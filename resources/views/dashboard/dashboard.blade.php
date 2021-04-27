@@ -1,4 +1,20 @@
-@extends('layouts.appLanding')
+@extends('layouts.appAdmin')
+
+@section('title')
+    Dashboard
+@endsection
+
+@section('header-page')
+    <h1 class="page-title">Dashboard</h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#"><i class="la la-home font-20"></i></a>
+        </li>
+        <li class="breadcrumb-item">Principal</li>
+    </ol>
+@endsection
+
+
 
 @section('content')
 <div class="container">
@@ -17,6 +33,7 @@
                     AQUI SE PUEDE COLOCAR OTRA COSA
                 </div>
             </div>
+
         </div>
     </div>
 </div>

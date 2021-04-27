@@ -1,4 +1,28 @@
-@extends('layouts.appLanding')
+@extends('layouts.appAdmin')
+
+@section('openAccess')
+    active
+@endsection
+
+@section('activeRoles')
+    active
+@endsection
+
+@section('title')
+    Roles
+@endsection
+
+@section('header-page')
+    <h1 class="page-title">Accesos</h1>
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item">
+            <a href="#"><i class="fa fa-home font-20"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <i class="fa fa-shield font-20"></i> Roles
+        </li>
+    </ol>
+@endsection
 
 @section('content')
 <div class="container">
