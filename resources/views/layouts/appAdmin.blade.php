@@ -15,7 +15,7 @@
     <!-- THEME STYLES-->
     <link href="{{ asset('admin/css/main.min.css') }}" rel="stylesheet" />
     <!-- PAGE LEVEL STYLES-->
-
+    <link href="{{ asset('toast/jquery.toast.min.css') }}" rel="stylesheet" />
     <!-- CSS inside -->
     @yield('styles')
 </head>
@@ -104,7 +104,7 @@
                 </li>
                 <li class="dropdown dropdown-user">
                     <a class="nav-link dropdown-toggle link" data-toggle="dropdown">
-                        <img src="{{ asset('admin/img/admin-avatar.png') }}" />
+                        <img src="{{asset('images/users/'.Auth::user()->image)}}" />
                         <span></span>{{ Auth::user()->name }}<i class="fa fa-angle-down m-l-5"></i>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-right">
@@ -131,7 +131,7 @@
         <div id="sidebar-collapse">
             <div class="admin-block d-flex">
                 <div>
-                    <img src="{{asset('admin/img/admin-avatar.png')}}" width="45px" />
+                    <img src="{{asset('images/users/'.Auth::user()->image)}}" width="45px" />
                 </div>
                 <div class="admin-info">
                     <div class="font-strong">{{ Auth::user()->name }}</div><small>Administrator</small></div>
@@ -152,15 +152,15 @@
                         <span class="nav-label">Accesos</span><i class="fa fa-angle-left arrow"></i>
                     </a>
                     <ul class="nav-2-level collapse">
-                        @can('list_role')
-                        <li>
-                            <a class="@yield('activeRoles')" href="{{ route('role.index') }}">Roles</a>
-                        </li>
-                        @endcan
                         @can('list_permission')
                         <li>
                             <a class="@yield('activePermissions')" href="{{ route('permission.index') }}">Permisos</a>
                         </li>
+                        @endcan
+                        @can('list_role')
+                            <li>
+                                <a class="@yield('activeRoles')" href="{{ route('role.index') }}">Roles</a>
+                            </li>
                         @endcan
                         @can('list_user')
                         <li>
@@ -250,6 +250,8 @@
 <script src="{{ asset('admin/vendors/jvectormap/jquery-jvectormap-us-aea-en.js') }}" type="text/javascript"></script>
 <!-- CORE SCRIPTS-->
 <script src="{{ asset('admin/js/app.min.js') }}" type="text/javascript"></script>
+<script src="{{ asset('toast/jquery.toast.min.js') }}" type="text/javascript"></script>
+
 @yield('scripts')
 </body>
 

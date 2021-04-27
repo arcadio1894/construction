@@ -25,7 +25,6 @@ class UserController extends Controller
 
         $user = User::create([
             'name' => $request->get('name'),
-            'dni' => $request->get('dni'),
             'email' => $request->get('email'),
             'password' => bcrypt($request->get('dni')),
         ]);
@@ -37,10 +36,10 @@ class UserController extends Controller
 
         // TODO: Tratamiento de un archivo de forma tradicional
         if (!$request->file('image')) {
-            $user->image = 'no_image.jpg';
+            $user->image = 'no_image.png';
             $user->save();
         } else {
-            $path = public_path().'/images/user/';
+            $path = public_path().'/images/users/';
             $extension = $request->file('image')->getClientOriginalExtension();
             $filename = $user->id . '.' . $extension;
             $request->file('image')->move($path, $filename);
@@ -59,7 +58,6 @@ class UserController extends Controller
         $user = User::find($request->get('user_id'));
 
         $user->name = $request->get('name');
-        $user->dni = $request->get('dni');
         $user->email = $request->get('email');
         $user->save();
 
@@ -69,8 +67,8 @@ class UserController extends Controller
 
         // TODO: Tratamiento de un archivo de forma tradicional
         if (!$request->file('image')) {
-            if ($user->image == 'no_image.jpg' || $user->image == null) {
-                $user->image = 'no_image.jpg';
+            if ($user->image == 'no_image.png' || $user->image == null) {
+                $user->image = 'no_image.png';
                 $user->save();
             }
 
@@ -117,5 +115,11 @@ class UserController extends Controller
             'rolesAll' => $rolesAll,
             'rolesSelected' => $rolesSelected
         );
+    }
+
+    public function getUsers()
+    {
+        $users = User::select('id', 'name', 'email', 'image')->get();
+        return datatables($users)->toJson();
     }
 }

@@ -53,13 +53,13 @@ class PermissionController extends Controller
 
         $permission->delete();
 
-        return response()->json(['message' => 'Role eliminado con éxito.'], 200);
+        return response()->json(['message' => 'Permiso eliminado con éxito.'], 200);
 
     }
 
     public function getPermissions()
     {
-        $shops = Permission::select('id', 'name', 'description')->get();
-        return datatables($shops)->toJson();
+        $permissions = Permission::select('id', 'name', 'description')->get();
+        return datatables($permissions)->toJson();
     }
 }

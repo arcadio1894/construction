@@ -1,20 +1,30 @@
 $(document).ready(function () {
     $('#dynamic-table').DataTable( {
             ajax: {
-                url: "/dashboard/all/permissions",
+                url: "/dashboard/all/users",
                 dataSrc: 'data'
             },
             bAutoWidth: false,
             "aoColumns": [
                 { data: 'id' },
                 { data: 'name' },
-                { data: 'description' },
+                { data: 'email' },
+                { data: null,
+                    title: 'Imagen',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        return '<img src="'+document.location.origin+ '/images/users/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                    }
+                },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<button data-description="'+item.description+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pencil"></i>Editar</button>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>Eliminar</button>' } },
+                        return '<button data-image="'+item.image+'" data-email="'+item.email+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pencil"></i>Editar</button>  <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>Eliminar</button>'
+                    }
+                },
 
             ],
             "aaSorting": [],
@@ -157,18 +167,23 @@ $(document).ready(function () {
             }
 
         } );
+    $(".select2").select2({
+        width : 'resolve',
+        placeholder: "Selecione los roles",
+        allowClear: true
+    });
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storePermission);
+    $formCreate.on('submit', storeUser);
     $modalCreate = $('#modalCreate');
-    $('#newPermission').on('click', openModalCreate);
+    $('#newUser').on('click', openModalCreate);
 
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updatePermission);
+    $formEdit.on('submit', updateUser);
     $modalEdit = $('#modalEdit');
     $(document).on('click', '[data-edit]', openModalEdit);
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyPermission);
+    $formDelete.on('submit', destroyUser);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
@@ -187,7 +202,7 @@ function openModalCreate() {
     $modalCreate.modal('show');
 }
 
-function storePermission() {
+function storeUser() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formCreate.data('url');
@@ -238,21 +253,45 @@ function storePermission() {
 }
 
 function openModalEdit() {
-    var permission_id = $(this).data('edit');
+    var user_id = $(this).data('edit');
     var name = $(this).data('name');
-    var description = $(this).data('description');
-    console.log(permission_id);
-    console.log(name);
-    console.log(description);
+    var email = $(this).data('email');
+    var image = $(this).data('image');
 
-    $modalEdit.find('[id=permission_id]').val(permission_id);
+    // Reseteamos el select para que se llene nuevamente
+    $('#rolesE').html('');
+
+    // Traer los permisos del role que ya estan guardados para
+    // colocarlos en el select
+    $.get( '/dashboard/user/roles/'+user_id )
+        .done(function( data ) {
+            $.each( data.rolesAll, function( key, value ) {
+                //console.log( value.name );
+                if(jQuery.inArray(value.name, data.rolesSelected) !== -1)
+                {
+                    $("#rolesE").append('<option selected value= '+value.name+'>' + value.description + '</option>');
+                }else{
+                    $("#rolesE").append('<option value= '+value.name+'>' + value.description + '</option>');
+                }
+
+            });
+
+            // Volver a actualizar el select select2
+            $('#rolesE').select2();
+        });
+
+    $modalEdit.find('[id=user_id]').val(user_id);
     $modalEdit.find('[id=nameE]').val(name);
-    $modalEdit.find('[id=descriptionE]').val(description);
+    $modalEdit.find('[id=emailE]').val(email);
+
+    var path = document.location.origin;
+    var completePath = path + '/images/users/' + image;
+    $modalEdit.find('[id=image-preview]').attr('src', completePath);
 
     $modalEdit.modal('show');
 }
 
-function updatePermission() {
+function updateUser() {
     event.preventDefault();
     // Obtener la URL
     var editUrl = $formEdit.data('url');
@@ -303,18 +342,18 @@ function updatePermission() {
 }
 
 function openModalDelete() {
-    var permission_id = $(this).data('delete');
+    var user_id = $(this).data('delete');
     var name = $(this).data('name');
-    var description = $(this).data('description');
+    var email = $(this).data('email');
 
-    $modalDelete.find('[id=permission_id]').val(permission_id);
+    $modalDelete.find('[id=user_id]').val(user_id);
     $modalDelete.find('[id=nameDelete]').html(name);
-    $modalDelete.find('[id=descriptionDelete]').html(description);
+    $modalDelete.find('[id=emailDelete]').html(email);
 
     $modalDelete.modal('show');
 }
 
-function destroyPermission() {
+function destroyUser() {
     event.preventDefault();
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');

@@ -89,4 +89,10 @@ class RoleController extends Controller
             'permissionsSelected' => $permissionsSelected
         );
     }
+
+    public function getRoles()
+    {
+        $roles = Role::select('id', 'name', 'description')->get();
+        return datatables($roles)->toJson();
+    }
 }

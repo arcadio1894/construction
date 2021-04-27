@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $('#dynamic-table').DataTable( {
             ajax: {
-                url: "/dashboard/all/permissions",
+                url: "/dashboard/all/roles",
                 dataSrc: 'data'
             },
             bAutoWidth: false,
@@ -157,18 +157,23 @@ $(document).ready(function () {
             }
 
         } );
+    $(".select2").select2({
+        width : 'resolve',
+        placeholder: "Selecione los permisos",
+        allowClear: true
+    });
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storePermission);
+    $formCreate.on('submit', storeRole);
     $modalCreate = $('#modalCreate');
-    $('#newPermission').on('click', openModalCreate);
+    $('#newRole').on('click', openModalCreate);
 
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updatePermission);
+    $formEdit.on('submit', updateRole);
     $modalEdit = $('#modalEdit');
     $(document).on('click', '[data-edit]', openModalEdit);
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyPermission);
+    $formDelete.on('submit', destroyRole);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
@@ -187,7 +192,7 @@ function openModalCreate() {
     $modalCreate.modal('show');
 }
 
-function storePermission() {
+function storeRole() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formCreate.data('url');
@@ -238,21 +243,41 @@ function storePermission() {
 }
 
 function openModalEdit() {
-    var permission_id = $(this).data('edit');
+    var role_id = $(this).data('edit');
     var name = $(this).data('name');
     var description = $(this).data('description');
-    console.log(permission_id);
-    console.log(name);
-    console.log(description);
 
-    $modalEdit.find('[id=permission_id]').val(permission_id);
+    // Reseteamos el select para que se llene nuevamente
+    $('#permissionsE').html('');
+
+    // Traer los permisos del role que ya estan guardados para
+    // colocarlos en el select
+    $.get( '/dashboard/role/permissions/'+name )
+        .done(function( data ) {
+            console.log(data);
+            $.each( data.permissionsAll, function( key, value ) {
+                //console.log( value.name );
+                if(jQuery.inArray(value.name, data.permissionsSelected) !== -1)
+                {
+                    $("#permissionsE").append('<option selected value= '+value.name+'>' + value.description + '</option>');
+                }else{
+                    $("#permissionsE").append('<option value= '+value.name+'>' + value.description + '</option>');
+                }
+
+            });
+
+            // Volver a actualizar el select select2
+            $('#permissionsE').select2();
+        });
+
+    $modalEdit.find('[id=role_id]').val(role_id);
     $modalEdit.find('[id=nameE]').val(name);
     $modalEdit.find('[id=descriptionE]').val(description);
 
     $modalEdit.modal('show');
 }
 
-function updatePermission() {
+function updateRole() {
     event.preventDefault();
     // Obtener la URL
     var editUrl = $formEdit.data('url');
@@ -303,18 +328,18 @@ function updatePermission() {
 }
 
 function openModalDelete() {
-    var permission_id = $(this).data('delete');
+    var role_id = $(this).data('delete');
     var name = $(this).data('name');
     var description = $(this).data('description');
 
-    $modalDelete.find('[id=permission_id]').val(permission_id);
+    $modalDelete.find('[id=role_id]').val(role_id);
     $modalDelete.find('[id=nameDelete]').html(name);
     $modalDelete.find('[id=descriptionDelete]').html(description);
 
     $modalDelete.modal('show');
 }
 
-function destroyPermission() {
+function destroyRole() {
     event.preventDefault();
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');
