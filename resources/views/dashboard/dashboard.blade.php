@@ -1,40 +1,25 @@
-@extends('layouts.appAdmin')
+@extends('layouts.appAdmin2')
 
 @section('title')
     Dashboard
 @endsection
 
-@section('header-page')
+@section('page-header')
     <h1 class="page-title">Dashboard</h1>
-    <ol class="breadcrumb">
+@endsection
+
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item">
-            <a href="#"><i class="la la-home font-20"></i></a>
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item">Principal</li>
     </ol>
 @endsection
 
-
+@section('page-title')
+    <h5 class="card-title">TITULO DASHBOARD</h5>
+@endsection
 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">{{ __('Dashboard') }}</div>
-
-                <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
-                    AQUI SE PUEDE COLOCAR OTRA COSA
-                </div>
-            </div>
-
-        </div>
-    </div>
-</div>
+    <h5 class="card-title">Card title</h5><p></p>
 @endsection
