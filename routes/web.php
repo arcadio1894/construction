@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/roles', 'RoleController@getRoles');
         Route::get('role/permissions/{id}', 'RoleController@getPermissions')->name('role.permissions')
             ->middleware('permission:update_role');
+        Route::get('/crear/rol', 'RoleController@create')->name('role.create');
+        Route::get('/editar/rol/{id}', 'RoleController@edit');
 
         Route::get('permisos', 'PermissionController@index')->name('permission.index')
             ->middleware('permission:list_permission');

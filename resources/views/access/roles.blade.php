@@ -39,7 +39,7 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de roles</h5>
-    <button id="newRole" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo rol </button>
+    <a href="{{ route('role.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo rol </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -69,8 +69,7 @@
         </table>
     </div>
 
-
-    <div id="modalCreate" class="modal fade" tabindex="-1">
+    {{--<div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -114,9 +113,9 @@
                 </form>
             </div>
         </div>
-    </div>
+    </div>--}}
 
-    <div id="modalEdit" class="modal fade" tabindex="-1">
+    {{--<div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -160,7 +159,7 @@
 
             </div>
         </div>
-    </div>
+    </div>--}}
 
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">

@@ -11,6 +11,28 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
+    const MODULES = [
+        'dashboard'=>'DASHBOARD',
+        'store'=>'TIENDAS',
+        'user'=>'USUARIOS',
+        'role'=>'ROLES',
+        'order'=>'PEDIDOS',
+        'permission'=>'PERMISOS',
+        'customer'=>'CLIENTES',
+        'category'=>'CATEGORÍAS',
+        'product'=>'PRODUCTOS',
+        'shipping_method'=>'MÉTODOS DE ENVÍO',
+        'payment_method'=>'MÉTODOS DE PAGO',
+        'zone'=>'ZONAS DE REPARTO',
+        'banner'=>'BANNERS',
+        'schedule'=>'HORARIO DE ATENCIÓN',
+        'aboutus'=>'INFORMACIÓN NOSOTROS',
+        'help'=>'INFORMACIÓN DE AYUDA',
+        'report'=>'REPORTES',
+        'email'=>'EMAILS',
+        'amount'=>'MONTOS DE COMPRA'
+    ];
+
     public function index()
     {
         $roles = Role::all();
@@ -94,5 +116,60 @@ class RoleController extends Controller
     {
         $roles = Role::select('id', 'name', 'description')->get();
         return datatables($roles)->toJson();
+    }
+
+    public function create()
+    {
+        $permissions = Permission::select('id', 'name', 'description')->get();
+
+        $groupPermissions = [];
+        $groups = [];
+        foreach ( $permissions as $permission )
+        {
+            $pos = strpos($permission->name, '_');
+            $group = substr($permission->name, $pos+1);
+            array_push($groupPermissions, $group);
+            //array_push($groupPermissions, ['key'=>$group, 'group'=>$this::MODULES[$group]]);
+        }
+        $grupos = array_unique($groupPermissions);
+        foreach ( $grupos as $group )
+        {
+            array_push($groups, ['group'=>$group, 'name'=>$this::MODULES[$group]]);
+        }
+        //dd(strrpos($permissions[6]->name, $groups[0]['group']));
+        return view('access.role_create', compact('permissions', 'groups'));
+    }
+
+    public function edit( $id )
+    {
+        $permissions = Permission::select('id', 'name', 'description')->get();
+
+        $groupPermissions = [];
+        $groups = [];
+        foreach ( $permissions as $permission )
+        {
+            $pos = strpos($permission->name, '_');
+            $group = substr($permission->name, $pos+1);
+            array_push($groupPermissions, $group);
+            //array_push($groupPermissions, ['key'=>$group, 'group'=>$this::MODULES[$group]]);
+        }
+        $grupos = array_unique($groupPermissions);
+        foreach ( $grupos as $group )
+        {
+            array_push($groups, ['group'=>$group, 'name'=>$this::MODULES[$group]]);
+        }
+        //dd(strrpos($permissions[6]->name, $groups[0]['group']));
+        $role = Role::findByName($id);
+
+        $permissionsSelected = [];
+        $permissions1 = $role->permissions;
+        foreach ( $permissions1 as $permission )
+        {
+            //var_dump($permission->name);
+            array_push($permissionsSelected, $permission->name);
+        }
+
+        //dd( in_array('holi_dashboard', $permissionsSelected) );
+        return view('access.role_edit', compact('permissions', 'groups', 'permissionsSelected', 'role'));
     }
 }
