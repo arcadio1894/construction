@@ -14,7 +14,7 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<button data-description="'+item.description+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pencil"></i>Editar</button>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>Eliminar</button>' } },
+                        return '<a href="'+document.location.origin+ '/dashboard/editar/rol/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>' } },
 
             ],
             "aaSorting": [],
@@ -162,15 +162,15 @@ $(document).ready(function () {
         placeholder: "Selecione los permisos",
         allowClear: true
     });
-    $formCreate = $('#formCreate');
+    /*$formCreate = $('#formCreate');
     $formCreate.on('submit', storeRole);
     $modalCreate = $('#modalCreate');
-    $('#newRole').on('click', openModalCreate);
+    $('#newRole').on('click', openModalCreate);*/
 
-    $formEdit = $('#formEdit');
+    /*$formEdit = $('#formEdit');
     $formEdit.on('submit', updateRole);
     $modalEdit = $('#modalEdit');
-    $(document).on('click', '[data-edit]', openModalEdit);
+    $(document).on('click', '[data-edit]', openModalEdit);*/
 
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroyRole);
@@ -188,7 +188,7 @@ var $modalEdit;
 var $formDelete;
 var $modalDelete;
 
-function openModalCreate() {
+/*function openModalCreate() {
     $modalCreate.modal('show');
 }
 
@@ -204,18 +204,24 @@ function storeRole() {
         contentType:false,
         success: function (data) {
             console.log(data);
-            $.toast({
-                text: data.message,
-                showHideTransition: 'slide',
-                bgColor: '#629B58',
-                allowToastClose: false,
-                hideAfter: 4000,
-                stack: 10,
-                textAlign: 'left',
-                position: 'top-right',
-                icon: 'success',
-                heading: 'Éxito'
-            });
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "4000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
             $modalCreate.modal('hide');
             setTimeout( function () {
                 location.reload();
@@ -223,18 +229,24 @@ function storeRole() {
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
-                $.toast({
-                    text:data.responseJSON.errors[property],
-                    showHideTransition: 'slide',
-                    bgColor: '#D15B47',
-                    allowToastClose: false,
-                    hideAfter: 4000,
-                    stack: 10,
-                    textAlign: 'left',
-                    position: 'top-right',
-                    icon: 'error',
-                    heading: 'Error'
-                });
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
             }
 
 
@@ -289,18 +301,24 @@ function updateRole() {
         contentType:false,
         success: function (data) {
             console.log(data);
-            $.toast({
-                text: data.message,
-                showHideTransition: 'slide',
-                bgColor: '#629B58',
-                allowToastClose: false,
-                hideAfter: 4000,
-                stack: 10,
-                textAlign: 'left',
-                position: 'top-right',
-                icon: 'success',
-                heading: 'Éxito'
-            });
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "4000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
             $modalEdit.modal('hide');
             setTimeout( function () {
                 location.reload();
@@ -308,24 +326,30 @@ function updateRole() {
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
-                $.toast({
-                    text:data.responseJSON.errors[property],
-                    showHideTransition: 'slide',
-                    bgColor: '#D15B47',
-                    allowToastClose: false,
-                    hideAfter: 4000,
-                    stack: 10,
-                    textAlign: 'left',
-                    position: 'top-right',
-                    icon: 'error',
-                    heading: 'Error'
-                });
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
             }
 
 
         },
     });
-}
+}*/
 
 function openModalDelete() {
     var role_id = $(this).data('delete');
@@ -351,18 +375,24 @@ function destroyRole() {
         contentType:false,
         success: function (data) {
             console.log(data);
-            $.toast({
-                text: data.message,
-                showHideTransition: 'slide',
-                bgColor: '#629B58',
-                allowToastClose: false,
-                hideAfter: 4000,
-                stack: 10,
-                textAlign: 'left',
-                position: 'top-right',
-                icon: 'success',
-                heading: 'Éxito'
-            });
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "4000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
             $modalDelete.modal('hide');
             setTimeout( function () {
                 location.reload();
@@ -370,18 +400,24 @@ function destroyRole() {
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
-                $.toast({
-                    text:data.responseJSON.errors[property],
-                    showHideTransition: 'slide',
-                    bgColor: '#D15B47',
-                    allowToastClose: false,
-                    hideAfter: 4000,
-                    stack: 10,
-                    textAlign: 'left',
-                    position: 'top-right',
-                    icon: 'error',
-                    heading: 'Error'
-                });
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
             }
 
 

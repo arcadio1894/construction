@@ -1,6 +1,10 @@
-@extends('layouts.appAdmin')
+@extends('layouts.appAdmin2')
 
 @section('openAccess')
+    menu-open
+@endsection
+
+@section('activeAccess')
     active
 @endsection
 
@@ -12,9 +16,16 @@
     Usuarios
 @endsection
 
+@section('styles-plugins')
+    <!-- Datatables -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+    <!-- Select2 -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+@endsection
+
 @section('styles')
-    <link href="{{ asset('admin/vendors/DataTables/datatables.min.css') }}" rel="stylesheet" />
-    <link href="{{ asset('admin/vendors/select2/dist/css/select2.min.css') }}" rel="stylesheet" />
     <style>
         .select2-search__field{
             width: 100% !important;
@@ -22,38 +33,40 @@
     </style>
 @endsection
 
-@section('header-page')
+@section('page-header')
     <h1 class="page-title">Accesos</h1>
-    <ul class="breadcrumb">
+@endsection
+
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
         <li class="breadcrumb-item">
-            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home font-14"></i> Dashboard</a>
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-users font-14"></i> Usuarios</li>
-    </ul>
+        <li class="breadcrumb-item"><i class="fa fa-users"></i> Usuarios</li>
+    </ol>
+@endsection
+
+@section('page-title')
+    <h5 class="card-title">Listado de usuarios</h5>
+    <button id="newUser" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo usuario </button>
 @endsection
 
 @section('content')
-    <div class="ibox">
-        <div class="ibox-head">
-            <div class="ibox-title">Listado de usuarios</div>
-            <button id="newUser" class="btn btn-outline-success" > <i class="fa fa-plus font-20"></i> Nuevo usuario </button>
-        </div>
-        <div class="ibox-body">
-            <table class="table" id="dynamic-table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Email</th>
-                    <th>Image</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover" id="dynamic-table">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Nombre</th>
+            <th>Email</th>
+            <th>Image</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
 
-                </tbody>
-            </table>
-        </div>
+        </tbody>
+    </table>
     </div>
 
     <div id="modalCreate" class="modal fade" tabindex="-1">
@@ -188,8 +201,16 @@
     </div>
 @endsection
 
+@section('plugins')
+    <!-- Datatables -->
+    <script src="{{ asset('admin/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    <!-- Select2 -->
+    <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+@endsection
+
 @section('scripts')
-    <script src="{{ asset('admin/vendors/select2/dist/js/select2.full.min.js') }}" type="text/javascript"></script>
-    <script src="{{ asset('admin/vendors/DataTables/datatables.min.js') }}" type="text/javascript"></script>
     <script src="{{ asset('js/user/index.js') }}"></script>
 @endsection
