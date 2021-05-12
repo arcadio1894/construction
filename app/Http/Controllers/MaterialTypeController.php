@@ -7,79 +7,59 @@ use Illuminate\Http\Request;
 
 class MaterialTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+ 
     public function index()
     {
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+    public function store(StoreMaterialTypeRequest $request)
+    {
+        $validated = $request->validated();
+
+        $materialType = MaterialType::create([
+            'name' => $request->get('name'),
+            'length' => $request->get('length'),
+            'width' => $request->get('width'),
+            'weight' => $request->get('weight'),
+            
+        ]);
+        return response()->json(['message' => 'Tipo de Material guardado con éxito.'], 200);
+    }
+
+    public function update(UpdateMaterialTypeRequest $request)
+    {
+        $validated = $request->validated();
+
+        $materialType = MaterialType::find($request->get('materialType_id'));
+
+        $materialType->name = $request->get('name');
+        $materialType->length = $request->get('length');
+        $materialType->width = $request->get('width');
+        $materialType->weight = $request->get('weight');
+        
+        $materialType->save();
+
+        return response()->json(['message' => 'Tipo de material modificado con éxito.'], 200);
+    }
+
+    public function destroy(DeleteMaterialTypeReqiest $request)
+    {
+        $validated = $request->validated();
+
+        $materialType = MaterialType::find($request->get('materialType_id'));
+
+        $materialType->delete();
+
+        return response()->json(['message' => 'Tipo de material eliminado con éxito.'], 200);
+    }
     public function create()
     {
         //
     }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\MaterialType  $materialType
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MaterialType $materialType)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\MaterialType  $materialType
-     * @return \Illuminate\Http\Response
-     */
     public function edit(MaterialType $materialType)
     {
         //
     }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\MaterialType  $materialType
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, MaterialType $materialType)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\MaterialType  $materialType
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(MaterialType $materialType)
-    {
-        //
-    }
+    
 }

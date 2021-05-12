@@ -56,7 +56,7 @@ class CustomerController extends Controller
 
         $customer = Customer::find($request->get('customer_id'));
 
-        $user->delete();
+        $customer->delete();
 
         return response()->json(['message' => 'Cliente eliminado con éxito.'], 200);
     }

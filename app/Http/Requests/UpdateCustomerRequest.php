@@ -26,7 +26,7 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
-            'RUC' => 'required|string|max:255|unique:customers,RUC'
+            'RUC' => 'required|string|max:255|unique:customers,RUC',
             'code' => 'required|string|min:3|max:10|unique:customers,code',
             'contact_name' => 'string|max:255',
             'adress' => 'string|max:255',
