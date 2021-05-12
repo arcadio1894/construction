@@ -4,10 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreCustomerRequest extends FormRequest
+class UpdateCustomerRequest extends FormRequest
 {
     /**
-     * Determine if the user is authorized to make this request.g
+     * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
@@ -24,6 +24,7 @@ class StoreCustomerRequest extends FormRequest
     public function rules()
     {
         return [
+            'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
             'RUC' => 'required|string|max:255|unique:customers,RUC'
             'code' => 'required|string|min:3|max:10|unique:customers,code',
@@ -39,6 +40,10 @@ class StoreCustomerRequest extends FormRequest
     public function messages()
     {
         return [
+
+            'customer_id.required' => 'El :attribute es obligatorio.',
+            'customer_id.exists' => 'El :attribute debe existir en la base de datos.',
+
             'business_name.required' => 'La :attribute es obligatoria.',
             'business_name.string' => 'La :attribute debe contener caracteres válidos.',
             'business_name.max' => 'La :attribute debe contener máximo 255 caracteres.',
@@ -79,10 +84,11 @@ class StoreCustomerRequest extends FormRequest
     public function attributes()
     {
         return [
-            'business_name' => 'Razón Soacial',
+            'customer_id' => 'id del cliente',
+            'business_name' => 'Razón Soacial del cliente',
             'RUC' => 'RUC del cliente',
             'code' => 'codigo del cliente',
-            'contact_name' => 'nombre de contacto',
+            'contact_name' => 'nombre de contacto del cliente',
             'adress' => 'dirección del cliente',
             'phone' => 'teléfono del cliente',
             'location' => 'codUbicacioón del cliente',
