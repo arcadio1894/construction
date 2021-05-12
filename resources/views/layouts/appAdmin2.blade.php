@@ -171,8 +171,7 @@
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                    <!-- Add icons to the links using the .nav-icon class
-                         with font-awesome or any other icon font library -->
+                    @can('access_permission')
                     <li class="nav-header">ADMINISTRADOR</li>
                     <li class="nav-item has-treeview @yield('openAccess')">
 
@@ -210,7 +209,158 @@
                             @endcan
                         </ul>
                     </li>
+                    @endcan
+                    <li class="nav-header">MANTENEDORES</li>
+                    <li class="nav-item has-treeview @yield('openCustomer')">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <p>
+                                Clientes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('list_customer')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar clientes</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('create_customer')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear clientes</p>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview @yield('openSupplier')">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-boxes"></i>
+                            <p>
+                                Proveedores
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('list_supplier')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar proveedores</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('create_supplier')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear proveedores</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('assign_supplier')
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Proveedores y materiales</p>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
 
+                    <li class="nav-header">MATERIALES</li>
+                    @can('list_category')
+                    <li class="nav-item has-treeview @yield('openCategory')">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <p>
+                                Categorías
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar categorias</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endcan
+                    @can('list_materialType')
+                    <li class="nav-item has-treeview @yield('openMaterialType')">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-boxes"></i>
+                            <p>
+                                Tipo Materiales
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar tipos</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endcan
+                    @can('list_material')
+                    <li class="nav-item has-treeview @yield('openMaterial')">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-boxes"></i>
+                            <p>
+                                Materiales
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar materiales</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear materiales</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    @endcan
+                    @can('list_quotes')
+                        <li class="nav-header">COTIZACIONES</li>
+                        <li class="nav-item">
+                        <a href="#" class="nav-link @yield('activeListQuotes')">
+                            <i class="nav-icon fas fa-th"></i>
+                            <p>
+                                Listar cotizaciones
+                                <span class="right badge badge-danger">New</span>
+                            </p>
+                        </a>
+                    </li>
+                        @can('create_quotes')
+                        <li class="nav-item">
+                            <a href="#" class="nav-link @yield('activeCreateQuotes')">
+                                <i class="nav-icon fas fa-th"></i>
+                                <p>
+                                    Crear cotizaciones
+                                    <span class="right badge badge-danger">New</span>
+                                </p>
+                            </a>
+                        </li>
+                        @endcan
+                    @endcan
                     <li class="nav-header">INVENTARIO</li>
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
@@ -253,7 +403,6 @@
                             </li>
                         </ul>
                     </li>
-
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-boxes"></i>
@@ -296,6 +445,7 @@
                         </ul>
                     </li>
 
+
                     <li class="nav-header">NAVBAR HEADER</li>
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
@@ -320,6 +470,7 @@
                             </li>
                         </ul>
                     </li>
+
                     <li class="nav-header">NAVBAR HEADER</li>
                     <li class="nav-item">
                         <a href="#" class="nav-link">
