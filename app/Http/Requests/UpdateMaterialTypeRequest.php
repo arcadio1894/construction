@@ -40,18 +40,18 @@ class UpdateMaterialTypeRequest extends FormRequest
             'materialType_id.required' => 'El :attribute es obligatorio.',
             'materialType_id.exists' => 'El :attribute debe existir en la base de datos.',
 
-            'name.required' => 'La :attribute es obligatoria.',
-            'name.string' => 'La :attribute debe contener caracteres válidos.',
-            'name.max' => 'La :attribute debe contener máximo 255 caracteres.',
+            'name.required' => 'El :attribute es obligatoria.',
+            'name.string' => 'El :attribute debe contener caracteres válidos.',
+            'name.max' => 'El :attribute debe contener máximo 255 caracteres.',
 
-            'length.string' => 'La :attribute debe contener caracteres válidos.',
-            'length.max' => 'La :attribute debe contener máximo 255 caracteres.',
+            'length.string' => 'El :attribute debe contener caracteres válidos.',
+            'length.max' => 'El :attribute debe contener máximo 255 caracteres.',
             
-            'width.string' => 'La :attribute debe contener caracteres válidos.',
-            'width.max' => 'La :attribute debe contener máximo 255 caracteres.',
+            'width.string' => 'El :attribute debe contener caracteres válidos.',
+            'width.max' => 'El :attribute debe contener máximo 255 caracteres.',
 
-            'weight.string' => 'La :attribute debe contener caracteres válidos.',
-            'weight.max' => 'La :attribute debe contener máximo 255 caracteres.',
+            'weight.string' => 'El :attribute debe contener caracteres válidos.',
+            'weight.max' => 'El :attribute debe contener máximo 255 caracteres.',
 
             
         ];
