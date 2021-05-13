@@ -15,6 +15,17 @@ class CreateEquipmentMaterialsTable extends Migration
     {
         Schema::create('equipment_materials', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('equipment_id')->constrained('equipments');
+            $table->foreignId('material_id')->constrained('materials');
+            $table->decimal('quantity', 9,2)->nullable();
+            $table->decimal('long', 9,2)->nullable();
+            $table->decimal('width', 9,2)->nullable();
+            $table->decimal('kilos', 9,2)->nullable();
+            $table->decimal('percentage', 9,2)->nullable();
+            $table->enum('state', ['En compra', 'Falta comprar']);
+            $table->decimal('price', 9,2);
+            $table->enum('availability', ['Agotado', 'Completo']);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

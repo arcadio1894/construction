@@ -13,8 +13,12 @@ class CreateEquipmentTable extends Migration
      */
     public function up()
     {
-        Schema::create('equipment', function (Blueprint $table) {
+        Schema::create('equipments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('quote_id')->constrained('quotes');
+            $table->string('description');
+            $table->decimal('total', 9,2);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
