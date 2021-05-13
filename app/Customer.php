@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Customer extends Model
 {
-    protected $fillable = ['business_name', 'code',];
+    protected $fillable = ['business_name','RUC', 'code','contact_name','adress','phone','location','email'];
 
     // TODO: Las relaciones
     public function quotes()

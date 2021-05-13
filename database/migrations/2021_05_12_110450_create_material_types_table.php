@@ -15,6 +15,11 @@ class CreateMaterialTypesTable extends Migration
     {
         Schema::create('material_types', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->require();
+            $table->string('length')->nullable();
+            $table->string('width')->nullable();
+            $table->string('weight')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
