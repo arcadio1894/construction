@@ -34,5 +34,16 @@ class Material extends Model
         return $this->belongsTo('App\Category');
     }
 
+    public function equipments()
+    {
+        return $this->belongsToMany('App\Equipment', 'equipment_materials')
+            ->withPivot('equipment_id', 'quantity', 'unit_price', 'long', 'width', 'kilos', 'percentage', 'state', 'price', 'availability');
+    }
+
+    public function defaultItems()
+    {
+        return $this->hasMany('App\DefaultItem');
+    }
+
     protected $dates = ['deleted_at'];
 }

@@ -30,4 +30,9 @@ class DefaultItem extends Model
     {
         return $this->belongsTo('App\Material');
     }
+
+    public function details()
+    {
+        return $this->hasMany('App\DetailItem');
+    }
 }

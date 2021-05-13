@@ -26,6 +26,11 @@ class Quote extends Model
         return $this->belongsTo('App\Customer');
     }
 
+    public function equipments()
+    {
+        return $this->hasMany('App\Equipment');
+    }
+
     protected $dates = ['deleted_at'];
 
 }
