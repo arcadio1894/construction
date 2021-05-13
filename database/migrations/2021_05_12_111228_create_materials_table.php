@@ -15,6 +15,19 @@ class CreateMaterialsTable extends Migration
     {
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
+            $table->string('description')->unique();
+            $table->string('measure');
+            $table->string('unit_measure');
+            $table->decimal('stock_max', 6,2);
+            $table->decimal('stock_min', 6,2);
+            $table->decimal('stock_current', 6,2);
+            $table->enum('priority', ['Aceptable', 'Agotado', 'Completo', 'Por agotarse']);
+            $table->decimal('unit_price', 9,2);
+            $table->string('image')->nullable();
+            $table->foreignId('material_type_id')->constrained('material_types');
+            $table->foreignId('category_id')->constrained('categories');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
