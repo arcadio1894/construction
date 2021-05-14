@@ -15,6 +15,10 @@ class CreateDetailItemsTable extends Migration
     {
         Schema::create('detail_items', function (Blueprint $table) {
             $table->id();
+            $table->string('description')->nullable();
+            $table->decimal('quantity',9,2)->nullable();
+            $table->foreignId('default_item_id')->constrained('default_items');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
