@@ -315,7 +315,7 @@
                     @endcan
                     @can('list_material')
                     <li class="nav-item has-treeview @yield('openMaterial')">
-                        <a href="#" class="nav-link">
+                        <a href="#" class="nav-link @yield('activeMaterial')">
                             <i class="nav-icon fas fa-boxes"></i>
                             <p>
                                 Materiales
@@ -324,13 +324,13 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#" class="nav-link @yield('activeListMaterial')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar materiales</p>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="#" class="nav-link @yield('activeCreateMaterial')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear materiales</p>
                                 </a>
