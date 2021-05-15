@@ -11,6 +11,17 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        //
+        MaterialType::create([
+            'name' => 'CATEGORIA 1',
+            'description' => '5m*1m',
+        ]);
+        MaterialType::create([
+            'name' => 'CATEGORIA 2',
+            'description' => '5m*2m',
+        ]);
+        MaterialType::create([
+            'name' => 'CATEGORIA 3',
+            'description' => '5m*2m',
+        ]);
     }
 }
