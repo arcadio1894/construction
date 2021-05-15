@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Category;
 
 class CategorySeeder extends Seeder
 {
@@ -11,16 +12,16 @@ class CategorySeeder extends Seeder
      */
     public function run()
     {
-        MaterialType::create([
-            'name' => 'CATEGORIA 1',
+        Category::create([
+            'name' => 'PLANCHA LISA INOX',
             'description' => '5m*1m',
         ]);
-        MaterialType::create([
-            'name' => 'CATEGORIA 2',
+        Category::create([
+            'name' => 'TUBERIA INOX',
             'description' => '5m*2m',
         ]);
-        MaterialType::create([
-            'name' => 'CATEGORIA 3',
+        Category::create([
+            'name' => 'TUBO CUADRADO INOX',
             'description' => '5m*2m',
         ]);
     }

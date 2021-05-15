@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\MaterialType;
 
 class MaterialTypeSeeder extends Seeder
 {
@@ -12,23 +13,23 @@ class MaterialTypeSeeder extends Seeder
     public function run()
     {
         MaterialType::create([
-            'name' => 'ejes',
-            'length' => '5m',
-            'width' => '5m',
-            'weight' => '1k',
+            'name' => 'Ejes',
+            'length' => 6000,
+            'width' => null,
+            'weight' => null,
             
         ]);
         MaterialType::create([
-            'name' => 'tubos',
-            'length' => '6m',
-            'width' => '6m',
-            'weight' => '2k',
+            'name' => 'Planchas chicas',
+            'length' => 2440,
+            'width' => 1220,
+            'weight' => null,
         ]);
         MaterialType::create([
-            'name' => 'planchas',
-            'length' => '7m',
-            'width' => '7m',
-            'weight' => '3k',
+            'name' => 'Planchas grandes',
+            'length' => 3000,
+            'width' => 1500,
+            'weight' => null,
         ]);
     }
 }
