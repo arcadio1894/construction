@@ -63,6 +63,21 @@ Route::middleware('auth')->group(function (){
         Route::post('permission/destroy', 'PermissionController@destroy')->name('permission.destroy')
             ->middleware('permission:destroy_permission');
         Route::get('/all/permissions', 'PermissionController@getPermissions');
+
+        Route::get('materiales', 'MaterialController@index')->name('material.index')
+            ->middleware('permission:list_material');
+        Route::get('crear/material', 'MaterialController@index')->name('material.create')
+            ->middleware('permission:create_material');
+        Route::post('material/store', 'MaterialController@store')->name('material.store')
+            ->middleware('permission:create_material');
+        Route::get('editar/material/{id}', 'MaterialController@index')->name('material.edit')
+            ->middleware('permission:update_material');
+        Route::post('material/update', 'MaterialController@update')->name('material.update')
+            ->middleware('permission:update_material');
+        Route::post('material/destroy', 'MaterialController@destroy')->name('material.destroy')
+            ->middleware('permission:destroy_material');
+        Route::get('/all/materials', 'MaterialController@getAllMaterials')->name('all.materials')
+            ->middleware('permission:list_material');
     });
 });
 

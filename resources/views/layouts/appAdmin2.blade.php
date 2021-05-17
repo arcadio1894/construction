@@ -324,7 +324,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link @yield('activeListMaterial')">
+                                <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar materiales</p>
                                 </a>

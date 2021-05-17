@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Material;
 
 class MaterialSeeder extends Seeder
 {
@@ -11,6 +12,34 @@ class MaterialSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Material::create([
+            'code' => '1',
+            'description' => 'PLANCHA LISA INOX C-304 0.8*1.22*2.44',
+            'measure' => '0.8*1.22*2.44',
+            'unit_measure' => 'UND',
+            'stock_max' => 10,
+            'stock_min'=> 1,
+            'stock_current' => 0,
+            'priority' => 'Agotado',
+            'unit_price' => 0,
+            'image' => null,
+            'material_type_id' => 3,
+            'category_id' => 1
+        ]);
+
+        Material::create([
+            'code' => '2',
+            'description' => 'PLANCHA LISA INOX C-304 1.2*1.22*2.44',
+            'measure' => '1.2*1.22*2.44',
+            'unit_measure' => 'UND',
+            'stock_max' => 10,
+            'stock_min'=> 1,
+            'stock_current' => 3.21,
+            'priority' => 'Completo',
+            'unit_price' => 0,
+            'image' => null,
+            'material_type_id' => 3,
+            'category_id' => 1
+        ]);
     }
 }
