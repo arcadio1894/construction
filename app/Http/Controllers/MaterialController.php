@@ -10,7 +10,7 @@ class MaterialController extends Controller
 
     public function index()
     {
-        //
+        return view('material.index');
     }
 
     public function create()
@@ -45,7 +45,9 @@ class MaterialController extends Controller
 
     public function getAllMaterials()
     {
-        $roles = Material::select('id', 'name', 'description')->get();
-        return datatables($roles)->toJson();
+        $materials = Material::with(['category', 'materialType'])->get();
+
+        //dd(datatables($materials)->toJson());
+        return datatables($materials)->toJson();
     }
 }
