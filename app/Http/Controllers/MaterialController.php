@@ -33,43 +33,45 @@ class MaterialController extends Controller
         DB::beginTransaction();
         try {
 
-            $user = Material::create([
-                'description',
-                'measure',
-                'unit_measure',
-                'stock_max',
-                'stock_min',
-                'stock_current',
-                'priority',
-                'unit_price',
-                'image',
-                'material_type_id',
-                'category_id'
+            $material = Material::create([
+                'description' => $request->get('description'),
+                'measure' => $request->get('measure'),
+                'unit_measure' => $request->get('unit_measure'),
+                'stock_max' => $request->get('stock_max'),
+                'stock_min' => $request->get('stock_min'),
+                'unit_price' => $request->get('unit_price'),
+                'stock_current' => 0,
+                'priority' => 'Aceptable',
+                'material_type_id' => $request->get('material_type'),
+                'category_id' => $request->get('category')
             ]);
 
-            // Sincronizar con roles
-            $roles = $request->get('roles');
-            //var_dump($roles);
-            $user->syncRoles($roles);
+            $length = 5;
+            $string = $material->id;
+            $code = 'P-'.str_pad($string,$length,"0", STR_PAD_LEFT);
+            //output: 0012345
+
+            $material->code = $code;
+            $material->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
             if (!$request->file('image')) {
-                $user->image = 'no_image.png';
-                $user->save();
+                $material->image = 'no_image.png';
+                $material->save();
             } else {
-                $path = public_path().'/images/users/';
+                $path = public_path().'/images/material/';
                 $extension = $request->file('image')->getClientOriginalExtension();
-                $filename = $user->id . '.' . $extension;
+                $filename = $material->id . '.' . $extension;
                 $request->file('image')->move($path, $filename);
-                $user->image = $filename;
-                $user->save();
+                $material->image = $filename;
+                $material->save();
             }
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Usuario guardado con éxito.'], 200);
+        return response()->json(['message' => 'Material guardado con éxito.'], 200);
 
     }
 

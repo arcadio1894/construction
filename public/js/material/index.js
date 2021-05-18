@@ -30,7 +30,14 @@ $(document).ready(function () {
                 { data: 'stock_current' },
                 { data: 'priority' },
                 { data: 'unit_price' },
-                { data: 'image' },
+                { data: null,
+                    title: 'Imagen',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                    }
+                },
                 /*{ data: 'category.name' },
                 { data: 'material_type.name' },*/
                 { data: null,

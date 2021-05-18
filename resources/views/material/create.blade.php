@@ -107,7 +107,7 @@
                         </div>
                         <div class="form-group">
                             <label for="stock_min">Stock Mínimo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_max" name="stock_max" class="form-control">
+                            <input type="text" id="stock_min" name="stock_min" class="form-control">
                         </div>
 
                         <div class="form-group">
