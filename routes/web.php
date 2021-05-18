@@ -66,7 +66,7 @@ Route::middleware('auth')->group(function (){
 
         Route::get('materiales', 'MaterialController@index')->name('material.index')
             ->middleware('permission:list_material');
-        Route::get('crear/material', 'MaterialController@index')->name('material.create')
+        Route::get('crear/material', 'MaterialController@create')->name('material.create')
             ->middleware('permission:create_material');
         Route::post('material/store', 'MaterialController@store')->name('material.store')
             ->middleware('permission:create_material');
