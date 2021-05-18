@@ -25,9 +25,9 @@ class StoreMaterialTypeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'length' => 'string|max:255',
-            'width' => 'string|max:255',
-            'weight' => 'string|max:255',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'weight' => 'nullable|numeric|min:0',
 
         ];
     }
@@ -38,17 +38,15 @@ class StoreMaterialTypeRequest extends FormRequest
             'name.required' => 'El :attribute es obligatoria.',
             'name.string' => 'El :attribute debe contener caracteres válidos.',
             'name.max' => 'El :attribute debe contener máximo 255 caracteres.',
+                        
+            'length.numeric' => 'El :attribute debe ser numerico.',            
+            'length.min' => 'El :attribute debe ser mayor a 0.',
             
-            
-            'length.string' => 'El :attribute debe contener caracteres válidos.',            
-            'length.max' => 'El :attribute es demasiado largo.',
-            
+            'width.numeric' => 'El :attribute debe ser numerico.',            
+            'width.min' => 'El :attribute debe ser mayor a 0.',
 
-            'width.string' => 'El :attribute debe contener caracteres válidos.',            
-            'width.max' => 'El :attribute es demasiado largo.',
-
-            'weight.string' => 'El :attribute debe contener caracteres válidos.',            
-            'weight.max' => 'El :attribute es demasiado largo.',
+            'weight.numeric' => 'El :attribute debe ser numerico.',            
+            'weight.min' => 'El :attribute debe ser mayor a 0.',
         ];
     }
 

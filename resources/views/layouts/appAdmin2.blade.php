@@ -212,7 +212,8 @@
                     @endcan
                     <li class="nav-header">MANTENEDORES</li>
                     <li class="nav-item has-treeview @yield('openCustomer')">
-                        <a href="#" class="nav-link">
+
+                        <a href="#" class="nav-link @yield('activeCustomer')">         
                             <i class="nav-icon fas fa-truck-loading"></i>
                             <p>
                                 Clientes
@@ -222,7 +223,7 @@
                         <ul class="nav nav-treeview">
                             @can('list_customer')
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('customer.index') }}" class="nav-link @yield('activeListCustomer')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar clientes</p>
                                 </a>
@@ -230,7 +231,7 @@
                             @endcan
                             @can('create_customer')
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('customer.create') }}" class="nav-link @yield('activeCreateCustomer')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear clientes</p>
                                 </a>
@@ -286,7 +287,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar categorias</p>
                                 </a>
@@ -296,7 +297,7 @@
                     @endcan
                     @can('list_materialType')
                     <li class="nav-item has-treeview @yield('openMaterialType')">
-                        <a href="#" class="nav-link">
+                        <a href="#" class="nav-link @yield('activeMaterialType')">   
                             <i class="nav-icon fas fa-boxes"></i>
                             <p>
                                 Tipo Materiales
@@ -305,7 +306,7 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar tipos</p>
                                 </a>

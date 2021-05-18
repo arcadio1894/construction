@@ -17,7 +17,7 @@ class CreateCustomersTable extends Migration
             $table->id();
             $table->string('business_name')->require();
             $table->string('RUC')->require()->unique();
-            $table->string('code')->require()->unique();
+            $table->string('code')->nullable()->unique();
             $table->string('contact_name')->nullable();
             $table->string('adress')->nullable();
             $table->string('phone')->nullable();
