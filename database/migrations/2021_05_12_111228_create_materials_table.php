@@ -16,7 +16,7 @@ class CreateMaterialsTable extends Migration
         Schema::create('materials', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique()->nullable();
-            $table->string('description')->unique();
+            $table->string('description');
             $table->string('measure');
             $table->string('unit_measure');
             $table->decimal('stock_max', 6,2);
