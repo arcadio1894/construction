@@ -1,28 +1,44 @@
+function format ( d ) {
+    return 'Medida: '+d.measure+'<br>'+
+        'Unidad de medida: '+d.unit_measure+'<br>'+
+        'Stock máximo: '+d.stock_max+'<br>'+
+        'Stock míximo: '+d.stock_min+'<br>'+
+        'Categoría: '+d.category.name+'<br>'+
+        'Tipo de material: '+d.material_type.name+'<br>';
+}
+
 $(document).ready(function () {
-    $('#dynamic-table').DataTable( {
+    var table = $('#dynamic-table').DataTable( {
             ajax: {
                 url: "/dashboard/all/materials",
                 dataSrc: 'data'
             },
             bAutoWidth: false,
             "aoColumns": [
+                {
+                    "class":          "details-control",
+                    "orderable":      false,
+                    "data":           null,
+                    "defaultContent": ""
+                },
                 { data: 'code' },
                 { data: 'description' },
-                { data: 'measure' },
+                /*{ data: 'measure' },
                 { data: 'unit_measure' },
                 { data: 'stock_max' },
-                { data: 'stock_min' },
+                { data: 'stock_min' },*/
                 { data: 'stock_current' },
                 { data: 'priority' },
-                { data: 'measure' },
-                { data: 'category_id' },
-                { data: 'material_type_id' },
+                { data: 'unit_price' },
+                { data: 'image' },
+                /*{ data: 'category.name' },
+                { data: 'material_type.name' },*/
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>' } },
+                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
 
             ],
             "aaSorting": [],
@@ -162,9 +178,51 @@ $(document).ready(function () {
                     "next": "Proximo",
                     "hours": "Horas"
                 }
-            }
+            },
 
         } );
+    // Array to track the ids of the details displayed rows
+    var detailRows = [];
+
+    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+        var idx = $.inArray( tr.attr('id'), detailRows );
+
+        if ( row.child.isShown() ) {
+            tr.removeClass( 'details' );
+            row.child.hide();
+
+            // Remove from the 'open' array
+            detailRows.splice( idx, 1 );
+        }
+        else {
+            tr.addClass( 'details' );
+            row.child( format( row.data() ) ).show();
+
+            // Add to the 'open' array
+            if ( idx === -1 ) {
+                detailRows.push( tr.attr('id') );
+            }
+        }
+    } );
+
+    // On each draw, loop over the `detailRows` array and show any child rows
+    table.on( 'draw', function () {
+        $.each( detailRows, function ( i, id ) {
+            $('#'+id+' td.details-control').trigger( 'click' );
+        } );
+    } );
+
+    $(document).on('click', '[data-column]', function (e) {
+        //e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
     $(".select2").select2({
         width : 'resolve',
         placeholder: "Selecione los permisos",
