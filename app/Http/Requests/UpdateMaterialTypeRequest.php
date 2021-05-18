@@ -24,11 +24,11 @@ class UpdateMaterialTypeRequest extends FormRequest
     public function rules()
     {
         return [
-            'materialType_id' => 'required|exists:material_types,id',
+            'materialtype_id' => 'required|exists:material_types,id',
             'name' => 'required|string|max:255',
-            'length' => 'string|max:255',
-            'width' => 'string|max:255',
-            'weight' => 'string|max:255',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'weight' => 'nullable|numeric|min:0',
                         
         ];
     }
@@ -43,15 +43,15 @@ class UpdateMaterialTypeRequest extends FormRequest
             'name.required' => 'El :attribute es obligatoria.',
             'name.string' => 'El :attribute debe contener caracteres válidos.',
             'name.max' => 'El :attribute debe contener máximo 255 caracteres.',
-
-            'length.string' => 'El :attribute debe contener caracteres válidos.',
-            'length.max' => 'El :attribute debe contener máximo 255 caracteres.',
+                        
+            'length.numeric' => 'El :attribute debe ser numerico.',            
+            'length.min' => 'El :attribute debe ser mayor a 0.',
             
-            'width.string' => 'El :attribute debe contener caracteres válidos.',
-            'width.max' => 'El :attribute debe contener máximo 255 caracteres.',
+            'width.numeric' => 'El :attribute debe ser numerico.',            
+            'width.min' => 'El :attribute debe ser mayor a 0.',
 
-            'weight.string' => 'El :attribute debe contener caracteres válidos.',
-            'weight.max' => 'El :attribute debe contener máximo 255 caracteres.',
+            'weight.numeric' => 'El :attribute debe ser numerico.',            
+            'weight.min' => 'El :attribute debe ser mayor a 0.',
 
             
         ];
@@ -60,7 +60,7 @@ class UpdateMaterialTypeRequest extends FormRequest
     public function attributes()
     {
         return [
-            'materialType_id' => 'id del cliente',
+            'materialType_id' => 'id del tipo de material',
             'name' => 'nombre del tipo de material',
             'length' => 'largo del tipo de material',
             'width' => 'ancho del tipo de material',

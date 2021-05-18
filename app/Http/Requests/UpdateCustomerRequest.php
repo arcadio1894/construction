@@ -26,13 +26,12 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
-            'RUC' => 'required|string|max:255|unique:customers,RUC',
-            'code' => 'required|string|min:3|max:10|unique:customers,code',
+            'ruc' => 'required|digits:11|string',
             'contact_name' => 'string|max:255',
             'adress' => 'string|max:255',
             'phone' => 'string|min:6|max:15',
             'location' => 'string|max:255',
-            'email' => 'required|string|email|max:255|unique:customers,email'
+            'email' => 'required|string|email|max:255'
             
         ];
     }
@@ -47,18 +46,11 @@ class UpdateCustomerRequest extends FormRequest
             'business_name.required' => 'La :attribute es obligatoria.',
             'business_name.string' => 'La :attribute debe contener caracteres válidos.',
             'business_name.max' => 'La :attribute debe contener máximo 255 caracteres.',
-            'business_name.unique' => 'La :attribute ya existe en la base de datos.',
 
-            'RUC.required' => 'El :attribute es obligatorio.',
-            'RUC.string' => 'El :attribute debe contener caracteres válidos.',            
-            'RUC.max' => 'El :attribute es demasiado largo.',
-            'RUC.unique' => 'El :attribute ya existe en la base de datos.',
-
-            'code.required' => 'El :attribute es obligatorio.',
-            'code.string' => 'El :attribute debe contener caracteres válidos.',
-            'code.min' => 'El :attribute debe contener mínimo 3 caracteres.',
-            'code.max' => 'El :attribute debe contener máximo 10 caracteres.',
-            'code.unique' => 'El :attribute ya existe en la base de datos.',
+            'ruc.required' => 'El :attribute es obligatorio.',
+            'ruc.string' => 'El :attribute debe contener caracteres válidos.',            
+            'ruc.digits' => 'El :attribute es demasiado largo.',
+            'ruc.numeric' => 'El :attribute debe ser numerico.',
 
             'contact_name.string' => 'El :attribute debe contener caracteres válidos.',
             'contact_name.max' => 'El :attribute debe contener máximo 255 caracteres.',
@@ -77,7 +69,6 @@ class UpdateCustomerRequest extends FormRequest
             'email.string' => 'El :attribute debe contener caracteres válidos.',
             'email.email' => 'El :attribute no tiene formato de email adecuado.',
             'email.max' => 'El :attribute es demasiado largo.',
-            'email.unique' => 'El :attribute ya existe en la base de datos.',
         ];
     }
 
@@ -86,8 +77,7 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'customer_id' => 'id del cliente',
             'business_name' => 'Razón Soacial del cliente',
-            'RUC' => 'RUC del cliente',
-            'code' => 'codigo del cliente',
+            'ruc' => 'RUC del cliente',
             'contact_name' => 'nombre de contacto del cliente',
             'adress' => 'dirección del cliente',
             'phone' => 'teléfono del cliente',

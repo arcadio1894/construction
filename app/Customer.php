@@ -3,10 +3,16 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
-    protected $fillable = ['business_name','RUC', 'code','contact_name','adress','phone','location','email'];
+
+    use SoftDeletes;
+
+    protected $fillable = [
+        'business_name','RUC', 'code','contact_name','adress','phone','location','email'
+    ];
 
     // TODO: Las relaciones
     public function quotes()
@@ -19,4 +25,6 @@ class Customer extends Model
     {
         return $this->belongsTo('App\Customer');
     }*/
+
+    protected $dates = ['deleted_at'];
 }
