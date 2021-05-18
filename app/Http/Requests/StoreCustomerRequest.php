@@ -25,8 +25,7 @@ class StoreCustomerRequest extends FormRequest
     {
         return [
             'business_name' => 'required|string|max:255',
-            'RUC' => 'required|string|max:255|unique:customers,RUC',
-            'code' => 'required|string|min:3|max:10|unique:customers,code',
+            'ruc' => 'required|digits:11|string|unique:customers,RUC',
             'contact_name' => 'string|max:255',
             'adress' => 'string|max:255',
             'phone' => 'string|min:6|max:15',
@@ -44,16 +43,11 @@ class StoreCustomerRequest extends FormRequest
             'business_name.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'business_name.unique' => 'La :attribute ya existe en la base de datos.',
 
-            'RUC.required' => 'El :attribute es obligatorio.',
-            'RUC.string' => 'El :attribute debe contener caracteres válidos.',            
-            'RUC.max' => 'El :attribute es demasiado largo.',
-            'RUC.unique' => 'El :attribute ya existe en la base de datos.',
-
-            'code.required' => 'El :attribute es obligatorio.',
-            'code.string' => 'El :attribute debe contener caracteres válidos.',
-            'code.min' => 'El :attribute debe contener mínimo 3 caracteres.',
-            'code.max' => 'El :attribute debe contener máximo 10 caracteres.',
-            'code.unique' => 'El :attribute ya existe en la base de datos.',
+            'ruc.required' => 'El :attribute es obligatorio.',
+            'ruc.string' => 'El :attribute debe contener caracteres válidos.',            
+            'ruc.digits' => 'El :attribute es demasiado largo.',
+            'ruc.unique' => 'El :attribute ya existe en la base de datos.',
+            'ruc.numeric' => 'El :attribute debe ser numerico.',
 
             'contact_name.string' => 'El :attribute debe contener caracteres válidos.',
             'contact_name.max' => 'El :attribute debe contener máximo 255 caracteres.',
@@ -81,7 +75,6 @@ class StoreCustomerRequest extends FormRequest
         return [
             'business_name' => 'Razón Soacial',
             'RUC' => 'RUC del cliente',
-            'code' => 'codigo del cliente',
             'contact_name' => 'nombre de contacto',
             'adress' => 'dirección del cliente',
             'phone' => 'teléfono del cliente',

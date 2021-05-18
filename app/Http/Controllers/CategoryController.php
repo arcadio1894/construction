@@ -2,15 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteCategoryRequest;
+use App\Http\Requests\StoreCategoryRequest;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
 
     public function index()
     {
-        //
+        $categories = Category::all();
+        //$permissions = Permission::all();
+
+        return view('category.index', compact('categories'));
     }
 
 
@@ -18,38 +25,67 @@ class CategoryController extends Controller
     {
         $validated = $request->validated();
 
-        $category = Category::create([
-            'name' => $request->get('name'),
-            'description' => $request->get('description'),
-           
+        DB::beginTransaction();
+        try {
 
-        ]);
+            $category = Category::create([
+                'name' => $request->get('name'),
+                'description' => $request->get('description'),
+               
+
+            ]);
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
         return response()->json(['message' => 'Categoría de material guardado con éxito.'], 200);
     }
 
 
-    public function update(StoreCategoryRequest $request)
+    public function update(UpdateCategoryRequest $request)
     {
         $validated = $request->validated();
 
-        $category = Category::find($request->get('category_id'));
+        DB::beginTransaction();
+        try {
 
-        $category->name = $request->get('name');
-        $category->description = $request->get('description');
-       
-        $customer->save();
+            $category = Category::find($request->get('category_id'));
 
-        return response()->json(['message' => 'Categoría de material modificado con éxito.'], 200);
+            $category->name = $request->get('name');
+            $category->description = $request->get('description');
+            $category->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Categoría de material modificado con éxito.','url'=>route('category.index')], 200);
     }
 
 
-    public function destroy(StoreCategoryRequest $request)
+    public function destroy(DeleteCategoryRequest $request)
     {
         $validated = $request->validated();
 
-        $category = Category::find($request->get('category_id'));
+        DB::beginTransaction();
+        try {
 
-        $category->delete();
+            $category = Category::find($request->get('category_id'));
+
+            $category->delete();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
 
         return response()->json(['message' => 'Categoría de material eliminado con éxito.'], 200);
     }
@@ -57,16 +93,26 @@ class CategoryController extends Controller
 
     public function create()
     {
-        //
+        return view('category.create');
     }
+
     public function show(Category $category)
     {
         //
     }
 
 
-    public function edit(Category $category)
+    public function edit($id)
     {
-        //
+        $category = Category::find($id);
+        return view('category.edit', compact('category'));
+    }   
+
+
+    public function getCategories()
+    {
+        $categories = Category::select('id', 'name', 'description') -> get();
+        return datatables($categories)->toJson();
+        //dd(datatables($customers)->toJson());
     }
 }
