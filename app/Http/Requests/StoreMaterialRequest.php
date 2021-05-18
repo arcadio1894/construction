@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Material;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreMaterialRequest extends FormRequest
@@ -70,4 +71,15 @@ class StoreMaterialRequest extends FormRequest
             'category' => 'categoría'
         ];
     }
+
+    /*public function withValidator($validator)
+    {
+        $result = Material::where('name', $this->name)->get();
+        $validator->after(function ($validator) use ($result) {
+            if (!$result->isEmpty()) {
+                $validator->errors()->add('User', 'Something wrong with this guy');
+            }
+        });
+        //return $validator;
+    }*/
 }

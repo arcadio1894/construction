@@ -100,7 +100,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_material');
         Route::post('material/store', 'MaterialController@store')->name('material.store')
             ->middleware('permission:create_material');
-        Route::get('editar/material/{id}', 'MaterialController@index')->name('material.edit')
+        Route::get('editar/material/{id}', 'MaterialController@edit')->name('material.edit')
             ->middleware('permission:update_material');
         Route::post('material/update', 'MaterialController@update')->name('material.update')
             ->middleware('permission:update_material');

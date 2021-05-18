@@ -82,17 +82,67 @@ class MaterialController extends Controller
 
     public function edit($id)
     {
-        //
+        $categories = Category::all();
+        $materialTypes = MaterialType::all();
+        $material = Material::with(['category', 'materialType'])->find($id);
+        return view('material.edit', compact('categories', 'materialTypes', 'material'));
+
     }
 
     public function update(UpdateMaterialRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $material = Material::find($request->get('material_id'));
+
+            $material->description = $request->get('description');
+            $material->measure = $request->get('measure');
+            $material->unit_measure = $request->get('unit_measure');
+            $material->stock_max = $request->get('stock_max');
+            $material->stock_min = $request->get('stock_min');
+            $material->unit_price = $request->get('unit_price');
+            $material->stock_current = $request->get('stock_current');
+            $material->priority = $request->get('priority');
+            $material->material_type_id = $request->get('material_type');
+            $material->category_id = $request->get('category');
+            $material->save();
+
+            // TODO: Tratamiento de un archivo de forma tradicional
+            if (!$request->file('image')) {
+                if ($material->image == 'no_image.png' || $material->image == null) {
+                    $material->image = 'no_image.png';
+                    $material->save();
+                }
+            } else {
+                $path = public_path().'/images/material/';
+                $extension = $request->file('image')->getClientOriginalExtension();
+                $filename = $material->id . '.' . $extension;
+                $request->file('image')->move($path, $filename);
+                $material->image = $filename;
+                $material->save();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Cambios guardados con éxito.'], 200);
+
     }
 
     public function destroy(DeleteMaterialRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $material = Material::find($request->get('material_id'));
+
+        $material->delete();
+
+        return response()->json(['message' => 'Material eliminado con éxito.'], 200);
+
     }
 
     public function getAllMaterials()
