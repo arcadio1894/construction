@@ -16,7 +16,7 @@ class CreateWarehousesTable extends Migration
         Schema::create('warehouses', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->foreignId('area_id')
                 ->constrained('areas')
                 ->onDelete('cascade');

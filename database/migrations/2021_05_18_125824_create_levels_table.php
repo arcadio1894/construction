@@ -16,7 +16,7 @@ class CreateLevelsTable extends Migration
         Schema::create('levels', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->foreignId('shelf_id')
                 ->constrained('shelves')
                 ->onDelete('cascade');

@@ -122,7 +122,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/areas', 'AreaController@getAreas');
 
         //WAREHOUSE
-        Route::get('almacenes/{area}', 'WarehouseController@index')->name('warehouse.index')
+        Route::get('ver/almacenes/{area}', 'WarehouseController@index')->name('warehouse.index')
             ->middleware('permission:list_warehouse');
         Route::post('warehouse/store', 'WarehouseController@store')->name('warehouse.store')
             ->middleware('permission:create_warehouse');
@@ -130,10 +130,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_warehouse');
         Route::post('warehouse/destroy', 'WarehouseController@destroy')->name('warehouse.destroy')
             ->middleware('permission:destroy_warehouse');
-        Route::get('/all/warehouses', 'WarehouseController@getWarehouses');
+        Route::get('/all/warehouses/{id_area}', 'WarehouseController@getWarehouses');
 
         //SHELF
-        Route::get('anaqueles/{almacen}/{area}', 'ShelfController@index')->name('shelf.index')
+        Route::get('ver/anaqueles/almacen/{almacen}/area/{area}', 'ShelfController@index')->name('shelf.index')
             ->middleware('permission:list_shelf');
         Route::post('shelf/store', 'ShelfController@store')->name('shelf.store')
             ->middleware('permission:create_shelf');
@@ -141,10 +141,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_shelf');
         Route::post('shelf/destroy', 'ShelfController@destroy')->name('shelf.destroy')
             ->middleware('permission:destroy_shelf');
-        Route::get('/all/shelves', 'ShelfController@getShelves');
+        Route::get('/all/shelves/{id_warehouse}', 'ShelfController@getShelves');
 
         //LEVEL
-        Route::get('niveles/{anaqueles}/{almacen}/{area}', 'LevelController@index')->name('level.index')
+        Route::get('ver/niveles/anaquel/{anaquel}/almacen/{almacen}/area/{area}', 'LevelController@index')->name('level.index')
             ->middleware('permission:list_level');
         Route::post('level/store', 'LevelController@store')->name('level.store')
             ->middleware('permission:create_level');
@@ -152,7 +152,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_level');
         Route::post('level/destroy', 'LevelController@destroy')->name('level.destroy')
             ->middleware('permission:destroy_level');
-        Route::get('/all/levels', 'LevelController@getLevels');
+        Route::get('/all/levels/{id_shelf}', 'LevelController@getLevels');
 
         //CONTAINER
         Route::get('contenedores/{niveles}/{anaqueles}/{almacen}/{area}', 'ContainerController@index')->name('container.index')

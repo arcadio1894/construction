@@ -2,84 +2,88 @@
 
 namespace App\Http\Controllers;
 
+use App\Area;
+use App\Http\Requests\DeleteLevelRequest;
+use App\Http\Requests\StoreLevelRequest;
+use App\Http\Requests\UpdateLevelRequest;
 use App\Level;
+use App\Shelf;
+use App\Warehouse;
 use Illuminate\Http\Request;
 
 class LevelController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index($anaquel, $warehouse, $area)
     {
-        //
+        $area = Area::find($area);
+        $warehouse = Warehouse::find($warehouse);
+        $shelf = Shelf::find($anaquel);
+        //dd($area);
+        return view('inventory.levels', compact('area', 'warehouse', 'shelf'));
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(StoreLevelRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $Level = Level::create([
+            'name' => $request->get('name'),
+            'comment' => $request->get('comment'),
+            'shelf_id' => $request->get('shelf_id'),
+        ]);
+
+        return response()->json(['message' => 'Nivel guardado con éxito.'], 200);
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Level  $level
-     * @return \Illuminate\Http\Response
-     */
     public function show(Level $level)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Level  $level
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Level $level)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Level  $level
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Level $level)
+    public function update(UpdateLevelRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $level = Level::find($request->get('level_id'));
+
+        $level->name = $request->get('name');
+        $level->comment = $request->get('comment');
+
+        $level->save();
+
+        return response()->json(['message' => 'Nivel modificado con éxito.'], 200);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Level  $level
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Level $level)
+    public function destroy(DeleteLevelRequest $request)
     {
-        //
+        $validated = $request->validated();
+
+        $level = Level::find($request->get('level_id'));
+
+        $level->delete();
+
+        return response()->json(['message' => 'Nivel eliminado con éxito.'], 200);
+
+    }
+
+    public function getLevels( $id_shelf )
+    {
+        $levels = Level::where('shelf_id', $id_shelf)->get();
+
+        //dd(datatables($materials)->toJson());
+        return datatables($levels)->toJson();
     }
 }

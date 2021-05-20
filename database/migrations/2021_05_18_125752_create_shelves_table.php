@@ -16,7 +16,7 @@ class CreateShelvesTable extends Migration
         Schema::create('shelves', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->foreignId('warehouse_id')
                 ->constrained('warehouses')
                 ->onDelete('cascade');
