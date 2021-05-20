@@ -13,7 +13,7 @@ class DeleteContainerRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,22 @@ class DeleteContainerRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'container_id' => 'required|exists:containers,id',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'container_id.required' => 'El :attribute es obligatorio.',
+            'container_id.exists' => 'El :attribute no existe en la base de datos.'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'container_id' => 'id del contenedor'
         ];
     }
 }

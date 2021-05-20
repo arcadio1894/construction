@@ -155,7 +155,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/levels/{id_shelf}', 'LevelController@getLevels');
 
         //CONTAINER
-        Route::get('contenedores/{niveles}/{anaqueles}/{almacen}/{area}', 'ContainerController@index')->name('container.index')
+        Route::get('ver/contenedores/nivel/{niveles}/anaquel/{anaqueles}/almacen/{almacen}/area/{area}', 'ContainerController@index')->name('container.index')
             ->middleware('permission:list_container');
         Route::post('container/store', 'ContainerController@store')->name('container.store')
             ->middleware('permission:create_container');
@@ -163,7 +163,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_container');
         Route::post('container/destroy', 'ContainerController@destroy')->name('container.destroy')
             ->middleware('permission:destroy_container');
-        Route::get('/all/containers', 'ContainerController@getContainers');
+        Route::get('/all/containers/{id_level}', 'ContainerController@getContainers');
 
         //LOCATION
         Route::get('ubicaciones', 'LocationController@index')->name('location.index')
