@@ -12,7 +12,7 @@ class Warehouse extends Model
         'area_id',
     ];
 
-    public function areas()
+    public function area()
     {
         return $this->belongsTo('App\Area');
     }

@@ -16,15 +16,20 @@ class CreateLocationsTable extends Migration
         Schema::create('locations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('area_id')
-                ->constrained('areas');
+                ->constrained('areas')
+                ->onDelete('cascade');;
             $table->foreignId('warehouse_id')
-                ->constrained('warehouses');
+                ->constrained('warehouses')
+                ->onDelete('cascade');;
             $table->foreignId('shelf_id')
-                ->constrained('shelves');
+                ->constrained('shelves')
+                ->onDelete('cascade');;
             $table->foreignId('level_id')
-                ->constrained('levels');
+                ->constrained('levels')
+                ->onDelete('cascade');;
             $table->foreignId('container_id')
-                ->constrained('containers');
+                ->constrained('containers')
+                ->onDelete('cascade');;
             $table->string('description');
             $table->timestamps();
         });

@@ -63,6 +63,27 @@ class RoleSeeder extends Seeder
             'create_quote',
             'update_quote',
             'destroy_quote',
+            'list_area',
+            'create_area',
+            'update_area',
+            'destroy_area',
+            'list_warehouse',
+            'create_warehouse',
+            'update_warehouse',
+            'destroy_warehouse',
+            'list_shelf',
+            'create_shelf',
+            'update_shelf',
+            'destroy_shelf',
+            'list_level',
+            'create_level',
+            'update_level',
+            'destroy_level',
+            'list_container',
+            'create_container',
+            'update_container',
+            'destroy_container',
+            'list_location'
         ]);
     }
 }

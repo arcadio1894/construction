@@ -16,7 +16,7 @@ class CreateContainersTable extends Migration
         Schema::create('containers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('comment');
+            $table->string('comment')->nullable();
             $table->foreignId('level_id')
                 ->constrained('levels')
                 ->onDelete('cascade');
