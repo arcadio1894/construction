@@ -170,7 +170,13 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_location');
         Route::get('/all/locations', 'LocationController@getLocations');
 
-
+        // ENTRY
+        Route::get('entradas/retaceria', 'EntryController@indexScraps')->name('entry.index.scrap')
+            ->middleware('permission:list_material');
+        Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
+            ->middleware('permission:create_material');
+        Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
+            ->middleware('permission:create_material');
     });
 });
 
