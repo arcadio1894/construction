@@ -331,7 +331,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a href="#" class="nav-link @yield('activeCreateMaterial')">
+                                <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear materiales</p>
                                 </a>
@@ -391,7 +391,7 @@
                             @endcan
                         </ul>
                     </li>
-                    <li class="nav-item has-treeview">
+                    {{--<li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-boxes"></i>
                             <p>
@@ -431,8 +431,56 @@
                                 </a>
                             </li>
                         </ul>
-                    </li>
+                    </li>--}}
                     @endcan
+
+                    <li class="nav-header">ENTRADAS</li>
+                    <li class="nav-item has-treeview @yield('openEntry')">
+                        <a href="#" class="nav-link @yield('activeEntryPurchase')">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                POR COMPRA
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link @yield('activeListEntryPurchase')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar entradas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link @yield('activeCreateEntryPurchase')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear entrada</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                POR RETAZOS
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('entry.purchase.create') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar entradas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('entry.scrap.create') }}" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear entrada</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
 
                     <li class="nav-header">NAVBAR HEADER</li>
                     <li class="nav-item has-treeview">

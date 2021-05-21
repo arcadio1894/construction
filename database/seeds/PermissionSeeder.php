@@ -231,19 +231,19 @@ class PermissionSeeder extends Seeder
 
         Permission::create([
             'name' => 'list_level',
-            'description' => 'Listar Anaqueles'
+            'description' => 'Listar Niveles'
         ]);
         Permission::create([
             'name' => 'create_level',
-            'description' => 'Crear Anaquel'
+            'description' => 'Crear Niveles'
         ]);
         Permission::create([
             'name' => 'update_level',
-            'description' => 'Modificar Anaquel'
+            'description' => 'Modificar Niveles'
         ]);
         Permission::create([
             'name' => 'destroy_level',
-            'description' => 'Eliminar Anaquel'
+            'description' => 'Eliminar Niveles'
         ]);
 
         Permission::create([
