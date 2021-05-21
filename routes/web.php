@@ -83,7 +83,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/crear/rol', 'RoleController@create')->name('role.create');
         Route::get('/editar/rol/{id}', 'RoleController@edit');
 
-        //Permission
+        //PERMISSION
         Route::get('permisos', 'PermissionController@index')->name('permission.index')
             ->middleware('permission:list_permission');
         Route::post('permission/store', 'PermissionController@store')->name('permission.store')
@@ -94,13 +94,14 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_permission');
         Route::get('/all/permissions', 'PermissionController@getPermissions');
 
+        // MATERIAL
         Route::get('materiales', 'MaterialController@index')->name('material.index')
             ->middleware('permission:list_material');
-        Route::get('crear/material', 'MaterialController@index')->name('material.create')
+        Route::get('crear/material', 'MaterialController@create')->name('material.create')
             ->middleware('permission:create_material');
         Route::post('material/store', 'MaterialController@store')->name('material.store')
             ->middleware('permission:create_material');
-        Route::get('editar/material/{id}', 'MaterialController@index')->name('material.edit')
+        Route::get('editar/material/{id}', 'MaterialController@edit')->name('material.edit')
             ->middleware('permission:update_material');
         Route::post('material/update', 'MaterialController@update')->name('material.update')
             ->middleware('permission:update_material');
@@ -108,6 +109,74 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_material');
         Route::get('/all/materials', 'MaterialController@getAllMaterials')->name('all.materials')
             ->middleware('permission:list_material');
+
+        //AREAS
+        Route::get('areas', 'AreaController@index')->name('area.index')
+            ->middleware('permission:list_area');
+        Route::post('area/store', 'AreaController@store')->name('area.store')
+            ->middleware('permission:create_area');
+        Route::post('area/update', 'AreaController@update')->name('area.update')
+            ->middleware('permission:update_area');
+        Route::post('area/destroy', 'AreaController@destroy')->name('area.destroy')
+            ->middleware('permission:destroy_area');
+        Route::get('/all/areas', 'AreaController@getAreas');
+
+        //WAREHOUSE
+        Route::get('ver/almacenes/{area}', 'WarehouseController@index')->name('warehouse.index')
+            ->middleware('permission:list_warehouse');
+        Route::post('warehouse/store', 'WarehouseController@store')->name('warehouse.store')
+            ->middleware('permission:create_warehouse');
+        Route::post('warehouse/update', 'WarehouseController@update')->name('warehouse.update')
+            ->middleware('permission:update_warehouse');
+        Route::post('warehouse/destroy', 'WarehouseController@destroy')->name('warehouse.destroy')
+            ->middleware('permission:destroy_warehouse');
+        Route::get('/all/warehouses/{id_area}', 'WarehouseController@getWarehouses');
+
+        //SHELF
+        Route::get('ver/anaqueles/almacen/{almacen}/area/{area}', 'ShelfController@index')->name('shelf.index')
+            ->middleware('permission:list_shelf');
+        Route::post('shelf/store', 'ShelfController@store')->name('shelf.store')
+            ->middleware('permission:create_shelf');
+        Route::post('shelf/update', 'ShelfController@update')->name('shelf.update')
+            ->middleware('permission:update_shelf');
+        Route::post('shelf/destroy', 'ShelfController@destroy')->name('shelf.destroy')
+            ->middleware('permission:destroy_shelf');
+        Route::get('/all/shelves/{id_warehouse}', 'ShelfController@getShelves');
+
+        //LEVEL
+        Route::get('ver/niveles/anaquel/{anaquel}/almacen/{almacen}/area/{area}', 'LevelController@index')->name('level.index')
+            ->middleware('permission:list_level');
+        Route::post('level/store', 'LevelController@store')->name('level.store')
+            ->middleware('permission:create_level');
+        Route::post('level/update', 'LevelController@update')->name('level.update')
+            ->middleware('permission:update_level');
+        Route::post('level/destroy', 'LevelController@destroy')->name('level.destroy')
+            ->middleware('permission:destroy_level');
+        Route::get('/all/levels/{id_shelf}', 'LevelController@getLevels');
+
+        //CONTAINER
+        Route::get('ver/contenedores/nivel/{niveles}/anaquel/{anaqueles}/almacen/{almacen}/area/{area}', 'ContainerController@index')->name('container.index')
+            ->middleware('permission:list_container');
+        Route::post('container/store', 'ContainerController@store')->name('container.store')
+            ->middleware('permission:create_container');
+        Route::post('container/update', 'ContainerController@update')->name('container.update')
+            ->middleware('permission:update_container');
+        Route::post('container/destroy', 'ContainerController@destroy')->name('container.destroy')
+            ->middleware('permission:destroy_container');
+        Route::get('/all/containers/{id_level}', 'ContainerController@getContainers');
+
+        //LOCATION
+        Route::get('ubicaciones', 'LocationController@index')->name('location.index')
+            ->middleware('permission:list_location');
+        Route::get('/all/locations', 'LocationController@getLocations');
+
+        // ENTRY
+        Route::get('entradas/retaceria', 'EntryController@indexScraps')->name('entry.index.scrap')
+            ->middleware('permission:list_material');
+        Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
+            ->middleware('permission:create_material');
+        Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
+            ->middleware('permission:create_material');
     });
 });
 

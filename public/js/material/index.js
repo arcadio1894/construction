@@ -30,7 +30,14 @@ $(document).ready(function () {
                 { data: 'stock_current' },
                 { data: 'priority' },
                 { data: 'unit_price' },
-                { data: 'image' },
+                { data: null,
+                    title: 'Imagen',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                    }
+                },
                 /*{ data: 'category.name' },
                 { data: 'material_type.name' },*/
                 { data: null,
@@ -38,7 +45,7 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
+                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
 
             ],
             "aaSorting": [],
@@ -228,45 +235,29 @@ $(document).ready(function () {
         placeholder: "Selecione los permisos",
         allowClear: true
     });
-    /*$formCreate = $('#formCreate');
-    $formCreate.on('submit', storeRole);
-    $modalCreate = $('#modalCreate');
-    $('#newRole').on('click', openModalCreate);*/
-
-    /*$formEdit = $('#formEdit');
-    $formEdit.on('submit', updateRole);
-    $modalEdit = $('#modalEdit');
-    $(document).on('click', '[data-edit]', openModalEdit);*/
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyRole);
+    $formDelete.on('submit', destroyMaterial);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
 });
 
-var $formCreate;
-var $modalCreate;
-
-var $formEdit;
-var $modalEdit;
-
 var $formDelete;
 var $modalDelete;
 
 function openModalDelete() {
-    var role_id = $(this).data('delete');
-    var name = $(this).data('name');
+    var material_id = $(this).data('delete');
     var description = $(this).data('description');
+    var measure = $(this).data('measure');
 
-    $modalDelete.find('[id=role_id]').val(role_id);
-    $modalDelete.find('[id=nameDelete]').html(name);
-    $modalDelete.find('[id=descriptionDelete]').html(description);
+    $modalDelete.find('[id=material_id]').val(material_id);
+    $modalDelete.find('[id=descriptionDelete]').html(description+' '+measure);
 
     $modalDelete.modal('show');
 }
 
-function destroyRole() {
+function destroyMaterial() {
     event.preventDefault();
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');

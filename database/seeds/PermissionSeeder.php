@@ -177,5 +177,95 @@ class PermissionSeeder extends Seeder
             'name' => 'destroy_quote',
             'description' => 'Eliminar Cotizaciones'
         ]);
+
+        Permission::create([
+            'name' => 'list_area',
+            'description' => 'Listar Áreas'
+        ]);
+        Permission::create([
+            'name' => 'create_area',
+            'description' => 'Crear Área'
+        ]);
+        Permission::create([
+            'name' => 'update_area',
+            'description' => 'Modificar Área'
+        ]);
+        Permission::create([
+            'name' => 'destroy_area',
+            'description' => 'Eliminar Área'
+        ]);
+
+        Permission::create([
+            'name' => 'list_warehouse',
+            'description' => 'Listar Almacenes'
+        ]);
+        Permission::create([
+            'name' => 'create_warehouse',
+            'description' => 'Crear Almacén'
+        ]);
+        Permission::create([
+            'name' => 'update_warehouse',
+            'description' => 'Modificar Almacén'
+        ]);
+        Permission::create([
+            'name' => 'destroy_warehouse',
+            'description' => 'Eliminar Almacén'
+        ]);
+
+        Permission::create([
+            'name' => 'list_shelf',
+            'description' => 'Listar Anaqueles'
+        ]);
+        Permission::create([
+            'name' => 'create_shelf',
+            'description' => 'Crear Anaquel'
+        ]);
+        Permission::create([
+            'name' => 'update_shelf',
+            'description' => 'Modificar Anaquel'
+        ]);
+        Permission::create([
+            'name' => 'destroy_shelf',
+            'description' => 'Eliminar Anaquel'
+        ]);
+
+        Permission::create([
+            'name' => 'list_level',
+            'description' => 'Listar Niveles'
+        ]);
+        Permission::create([
+            'name' => 'create_level',
+            'description' => 'Crear Niveles'
+        ]);
+        Permission::create([
+            'name' => 'update_level',
+            'description' => 'Modificar Niveles'
+        ]);
+        Permission::create([
+            'name' => 'destroy_level',
+            'description' => 'Eliminar Niveles'
+        ]);
+
+        Permission::create([
+            'name' => 'list_container',
+            'description' => 'Listar Contenedores'
+        ]);
+        Permission::create([
+            'name' => 'create_container',
+            'description' => 'Crear Contenedor'
+        ]);
+        Permission::create([
+            'name' => 'update_container',
+            'description' => 'Modificar Contenedor'
+        ]);
+        Permission::create([
+            'name' => 'destroy_container',
+            'description' => 'Eliminar Contenedor'
+        ]);
+
+        Permission::create([
+            'name' => 'list_location',
+            'description' => 'Ver ubicaciones'
+        ]);
     }
 }
