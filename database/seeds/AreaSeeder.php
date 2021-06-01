@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Area;
 
 class AreaSeeder extends Seeder
 {
@@ -11,6 +12,14 @@ class AreaSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Area::create([
+            'name' => 'Sistemas',
+            'comment' => 'Área de sistemas'
+        ]);
+
+        Area::create([
+            'name' => 'Producción',
+            'comment' => 'Área de producctión'
+        ]);
     }
 }

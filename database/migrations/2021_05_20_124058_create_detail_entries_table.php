@@ -15,6 +15,11 @@ class CreateDetailEntriesTable extends Migration
     {
         Schema::create('detail_entries', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('entry_id')->constrained('entries');
+            $table->foreignId('material_id')->constrained('materials');
+            $table->decimal('ordered_quantity',9,2)->default(0);
+            $table->decimal('entered_quantity',9,2)->default(0);
+            $table->boolean('isComplete')->default(true);
             $table->timestamps();
         });
     }

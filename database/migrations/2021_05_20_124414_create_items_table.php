@@ -15,6 +15,16 @@ class CreateItemsTable extends Migration
     {
         Schema::create('items', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('detail_entry_id')->constrained('detail_entries');
+            $table->foreignId('material_id')->constrained('materials');
+            $table->string('code')->nullable();
+            $table->decimal('length', 9,2)->nullable();
+            $table->decimal('width', 9,2)->nullable();
+            $table->decimal('weight',9,2)->nullable();
+            $table->decimal('price',9,2)->nullable();
+            $table->foreignId('material_type_id')->constrained('material_types');
+            $table->foreignId('location_id')->constrained('locations');
+            $table->enum('state', ['good', 'bad'])->nullable();
             $table->timestamps();
         });
     }

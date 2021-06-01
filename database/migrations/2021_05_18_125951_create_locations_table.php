@@ -30,7 +30,7 @@ class CreateLocationsTable extends Migration
             $table->foreignId('container_id')
                 ->constrained('containers')
                 ->onDelete('cascade');;
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

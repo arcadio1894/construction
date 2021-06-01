@@ -21,7 +21,17 @@ $(document).ready(function () {
                     "defaultContent": ""
                 },
                 { data: 'id' },
-                { data: 'description' },
+                { data: null,
+                    title: 'Descripción',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        return '<p>'+'AR:'+item.area.name+
+                            '|AL:'+item.warehouse.name+
+                            '|AN:'+item.shelf.name+
+                            '|NIV:'+item.level.name+
+                            '|CON:'+item.container.name+
+                            '</p> ' } },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,

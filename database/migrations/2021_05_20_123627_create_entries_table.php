@@ -15,6 +15,11 @@ class CreateEntriesTable extends Migration
     {
         Schema::create('entries', function (Blueprint $table) {
             $table->id();
+            $table->string('referral_guide')->nullable();
+            $table->string('purchase_order')->nullable();
+            $table->string('invoice')->nullable();
+            $table->enum('entry_type', ['Por compra', 'Retacería'])->default('Por compra');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
