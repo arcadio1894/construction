@@ -14,7 +14,7 @@ class MaterialSeeder extends Seeder
     {
         Material::create([
             'code' => 'P-00001',
-            'description' => 'PLANCHA LISA INOX C-304',
+            'description' => 'PLANCHA LISA INOX C-304 0.8*1.22*2.44',
             'measure' => '0.8*1.22*2.44',
             'unit_measure' => 'UND',
             'stock_max' => 10,
@@ -29,7 +29,7 @@ class MaterialSeeder extends Seeder
 
         Material::create([
             'code' => 'P-00002',
-            'description' => 'PLANCHA LISA INOX C-304',
+            'description' => 'PLANCHA LISA INOX C-304 1.2*1.22*2.44',
             'measure' => '1.2*1.22*2.44',
             'unit_measure' => 'UND',
             'stock_max' => 10,

@@ -52,4 +52,17 @@ class LocationController extends Controller
         //dd(datatables($materials)->toJson());
         return datatables($locations)->toJson();
     }
+
+    public function getJsonLocations()
+    {
+        $array = [];
+        $locations = Location::with(['area', 'warehouse', 'shelf', 'level', 'container'])->get();
+        foreach ( $locations as $location )
+        {
+            $l = 'AR:'.$location->area->name.'|AL:'.$location->warehouse->name.'|AN:'.$location->shelf->name.'|NIV:'.$location->level->name.'|CON:'.$location->container->name;
+            array_push($array, ['id'=> $location->id, 'location' => $l]);
+        }
+        //dd($array);
+        return $array;
+    }
 }
