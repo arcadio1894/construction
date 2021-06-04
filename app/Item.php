@@ -14,9 +14,11 @@ class Item extends Model
         'width',
         'weight',
         'price',
+        'percentage',
         'material_type_id',
         'location_id',
-        'state'
+        'state',
+        'state_item'
     ];
 
     public function detailEntry()

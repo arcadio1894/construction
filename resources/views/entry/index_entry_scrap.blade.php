@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openMaterial')
+@section('openEntryScrap')
     menu-open
 @endsection
 
-@section('activeMaterial')
+@section('activeEntryScrap')
     active
 @endsection
 
-@section('activeListMaterial')
+@section('activeListEntryScrap')
     active
 @endsection
 
 @section('title')
-    Materiales
+    Entradas por compras
 @endsection
 
 @section('styles-plugins')
@@ -41,12 +41,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Materiales</h1>
+    <h1 class="page-title">Entradas por retazos</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de materiales</h5>
-    <a href="{{ route('material.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo material </a>
+    <h5 class="card-title">Listado de entradas</h5>
+    <a href="{{ route('entry.scrap.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo ingreso </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -54,7 +54,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-key"></i> Materiales </li>
+        <li class="breadcrumb-item"><i class="fa fa-key"></i> Entradas por retazos </li>
     </ol>
 @endsection
 
@@ -85,7 +85,7 @@
                 <input type="checkbox" checked data-column="5" class="custom-control-input" id="customSwitch6">
                 <label class="custom-control-label" for="customSwitch6">Stock Min</label>
             </div>--}}
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                 <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch7">
                 <label class="custom-control-label" for="customSwitch7">Stock Actual</label>
             </div>
@@ -100,7 +100,7 @@
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                 <input type="checkbox" checked data-column="6" class="custom-control-input" id="customSwitch10">
                 <label class="custom-control-label" for="customSwitch10">Imagen</label>
-            </div>
+            </div>--}}
             {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                 <input type="checkbox" checked data-column="10" class="custom-control-input" id="customSwitch11">
                 <label class="custom-control-label" for="customSwitch11">Categoría</label>
@@ -119,17 +119,8 @@
             <tr>
                 <th></th>
                 <th>Código</th>
-                <th>Descripcion</th>
-                {{--<th>Medida</th>
-                <th>Unidad Medida</th>
-                <th>Stock Max</th>
-                <th>Stock Min</th>--}}
-                <th>Stock Actual</th>
-                <th>Prioridad</th>
-                <th>Precio Unitario</th>
-                <th>Imagen</th>
-                {{--<th>Categoría</th>
-                <th>Tipo de Material</th>--}}
+                <th>Tipo de entrada</th>
+                <th>Fecha</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -174,5 +165,6 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/material/index.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    <script src="{{ asset('js/entry/index_entry_scrap.js') }}"></script>
 @endsection

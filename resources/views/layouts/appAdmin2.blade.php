@@ -439,13 +439,13 @@
                         <a href="#" class="nav-link @yield('activeEntryPurchase')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                POR COMPRA
+                                Por compra
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link @yield('activeListEntryPurchase')">
+                                <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>
@@ -462,13 +462,13 @@
                         <a href="#" class="nav-link @yield('activeEntryScrap')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
                             <p>
-                                POR RETAZOS
+                                Por retazos
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="#" class="nav-link @yield('activeListEntryScrap')">
+                                <a href="{{ route('entry.scrap.index') }}" class="nav-link @yield('activeListEntryScrap')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>

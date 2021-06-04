@@ -134,7 +134,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar material</button>
+                <button type="submit" class="btn btn-outline-success float-right">Guardar retazo</button>
             </div>
         </div>
         <!-- /.card-footer -->
