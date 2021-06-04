@@ -23,4 +23,9 @@ class DetailEntry extends Model
     {
         return $this->belongsTo('App\Material');
     }
+
+    public function items()
+    {
+        return $this->hasMany('App\Item');
+    }
 }

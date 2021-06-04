@@ -13,9 +13,14 @@ use Illuminate\Support\Facades\DB;
 class EntryController extends Controller
 {
 
-    public function index()
+    public function indexEntryPurchase()
     {
-        //
+        return view('entry.index_entry_purchase');
+    }
+
+    public function indexEntryScraps()
+    {
+        return view('entry.index_entry_scrap');
     }
 
     public function createEntryPurchase()
@@ -82,9 +87,11 @@ class EntryController extends Controller
                             'width' => $detail_entry->material->materialType->width,
                             'weight' => $detail_entry->material->materialType->weight,
                             'price' => $price,
+                            'percentage' => 1,
                             'material_type_id' => $detail_entry->material->materialType->id,
                             'location_id' => $items[$i]->id_location,
-                            'state' => $items[$i]->state
+                            'state' => $items[$i]->state,
+                            'state_item' => 'entered'
                         ]);
                     }
                 }
@@ -95,7 +102,7 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Ingreso guardado con éxito.'], 200);
+        return response()->json(['message' => 'Ingreso por compra guardado con éxito.'], 200);
 
     }
 
@@ -127,12 +134,16 @@ class EntryController extends Controller
                 'price' => (float)  $item_selected[0]->price,
                 'material_type_id' => $item_selected[0]->materialType_id,
                 'location_id' => $item_selected[0]->location_id,
-                'state' => $item_selected[0]->state
+                'state' => $item_selected[0]->state,
+                'state_item' => 'entered'
             ]);
 
             // TODO: Eliminar el item anterior
             $item_deleted = Item::find($item_selected[0]->id);
-            $item_deleted->delete();
+            $item_deleted->percentage = 0;
+            $item_deleted->state_item = 'scraped';
+            $item_deleted->save();
+            //$item_deleted->delete();
 
             // TODO: Actualizar la cantidad en el material
             // TODO: Primero restar uno y luego sumar AreaReal/AreaTotal
@@ -141,12 +152,16 @@ class EntryController extends Controller
             if( $material->materialType->id == 2 || $material->materialType->id == 3 )
             {
                 $porcentaje = ($item->length*$item->width)/($material->materialType->length*$material->materialType->width);
+                $item->percentage = $porcentaje;
+                $item->save();
             }
             if( $material->materialType->id == 1 )
             {
                 $porcentaje = ($item->length)/($material->materialType->length);
+                $item->percentage = $porcentaje;
+                $item->save();
             }
-            $material->stock_current = $material->stock_current - 1 + $porcentaje;
+            $material->stock_current = $material->stock_current - $item_deleted->percentage + $porcentaje;
             $material->save();
 
             DB::commit();
@@ -154,7 +169,7 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Ingreso guardado con éxito.'], 200);
+        return response()->json(['message' => 'Ingreso por retacería guardado con éxito.'], 200);
 
     }
 
@@ -176,5 +191,55 @@ class EntryController extends Controller
     public function destroy(Entry $entry)
     {
         //
+    }
+
+    public function getJsonEntriesPurchase()
+    {
+        $entries = Entry::with(['details' => function ($query) {
+                $query->with('material')->with(['items' => function ($query) {
+                    $query->where('state_item', 'entered')
+                        ->with('materialType')
+                        ->with(['location' => function ($query) {
+                            $query->with(['area', 'warehouse', 'shelf', 'level', 'container']);
+                        }]);
+                }]);
+            }])
+            ->where('entry_type', 'Por compra')
+            ->get();
+
+        //dd(datatables($entries)->toJson());
+        return datatables($entries)->toJson();
+    }
+
+    public function getJsonEntriesScrap()
+    {
+        $entries = Entry::with(['details' => function ($query) {
+            $query->with('material')->with(['items' => function ($query) {
+                $query->where('state_item', 'entered');
+            }]);
+        }])
+            ->where('entry_type', 'Retacería')
+            ->get();
+
+        //dd(datatables($entries)->toJson());
+        return datatables($entries)->toJson();
+    }
+
+    public function getEntriesPurchase()
+    {
+        $entries = Entry::with(['details' => function ($query) {
+            $query->with('material')->with(['items' => function ($query) {
+                $query->where('state_item', 'entered')
+                    ->with('materialType')
+                    ->with(['location' => function ($query) {
+                        $query->with(['area', 'warehouse', 'shelf', 'level', 'container']);
+                    }]);
+            }]);
+        }])
+            ->where('entry_type', 'Por compra')
+            ->get();
+
+        //dd(datatables($entries)->toJson());
+        return $entries;
     }
 }

@@ -22,9 +22,11 @@ class CreateItemsTable extends Migration
             $table->decimal('width', 9,2)->nullable();
             $table->decimal('weight',9,2)->nullable();
             $table->decimal('price',9,2)->nullable();
+            $table->decimal('percentage',9,2)->nullable();
             $table->foreignId('material_type_id')->constrained('material_types');
             $table->foreignId('location_id')->constrained('locations');
             $table->enum('state', ['good', 'bad'])->nullable();
+            $table->enum('state_item', ['entered', 'scraped', 'reserved', 'exited'])->nullable();
             $table->timestamps();
         });
     }
