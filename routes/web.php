@@ -17,13 +17,21 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+//LANDING
+Route::get('/nosotros', 'LandingController@about')->name('landing.about');
+Route::get('/fabricacion', 'LandingController@manufacturing')->name('landing.manufacturing');
+Route::get('/servicios', 'LandingController@service')->name('landing.service');
+Route::get('/contacto', 'LandingController@contact')->name('landing.contact');
+
+
 Auth::routes();
 
 Route::middleware('auth')->group(function (){
-    Route::prefix('dashboard')->group(function (){
+        Route::prefix('dashboard')->group(function (){
         Route::get('/principal', 'HomeController@dashboard')->name('dashboard.principal');
 
         // TODO: Rutas módulo Accesos
+
         //USER
         Route::get('usuarios', 'UserController@index')->name('user.index')
             ->middleware('permission:list_user');
@@ -47,6 +55,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/editar/cliente/{id}', 'CustomerController@edit')->name('customer.edit');
         Route::post('customer/update', 'CustomerController@update')->name('customer.update');
         Route::post('customer/destroy', 'CustomerController@destroy')->name('customer.destroy');
+        Route::get('clientes/restore', 'CustomerController@restore')->name('customer.restore');
+        Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
 
         //MATERIAL TYPE
         Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes');

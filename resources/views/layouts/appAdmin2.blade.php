@@ -236,6 +236,12 @@
                                     <p>Crear clientes</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('customer.restore') }}" class="nav-link @yield('activeRestoreCustomer')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Restaurar clientes</p>
+                                </a>
+                            </li>
                             @endcan
                         </ul>
                     </li>

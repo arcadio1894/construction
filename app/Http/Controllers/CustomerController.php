@@ -128,4 +128,19 @@ class CustomerController extends Controller
         return datatables($customers)->toJson();
         //dd(datatables($customers)->toJson());
     }
+
+    public function restore()
+    {
+        $customers = Customer::all();
+        //$permissions = Permission::all();
+
+        return view('customer.restore', compact('customers'));
+    }
+
+    public function getCustomersDestroy()
+    {
+        $customers = Customer::onlyTrashed()->get();
+        return datatables($customers)->toJson();
+        //dd(datatables($customers)->toJson());
+    }
 }
