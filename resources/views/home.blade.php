@@ -1,3 +1,4 @@
+<!-- Despues de iniciar sesion -->
 @extends('layouts.appLanding')
 
 @section('title')
