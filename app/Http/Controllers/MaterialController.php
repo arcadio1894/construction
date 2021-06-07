@@ -152,4 +152,17 @@ class MaterialController extends Controller
         //dd(datatables($materials)->toJson());
         return datatables($materials)->toJson();
     }
+
+    public function getJsonMaterials()
+    {
+        $materials = Material::all();
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->description]);
+        }
+
+        //dd($materials);
+        return $array;
+    }
 }

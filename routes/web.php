@@ -181,12 +181,30 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/locations', 'LocationController@getLocations');
 
         // ENTRY
-        Route::get('entradas/retaceria', 'EntryController@indexScraps')->name('entry.index.scrap')
+        Route::get('entradas/retaceria', 'EntryController@indexEntryScraps')->name('entry.scrap.index')
+            ->middleware('permission:list_material');
+        Route::get('entradas/compra', 'EntryController@indexEntryPurchase')->name('entry.purchase.index')
             ->middleware('permission:list_material');
         Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
             ->middleware('permission:create_material');
         Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
             ->middleware('permission:create_material');
+        Route::post('entry_purchase/store', 'EntryController@storeEntryPurchase')->name('entry.purchase.store')
+            ->middleware('permission:create_material');
+        Route::post('entry_scrap/store', 'EntryController@storeEntryScrap')->name('entry.scrap.store')
+            ->middleware('permission:create_material');
+        Route::get('/get/materials', 'MaterialController@getJsonMaterials')
+            ->middleware('permission:list_material');
+        Route::get('/get/locations', 'LocationController@getJsonLocations')
+            ->middleware('permission:list_material');
+        Route::get('/get/items/{id_material}', 'ItemController@getJsonItems')
+            ->middleware('permission:list_material');
+        Route::get('/get/json/entries/purchase', 'EntryController@getJsonEntriesPurchase')
+            ->middleware('permission:list_material');
+        Route::get('/get/entries/purchase', 'EntryController@getEntriesPurchase')
+            ->middleware('permission:list_material');
+        Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap')
+            ->middleware('permission:list_material');
     });
 });
 

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Level;
 
 class LevelSeeder extends Seeder
 {
@@ -11,6 +12,15 @@ class LevelSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Level::create([
+            'name' => 'General',
+            'comment' => 'Nivel general',
+            'shelf_id' => 1
+        ]);
+        Level::create([
+            'name' => 'General',
+            'comment' => 'Nivel general',
+            'shelf_id' => 2
+        ]);
     }
 }

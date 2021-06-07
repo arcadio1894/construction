@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
+use App\Container;
 
 class ContainerSeeder extends Seeder
 {
@@ -11,6 +12,16 @@ class ContainerSeeder extends Seeder
      */
     public function run()
     {
-        //
+        Container::create([
+            'name' => 'General',
+            'comment' => 'Contenedor general',
+            'level_id' => 1
+        ]);
+
+        Container::create([
+            'name' => 'General',
+            'comment' => 'Contenedor general',
+            'level_id' => 2
+        ]);
     }
 }
