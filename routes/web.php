@@ -195,6 +195,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_material');
         Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap')
             ->middleware('permission:list_material');
+        Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail')
+            ->middleware('permission:list_material');
     });
 });
 

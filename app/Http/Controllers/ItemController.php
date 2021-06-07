@@ -71,4 +71,30 @@ class ItemController extends Controller
         //dd($array);
         return $array;
     }
+
+    public function getJsonItemsDetail($detail)
+    {
+        $array = [];
+        $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
+            ->where('detail_entry_id', $detail)
+            ->get();
+        foreach ( $items as $key => $item )
+        {
+            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+            array_push($array,
+                [
+                    'id'=> $key+1,
+                    'material' => $item->material->description,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'weight' => $item->weight,
+                    'price' => $item->price,
+                    'location' => $l,
+                    'state' => $item->state_item,
+                ]);
+        }
+        //dd($array);
+        return json_encode($array);
+    }
 }
