@@ -33,7 +33,7 @@
         <div class="preloader-inner position-relative">
             <div class="preloader-circle"></div>
             <div class="preloader-img pere-text">
-                <img src="{{ asset('landing/img/logo/loder-logo.png') }}" alt="">
+                <img src="{{ asset('landing/img/logo/loder-logo1.png') }}" alt="">
             </div>
         </div>
     </div>
@@ -49,17 +49,15 @@
                         <div class="row d-flex justify-content-between align-items-center">
                             <div class="header-info-left">
                                 <ul>
-                                    <li>+(123) 1234-567-8901</li>
-                                    <li>info@domain.com</li>
-                                    <li>Mon - Sat 8:00 - 17:30, Sunday - CLOSED</li>
+                                    <li>+51 998396337</li>
+                                    <li>+51 992555482</li>
+                                    <li>jmauricio@sermeind.com</li>
+                                    <li>Lun - Vie: 09:00 - 18:00</li>
                                 </ul>
                             </div>
                             <div class="header-info-right">
                                 <ul class="header-social">
-                                    <li><a href="#"><i class="fab fa-twitter"></i></a></li>
-                                    <li><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                                    <li><a href="#"><i class="fab fa-linkedin-in"></i></a></li>
-                                    <li> <a href="#"><i class="fab fa-google-plus-g"></i></a></li>
+                                    <li><a href="https://www.facebook.com/sermeind.fabricaciones.industriales/?ref=page_internal"><i class="fab fa-facebook-f"></i></a></li>
                                 </ul>
                             </div>
                         </div>
@@ -73,9 +71,9 @@
                         <div class="col-xl-2 col-lg-2 col-md-2">
                             <div class="logo">
                                 <!-- logo-1 -->
-                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('landing/img/logo/logo.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('landing/img/logo/logo1.png') }}" alt=""></a>
                                 <!-- logo-2 -->
-                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('landing/img/logo/loder-logo.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('landing/img/logo/loder-logo1.png') }}" alt=""></a>
                             </div>
                         </div>
                         <div class="col-xl-10 col-lg-10 col-md-10">
@@ -84,10 +82,8 @@
                                 <nav>
                                     <ul id="navigation">
                                         <li><a href="{{ url('/') }}">Inicio</a></li>
-                                        <li><a href="#">Fabricación</a></li>
-                                        <li><a href="#">Servicios</a></li>
-                                        <li><a href="#">Productos</a></li>
-                                        <li><a href="#">Nosotros</a></li>
+                                        <li><a href="{{ route('landing.about') }}">Nosotros</a></li>
+                                        <li><a href="{{ route('landing.service') }}">Servicios</a></li>
                                         @auth()
                                            {{-- <li><a href="#">Pages</a>
                                                 <ul class="submenu">
@@ -97,7 +93,7 @@
                                                 </ul>
                                             </li>--}}
                                         @endauth
-                                        <li><a href="#">Contacto</a></li>
+                                        <li><a href="{{ route('landing.contact') }}">Contacto</a></li>
                                         @guest
                                             <li><a href="{{ route('register') }}" > Registro</a></li>
                                             <li><a href="{{ route('login') }}" > Iniciar sesión</a></li>
@@ -144,7 +140,7 @@
 <main>
     <!-- Header Page Start-->
     <div class="slider-area ">
-        <div class="single-slider hero-overly slider-height2 d-flex align-items-center" data-background="{{ asset('landing/img/hero/about.jpg') }}">
+        <div class="single-slider hero-overly slider-height2 d-flex align-items-center" data-background="@yield('data-background')">
             <div class="container">
                 <div class="row">
                     <div class="col-xl-12">
@@ -165,27 +161,8 @@
     </div>
     <!-- Header Page End-->
 
-    <!-- Content Page Start-->
-    <div class="services-area1 section-padding">
-        <div class="container">
-            <!-- section tittle -->
-            <div class="row">
-                <div class="col-lg-12">
-                    @yield('title-page')
-                    {{--<div class="section-tittle mb-55">
-                        <div class="front-text">
-                            <h2 class="">Our Services</h2>
-                        </div>
-                        <span class="back-text">Services</span>
-                    </div>--}}
-                </div>
-            </div>
-            <div class="row">
-                @yield('content')
-            </div>
-        </div>
-    </div>
-    <!-- Content Page End-->
+    @yield('content')  
+
 </main>
 <footer>
     <!-- Footer Start-->
@@ -197,54 +174,46 @@
                         <div class="single-footer-caption mb-30">
                             <!-- logo -->
                             <div class="footer-logo">
-                                <a href="#"><img src="{{ asset('landing/img/logo/logo2_footer.png') }}" alt=""></a>
+                                <a href="#"><img src="{{ asset('landing/img/logo/logo2_footer1.png') }}" alt=""></a>
                             </div>
                             <div class="footer-tittle">
-                                <div class="footer-pera">
-                                    <p class="info1">Lorem ipsum dolor sit amet, consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore.</p>
+                                <div class="footer-pera" style="text-align: justify;">
+                                    <p class="info1" >Empresa con amplia experiencia en soldadura, fabricación y mantenimiento de todo tipo de maquinarias para la industria Alimentaria.</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-2 col-md-4 col-sm-5">
-                        <div class="single-footer-caption mb-50">
-                            <div class="footer-tittle">
-                                <h4>Quick Links</h4>
-                                <ul>
-                                    <li><a href="#">About</a></li>
-                                    <li><a href="#">Services</a></li>
-                                    <li><a href="#">Projects</a></li>
-                                    <li><a href="#">Contact Us</a></li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
+
                     <div class="col-lg-3 col-md-4 col-sm-7">
                         <div class="single-footer-caption mb-50">
                             <div class="footer-tittle">
                                 <h4>Contact</h4>
                                 <div class="footer-pera">
-                                    <p class="info1">198 West 21th Street, Suite 721 New York,NY 10010</p>
+                                    <p class="info1">Distrito Moche - La Libertad - Peru</p>
                                 </div>
                                 <ul>
-                                    <li><a href="#">Phone: +95 (0) 123 456 789</a></li>
-                                    <li><a href="#">Cell: +95 (0) 123 456 789</a></li>
+                                    <li><a>Cel: +51 998396337</a></li>
+                                    <li><a>Cel: +51 992555482</a></li>
                                 </ul>
                             </div>
                         </div>
                     </div>
+
                     <div class="col-lg-3 col-md-6 col-sm-8">
                         <div class="single-footer-caption mb-50">
                             <!-- Form -->
                             <div class="footer-form">
                                 <div id="mc_embed_signup">
+                                    <!--
                                     <form target="_blank" action="https://spondonit.us12.list-manage.com/subscribe/post?u=1462626880ade1ac87bd9c93a&amp;id=92a4423d01" method="get" class="subscribe_form relative mail_part" novalidate="true">
                                         <input type="email" name="EMAIL" id="newsletter-form-email" placeholder=" Email Address " class="placeholder hide-on-focus" onfocus="this.placeholder = ''" onblur="this.placeholder = ' Email Address '">
+
                                         <div class="form-icon">
                                             <button type="submit" name="submit" id="newsletter-submit" class="email_icon newsletter-submit button-contactForm">
                                                 REGÍSTRATE
                                             </button>
                                         </div>
+                                        -->
                                         <div class="mt-10 info"></div>
                                     </form>
                                 </div>
@@ -256,6 +225,7 @@
                         </div>
                     </div>
                 </div>
+
                 <!-- Copy-Right -->
                 <div class="row align-items-center">
                     <div class="col-xl-12 ">
