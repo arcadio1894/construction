@@ -154,6 +154,8 @@
                         </tr>
                         </thead>
                         <tbody id="table-items">
+
+                        </tbody>
                         <template id="template-item">
                             <tr>
                                 <td data-i></td>
@@ -167,7 +169,6 @@
                                 <td data-state></td>
                             </tr>
                         </template>
-                        </tbody>
                     </table>
                 </div>
                 <div class="modal-footer">

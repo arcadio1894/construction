@@ -280,6 +280,7 @@ let $longitud = 20;
 let $modalItems;
 
 function showItems() {
+    $('#table-items').html('');
     var detail_id = $(this).data('detail');
     $.ajax({
         url: "/dashboard/get/json/items/"+detail_id,
