@@ -7,6 +7,7 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -121,5 +122,12 @@ class UserController extends Controller
     {
         $users = User::select('id', 'name', 'email', 'image')->get();
         return datatables($users)->toJson();
+    }
+
+    public function getUsers2()
+    {
+        $users = User::select('id', 'name')
+            ->where('id', '!=' , Auth::user()->id)->get();
+        return json_encode($users);
     }
 }

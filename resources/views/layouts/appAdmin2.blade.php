@@ -488,6 +488,54 @@
                         </ul>
                     </li>
 
+                    <li class="nav-header">SALIDAS</li>
+                    <li class="nav-item has-treeview @yield('openOutputRequest')">
+                        <a href="#" class="nav-link @yield('activeOutputRequest')">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Solicitudes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('output.request.index') }}" class="nav-link @yield('activeListOutputRequest')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar solicitudes</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear solicitudes</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview @yield('openOutputs')">
+                        <a href="#" class="nav-link @yield('activeOutputs')">
+                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <p>
+                                Salidas
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('output.index') }}" class="nav-link @yield('activeListOutput')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar salidas</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="{{ route('output.create') }}" class="nav-link @yield('activeCreateOutput')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear salida</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     <li class="nav-header">NAVBAR HEADER</li>
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">

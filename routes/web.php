@@ -27,7 +27,7 @@ Route::get('/contacto', 'LandingController@contact')->name('landing.contact');
 Auth::routes();
 
 Route::middleware('auth')->group(function (){
-        Route::prefix('dashboard')->group(function (){
+    Route::prefix('dashboard')->group(function (){
         Route::get('/principal', 'HomeController@dashboard')->name('dashboard.principal');
 
         // TODO: Rutas módulo Accesos
@@ -207,6 +207,20 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_material');
         Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail')
             ->middleware('permission:list_material');
+
+        // OUTPUT
+        Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')->name('output.request.index')
+            ->middleware('permission:list_material');
+        Route::get('salidas', 'OutputController@indexOutputs')->name('output.index')
+            ->middleware('permission:list_material');
+        Route::get('crear/solicitud', 'OutputController@createOutputRequest')->name('output.request.create')
+            ->middleware('permission:list_material');
+        Route::get('crear/salida', 'OutputController@createOutput')->name('output.create')
+            ->middleware('permission:list_material');
+        Route::post('ouput/store', 'OutputController@storeOutput')->name('output.request.store')
+            ->middleware('permission:list_material');
+        Route::get('/get/users', 'UserController@getUsers2');
+
     });
 });
 
