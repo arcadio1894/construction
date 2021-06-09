@@ -154,6 +154,54 @@
             </div>
         </div>
     </div>
+
+    <div id="modalItems" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Listado de items</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body table-responsive">
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Material</th>
+                            <th>Código</th>
+                            <th>Largo</th>
+                            <th>Ancho</th>
+                            <th>Peso</th>
+                            <th>Precio</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-items">
+
+                        </tbody>
+                        <template id="template-item">
+                            <tr>
+                                <td data-i></td>
+                                <td data-material></td>
+                                <td data-code></td>
+                                <td data-length></td>
+                                <td data-width><span class="badge bg-danger">55%</span></td>
+                                <td data-weight></td>
+                                <td data-price></td>
+                                <td data-location></td>
+                                <td data-state></td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')

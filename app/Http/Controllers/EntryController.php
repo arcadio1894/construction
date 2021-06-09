@@ -135,13 +135,12 @@ class EntryController extends Controller
                 'material_type_id' => $item_selected[0]->materialType_id,
                 'location_id' => $item_selected[0]->location_id,
                 'state' => $item_selected[0]->state,
-                'state_item' => 'entered'
+                'state_item' => 'scraped'
             ]);
 
             // TODO: Eliminar el item anterior
             $item_deleted = Item::find($item_selected[0]->id);
             $item_deleted->percentage = 0;
-            $item_deleted->state_item = 'scraped';
             $item_deleted->save();
             //$item_deleted->delete();
 
