@@ -46,7 +46,7 @@ class ItemController extends Controller
     {
         $array = [];
         $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
-            ->where('material_id', $id_material)
+            ->where('material_id', $id_material)->where('state_item','exited')
             ->get();
         foreach ( $items as $item )
         {
@@ -91,7 +91,37 @@ class ItemController extends Controller
                     'weight' => $item->weight,
                     'price' => $item->price,
                     'location' => $l,
-                    'state' => $item->state_item,
+                    'state' => $item->state,
+                ]);
+        }
+        //dd($array);
+        return json_encode($array);
+    }
+
+    public function getJsonItemsOutput($id_material)
+    {
+        $array = [];
+        $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
+            ->where('material_id', $id_material)->whereIn('state_item',['entered', 'scraped'])
+            ->get();
+        foreach ( $items as $item )
+        {
+            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+            array_push($array,
+                [
+                    'id'=> $item->id,
+                    'location' => $l,
+                    'location_id' => $item->location->id,
+                    'materialType' => $item->materialType,
+                    'material' => $item->material->description,
+                    'material_id' => $item->material->id,
+                    'price' => $item->price,
+                    'state' => $item->state,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'weight' => $item->weight,
+                    'detailEntry' => $item->detailEntry->id,
                 ]);
         }
         //dd($array);

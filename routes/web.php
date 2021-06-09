@@ -220,6 +220,8 @@ Route::middleware('auth')->group(function (){
         Route::post('ouput/store', 'OutputController@storeOutput')->name('output.request.store')
             ->middleware('permission:list_material');
         Route::get('/get/users', 'UserController@getUsers2');
+        Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput')
+            ->middleware('permission:list_material');
 
     });
 });

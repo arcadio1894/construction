@@ -421,11 +421,9 @@ function deleteItem() {
 }
 
 function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
-    var status = (state === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
-        (state === 'scraped') ? '<span class="badge bg-success">Se ha retazado</span>' :
-            (state === 'reserved') ? '<span class="badge bg-success">Solicitado</span>' :
-                (state === 'exited') ? '<span class="badge bg-success">Salido</span>' :
-                    'Indefinido';
+    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
+        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
+            'Indefinido';
     var clone = activateTemplate('#template-item');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-material]").innerHTML = material;

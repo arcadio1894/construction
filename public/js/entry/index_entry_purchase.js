@@ -16,7 +16,7 @@ function format ( d ) {
             'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
             'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
             'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>';
+            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
@@ -305,11 +305,9 @@ function showItems() {
 }
 
 function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
-    var status = (state === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
-        (state === 'scraped') ? '<span class="badge bg-secondary">Se ha retazado</span>' :
-            (state === 'reserved') ? '<span class="badge bg-warning">Solicitado</span>' :
-                (state === 'exited') ? '<span class="badge bg-danger">Salido</span>' :
-                    'Indefinido';
+    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
+        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
+            'Indefinido';
     var clone = activateTemplate('#template-item');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-material]").innerHTML = material;

@@ -19,6 +19,7 @@
 @section('styles-plugins')
     <!-- daterange picker -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/daterangepicker/daterangepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -118,26 +119,20 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-8">
                                 <div class="form-group">
                                     <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="material_search" class="form-control rounded-0 typeahead">
 
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            {{--<div class="col-md-3">
                                 <div class="form-group">
                                     <label for="quantity">Cantidad Ingresada <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="quantity" class="form-control">
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="price">Precio Unitario <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="price" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
+                            </div>--}}
+                            <div class="col-md-4">
                                 <label for="btn-add"> &nbsp; </label>
                                 <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button></div>
                         </div>
@@ -154,7 +149,6 @@
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
                                                     <th>Material</th>
                                                     <th>Item</th>
                                                     <th>Ubicación</th>
@@ -165,7 +159,6 @@
                                             <tbody id="body-materials">
                                                 <template id="materials-selected">
                                                     <tr>
-                                                        <td data-id>183</td>
                                                         <td data-description>John Doe</td>
                                                         <td data-item>John Doe</td>
                                                         <td data-location>11-7-2014</td>
@@ -191,40 +184,26 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar orden de compra</button>
+                <button type="submit" class="btn btn-outline-success float-right">Guardar solicitud de salida</button>
             </div>
         </div>
         <!-- /.card-footer -->
     </form>
 
     <div id="modalAddItems" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Agregar items</h4>
+                    <h4 class="modal-title">Seleccionar items</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-6">
+                        <div class="col-md-12">
                             <label class="col-sm-12 control-label" for="material_selected"> Material </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected" name="material_selected" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="col-sm-12 control-label" for="quantity_selected"> Cantidad </label>
-
-                            <div class="col-sm-12">
-                                <input type="text" id="quantity_selected" name="quantity_selected" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="col-sm-12 control-label" for="price_selected"> Precio </label>
-
-                            <div class="col-sm-12">
-                                <input type="text" id="price_selected" name="price_selected" class="form-control" />
                             </div>
                         </div>
                     </div>
@@ -235,53 +214,92 @@
                         </div>
                     </div>
 
-                    {{--<div class="p-1 row">
-                        <div class="col-sm-5">
-                            <div class="col-md-12">
-                                <input type="text" name="series[]" class="form-control" />
-                            </div>
-                        </div>
-                        <div class="col-sm-5">
-                            <div class="col-md-12">
-                                <input type="text" name="locations[]" class="form-control locations" />
-                            </div>
-                        </div>
-                        <div class="col-sm-2">
-                            <div class="col-md-12">
-                                <button type="button" id="btnNew" class="btn btn-block btn-success"><i class="fa fa-plus"></i> Agregar</button>
-                            </div>
-                        </div>
-                    </div>--}}
+                    <div class="table-responsive p-0" style="height: 300px;">
+                        <table class="card-body table table-head-fixed text-nowrap">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Serie</th>
+                                <th>Ubicación</th>
+                                <th>Largo</th>
+                                <th>Ancho</th>
+                                <th>Peso</th>
+                                <th>Precio</th>
+                                <th>Selección</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-items">
 
-                    <div id="body-items"></div>
-                    <template id="template-item">
+
+                            </tbody>
+                            <template id="template-item">
+                                <tr>
+                                    <td data-id>John Doe</td>
+                                    <td data-serie>John Doe</td>
+                                    <td data-location>John Doe</td>
+                                    <td data-length>11-7-2014</td>
+                                    <td data-width>11-7-2014</td>
+                                    <td data-weight>11-7-2014</td>
+                                    <td data-price>11-7-2014</td>
+                                    <td>
+                                        <div class="icheck-success d-inline">
+                                            <input type="checkbox" data-selected id="checkboxSuccess1">
+                                            <label for="checkboxSuccess1" data-label></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </table>
+                    </div>
+
+                    {{--<template id="template-item">
                         <div class="row p-1">
-                            <div class="col-sm-3">
+                            <div class="col-sm-2">
                                 <div class="col-md-12">
-                                    <input type="text" name="series[]" data-series class="form-control" />
+                                    <input type="text" name="series[]" data-serie class="form-control" />
                                 </div>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-2">
                                 <div class="col-md-12">
-                                    <input type="text" name="locations[]" data-locations class="form-control locations" />
+                                    <input type="text" name="locations[]" data-location class="form-control locations" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <input type="text" name="length[]" data-length class="form-control" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <input type="text" name="width[]" data-width class="form-control locations" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <input type="text" name="weight[]" data-weight class="form-control locations" />
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="col-md-12">
+                                    <input type="text" name="price[]" data-price class="form-control locations" />
                                 </div>
                             </div>
                             <div class="col-sm-3">
-                                <select class="form-control select2" data-states style="width: 100%;">
-                                    <option value="good" selected="selected">Buena estado</option>
-                                    <option value="bad">Deficiente</option>
-                                </select>
-
+                                <div class="col-md-12">
+                                    <div class="icheck-success d-inline">
+                                        <input type="checkbox" checked="" data-selected id="checkboxSuccess1">
+                                        <label for="checkboxSuccess1"></label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                    </template>
-
+                    </template>--}}
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" id="btn-saveItems" class="btn btn-outline-primary">Agregar</button>
+                    <button type="button" id="btn-saveItems" class="btn btn-outline-primary">Agregar</button>
                 </div>
 
             </div>
