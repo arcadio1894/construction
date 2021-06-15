@@ -252,50 +252,6 @@
                         </table>
                     </div>
 
-                    {{--<template id="template-item">
-                        <div class="row p-1">
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="series[]" data-serie class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="locations[]" data-location class="form-control locations" />
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="length[]" data-length class="form-control" />
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="width[]" data-width class="form-control locations" />
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="weight[]" data-weight class="form-control locations" />
-                                </div>
-                            </div>
-                            <div class="col-sm-2">
-                                <div class="col-md-12">
-                                    <input type="text" name="price[]" data-price class="form-control locations" />
-                                </div>
-                            </div>
-                            <div class="col-sm-3">
-                                <div class="col-md-12">
-                                    <div class="icheck-success d-inline">
-                                        <input type="checkbox" checked="" data-selected id="checkboxSuccess1">
-                                        <label for="checkboxSuccess1"></label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </template>--}}
-
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>

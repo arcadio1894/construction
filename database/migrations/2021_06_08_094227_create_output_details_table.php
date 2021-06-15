@@ -15,6 +15,8 @@ class CreateOutputDetailsTable extends Migration
     {
         Schema::create('output_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('output_id')->constrained('outputs');
+            $table->foreignId('item_id')->constrained('items');
             $table->timestamps();
         });
     }
