@@ -522,17 +522,12 @@
                         </a>
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{ route('output.index') }}" class="nav-link @yield('activeListOutput')">
+                                <a href="{{ route('output.confirm') }}" class="nav-link @yield('activeListOutput')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar salidas</p>
                                 </a>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('output.create') }}" class="nav-link @yield('activeCreateOutput')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Crear salida</p>
-                                </a>
-                            </li>
+
                         </ul>
                     </li>
 

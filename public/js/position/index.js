@@ -1,11 +1,12 @@
 $(document).ready(function () {
+    var id_container = $('#id_container').val();
     var id_level = $('#id_level').val();
     var id_shelf = $('#id_shelf').val();
     var id_warehouse = $('#id_warehouse').val();
     var id_area = $('#id_area').val();
     $('#dynamic-table').DataTable( {
             ajax: {
-                url: "/dashboard/all/containers/"+id_level,
+                url: "/dashboard/all/positions/"+id_container,
                 dataSrc: 'data'
             },
             bAutoWidth: false,
@@ -18,8 +19,7 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/ver/posiciones/contenedor/'+item.id+'/nivel/'+id_level+'/anaquel/'+id_shelf+'/almacen/'+id_warehouse+'/area/'+id_area+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-eye"></i> Ver posiciones</a>'+
-                            ' <button data-comment="'+item.comment+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</button>'+
+                        return ' <button data-comment="'+item.comment+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</button>'+
                             ' <button data-delete="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>'
                     }
                 },
@@ -166,17 +166,17 @@ $(document).ready(function () {
 
         } );
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeContainer);
+    $formCreate.on('submit', storePosition);
     $modalCreate = $('#modalCreate');
-    $('#newContainer').on('click', openModalCreate);
+    $('#newPosition').on('click', openModalCreate);
 
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updateContainer);
+    $formEdit.on('submit', updatePosition);
     $modalEdit = $('#modalEdit');
     $(document).on('click', '[data-edit]', openModalEdit);
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyContainer);
+    $formDelete.on('submit', destroyPosition);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
@@ -195,7 +195,7 @@ function openModalCreate() {
     $modalCreate.modal('show');
 }
 
-function storeContainer() {
+function storePosition() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formCreate.data('url');
@@ -218,7 +218,7 @@ function storeContainer() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -228,7 +228,7 @@ function storeContainer() {
             $modalCreate.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
@@ -243,7 +243,7 @@ function storeContainer() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "4000",
+                        "timeOut": "2000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",
@@ -258,18 +258,18 @@ function storeContainer() {
 }
 
 function openModalEdit() {
-    var container_id = $(this).data('edit');
+    var position_id = $(this).data('edit');
     var name = $(this).data('name');
     var comment = $(this).data('comment');
 
-    $modalEdit.find('[id=container_id]').val(container_id);
+    $modalEdit.find('[id=position_id]').val(position_id);
     $modalEdit.find('[id=nameE]').val(name);
     $modalEdit.find('[id=commentE]').val(comment);
 
     $modalEdit.modal('show');
 }
 
-function updateContainer() {
+function updatePosition() {
     event.preventDefault();
     // Obtener la URL
     var editUrl = $formEdit.data('url');
@@ -332,18 +332,18 @@ function updateContainer() {
 }
 
 function openModalDelete() {
-    var container_id = $(this).data('delete');
+    var position_id = $(this).data('delete');
     var name = $(this).data('name');
     var comment = $(this).data('comment');
 
-    $modalDelete.find('[id=container_id]').val(container_id);
+    $modalDelete.find('[id=position_id]').val(position_id);
     $modalDelete.find('[id=nameDelete]').html(name);
     $modalDelete.find('[id=commentDelete]').html(comment);
 
     $modalDelete.modal('show');
 }
 
-function destroyContainer() {
+function destroyPosition() {
     event.preventDefault();
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');
@@ -366,7 +366,7 @@ function destroyContainer() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -376,7 +376,7 @@ function destroyContainer() {
             $modalDelete.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

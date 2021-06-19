@@ -175,6 +175,17 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_container');
         Route::get('/all/containers/{id_level}', 'ContainerController@getContainers');
 
+        //POSITION
+        Route::get('ver/posiciones/contenedor/{contenedor}/nivel/{niveles}/anaquel/{anaqueles}/almacen/{almacen}/area/{area}', 'PositionController@index')->name('position.index')
+            ->middleware('permission:list_position');
+        Route::post('position/store', 'PositionController@store')->name('position.store')
+            ->middleware('permission:create_position');
+        Route::post('position/update', 'PositionController@update')->name('position.update')
+            ->middleware('permission:update_position');
+        Route::post('position/destroy', 'PositionController@destroy')->name('position.destroy')
+            ->middleware('permission:destroy_position');
+        Route::get('/all/positions/{id_container}', 'PositionController@getPositions');
+
         //LOCATION
         Route::get('ubicaciones', 'LocationController@index')->name('location.index')
             ->middleware('permission:list_location');
@@ -211,17 +222,25 @@ Route::middleware('auth')->group(function (){
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')->name('output.request.index')
             ->middleware('permission:list_material');
-        Route::get('salidas', 'OutputController@indexOutputs')->name('output.index')
+        Route::get('salidas', 'OutputController@indexOutputs')->name('output.confirm')
             ->middleware('permission:list_material');
         Route::get('crear/solicitud', 'OutputController@createOutputRequest')->name('output.request.create')
-            ->middleware('permission:list_material');
-        Route::get('crear/salida', 'OutputController@createOutput')->name('output.create')
             ->middleware('permission:list_material');
         Route::post('ouput/store', 'OutputController@storeOutput')->name('output.request.store')
             ->middleware('permission:list_material');
         Route::get('/get/users', 'UserController@getUsers2');
         Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput')
             ->middleware('permission:list_material');
+        Route::post('output_request/store', 'OutputController@storeOutputRequest')->name('output.request.store')
+            ->middleware('permission:create_material');
+        Route::get('/get/json/output/request', 'OutputController@getOutputRequest')
+            ->middleware('permission:list_material');
+        Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest')
+            ->middleware('permission:list_material');
+        Route::post('output_request/attend', 'OutputController@attendOutputRequest')->name('output.attend')
+            ->middleware('permission:create_material');
+        Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')->name('output.confirmed')
+            ->middleware('permission:create_material');
 
     });
 });

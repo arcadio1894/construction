@@ -103,7 +103,7 @@ $(document).ready(function () {
     $(document).on('change', '[data-selected]', selectItem);
 
     $formCreate = $("#formCreate");
-    $formCreate.on('submit', storeOrderPurchase);
+    $formCreate.on('submit', storeOutputRequest);
 
 });
 
@@ -143,7 +143,7 @@ function saveTableItems() {
 
     for ( var i=0; i<$itemsSelected.length; i++ )
     {
-        $items.push({ 'id': $itemsSelected[i].length+1, 'item': $itemsSelected[i].id});
+        $items.push({'item': $itemsSelected[i].id});
         renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
     }
 
@@ -279,7 +279,7 @@ function activateTemplate(id) {
     return document.importNode(t.content, true);
 }
 
-function storeOrderPurchase() {
+function storeOutputRequest() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formCreate.data('url');
@@ -313,10 +313,32 @@ function storeOrderPurchase() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                location.reload();
+                //location.reload();
             }, 2000 )
         },
         error: function (data) {
+            console.log(data);
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {

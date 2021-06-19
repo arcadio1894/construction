@@ -15,6 +15,11 @@ class CreateOutputsTable extends Migration
     {
         Schema::create('outputs', function (Blueprint $table) {
             $table->id();
+            $table->string('execution_order');
+            $table->dateTime('request_date');
+            $table->foreignId('requesting_user')->constrained('users');
+            $table->foreignId('responsible_user')->constrained('users');
+            $table->enum('state', ['created', 'attended', 'confirmed'])->default('created');
             $table->timestamps();
         });
     }

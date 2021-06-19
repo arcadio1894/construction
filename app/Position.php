@@ -4,27 +4,21 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Container extends Model
+class Position extends Model
 {
     protected $fillable = [
         'name',
         'comment',
-        'level_id'
+        'container_id'
     ];
 
-    public function level()
+    public function container()
     {
-        return $this->belongsTo('App\Level');
-    }
-
-    public function positions()
-    {
-        return $this->hasMany('App\Position');
+        return $this->belongsTo('App\Container');
     }
 
     public function locations()
     {
         return $this->hasMany('App\Location');
     }
-
 }

@@ -160,7 +160,7 @@ class EntryController extends Controller
                 $item->percentage = $porcentaje;
                 $item->save();
             }
-            $material->stock_current = $material->stock_current - $item_deleted->percentage + $porcentaje;
+            $material->stock_current = $material->stock_current + $porcentaje;
             $material->save();
 
             DB::commit();

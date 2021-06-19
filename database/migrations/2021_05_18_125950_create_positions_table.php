@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateOutputDetailsTable extends Migration
+class CreatePositionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,13 @@ class CreateOutputDetailsTable extends Migration
      */
     public function up()
     {
-        Schema::create('output_details', function (Blueprint $table) {
+        Schema::create('positions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('output_id')->constrained('outputs');
-            $table->foreignId('item_id')->constrained('items');
+            $table->string('name');
+            $table->string('comment')->nullable();
+            $table->foreignId('container_id')
+                ->constrained('containers')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -28,6 +31,6 @@ class CreateOutputDetailsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('output_details');
+        Schema::dropIfExists('positions');
     }
 }
