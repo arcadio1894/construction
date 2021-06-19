@@ -41,21 +41,6 @@ class ContainerController extends Controller
             'level_id' => $request->get('level_id'),
         ]);
 
-        // Crear la ubicacion
-        $level = Level::find($container->level->id);
-        $shelf = Shelf::find($level->shelf->id);
-        $warehouse = Warehouse::find($shelf->warehouse->id);
-        $area = Area::find($warehouse->area->id);
-
-        $location = Location::create([
-            'area_id' => $area->id,
-            'warehouse_id' => $warehouse->id,
-            'shelf_id' => $shelf->id,
-            'level_id' => $level->id,
-            'container_id' => $container->id,
-            'description' => 'AR-'.$area->name.'|ALM-'.$warehouse->name.'|ANA-'.$shelf->name.'|NIV-'.$level->name.'|CONT-'.$container->name
-        ]);
-
         return response()->json(['message' => 'Contenedor guardado con éxito.'], 200);
 
     }
@@ -90,19 +75,6 @@ class ContainerController extends Controller
         $validated = $request->validated();
 
         $container = Container::find($request->get('container_id'));
-
-        // Eliminar la ubicacion
-        $level = Level::find($container->level->id);
-        $shelf = Shelf::find($level->shelf->id);
-        $warehouse = Warehouse::find($shelf->warehouse->id);
-        $area = Area::find($warehouse->area->id);
-
-        $location = Location::where('area_id', $area->id)
-            ->where('warehouse_id', $warehouse)
-            ->where('shelf_id', $shelf->id)
-            ->where('level_id', $level->id)->first();
-
-        $location->delete();
 
         $container->delete();
 

@@ -175,6 +175,17 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_container');
         Route::get('/all/containers/{id_level}', 'ContainerController@getContainers');
 
+        //POSITION
+        Route::get('ver/posiciones/contenedor/{contenedor}/nivel/{niveles}/anaquel/{anaqueles}/almacen/{almacen}/area/{area}', 'PositionController@index')->name('position.index')
+            ->middleware('permission:list_position');
+        Route::post('position/store', 'PositionController@store')->name('position.store')
+            ->middleware('permission:create_position');
+        Route::post('position/update', 'PositionController@update')->name('position.update')
+            ->middleware('permission:update_position');
+        Route::post('position/destroy', 'PositionController@destroy')->name('position.destroy')
+            ->middleware('permission:destroy_position');
+        Route::get('/all/positions/{id_container}', 'PositionController@getPositions');
+
         //LOCATION
         Route::get('ubicaciones', 'LocationController@index')->name('location.index')
             ->middleware('permission:list_location');

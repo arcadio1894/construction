@@ -17,19 +17,22 @@ class CreateLocationsTable extends Migration
             $table->id();
             $table->foreignId('area_id')
                 ->constrained('areas')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->foreignId('warehouse_id')
                 ->constrained('warehouses')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->foreignId('shelf_id')
                 ->constrained('shelves')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->foreignId('level_id')
                 ->constrained('levels')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
             $table->foreignId('container_id')
                 ->constrained('containers')
-                ->onDelete('cascade');;
+                ->onDelete('cascade');
+            $table->foreignId('position_id')
+                ->constrained('positions')
+                ->onDelete('cascade');
             $table->string('description')->nullable();
             $table->timestamps();
         });

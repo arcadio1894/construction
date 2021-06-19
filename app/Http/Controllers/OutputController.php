@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Item;
+use App\Material;
 use App\Output;
 use App\OutputDetail;
 use App\User;
@@ -82,7 +83,10 @@ class OutputController extends Controller
                 $item = Item::find($outputDetail->item_id);
                 $item->state_item = 'exited';
                 $item->save();
-                // TODO: Dismunir el stock del producto
+                // TODO: Dismunir el stock del material
+                $material = Material::find($item->material_id);
+                $material->stock_current = $material->stock_current - $item->percentage;
+                $material->save();
             }
 
             DB::commit();

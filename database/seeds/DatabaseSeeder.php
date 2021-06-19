@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ShelfSeeder::class);
         $this->call(LevelSeeder::class);
         $this->call(ContainerSeeder::class);
+        $this->call(PositionSeeder::class);
         $this->call(LocationSeeder::class);
     }
 }
