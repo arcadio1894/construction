@@ -145,7 +145,7 @@
                             
                                 <div class="stock-text" data-animation="fadeInUp" data-delay=".8s">
                                     <!--<h2>Fabricaciones Industriales S.A.C.</h2>-->
-                                    <h2>Fabricaciones Industriales S.A.C.</h2>
+                                    <h2>Fabricaciones Industriales</h2>
                                 </div>
 
                             <!--

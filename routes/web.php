@@ -22,6 +22,8 @@ Route::get('/nosotros', 'LandingController@about')->name('landing.about');
 Route::get('/fabricacion', 'LandingController@manufacturing')->name('landing.manufacturing');
 Route::get('/servicios', 'LandingController@service')->name('landing.service');
 Route::get('/contacto', 'LandingController@contact')->name('landing.contact');
+Route::post('/emailcontact', 'EmailController@sendEmailContact')->name('email.contact');
+
 
 
 Auth::routes();
@@ -55,8 +57,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/editar/cliente/{id}', 'CustomerController@edit')->name('customer.edit');
         Route::post('customer/update', 'CustomerController@update')->name('customer.update');
         Route::post('customer/destroy', 'CustomerController@destroy')->name('customer.destroy');
-        Route::get('clientes/restore', 'CustomerController@restore')->name('customer.restore');
+        Route::get('clientes/restore', 'CustomerController@indexrestore')->name('customer.indexrestore');
         Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
+        Route::post('customer/restore', 'CustomerController@restore')->name('customer.restore');
 
         //MATERIAL TYPE
         Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes');
