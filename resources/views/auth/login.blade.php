@@ -4,6 +4,10 @@
     Inicio de sesión
 @endsection
 
+@section('data-background')
+    {{ asset('landing/img/hero/about2.jpg') }}
+@endsection
+
 @section('header-page')
     <div class="hero-cap pt-100">
         <h2>Inicio de sesión</h2>
@@ -25,6 +29,7 @@
 @endsection
 
 @section('content')
+
 <!-- Page de register y de login -->
     <!-- Content Page Start-->
     <div class="services-area1 section-padding">
@@ -33,11 +38,10 @@
             <div class="row">
                 <div class="col-lg-12">
                         <div class="section-tittle mb-30">
-                            <div class="row front-text justify-content-center">
-                                <h2 class="">Accede a tu cuenta</h2>
-                            </div>
-                            <span class="back-text">Accede a tu cuenta</span>
+                        <div class="row front-text justify-content-center">
+                            <h2 class="">Accede a tu cuenta</h2>
                         </div>
+                        <span class="back-text">Accede a tu cuenta</span>
                     </div>
                 </div>
             </div>
@@ -91,12 +95,12 @@
                                 <div class="form-group row mb-0">
                                     <div class="col-md-8 offset-md-4">
                                         <button type="submit" class="btn">
-                                            {{ __('Login') }}
+                                            {{ __('Iniciar Sesión') }}
                                         </button>
 
                                         @if (Route::has('password.request'))
                                             <a class="btn" href="{{ route('password.request') }}">
-                                                {{ __('Forgot Your Password?') }}
+                                                {{ __('Recuperar Contraseña') }}
                                             </a>
                                         @endif
                                     </div>
@@ -109,4 +113,5 @@
         </div>
     </div>
     <!-- Content Page End-->
+
 @endsection

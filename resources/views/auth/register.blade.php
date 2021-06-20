@@ -4,6 +4,10 @@
     Registro
 @endsection
 
+@section('data-background')
+    {{ asset('landing/img/hero/about2.jpg') }}
+@endsection
+
 @section('header-page')
     <div class="hero-cap pt-100">
         <h2>Regístrate</h2>
@@ -97,7 +101,7 @@
                                 <div class="form-group row mb-0">
                                     <div class="col-md-6 offset-md-4">
                                         <button type="submit" class="btn">
-                                            {{ __('Register') }}
+                                            {{ __('Registrarse') }}
                                         </button>
                                     </div>
                                 </div>

@@ -7,6 +7,8 @@
 @section('styles')
     <link rel="stylesheet" href="{{ asset('landing/css/responsive.css') }}">
     <link rel="stylesheet" href="{{ asset('landing/css/animate.min.css') }}">
+    <!-- Toastr -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/toastr/toastr.min.css') }}">
 @endsection
 
 @section('data-background')
@@ -35,9 +37,10 @@
             </div>
         
             <div class="col-lg-5">
-                <form class="form-contact contact_form" action="contact_process.php" method="post" id="contactForm" novalidate="novalidate">
+                <form class="form-contact contact_form" data-url="{{route('email.contact')}}" method="post" id="formEmail">
+                    @csrf
                     <div class="row">
-                               
+                            
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <input class="form-control valid" name="name" id="name" type="text" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Escribe tu nombre'" placeholder="Escribe tu nombre">
@@ -62,7 +65,6 @@
                             </div>
                         </div>
                     </div>
-                                
                     <div class="form-group mt-3">
                         <button type="submit" class="button button-contactForm boxed-btn">Enviar mensaje</button>
                     </div>
@@ -102,4 +104,10 @@
         </div>
     </div>
 </section>
+@endsection
+
+@section('scripts')
+    <!-- Toastr -->
+    <script src="{{ asset('admin/plugins/toastr/toastr.min.js') }}"></script>
+    <script src="{{ asset('js/contact/email.js') }}"></script>
 @endsection
