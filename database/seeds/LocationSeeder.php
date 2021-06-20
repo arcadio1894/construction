@@ -18,6 +18,7 @@ class LocationSeeder extends Seeder
             'shelf_id' => 1,
             'level_id' => 1,
             'container_id' => 1,
+            'position_id' => 1,
         ]);
         Location::create([
             'area_id' => 2,
@@ -25,6 +26,7 @@ class LocationSeeder extends Seeder
             'shelf_id' => 2,
             'level_id' => 2,
             'container_id' => 2,
+            'position_id' => 2,
         ]);
     }
 }

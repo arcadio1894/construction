@@ -12,6 +12,7 @@ class Location extends Model
         'shelf_id',
         'level_id',
         'container_id',
+        'position_id',
         'description'
     ];
 
@@ -38,5 +39,10 @@ class Location extends Model
     public function container()
     {
         return $this->belongsTo('App\Container');
+    }
+
+    public function position()
+    {
+        return $this->belongsTo('App\Position');
     }
 }

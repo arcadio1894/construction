@@ -16,7 +16,7 @@ function format ( d ) {
             'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
             'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
             'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>';
+            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
@@ -266,9 +266,15 @@ $(document).ready(function () {
 
     $modalAddItems = $('#modalAddItems');
 
-    $(document).on('click', '[data-delete]', deleteItem);
+    //$(document).on('click', '[data-delete]', deleteItem);
+
+    $modalItems = $('#modalItems');
+
+    $(document).on('click', '[data-detail]', showItems);
 
 });
+
+let $modalItems;
 
 let $formCreate;
 
@@ -277,6 +283,43 @@ let $modalAddItems;
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function showItems() {
+    $('#table-items').html('');
+    var detail_id = $(this).data('detail');
+    $.ajax({
+        url: "/dashboard/get/json/items/"+detail_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //
+            for (var i=0; i<json.length; i++)
+            {
+                renderTemplateItemDetail(json[i].id, json[i].material, json[i].code, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].location, json[i].state);
+                //$materials.push(json[i].material);
+            }
+
+        }
+    });
+    $modalItems.modal('show');
+}
+
+function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
+    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
+        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
+            'Indefinido';
+    var clone = activateTemplate('#template-item');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-weight]").innerHTML = weight;
+    clone.querySelector("[data-price]").innerHTML = price;
+    clone.querySelector("[data-location]").innerHTML = location;
+    clone.querySelector("[data-state]").innerHTML = status;
+    $('#table-items').append(clone);
+}
 
 function addItems() {
     if( $('#material_search').val().trim() === '' )

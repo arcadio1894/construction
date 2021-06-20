@@ -77,6 +77,30 @@ function saveTableItems() {
     let weight = $('#weight').val();
 
     const result = $itemsComplete.find( item => item.code === item_selected );
+
+    if ( parseFloat(result.length)*parseFloat(result.width) < parseFloat(length)*parseFloat(width) )
+    {
+        toastr.error('Las medidas superan las mediads del material', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
     let newPrice = 0;
     if ( result.materialType.name === "Planchas grandes" || result.materialType.name === "Planchas chicas" )
     {

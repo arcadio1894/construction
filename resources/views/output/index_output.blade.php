@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openEntryPurchase')
+@section('openOutputs')
     menu-open
 @endsection
 
-@section('activeEntryPurchase')
+@section('activeOutputs')
     active
 @endsection
 
-@section('activeListEntryPurchase')
+@section('activeListOutput')
     active
 @endsection
 
 @section('title')
-    Entradas por compras
+    Salidas
 @endsection
 
 @section('styles-plugins')
@@ -41,12 +41,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Entradas por compras</h1>
+    <h1 class="page-title">Salidas</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de entradas</h5>
-    <a href="{{ route('entry.purchase.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo ingreso </a>
+    <h5 class="card-title">Listado de salidas</h5>
+    <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -54,7 +54,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-key"></i> Entradas por compras </li>
+        <li class="breadcrumb-item"><i class="fa fa-key"></i> Salidas </li>
     </ol>
 @endsection
 
@@ -111,18 +111,17 @@
             </div>--}}
 
         </div>
-
     </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th></th>
-                <th>Guia de remisión</th>
-                <th>Orden de compra</th>
-                <th>Factura</th>
-                <th>Tipo de entrada</th>
-                <th>Fecha</th>
+                <th>N°</th>
+                <th>Orden de ejecución</th>
+                <th>Fecha de solicitud</th>
+                <th>Usuario solicitante</th>
+                <th>Usuario responsable</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -149,6 +148,31 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalConfirm" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmar salida</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formConfirm" data-url="{{ route('output.confirmed') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="output_id" name="output_id">
+                        <strong>
+                            ¿Está seguro de confirmar esta solicitud de salida?
+                        </strong>
+                        <p id="descriptionAttend"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" >Confirmar</button>
+                        <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
                     </div>
                 </form>
             </div>
@@ -197,7 +221,7 @@
                     </table>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 </div>
             </div>
         </div>
@@ -215,6 +239,6 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-    <script src="{{ asset('js/entry/index_entry_purchase.js') }}"></script>
+    <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('js/output/index_output.js') }}"></script>
 @endsection

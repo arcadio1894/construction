@@ -34,7 +34,7 @@ class MaterialSeeder extends Seeder
             'unit_measure' => 'UND',
             'stock_max' => 10,
             'stock_min'=> 1,
-            'stock_current' => 3.21,
+            'stock_current' => 0,
             'priority' => 'Completo',
             'unit_price' => 0,
             'image' => 'no_image.png',

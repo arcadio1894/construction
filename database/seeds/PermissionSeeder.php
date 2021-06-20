@@ -264,6 +264,23 @@ class PermissionSeeder extends Seeder
         ]);
 
         Permission::create([
+            'name' => 'list_position',
+            'description' => 'Listar Posiciones'
+        ]);
+        Permission::create([
+            'name' => 'create_position',
+            'description' => 'Crear Posición'
+        ]);
+        Permission::create([
+            'name' => 'update_position',
+            'description' => 'Modificar Posición'
+        ]);
+        Permission::create([
+            'name' => 'destroy_position',
+            'description' => 'Eliminar Posición'
+        ]);
+
+        Permission::create([
             'name' => 'list_location',
             'description' => 'Ver ubicaciones'
         ]);

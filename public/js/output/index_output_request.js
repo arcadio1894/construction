@@ -13,9 +13,10 @@ function format ( d ) {
         var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
         mensaje = mensaje +
             'Material: '+d.details[i].material.description+'<br>'+
-            'Cantidad ingresada: 1 <br>'+
+            'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
+            'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
             'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Ver Items </a>';
+            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
@@ -24,25 +25,40 @@ function format ( d ) {
 $(document).ready(function () {
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/get/json/entries/scrap",
+            url: "/dashboard/get/json/output/request",
             dataSrc: 'data'
         },
         bAutoWidth: false,
         "aoColumns": [
-            {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },
-            { data: 'id' },
-            { data: 'entry_type' },
             { data: null,
-                title: 'Fecha',
+                title: 'Solicitud',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>'
+                    return '<p> Solicitud-'+ item.id +'</p>';
+                }
+            },
+            { data: 'execution_order' },
+            { data: null,
+                title: 'Fecha de solicitud',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ moment(item.request_date).format('DD-MM-YYYY H:m a') +'</p>'
+                }
+            },
+            { data: 'requesting_user.name' },
+            { data: 'responsible_user.name' },
+            { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    var status = (item.state === 'created') ? '<span class="badge bg-success">Solicitud creada</span>' :
+                        (item.state === 'attended') ? '<span class="badge bg-warning">Solicitud atendida</span>' :
+                            (item.state === 'confirmed') ? '<span class="badge bg-secondary">Solicitud confirmada</span>' :
+                                'Indefinido';
+                    return '<p> '+status+' </p>'
                 }
             },
             { data: null,
@@ -50,7 +66,14 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
+                    if (item.state === 'attended')
+                    {
+                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'
+                    }
+                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'
+                }
+
+            },
 
         ],
         "aaSorting": [],
@@ -236,40 +259,34 @@ $(document).ready(function () {
         column.visible( ! column.visible() );
     } );
 
-    /*$.ajax({
-        url: "/dashboard/get/json/entries/purchase",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $entriesComplete.push(json[i]);
-            }
-
-        }
-    });*/
-    /*$.ajax({
-        url: "/dashboard/get/entries/purchase",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $entriesComplete.push(json[i]);
-            }
-
-        }
-    });*/
-
     $modalAddItems = $('#modalAddItems');
+
+    //$(document).on('click', '[data-delete]', deleteItem);
 
     $modalItems = $('#modalItems');
 
-    $(document).on('click', '[data-detail]', showItems);
+    $modalAttend = $('#modalAttend');
 
+    $formAttend = $('#formAttend');
+
+    $formAttend.on('submit', attendOutput);
+
+    $(document).on('click', '[data-details]', showItems);
+
+    $('body').tooltip({
+        selector: '[data-toggle]'
+    });
+
+    $(document).on('click', '[data-attend]', openModalAttend);
 });
 
+let $modalItems;
+
+let $modalAttend;
+
 let $formCreate;
+
+var $formAttend;
 
 let $modalAddItems;
 
@@ -277,16 +294,15 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 let $longitud = 20;
 
-let $modalItems;
-
 function showItems() {
     $('#table-items').html('');
-    var detail_id = $(this).data('detail');
+    var output_id = $(this).data('details');
     $.ajax({
-        url: "/dashboard/get/json/items/"+detail_id,
+        url: "/dashboard/get/json/items/output/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
+            //
             for (var i=0; i<json.length; i++)
             {
                 renderTemplateItemDetail(json[i].id, json[i].material, json[i].code, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].location, json[i].state);
@@ -296,6 +312,116 @@ function showItems() {
         }
     });
     $modalItems.modal('show');
+}
+
+function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
+    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
+        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
+            'Indefinido';
+    var clone = activateTemplate('#template-item');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-weight]").innerHTML = weight;
+    clone.querySelector("[data-price]").innerHTML = price;
+    clone.querySelector("[data-location]").innerHTML = location;
+    clone.querySelector("[data-state]").innerHTML = status;
+    $('#table-items').append(clone);
+}
+
+function openModalAttend() {
+    var output_id = $(this).data('attend');
+
+    $modalAttend.find('[id=output_id]').val(output_id);
+    $modalAttend.find('[id=descriptionAttend]').html('Solicitud-'+output_id);
+
+    $modalAttend.modal('show');
+}
+
+function attendOutput() {
+    console.log('Llegue');
+    event.preventDefault();
+    // Obtener la URL
+    var attendUrl = $formAttend.data('url');
+    $.ajax({
+        url: attendUrl,
+        method: 'POST',
+        data: new FormData(this),
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalAttend.modal('hide');
+            setTimeout( function () {
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
 }
 
 function addItems() {
@@ -420,21 +546,15 @@ function deleteItem() {
     $(this).parent().parent().parent().remove();
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
-    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
-        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
-            'Indefinido';
-    var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
-    clone.querySelector("[data-price]").innerHTML = price;
+function renderTemplateMaterial(id, price, material, item, location, state) {
+    var clone = activateTemplate('#materials-selected');
+    clone.querySelector("[data-id]").innerHTML = id;
+    clone.querySelector("[data-description]").innerHTML = material;
+    clone.querySelector("[data-item]").innerHTML = item;
     clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = status;
-    $('#table-items').append(clone);
+    clone.querySelector("[data-state]").innerHTML = state;
+    clone.querySelector("[data-price]").innerHTML = price;
+    $('#body-materials').append(clone);
 }
 
 function renderTemplateItem() {
