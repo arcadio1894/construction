@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\DeleteCustomerRequest;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Http\Requests\RestoreCustomerRequest;
 use App\Customer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -129,7 +130,7 @@ class CustomerController extends Controller
         //dd(datatables($customers)->toJson());
     }
 
-    public function restore()
+    public function indexrestore()
     {
         $customers = Customer::all();
         //$permissions = Permission::all();
@@ -142,5 +143,26 @@ class CustomerController extends Controller
         $customers = Customer::onlyTrashed()->get();
         return datatables($customers)->toJson();
         //dd(datatables($customers)->toJson());
+    }
+
+    public function restore(RestoreCustomerRequest $request)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            
+            $customer = Customer::onlyTrashed()->where('id', $request->get('customer_id'))->first();
+
+            $customer->restore();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cliente restaurado con éxito.'], 200);
     }
 }

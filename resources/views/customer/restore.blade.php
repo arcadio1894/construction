@@ -67,6 +67,33 @@
             </tbody>
         </table>
     </div>
+
+    <div id="modalRestore" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmar restauración</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formRestore" data-url="{{ route('customer.restore') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="customer_id" name="customer_id">
+                        <div>
+                            Desea restaurar el siguiente cliente: <br>
+                            <div id="code"></div>
+                            <div id="company"></div>                            
+                        </div> 
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Restaurar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('plugins')

@@ -34,9 +34,9 @@
             <div class="col-lg-12">
                 <div class="section-tittle mb-55">
                     <div class="front-text">
-                        <h2 class="">Nuestros Services</h2>
+                        <h2 class="">Nuestros Servicios</h2>
                     </div>
-                    <span class="back-text">Services</span>
+                    <span class="back-text">Servicios</span>
                 </div>
             </div>
         </div>

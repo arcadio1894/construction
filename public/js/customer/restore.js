@@ -18,10 +18,8 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/cliente/'+item.id+
-                        		'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>'+
-                        		' <button data-delete="'+item.id+'" '+'data-customer="'+item.contact_name+'" '+'data-company="'+item.business_name+'" '+
-                        		'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>' 
+                        return ' <button data-restore="'+item.id+'" '+'data-code="'+item.code+'" '+'data-company="'+item.business_name+'" '+
+                        		'" class="btn btn-outline-success btn-sm"><i class="fas fa-trash-restore"></i></button>' 
                     } },
 
             ],
@@ -166,33 +164,33 @@ $(document).ready(function () {
 
         } );
 
-    $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyCustomer);
-    $modalDelete = $('#modalDelete');
-    $(document).on('click', '[data-delete]', openModalDelete);
+    $formRestore = $('#formRestore');
+    $formRestore.on('submit', restoreCustomer);
+    $modalRestore = $('#modalRestore');
+    $(document).on('click', '[data-restore]', openModalRestore);
 });
 
-var $formDelete;
-var $modalDelete;
+var $formRestore;
+var $modalRestore;
 
-function openModalDelete() {
-    var customer_id = $(this).data('delete');
-    var customer = $(this).data('customer');
+function openModalRestore() {
+    var customer_id = $(this).data('restore');
+    var code = $(this).data('code');
     var company = $(this).data('company');
 
-    $modalDelete.find('[id=customer_id]').val(customer_id);
-    $modalDelete.find('[id=customer]').html(customer);
-    $modalDelete.find('[id=company]').html(company);
+    $modalRestore.find('[id=customer_id]').val(customer_id);
+    $modalRestore.find('[id=code]').html('<b>Codigo: </b>'+code);
+    $modalRestore.find('[id=company]').html('<b>Nombre: </b>'+company);
 
-    $modalDelete.modal('show');
+    $modalRestore.modal('show');
 }
 
-function destroyCustomer() {
+function restoreCustomer() {
     event.preventDefault();
     // Obtener la URL
-    var deleteUrl = $formDelete.data('url');
+    var restoreUrl = $formRestore.data('url');
     $.ajax({
-        url: deleteUrl,
+        url: restoreUrl,
         method: 'POST',
         data: new FormData(this),
         processData:false,
@@ -217,7 +215,7 @@ function destroyCustomer() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
-            $modalDelete.modal('hide');
+            $modalRestore.modal('hide');
             setTimeout( function () {
                 location.reload();
             }, 4000 )
