@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openCustomer')
+@section('openContactName')
     menu-open
 @endsection
 
-@section('activeCustomer')
+@section('activeContactName')
     active
 @endsection
 
-@section('activeListCustomer')
+@section('activeListContactName')
     active
 @endsection
 
 @section('title')
-    Customer
+    Contactos
 @endsection
 
 @section('styles-plugins')
@@ -34,11 +34,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Clientes</h1>
+    <h1 class="page-title">Nombres de contacto</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Editar cliente {{$customer->code}}</h5>
+    <h5 class="card-title">Editar contacto {{$contactName->code}}</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -47,45 +47,50 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('customer.index') }}"><i class="fa fa-key"></i> Clientes</a>
+            <a href="{{ route('contactName.index') }}"><i class="fa fa-key"></i> Contactos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formEdit" class="form-horizontal" data-url="{{ route('customer.update') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('contactName.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" class="form-control" name="customer_id" value="{{$customer->id}}">
+        <input type="hidden" class="form-control" name="contactName_id" value="{{$contactName->id}}">
 
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">RUC</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="ruc" placeholder="Ejm: 1234678901" value="{{$customer->RUC}}">
+                    <select id="customer_id" class="form-control select2" name="customer_id" data-states style="width: 100%;">
+                        <option></option>
+                        @foreach( $customers as $customer )
+                            <option value="{{ $customer->id }}" {{ $customer->id === $contactName->customer_id ? 'selected' : '' }}>{{ $customer->business_name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Razon Social</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre de contacto</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="business_name" placeholder="Ejm: Edesce EIRL" value="{{$customer->business_name}}">
+                    <input type="text" class="form-control" name="name" value="{{ $contactName->name }}">
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Direccion</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Teléfono</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="address" placeholder="Ejm: Jr Union" value="{{$customer->address}}">
+                    <input type="text" class="form-control" name="phone" value="{{ $contactName->phone }}">
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Ubicacion</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Email</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="location" placeholder="Ejm: Moche" value="{{$customer->location}}">
+                    <input type="text" class="form-control" name="email" value="{{ $contactName->email }}">
                 </div>
             </div>
         </div>
@@ -109,5 +114,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/customer/edit.js') }}"></script>
+    <script src="{{ asset('js/contactName/edit.js') }}"></script>
 @endsection

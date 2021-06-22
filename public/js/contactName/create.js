@@ -1,5 +1,8 @@
 $(document).ready(function () {
-
+    $("#customer_id").select2({
+        placeholder: "Seleccione una empresa",
+        allowClear: true
+    });
     $formCreate = $('#formCreate');
     $formCreate.on('submit', storeCustomer);
 

@@ -245,6 +245,41 @@
                             @endcan
                         </ul>
                     </li>
+
+                    <li class="nav-item has-treeview @yield('openContactName')">
+                        <a href="#" class="nav-link @yield('activeContactName')">
+                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <p>
+                                Contactos
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('list_customer')
+                                <li class="nav-item">
+                                    <a href="{{ route('contactName.index') }}" class="nav-link @yield('activeListContactName')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar contactos</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('create_customer')
+                                <li class="nav-item">
+                                    <a href="{{ route('contactName.create') }}" class="nav-link @yield('activeCreateContactName')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Crear contacto</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('contactName.indexrestore') }}" class="nav-link @yield('activeRestoreContactName')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Restaurar contactos</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+
                     <li class="nav-item has-treeview @yield('openSupplier')">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-boxes"></i>

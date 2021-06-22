@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openCustomer')
+@section('openContactName')
     menu-open
 @endsection
 
-@section('activeCustomer')
+@section('activeContactName')
     active
 @endsection
 
-@section('activeListCustomer')
+@section('activeRestoreContactName')
     active
 @endsection
 
 @section('title')
-    Clientes
+    Contactos
 @endsection
 
 @section('styles-plugins')
@@ -38,13 +38,12 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-users"></i> Clientes</li>
+        <li class="breadcrumb-item"><i class="fa fa-users"></i> Contactos</li>
     </ol>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de clientes</h5>
-    <a href="{{ route('customer.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Cliente </a>
+    <h5 class="card-title">Listado de contactos eliminados</h5>
 @endsection
 
 @section('content')
@@ -54,10 +53,10 @@
             <thead>
             <tr>
                 <th>Código</th>
-                <th>Razon Social</th>
-                <th>RUC</th>
-                <th>Direccion</th>
-                <th>Ubicación</th>
+                <th>Nombre de contacto</th>
+                <th>Empresa</th>
+                <th>Teléfono</th>
+                <th>Email</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -67,23 +66,26 @@
         </table>
     </div>
 
-    <div id="modalDelete" class="modal fade" tabindex="-1">
+    <div id="modalRestore" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar eliminación</h4>
+                    <h4 class="modal-title">Confirmar restauración</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('customer.destroy') }}">
+                <form id="formRestore" data-url="{{ route('contactName.restore') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="customer_id" name="customer_id">
-                        <strong>¿Está seguro de eliminar a esta empresa cliente?</strong>
-                        <p id="company"></p>
+                        <input type="hidden" id="contactName_id" name="contactName_id">
+                        <div>
+                            Desea restaurar el siguiente contacto: <br>
+                            <div id="contact"></div>
+                            <div id="company"></div>                            
+                        </div> 
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <button type="submit" class="btn btn-success">Restaurar</button>
                     </div>
                 </form>
             </div>
@@ -103,5 +105,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/customer/index.js') }}"></script>
+    <script src="{{ asset('js/contactName/restore.js') }}"></script>
 @endsection

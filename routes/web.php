@@ -61,6 +61,18 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
         Route::post('customer/restore', 'CustomerController@restore')->name('customer.restore');
 
+        //CONTACT NAME
+        Route::get('/all/contacts', 'ContactNameController@getContacts');
+        Route::get('contactos', 'ContactNameController@index')->name('contactName.index');
+        Route::get('crear/contacto', 'ContactNameController@create')->name('contactName.create');
+        Route::post('contact/store', 'ContactNameController@store')->name('contactName.store');
+        Route::get('/editar/contacto/{id}', 'ContactNameController@edit')->name('contactName.edit');
+        Route::post('contact/update', 'ContactNameController@update')->name('contactName.update');
+        Route::post('contact/destroy', 'ContactNameController@destroy')->name('contactName.destroy');
+        Route::get('contactos/restore', 'ContactNameController@indexrestore')->name('contactName.indexrestore');
+        Route::get('/all/contacts/destroy', 'ContactNameController@getContactsDestroy');
+        Route::post('contact/restore', 'ContactNameController@restore')->name('contactName.restore');
+
         //MATERIAL TYPE
         Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes');
         Route::get('TiposMateriales', 'MaterialTypeController@index')->name('materialtype.index');
