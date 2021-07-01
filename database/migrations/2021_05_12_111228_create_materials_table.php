@@ -27,6 +27,9 @@ class CreateMaterialsTable extends Migration
             $table->string('image')->nullable();
             $table->foreignId('material_type_id')->constrained('material_types');
             $table->foreignId('category_id')->constrained('categories');
+            $table->foreignId('exampler_id')->constrained('examplers');
+            $table->foreignId('brand_id')->constrained('brands');
+            $table->string('serie')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

@@ -55,8 +55,6 @@
                 <th>Código</th>
                 <th>Razon Social</th>
                 <th>RUC</th>
-                <th>Nombre Contacto</th>
-                <th>Teléfono</th>                
                 <th>Direccion</th>
                 <th>Ubicación</th>
                 <th>Acciones</th>

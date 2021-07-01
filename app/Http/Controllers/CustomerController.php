@@ -30,12 +30,8 @@ class CustomerController extends Controller
                 $customer = Customer::create([
                     'business_name' => $request->get('business_name'),
                     'RUC' => $request->get('ruc'),
-                    //'code' => $request->get('code'),
-                    'contact_name' => $request->get('contact_name'),
-                    'adress' => $request->get('adress'),
-                    'phone' => $request->get('phone'),
+                    'address' => $request->get('address'),
                     'location' => $request->get('location'),
-                    'email' => $request->get('email'),
                 ]);
 
                 $length = 5;
@@ -67,11 +63,8 @@ class CustomerController extends Controller
 
             $customer->business_name = $request->get('business_name');
             $customer->RUC = $request->get('ruc');
-            $customer->contact_name = $request->get('contact_name');
-            $customer->adress = $request->get('adress');
-            $customer->phone = $request->get('phone');
+            $customer->address = $request->get('address');
             $customer->location = $request->get('location');
-            $customer->email = $request->get('email');
             $customer->save();
 
             DB::commit();
@@ -125,7 +118,7 @@ class CustomerController extends Controller
 
     public function getCustomers()
     {
-        $customers = Customer::select('id', 'code', 'business_name', 'RUC', 'contact_name', 'phone', 'adress', 'location') -> get();
+        $customers = Customer::select('id', 'code', 'business_name', 'RUC', 'address', 'location') -> get();
         return datatables($customers)->toJson();
         //dd(datatables($customers)->toJson());
     }

@@ -11,13 +11,18 @@ class Customer extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'business_name','RUC', 'code','contact_name','adress','phone','location','email'
+        'business_name','RUC', 'code','address', 'location'
     ];
 
     // TODO: Las relaciones
     public function quotes()
     {
         return $this->hasMany('App\Quote');
+    }
+
+    public function contactNames()
+    {
+        return $this->hasMany('App\ContactName');
     }
 
     /* En la cotizacion

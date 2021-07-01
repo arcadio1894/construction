@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Brand;
 use App\Category;
+use App\Exampler;
 use App\Http\Requests\DeleteMaterialRequest;
 use App\Http\Requests\StoreMaterialRequest;
 use App\Http\Requests\UpdateMaterialRequest;
 use App\Material;
 use App\MaterialType;
+use App\Specification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -23,7 +26,8 @@ class MaterialController extends Controller
     {
         $categories = Category::all();
         $materialTypes = MaterialType::all();
-        return view('material.create', compact('categories', 'materialTypes'));
+        $brands = Brand::all();
+        return view('material.create', compact('categories', 'materialTypes', 'brands'));
     }
 
     public function store(StoreMaterialRequest $request)
@@ -43,7 +47,10 @@ class MaterialController extends Controller
                 'stock_current' => 0,
                 'priority' => 'Aceptable',
                 'material_type_id' => $request->get('material_type'),
-                'category_id' => $request->get('category')
+                'category_id' => $request->get('category'),
+                'brand_id' => $request->get('brand'),
+                'exampler_id' => $request->get('exampler'),
+                'serie' => $request->get('serie')
             ]);
 
             $length = 5;
@@ -66,6 +73,23 @@ class MaterialController extends Controller
                 $material->image = $filename;
                 $material->save();
             }
+
+            // TODO: Insertamos las especificaciones
+
+            $specifications = $request->get('specifications');
+            $contents = $request->get('contents');
+            if ( $specifications !== null || $specifications !== "" )
+            {
+                for ( $i=0; $i< sizeof($specifications); $i++ )
+                {
+                    Specification::create([
+                        'name' => $specifications[$i],
+                        'content' => $contents[$i],
+                        'material_id' => $material->id
+                    ]);
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();

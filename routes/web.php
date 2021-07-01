@@ -61,6 +61,18 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
         Route::post('customer/restore', 'CustomerController@restore')->name('customer.restore');
 
+        //CONTACT NAME
+        Route::get('/all/contacts', 'ContactNameController@getContacts');
+        Route::get('contactos', 'ContactNameController@index')->name('contactName.index');
+        Route::get('crear/contacto', 'ContactNameController@create')->name('contactName.create');
+        Route::post('contact/store', 'ContactNameController@store')->name('contactName.store');
+        Route::get('/editar/contacto/{id}', 'ContactNameController@edit')->name('contactName.edit');
+        Route::post('contact/update', 'ContactNameController@update')->name('contactName.update');
+        Route::post('contact/destroy', 'ContactNameController@destroy')->name('contactName.destroy');
+        Route::get('contactos/restore', 'ContactNameController@indexrestore')->name('contactName.indexrestore');
+        Route::get('/all/contacts/destroy', 'ContactNameController@getContactsDestroy');
+        Route::post('contact/restore', 'ContactNameController@restore')->name('contactName.restore');
+
         //MATERIAL TYPE
         Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes');
         Route::get('TiposMateriales', 'MaterialTypeController@index')->name('materialtype.index');
@@ -78,6 +90,25 @@ Route::middleware('auth')->group(function (){
         Route::get('/editar/categoria/{id}', 'CategoryController@edit')->name('category.edit');
         Route::post('category/update', 'CategoryController@update')->name('category.update');
         Route::post('category/destroy', 'CategoryController@destroy')->name('category.destroy');
+
+        //EXAMPLER
+        Route::get('/all/examplers', 'ExamplerController@getExamplers');
+        Route::get('Modelos', 'ExamplerController@index')->name('exampler.index');
+        Route::get('crear/modelo', 'ExamplerController@create')->name('exampler.create');
+        Route::post('exampler/store', 'ExamplerController@store')->name('exampler.store');
+        Route::get('/editar/modelo/{id}', 'ExamplerController@edit')->name('exampler.edit');
+        Route::post('exampler/update', 'ExamplerController@update')->name('exampler.update');
+        Route::post('exampler/destroy', 'ExamplerController@destroy')->name('exampler.destroy');
+
+        //BRAND
+        Route::get('/all/brands', 'BrandController@getBrands');
+        Route::get('Marcas', 'BrandController@index')->name('brand.index');
+        Route::get('crear/marca', 'BrandController@create')->name('brand.create');
+        Route::post('brand/store', 'BrandController@store')->name('brand.store');
+        Route::get('/editar/marca/{id}', 'BrandController@edit')->name('brand.edit');
+        Route::post('brand/update', 'BrandController@update')->name('brand.update');
+        Route::post('brand/destroy', 'BrandController@destroy')->name('brand.destroy');
+        Route::get('/get/exampler/{brand_id}', 'BrandController@getJsonBrands');
 
         //ROL
         Route::get('roles', 'RoleController@index')->name('role.index')

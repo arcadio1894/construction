@@ -18,11 +18,8 @@ class CreateCustomersTable extends Migration
             $table->string('business_name')->require();
             $table->string('RUC')->require()->unique();
             $table->string('code')->nullable()->unique();
-            $table->string('contact_name')->nullable();
-            $table->string('adress')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('address')->nullable();
             $table->string('location')->nullable();
-            $table->string('email')->require()->unique();
             $table->softDeletes();
             $table->timestamps();
         });

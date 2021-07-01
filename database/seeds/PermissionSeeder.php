@@ -284,5 +284,39 @@ class PermissionSeeder extends Seeder
             'name' => 'list_location',
             'description' => 'Ver ubicaciones'
         ]);
+
+        Permission::create([
+            'name' => 'list_brand',
+            'description' => 'Listar Marca'
+        ]);
+        Permission::create([
+            'name' => 'create_brand',
+            'description' => 'Crear Marca'
+        ]);
+        Permission::create([
+            'name' => 'update_brand',
+            'description' => 'Modificar Marca'
+        ]);
+        Permission::create([
+            'name' => 'destroy_brand',
+            'description' => 'Eliminar Marca'
+        ]);
+
+        Permission::create([
+            'name' => 'list_exampler',
+            'description' => 'Listar Modelo'
+        ]);
+        Permission::create([
+            'name' => 'create_exampler',
+            'description' => 'Crear Modelo'
+        ]);
+        Permission::create([
+            'name' => 'update_exampler',
+            'description' => 'Modificar Modelo'
+        ]);
+        Permission::create([
+            'name' => 'destroy_exampler',
+            'description' => 'Eliminar Modelo'
+        ]);
     }
 }

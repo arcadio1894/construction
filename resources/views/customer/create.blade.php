@@ -74,25 +74,9 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre de Contacto</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="contact_name" placeholder="Ejm: admin">
-                </div>
-            </div>
-
-            <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Telefono</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="phone" placeholder="Ejm: 123456789">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Direccion</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="adress" placeholder="Ejm: Jr Union">
+                    <input type="text" class="form-control" name="address" placeholder="Ejm: Jr Union">
                 </div>
             </div>
 
@@ -103,16 +87,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Email</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="email" placeholder="Ejm: admin@holi.com">
-                </div>
-            </div>
-        </div>
-
 
         <div class="text-center">
             <button type="submit" class="btn btn-outline-success">Guardar</button>
