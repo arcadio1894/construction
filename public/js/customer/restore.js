@@ -9,9 +9,7 @@ $(document).ready(function () {
                 { data: 'code' },
                 { data: 'business_name' },
                 { data: 'RUC' },
-                { data: 'contact_name' },
-                { data: 'phone' },
-                { data: 'adress' },
+                { data: 'address' },
                 { data: 'location' },
                 { data: null,
                     title: 'Acciones',
@@ -208,7 +206,7 @@ function restoreCustomer() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -218,7 +216,7 @@ function restoreCustomer() {
             $modalRestore.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

@@ -24,7 +24,9 @@ class MaterialSeeder extends Seeder
             'unit_price' => 0,
             'image' => 'no_image.png',
             'material_type_id' => 3,
-            'category_id' => 1
+            'category_id' => 1,
+            'brand_id' => 1,
+            'exampler_id' => 1
         ]);
 
         Material::create([
@@ -39,7 +41,9 @@ class MaterialSeeder extends Seeder
             'unit_price' => 0,
             'image' => 'no_image.png',
             'material_type_id' => 3,
-            'category_id' => 1
+            'category_id' => 1,
+            'brand_id' => 1,
+            'exampler_id' => 1,
         ]);
     }
 }

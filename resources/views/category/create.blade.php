@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeListCategory')
+@section('activeCreateCategory')
     active
 @endsection
 

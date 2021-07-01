@@ -9,9 +9,7 @@ $(document).ready(function () {
                 { data: 'code' },
                 { data: 'business_name' },
                 { data: 'RUC' },
-                { data: 'contact_name' },
-                { data: 'phone' },
-                { data: 'adress' },
+                { data: 'address' },
                 { data: 'location' },
                 { data: null,
                     title: 'Acciones',
@@ -19,9 +17,9 @@ $(document).ready(function () {
                     "render": function (item)
                     {
                         return '<a href="'+document.location.origin+ '/dashboard/editar/cliente/'+item.id+
-                        		'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>'+
-                        		' <button data-delete="'+item.id+'" '+'data-customer="'+item.contact_name+'" '+'data-company="'+item.business_name+'" '+
-                        		'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>' 
+                            '" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>'+
+                            ' <button data-delete="'+item.id+'" data-company="'+item.business_name+'" '+
+                            ' class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>'
                     } },
 
             ],
@@ -210,7 +208,7 @@ function destroyCustomer() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -220,7 +218,7 @@ function destroyCustomer() {
             $modalDelete.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
@@ -235,7 +233,7 @@ function destroyCustomer() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "4000",
+                        "timeOut": "2000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",

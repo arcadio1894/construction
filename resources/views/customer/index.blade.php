@@ -56,8 +56,6 @@
                 <th>Código</th>
                 <th>Razon Social</th>
                 <th>RUC</th>
-                <th>Nombre Contacto</th>
-                <th>Teléfono</th>                
                 <th>Direccion</th>
                 <th>Ubicación</th>
                 <th>Acciones</th>
@@ -80,7 +78,7 @@
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="customer_id" name="customer_id">
-                        <p id="customer"></p>
+                        <strong>¿Está seguro de eliminar a esta empresa cliente?</strong>
                         <p id="company"></p>
                     </div>
                     <div class="modal-footer">

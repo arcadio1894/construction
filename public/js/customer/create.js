@@ -30,7 +30,7 @@ function storeCustomer() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -39,7 +39,7 @@ function storeCustomer() {
                 });
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

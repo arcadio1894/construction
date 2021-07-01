@@ -27,11 +27,8 @@ class UpdateCustomerRequest extends FormRequest
             'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
             'ruc' => 'required|digits:11|string',
-            'contact_name' => 'string|max:255',
-            'adress' => 'string|max:255',
-            'phone' => 'string|min:6|max:15',
+            'address' => 'string|max:255',
             'location' => 'string|max:255',
-            'email' => 'required|string|email|max:255'
             
         ];
     }
@@ -52,23 +49,11 @@ class UpdateCustomerRequest extends FormRequest
             'ruc.digits' => 'El :attribute es demasiado largo.',
             'ruc.numeric' => 'El :attribute debe ser numerico.',
 
-            'contact_name.string' => 'El :attribute debe contener caracteres válidos.',
-            'contact_name.max' => 'El :attribute debe contener máximo 255 caracteres.',
-            
-            'adress.string' => 'La :attribute debe contener caracteres válidos.',            
-            'adress.max' => 'La :attribute debe contener máximo 255 caracteres.',
+            'address.string' => 'La :attribute debe contener caracteres válidos.',
+            'address.max' => 'La :attribute debe contener máximo 255 caracteres.',
 
-            'phone.string' => 'El :attribute debe contener caracteres válidos.',
-            'phone.min' => 'El :attribute debe contener mínimo 6 caracteres.',
-            'phone.max' => 'El :attribute debe contener máximo 15 caracteres.',
-            
             'location.string' => 'La :attribute debe contener caracteres válidos.',            
             'location.max' => 'La :attribute debe contener máximo 255 caracteres.',
-
-            'email.required' => 'El :attribute es obligatorio.',
-            'email.string' => 'El :attribute debe contener caracteres válidos.',
-            'email.email' => 'El :attribute no tiene formato de email adecuado.',
-            'email.max' => 'El :attribute es demasiado largo.',
         ];
     }
 
@@ -78,11 +63,8 @@ class UpdateCustomerRequest extends FormRequest
             'customer_id' => 'id del cliente',
             'business_name' => 'Razón Soacial del cliente',
             'ruc' => 'RUC del cliente',
-            'contact_name' => 'nombre de contacto del cliente',
-            'adress' => 'dirección del cliente',
-            'phone' => 'teléfono del cliente',
+            'address' => 'dirección del cliente',
             'location' => 'codUbicacioón del cliente',
-            'email' => 'email del cliente'
         ];
     }
 }

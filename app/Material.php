@@ -21,7 +21,9 @@ class Material extends Model
         'unit_price',
         'image',
         'material_type_id',
-        'category_id'
+        'category_id',
+        'brand_id',
+        'exampler_id'
     ];
 
     public function materialType()
@@ -32,6 +34,16 @@ class Material extends Model
     public function category()
     {
         return $this->belongsTo('App\Category');
+    }
+
+    public function exampler()
+    {
+        return $this->belongsTo('App\Exampler');
+    }
+
+    public function brand()
+    {
+        return $this->belongsTo('App\Brand');
     }
 
     public function equipments()
