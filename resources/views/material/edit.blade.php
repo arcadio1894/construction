@@ -96,6 +96,10 @@
                             <input type="file" id="image" name="image" class="form-control">
                             <img src="{{ asset('images/material/'.$material->image) }}" width="100px" height="100px" alt="{{ $material->description }}">
                         </div>
+                        <div class="form-group">
+                            <label for="serie">N° de serie </label>
+                            <input type="text" id="serie" name="serie" class="form-control" value="{{ $material->serie }}">
+                        </div>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -141,6 +145,81 @@
                                 @endforeach
                             </select>
                         </div>
+                        <div class="form-group">
+                            <label for="brand">Marca <span class="right badge badge-danger">(*)</span></label>
+                            <select id="brand" name="brand" class="form-control select2" style="width: 100%;">
+                                <option></option>
+                                @foreach( $brands as $brand )
+                                    <option value="{{ $brand->id }}" {{ ($brand->id === $material->brand_id) ? 'selected' : '' }}>{{ $brand->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <input type="hidden" id="exampler_id" value="{{ $material->exampler_id }}">
+                        <div class="form-group">
+                            <label for="exampler">Modelo <span class="right badge badge-danger">(*)</span></label>
+                            <select id="exampler" name="exampler" class="form-control select2" style="width: 100%;">
+
+                            </select>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Especificaciones (Opcional)</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-5">
+                                <label for="specification">Especificación <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="specification" class="form-control">
+                            </div>
+                            <div class="col-md-5">
+                                <label for="content">Contenido <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="content" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-add"> &nbsp; </label>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <div id="body-specifications"></div>
+                        @foreach( $specifications as $specification )
+                        <div class="form-group row">
+                            <div class="col-md-5">
+                                <input type="text" data-name name="specifications[]" value="{{ $specification->name }}" class="form-control">
+                            </div>
+                            <div class="col-md-5">
+                                <input type="text" data-content name="contents[]" value="{{ $specification->content }}" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" data-delete="btn-delete" class="btn btn-block btn-outline-danger">Quitar <i class="fas fa-trash"></i></button>
+                            </div>
+                        </div>
+                        @endforeach
+                        <template id="template-specification">
+                            <div class="form-group row">
+                                <div class="col-md-5">
+                                    <input type="text" data-name name="specifications[]" class="form-control">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" data-content name="contents[]" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" data-delete="btn-delete" class="btn btn-block btn-outline-danger">Quitar <i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -174,6 +253,9 @@
             });
             $('#priority').select2({
                 placeholder: "Selecione prioridad",
+            });
+            $('#brand').select2({
+                placeholder: "Selecione una marca",
             })
         })
     </script>
