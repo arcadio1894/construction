@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openCategory')
+@section('openBrand')
     menu-open
 @endsection
 
-@section('activeCategory')
+@section('activeBrand')
     active
 @endsection
 
-@section('activeCreateCategory')
+@section('activeListBrand')
     active
 @endsection
 
 @section('title')
-    Categorias
+    Modelo
 @endsection
 
 @section('styles-plugins')
@@ -34,37 +34,49 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Tipo</h1>
+    <h1 class="page-title">Modelos</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo Tipo de Material</h5>
-    <a href="{{ route('category.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Categorias </a>
+    <h5 class="card-title">Editar modelo {{$exampler->name}}</h5>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('category.store') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('exampler.update') }}" enctype="multipart/form-data">
         @csrf
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
-                <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tuberia Inoxidable">
-                </div>
-            </div>
-        </div>
+        <input type="hidden" class="form-control" name="exampler_id" value="{{$exampler->id}}">
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Descripcion</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Modelo</label>
                 <div class="col-sm-10">
-                     <input type="text" class="form-control" name="description" placeholder="Ejm: 5m*1m">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Marca" value="{{$exampler->name}}">
                 </div>
             </div>
+
+            <div class="col-md-6">
+                <label for="brand_id" class="col-12 col-form-label">Seleccione Marca</label>
+                <div class="col-sm-10">
+                    <select id="brand_id" name="brand_id" class="form-control select2" style="width: 100%;">
+                        <option></option>
+                        @foreach( $brands as $brand )
+                            <option value="{{ $brand->id }}" {{ $brand->id === $exampler->brand_id ? 'selected' : '' }}>{{ $brand->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="inputEmail3" class="col-12 col-form-label">Comentario</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" name="comment" placeholder="Ejm: Descripción" value="{{$exampler->comment}}">
+                </div>
+            </div>
+
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-outline-success">Guardar</button>
+            <button type="submit" class="btn btn-outline-success">Guardar Cambios</button>
             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
         </div>
         <!-- /.card-footer -->
@@ -82,5 +94,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/category/create.js') }}"></script>
+    <script src="{{ asset('js/exampler/edit.js') }}"></script>
 @endsection

@@ -87,7 +87,15 @@ class RoleSeeder extends Seeder
             'create_position',
             'update_position',
             'destroy_position',
-            'list_location'
+            'list_location',
+            'list_brand',
+            'create_brand',
+            'update_brand',
+            'destroy_brand',
+            'list_exampler',
+            'create_exampler',
+            'update_exampler',
+            'destroy_exampler'
         ]);
     }
 }

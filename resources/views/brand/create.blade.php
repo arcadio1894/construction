@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openCategory')
+@section('openBrand')
     menu-open
 @endsection
 
-@section('activeCategory')
+@section('activeBrand')
     active
 @endsection
 
-@section('activeCreateCategory')
+@section('activeCreateBrand')
     active
 @endsection
 
 @section('title')
-    Categorias
+    Marcas
 @endsection
 
 @section('styles-plugins')
@@ -34,31 +34,41 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Tipo</h1>
+    <h1 class="page-title">Marcas</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo Tipo de Material</h5>
-    <a href="{{ route('category.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Categorias </a>
+    <h5 class="card-title">Crear nueva marca</h5>
+    <a href="{{ route('brand.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Marcas </a>
+@endsection
+
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('brand.index') }}"><i class="fa fa-key"></i> Marcas</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+    </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('category.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('brand.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Marca</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tuberia Inoxidable">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Marca">
                 </div>
             </div>
-        </div>
 
-        <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Descripcion</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Comentario</label>
                 <div class="col-sm-10">
-                     <input type="text" class="form-control" name="description" placeholder="Ejm: 5m*1m">
+                     <input type="text" class="form-control" name="comment" placeholder="Ejm: Descripción">
                 </div>
             </div>
         </div>
@@ -82,5 +92,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/category/create.js') }}"></script>
+    <script src="{{ asset('js/brand/create.js') }}"></script>
 @endsection

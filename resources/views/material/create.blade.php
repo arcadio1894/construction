@@ -85,6 +85,10 @@
                             <label for="image">Imagen <span class="right badge badge-danger">(*)</span></label>
                             <input type="file" id="image" name="image" class="form-control">
                         </div>
+                        <div class="form-group">
+                            <label for="serie">N° de serie </label>
+                            <input type="text" id="serie" name="serie" class="form-control">
+                        </div>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -121,11 +125,75 @@
                         <div class="form-group">
                             <label for="category">Categoría <span class="right badge badge-danger">(*)</span></label>
                             <select id="category" name="category" class="form-control select2" style="width: 100%;">
+                                <option></option>
                                 @foreach( $categories as $category )
                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                 @endforeach
                             </select>
                         </div>
+
+                        <div class="form-group">
+                            <label for="brand">Marca <span class="right badge badge-danger">(*)</span></label>
+                            <select id="brand" name="brand" class="form-control select2" style="width: 100%;">
+                                <option></option>
+                                @foreach( $brands as $brand )
+                                    <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="exampler">Modelo <span class="right badge badge-danger">(*)</span></label>
+                            <select id="exampler" name="exampler" class="form-control select2" style="width: 100%;">
+
+                            </select>
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Especificaciones (Opcional)</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-5">
+                                <label for="specification">Especificación <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="specification" class="form-control">
+                            </div>
+                            <div class="col-md-5">
+                                <label for="content">Contenido <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="content" class="form-control">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-add"> &nbsp; </label>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+
+                        </div>
+                        <hr>
+                        <div id="body-specifications"></div>
+                        <template id="template-specification">
+                            <div class="form-group row">
+                                <div class="col-md-5">
+                                    <input type="text" data-name name="specifications[]" class="form-control">
+                                </div>
+                                <div class="col-md-5">
+                                    <input type="text" data-content name="contents[]" class="form-control">
+                                </div>
+                                <div class="col-md-2">
+                                    <button type="button" data-delete="btn-delete" class="btn btn-block btn-outline-danger">Quitar <i class="fas fa-trash"></i></button>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -153,9 +221,12 @@
             //Initialize Select2 Elements
             $('#material_type').select2({
                 placeholder: "Selecione tipo de material",
-            })
+            });
             $('#category').select2({
                 placeholder: "Selecione categoría",
+            });
+            $('#brand').select2({
+                placeholder: "Selecione una marca",
             })
         })
     </script>

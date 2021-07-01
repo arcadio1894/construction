@@ -24,6 +24,9 @@ class StoreMaterialRequest extends FormRequest
             'image' => 'image',
             'material_type' => 'required|exists:material_types,id',
             'category' => 'required|exists:categories,id',
+            'brand' => 'required|exists:brands,id',
+            'exampler' => 'required|exists:examplers,id',
+            'serie' => 'nullable|string|max:255',
         ];
     }
 
@@ -53,7 +56,14 @@ class StoreMaterialRequest extends FormRequest
             'material_type.exists' => 'El :attribute no existe en la base de datos.',
             'material_type.required' => 'El :attribute es obligatorio.',
             'category.exists' => 'El :attribute no existe en la base de datos.',
-            'category.required' => 'La :attribute es obligatoria.'
+            'category.required' => 'La :attribute es obligatoria.',
+            'brand.exists' => 'El :attribute no existe en la base de datos.',
+            'brand.required' => 'La :attribute es obligatoria.',
+            'exampler.exists' => 'El :attribute no existe en la base de datos.',
+            'exampler.required' => 'La :attribute es obligatoria.',
+            'serie.string' => 'El :attribute debe contener caracteres válidos.',
+            'serie.max' => 'La :attribute es demasiado largo.',
+            'serie.nullable' => 'La :attribute puede ser nula.'
         ];
     }
 
@@ -68,7 +78,10 @@ class StoreMaterialRequest extends FormRequest
             'unit_price' => 'precio unitario',
             'image' => 'imagen',
             'material_type' => 'tipo de material',
-            'category' => 'categoría'
+            'category' => 'categoría',
+            'brand' => 'marca',
+            'exampler' => 'modelo',
+            'serie' => 'serie'
         ];
     }
 

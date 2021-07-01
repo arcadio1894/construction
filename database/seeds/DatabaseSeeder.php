@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
         $this->call(CustomerSeeder::class);
         $this->call(ContactNameSeeder::class);
 
+        $this->call(BrandSeeder::class);
+        $this->call(ExamplerSeeder::class);
         $this->call(MaterialSeeder::class);
 
         $this->call(AreaSeeder::class);
