@@ -106,10 +106,12 @@ class MaterialController extends Controller
 
     public function edit($id)
     {
+        $specifications = Specification::where('material_id', $id)->get();
+        $brands = Brand::all();
         $categories = Category::all();
         $materialTypes = MaterialType::all();
         $material = Material::with(['category', 'materialType'])->find($id);
-        return view('material.edit', compact('categories', 'materialTypes', 'material'));
+        return view('material.edit', compact('specifications', 'brands', 'categories', 'materialTypes', 'material'));
 
     }
 
@@ -132,6 +134,9 @@ class MaterialController extends Controller
             $material->priority = $request->get('priority');
             $material->material_type_id = $request->get('material_type');
             $material->category_id = $request->get('category');
+            $material->brand_id = $request->get('brand');
+            $material->exampler_id = $request->get('exampler');
+            $material->serie = $request->get('serie');
             $material->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -148,6 +153,26 @@ class MaterialController extends Controller
                 $material->image = $filename;
                 $material->save();
             }
+
+            // TODO: Insertamos las especificaciones
+            $specifications = $request->get('specifications');
+            $contents = $request->get('contents');
+            if ( $request->has('specifications') )
+            {
+                Specification::where('material_id', $material->id)->delete();
+
+                for ( $i=0; $i< sizeof($specifications); $i++ )
+                {
+                    Specification::create([
+                        'name' => $specifications[$i],
+                        'content' => $contents[$i],
+                        'material_id' => $material->id
+                    ]);
+                }
+            } else {
+                Specification::where('material_id', $material->id)->delete();
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -162,6 +187,7 @@ class MaterialController extends Controller
         $validated = $request->validated();
 
         $material = Material::find($request->get('material_id'));
+        Specification::where('material_id', $request->get('material_id'))->delete();
 
         $material->delete();
 

@@ -276,6 +276,34 @@ Route::middleware('auth')->group(function (){
         Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')->name('output.confirmed')
             ->middleware('permission:create_material');
 
+        // TRANSFER
+        Route::get('transferencias', 'TransferController@index')->name('transfer.index')
+            ->middleware('permission:list_material');
+        Route::get('crear/transferencia', 'TransferController@create')->name('transfer.create')
+            ->middleware('permission:list_material');
+        Route::post('transfer/store', 'TransferController@store')->name('transfer.store')
+            ->middleware('permission:list_material');
+        Route::get('/get/json/transfer', 'TransferController@getTransfers')
+            ->middleware('permission:list_material');
+        Route::get('/get/json/transfer/material/{transfer_id}', 'TransferController@getJsonTransfers')
+            ->middleware('permission:list_material');
+        Route::post('editar/transferencia', 'TransferController@edit')->name('transfer.edit')
+            ->middleware('permission:create_material');
+        Route::post('transfer/update', 'TransferController@update')->name('transfer.update')
+            ->middleware('permission:create_material');
+        Route::post('transfer/cancel', 'TransferController@cancel')->name('transfer.cancel')
+            ->middleware('permission:create_material');
+
+        Route::get('get/warehouse/area/{area_id}', 'TransferController@getWarehouse')
+            ->middleware('permission:list_material');
+        Route::get('get/shelf/warehouse/{warehouse_id}', 'TransferController@getShelf')
+            ->middleware('permission:list_material');
+        Route::get('get/level/shelf/{shelf_id}', 'TransferController@getLevel')
+            ->middleware('permission:list_material');
+        Route::get('get/container/level/{level_id}', 'TransferController@getContainer')
+            ->middleware('permission:list_material');
+        Route::get('get/position/container/{container_id}', 'TransferController@getPosition')
+            ->middleware('permission:list_material');
     });
 });
 
