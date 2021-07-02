@@ -138,10 +138,11 @@
                                 <label for="btn-add"> &nbsp; </label>
                                 <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                             </div>
+                        </div>
                         <hr>
 
                         <div class="row">
-                            <div class="col-12">
+                            <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
                                         <h3 class="card-title">Materiales</h3>

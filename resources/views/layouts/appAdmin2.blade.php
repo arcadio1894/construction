@@ -488,6 +488,36 @@
                             @endcan
                         </ul>
                     </li>
+                    @endcan
+
+                        <li class="nav-header">TRANSFERENCIAS</li>
+                        <li class="nav-item has-treeview @yield('openTransfer')">
+                            <a href="#" class="nav-link @yield('activeTransfer')">
+                                <i class="nav-icon fas fa-truck-loading"></i>
+                                <p>
+                                    Transferencias
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('transfer.index') }}" class="nav-link @yield('activeListTransfer')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar traslados</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('transfer.create') }}" class="nav-link @yield('activeCreateTransfer')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear traslado</p>
+                                        </a>
+                                    </li>
+
+                            </ul>
+                        </li>
+
                     {{--<li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-boxes"></i>
@@ -529,7 +559,6 @@
                             </li>
                         </ul>
                     </li>--}}
-                    @endcan
 
                     <li class="nav-header">ENTRADAS</li>
                     <li class="nav-item has-treeview @yield('openEntryPurchase')">
