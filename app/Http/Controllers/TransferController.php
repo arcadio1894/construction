@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Area;
 use App\Container;
+
 use App\Http\Requests\StoreTransferRequest;
 use App\Item;
 use App\Level;
@@ -85,7 +86,6 @@ class TransferController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Transferencia guardada con éxito.'], 200);
-
     }
 
     public function show(Transfer $transfer)
@@ -168,6 +168,7 @@ class TransferController extends Controller
         return $array;
     }
 
+
     public function getTransfers()
     {
         $transfers = Transfer::with(['destinationLocation' => function ($query) {
@@ -178,4 +179,5 @@ class TransferController extends Controller
 
         return datatables($transfers)->toJson();
     }
+
 }

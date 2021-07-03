@@ -153,6 +153,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_material');
         Route::get('/all/materials', 'MaterialController@getAllMaterials')->name('all.materials')
             ->middleware('permission:list_material');
+        Route::get('view/material/items/{id}', 'MaterialController@getItems')->name('material.getItems');
+        Route::get('view/material/all/items/{id}', 'MaterialController@getItemsMaterial')->name('material.getItemsMaterial');
 
         //AREAS
         Route::get('areas', 'AreaController@index')->name('area.index')

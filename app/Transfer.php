@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transfer extends Model
 {
+
     protected $fillable = [
         'code',
         'destination_location',
@@ -21,4 +22,5 @@ class Transfer extends Model
     {
         return $this->hasMany('App\TransferDetail');
     }
+
 }

@@ -138,7 +138,9 @@
                                 <label for="btn-add"> &nbsp; </label>
                                 <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                             </div>
+
                         </div>
+
                         <hr>
 
                         <div class="row">

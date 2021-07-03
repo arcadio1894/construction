@@ -31,7 +31,7 @@
         <div class="preloader-inner position-relative">
             <div class="preloader-circle"></div>
             <div class="preloader-img pere-text">
-                <img src="{{ asset('landing/img/logo/loder-logo1.png') }}" alt="">
+                <img src="{{ asset('landing/img/logo/loder-logo.png') }}" alt="">
             </div>
         </div>
     </div>
@@ -69,7 +69,7 @@
                         <div class="col-xl-2 col-lg-2 col-md-2">
                             <div class="logo">
                                 <!-- logo-1 -->
-                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('landing/img/logo/logo1.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('landing/img/logo/logo.png') }}" alt=""></a>
                                 <!-- logo-2 -->
                                 <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('landing/img/logo/loder-logo1.png') }}" alt=""></a>
                             </div>
@@ -351,7 +351,7 @@
                         <div class="single-footer-caption mb-30">
                             <!-- logo -->
                             <div class="footer-logo">
-                                <a href="#"><img src="{{ asset('landing/img/logo/logo2_footer1.png') }}" alt=""></a>
+                                <a href="#"><img src="{{ asset('landing/img/logo/logo2_footer.png') }}" alt=""></a>
                             </div>
                             <div class="footer-tittle">
                                 <div class="footer-pera" style="text-align: justify;">

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 let $materials=[];
 let $materialsComplete=[];
 let $items=[];
@@ -41,6 +42,15 @@ $(document).ready(function () {
     $formCreate.on('submit', storeTransfer);
 
     $(document).on('click', '[data-deleteItem]', deleteItem);
+=======
+$(document).ready(function () {
+    $formCreate = $('#formCreate');
+    $formCreate.on('submit', storeMaterial);
+    
+    $('#btn-add').on('click', showTemplateSpecification);
+
+    $(document).on('click', '[data-delete]', deleteSpecification);
+>>>>>>> master
 
     $selectWarehouse = $('#warehouse');
     $('#area').change(function () {
@@ -119,7 +129,11 @@ $(document).ready(function () {
     $selectLevel.change(function () {
         $selectContainer.empty();
         $selectPosition.empty();
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> master
         var level =  $selectLevel.val();
         $.get( "/dashboard/get/container/level/"+level, function( data ) {
             $selectContainer.append($("<option>", {
@@ -164,6 +178,7 @@ var $selectShelf;
 var $selectLevel;
 var $selectContainer;
 var $selectPosition;
+<<<<<<< HEAD
 let $modalAddItems;
 
 var substringMatcher = function(strs) {
@@ -295,6 +310,32 @@ function storeTransfer() {
         url: createUrl,
         method: 'POST',
         data: form,
+=======
+
+function showTemplateSpecification() {
+    var specification = $('#specification').val();
+    var content = $('#content').val();
+
+    $('#specification').val('');
+    $('#content').val('');
+
+    renderTemplateItem(specification, content);
+}
+
+function deleteSpecification() {
+    //console.log($(this).parent().parent().parent());
+    $(this).parent().parent().remove();
+}
+
+function storeMaterial() {
+    event.preventDefault();
+    // Obtener la URL
+    var createUrl = $formCreate.data('url');
+    $.ajax({
+        url: createUrl,
+        method: 'POST',
+        data: new FormData(this),
+>>>>>>> master
         processData:false,
         contentType:false,
         success: function (data) {
@@ -348,6 +389,7 @@ function storeTransfer() {
     });
 }
 
+<<<<<<< HEAD
 function deleteItem() {
     //console.log($(this).parent().parent().parent());
     var itemToRemove = $(this).attr('data-deleteItem');
@@ -383,6 +425,13 @@ function renderTemplateItem(i, code, location, length, width, weight, price, id)
     clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
     clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
     $('#body-items').append(clone);
+=======
+function renderTemplateItem(specification, content) {
+    var clone = activateTemplate('#template-specification');
+    clone.querySelector("[data-name]").setAttribute('value', specification);
+    clone.querySelector("[data-content]").setAttribute('value', content);
+    $('#body-specifications').append(clone);
+>>>>>>> master
 }
 
 function activateTemplate(id) {

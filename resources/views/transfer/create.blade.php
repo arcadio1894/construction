@@ -17,12 +17,17 @@
 @endsection
 
 @section('styles-plugins')
+<<<<<<< HEAD
     <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
 
+=======
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+>>>>>>> master
 @endsection
 
 @section('styles')
@@ -30,6 +35,7 @@
         .select2-search__field{
             width: 100% !important;
         }
+<<<<<<< HEAD
         .modal-dialog {
             height: 100% !important;
         }
@@ -38,6 +44,8 @@
             height: auto;
             min-height: 100%;
         }
+=======
+>>>>>>> master
     </style>
 @endsection
 
@@ -152,7 +160,11 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="btn-add"> &nbsp; </label>
+<<<<<<< HEAD
                                 <button type="button" id="btn-addItems" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+=======
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+>>>>>>> master
                             </div>
                         </div>
 
@@ -169,6 +181,10 @@
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                             <tr>
+<<<<<<< HEAD
+=======
+                                                <th>ID</th>
+>>>>>>> master
                                                 <th>Material</th>
                                                 <th>Item</th>
                                                 <th>Ubicación</th>
@@ -177,6 +193,7 @@
                                                 <th>Acciones</th>
                                             </tr>
                                             </thead>
+<<<<<<< HEAD
                                             <tbody id="body-materials">
 
 
@@ -184,6 +201,13 @@
                                             <template id="item-selected">
                                                 <tr>
                                                     <td data-description>183</td>
+=======
+                                            <tbody id="body-items">
+                                            <template id="item-selected">
+                                                <tr>
+                                                    <td data-id>183</td>
+                                                    <td data-material>John Doe</td>
+>>>>>>> master
                                                     <td data-item>John Doe</td>
                                                     <td data-location>John Doe</td>
                                                     <td data-state>John Doe</td>
@@ -193,6 +217,11 @@
                                                     </td>
                                                 </tr>
                                             </template>
+<<<<<<< HEAD
+=======
+
+                                            </tbody>
+>>>>>>> master
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
@@ -214,6 +243,7 @@
         </div>
         <!-- /.card-footer -->
     </form>
+<<<<<<< HEAD
 
     <div id="modalAddItems" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -286,6 +316,8 @@
             </div>
         </div>
     </div>
+=======
+>>>>>>> master
 @endsection
 
 @section('plugins')
@@ -294,8 +326,11 @@
 @endsection
 
 @section('scripts')
+<<<<<<< HEAD
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
 
+=======
+>>>>>>> master
     <script>
         $(function () {
             //Initialize Select2 Elements

@@ -1,25 +1,31 @@
+function format ( d ) {
+    return 'Estado: '+d.state+'<br>'+
+        'Estado de Item: '+d.state_item+'<br>'+
+        'Tipo de Material: '+d.material_type.name+'<br>';
+}
+
 $(document).ready(function () {
-    $('#dynamic-table').DataTable( {
+    var idMaterial = $("#id-material").val();
+
+    var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/contacts/destroy",
+            url: "/dashboard/view/material/all/items/"+idMaterial,
             dataSrc: 'data'
         },
         bAutoWidth: false,
         "aoColumns": [
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
+            },
             { data: 'code' },
-            { data: 'name' },
-            { data: 'customer.business_name' },
-            { data: 'phone' },
-            { data: 'email' },
-            { data: null,
-                title: 'Acciones',
-                wrap: true,
-                "render": function (item)
-                {
-                    return ' <button data-restore="'+item.id+'" '+'data-contact="'+item.name+'" '+'data-company="'+item.customer.business_name+'" '+
-                            ' class="btn btn-outline-success btn-sm"><i class="fas fa-trash-restore"></i></button>'
-                } },
-
+            { data: 'length' },
+            { data: 'width' },
+            { data: 'weight' },
+            { data: 'price' },
+            { data: 'percentage' },
         ],
         "aaSorting": [],
 
@@ -162,89 +168,47 @@ $(document).ready(function () {
 
     } );
 
-    $formRestore = $('#formRestore');
-    $formRestore.on('submit', restoreCustomer);
-    $modalRestore = $('#modalRestore');
-    $(document).on('click', '[data-restore]', openModalRestore);
-});
+    // Array to track the ids of the details displayed rows
+    var detailRows = [];
 
-var $formRestore;
-var $modalRestore;
+    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+        var tr = $(this).closest('tr');
+        var row = table.row( tr );
+        var idx = $.inArray( tr.attr('id'), detailRows );
 
-function openModalRestore() {
-<<<<<<< HEAD
-    var customer_id = $(this).data('restore');
-=======
-    var customer_id = $(this).data('restore'); 
->>>>>>> master
-    var contact = $(this).data('contact');
-    var company = $(this).data('company');
+        if ( row.child.isShown() ) {
+            tr.removeClass( 'details' );
+            row.child.hide();
 
-    $modalRestore.find('[id=contactName_id]').val(customer_id);
-    $modalRestore.find('[id=contact]').html('<b>Contacto: </b>'+contact);
-    $modalRestore.find('[id=company]').html('<b>Empresa: </b>'+company);
+            // Remove from the 'open' array
+            detailRows.splice( idx, 1 );
+        }
+        else {
+            tr.addClass( 'details' );
+            row.child( format( row.data() ) ).show();
 
-    $modalRestore.modal('show');
-}
-
-function restoreCustomer() {
-    event.preventDefault();
-    // Obtener la URL
-    var restoreUrl = $formRestore.data('url');
-    $.ajax({
-        url: restoreUrl,
-        method: 'POST',
-        data: new FormData(this),
-        processData:false,
-        contentType:false,
-        success: function (data) {
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalRestore.modal('hide');
-            setTimeout( function () {
-                location.reload();
-            }, 2000 )
-        },
-        error: function (data) {
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "4000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
+            // Add to the 'open' array
+            if ( idx === -1 ) {
+                detailRows.push( tr.attr('id') );
             }
+        }
+    } );
 
+    // On each draw, loop over the `detailRows` array and show any child rows
+    table.on( 'draw', function () {
+        $.each( detailRows, function ( i, id ) {
+            $('#'+id+' td.details-control').trigger( 'click' );
+        } );
+    } );
 
-        },
-    });
-}
+    $(document).on('click', '[data-column]', function (e) {
+        //e.preventDefault();
+
+        // Get the column API object
+        var column = table.column( $(this).attr('data-column') );
+
+        // Toggle the visibility
+        column.visible( ! column.visible() );
+    } );
+
+});

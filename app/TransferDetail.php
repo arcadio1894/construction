@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class TransferDetail extends Model
 {
+
     protected $fillable = [
         'transfer_id',
         'item_id',
@@ -26,4 +27,5 @@ class TransferDetail extends Model
     {
         return $this->belongsTo('App\Location', 'origin_location');
     }
+
 }
