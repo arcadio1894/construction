@@ -172,7 +172,7 @@ var $formRestore;
 var $modalRestore;
 
 function openModalRestore() {
-    var customer_id = $(this).data('restore');
+    var customer_id = $(this).data('restore'); 
     var contact = $(this).data('contact');
     var company = $(this).data('company');
 
