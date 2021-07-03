@@ -137,9 +137,8 @@ class ContactNameController extends Controller
 
     public function getContactsDestroy()
     {
-        
         $contactNames = ContactName::withTrashed()->with('customer')->get();
-        
+
         return datatables($contactNames)->toJson();
         //dd(datatables($customers)->toJson());
     }
