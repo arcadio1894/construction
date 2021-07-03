@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\ContactName;
+use App\Customer;
+
 use App\Http\Requests\DeleteCustomerRequest;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Requests\RestoreCustomerRequest;
-use App\Customer;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -83,9 +86,15 @@ class CustomerController extends Controller
 
         DB::beginTransaction();
         try {
-            
-            $customer = Customer::find($request->get('customer_id'));
 
+            $customer = Customer::find($request->get('customer_id'));    
+
+            $contacts = ContactName::where('customer_id', $customer->id)->get();
+
+            foreach ($contacts as $contact) {
+               $contact->delete(); 
+            }
+            
             $customer->delete();
 
             DB::commit();
