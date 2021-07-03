@@ -45,7 +45,10 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
+                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  '+  
+                                '<button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  ' +
+                                '<a href="'+document.location.origin+ '/dashboard/view/items/'+item.id+'" class="btn btn-outline-info btn-sm"><i class="fa fa-eye"></i> </a>'
+                    } },
 
             ],
             "aaSorting": [],
