@@ -17,14 +17,26 @@
 @endsection
 
 @section('styles-plugins')
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
+
 @endsection
 
 @section('styles')
     <style>
         .select2-search__field{
             width: 100% !important;
+        }
+        .modal-dialog {
+            height: 100% !important;
+        }
+
+        .modal-content {
+            height: auto;
+            min-height: 100%;
         }
     </style>
 @endsection
@@ -140,7 +152,7 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="btn-add"> &nbsp; </label>
-                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                <button type="button" id="btn-addItems" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                             </div>
                         </div>
 
@@ -157,7 +169,6 @@
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                             <tr>
-                                                <th>ID</th>
                                                 <th>Material</th>
                                                 <th>Item</th>
                                                 <th>Ubicación</th>
@@ -166,11 +177,13 @@
                                                 <th>Acciones</th>
                                             </tr>
                                             </thead>
-                                            <tbody id="body-items">
+                                            <tbody id="body-materials">
+
+
+                                            </tbody>
                                             <template id="item-selected">
                                                 <tr>
-                                                    <td data-id>183</td>
-                                                    <td data-material>John Doe</td>
+                                                    <td data-description>183</td>
                                                     <td data-item>John Doe</td>
                                                     <td data-location>John Doe</td>
                                                     <td data-state>John Doe</td>
@@ -180,8 +193,6 @@
                                                     </td>
                                                 </tr>
                                             </template>
-
-                                            </tbody>
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
@@ -203,6 +214,78 @@
         </div>
         <!-- /.card-footer -->
     </form>
+
+    <div id="modalAddItems" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar items</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="col-sm-12 control-label" for="material_selected"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected" name="material_selected" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="col-sm-12 control-label"> Items y ubicaciones </label>
+                        </div>
+                    </div>
+
+                    <div class="table-responsive p-0" style="height: 300px;">
+                        <table class="card-body table table-head-fixed text-nowrap">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Serie</th>
+                                <th>Ubicación</th>
+                                <th>Largo</th>
+                                <th>Ancho</th>
+                                <th>Peso</th>
+                                <th>Precio</th>
+                                <th>Selección</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-items">
+
+
+                            </tbody>
+                            <template id="template-item">
+                                <tr>
+                                    <td data-id>John Doe</td>
+                                    <td data-serie>John Doe</td>
+                                    <td data-location>John Doe</td>
+                                    <td data-length>11-7-2014</td>
+                                    <td data-width>11-7-2014</td>
+                                    <td data-weight>11-7-2014</td>
+                                    <td data-price>11-7-2014</td>
+                                    <td>
+                                        <div class="icheck-success d-inline">
+                                            <input type="checkbox" data-selected id="checkboxSuccess1">
+                                            <label for="checkboxSuccess1" data-label></label>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </template>
+                        </table>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-saveItems" class="btn btn-outline-primary">Agregar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -211,6 +294,8 @@
 @endsection
 
 @section('scripts')
+    <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
+
     <script>
         $(function () {
             //Initialize Select2 Elements
