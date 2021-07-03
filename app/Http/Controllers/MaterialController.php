@@ -11,6 +11,8 @@ use App\Http\Requests\UpdateMaterialRequest;
 use App\Material;
 use App\MaterialType;
 use App\Specification;
+use App\Item;
+use APP\DetailEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -214,5 +216,33 @@ class MaterialController extends Controller
 
         //dd($materials);
         return $array;
+    }
+
+    public function getItems($id)
+    {
+        /*
+        $items = Item::where('material_id', $id)->get();
+        $brands = Brand::all();
+        $categories = Category::all();
+        $materialTypes = MaterialType::all();
+        $material = Material::with(['category', 'materialType'])->find($id);
+        return view('material.edit', compact('items', 'brands', 'categories', 'materialTypes', 'material'));
+        */
+
+        $material = Material::find($id);
+        //$items = Item::where('material_id', $id)->get();
+        //return view('material.items', compact('items', 'material'));
+        return view('material.items', compact('material'));    
+
+    }
+
+    public function getItemsMaterial($id)
+    {
+
+        $items = Item::where('material_id', $id)->with('MaterialType')->with('DetailEntry')->get();
+
+        //dd(datatables($items)->toJson());
+        return datatables($items)->toJson();
+
     }
 }
