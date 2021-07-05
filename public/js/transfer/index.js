@@ -7,25 +7,16 @@ function format ( d ) {
 $(document).ready(function () {
     var table = $('#dynamic-table').DataTable( {
             ajax: {
-<<<<<<< HEAD
                 url: "/dashboard/get/json/transfer",
-=======
-                url: "/dashboard/all/materials",
->>>>>>> master
                 dataSrc: 'data'
             },
             bAutoWidth: false,
             "aoColumns": [
-<<<<<<< HEAD
                 /*{
-=======
-                {
->>>>>>> master
                     "class":          "details-control",
                     "orderable":      false,
                     "data":           null,
                     "defaultContent": ""
-<<<<<<< HEAD
                 },*/
                 { data: 'code' },
                 { data: null,
@@ -46,23 +37,14 @@ $(document).ready(function () {
                         return '<p> '+ location +'</p>';
                     }
                 },
-=======
-                },
-                { data: 'code' },
-                { data: 'date_transfer' },
-                { data: 'destination_location' },
->>>>>>> master
                 { data: 'state' },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
                     "render": function (item)
                     {
-<<<<<<< HEAD
                         return '<a href="#" class="btn btn-outline-success btn-sm"><i class="fa fa-check"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'
-=======
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'
->>>>>>> master
+
                     }
                 }
 

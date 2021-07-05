@@ -46,11 +46,8 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de transferencias</h5>
-<<<<<<< HEAD
+
     <a href="{{ route('transfer.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo traslado </a>
-=======
-    <a href="{{ route('material.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo material </a>
->>>>>>> master
 @endsection
 
 @section('page-breadcrumb')
@@ -67,10 +64,8 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-<<<<<<< HEAD
-=======
+
                 <th></th>
->>>>>>> master
                 <th>Código</th>
                 <th>Fecha de traslado</th>
                 <th>Ubicación Destino</th>
@@ -119,9 +114,6 @@
 @endsection
 
 @section('scripts')
-<<<<<<< HEAD
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
-=======
->>>>>>> master
     <script src="{{ asset('js/transfer/index.js') }}"></script>
 @endsection
