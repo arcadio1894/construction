@@ -232,14 +232,14 @@ class MaterialController extends Controller
         $material = Material::find($id);
         //$items = Item::where('material_id', $id)->get();
         //return view('material.items', compact('items', 'material'));
-        return view('material.items', compact('material'));    
+        return view('material.items', compact('material'));
 
     }
 
     public function getItemsMaterial($id)
     {
 
-        $items = Item::where('material_id', $id)->with('MaterialType')->with('DetailEntry')->get();
+        $items = Item::where('material_id', $id)->whereIn('state_item', ['entered', 'scraped'])->with('material')->with('MaterialType')->with('DetailEntry')->get();
 
         //dd(datatables($items)->toJson());
         return datatables($items)->toJson();

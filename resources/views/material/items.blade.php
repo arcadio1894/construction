@@ -56,12 +56,14 @@
             <thead>
             <tr>
                 <th></th>
+                <th>Material</th>
                 <th>Código</th>
                 <th>Largo</th>
                 <th>Ancho</th>
                 <th>Peso</th>
                 <th>Precio</th>
                 <th>Porcentaje</th>
+                <th>Estado</th>
             </tr>
             </thead>
             <tbody>

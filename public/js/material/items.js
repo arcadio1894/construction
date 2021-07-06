@@ -20,12 +20,24 @@ $(document).ready(function () {
                 "data":           null,
                 "defaultContent": ""
             },
+            { data: 'material.description' },
             { data: 'code' },
             { data: 'length' },
             { data: 'width' },
             { data: 'weight' },
             { data: 'price' },
             { data: 'percentage' },
+            { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    var status = (item.state_item === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
+                        (item.state_item === 'scraped') ? '<span class="badge bg-warning">Retazo</span>' :
+                            'Indefinido';
+                    return '<p> '+status+' </p>'
+                }
+            },
         ],
         "aaSorting": [],
 
