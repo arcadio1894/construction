@@ -80,7 +80,7 @@ class MaterialController extends Controller
 
             $specifications = $request->get('specifications');
             $contents = $request->get('contents');
-            if ( $specifications !== null || $specifications !== "" )
+            if ( $request->has('specifications') )
             {
                 for ( $i=0; $i< sizeof($specifications); $i++ )
                 {
