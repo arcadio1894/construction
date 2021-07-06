@@ -313,7 +313,7 @@ function storeOutputRequest() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                //location.reload();
+                location.reload();
             }, 2000 )
         },
         error: function (data) {
