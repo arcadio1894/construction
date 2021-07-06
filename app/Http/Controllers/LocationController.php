@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Item;
 use App\Location;
 use Illuminate\Http\Request;
 
@@ -64,5 +65,20 @@ class LocationController extends Controller
         }
         //dd($array);
         return $array;
+    }
+
+    public function getItemsLocation($id)
+    {
+        $items = Item::where('location_id', $id)->whereIn('state_item', ['entered', 'scraped'])->with('material')->with('MaterialType')->with('DetailEntry')->get();
+
+        //dd(datatables($items)->toJson());
+        return datatables($items)->toJson();
+
+    }
+
+    public function getMaterialsByLocation($id)
+    {
+        $location = Location::with(['area', 'warehouse', 'shelf', 'level', 'container', 'position'])->find($id);
+        return view('inventory.items', compact('location'));
     }
 }

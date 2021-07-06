@@ -3,7 +3,8 @@ function format ( d ) {
         'Almacén: '+d.warehouse.name+'<br>'+
         'Anaquel: '+d.shelf.name+'<br>'+
         'Nivel: '+d.level.name+'<br>'+
-        'Contenedor: '+d.container.name+'<br>';
+        'Contenedor: '+d.container.name+'<br>'+
+        'Posición: '+d.position.name+'<br>';
 }
 
 $(document).ready(function () {

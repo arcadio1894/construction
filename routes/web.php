@@ -226,6 +226,8 @@ Route::middleware('auth')->group(function (){
         Route::get('ubicaciones', 'LocationController@index')->name('location.index')
             ->middleware('permission:list_location');
         Route::get('/all/locations', 'LocationController@getLocations');
+        Route::get('/ver/materiales/ubicacion/{location_id}', 'LocationController@getMaterialsByLocation');
+        Route::get('/view/location/all/items/{id}', 'LocationController@getItemsLocation')->name('material.getItemsMaterial');
 
         // ENTRY
         Route::get('entradas/retaceria', 'EntryController@indexEntryScraps')->name('entry.scrap.index')

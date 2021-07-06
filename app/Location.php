@@ -45,4 +45,9 @@ class Location extends Model
     {
         return $this->belongsTo('App\Position');
     }
+
+    public function items()
+    {
+        return $this->hasMany('App\Item');
+    }
 }
