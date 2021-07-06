@@ -96,10 +96,10 @@
                             <input type="file" id="image" name="image" class="form-control">
                             <img src="{{ asset('images/material/'.$material->image) }}" width="100px" height="100px" alt="{{ $material->description }}">
                         </div>
-                        <div class="form-group">
+                    <!--<div class="form-group">
                             <label for="serie">N° de serie </label>
                             <input type="text" id="serie" name="serie" class="form-control" value="{{ $material->serie }}">
-                        </div>
+                        </div>-->
                     </div>
                     <!-- /.card-body -->
                 </div>

@@ -85,10 +85,10 @@
                             <label for="image">Imagen <span class="right badge badge-danger">(*)</span></label>
                             <input type="file" id="image" name="image" class="form-control">
                         </div>
-                        <div class="form-group">
+                        <!--<div class="form-group">
                             <label for="serie">N° de serie </label>
                             <input type="text" id="serie" name="serie" class="form-control">
-                        </div>
+                        </div>-->
                     </div>
                     <!-- /.card-body -->
                 </div>
