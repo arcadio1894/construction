@@ -1,7 +1,14 @@
 function format ( d ) {
+    var location = 'AR:'+d.location.area.name+
+        '|AL:'+d.location.warehouse.name+
+        '|ES:'+d.location.shelf.name+
+        '|FIL:'+d.location.level.name+
+        '|COL:'+d.location.container.name+
+        '|POS:'+d.location.position.name;
     return 'Estado: '+d.state+'<br>'+
         'Estado de Item: '+d.state_item+'<br>'+
-        'Tipo de Material: '+d.material_type.name+'<br>';
+        'Tipo de Material: '+d.material_type.name+'<br>'+
+        'Ubicación: '+location+'<br>';
 }
 
 $(document).ready(function () {

@@ -239,7 +239,14 @@ class MaterialController extends Controller
     public function getItemsMaterial($id)
     {
 
-        $items = Item::where('material_id', $id)->whereIn('state_item', ['entered', 'scraped'])->with('material')->with('MaterialType')->with('DetailEntry')->get();
+        $items = Item::where('material_id', $id)
+            ->whereIn('state_item', ['entered', 'scraped'])
+            ->with(['location' => function ($query) {
+                $query->with(['area', 'warehouse', 'shelf', 'level', 'container', 'position']);
+            }])
+            ->with('material')
+            ->with('MaterialType')
+            ->with('DetailEntry')->get();
 
         //dd(datatables($items)->toJson());
         return datatables($items)->toJson();
