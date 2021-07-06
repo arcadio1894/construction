@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width initial-scale=1.0">
-    <title>{{ env('APP_NAME') }} | @yield('title')</title>
+    <title>{{ config('app.name', 'Laravel') }} | @yield('title')</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('landing/img/favicon.ico') }}">
     <!-- GLOBAL MAINLY STYLES-->
     <link href="{{ asset('admin/vendors/bootstrap/dist/css/bootstrap.min.css') }}" rel="stylesheet" />

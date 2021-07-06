@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} | @yield('title')</title>
+    <title>{{ config('app.name', 'Sermeind') }} | @yield('title')</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
@@ -161,7 +161,7 @@
     </div>
     <!-- Header Page End-->
 
-    @yield('content')  
+    @yield('content')
 
 </main>
 <footer>

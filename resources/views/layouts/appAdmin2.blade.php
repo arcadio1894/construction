@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <title>{{ env('APP_NAME') }} | @yield('title')</title>
+    <title>{{ config('app.name', 'Sermeind') }} | @yield('title')</title>
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('landing/img/favicon.ico') }}">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -153,7 +153,7 @@
         <a href="{{ url('/') }}" class="brand-link">
             <img src="{{ asset('admin/dist/img/AdminLTELogo.png') }}" alt="AdminLTE Logo" class="brand-image img-circle elevation-3"
                  style="opacity: .8">
-            <span class="brand-text font-weight-light">Construction</span>
+            <span class="brand-text font-weight-light">Sermeind</span>
         </a>
 
         <!-- Sidebar -->
@@ -213,7 +213,7 @@
                     <li class="nav-header">MANTENEDORES</li>
                     <li class="nav-item has-treeview @yield('openCustomer')">
 
-                        <a href="#" class="nav-link @yield('activeCustomer')">         
+                        <a href="#" class="nav-link @yield('activeCustomer')">
                             <i class="nav-icon fas fa-truck-loading"></i>
                             <p>
                                 Clientes
@@ -394,7 +394,7 @@
                     @endcan
                     @can('list_materialType')
                     <li class="nav-item has-treeview @yield('openMaterialType')">
-                        <a href="#" class="nav-link @yield('activeMaterialType')">   
+                        <a href="#" class="nav-link @yield('activeMaterialType')">
                             <i class="nav-icon fas fa-boxes"></i>
                             <p>
                                 Tipo Materiales
