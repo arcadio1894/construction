@@ -50,7 +50,11 @@ $(document).ready(function () {
     $('#btn-add').on('click', addItems);
     $modalAddItems = $('#modalAddItems');
 
+    $modalAddGroupItems = $('#modalAddGroupItems');
+
     $('#btn-saveItems').on('click', saveTableItems);
+
+    $('#btn-saveGroupItems').on('click', saveTableItems);
 
     $(document).on('click', '[data-delete]', deleteItem);
 
@@ -85,56 +89,91 @@ var substringMatcher = function(strs) {
 let $formCreate;
 
 let $modalAddItems;
+let $modalAddGroupItems;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
 
 function saveTableItems() {
+
     var series_selected = [];
     var locations_selected = [];
     var states_selected = [];
 
-    $("[data-series]").each(function(){
-        series_selected.push( $(this).val() );
-    });
+    if ($('[name="my-checkbox"]').is(':checked')) {
+        let quantity = $('#quantity_GroupSelected').val();
+        let material_name = $('#material_GroupSelected').val();
+        let material_price = $('#price_GroupSelected').val();
+        let material_location = $('#locationGroup').val();
+        let material_state = $('#stateGroup').val();
+        let state = $('#stateGroup').children("option:selected").val();
+        let state_description = $('#stateGroup').children("option:selected").text();
 
-    $("[data-states]").each(function(){
-        states_selected.push( { 'state': $(this).children("option:selected").val(), 'description': $(this).children("option:selected").text()}  );
-    });
-
-    console.log(states_selected);
-
-    $("[data-locations]").each(function(){
-        if ( $(this).val() !== '' )
+        for ( var j=0; j<quantity; j++ )
         {
-            const result = $locationsComplete.find( location => location.location === $(this).val() );
-            locations_selected.push( {'id':result.id, 'location':result.location} );
+            const material = $materialsComplete.find( material => material.material === material_name );
+            const location = $locationsComplete.find( location => location.location === material_location );
+            const code = rand_code($caracteres, $longitud);
+
+            $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': material.id, 'item': code, 'location': location.location, 'id_location':location.id, 'state': state, 'state_description': state_description });
+            renderTemplateMaterial($items.length, material_price, material_name, code,  location.location, state_description);
         }
 
-    });
+        $('#material_search').val('');
+        $('#quantity').val('');
+        $('#price').val('');
+        $('#material_GroupSelected').val('');
+        $('#quantity_GroupSelected').val('');
+        $('#price_GroupSelected').val('');
+        //$('#body-items').html('');
 
-    let material_name = $('#material_selected').val();
-    let material_quantity = $('#quantity_selected').val();
-    let material_price = $('#price_selected').val();
+        $modalAddGroupItems.modal('hide');
 
-    for ( var i=0; i<series_selected.length; i++ )
-    {
-        const result = $materialsComplete.find( material => material.material === material_name );
-        $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
-        renderTemplateMaterial($items.length, material_price, material_name, series_selected[i],  locations_selected[i].location, states_selected[i].description);
-        $('.select2').select2();
+    } else {
+        $("[data-series]").each(function(){
+            series_selected.push( $(this).val() );
+        });
+
+        $("[data-states]").each(function(){
+            states_selected.push( { 'state': $(this).children("option:selected").val(), 'description': $(this).children("option:selected").text()}  );
+        });
+
+        console.log(states_selected);
+
+        $("[data-locations]").each(function(){
+            if ( $(this).val() !== '' )
+            {
+                const result = $locationsComplete.find( location => location.location === $(this).val() );
+                locations_selected.push( {'id':result.id, 'location':result.location} );
+            }
+
+        });
+
+        let material_name = $('#material_selected').val();
+        let material_quantity = $('#quantity_selected').val();
+        let material_price = $('#price_selected').val();
+
+        for ( var i=0; i<series_selected.length; i++ )
+        {
+            const result = $materialsComplete.find( material => material.material === material_name );
+            $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
+            renderTemplateMaterial($items.length, material_price, material_name, series_selected[i],  locations_selected[i].location, states_selected[i].description);
+            $('.select2').select2();
+        }
+
+        $('#material_search').val('');
+        $('#quantity').val('');
+        $('#price').val('');
+        $('#material_selected').val('');
+        $('#quantity_selected').val('');
+        $('#price_selected').val('');
+        $('#body-items').html('');
+
+        $modalAddItems.modal('hide');
     }
 
-    $('#material_search').val('');
-    $('#quantity').val('');
-    $('#price').val('');
-    $('#material_selected').val('');
-    $('#quantity_selected').val('');
-    $('#price_selected').val('');
-    $('#body-items').html('');
 
-    $modalAddItems.modal('hide');
 }
 
 function addItems() {
@@ -208,40 +247,61 @@ function addItems() {
     }
 
     let material_name = $('#material_search').val();
-    $modalAddItems.find('[id=material_selected]').val(material_name);
-    $modalAddItems.find('[id=material_selected]').prop('disabled', true);
     let material_quantity = $('#quantity').val();
-    $modalAddItems.find('[id=quantity_selected]').val(material_quantity);
-    $modalAddItems.find('[id=quantity_selected]').prop('disabled', true);
     let material_price = $('#price').val();
-    $modalAddItems.find('[id=price_selected]').val(material_price);
-    $modalAddItems.find('[id=price_selected]').prop('disabled', true);
 
-    $('#body-items').html('');
-
-    for (var i = 0; i<material_quantity; i++)
+    if($('[name="my-checkbox"]').is(':checked'))
     {
-        renderTemplateItem();
-        $('.select2').select2();
-    }
+        //alert('Es agrupado');
+        $('.locationGroup').typeahead('destroy');
+        $modalAddGroupItems.find('[id=material_GroupSelected]').val(material_name);
+        $modalAddGroupItems.find('[id=material_GroupSelected]').prop('disabled', true);
+        $modalAddGroupItems.find('[id=quantity_GroupSelected]').val(material_quantity);
+        $modalAddGroupItems.find('[id=quantity_GroupSelected]').prop('disabled', true);
+        $modalAddGroupItems.find('[id=price_GroupSelected]').val(material_price);
+        $modalAddGroupItems.find('[id=price_GroupSelected]').prop('disabled', true);
 
-    $('.locations').typeahead({
-            hint: true,
-            highlight: true, /* Enable substring highlighting */
-            minLength: 1 /* Specify minimum characters required for showing suggestions */
-        },
+        $('.locationGroup').typeahead({
+                hint: true,
+                highlight: true, /* Enable substring highlighting */
+                minLength: 1 /* Specify minimum characters required for showing suggestions */
+            },
+            {
+                limit: 12,
+                source: substringMatcher($locations)
+            });
+
+        $modalAddGroupItems.modal('show');
+
+    }else{
+        //alert('NO es agrupado');
+        $modalAddItems.find('[id=material_selected]').val(material_name);
+        $modalAddItems.find('[id=material_selected]').prop('disabled', true);
+        $modalAddItems.find('[id=quantity_selected]').val(material_quantity);
+        $modalAddItems.find('[id=quantity_selected]').prop('disabled', true);
+        $modalAddItems.find('[id=price_selected]').val(material_price);
+        $modalAddItems.find('[id=price_selected]').prop('disabled', true);
+
+        $('#body-items').html('');
+
+        for (var i = 0; i<material_quantity; i++)
         {
-            limit: 12,
-            source: substringMatcher($locations)
-        });
+            renderTemplateItem();
+            $('.select2').select2();
+        }
 
-    $modalAddItems.modal('show');
+        $('.locations').typeahead({
+                hint: true,
+                highlight: true, /* Enable substring highlighting */
+                minLength: 1 /* Specify minimum characters required for showing suggestions */
+            },
+            {
+                limit: 12,
+                source: substringMatcher($locations)
+            });
 
-    /*$items.push({
-        "productId" : sku,
-        "qty" : qty,
-        "price" : price
-    });*/
+        $modalAddItems.modal('show');
+    }
 }
 
 function rand_code($caracteres, $longitud){
