@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
 @endsection
 
 @section('styles')
@@ -115,24 +117,28 @@
                     <div class="card-body">
 
                         <div class="row">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="material_search" class="form-control rounded-0 typeahead">
 
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="quantity">Cantidad Ingresada <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="quantity" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="price">Precio Unitario <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="price" class="form-control">
                                 </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-grouped"> Agrupado </label> <br>
+                                <input id="btn-grouped" type="checkbox" name="my-checkbox" data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
                             </div>
                             <div class="col-md-2">
                                 <label for="btn-add"> &nbsp; </label>
@@ -287,15 +293,84 @@
             </div>
         </div>
     </div>
+
+    <div id="modalAddGroupItems" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Agregar items</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label class="col-sm-12 control-label" for="material_GroupSelected"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_GroupSelected" name="material_GroupSelected" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="col-sm-12 control-label" for="quantity_GroupSelected"> Cantidad </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="quantity_GroupSelected" name="quantity_GroupSelected" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="col-sm-12 control-label" for="price_GroupSelected"> Precio </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="price_GroupSelected" name="price_GroupSelected" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="col-sm-12 control-label"> Seleccione la ubicación </label>
+                        </div>
+                    </div>
+
+                    <div class="row p-1">
+                        <div class="col-sm-9">
+                            <div class="col-md-12">
+                                <input type="text" id="locationGroup" name="locationGroup" data-locationGroup class="form-control locationGroup" />
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <select class="form-control select2" id="stateGroup" data-stateGroup style="width: 100%;">
+                                <option value="good" selected="selected">Buena estado</option>
+                                <option value="bad">Deficiente</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="submit" id="btn-saveGroupItems" class="btn btn-outline-primary">Agregar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 @endsection
 
 @section('scripts')
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
-
+    <script>
+        $("input[data-bootstrap-switch]").each(function(){
+            $(this).bootstrapSwitch();
+        });
+    </script>
     <script src="{{ asset('js/entry/entry_purchase.js') }}"></script>
+
 @endsection
