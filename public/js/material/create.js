@@ -26,14 +26,98 @@ $(document).ready(function () {
 
     });
 
+    $('#feature').change(function () {
+        let feature =  $('#feature').val();
+        switch(feature) {
+            case "2":
+                //alert('Metalico');
+                $('#feature-body').css("display","");
+                break;
+            case "1":
+                $('#feature-body').css("display","none");
+                $('#type').val('1');
+                $('#type').trigger('change');
+                $('#material').val('1');
+                $('#material').trigger('change');
+                $('#cedula').val('1');
+                $('#cedula').trigger('change');
+                $('#quality').val('1');
+                $('#quality').trigger('change');
+                generateNameProduct();
+                break;
+        }
+    });
+
     $select.select2({
         placeholder: "Selecione un modelo",
-    })
+    });
+    
+    $('#btn-generate').on('click', generateNameProduct);
 
 });
 
 var $formCreate;
 var $select;
+
+function generateNameProduct() {
+    if( $('#description').val().trim() === '' )
+    {
+        toastr.error('Debe escribir una descripción', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if( $('#measure').val().trim() === '' )
+    {
+        toastr.error('Debe escribir una medida', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    $('#name').val('');
+
+    let type = ($('#type option:selected').text() === 'Ninguno') ? '': ' '+$('#type option:selected').text();
+    let material = ($('#material option:selected').text() === 'Ninguno') ? '': ' '+$('#material option:selected').text();
+    let cedula = ($('#cedula option:selected').text() === 'Ninguno') ? '': ' '+$('#cedula option:selected').text();
+    let quality = ($('#quality option:selected').text() === 'Ninguno') ? '': ' '+$('#quality option:selected').text();
+    let measure = ' ' + $('#measure').val();
+
+    let name = $('#description').val() + type + material + cedula + quality + measure;
+    $('#name').val(name);
+
+}
 
 function showTemplateSpecification() {
     var specification = $('#specification').val();

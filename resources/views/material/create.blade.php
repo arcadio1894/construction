@@ -64,13 +64,78 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="description" name="description" class="form-control">
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="description" name="description" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="feature">Característica <span class="right badge badge-danger">(*)</span></label>
+                                <select id="feature" name="type" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>Ninguno</option>
+                                    <option value="2">Metálico</option>
+
+                                </select>
+
+                            </div>
+                        </div>
+                        <div class="form-group row" id="feature-body" style="display: none">
+                            <div class="col-md-3">
+                                <label for="type">Tipo </label>
+                                <select id="type" name="type" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>Ninguno</option>
+                                    <option value="2">Roscable</option>
+                                    <option value="3">Soldable</option>
+                                    <option value="4">Acero</option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="material">Material </label>
+                                <select id="material" name="material" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>Ninguno</option>
+                                    <option value="2">INOX</option>
+                                    <option value="3">FEGA</option>
+                                    <option value="4">FENE</option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="cedula">Cédula </label>
+                                <select id="cedula" name="cedula" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>Ninguno</option>
+                                    <option value="2">SCH40</option>
+                                    <option value="3">SCH10</option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="quality">Calidad </label>
+                                <select id="quality" name="quality" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>Ninguno</option>
+                                    <option value="2">C-304</option>
+                                    <option value="3">C-316</option>
+                                </select>
+
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
                             <input type="text" id="measure" name="measure" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label for="name">Nombre completo</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control rounded-0" id="name" name="name">
+                                <span class="input-group-append">
+                                    <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
+                                </span>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
@@ -227,6 +292,21 @@
             });
             $('#brand').select2({
                 placeholder: "Selecione una marca",
+            });
+            $('#feature').select2({
+                placeholder: "Seleccione característica",
+            });
+            $('#type').select2({
+                placeholder: "Elija",
+            });
+            $('#material').select2({
+                placeholder: "Elija",
+            });
+            $('#cedula').select2({
+                placeholder: "Elija",
+            });
+            $('#quality').select2({
+                placeholder: "Elija",
             })
         })
     </script>
