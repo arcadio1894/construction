@@ -25,7 +25,7 @@ class UpdateShelfRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255',
+            'comment' => 'nullable|string|max:255',
             'shelf_id' => 'required|exists:shelves,id'
         ];
     }

@@ -27,8 +27,8 @@ class UpdateCustomerRequest extends FormRequest
             'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
             'ruc' => 'required|digits:11|string',
-            'address' => 'string|max:255',
-            'location' => 'string|max:255',
+            'address' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255',
             
         ];
     }
