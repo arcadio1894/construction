@@ -66,7 +66,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if (item.state === 'confirmed')
+                    if (item.state === 'confirmed' || item.state === 'created')
                     {
                         return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>';
                     }

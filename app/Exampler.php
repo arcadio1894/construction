@@ -7,8 +7,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Exampler extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = ['name','comment', 'brand_id'];
 
     public function materials()
@@ -20,6 +18,4 @@ class Exampler extends Model
     {
         return $this->belongsTo('App\Brand');
     }
-
-    protected $dates = ['deleted_at'];
 }
