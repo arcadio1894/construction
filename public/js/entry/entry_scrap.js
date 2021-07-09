@@ -158,6 +158,8 @@ function addItems() {
         return;
     }
 
+    $("#item_selected").typeahead("destroy");
+
     let material_name = $('#material_search').val();
     $modalAddItems.find('[id=material_selected]').val(material_name);
     $modalAddItems.find('[id=material_selected]').prop('disabled', true);
@@ -175,7 +177,7 @@ function addItems() {
         }
     });
 
-    $('.items').typeahead({
+    $('#item_selected').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
             minLength: 1 /* Specify minimum characters required for showing suggestions */
