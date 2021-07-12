@@ -79,6 +79,12 @@ class EntryController extends Controller
                     if( $detail_entry->material_id == $items[$i]->id_material )
                     {
                         $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                        $materialS = Material::find($detail_entry->material_id);
+                        if ( $materialS->price < $items[$i]->price )
+                        {
+                            $materialS->price = $items[$i]->price;
+                            $materialS->save();
+                        }
                         $item = Item::create([
                             'detail_entry_id' => $detail_entry->id,
                             'material_id' => $detail_entry->material_id,
