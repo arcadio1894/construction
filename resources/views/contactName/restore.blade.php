@@ -77,6 +77,7 @@
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="contactName_id" name="contactName_id">
+                        <input type="hidden" id="customer_id" name="customer_id">
                         <div>
                             Desea restaurar el siguiente contacto: <br>
                             <div id="contact"></div>

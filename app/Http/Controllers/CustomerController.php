@@ -87,8 +87,8 @@ class CustomerController extends Controller
         DB::beginTransaction();
         try {
 
-            $customer = Customer::find($request->get('customer_id'));    
-
+            $customer = Customer::find($request->get('customer_id'));
+                
             $contacts = ContactName::where('customer_id', $customer->id)->get();
 
             foreach ($contacts as $contact) {
@@ -153,8 +153,15 @@ class CustomerController extends Controller
 
         DB::beginTransaction();
         try {
-            
+
+
             $customer = Customer::onlyTrashed()->where('id', $request->get('customer_id'))->first();
+
+            $contacts = ContactName::withTrashed()->with('customer')->where('customer_id', $customer->id)->get();
+
+            foreach ($contacts as $contact) {
+               $contact->restore(); 
+            }
 
             $customer->restore();
 
