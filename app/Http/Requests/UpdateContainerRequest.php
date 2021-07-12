@@ -25,7 +25,7 @@ class UpdateContainerRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255',
+            'comment' => 'nullable|string|max:255',
             'container_id' => 'required|exists:containers,id'
         ];
     }

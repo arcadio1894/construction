@@ -26,7 +26,7 @@ class UpdateAreaRequest extends FormRequest
         return [
             'area_id' => 'required|exists:areas,id',
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255'
+            'comment' => 'nullable|string|max:255'
         ];
     }
 

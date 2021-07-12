@@ -25,7 +25,7 @@ class StoreWarehouseRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255',
+            'comment' => 'nullable|string|max:255',
             'area_id' => 'required|exists:areas,id'
         ];
     }

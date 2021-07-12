@@ -25,7 +25,7 @@ class UpdateExamplerRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255',
+            'comment' => 'nullable|string|max:255',
             'brand_id' => 'required|exists:brands,id'
         ];
     }

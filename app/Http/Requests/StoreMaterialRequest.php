@@ -20,7 +20,7 @@ class StoreMaterialRequest extends FormRequest
             'unit_measure' => 'required|string|max:255',
             'stock_max' => 'required|numeric|min:0',
             'stock_min' => 'required|numeric|min:0',
-            'unit_price' => 'required|numeric|between:0,99999.99',
+            'unit_price' => 'nullable|numeric|between:0,99999.99',
             'image' => 'image',
             'material_type' => 'required|exists:material_types,id',
             'category' => 'required|exists:categories,id',

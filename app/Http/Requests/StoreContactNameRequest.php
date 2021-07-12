@@ -26,8 +26,8 @@ class StoreContactNameRequest extends FormRequest
         return [
             'name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
-            'phone' => 'string|max:12',
-            'email' => 'string|max:255|email|unique:contact_names,email'
+            'phone' => 'nullable|string|max:12',
+            'email' => 'nullable|string|max:255|email|unique:contact_names,email'
         ];
     }
 

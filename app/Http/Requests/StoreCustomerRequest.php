@@ -26,8 +26,8 @@ class StoreCustomerRequest extends FormRequest
         return [
             'business_name' => 'required|string|max:255',
             'ruc' => 'required|digits:11|string|unique:customers,RUC',
-            'address' => 'string|max:255',
-            'location' => 'string|max:255'
+            'address' => 'nullable|string|max:255',
+            'location' => 'nullable|string|max:255'
         ];
     }
 

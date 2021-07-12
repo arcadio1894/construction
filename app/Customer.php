@@ -2,17 +2,20 @@
 
 namespace App;
 
+use Iatstuti\Database\Support\CascadeSoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Customer extends Model
 {
 
-    use SoftDeletes;
+    use SoftDeletes, CascadeSoftDeletes;
 
     protected $fillable = [
         'business_name','RUC', 'code','address', 'location'
     ];
+
+    protected $cascadeDeletes = ['contactNames'];
 
     // TODO: Las relaciones
     public function quotes()

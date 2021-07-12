@@ -101,6 +101,29 @@ function saveTableItems() {
         return;
     }
 
+    if ( length === '' || width === '' )
+    {
+        toastr.error('Las medidas no han sido ingresadas', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
     let newPrice = 0;
     if ( result.materialType.name === "Planchas grandes" || result.materialType.name === "Planchas chicas" )
     {
@@ -158,6 +181,8 @@ function addItems() {
         return;
     }
 
+    $("#item_selected").typeahead("destroy");
+
     let material_name = $('#material_search').val();
     $modalAddItems.find('[id=material_selected]').val(material_name);
     $modalAddItems.find('[id=material_selected]').prop('disabled', true);
@@ -175,7 +200,7 @@ function addItems() {
         }
     });
 
-    $('.items').typeahead({
+    $('#item_selected').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
             minLength: 1 /* Specify minimum characters required for showing suggestions */

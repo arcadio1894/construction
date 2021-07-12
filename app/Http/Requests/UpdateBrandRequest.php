@@ -26,7 +26,7 @@ class UpdateBrandRequest extends FormRequest
         return [
             'brand_id' => 'required|exists:brands,id',
             'name' => 'required|string|max:255',
-            'comment' => 'string|max:255',
+            'comment' => 'nullable|string|max:255',
         ];
     }
 

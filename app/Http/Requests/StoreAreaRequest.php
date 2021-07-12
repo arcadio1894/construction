@@ -25,7 +25,7 @@ class StoreAreaRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255|unique:areas,name',
-            'comment' => 'string|max:255'
+            'comment' => 'nullable|string|max:255'
         ];
     }
 

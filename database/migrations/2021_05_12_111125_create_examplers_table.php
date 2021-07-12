@@ -17,8 +17,10 @@ class CreateExamplersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('comment')->nullable();
-            $table->foreignId('brand_id')->nullable()->constrained('brands');
-            $table->softDeletes();
+            $table->foreignId('brand_id')
+                ->nullable()
+                ->constrained('brands')
+                ->onDelete('cascade');
             $table->timestamps();
         });
     }
