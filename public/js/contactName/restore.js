@@ -16,7 +16,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return ' <button data-restore="'+item.id+'" '+'data-contact="'+item.name+'" '+'data-company="'+item.customer.business_name+'" '+
+                    return ' <button data-restore="'+item.id+'" '+'data-contact="'+item.name+'" '+'data-company="'+item.customer.business_name+'" '+'data-idcompany="'+item.customer.id+'" '+
                             ' class="btn btn-outline-success btn-sm"><i class="fas fa-trash-restore"></i></button>'
                 } },
 
@@ -172,15 +172,14 @@ var $formRestore;
 var $modalRestore;
 
 function openModalRestore() {
-<<<<<<< HEAD
-    var customer_id = $(this).data('restore');
-=======
+
     var customer_id = $(this).data('restore'); 
->>>>>>> master
     var contact = $(this).data('contact');
     var company = $(this).data('company');
+    var company_id = $(this).data('idcompany');
 
     $modalRestore.find('[id=contactName_id]').val(customer_id);
+    $modalRestore.find('[id=customer_id]').val(company_id);
     $modalRestore.find('[id=contact]').html('<b>Contacto: </b>'+contact);
     $modalRestore.find('[id=company]').html('<b>Empresa: </b>'+company);
 

@@ -137,7 +137,7 @@ class ContactNameController extends Controller
 
     public function getContactsDestroy()
     {
-        $contactNames = ContactName::withTrashed()->with('customer')->get();
+        $contactNames = ContactName::onlyTrashed()->with('customer')->get();
 
         return datatables($contactNames)->toJson();
         //dd(datatables($customers)->toJson());
@@ -145,14 +145,31 @@ class ContactNameController extends Controller
 
     public function restore(RestoreContactNameRequest $request)
     {
+        
         $validated = $request->validated();
 
         DB::beginTransaction();
         try {
 
+            //$customer = Customer::find($request->get('customer_id'));
+            /*
             $contact = ContactName::onlyTrashed()->where('id', $request->get('contactName_id'))->first();
 
             $contact->restore();
+
+            DB::commit();
+            */
+
+            $customer = Customer::withTrashed()->find($request->get('customer_id'));
+            $customer_delete = $customer->deleted_at;
+
+            if(is_null($customer_delete)) {
+                $contact = ContactName::onlyTrashed()->where('id', $request->get('contactName_id'))->first();
+
+                $contact->restore();
+            } else {
+                return response()->json(['message' => 'La empresa se encuentra eliminada.'], 422);   
+            }
 
             DB::commit();
 
@@ -162,5 +179,8 @@ class ContactNameController extends Controller
         }
 
         return response()->json(['message' => 'Contacto restaurado con éxito.'], 200);
+        
+
+        
     }
 }
