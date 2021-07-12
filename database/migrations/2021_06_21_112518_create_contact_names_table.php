@@ -16,7 +16,8 @@ class CreateContactNamesTable extends Migration
         Schema::create('contact_names', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('customer_id')->constrained('customers');
+            $table->foreignId('customer_id')
+                ->constrained('customers')->cascadeOnDelete();
             $table->string('code')->nullable()->unique();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();

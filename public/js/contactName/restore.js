@@ -222,8 +222,11 @@ function restoreCustomer() {
             }, 2000 )
         },
         error: function (data) {
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
+            console.log(data);
+            if ( data.responseJSON.message && !data.responseJSON.errors )
+            {
+
+                toastr.error(data.responseJSON.message, 'Error',
                     {
                         "closeButton": true,
                         "debug": false,
@@ -241,8 +244,28 @@ function restoreCustomer() {
                         "showMethod": "fadeIn",
                         "hideMethod": "fadeOut"
                     });
+            } else {
+                for ( var property in data.responseJSON.errors ) {
+                    toastr.error(data.responseJSON.errors[property], 'Error',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "4000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                }
             }
-
 
         },
     });

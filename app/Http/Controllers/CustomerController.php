@@ -89,11 +89,11 @@ class CustomerController extends Controller
 
             $customer = Customer::find($request->get('customer_id'));
                 
-            $contacts = ContactName::where('customer_id', $customer->id)->get();
+            /*$contacts = ContactName::where('customer_id', $customer->id)->get();
 
             foreach ($contacts as $contact) {
                $contact->delete(); 
-            }
+            }*/
             
             $customer->delete();
 
@@ -156,14 +156,15 @@ class CustomerController extends Controller
 
 
             $customer = Customer::onlyTrashed()->where('id', $request->get('customer_id'))->first();
-
-            $contacts = ContactName::withTrashed()->with('customer')->where('customer_id', $customer->id)->get();
+            $customer->restore();
+            $customer->contactNames()->onlyTrashed()->restore();
+            /*$contacts = ContactName::withTrashed()->with('customer')->where('customer_id', $customer->id)->get();
 
             foreach ($contacts as $contact) {
                $contact->restore(); 
             }
 
-            $customer->restore();
+            $customer->restore();*/
 
             DB::commit();
 
