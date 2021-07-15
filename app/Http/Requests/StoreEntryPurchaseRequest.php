@@ -28,6 +28,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'purchase_order' => 'required|string|min:5|max:255',
             'invoice' => 'required|string|min:5|max:255',
             'entry_type' => 'required',
+            'supplier_id' => 'required|exists:suppliers,id',
             'items' => 'required'
         ];
     }
@@ -48,6 +49,8 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'entry_type.required' => 'La :attribute es obligatorio.',
+            'supplier_id.required' => 'El :attribute es obligatorio.',
+            'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
         ];
     }
@@ -59,6 +62,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'purchase_order' => 'orden de compra',
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
+            'supplier_id' => 'proveedor',
             'items' => 'items'
         ];
     }

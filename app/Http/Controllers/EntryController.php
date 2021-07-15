@@ -7,6 +7,7 @@ use App\Entry;
 use App\Http\Requests\StoreEntryPurchaseRequest;
 use App\Item;
 use App\Material;
+use App\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -25,7 +26,8 @@ class EntryController extends Controller
 
     public function createEntryPurchase()
     {
-        return view('entry.create_entry_purchase');
+        $suppliers = Supplier::all();
+        return view('entry.create_entry_purchase', compact('suppliers'));
     }
 
     public function createEntryScrap()
@@ -44,6 +46,7 @@ class EntryController extends Controller
                 'referral_guide' => $request->get('referral_guide'),
                 'purchase_order' => $request->get('purchase_order'),
                 'invoice' => $request->get('invoice'),
+                'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type')
             ]);
 
@@ -82,7 +85,7 @@ class EntryController extends Controller
                         $materialS = Material::find($detail_entry->material_id);
                         if ( $materialS->price < $items[$i]->price )
                         {
-                            $materialS->price = $items[$i]->price;
+                            $materialS->unit_price = $items[$i]->price;
                             $materialS->save();
                         }
                         $item = Item::create([
@@ -200,7 +203,7 @@ class EntryController extends Controller
 
     public function getJsonEntriesPurchase()
     {
-        $entries = Entry::with(['details' => function ($query) {
+        $entries = Entry::with('supplier')->with(['details' => function ($query) {
                 $query->with('material')->with(['items' => function ($query) {
                     $query->where('state_item', 'entered')
                         ->with('materialType')
@@ -232,7 +235,7 @@ class EntryController extends Controller
 
     public function getEntriesPurchase()
     {
-        $entries = Entry::with(['details' => function ($query) {
+        $entries = Entry::with('supplier')->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered')
                     ->with('materialType')
