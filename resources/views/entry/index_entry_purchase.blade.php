@@ -23,6 +23,11 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+
 @endsection
 
 @section('styles')
@@ -59,59 +64,19 @@
 @endsection
 
 @section('content')
-    <div>
-        <div class="row">
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="1" class="custom-control-input" id="customSwitch1">
-                <label class="custom-control-label" for="customSwitch1">Código</label>
+    <div class="row">
+        <div class="col-md-3">
+            <strong> Seleccione un rango de fechas: </strong>
+        </div>
+        <div class="col-md-6" id="sandbox-container">
+            <div class="input-daterange input-group" id="datepicker">
+                <input type="text" class="form-control form-control-sm date-range-filter" id="start" name="start">
+                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end">
             </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch2">
-                <label class="custom-control-label" for="customSwitch2">Descripcion</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch3">
-                <label class="custom-control-label" for="customSwitch3">Medida</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch4">
-                <label class="custom-control-label" for="customSwitch4">Unidad Medida</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="4" class="custom-control-input" id="customSwitch5">
-                <label class="custom-control-label" for="customSwitch5">Stock Max</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="5" class="custom-control-input" id="customSwitch6">
-                <label class="custom-control-label" for="customSwitch6">Stock Min</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch7">
-                <label class="custom-control-label" for="customSwitch7">Stock Actual</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="4" class="custom-control-input" id="customSwitch8">
-                <label class="custom-control-label" for="customSwitch8">Prioridad</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="5" class="custom-control-input" id="customSwitch9">
-                <label class="custom-control-label" for="customSwitch9">Precio</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="6" class="custom-control-input" id="customSwitch10">
-                <label class="custom-control-label" for="customSwitch10">Imagen</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="10" class="custom-control-input" id="customSwitch11">
-                <label class="custom-control-label" for="customSwitch11">Categoría</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="11" class="custom-control-input" id="customSwitch12">
-                <label class="custom-control-label" for="customSwitch12">Tipo material</label>
-            </div>--}}
-
         </div>
 
+        <br><br>
     </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
@@ -122,6 +87,7 @@
                 <th>Orden de compra</th>
                 <th>Factura</th>
                 <th>Tipo de entrada</th>
+                <th>Proveedor</th>
                 <th>Fecha</th>
                 <th>Acciones</th>
             </tr>
@@ -216,5 +182,7 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/entry/index_entry_purchase.js') }}"></script>
 @endsection

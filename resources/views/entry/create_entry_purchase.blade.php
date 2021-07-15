@@ -98,6 +98,17 @@
                                     <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
                                 </div>
                             </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="supplier">Proveedor <span class="right badge badge-danger">(*)</span></label>
+                                    <select id="supplier" name="supplier_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $suppliers as $supplier )
+                                            <option value="{{ $supplier->id }}">{{ $supplier->business_name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -370,6 +381,9 @@
         $("input[data-bootstrap-switch]").each(function(){
             $(this).bootstrapSwitch();
         });
+        $('#supplier').select2({
+            placeholder: "Seleccione un proveedor",
+        })
     </script>
     <script src="{{ asset('js/entry/entry_purchase.js') }}"></script>
 

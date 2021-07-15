@@ -23,6 +23,13 @@ function format ( d ) {
 }
 
 $(document).ready(function () {
+    $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/entries/purchase",
@@ -40,12 +47,13 @@ $(document).ready(function () {
             { data: 'purchase_order' },
             { data: 'invoice' },
             { data: 'entry_type' },
+            { data: 'supplier.business_name' },
             { data: null,
                 title: 'Fecha',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>'
+                    return '<p> '+ moment(item.created_at).format('DD/MM/YYYY') +'</p>'
                 }
             },
             { data: null,
@@ -239,31 +247,6 @@ $(document).ready(function () {
         column.visible( ! column.visible() );
     } );
 
-    /*$.ajax({
-        url: "/dashboard/get/json/entries/purchase",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $entriesComplete.push(json[i]);
-            }
-
-        }
-    });*/
-    /*$.ajax({
-        url: "/dashboard/get/entries/purchase",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $entriesComplete.push(json[i]);
-            }
-
-        }
-    });*/
-
     $modalAddItems = $('#modalAddItems');
 
     //$(document).on('click', '[data-delete]', deleteItem);
@@ -272,6 +255,42 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-detail]', showItems);
 
+    // Extend dataTables search
+    $.fn.dataTable.ext.search.push(
+        function( settings, data, dataIndex ) {
+            var min  = $('#start').val();
+            var max  = $('#end').val();
+            var createdAt = data[6]; // Our date column in the table
+            var startDate   = moment(min, "DD/MM/YYYY");
+            var endDate     = moment(max, "DD/MM/YYYY");
+            var diffDate = moment(createdAt, "DD/MM/YYYY");
+
+            if ( (min === "" || max === "") ||  (diffDate.isBetween(startDate, endDate, null, '[]')) )
+            {
+                console.log("Es true" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+                console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate + " " );
+                return true;
+            }
+            console.log("Es false" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+            console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate);
+
+            return false;
+
+            /*return !!((min === "" || max === "")
+                ||
+                (moment(createdAt).isSameOrAfter(min) && moment(createdAt).isSameOrBefore(max)));
+
+*/
+            /*return !!((min === "" || max === "") ||
+                (diffDate.isBetween(startDate, endDate)));*/
+
+        }
+    );
+
+    // Re-draw the table when the a date range filter changes
+    $('.date-range-filter').change( function() {
+        table.draw();
+    } );
 });
 
 let $modalItems;

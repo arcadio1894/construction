@@ -31,12 +31,6 @@ $(document).ready(function () {
         }
     });
 
-    $(".select2").select2({
-        width : 'resolve',
-        placeholder: "Selecione los permisos",
-        allowClear: true
-    });
-
     $('.typeahead').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
