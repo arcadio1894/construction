@@ -61,6 +61,28 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
         Route::post('customer/restore', 'CustomerController@restore')->name('customer.restore');
 
+        //SUPPLIER
+        Route::get('/all/suppliers', 'SupplierController@getSuppliers')
+            ->middleware('permission:list_supplier');
+        Route::get('proveedores', 'SupplierController@index')->name('supplier.index')
+            ->middleware('permission:list_supplier');
+        Route::get('crear/proveedor', 'SupplierController@create')->name('supplier.create')
+            ->middleware('permission:create_supplier');
+        Route::post('supplier/store', 'SupplierController@store')->name('supplier.store')
+            ->middleware('permission:create_supplier');
+        Route::get('/editar/proveedor/{id}', 'SupplierController@edit')->name('supplier.edit')
+            ->middleware('permission:update_supplier');
+        Route::post('supplier/update', 'SupplierController@update')->name('supplier.update')
+            ->middleware('permission:update_supplier');
+        Route::post('supplier/destroy', 'SupplierController@destroy')->name('supplier.destroy')
+            ->middleware('permission:destroy_supplier');
+        Route::get('proveedores/restore', 'SupplierController@indexrestore')->name('supplier.indexrestore')
+            ->middleware('permission:destroy_supplier');
+        Route::get('/all/suppliers/destroy', 'SupplierController@getSuppliersDestroy')
+            ->middleware('permission:destroy_supplier');
+        Route::post('supplier/restore', 'SupplierController@restore')->name('supplier.restore')
+            ->middleware('permission:destroy_supplier');
+
         //CONTACT NAME
         Route::get('/all/contacts', 'ContactNameController@getContacts');
         Route::get('contactos', 'ContactNameController@index')->name('contactName.index');
