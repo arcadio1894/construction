@@ -281,7 +281,7 @@
                     </li>
 
                     <li class="nav-item has-treeview @yield('openSupplier')">
-                        <a href="#" class="nav-link">
+                        <a href="#" class="nav-link @yield('activeSupplier')">
                             <i class="nav-icon fas fa-boxes"></i>
                             <p>
                                 Proveedores
@@ -291,7 +291,7 @@
                         <ul class="nav nav-treeview">
                             @can('list_supplier')
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('supplier.index') }}" class="nav-link @yield('activeListSupplier')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar proveedores</p>
                                 </a>
@@ -299,11 +299,19 @@
                             @endcan
                             @can('create_supplier')
                             <li class="nav-item">
-                                <a href="#" class="nav-link">
+                                <a href="{{ route('supplier.create') }}" class="nav-link @yield('activeCreateSupplier')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear proveedores</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('destroy_supplier')
+                                <li class="nav-item">
+                                    <a href="{{ route('supplier.indexrestore') }}" class="nav-link @yield('activeRestoreSupplier')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Restaurar proveedores</p>
+                                    </a>
+                                </li>
                             @endcan
                             @can('assign_supplier')
                             <li class="nav-item">
