@@ -6,6 +6,7 @@ use App\Http\Requests\DeleteMaterialTypeRequest;
 use App\Http\Requests\StoreMaterialTypeRequest;
 use App\Http\Requests\UpdateMaterialTypeRequest;
 use App\MaterialType;
+use App\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -29,13 +30,11 @@ class MaterialTypeController extends Controller
 
                 $materialType = MaterialType::create([
                     'name' => $request->get('name'),
-                    'length' => $request->get('length'),
-                    'width' => $request->get('width'),
-                    'weight' => $request->get('weight'),
-                    
+                    'description' => $request->get('description'),
+                    'subcategory_id' => $request->get('subcategory_id'),
                 ]);
 
-        DB::commit();
+            DB::commit();
 
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -54,12 +53,11 @@ class MaterialTypeController extends Controller
             $materialType = MaterialType::find($request->get('materialtype_id'));
 
             $materialType->name = $request->get('name');
-            $materialType->length = $request->get('length');
-            $materialType->width = $request->get('width');
-            $materialType->weight = $request->get('weight');
+            $materialType->description = $request->get('description');
+            $materialType->subcategory_id = $request->get('subcategory_id');
             $materialType->save();
 
-        DB::commit();
+            DB::commit();
 
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -80,6 +78,8 @@ class MaterialTypeController extends Controller
 
             $materialtype->delete();
 
+            DB::commit();
+
         } catch ( \Throwable $e ) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
@@ -90,20 +90,35 @@ class MaterialTypeController extends Controller
 
     public function create()
     {
-        return view('materialtype.create');
+        $subcategories = Subcategory::all();
+        return view('materialtype.create', compact('subcategories'));
     }
 
     public function edit($id)
     {
+        $subcategories = Subcategory::all();
         $materialtype = MaterialType::find($id);
-        return view('materialtype.edit', compact('materialtype'));
+        return view('materialtype.edit', compact('materialtype', 'subcategories'));
     }
 
     public function getMaterialTypes()
     {
-        $materialtypes = MaterialType::select('id', 'name', 'length', 'width', 'weight') -> get();
+        $materialtypes = MaterialType::with('subcategory')->get();
         return datatables($materialtypes)->toJson();
         //dd(datatables($customers)->toJson());
+    }
+
+    public function getTypesBySubCategory($id)
+    {
+        $types = MaterialType::where('subcategory_id', $id)->get();
+        $array = [];
+        foreach ( $types as $type )
+        {
+            array_push($array, ['id'=> $type->id, 'type' => $type->name]);
+        }
+
+        //dd($array);
+        return $array;
     }
     
 }

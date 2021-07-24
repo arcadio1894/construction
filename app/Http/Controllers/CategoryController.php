@@ -6,6 +6,7 @@ use App\Http\Requests\DeleteCategoryRequest;
 use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\UpdateCategoryRequest;
 use App\Category;
+use App\Subcategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -114,5 +115,18 @@ class CategoryController extends Controller
         $categories = Category::select('id', 'name', 'description') -> get();
         return datatables($categories)->toJson();
         //dd(datatables($customers)->toJson());
+    }
+
+    public function getSubcategoryByCategory($id)
+    {
+        $subcategories = Subcategory::where('category_id', $id)->get();
+        $array = [];
+        foreach ( $subcategories as $subcategory )
+        {
+            array_push($array, ['id'=> $subcategory->id, 'subcategory' => $subcategory->name]);
+        }
+
+        //dd($array);
+        return $array;
     }
 }

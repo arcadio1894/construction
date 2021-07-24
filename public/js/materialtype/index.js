@@ -7,9 +7,8 @@ $(document).ready(function () {
             bAutoWidth: false,
             "aoColumns": [
                 { data: 'name' },
-                { data: 'length' },
-                { data: 'width' },
-                { data: 'weight' },
+                { data: 'subcategory.name' },
+                { data: 'description' },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
@@ -17,8 +16,8 @@ $(document).ready(function () {
                     {
                         return '<a href="'+document.location.origin+ '/dashboard/editar/tipomaterial/'+item.id+
                         		'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>'+
-                        		' <button data-delete="'+item.id+'" data-name="'+item.name+'" '+
-                        		'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>' 
+                        		'<button data-delete="'+item.id+'" data-name="'+item.name+'" '+
+                        		'class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>'
                     } },
 
             ],
@@ -205,7 +204,7 @@ function destroymaterialtype() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "3000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -215,7 +214,7 @@ function destroymaterialtype() {
             $modalDelete.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 3000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
@@ -230,7 +229,7 @@ function destroymaterialtype() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "4000",
+                        "timeOut": "3000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",

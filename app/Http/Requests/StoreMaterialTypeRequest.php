@@ -25,9 +25,8 @@ class StoreMaterialTypeRequest extends FormRequest
     {
         return [
             'name' => 'required|string|max:255',
-            'length' => 'nullable|numeric|min:0',
-            'width' => 'nullable|numeric|min:0',
-            'weight' => 'nullable|numeric|min:0',
+            'description' => 'nullable|string|max:255',
+            'subcategory_id' => 'required|exists:subcategories,id',
 
         ];
     }
@@ -38,26 +37,21 @@ class StoreMaterialTypeRequest extends FormRequest
             'name.required' => 'El :attribute es obligatoria.',
             'name.string' => 'El :attribute debe contener caracteres válidos.',
             'name.max' => 'El :attribute debe contener máximo 255 caracteres.',
-                        
-            'length.numeric' => 'El :attribute debe ser numerico.',            
-            'length.min' => 'El :attribute debe ser mayor a 0.',
-            
-            'width.numeric' => 'El :attribute debe ser numerico.',            
-            'width.min' => 'El :attribute debe ser mayor a 0.',
 
-            'weight.numeric' => 'El :attribute debe ser numerico.',            
-            'weight.min' => 'El :attribute debe ser mayor a 0.',
+            'description.string' => 'El :attribute debe contener caracteres válidos.',
+            'description.max' => 'El :attribute debe contener máximo 255 caracteres.',
+
+            'subcategory_id.required' => 'El :attribute es obligatoria.',
+            'subcategory_id.exists' => 'El :attribute no existe en la base de datos.',
         ];
     }
 
     public function attributes()
     {
         return [
-            'name' => 'nombre del tipo de material',
-            'length' => 'largo del tipo de material',
-            'width' => 'ancho del tipo de material',
-            'weight' => 'peso del tipo de material',
-            
+            'name' => 'nombre del tipo',
+            'description' => 'descripción del tipo',
+            'subcategory_id' => 'subcategoría del tipo',
         ];
     }
 }

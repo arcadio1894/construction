@@ -1,11 +1,19 @@
 @extends('layouts.appAdmin2')
 
+@section('openConfig')
+    menu-open
+@endsection
+
 @section('openCategory')
     menu-open
 @endsection
 
-@section('activeCategory')
+@section('activeConfig')
     active
+@endsection
+
+@section('activeCategory')
+
 @endsection
 
 @section('activeListCategory')

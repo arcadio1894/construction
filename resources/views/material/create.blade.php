@@ -19,6 +19,8 @@
 @section('styles-plugins')
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
 @endsection
 
 @section('styles')
@@ -65,16 +67,44 @@
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="description" name="description" class="form-control">
                             </div>
+                        </div>
+
+                        <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="feature">Característica <span class="right badge badge-danger">(*)</span></label>
-                                <select id="feature" name="type" class="form-control select2" style="width: 100%;">
+                                <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="measure" name="measure" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
+                                <select id="unit_measure" name="unit_measure" class="form-control select2" style="width: 100%;">
                                     <option></option>
-                                    <option value="1" selected>Ninguno</option>
-                                    <option value="2">Metálico</option>
+                                    @foreach( $unitMeasures as $unitMeasure )
+                                        <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="category">Categorías <span class="right badge badge-danger">(*)</span></label>
+                                <select id="category" name="category" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $categories as $category )
+                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subcategory">Subcategorías <span class="right badge badge-danger">(*)</span></label>
+                                <select id="subcategory" name="subcategory" class="form-control select2" style="width: 100%;">
+                                    <option></option>
 
                                 </select>
 
@@ -85,31 +115,24 @@
                                 <label for="type">Tipo </label>
                                 <select id="type" name="type" class="form-control select2" style="width: 100%;">
                                     <option></option>
-                                    <option value="1" selected>Ninguno</option>
-                                    <option value="2">Roscable</option>
-                                    <option value="3">Soldable</option>
-                                    <option value="4">Acero</option>
                                 </select>
 
                             </div>
                             <div class="col-md-3">
-                                <label for="material">Material </label>
-                                <select id="material" name="material" class="form-control select2" style="width: 100%;">
+                                <label for="subtype">Subtipo </label>
+                                <select id="subtype" name="subtype" class="form-control select2" style="width: 100%;">
                                     <option></option>
-                                    <option value="1" selected>Ninguno</option>
-                                    <option value="2">INOX</option>
-                                    <option value="3">FEGA</option>
-                                    <option value="4">FENE</option>
                                 </select>
 
                             </div>
                             <div class="col-md-3">
-                                <label for="cedula">Cédula </label>
-                                <select id="cedula" name="cedula" class="form-control select2" style="width: 100%;">
+                                <label for="warrant">Cédula </label>
+                                <select id="warrant" name="warrant" class="form-control select2" style="width: 100%;">
                                     <option></option>
-                                    <option value="1" selected>Ninguno</option>
-                                    <option value="2">SCH40</option>
-                                    <option value="3">SCH10</option>
+                                    <option value="" selected>Ninguno</option>
+                                    @foreach( $warrants as $warrant )
+                                        <option value="{{$warrant->id}}">{{ $warrant->name }}</option>
+                                    @endforeach
                                 </select>
 
                             </div>
@@ -117,17 +140,15 @@
                                 <label for="quality">Calidad </label>
                                 <select id="quality" name="quality" class="form-control select2" style="width: 100%;">
                                     <option></option>
-                                    <option value="1" selected>Ninguno</option>
-                                    <option value="2">C-304</option>
-                                    <option value="3">C-316</option>
+                                    <option value="" selected>Ninguno</option>
+                                    @foreach( $qualities as $quality )
+                                        <option value="{{$quality->id}}">{{ $quality->name }}</option>
+                                    @endforeach
                                 </select>
 
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="measure" name="measure" class="form-control">
-                        </div>
+
                         <div class="form-group">
                             <label for="name">Nombre completo</label>
                             <div class="input-group mb-3">
@@ -137,10 +158,7 @@
                                 </span>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="unit_measure" name="unit_measure" class="form-control">
-                        </div>
+
 
                         <div class="form-group">
                             <label for="unit_price">Precio Unitario <span class="right badge badge-danger">(*)</span></label>
@@ -179,22 +197,26 @@
                             <input type="text" id="stock_min" name="stock_min" class="form-control">
                         </div>
 
-                        <div class="form-group">
-                            <label for="material_type">Tipo de material <span class="right badge badge-danger">(*)</span></label>
-                            <select id="material_type" name="material_type" class="form-control select2" style="width: 100%;">
-                                @foreach( $materialTypes as $materialType )
-                                    <option value="{{ $materialType->id }}">{{ $materialType->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="category">Categoría <span class="right badge badge-danger">(*)</span></label>
-                            <select id="category" name="category" class="form-control select2" style="width: 100%;">
-                                <option></option>
-                                @foreach( $categories as $category )
-                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="btn-grouped"> Retacería </label> <br>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="icheck-primary d-inline">
+                                    <input type="radio" id="typescrap0" name="typescrap" value="" checked>
+                                    <label for="typescrap0">Ninguno
+                                    </label>
+                                </div>
+                            </div>
+                            @foreach( $typescraps as $typescrap )
+                            <div class="col-md-4">
+                                <div class="icheck-primary d-inline">
+                                    <input type="radio" id="typescrap{{$typescrap->id}}" name="typescrap" value="{{$typescrap->id}}">
+                                    <label for="typescrap{{$typescrap->id}}">{{$typescrap->name}}
+                                    </label>
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
 
                         <div class="form-group">
@@ -278,6 +300,7 @@
 @section('plugins')
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 @endsection
 
 @section('scripts')
@@ -290,6 +313,9 @@
             $('#category').select2({
                 placeholder: "Selecione categoría",
             });
+            $('#subcategory').select2({
+                placeholder: "Selecione subcategoría",
+            });
             $('#brand').select2({
                 placeholder: "Selecione una marca",
             });
@@ -299,15 +325,21 @@
             $('#type').select2({
                 placeholder: "Elija",
             });
-            $('#material').select2({
+            $('#subtype').select2({
                 placeholder: "Elija",
             });
-            $('#cedula').select2({
+            $('#warrant').select2({
                 placeholder: "Elija",
             });
             $('#quality').select2({
                 placeholder: "Elija",
-            })
+            });
+            $('#unit_measure').select2({
+                placeholder: "Elija",
+            });
+            $("input[data-bootstrap-switch]").each(function(){
+                $(this).bootstrapSwitch();
+            });
         })
     </script>
     <script src="{{ asset('js/material/create.js') }}"></script>

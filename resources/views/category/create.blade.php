@@ -1,11 +1,19 @@
 @extends('layouts.appAdmin2')
 
+@section('openConfig')
+    menu-open
+@endsection
+
+@section('activeConfig')
+    active
+@endsection
+
 @section('openCategory')
     menu-open
 @endsection
 
 @section('activeCategory')
-    active
+
 @endsection
 
 @section('activeCreateCategory')
@@ -34,11 +42,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Tipo</h1>
+    <h1 class="page-title">Categoría</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo Tipo de Material</h5>
+    <h5 class="card-title">Crear nueva categoría</h5>
     <a href="{{ route('category.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Categorias </a>
 @endsection
 

@@ -16,9 +16,10 @@ class CreateMaterialTypesTable extends Migration
         Schema::create('material_types', function (Blueprint $table) {
             $table->id();
             $table->string('name')->require();
-            $table->decimal('length', 9,2)->nullable();
-            $table->decimal('width', 9,2)->nullable();
-            $table->decimal('weight',9,2)->nullable();
+            $table->foreignId('subcategory_id')
+                ->constrained('subcategories')
+                ->cascadeOnDelete();
+            $table->string('description')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

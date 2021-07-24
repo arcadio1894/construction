@@ -13,23 +13,19 @@ class MaterialTypeSeeder extends Seeder
     public function run()
     {
         MaterialType::create([
-            'name' => 'Ejes',
-            'length' => 6000,
-            'width' => null,
-            'weight' => null,
-            
+            'name' => 'ROSCADO',
+            'description' => 'ROSCADO',
+            'subcategory_id' => 1
         ]);
         MaterialType::create([
-            'name' => 'Planchas chicas',
-            'length' => 2440,
-            'width' => 1220,
-            'weight' => null,
+            'name' => 'SOLDABLE',
+            'description' => 'SOLDABLE',
+            'subcategory_id' => 1
         ]);
         MaterialType::create([
-            'name' => 'Planchas grandes',
-            'length' => 3000,
-            'width' => 1500,
-            'weight' => null,
+            'name' => 'OD',
+            'description' => 'OD',
+            'subcategory_id' => 1
         ]);
     }
 }

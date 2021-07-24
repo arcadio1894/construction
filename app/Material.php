@@ -13,27 +13,47 @@ class Material extends Model
         'code',
         'description',
         'measure',
-        'unit_measure',
+        'unit_measure_id',
         'stock_max',
         'stock_min',
         'stock_current',
         'priority',
         'unit_price',
         'image',
-        'material_type_id',
         'category_id',
+        'subcategory_id',
+        'material_type_id',
+        'subtype_id',
         'brand_id',
-        'exampler_id'
+        'exampler_id',
+        'warrant_id',
+        'quality_id',
+        'typescrap_id'
     ];
+
+    public function unitMeasure()
+    {
+        return $this->belongsTo('App\UnitMeasure');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo('App\Category');
+    }
+
+    public function subcategory()
+    {
+        return $this->belongsTo('App\Subcategory');
+    }
 
     public function materialType()
     {
         return $this->belongsTo('App\MaterialType');
     }
 
-    public function category()
+    public function subType()
     {
-        return $this->belongsTo('App\Category');
+        return $this->belongsTo('App\SubType');
     }
 
     public function exampler()
@@ -44,6 +64,21 @@ class Material extends Model
     public function brand()
     {
         return $this->belongsTo('App\Brand');
+    }
+
+    public function warrant()
+    {
+        return $this->belongsTo('App\Warrant');
+    }
+
+    public function quality()
+    {
+        return $this->belongsTo('App\Quality');
+    }
+
+    public function typeScrap()
+    {
+        return $this->belongsTo('App\Typescrap');
     }
 
     public function equipments()

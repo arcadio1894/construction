@@ -103,6 +103,17 @@ Route::middleware('auth')->group(function (){
         Route::get('/editar/tipomaterial/{id}', 'MaterialTypeController@edit')->name('materialtype.edit');
         Route::post('materialtype/update', 'MaterialTypeController@update')->name('materialtype.update');
         Route::post('materialtype/destroy', 'MaterialTypeController@destroy')->name('materialtype.destroy');
+        Route::get('/get/types/{subcategory_id}', 'MaterialTypeController@getTypesBySubCategory');
+
+        //SUB TYPE
+        Route::get('/all/subtypes', 'SubTypeController@getSubTypes');
+        Route::get('Subtipos', 'SubTypeController@index')->name('subtype.index');
+        Route::get('crear/subtipo', 'SubTypeController@create')->name('subtype.create');
+        Route::post('subtype/store', 'SubTypeController@store')->name('subtype.store');
+        Route::get('/editar/subtipo/{id}', 'SubTypeController@edit')->name('subtype.edit');
+        Route::post('subtype/update', 'SubTypeController@update')->name('subtype.update');
+        Route::post('subtype/destroy', 'SubTypeController@destroy')->name('subtype.destroy');
+        Route::get('/get/subtypes/{type_id}', 'SubTypeController@getSubTypesByType');
 
         //CATEGORY
         Route::get('/all/categories', 'CategoryController@getCategories');
@@ -112,6 +123,16 @@ Route::middleware('auth')->group(function (){
         Route::get('/editar/categoria/{id}', 'CategoryController@edit')->name('category.edit');
         Route::post('category/update', 'CategoryController@update')->name('category.update');
         Route::post('category/destroy', 'CategoryController@destroy')->name('category.destroy');
+        Route::get('/get/subcategories/{category_id}', 'CategoryController@getSubcategoryByCategory');
+
+        //SUBCATEGORY
+        Route::get('/all/subcategories', 'SubcategoryController@getSubcategories');
+        Route::get('Subcategorias', 'SubcategoryController@index')->name('subcategory.index');
+        Route::get('crear/subcategoria', 'SubcategoryController@create')->name('subcategory.create');
+        Route::post('subcategory/store', 'SubcategoryController@store')->name('subcategory.store');
+        Route::get('/editar/subcategoria/{id}', 'SubcategoryController@edit')->name('subcategory.edit');
+        Route::post('subcategory/update', 'SubcategoryController@update')->name('subcategory.update');
+        Route::post('subcategory/destroy', 'SubcategoryController@destroy')->name('subcategory.destroy');
 
         //EXAMPLER
         Route::get('/all/examplers', 'ExamplerController@getExamplers');
@@ -131,6 +152,24 @@ Route::middleware('auth')->group(function (){
         Route::post('brand/update', 'BrandController@update')->name('brand.update');
         Route::post('brand/destroy', 'BrandController@destroy')->name('brand.destroy');
         Route::get('/get/exampler/{brand_id}', 'BrandController@getJsonBrands');
+
+        //CEDULA
+        Route::get('/all/warrants', 'WarrantController@getWarrants');
+        Route::get('Cédulas', 'WarrantController@index')->name('warrant.index');
+        Route::get('crear/cedula', 'WarrantController@create')->name('warrant.create');
+        Route::post('warrant/store', 'WarrantController@store')->name('warrant.store');
+        Route::get('/editar/cedula/{id}', 'WarrantController@edit')->name('warrant.edit');
+        Route::post('warrant/update', 'WarrantController@update')->name('warrant.update');
+        Route::post('warrant/destroy', 'WarrantController@destroy')->name('warrant.destroy');
+
+        //CALIDAD
+        Route::get('/all/qualities', 'QualityController@getQualities');
+        Route::get('Calidades', 'QualityController@index')->name('quality.index');
+        Route::get('crear/calidad', 'QualityController@create')->name('quality.create');
+        Route::post('quality/store', 'QualityController@store')->name('quality.store');
+        Route::get('/editar/calidad/{id}', 'QualityController@edit')->name('quality.edit');
+        Route::post('quality/update', 'QualityController@update')->name('quality.update');
+        Route::post('quality/destroy', 'QualityController@destroy')->name('quality.destroy');
 
         //ROL
         Route::get('roles', 'RoleController@index')->name('role.index')

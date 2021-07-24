@@ -1,11 +1,19 @@
 @extends('layouts.appAdmin2')
 
+@section('openConfig')
+    menu-open
+@endsection
+
+@section('activeConfig')
+    active
+@endsection
+
 @section('openMaterialType')
     menu-open
 @endsection
 
 @section('activeMaterialType')
-    active
+
 @endsection
 
 @section('activeListMaterialType')
@@ -42,6 +50,18 @@
     <a href="{{ route('materialtype.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('materialtype.index') }}"><i class="fa fa-key"></i> Tipo de materiales</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
+    </ol>
+@endsection
+
 @section('content')
     <form id="formEdit" class="form-horizontal" data-url="{{ route('materialtype.update') }}" enctype="multipart/form-data">
         @csrf
@@ -54,27 +74,22 @@
                     <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica" value="{{$materialtype->name}}">
                 </div>
             </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Largo</label>
+            <div class="col-md-6">
+                <label for="subcategory_id" class="col-12 col-form-label">Seleccione Marca</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" name="length" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->length}}">
+                    <select id="subcategory_id" name="subcategory_id" class="form-control select2" style="width: 100%;">
+                        <option></option>
+                        @foreach( $subcategories as $subcategory )
+                            <option value="{{ $subcategory->id }}"  {{ $subcategory->id === $materialtype->subcategory_id ? 'selected' : '' }}>{{ $subcategory->name }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Ancho</label>
+            <div class="col-md-6">
+                <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" name="width" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->width}}"> 
-                </div>
-            </div>
-
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Peso</label>
-                <div class="col-sm-10">
-                    <input type="number" class="form-control" name="weight" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->weight}}">
+                    <input type="text" class="form-control" name="description" placeholder="Descripcion" value="{{$materialtype->name}}">
                 </div>
             </div>
         </div>

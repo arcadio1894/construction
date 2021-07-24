@@ -30,7 +30,7 @@ function updateMaterialType() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "3000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -39,7 +39,7 @@ function updateMaterialType() {
                 });
             setTimeout( function () {
                 $(location).attr('href', data.url)
-            }, 4000 )
+            }, 3000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {
@@ -54,7 +54,7 @@ function updateMaterialType() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "4000",
+                        "timeOut": "3000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",
