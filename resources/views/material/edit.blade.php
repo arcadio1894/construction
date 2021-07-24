@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeCreateMaterial')
+@section('activeListMaterial')
     active
 @endsection
 
@@ -19,6 +19,8 @@
 @section('styles-plugins')
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
 @endsection
 
 @section('styles')
@@ -53,6 +55,13 @@
     <form id="formEdit" class="form-horizontal" data-url="{{ route('material.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="material_id" value="{{ $material->id }}">
+
+        <input type="hidden" id="category_id" value="{{$material->category_id}}">
+        <input type="hidden" id="subcategory_id" value="{{$material->subcategory_id}}">
+        <input type="hidden" id="type_id" value="{{$material->material_type_id}}">
+        <input type="hidden" id="subtype_id" value="{{$material->subtype_id}}">
+
+        <input type="hidden" id="exampler_id" value="{{$material->exampler_id}}">
         <div class="row">
             <div class="col-md-6">
                 <div class="card card-success">
@@ -65,18 +74,99 @@
                         </div>
                     </div>
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="description" name="description" class="form-control" value="{{ $material->description }}">
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="description" name="description" class="form-control" value="{{ $material->description }}">
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="measure" name="measure" class="form-control" value="{{ $material->measure }}">
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="measure" name="measure" class="form-control" value="{{ $material->measure }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
+                                <select id="unit_measure" name="unit_measure" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $unitMeasures as $unitMeasure )
+                                        <option value="{{ $unitMeasure->id }}" {{ ($unitMeasure->id === $material->unit_measure_id) ? 'selected': ''}}>{{ $unitMeasure->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="unit_measure" name="unit_measure" class="form-control" value="{{ $material->unit_measure }}">
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="category">Categorías <span class="right badge badge-danger">(*)</span></label>
+                                <select id="category" name="category" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $categories as $category )
+                                        <option value="{{ $category->id }}" {{ ($category->id === $material->category_id) ? 'selected': ''}}>{{ $category->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for="subcategory">Subcategorías <span class="right badge badge-danger">(*)</span></label>
+                                <select id="subcategory" name="subcategory" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+
+                                </select>
+
+                            </div>
                         </div>
+                        <div class="form-group row" id="feature-body" style="display: none">
+                            <div class="col-md-3">
+                                <label for="type">Tipo </label>
+                                <select id="type" name="type" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="subtype">Subtipo </label>
+                                <select id="subtype" name="subtype" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="warrant">Cédula </label>
+                                <select id="warrant" name="warrant" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="" selected>Ninguno</option>
+                                    @foreach( $warrants as $warrant )
+                                        <option value="{{$warrant->id}}" {{ ($warrant->id === $material->warrant_id) ? 'selected': ''}}>{{ $warrant->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label for="quality">Calidad </label>
+                                <select id="quality" name="quality" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="" selected>Ninguno</option>
+                                    @foreach( $qualities as $quality )
+                                        <option value="{{$quality->id}}" {{ ($quality->id === $material->quality_id) ? 'selected' : '' }}>{{ $quality->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="name">Nombre completo</label>
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control rounded-0" id="name" name="name">
+                                <span class="input-group-append">
+                                    <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
+                                </span>
+                            </div>
+                        </div>
+
 
                         <div class="form-group">
                             <label for="unit_price">Precio Unitario <span class="right badge badge-danger">(*)</span></label>
@@ -85,10 +175,10 @@
                         <div class="form-group">
                             <label for="priority">Prioridad <span class="right badge badge-danger">(*)</span></label>
                             <select id="priority" name="priority" class="form-control select2" style="width: 100%;">
-                                <option value="Aceptable" {{ $material->priority = 'Aceptable' ? 'selected' : '' }}>Aceptable</option>
-                                <option value="Agotado" {{ $material->priority = 'Agotado' ? 'selected' : '' }}>Agotado</option>
-                                <option value="Completo" {{ $material->priority = 'Completo' ? 'selected' : '' }}>Completo</option>
-                                <option value="Por agotarse" {{ $material->priority = 'Por agotarse' ? 'selected' : '' }}>Por agotarse</option>
+                                <option value="Aceptable" {{ $material->priority === 'Aceptable' ? 'selected' : '' }}>Aceptable</option>
+                                <option value="Agotado" {{ $material->priority === 'Agotado' ? 'selected' : '' }}>Agotado</option>
+                                <option value="Completo" {{ $material->priority === 'Completo' ? 'selected' : '' }}>Completo</option>
+                                <option value="Por agotarse" {{ $material->priority === 'Por agotarse' ? 'selected' : '' }}>Por agotarse</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -96,10 +186,7 @@
                             <input type="file" id="image" name="image" class="form-control">
                             <img src="{{ asset('images/material/'.$material->image) }}" width="100px" height="100px" alt="{{ $material->description }}">
                         </div>
-                    <!--<div class="form-group">
-                            <label for="serie">N° de serie </label>
-                            <input type="text" id="serie" name="serie" class="form-control" value="{{ $material->serie }}">
-                        </div>-->
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -122,39 +209,45 @@
                         </div>
                         <div class="form-group">
                             <label for="stock_min">Stock Mínimo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_min" name="stock_min" class="form-control" value="{{ $material->stock_min }}">
+                            <input type="text" id="stock_min" name="stock_min" class="form-control" value="{{ $material->stock_min }}" readonly>
                         </div>
+
                         <div class="form-group">
                             <label for="stock_current">Stock Actual <span class="right badge badge-danger">(*)</span></label>
                             <input type="text" id="stock_current" name="stock_current" class="form-control" value="{{ $material->stock_current }}">
                         </div>
 
-                        <div class="form-group">
-                            <label for="material_type">Tipo de material <span class="right badge badge-danger">(*)</span></label>
-                            <select id="material_type" name="material_type" class="form-control select2" style="width: 100%;">
-                                @foreach( $materialTypes as $materialType )
-                                    <option value="{{ $materialType->id }}" {{ $materialType->id == $material->material_type_id ? 'selected' : '' }}>{{ $materialType->name }}</option>
-                                @endforeach
-                            </select>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="btn-grouped"> Retacería </label> <br>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="icheck-primary d-inline">
+                                    <input type="radio" id="typescrap0" name="typescrap" value="" {{ ($material->typescrap_id === null) ? 'checked' : '' }}>
+                                    <label for="typescrap0">Ninguno
+                                    </label>
+                                </div>
+                            </div>
+                            @foreach( $typescraps as $typescrap )
+                                <div class="col-md-4">
+                                    <div class="icheck-primary d-inline">
+                                        <input type="radio" id="typescrap{{$typescrap->id}}" name="typescrap" value="{{$typescrap->id}}" {{ ($typescrap->id === $material->typescrap_id) ? 'checked' : '' }}>
+                                        <label for="typescrap{{$typescrap->id}}">{{$typescrap->name}}
+                                        </label>
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
-                        <div class="form-group">
-                            <label for="category">Categoría <span class="right badge badge-danger">(*)</span></label>
-                            <select id="category" name="category" class="form-control select2" style="width: 100%;">
-                                @foreach( $categories as $category )
-                                    <option value="{{ $category->id }}" {{ $category->id == $material->category_id ? 'selected' : '' }}>{{ $category->name }}</option>
-                                @endforeach
-                            </select>
-                        </div>
+
                         <div class="form-group">
                             <label for="brand">Marca <span class="right badge badge-danger">(*)</span></label>
                             <select id="brand" name="brand" class="form-control select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $brands as $brand )
-                                    <option value="{{ $brand->id }}" {{ ($brand->id === $material->brand_id) ? 'selected' : '' }}>{{ $brand->name }}</option>
+                                    <option value="{{ $brand->id }}" {{ ($brand->id === $material->brand_id) ? 'selected':'' }}>{{ $brand->name }}</option>
                                 @endforeach
                             </select>
                         </div>
-                        <input type="hidden" id="exampler_id" value="{{ $material->exampler_id }}">
                         <div class="form-group">
                             <label for="exampler">Modelo <span class="right badge badge-danger">(*)</span></label>
                             <select id="exampler" name="exampler" class="form-control select2" style="width: 100%;">
@@ -239,6 +332,7 @@
 @section('plugins')
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
 @endsection
 
 @section('scripts')
@@ -251,12 +345,39 @@
             $('#category').select2({
                 placeholder: "Selecione categoría",
             });
-            $('#priority').select2({
-                placeholder: "Selecione prioridad",
+            $('#subcategory').select2({
+                placeholder: "Selecione subcategoría",
             });
             $('#brand').select2({
                 placeholder: "Selecione una marca",
-            })
+            });
+            $('#exampler').select2({
+                placeholder: "Selecione un modelo",
+            });
+            $('#priority').select2({
+                placeholder: "Selecione una prioridad",
+            });
+            $('#feature').select2({
+                placeholder: "Seleccione característica",
+            });
+            $('#type').select2({
+                placeholder: "Elija",
+            });
+            $('#subtype').select2({
+                placeholder: "Elija",
+            });
+            $('#warrant').select2({
+                placeholder: "Elija",
+            });
+            $('#quality').select2({
+                placeholder: "Elija",
+            });
+            $('#unit_measure').select2({
+                placeholder: "Elija",
+            });
+            $("input[data-bootstrap-switch]").each(function(){
+                $(this).bootstrapSwitch();
+            });
         })
     </script>
     <script src="{{ asset('js/material/edit.js') }}"></script>

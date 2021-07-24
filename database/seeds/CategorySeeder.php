@@ -13,16 +13,24 @@ class CategorySeeder extends Seeder
     public function run()
     {
         Category::create([
-            'name' => 'PLANCHA LISA INOX',
-            'description' => '5m*1m',
+            'name' => 'EPP',
+            'description' => 'EQUIPO PROTECCIÓN  PERSONAL',
         ]);
         Category::create([
-            'name' => 'TUBERIA INOX',
-            'description' => '5m*2m',
+            'name' => 'EMBALAJES',
+            'description' => 'EMBALAJES',
         ]);
         Category::create([
-            'name' => 'TUBO CUADRADO INOX',
-            'description' => '5m*2m',
+            'name' => 'OFICINA',
+            'description' => 'UTILES DE OFICINA',
+        ]);
+        Category::create([
+            'name' => 'ACCESORIOS',
+            'description' => 'ACCESORIOS VARIOS',
+        ]);
+        Category::create([
+            'name' => 'CONSUMIBLES',
+            'description' => 'VARIOS',
         ]);
     }
 }

@@ -1,11 +1,19 @@
 @extends('layouts.appAdmin2')
 
+@section('openConfig')
+    menu-open
+@endsection
+
+@section('activeConfig')
+    active
+@endsection
+
 @section('openMaterialType')
     menu-open
 @endsection
 
 @section('activeMaterialType')
-    active
+
 @endsection
 
 @section('activeListMaterialType')
@@ -44,10 +52,9 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th>Nombre</th>
-                <th>Largo</th>
-                <th>Ancho</th>
-                <th>Peso (Kg)</th>
+                <th>Tipo</th>
+                <th>Subcategoría</th>
+                <th>Descripción</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -68,6 +75,7 @@
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="materialtype_id" name="materialtype_id">
+                        <strong>¿Está seguro de eliminar este tipo?</strong>
                         <p id="name"></p>
 
                     </div>

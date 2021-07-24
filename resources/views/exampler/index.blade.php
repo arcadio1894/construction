@@ -1,11 +1,19 @@
 @extends('layouts.appAdmin2')
 
+@section('openConfig')
+    menu-open
+@endsection
+
+@section('activeConfig')
+    active
+@endsection
+
 @section('openExampler')
     menu-open
 @endsection
 
 @section('activeExampler')
-    active
+
 @endsection
 
 @section('activeListExampler')

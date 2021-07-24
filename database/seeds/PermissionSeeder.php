@@ -318,5 +318,73 @@ class PermissionSeeder extends Seeder
             'name' => 'destroy_exampler',
             'description' => 'Eliminar Modelo'
         ]);
+
+        Permission::create([
+            'name' => 'list_subcategory',
+            'description' => 'Listar Subcategorías'
+        ]);
+        Permission::create([
+            'name' => 'create_subcategory',
+            'description' => 'Crear Subcategorías'
+        ]);
+        Permission::create([
+            'name' => 'update_subcategory',
+            'description' => 'Modificar Subcategorías'
+        ]);
+        Permission::create([
+            'name' => 'destroy_subcategory',
+            'description' => 'Eliminar Subcategorías'
+        ]);
+
+        Permission::create([
+            'name' => 'list_subType',
+            'description' => 'Listar SubTipos'
+        ]);
+        Permission::create([
+            'name' => 'create_subType',
+            'description' => 'Crear SubTipos'
+        ]);
+        Permission::create([
+            'name' => 'update_subType',
+            'description' => 'Modificar SubTipos'
+        ]);
+        Permission::create([
+            'name' => 'destroy_subType',
+            'description' => 'Eliminar SubTipos'
+        ]);
+
+        Permission::create([
+            'name' => 'list_warrant',
+            'description' => 'Listar cédulas'
+        ]);
+        Permission::create([
+            'name' => 'create_warrant',
+            'description' => 'Crear cédulas'
+        ]);
+        Permission::create([
+            'name' => 'update_warrant',
+            'description' => 'Modificar cédulas'
+        ]);
+        Permission::create([
+            'name' => 'destroy_warrant',
+            'description' => 'Eliminar cédulas'
+        ]);
+
+        Permission::create([
+            'name' => 'list_quality',
+            'description' => 'Listar calidades'
+        ]);
+        Permission::create([
+            'name' => 'create_quality',
+            'description' => 'Crear calidades'
+        ]);
+        Permission::create([
+            'name' => 'update_quality',
+            'description' => 'Modificar calidades'
+        ]);
+        Permission::create([
+            'name' => 'destroy_quality',
+            'description' => 'Eliminar calidades'
+        ]);
     }
 }

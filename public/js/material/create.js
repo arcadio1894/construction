@@ -6,18 +6,48 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', deleteSpecification);
 
-    $select = $('#exampler');
-    $('#brand').change(function () {
-        $select.empty();
-        var brand =  $('#brand').val();
-        $.get( "/dashboard/get/exampler/"+brand, function( data ) {
-            $select.append($("<option>", {
+    $selectCategory = $('#category');
+
+    $selectSubCategory = $('#subcategory');
+
+    $selectBrand = $('#brand');
+
+    $selectExampler = $('#exampler');
+
+    $selectType = $('#type');
+
+    $selectSubtype = $('#subtype');
+
+    $selectCategory.change(function () {
+        $selectSubCategory.empty();
+        var category =  $selectCategory.val();
+        $.get( "/dashboard/get/subcategories/"+category, function( data ) {
+            $selectSubCategory.append($("<option>", {
                 value: '',
-                text: ''
+                text: 'Ninguna'
             }));
             for ( var i=0; i<data.length; i++ )
             {
-                $select.append($("<option>", {
+                $selectSubCategory.append($("<option>", {
+                    value: data[i].id,
+                    text: data[i].subcategory
+                }));
+            }
+        });
+
+    });
+
+    $selectBrand.change(function () {
+        $selectExampler.empty();
+        var brand =  $selectBrand.val();
+        $.get( "/dashboard/get/exampler/"+brand, function( data ) {
+            $selectExampler.append($("<option>", {
+                value: '',
+                text: 'Ninguna'
+            }));
+            for ( var i=0; i<data.length; i++ )
+            {
+                $selectExampler.append($("<option>", {
                     value: data[i].id,
                     text: data[i].exampler
                 }));
@@ -26,29 +56,66 @@ $(document).ready(function () {
 
     });
 
-    $('#feature').change(function () {
-        let feature =  $('#feature').val();
-        switch(feature) {
-            case "2":
+    $selectSubCategory.change(function () {
+        let subcategory = $selectSubCategory.select2('data');
+        //alert(subcategory[0].text);
+        switch(subcategory[0].text) {
+            case "INOX":
                 //alert('Metalico');
+                $selectType.empty();
+                var subcategoria =  subcategory[0].id;
+                $.get( "/dashboard/get/types/"+subcategoria, function( data ) {
+                    $selectType.append($("<option>", {
+                        value: '',
+                        text: 'Ninguno'
+                    }));
+                    for ( var i=0; i<data.length; i++ )
+                    {
+                        $selectType.append($("<option>", {
+                            value: data[i].id,
+                            text: data[i].type
+                        }));
+                    }
+                });
                 $('#feature-body').css("display","");
+
                 break;
-            case "1":
+            default :
                 $('#feature-body').css("display","none");
-                $('#type').val('1');
-                $('#type').trigger('change');
-                $('#material').val('1');
-                $('#material').trigger('change');
-                $('#cedula').val('1');
-                $('#cedula').trigger('change');
-                $('#quality').val('1');
+                $selectType.val('0');
+                $selectType.trigger('change');
+                $selectSubtype.val('0');
+                $selectSubtype.trigger('change');
+                $('#warrant').val('0');
+                $('#warrant').trigger('change');
+                $('#quality').val('0');
                 $('#quality').trigger('change');
                 generateNameProduct();
                 break;
         }
     });
 
-    $select.select2({
+    $selectType.change(function () {
+        $selectSubtype.empty();
+        let type = $selectType.select2('data');
+
+        $.get( "/dashboard/get/subtypes/"+type[0].id, function( data ) {
+            $selectSubtype.append($("<option>", {
+                value: '',
+                text: 'Ninguno'
+            }));
+            for ( var i=0; i<data.length; i++ )
+            {
+                $selectSubtype.append($("<option>", {
+                    value: data[i].id,
+                    text: data[i].subtype
+                }));
+            }
+        });
+
+    });
+
+    $selectExampler.select2({
         placeholder: "Selecione un modelo",
     });
     
@@ -58,6 +125,12 @@ $(document).ready(function () {
 
 var $formCreate;
 var $select;
+var $selectCategory;
+var $selectSubCategory;
+var $selectBrand;
+var $selectExampler;
+var $selectType;
+var $selectSubtype;
 
 function generateNameProduct() {
     if( $('#description').val().trim() === '' )
@@ -109,12 +182,12 @@ function generateNameProduct() {
     $('#name').val('');
 
     let type = ($('#type option:selected').text() === 'Ninguno') ? '': ' '+$('#type option:selected').text();
-    let material = ($('#material option:selected').text() === 'Ninguno') ? '': ' '+$('#material option:selected').text();
-    let cedula = ($('#cedula option:selected').text() === 'Ninguno') ? '': ' '+$('#cedula option:selected').text();
+    let subtype = ($('#subtype option:selected').text() === 'Ninguno') ? '': ' '+$('#subtype option:selected').text();
+    let warrant = ($('#warrant option:selected').text() === 'Ninguno') ? '': ' '+$('#warrant option:selected').text();
     let quality = ($('#quality option:selected').text() === 'Ninguno') ? '': ' '+$('#quality option:selected').text();
     let measure = ' ' + $('#measure').val();
 
-    let name = $('#description').val() + type + material + cedula + quality + measure;
+    let name = $('#description').val() + type + subtype + warrant + quality + measure;
     $('#name').val(name);
 
 }
@@ -157,7 +230,7 @@ function storeMaterial() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -165,8 +238,8 @@ function storeMaterial() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                location.reload();
-            }, 4000 )
+                //location.reload();
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

@@ -325,124 +325,250 @@
                     </li>
 
                     <li class="nav-header">MATERIALES</li>
-                    @can('list_category')
-                    <li class="nav-item has-treeview @yield('openCategory')">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-truck-loading"></i>
+                    <li class="nav-item has-treeview @yield('openConfig')">
+                        <a href="#" class="nav-link @yield('activeConfig')">
+                            <i class="fas fa-tools nav-icon"></i>
                             <p>
-                                Categorías
+                                Configuraciones
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Listar categorias</p>
+                            @can('list_category')
+                            <li class="nav-item has-treeview @yield('openCategory')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Categorías
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar categorias</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('category.create') }}" class="nav-link @yield('activeCreateCategory')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear categorias</p>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
-                            <li class="nav-item">
-                                <a href="{{ route('category.create') }}" class="nav-link @yield('activeCreateCategory')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Crear categorias</p>
+                            @endcan
+
+                            @can('list_subcategory')
+                                <li class="nav-item has-treeview @yield('openSubcategory')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Subcategorías
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('subcategory.index') }}" class="nav-link @yield('activeListSubcategory')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar subcategorias</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('subcategory.create') }}" class="nav-link @yield('activeCreateSubcategory')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear subcategorias</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
+
+                            @can('list_materialType')
+                                <li class="nav-item has-treeview @yield('openMaterialType')">
+                                    <a href="#" class="nav-link @yield('activeMaterialType')">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Tipo Materiales
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar tipos</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('materialtype.create') }}" class="nav-link @yield('activeCreateMaterialType')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear tipos</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
+
+                            @can('list_subType')
+                                <li class="nav-item has-treeview @yield('openSubType')">
+                                    <a href="#" class="nav-link @yield('activeSubType')">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            SubTipos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('subtype.index') }}" class="nav-link @yield('activeListSubType')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar Subtipos</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('subtype.create') }}" class="nav-link @yield('activeCreateSubType')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear Subtipos</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
+
+                            @can('list_warrant')
+                                <li class="nav-item has-treeview @yield('openWarrant')">
+                                    <a href="#" class="nav-link @yield('activeWarrant')">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Cédulas
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('warrant.index') }}" class="nav-link @yield('activeListWarrant')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar cédulas</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('warrant.create') }}" class="nav-link @yield('activeCreateWarrant')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear cédulas</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
+
+                            @can('list_quality')
+                                <li class="nav-item has-treeview @yield('openQuality')">
+                                    <a href="#" class="nav-link @yield('activeQuality')">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Calidades
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('quality.index') }}" class="nav-link @yield('activeListQuality')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar calidades</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('quality.create') }}" class="nav-link @yield('activeCreateQuality')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear calidades</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan
+
+                            @can('list_brand')
+                            <li class="nav-item has-treeview @yield('openBrand')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Marcas
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
                                 </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('brand.index') }}" class="nav-link @yield('activeListBrand')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar marcas</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('brand.create') }}" class="nav-link @yield('activeCreateBrand')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear marcas</p>
+                                        </a>
+                                    </li>
+                                </ul>
                             </li>
+                            @endcan
+
+                            @can('list_exampler')
+                            <li class="nav-item has-treeview @yield('openExampler')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Modelos
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="{{ route('exampler.index') }}" class="nav-link @yield('activeListExampler')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar modelos</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('exampler.create') }}" class="nav-link @yield('activeCreateExampler')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear modelos</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            @endcan
+
+
                         </ul>
                     </li>
-                    @endcan
-                    @can('list_brand')
-                        <li class="nav-item has-treeview @yield('openBrand')">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-truck-loading"></i>
-                                <p>
-                                    Marcas
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('brand.index') }}" class="nav-link @yield('activeListBrand')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Listar marcas</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('brand.create') }}" class="nav-link @yield('activeCreateBrand')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Crear marcas</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @endcan
-                    @can('list_exampler')
-                        <li class="nav-item has-treeview @yield('openExampler')">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon fas fa-truck-loading"></i>
-                                <p>
-                                    Modelos
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('exampler.index') }}" class="nav-link @yield('activeListExampler')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Listar modelos</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="{{ route('exampler.create') }}" class="nav-link @yield('activeCreateExampler')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Crear modelos</p>
-                                    </a>
-                                </li>
-                            </ul>
-                        </li>
-                    @endcan
-                    @can('list_materialType')
-                    <li class="nav-item has-treeview @yield('openMaterialType')">
-                        <a href="#" class="nav-link @yield('activeMaterialType')">
-                            <i class="nav-icon fas fa-boxes"></i>
-                            <p>
-                                Tipo Materiales
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Listar tipos</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    @endcan
                     @can('list_material')
-                    <li class="nav-item has-treeview @yield('openMaterial')">
-                        <a href="#" class="nav-link @yield('activeMaterial')">
-                            <i class="nav-icon fas fa-boxes"></i>
-                            <p>
-                                Materiales
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Listar materiales</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Crear materiales</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="nav-item has-treeview @yield('openMaterial')">
+                            <a href="#" class="nav-link @yield('activeMaterial')">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <p>
+                                    Materiales
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                <li class="nav-item">
+                                    <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar materiales</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Crear materiales</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
                     @endcan
                     @can('list_quotes')
                         <li class="nav-header">COTIZACIONES</li>
@@ -498,75 +624,33 @@
                     </li>
                     @endcan
 
-                        <li class="nav-header">TRANSFERENCIAS</li>
-                        <li class="nav-item has-treeview @yield('openTransfer')">
-                            <a href="#" class="nav-link @yield('activeTransfer')">
-                                <i class="nav-icon fas fa-truck-loading"></i>
-                                <p>
-                                    Transferencias
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
-
-                                    <li class="nav-item">
-                                        <a href="{{ route('transfer.index') }}" class="nav-link @yield('activeListTransfer')">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Listar traslados</p>
-                                        </a>
-                                    </li>
-
-                                    <li class="nav-item">
-                                        <a href="{{ route('transfer.create') }}" class="nav-link @yield('activeCreateTransfer')">
-                                            <i class="far fa-circle nav-icon"></i>
-                                            <p>Crear traslado</p>
-                                        </a>
-                                    </li>
-
-                            </ul>
-                        </li>
-
-                    {{--<li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-boxes"></i>
+                    <li class="nav-header">TRANSFERENCIAS</li>
+                    <li class="nav-item has-treeview @yield('openTransfer')">
+                        <a href="#" class="nav-link @yield('activeTransfer')">
+                            <i class="nav-icon fas fa-truck-loading"></i>
                             <p>
-                                Productos
+                                Transferencias
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Categorías</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Modelos</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Marcas</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Proveedores</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Items</p>
-                                </a>
-                            </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('transfer.index') }}" class="nav-link @yield('activeListTransfer')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar traslados</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="{{ route('transfer.create') }}" class="nav-link @yield('activeCreateTransfer')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Crear traslado</p>
+                                    </a>
+                                </li>
+
                         </ul>
-                    </li>--}}
+                    </li>
 
                     <li class="nav-header">ENTRADAS</li>
                     <li class="nav-item has-treeview @yield('openEntryPurchase')">
@@ -679,6 +763,59 @@
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Inactive Page</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item has-treeview">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-circle"></i>
+                            <p>
+                                Level 1
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Level 2</p>
+                                </a>
+                            </li>
+                            <li class="nav-item has-treeview">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>
+                                        Level 2
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Level 3</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Level 3</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-dot-circle nav-icon"></i>
+                                            <p>Level 3</p>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Level 2</p>
                                 </a>
                             </li>
                         </ul>
