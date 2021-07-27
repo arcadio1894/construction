@@ -87,7 +87,7 @@
                     <input type="hidden" name="container_id" id="container_id" value="{{$container->id}}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Posición </label>
+                            <label class="col-sm-3 control-label" for="name"> Posición <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: X" required />
@@ -122,7 +122,7 @@
                     <input type="hidden" name="position_id" id="position_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label " for="nameE"> Posición </label>
+                            <label class="col-sm-3 control-label " for="nameE"> Posición <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" required />

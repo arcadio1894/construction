@@ -313,14 +313,14 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('assign_supplier')
+                            {{--@can('assign_supplier')
                             <li class="nav-item">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Proveedores y materiales</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                         </ul>
                     </li>
 
@@ -581,7 +581,7 @@
                                 </p>
                             </a>
                         </li>
-                        @can('create_quotes')
+                        {{--@can('create_quotes')
                         <li class="nav-item">
                             <a href="#" class="nav-link @yield('activeCreateQuotes')">
                                 <i class="nav-icon fas fa-th"></i>
@@ -591,7 +591,7 @@
                                 </p>
                             </a>
                         </li>
-                        @endcan
+                        @endcan--}}
                     @endcan
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>
@@ -743,7 +743,7 @@
                         </ul>
                     </li>
 
-                    <li class="nav-header">NAVBAR HEADER</li>
+                    {{--<li class="nav-header">NAVBAR HEADER</li>
                     <li class="nav-item has-treeview">
                         <a href="#" class="nav-link">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -830,7 +830,7 @@
                                 <span class="right badge badge-danger">New</span>
                             </p>
                         </a>
-                    </li>
+                    </li>--}}
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

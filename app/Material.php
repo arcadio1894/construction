@@ -9,6 +9,8 @@ class Material extends Model
 {
     use SoftDeletes;
 
+    protected $appends = ['full_description'];
+
     protected $fillable = [
         'code',
         'description',
@@ -31,6 +33,17 @@ class Material extends Model
         'typescrap_id'
     ];
 
+    public function getFullDescriptionAttribute()
+    {
+        $subcategory = ( is_null($this->subcategory) ) ? '': ' '.$this->subcategory->name;
+        $type = ( is_null($this->materialType) ) ? '': ' '.$this->materialType->name;
+        $subtype = ( is_null($this->subType) ) ? '': ' '.$this->subType->name;
+        $warrant = ( is_null($this->warrant) ) ? '': ' '.$this->warrant->name;
+        $quality = ( is_null($this->quality) ) ? '': ' '.$this->quality->name;
+
+        return "{$this->description}". $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
+    }
+
     public function unitMeasure()
     {
         return $this->belongsTo('App\UnitMeasure');
@@ -48,12 +61,12 @@ class Material extends Model
 
     public function materialType()
     {
-        return $this->belongsTo('App\MaterialType');
+        return $this->belongsTo('App\MaterialType', 'material_type_id');
     }
 
     public function subType()
     {
-        return $this->belongsTo('App\SubType');
+        return $this->belongsTo('App\Subtype', 'subtype_id');
     }
 
     public function exampler()
@@ -78,7 +91,7 @@ class Material extends Model
 
     public function typeScrap()
     {
-        return $this->belongsTo('App\Typescrap');
+        return $this->belongsTo('App\Typescrap', 'typescrap_id');
     }
 
     public function equipments()

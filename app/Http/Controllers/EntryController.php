@@ -8,6 +8,7 @@ use App\Http\Requests\StoreEntryPurchaseRequest;
 use App\Item;
 use App\Material;
 use App\Supplier;
+use App\Typescrap;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -88,20 +89,39 @@ class EntryController extends Controller
                             $materialS->unit_price = $items[$i]->price;
                             $materialS->save();
                         }
-                        $item = Item::create([
-                            'detail_entry_id' => $detail_entry->id,
-                            'material_id' => $detail_entry->material_id,
-                            'code' => $items[$i]->item,
-                            'length' => $detail_entry->material->materialType->length,
-                            'width' => $detail_entry->material->materialType->width,
-                            'weight' => $detail_entry->material->materialType->weight,
-                            'price' => $price,
-                            'percentage' => 1,
-                            'material_type_id' => $detail_entry->material->materialType->id,
-                            'location_id' => $items[$i]->id_location,
-                            'state' => $items[$i]->state,
-                            'state_item' => 'entered'
-                        ]);
+                        //dd($detail_entry->material->materialType);
+                        if ( isset($detail_entry->material->typeScrap) )
+                        {
+                            $item = Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $items[$i]->item,
+                                'length' => $detail_entry->material->typeScrap->length,
+                                'width' => $detail_entry->material->typeScrap->width,
+                                'weight' => 0,
+                                'price' => $price,
+                                'percentage' => 1,
+                                'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                'location_id' => $items[$i]->id_location,
+                                'state' => $items[$i]->state,
+                                'state_item' => 'entered'
+                            ]);
+                        } else {
+                            $item = Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $items[$i]->item,
+                                'length' => 0,
+                                'width' => 0,
+                                'weight' => 0,
+                                'price' => $price,
+                                'percentage' => 1,
+                                'location_id' => $items[$i]->id_location,
+                                'state' => $items[$i]->state,
+                                'state_item' => 'entered'
+                            ]);
+                        }
+
                     }
                 }
             }
@@ -141,7 +161,7 @@ class EntryController extends Controller
                 'width' => (float) $item_selected[0]->width,
                 'weight' => (float)  $item_selected[0]->weight,
                 'price' => (float)  $item_selected[0]->price,
-                'material_type_id' => $item_selected[0]->materialType_id,
+                'typescrap_id' => $item_selected[0]->typescrap_id,
                 'location_id' => $item_selected[0]->location_id,
                 'state' => $item_selected[0]->state,
                 'state_item' => 'scraped'
@@ -155,15 +175,15 @@ class EntryController extends Controller
 
             // TODO: Actualizar la cantidad en el material
             // TODO: Primero restar uno y luego sumar AreaReal/AreaTotal
-            $material = Material::with('materialType')->find($item->material_id);
+            $material = Material::with('typeScrap')->find($item->material_id);
             $porcentaje = 0;
-            if( $material->materialType->id == 2 || $material->materialType->id == 3 )
+            if( isset($material->typeScrap) && ($material->typeScrap->id == 1 || $material->typeScrap->id == 2)  )
             {
-                $porcentaje = ($item->length*$item->width)/($material->materialType->length*$material->materialType->width);
+                $porcentaje = ($item->length*$item->width)/($material->typeScrap->length*$material->typeScrap->width);
                 $item->percentage = $porcentaje;
                 $item->save();
             }
-            if( $material->materialType->id == 1 )
+            if( isset($material->typeScrap) && $material->typeScrap->id == 3 )
             {
                 $porcentaje = ($item->length)/($material->materialType->length);
                 $item->percentage = $porcentaje;
@@ -206,7 +226,7 @@ class EntryController extends Controller
         $entries = Entry::with('supplier')->with(['details' => function ($query) {
                 $query->with('material')->with(['items' => function ($query) {
                     $query->where('state_item', 'entered')
-                        ->with('materialType')
+                        ->with('typescrap')
                         ->with(['location' => function ($query) {
                             $query->with(['area', 'warehouse', 'shelf', 'level', 'container']);
                         }]);
@@ -238,7 +258,7 @@ class EntryController extends Controller
         $entries = Entry::with('supplier')->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered')
-                    ->with('materialType')
+                    ->with('typescrap')
                     ->with(['location' => function ($query) {
                         $query->with(['area', 'warehouse', 'shelf', 'level', 'container']);
                     }]);

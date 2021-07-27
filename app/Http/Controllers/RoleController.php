@@ -30,7 +30,13 @@ class RoleController extends Controller
         'location'=>'UBICACIONES',
         'report'=>'REPORTES',
         'email'=>'EMAILS',
-        'amount'=>'MONTOS DE COMPRA'
+        'exampler'=>'MODELOS',
+        'brand' => 'MARCAS',
+        'subcategory' => 'SUBCATEGORÍAS',
+        'subType' => 'SUB TIPOS',
+        'warrant' => 'CÉDULA',
+        'quality' => 'CALIDAD',
+        'position' => 'POSICIONES'
     ];
 
     public function index()

@@ -69,13 +69,13 @@
         
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica" value="{{$materialtype->name}}">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tipo" value="{{$materialtype->name}}">
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="subcategory_id" class="col-12 col-form-label">Seleccione Marca</label>
+                <label for="subcategory_id" class="col-12 col-form-label">Seleccione Marca <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <select id="subcategory_id" name="subcategory_id" class="form-control select2" style="width: 100%;">
                         <option></option>

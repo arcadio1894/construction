@@ -181,13 +181,14 @@ function generateNameProduct() {
 
     $('#name').val('');
 
+    let subcategory = ($('#subcategory option:selected').text() === 'Ninguno') ? '': ' '+$('#subcategory option:selected').text();
     let type = ($('#type option:selected').text() === 'Ninguno') ? '': ' '+$('#type option:selected').text();
     let subtype = ($('#subtype option:selected').text() === 'Ninguno') ? '': ' '+$('#subtype option:selected').text();
     let warrant = ($('#warrant option:selected').text() === 'Ninguno') ? '': ' '+$('#warrant option:selected').text();
     let quality = ($('#quality option:selected').text() === 'Ninguno') ? '': ' '+$('#quality option:selected').text();
     let measure = ' ' + $('#measure').val();
 
-    let name = $('#description').val() + type + subtype + warrant + quality + measure;
+    let name = $('#description').val() + subcategory + type + subtype + warrant + quality + measure;
     $('#name').val(name);
 
 }
@@ -238,7 +239,7 @@ function storeMaterial() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                //location.reload();
+                location.reload();
             }, 2000 )
         },
         error: function (data) {

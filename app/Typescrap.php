@@ -15,5 +15,11 @@ class Typescrap extends Model
         'width'
     ];
 
+    public function materials()
+    {
+        return $this->hasMany('App\Material');
+    }
+
+
     protected $dates = ['deleted_at'];
 }

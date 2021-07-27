@@ -7,7 +7,7 @@ function format ( d ) {
         '|POS:'+d.location.position.name;
     return 'Estado: '+d.state+'<br>'+
         'Estado de Item: '+d.state_item+'<br>'+
-        'Tipo de Material: '+d.material_type.name+'<br>'+
+        'Tipo de Material: '+d.typescrap.name+'<br>'+
         'Ubicación: '+location+'<br>';
 }
 
@@ -27,7 +27,7 @@ $(document).ready(function () {
                 "data":           null,
                 "defaultContent": ""
             },
-            { data: 'material.description' },
+            { data: 'material.full_description' },
             { data: 'code' },
             { data: 'length' },
             { data: 'width' },

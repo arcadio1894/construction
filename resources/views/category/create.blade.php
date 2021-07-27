@@ -55,9 +55,9 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tuberia Inoxidable">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Categoría">
                 </div>
             </div>
         </div>
@@ -66,7 +66,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Descripcion</label>
                 <div class="col-sm-10">
-                     <input type="text" class="form-control" name="description" placeholder="Ejm: 5m*1m">
+                     <input type="text" class="form-control" name="description" placeholder="Ejm: Descripción">
                 </div>
             </div>
         </div>

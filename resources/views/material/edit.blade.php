@@ -182,7 +182,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="image">Imagen <span class="right badge badge-danger">(*)</span></label>
+                            <label for="image">Imagen </label>
                             <input type="file" id="image" name="image" class="form-control">
                             <img src="{{ asset('images/material/'.$material->image) }}" width="100px" height="100px" alt="{{ $material->description }}">
                         </div>
@@ -240,7 +240,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label for="brand">Marca <span class="right badge badge-danger">(*)</span></label>
+                            <label for="brand">Marca </label>
                             <select id="brand" name="brand" class="form-control select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $brands as $brand )
@@ -249,7 +249,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="exampler">Modelo <span class="right badge badge-danger">(*)</span></label>
+                            <label for="exampler">Modelo </label>
                             <select id="exampler" name="exampler" class="form-control select2" style="width: 100%;">
 
                             </select>
@@ -272,11 +272,11 @@
                     <div class="card-body">
                         <div class="form-group row">
                             <div class="col-md-5">
-                                <label for="specification">Especificación <span class="right badge badge-danger">(*)</span></label>
+                                <label for="specification">Especificación </label>
                                 <input type="text" id="specification" class="form-control">
                             </div>
                             <div class="col-md-5">
-                                <label for="content">Contenido <span class="right badge badge-danger">(*)</span></label>
+                                <label for="content">Contenido </label>
                                 <input type="text" id="content" class="form-control">
                             </div>
                             <div class="col-md-2">

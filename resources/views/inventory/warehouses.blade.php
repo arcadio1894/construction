@@ -71,7 +71,7 @@
                     <input type="hidden" name="area_id" id="area_id" value="{{$area->id}}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Almacén </label>
+                            <label class="col-sm-3 control-label" for="name"> Almacén <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: Principal" required />
@@ -106,7 +106,7 @@
                     <input type="hidden" name="warehouse_id" id="warehouse_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label " for="nameE"> Almacén </label>
+                            <label class="col-sm-3 control-label " for="nameE"> Almacén <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" required />

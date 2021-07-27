@@ -79,7 +79,7 @@
                     <input type="hidden" name="shelf_id" id="shelf_id" value="{{$shelf->id}}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Nivel </label>
+                            <label class="col-sm-3 control-label" for="name"> Nivel <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: A" required />
@@ -114,7 +114,7 @@
                     <input type="hidden" name="level_id" id="level_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label " for="nameE"> Nivel </label>
+                            <label class="col-sm-3 control-label " for="nameE"> Nivel <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" required />

@@ -80,14 +80,14 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Nombre </label>
+                            <label class="col-sm-3 control-label" for="name"> Nombre <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: Jorge Gonzales" required />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="description"> Email </label>
+                            <label class="col-sm-3 control-label" for="description"> Email <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="email" id="email" name="email" class="form-control" placeholder="Ejm: user@construction.com" required />
@@ -101,7 +101,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="roles"> Roles </label>
+                            <label class="col-sm-3 control-label" for="roles"> Roles <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <select multiple="" name="roles[]" class="select2 form-control" style="width: 100%"  id="roles" >
@@ -134,7 +134,7 @@
                     <input type="hidden" name="user_id" id="user_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="nameE"> Nombre </label>
+                            <label class="col-sm-3 control-label" for="nameE"> Nombre <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" required />
@@ -142,7 +142,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="emailE"> Correo electrónico </label>
+                            <label class="col-sm-3 control-label" for="emailE"> Correo electrónico <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="email" id="emailE" name="email" class="form-control" required />
@@ -157,7 +157,7 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="rolesE"> Roles </label>
+                            <label class="col-sm-3 control-label" for="rolesE"> Roles <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <select multiple="" name="roles[]" class="select2 form-control" style="width: 100%" id="rolesE" >

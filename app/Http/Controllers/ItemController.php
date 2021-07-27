@@ -45,7 +45,7 @@ class ItemController extends Controller
     public function getJsonItems($id_material)
     {
         $array = [];
-        $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
+        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
             ->where('material_id', $id_material)->where('state_item','exited')
             ->get();
         foreach ( $items as $item )
@@ -56,8 +56,8 @@ class ItemController extends Controller
                     'id'=> $item->id,
                     'location' => $l,
                     'location_id' => $item->location->id,
-                    'materialType' => $item->materialType,
-                    'material' => $item->material->description,
+                    'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
+                    'material' => $item->material->full_description,
                     'material_id' => $item->material->id,
                     'price' => $item->price,
                     'state' => $item->state,
@@ -75,7 +75,7 @@ class ItemController extends Controller
     public function getJsonItemsDetail($detail)
     {
         $array = [];
-        $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
+        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
             ->where('detail_entry_id', $detail)
             ->get();
         foreach ( $items as $key => $item )
@@ -84,7 +84,7 @@ class ItemController extends Controller
             array_push($array,
                 [
                     'id'=> $key+1,
-                    'material' => $item->material->description,
+                    'material' => $item->material->full_description,
                     'code' => $item->code,
                     'length' => $item->length,
                     'width' => $item->width,
@@ -101,7 +101,7 @@ class ItemController extends Controller
     public function getJsonItemsOutput($id_material)
     {
         $array = [];
-        $items = Item::with(['location', 'materialType', 'material', 'detailEntry'])
+        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
             ->where('material_id', $id_material)->whereIn('state_item',['entered', 'scraped'])
             ->get();
         foreach ( $items as $item )
@@ -112,8 +112,8 @@ class ItemController extends Controller
                     'id'=> $item->id,
                     'location' => $l,
                     'location_id' => $item->location->id,
-                    'materialType' => $item->materialType,
-                    'material' => $item->material->description,
+                    'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
+                    'material' => $item->material->full_description,
                     'material_id' => $item->material->id,
                     'price' => $item->price,
                     'state' => $item->state,

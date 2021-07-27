@@ -68,14 +68,14 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Subcategoría</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Subcategoría <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="name" placeholder="Ejm: Subcategoría" value="{{$subcategory->name}}">
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="category_id" class="col-12 col-form-label">Seleccione Categoría</label>
+                <label for="category_id" class="col-12 col-form-label">Seleccione Categoría <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <select id="category_id" name="category_id" class="form-control select2" style="width: 100%;">
                         <option></option>

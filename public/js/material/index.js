@@ -1,10 +1,24 @@
 function format ( d ) {
+    var type = (d.material_type===null) ? 'Ninguno':d.material_type.name;
+    var subtype = (d.sub_type===null) ? 'Ninguno':d.sub_type.name;
+    var warrant = (d.warrant===null) ? 'Ninguno':d.warrant.name;
+    var quality = (d.quality===null) ? 'Ninguno':d.quality.name;
+    var brand = (d.brand===null) ? 'Ninguno':d.brand.name;
+    var exampler = (d.exampler===null) ? 'Ninguno':d.exampler.name;
+    var typescrap = (d.type_scrap===null) ? 'Ninguno':d.type_scrap.name;
     return 'Medida: '+d.measure+'<br>'+
-        'Unidad de medida: '+d.unit_measure+'<br>'+
+        'Unidad de medida: '+d.unit_measure.name+'<br>'+
         'Stock máximo: '+d.stock_max+'<br>'+
         'Stock míximo: '+d.stock_min+'<br>'+
         'Categoría: '+d.category.name+'<br>'+
-        'Tipo de material: '+d.material_type.name+'<br>';
+        'SubCategoría: '+d.subcategory.name+'<br>'+
+        'Tipo de material: '+type+'<br>'+
+        'Sub tipo: '+subtype+'<br>'+
+        'Cédula: '+warrant+'<br>'+
+        'Calidad: '+quality+'<br>'+
+        'Marca: '+brand+'<br>'+
+        'Modelo: '+exampler+'<br>'+
+        'Retacería: '+typescrap+'<br>';
 }
 
 $(document).ready(function () {
@@ -22,11 +36,11 @@ $(document).ready(function () {
                     "defaultContent": ""
                 },
                 { data: 'code' },
-                { data: 'description' },
-                /*{ data: 'measure' },
-                { data: 'unit_measure' },
+                { data: 'full_description' },
+                { data: 'measure' },
+                { data: 'unit_measure.name' },
                 { data: 'stock_max' },
-                { data: 'stock_min' },*/
+                { data: 'stock_min' },
                 { data: 'stock_current' },
                 { data: 'priority' },
                 { data: 'unit_price' },
@@ -38,8 +52,78 @@ $(document).ready(function () {
                         return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
                     }
                 },
-                /*{ data: 'category.name' },
-                { data: 'material_type.name' },*/
+                { data: 'category.name' },
+                { data: 'subcategory.name' },
+                { data: null,
+                    title: 'Tipo',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.material_type === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.material_type.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Subtipo',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.sub_type === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.sub_type.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Cédula',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.warrant === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.warrant.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Calidad',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.quality === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.quality.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Marca',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.brand === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.brand.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Modelo',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.exampler === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.exampler.name +'</p>';
+                    }
+                },
+                { data: null,
+                    title: 'Retacería',
+                    wrap: true,
+                    "render": function (item)
+                    {
+                        if ( item.type_scrap === null )
+                            return '<p>Ninguno</p>';
+                        return '<p>'+ item.type_scrap.name +'</p>';
+                    }
+                },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
@@ -51,7 +135,12 @@ $(document).ready(function () {
                     } },
 
             ],
-            "aaSorting": [],
+        "aaSorting": [],
+        "columnDefs": [
+            {
+                "visible": false,
+                "targets": [ 3, 5, 6, 13, 14, 15, 16, 17, 18, 19 ]
+            }],
 
             select: {
                 style: 'single'

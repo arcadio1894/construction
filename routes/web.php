@@ -305,6 +305,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_material');
         Route::get('/get/materials', 'MaterialController@getJsonMaterials')
             ->middleware('permission:list_material');
+        Route::get('/get/materials/scrap', 'MaterialController@getJsonMaterialsScrap')
+            ->middleware('permission:list_material');
         Route::get('/get/locations', 'LocationController@getJsonLocations')
             ->middleware('permission:list_material');
         Route::get('/get/items/{id_material}', 'ItemController@getJsonItems')

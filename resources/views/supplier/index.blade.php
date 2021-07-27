@@ -44,7 +44,7 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de proveedores</h5>
-    <a href="{{ route('supplier.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Cliente </a>
+    <a href="{{ route('supplier.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Proveedor </a>
 @endsection
 
 @section('content')

@@ -220,19 +220,36 @@ class MaterialController extends Controller
 
     public function getAllMaterials()
     {
-        $materials = Material::with(['category', 'materialType'])->get();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
 
+        //dd($materials);
         //dd(datatables($materials)->toJson());
         return datatables($materials)->toJson();
     }
 
     public function getJsonMaterials()
     {
-        $materials = Material::all();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
+
         $array = [];
         foreach ( $materials as $material )
         {
-            array_push($array, ['id'=> $material->id, 'material' => $material->description]);
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description]);
+        }
+
+        //dd($materials);
+        return $array;
+    }
+
+    public function getJsonMaterialsScrap()
+    {
+        $materials = Material::with('subcategory', 'materialType', 'subtype', 'warrant', 'quality')
+            ->whereNotNull('typescrap_id')
+            ->get();
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description]);
         }
 
         //dd($materials);
@@ -266,7 +283,7 @@ class MaterialController extends Controller
                 $query->with(['area', 'warehouse', 'shelf', 'level', 'container', 'position']);
             }])
             ->with('material')
-            ->with('MaterialType')
+            ->with('typescrap')
             ->with('DetailEntry')->get();
 
         //dd(datatables($items)->toJson());

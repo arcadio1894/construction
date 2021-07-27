@@ -83,7 +83,7 @@
                     <input type="hidden" name="level_id" id="level_id" value="{{$level->id}}">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Contenedor </label>
+                            <label class="col-sm-3 control-label" for="name"> Contenedor <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: Único" required />
@@ -118,7 +118,7 @@
                     <input type="hidden" name="container_id" id="container_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label " for="nameE"> Nivel </label>
+                            <label class="col-sm-3 control-label " for="nameE"> Contenedor <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" required />

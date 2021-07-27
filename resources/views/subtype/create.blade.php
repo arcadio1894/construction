@@ -67,14 +67,14 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Subtipo</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Subtipo <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Subtipo">
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="material_type_id" class="col-12 col-form-label">Seleccione Tipo</label>
+                <label for="material_type_id" class="col-12 col-form-label">Seleccione Tipo <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <select id="material_type_id" name="material_type_id" class="form-control select2" style="width: 100%;">
                         <option></option>
@@ -88,7 +88,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="description" placeholder="Descripcion">
+                    <input type="text" class="form-control" name="description" placeholder="Descripción">
                 </div>
             </div>
         </div>

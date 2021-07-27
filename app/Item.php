@@ -15,7 +15,7 @@ class Item extends Model
         'weight',
         'price',
         'percentage',
-        'material_type_id',
+        'typescrap_id',
         'location_id',
         'state',
         'state_item'
@@ -31,9 +31,9 @@ class Item extends Model
         return $this->belongsTo('App\Material');
     }
 
-    public function materialType()
+    public function typescrap()
     {
-        return $this->belongsTo('App\MaterialType');
+        return $this->belongsTo('App\TypeScrap', 'typescrap_id');
     }
 
     public function location()

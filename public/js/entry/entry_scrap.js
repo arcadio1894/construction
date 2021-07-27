@@ -6,7 +6,7 @@ let $item=[];
 
 $(document).ready(function () {
     $.ajax({
-        url: "/dashboard/get/materials",
+        url: "/dashboard/get/materials/scrap",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -125,16 +125,19 @@ function saveTableItems() {
     }
 
     let newPrice = 0;
-    if ( result.materialType.name === "Planchas grandes" || result.materialType.name === "Planchas chicas" )
+    console.log(result.typescrap);
+    if ( result.typescrap === 1 || result.typescrap === 2 )
     {
+        console.log('Entre a 1 y 2');
         let priceTotal = parseFloat(result.price);
         let areaTotal = parseFloat(result.length)*parseFloat(result.width);
         let areaReal = parseFloat(length)*parseFloat(width);
         newPrice = ((areaReal*priceTotal)/areaTotal).toFixed(2);
     }
 
-    if ( result.materialType.name === "Tubos" || result.materialType.name === "Ejes" || result.materialType.name === "Platinas"  )
+    if ( result.typescrap === 3  )
     {
+        console.log('Entre a 3');
         let priceTotal = parseFloat(result.price);
         let lengthTotal = parseFloat(result.length);
         let lengthReal = parseFloat(length);
@@ -143,7 +146,7 @@ function saveTableItems() {
 
     let state = ( result.state === "bad") ? 'Deficiente' : 'Buen estado';
 
-    $item.push({ 'id': result.id, 'detailEntry': result.detailEntry, 'length':length, 'width':width, 'weight':weight, 'price': newPrice, 'material': material_name, 'materialType_id': result.materialType.id, 'material_id': result.material_id, 'code': result.code, 'location': result.location, 'location_id': result.location_id, 'state': result.state });
+    $item.push({ 'id': result.id, 'detailEntry': result.detailEntry, 'length':length, 'width':width, 'weight':weight, 'price': newPrice, 'material': material_name, 'typescrap_id': result.typescrap, 'material_id': result.material_id, 'code': result.code, 'location': result.location, 'location_id': result.location_id, 'state': result.state });
     console.log($item);
 
     $('#item_selected').val('');
@@ -251,6 +254,7 @@ function storeOrderScrap() {
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var item = JSON.stringify($item);
+    console.log(item);
     var form = new FormData(this);
     form.append('item', item);
     $.ajax({

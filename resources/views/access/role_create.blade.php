@@ -58,13 +58,13 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Código del Rol</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Código del Rol <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="name" placeholder="Ejm: admin">
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Descripción del Rol</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Descripción del Rol <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="description" placeholder="Ejm: Administrador">
                 </div>

@@ -58,7 +58,7 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="customer_id" class="col-12 col-form-label">Empresa</label>
+                <label for="customer_id" class="col-12 col-form-label">Empresa <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <select id="customer_id" class="form-control select2" name="customer_id" data-states style="width: 100%;">
                         <option></option>
@@ -70,7 +70,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre de Contacto</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre de Contacto <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" name="name" >
                 </div>

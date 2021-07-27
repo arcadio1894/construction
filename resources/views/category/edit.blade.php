@@ -56,9 +56,9 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: PLANCHA LISA INOX" value="{{$category->name}}">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Categoría" value="{{$category->name}}">
                 </div>
             </div>
         </div>
@@ -67,7 +67,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Descripcion</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="description" placeholder="Ejm: 5m*1m" value="{{$category->description}}">
+                    <input type="text" class="form-control" name="description" placeholder="Ejm: Descripción" value="{{$category->description}}">
                 </div>
             </div>
         </div>

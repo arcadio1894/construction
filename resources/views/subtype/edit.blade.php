@@ -69,13 +69,13 @@
         
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica" value="{{$subtype->name}}">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Subtipo" value="{{$subtype->name}}">
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="material_type_id" class="col-12 col-form-label">Seleccione un tipo de material</label>
+                <label for="material_type_id" class="col-12 col-form-label">Seleccione un tipo <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <select id="material_type_id" name="material_type_id" class="form-control select2" style="width: 100%;">
                         <option></option>
@@ -89,7 +89,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="description" placeholder="Descripcion" value="{{$subtype->description}}">
+                    <input type="text" class="form-control" name="description" placeholder="Descripción" value="{{$subtype->description}}">
                 </div>
             </div>
         </div>

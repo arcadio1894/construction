@@ -66,14 +66,14 @@
                     @csrf
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="name"> Permiso </label>
+                            <label class="col-sm-3 control-label" for="name"> Permiso <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: product_list" required />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="description"> Descripción </label>
+                            <label class="col-sm-3 control-label" for="description"> Descripción <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="description" name="description" class="form-control" placeholder="Ejm: Listar productos" required />
@@ -101,14 +101,14 @@
                     <input type="hidden" name="permission_id" id="permission_id">
                     <div class="modal-body">
                         <div class="form-group">
-                            <label class="col-sm-3 control-label " for="nameE"> Permiso </label>
+                            <label class="col-sm-3 control-label " for="nameE"> Permiso <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="nameE" name="name" class="form-control" placeholder="Ejm: product_list" required />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label" for="descriptionE"> Descripción </label>
+                            <label class="col-sm-3 control-label" for="descriptionE"> Descripción <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="descriptionE" name="description" class="form-control" placeholder="Ejm: Listar productos" required />
