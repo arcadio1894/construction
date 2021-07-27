@@ -137,12 +137,13 @@ class RoleController extends Controller
             array_push($groupPermissions, $group);
             //array_push($groupPermissions, ['key'=>$group, 'group'=>$this::MODULES[$group]]);
         }
+        //dd($groupPermissions);
         $grupos = array_unique($groupPermissions);
         foreach ( $grupos as $group )
         {
             array_push($groups, ['group'=>$group, 'name'=>$this::MODULES[$group]]);
         }
-        //dd(strrpos($permissions[6]->name, $groups[0]['group']));
+        //dd($groups);
         return view('access.role_create', compact('permissions', 'groups'));
     }
 

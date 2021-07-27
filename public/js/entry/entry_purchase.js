@@ -120,8 +120,8 @@ function saveTableItems() {
         $('#material_GroupSelected').val('');
         $('#quantity_GroupSelected').val('');
         $('#price_GroupSelected').val('');
-        //$('#body-items').html('');
-
+        $('#locationGroup').val('');
+        $('#locationGroup').typeahead('destroy');
         $modalAddGroupItems.modal('hide');
 
     } else {
@@ -163,7 +163,8 @@ function saveTableItems() {
         $('#quantity_selected').val('');
         $('#price_selected').val('');
         $('#body-items').html('');
-
+        $('#locationGroup').val(' ');
+        $('#locationGroup').typeahead('destroy');
         $modalAddItems.modal('hide');
     }
 
@@ -244,10 +245,12 @@ function addItems() {
     let material_quantity = $('#quantity').val();
     let material_price = $('#price').val();
 
+    $('#locationGroup').typeahead('destroy');
+
     if($('[name="my-checkbox"]').is(':checked'))
     {
         //alert('Es agrupado');
-        $('.locationGroup').typeahead('destroy');
+
         $modalAddGroupItems.find('[id=material_GroupSelected]').val(material_name);
         $modalAddGroupItems.find('[id=material_GroupSelected]').prop('disabled', true);
         $modalAddGroupItems.find('[id=quantity_GroupSelected]').val(material_quantity);
@@ -255,7 +258,7 @@ function addItems() {
         $modalAddGroupItems.find('[id=price_GroupSelected]').val(material_price);
         $modalAddGroupItems.find('[id=price_GroupSelected]').prop('disabled', true);
 
-        $('.locationGroup').typeahead({
+        $('#locationGroup').typeahead({
                 hint: true,
                 highlight: true, /* Enable substring highlighting */
                 minLength: 1 /* Specify minimum characters required for showing suggestions */

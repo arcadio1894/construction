@@ -161,7 +161,7 @@
 
 
                         <div class="form-group">
-                            <label for="unit_price">Precio Unitario <span class="right badge badge-danger">(*)</span></label>
+                            <label for="unit_price">Precio Unitario </label>
                             <input type="text" id="unit_price" name="unit_price" class="form-control">
                         </div>
                         <div class="form-group">

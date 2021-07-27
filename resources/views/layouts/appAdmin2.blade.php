@@ -334,6 +334,32 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            {{--@can('list_category')
+                                <li class="nav-item has-treeview @yield('openCategory')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Tipos Retazos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        <li class="nav-item">
+                                            <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar tipos</p>
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear tipos</p>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            @endcan--}}
+
                             @can('list_category')
                             <li class="nav-item has-treeview @yield('openCategory')">
                                 <a href="#" class="nav-link">

@@ -50,6 +50,18 @@
     <a href="{{ route('materialtype.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('material.index') }}"><i class="fa fa-key"></i> Materiales</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+    </ol>
+@endsection
+
 @section('content')
     <form id="formCreate" class="form-horizontal" data-url="{{ route('materialtype.store') }}" enctype="multipart/form-data">
         @csrf

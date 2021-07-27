@@ -21,7 +21,7 @@
 @endsection
 
 @section('title')
-    Tipos de Materiales
+    Tipos de Retacería
 @endsection
 
 @section('styles-plugins')
@@ -42,8 +42,17 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de Tipos de Materiales</h5>
-    <a href="{{ route('materialtype.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Tipo de Material </a>
+    <h5 class="card-title">Listado de Tipos de Retacería</h5>
+    <a href="{{ route('typescrap.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Tipo de Retacería </a>
+@endsection
+
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
+    </ol>
 @endsection
 
 @section('content')
@@ -55,7 +64,6 @@
                 <th>Nombre</th>
                 <th>Largo</th>
                 <th>Ancho</th>
-                <th>Peso (Kg)</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -72,10 +80,10 @@
                     <h4 class="modal-title">Confirmar eliminación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('materialtype.destroy') }}">
+                <form id="formDelete" data-url="{{ route('typescrap.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="materialtype_id" name="materialtype_id">
+                        <input type="hidden" id="typescrap_id" name="typescrap_id">
                         <p id="name"></p>
 
                     </div>
@@ -101,5 +109,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/materialtype/index.js') }}"></script>
+    <script src="{{ asset('js/typescrap/index.js') }}"></script>
 @endsection

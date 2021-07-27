@@ -171,6 +171,24 @@ Route::middleware('auth')->group(function (){
         Route::post('quality/update', 'QualityController@update')->name('quality.update');
         Route::post('quality/destroy', 'QualityController@destroy')->name('quality.destroy');
 
+        //TYPESCRAP
+        Route::get('/all/typescraps', 'TypescrapController@getTypeScraps');
+        Route::get('Retacerías', 'TypescrapController@index')->name('typescrap.index');
+        Route::get('crear/retaceria', 'TypescrapController@create')->name('typescrap.create');
+        Route::post('typescrap/store', 'TypescrapController@store')->name('typescrap.store');
+        Route::get('/editar/retaceria/{id}', 'TypescrapController@edit')->name('typescrap.edit');
+        Route::post('typescrap/update', 'TypescrapController@update')->name('typescrap.update');
+        Route::post('typescrap/destroy', 'TypescrapController@destroy')->name('typescrap.destroy');
+
+        //UNITMEASURE
+        Route::get('/all/unitmeasure', 'UnitMeasureController@getWarrants');
+        Route::get('Unidades', 'UnitMeasureController@index')->name('unitmeasure.index');
+        Route::get('crear/unidad', 'UnitMeasureController@create')->name('unitmeasure.create');
+        Route::post('unitmeasure/store', 'UnitMeasureController@store')->name('unitmeasure.store');
+        Route::get('/editar/unidad/{id}', 'UnitMeasureController@edit')->name('unitmeasure.edit');
+        Route::post('unitmeasure/update', 'UnitMeasureController@update')->name('unitmeasure.update');
+        Route::post('unitmeasure/destroy', 'UnitMeasureController@destroy')->name('unitmeasure.destroy');
+
         //ROL
         Route::get('roles', 'RoleController@index')->name('role.index')
             ->middleware('permission:list_role');

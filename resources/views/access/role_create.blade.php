@@ -84,7 +84,7 @@
                 <div class="form-group">
                     <p class="mt-2 mb-1">{{ $group['name'] }}</p>
                     @foreach( $permissions as $permission )
-                        @if ( strrpos($permission->name, $group['group']) !== false )
+                        @if ( substr($permission->name, strpos($permission->name, '_')+1) === $group['group'] )
                         <div class="custom-control custom-checkbox">
                             <input class="custom-control-input" id="permission{{ $permission->id }}" type="checkbox" name="permissions[]" value="{{ $permission->id }}">
                             <label for="permission{{ $permission->id }}" class="custom-control-label">{{ $permission->description }}</label>
