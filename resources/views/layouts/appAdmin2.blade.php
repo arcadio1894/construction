@@ -364,6 +364,36 @@
                                 </li>
                             @endcan
 
+                            @can('list_typeScrap')
+                                <li class="nav-item has-treeview @yield('openTypeScrap')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Tipo de retacería
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_typeScrap')
+                                            <li class="nav-item">
+                                                <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar Tipo retacería</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_typeScrap')
+                                            <li class="nav-item">
+                                                <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear Tipo retacería</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+
                             @can('list_category')
                             <li class="nav-item has-treeview @yield('openCategory')">
                                 <a href="#" class="nav-link">

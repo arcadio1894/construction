@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\DeleteTypeScrapRequest;
+use App\Http\Requests\StoreTypeScrapRequest;
+use App\Http\Requests\UpdateTypeScrapRequest;
 use App\Typescrap;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade;
 
@@ -13,7 +17,10 @@ class TypescrapController extends Controller
     {
         $typescraps = Typescrap::all();
         //$permissions = Permission::all();
-        return view('typescrap.index', compact('typescraps'));
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('typescrap.index', compact('typescraps', 'permissions'));
     }
 
     public function store(StoreTypeScrapRequest $request)
@@ -23,9 +30,10 @@ class TypescrapController extends Controller
         DB::beginTransaction();
         try {
 
-            $brand = Brand::create([
+            $typeScrap = Typescrap::create([
                 'name' => $request->get('name'),
-                'comment' => $request->get('comment'),
+                'width' => $request->get('width'),
+                'length' => $request->get('length'),
             ]);
 
             DB::commit();
@@ -34,21 +42,22 @@ class TypescrapController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Marca de material guardado con éxito.'], 200);
+        return response()->json(['message' => 'Tipo de retacería guardado con éxito.'], 200);
     }
 
-    public function update(UpdateBrandRequest $request)
+    public function update(UpdateTypeScrapRequest $request)
     {
         $validated = $request->validated();
 
         DB::beginTransaction();
         try {
 
-            $brand = Brand::find($request->get('brand_id'));
+            $typeScrap = TypeScrap::find($request->get('typeScrap_id'));
 
-            $brand->name = $request->get('name');
-            $brand->comment = $request->get('comment');
-            $brand->save();
+            $typeScrap->name = $request->get('name');
+            $typeScrap->width = $request->get('width');
+            $typeScrap->length = $request->get('length');
+            $typeScrap->save();
 
             DB::commit();
 
@@ -57,19 +66,19 @@ class TypescrapController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['message' => 'Marca de material modificada con éxito.','url'=>route('brand.index')], 200);
+        return response()->json(['message' => 'Tipo de retacería modificada con éxito.','url'=>route('typescrap.index')], 200);
     }
 
-    public function destroy(DeleteBrandRequest $request)
+    public function destroy(DeleteTypeScrapRequest $request)
     {
         $validated = $request->validated();
 
         DB::beginTransaction();
         try {
 
-            $brand = Brand::find($request->get('brand_id'));
+            $typeScrap = TypeScrap::find($request->get('typeScrap_id'));
 
-            $brand->delete();
+            $typeScrap->delete();
 
             DB::commit();
 
@@ -78,18 +87,18 @@ class TypescrapController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['message' => 'Marca de material eliminada con éxito.'], 200);
+        return response()->json(['message' => 'Tipo de retacería eliminada con éxito.'], 200);
     }
 
     public function create()
     {
-        return view('brand.create');
+        return view('typescrap.create');
     }
 
     public function edit($id)
     {
-        $brand = Brand::find($id);
-        return view('brand.edit', compact('brand'));
+        $typeScrap = TypeScrap::find($id);
+        return view('typescrap.edit', compact('typeScrap'));
     }
 
 
@@ -100,16 +109,4 @@ class TypescrapController extends Controller
         //dd(datatables($customers)->toJson());
     }
 
-    public function getJsonBrands($id)
-    {
-        $examplers = Exampler::where('brand_id', $id)->get();
-        $array = [];
-        foreach ( $examplers as $exampler )
-        {
-            array_push($array, ['id'=> $exampler->id, 'exampler' => $exampler->name]);
-        }
-
-        //dd($array);
-        return $array;
-    }
 }

@@ -1,13 +1,13 @@
 $(document).ready(function () {
 
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeBrand);
+    $formCreate.on('submit', storeTypeScrap);
 
 });
 
 var $formCreate;
 
-function storeBrand() {
+function storeTypeScrap() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formCreate.data('url');

@@ -44,7 +44,7 @@ class RoleController extends Controller
         'entryPurchase' => 'ENTRADA POR COMPRA',
         'entryScrap' => 'RETACERÍA',
         'output' => 'SALIDAS',
-
+        'typeScrap' => 'TIPO RETACERÍA',
     ];
 
     public function index()

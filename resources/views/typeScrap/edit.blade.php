@@ -8,20 +8,20 @@
     active
 @endsection
 
-@section('openMaterialType')
+@section('openTypeScrap')
     menu-open
 @endsection
 
-@section('activeMaterialType')
+@section('activeTypeScrap')
 
 @endsection
 
-@section('activeListMaterialType')
+@section('activeListTypeScrap')
     active
 @endsection
 
 @section('title')
-    Tipos de Materiales
+    Tipos de Retacería
 @endsection
 
 @section('styles-plugins')
@@ -42,24 +42,24 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Tipo</h1>
+    <h1 class="page-title">Tipo de Retacería</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Editar Tipo de Material: {{$materialtype->name}}</h5>
-    <a href="{{ route('materialtype.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
+    <h5 class="card-title">Editar Tipo de Retacería: {{$typeScrap->name}}</h5>
+    <a href="{{ route('typescrap.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
 @endsection
 
 @section('content')
-    <form id="formEdit" class="form-horizontal" data-url="{{ route('materialtype.update') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('typescrap.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" class="form-control" name="materialtype_id" value="{{$materialtype->id}}">
+        <input type="hidden" class="form-control" name="typeScrap_id" value="{{$typeScrap->id}}">
         
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica" value="{{$materialtype->name}}">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tipo de retacería" value="{{$typeScrap->name}}">
                 </div>
             </div>
         </div>
@@ -68,23 +68,17 @@
             <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Largo</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" name="length" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->length}}">
+                    <input type="number" class="form-control" name="length" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$typeScrap->length}}">
                 </div>
             </div>
 
             <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Ancho</label>
                 <div class="col-sm-10">
-                    <input type="number" class="form-control" name="width" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->width}}"> 
+                    <input type="number" class="form-control" name="width" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$typeScrap->width}}">
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Peso</label>
-                <div class="col-sm-10">
-                    <input type="number" class="form-control" name="weight" min="0" placeholder="Ejm: 0,00" step="0.01" value="{{$materialtype->weight}}">
-                </div>
-            </div>
         </div>
 
         <div class="text-center">
@@ -106,5 +100,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/materialtype/edit.js') }}"></script>
+    <script src="{{ asset('js/typescrap/edit.js') }}"></script>
 @endsection

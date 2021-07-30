@@ -8,20 +8,20 @@
     active
 @endsection
 
-@section('openMaterialType')
+@section('openTypeScrap')
     menu-open
 @endsection
 
-@section('activeMaterialType')
+@section('activeTypeScrap')
 
 @endsection
 
-@section('activeCreateMaterialType')
+@section('activeCreateTypeScrap')
     active
 @endsection
 
 @section('title')
-    Tipos de Materiales
+    Tipos de retacería
 @endsection
 
 @section('styles-plugins')
@@ -42,12 +42,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Tipo</h1>
+    <h1 class="page-title">Tipo de retacería</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo Tipo de Material</h5>
-    <a href="{{ route('materialtype.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
+    <h5 class="card-title">Crear Tipo de retacería</h5>
+    <a href="{{ route('typescrap.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -56,45 +56,39 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('material.index') }}"><i class="fa fa-key"></i> Materiales</a>
+            <a href="{{ route('typescrap.index') }}"><i class="fa fa-key"></i> Tipo de Retacería</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('materialtype.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('typescrap.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Nombre</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Plancha Chica">
+                    <input type="text" class="form-control" name="name" placeholder="Ejm: Tipo de retacería">
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Largo</label>
+            <div class="col-md-6">
+                <label for="inputEmail3" class="col-12 col-form-label">Largo <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="number" class="form-control" name="length" min="0" placeholder="Ejm: 0,00" step="0.01" >
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Ancho</label>
+            <div class="col-md-6">
+                <label for="inputEmail3" class="col-12 col-form-label">Ancho <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="number" class="form-control" name="width" min="0" placeholder="Ejm: 0,00" step="0.01"> 
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <label for="inputEmail3" class="col-12 col-form-label">Peso</label>
-                <div class="col-sm-10">
-                    <input type="number" class="form-control" name="weight" min="0" placeholder="Ejm: 0,00" step="0.01">
-                </div>
-            </div>
         </div>
 
         <div class="text-center">
@@ -116,5 +110,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/materialtype/create.js') }}"></script>
+    <script src="{{ asset('js/typescrap/create.js') }}"></script>
 @endsection

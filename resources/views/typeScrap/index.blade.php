@@ -8,15 +8,15 @@
     active
 @endsection
 
-@section('openMaterialType')
+@section('openTypeScrap')
     menu-open
 @endsection
 
-@section('activeMaterialType')
+@section('activeTypeScrap')
 
 @endsection
 
-@section('activeListMaterialType')
+@section('activeListTypeScrap')
     active
 @endsection
 
@@ -41,6 +41,10 @@
     </style>
 @endsection
 
+@section('page-header')
+    <h1 class="page-title">Tipo de retacerías</h1>
+@endsection
+
 @section('page-title')
     <h5 class="card-title">Listado de Tipos de Retacería</h5>
     <a href="{{ route('typescrap.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Tipo de Retacería </a>
@@ -56,6 +60,7 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
@@ -83,7 +88,7 @@
                 <form id="formDelete" data-url="{{ route('typescrap.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="typescrap_id" name="typescrap_id">
+                        <input type="hidden" id="typeScrap_id" name="typeScrap_id">
                         <p id="name"></p>
 
                     </div>
