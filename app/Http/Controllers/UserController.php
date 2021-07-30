@@ -17,7 +17,10 @@ class UserController extends Controller
         $users = User::all();
         $roles = Role::all();
 
-        return view('access.users', compact('users', 'roles'));
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('access.users', compact('users', 'roles', 'permissions'));
     }
 
     public function store(StoreUserRequest $request)

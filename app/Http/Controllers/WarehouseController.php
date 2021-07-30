@@ -8,14 +8,18 @@ use App\Http\Requests\StoreWarehouseRequest;
 use App\Http\Requests\UpdateWarehouseRequest;
 use App\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class WarehouseController extends Controller
 {
     public function index($area)
     {
         $area = Area::find($area);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         //dd($area);
-        return view('inventory.warehouses', compact('area'));
+        return view('inventory.warehouses', compact('area', 'permissions'));
     }
 
     public function create()

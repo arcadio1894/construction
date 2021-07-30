@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateSubtypeRequest;
 use App\MaterialType;
 use App\Subtype;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SubtypeController extends Controller
@@ -16,8 +17,10 @@ class SubtypeController extends Controller
     {
         $subtypes = Subtype::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('subtype.index', compact('subtypes'));
+        return view('subtype.index', compact('subtypes', 'permissions'));
     }
 
     public function store(StoreSubtypeRequest $request)

@@ -59,6 +59,8 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <div>
         <div class="row">
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">

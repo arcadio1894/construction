@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateMaterialTypeRequest;
 use App\MaterialType;
 use App\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MaterialTypeController extends Controller
@@ -17,8 +18,10 @@ class MaterialTypeController extends Controller
     {
         $materialtypes = MaterialType::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('materialtype.index', compact('materialtypes'));
+        return view('materialtype.index', compact('materialtypes', 'permissions'));
     }
 
     public function store(StoreMaterialTypeRequest $request)

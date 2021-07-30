@@ -7,6 +7,7 @@ use App\Http\Requests\StoreWarrantRequest;
 use App\Http\Requests\UpdateWarrantRequest;
 use App\Warrant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class WarrantController extends Controller
@@ -15,8 +16,10 @@ class WarrantController extends Controller
     {
         $warrants = Warrant::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('warrant.index', compact('warrants'));
+        return view('warrant.index', compact('warrants', 'permissions'));
     }
 
     public function store(StoreWarrantRequest $request)

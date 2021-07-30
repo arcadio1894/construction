@@ -44,6 +44,8 @@
 
 @section('content')
     <input type="hidden" id="id_area" value="{{$area->id}}">
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
                 <thead>

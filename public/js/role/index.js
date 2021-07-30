@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+    console.log($permissions);
     $('#dynamic-table').DataTable( {
             ajax: {
                 url: "/dashboard/all/roles",
@@ -14,7 +16,16 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/rol/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>' } },
+                        var text = '';
+                        if ( $.inArray('update_role', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/editar/rol/'+item.name+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</a>';
+                        }
+                        if ( $.inArray('destroy_role', $permissions) !== -1 ) {
+                            text = text + '  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>';
+                        }
+                        return text
+                    }
+                },
 
             ],
             "aaSorting": [],
@@ -187,6 +198,8 @@ var $modalEdit;
 
 var $formDelete;
 var $modalDelete;
+
+var $permissions;
 
 /*function openModalCreate() {
     $modalCreate.modal('show');

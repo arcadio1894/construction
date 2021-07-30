@@ -8,6 +8,7 @@ use App\Http\Requests\StoreSubcategoryRequest;
 use App\Http\Requests\UpdateSubcategoryRequest;
 use App\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class SubcategoryController extends Controller
@@ -16,8 +17,10 @@ class SubcategoryController extends Controller
     {
         $subcategories = Subcategory::with('category')->get();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('subcategory.index', compact('subcategories'));
+        return view('subcategory.index', compact('subcategories', 'permissions'));
     }
 
     public function store(StoreSubcategoryRequest $request)

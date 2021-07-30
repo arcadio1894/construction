@@ -40,20 +40,22 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Comentario</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     </div>
     <div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog">

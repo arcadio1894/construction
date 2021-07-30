@@ -1,4 +1,6 @@
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+    console.log($permissions);
     $('#dynamic-table').DataTable( {
             ajax: {
                 url: "/dashboard/all/users",
@@ -22,7 +24,15 @@ $(document).ready(function () {
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<button data-image="'+item.image+'" data-email="'+item.email+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i>Editar</button>  <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>Eliminar</button>'
+                        var text = '';
+                        if ( $.inArray('update_user', $permissions) !== -1 ) {
+                            text = text + '<button data-image="'+item.image+'" data-email="'+item.email+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i>Editar</button> ';
+                        }
+                        if ( $.inArray('destroy_user', $permissions) !== -1 ) {
+                            text = text + ' <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i>Eliminar</button>';
+                        }
+                        return text;
+
                     }
                 },
 
@@ -197,6 +207,8 @@ var $modalEdit;
 
 var $formDelete;
 var $modalDelete;
+
+var $permissions;
 
 function openModalCreate() {
     $modalCreate.modal('show');

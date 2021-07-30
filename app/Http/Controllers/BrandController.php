@@ -8,6 +8,7 @@ use App\Http\Requests\DeleteBrandRequest;
 use App\Http\Requests\StoreBrandRequest;
 use App\Http\Requests\UpdateBrandRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class BrandController extends Controller
@@ -16,8 +17,10 @@ class BrandController extends Controller
     {
         $brands = Brand::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('brand.index', compact('brands'));
+        return view('brand.index', compact('brands', 'permissions'));
     }
 
     public function store(StoreBrandRequest $request)

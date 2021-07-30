@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateCategoryRequest;
 use App\Category;
 use App\Subcategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
@@ -17,8 +18,10 @@ class CategoryController extends Controller
     {
         $categories = Category::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('category.index', compact('categories'));
+        return view('category.index', compact('categories', 'permissions'));
     }
 
 

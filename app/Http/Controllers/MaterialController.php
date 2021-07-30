@@ -18,6 +18,7 @@ use App\Typescrap;
 use App\UnitMeasure;
 use App\Warrant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class MaterialController extends Controller
@@ -25,7 +26,10 @@ class MaterialController extends Controller
 
     public function index()
     {
-        return view('material.index');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('material.index', compact('permissions'));
     }
 
     public function create()

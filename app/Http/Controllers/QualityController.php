@@ -7,6 +7,7 @@ use App\Http\Requests\StoreQualityRequest;
 use App\Http\Requests\UpdateQualityRequest;
 use App\Quality;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class QualityController extends Controller
@@ -15,8 +16,10 @@ class QualityController extends Controller
     {
         $qualities = Quality::all();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('quality.index', compact('qualities'));
+        return view('quality.index', compact('qualities', 'permissions'));
     }
 
     public function store(StoreQualityRequest $request)

@@ -11,16 +11,19 @@ use App\Http\Requests\UpdateCustomerRequest;
 use App\Http\Requests\RestoreCustomerRequest;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Laracasts\Utilities\JavaScript\JavaScriptFacade;
 
 class CustomerController extends Controller
 {
     public function index()
     {
         $customers = Customer::all();
-        //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('customer.index', compact('customers'));
+        return view('customer.index', compact('customers', 'permissions'));
     }
 
     public function store(StoreCustomerRequest $request)

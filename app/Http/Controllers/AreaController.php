@@ -7,12 +7,16 @@ use App\Http\Requests\DeleteAreaRequest;
 use App\Http\Requests\StoreAreaRequest;
 use App\Http\Requests\UpdateAreaRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AreaController extends Controller
 {
     public function index()
     {
-        return view('inventory.areas');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('inventory.areas', compact('permissions'));
     }
 
     public function create()

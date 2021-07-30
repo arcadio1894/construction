@@ -52,6 +52,7 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissionsAll) }}">
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">

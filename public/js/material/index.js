@@ -22,119 +22,127 @@ function format ( d ) {
 }
 
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+    console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
-            ajax: {
-                url: "/dashboard/all/materials",
-                dataSrc: 'data'
+        ajax: {
+            url: "/dashboard/all/materials",
+            dataSrc: 'data'
+        },
+        bAutoWidth: false,
+        "aoColumns": [
+            {
+                "class":          "details-control",
+                "orderable":      false,
+                "data":           null,
+                "defaultContent": ""
             },
-            bAutoWidth: false,
-            "aoColumns": [
+            { data: 'code' },
+            { data: 'full_description' },
+            { data: 'measure' },
+            { data: 'unit_measure.name' },
+            { data: 'stock_max' },
+            { data: 'stock_min' },
+            { data: 'stock_current' },
+            { data: 'priority' },
+            { data: 'unit_price' },
+            { data: null,
+                title: 'Imagen',
+                wrap: true,
+                "render": function (item)
                 {
-                    "class":          "details-control",
-                    "orderable":      false,
-                    "data":           null,
-                    "defaultContent": ""
-                },
-                { data: 'code' },
-                { data: 'full_description' },
-                { data: 'measure' },
-                { data: 'unit_measure.name' },
-                { data: 'stock_max' },
-                { data: 'stock_min' },
-                { data: 'stock_current' },
-                { data: 'priority' },
-                { data: 'unit_price' },
-                { data: null,
-                    title: 'Imagen',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                    return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                }
+            },
+            { data: 'category.name' },
+            { data: 'subcategory.name' },
+            { data: null,
+                title: 'Tipo',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.material_type === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.material_type.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Subtipo',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.sub_type === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.sub_type.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Cédula',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.warrant === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.warrant.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Calidad',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.quality === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.quality.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Marca',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.brand === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.brand.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Modelo',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.exampler === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.exampler.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Retacería',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.type_scrap === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.type_scrap.name +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Acciones',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('update_material', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  '
                     }
-                },
-                { data: 'category.name' },
-                { data: 'subcategory.name' },
-                { data: null,
-                    title: 'Tipo',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.material_type === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.material_type.name +'</p>';
+                    if ( $.inArray('destroy_customer', $permissions) !== -1 ) {
+                        text = text + '<button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  ';
                     }
-                },
-                { data: null,
-                    title: 'Subtipo',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.sub_type === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.sub_type.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Cédula',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.warrant === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.warrant.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Calidad',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.quality === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.quality.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Marca',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.brand === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.brand.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Modelo',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.exampler === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.exampler.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Retacería',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        if ( item.type_scrap === null )
-                            return '<p>Ninguno</p>';
-                        return '<p>'+ item.type_scrap.name +'</p>';
-                    }
-                },
-                { data: null,
-                    title: 'Acciones',
-                    wrap: true,
-                    "render": function (item)
-                    {
-                        return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  '+  
-                                '<button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  ' +
-                                '<a href="'+document.location.origin+ '/dashboard/view/material/items/'+item.id+'" class="btn btn-outline-info btn-sm"><i class="fa fa-eye"></i> </a>'
-                    } },
+                    return text + '<a href="'+document.location.origin+ '/dashboard/view/material/items/'+item.id+'" class="btn btn-outline-info btn-sm"><i class="fa fa-eye"></i> </a>';
+                }
+            },
 
-            ],
+        ],
         "aaSorting": [],
         "columnDefs": [
             {
@@ -338,6 +346,7 @@ $(document).ready(function () {
 
 var $formDelete;
 var $modalDelete;
+var $permissions;
 
 function openModalDelete() {
     var material_id = $(this).data('delete');

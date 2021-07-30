@@ -10,6 +10,7 @@ use App\Level;
 use App\Shelf;
 use App\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LevelController extends Controller
 {
@@ -18,8 +19,11 @@ class LevelController extends Controller
         $area = Area::find($area);
         $warehouse = Warehouse::find($warehouse);
         $shelf = Shelf::find($anaquel);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         //dd($area);
-        return view('inventory.levels', compact('area', 'warehouse', 'shelf'));
+        return view('inventory.levels', compact('area', 'warehouse', 'shelf', 'permissions'));
 
     }
 

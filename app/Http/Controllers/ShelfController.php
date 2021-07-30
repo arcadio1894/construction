@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateShelfRequest;
 use App\Shelf;
 use App\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShelfController extends Controller
 {
@@ -16,8 +17,11 @@ class ShelfController extends Controller
     {
         $area = Area::find($area);
         $warehouse = Warehouse::find($warehouse);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         //dd($area);
-        return view('inventory.shelves', compact('area', 'warehouse'));
+        return view('inventory.shelves', compact('area', 'warehouse', 'permissions'));
     }
 
     public function create()

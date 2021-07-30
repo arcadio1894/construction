@@ -6,6 +6,7 @@ use App\Http\Requests\DeleteRoleRequest;
 use App\Http\Requests\StoreRoleRequest;
 use App\Http\Requests\UpdateRoleRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
@@ -44,7 +45,10 @@ class RoleController extends Controller
         $roles = Role::all();
         $permissions = Permission::all();
 
-        return view('access.roles', compact('roles', 'permissions'));
+        $user = Auth::user();
+        $permissionsAll = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('access.roles', compact('roles', 'permissions', 'permissionsAll'));
     }
 
     public function store(StoreRoleRequest $request)

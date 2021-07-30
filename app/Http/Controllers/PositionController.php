@@ -13,6 +13,7 @@ use App\Position;
 use App\Shelf;
 use App\Warehouse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PositionController extends Controller
 {
@@ -23,8 +24,11 @@ class PositionController extends Controller
         $shelf = Shelf::find($anaquel);
         $level = Level::find($nivel);
         $container = Level::find($container);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         //dd($area);
-        return view('inventory.positions', compact('area', 'warehouse', 'shelf', 'level', 'container'));
+        return view('inventory.positions', compact('area', 'warehouse', 'shelf', 'level', 'container', 'permissions'));
 
     }
 

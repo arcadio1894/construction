@@ -8,6 +8,7 @@ use App\Http\Requests\DeleteExamplerRequest;
 use App\Http\Requests\StoreExamplerRequest;
 use App\Http\Requests\UpdateExamplerRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ExamplerController extends Controller
@@ -16,8 +17,11 @@ class ExamplerController extends Controller
     {
         $examplers = Exampler::with('brand')->get();
         //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('exampler.index', compact('examplers'));
+
+        return view('exampler.index', compact('examplers', 'permissions'));
     }
 
     public function store(StoreExamplerRequest $request)

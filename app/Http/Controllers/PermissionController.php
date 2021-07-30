@@ -6,6 +6,7 @@ use App\Http\Requests\DeletePermissionRequest;
 use App\Http\Requests\StorePermissionRequest;
 use App\Http\Requests\UpdatePermissionRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
@@ -13,8 +14,10 @@ class PermissionController extends Controller
     public function index()
     {
         $permissions = Permission::all();
+        $user = Auth::user();
+        $permissionsAll = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('access.permissions', compact('permissions'));
+        return view('access.permissions', compact('permissions', 'permissionsAll'));
     }
 
     public function store(StorePermissionRequest $request)
