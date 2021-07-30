@@ -37,7 +37,14 @@ class RoleController extends Controller
         'subType' => 'SUB TIPOS',
         'warrant' => 'CÉDULA',
         'quality' => 'CALIDAD',
-        'position' => 'POSICIONES'
+        'position' => 'POSICIONES',
+        'unitMeasure' => 'UNIDAD DE MEDIDA',
+        'contactName' => 'NOMBRE DE CONTACTO',
+        'transfer' => 'TRANSFERENCIAS',
+        'entryPurchase' => 'ENTRADA POR COMPRA',
+        'entryScrap' => 'RETACERÍA',
+        'output' => 'SALIDAS',
+
     ];
 
     public function index()

@@ -181,7 +181,7 @@ Route::middleware('auth')->group(function (){
         Route::post('typescrap/destroy', 'TypescrapController@destroy')->name('typescrap.destroy');
 
         //UNITMEASURE
-        Route::get('/all/unitmeasure', 'UnitMeasureController@getWarrants');
+        Route::get('/all/unitmeasure', 'UnitMeasureController@getUnitMeasure');
         Route::get('Unidades', 'UnitMeasureController@index')->name('unitmeasure.index');
         Route::get('crear/unidad', 'UnitMeasureController@create')->name('unitmeasure.create');
         Route::post('unitmeasure/store', 'UnitMeasureController@store')->name('unitmeasure.store');

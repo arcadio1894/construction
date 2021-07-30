@@ -334,31 +334,35 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {{--@can('list_category')
-                                <li class="nav-item has-treeview @yield('openCategory')">
+                            @can('list_unitMeasure')
+                                <li class="nav-item has-treeview @yield('openUnitMeasure')">
                                     <a href="#" class="nav-link">
                                         <i class="far fa-circle nav-icon text-success"></i>
                                         <p>
-                                            Tipos Retazos
+                                            Unidad de Medida
                                             <i class="right fas fa-angle-left"></i>
                                         </p>
                                     </a>
                                     <ul class="nav nav-treeview">
+                                        @can('list_unitMeasure')
                                         <li class="nav-item">
-                                            <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                            <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListUnitMeasure')">
                                                 <i class="far fa-dot-circle nav-icon text-warning"></i>
-                                                <p>Listar tipos</p>
+                                                <p>Listar unidades</p>
                                             </a>
                                         </li>
+                                        @endcan
+                                        @can('create_unitMeasure')
                                         <li class="nav-item">
-                                            <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                            <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateUnitMeasure')">
                                                 <i class="far fa-dot-circle nav-icon text-warning"></i>
-                                                <p>Crear tipos</p>
+                                                <p>Crear unidades</p>
                                             </a>
                                         </li>
+                                        @endcan
                                     </ul>
                                 </li>
-                            @endcan--}}
+                            @endcan
 
                             @can('list_category')
                             <li class="nav-item has-treeview @yield('openCategory')">

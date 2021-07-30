@@ -386,5 +386,135 @@ class PermissionSeeder extends Seeder
             'name' => 'destroy_quality',
             'description' => 'Eliminar calidades'
         ]);
+
+        Permission::create([
+            'name' => 'list_unitMeasure',
+            'description' => 'Listar Und. Medidas'
+        ]);
+        Permission::create([
+            'name' => 'create_unitMeasure',
+            'description' => 'Crear Und. Medidas'
+        ]);
+        Permission::create([
+            'name' => 'update_unitMeasure',
+            'description' => 'Modificar Und. Medidas'
+        ]);
+        Permission::create([
+            'name' => 'destroy_unitMeasure',
+            'description' => 'Eliminar Und. Medidas'
+        ]);
+
+        Permission::create([
+            'name' => 'list_contactName',
+            'description' => 'Listar Contacto'
+        ]);
+        Permission::create([
+            'name' => 'create_contactName',
+            'description' => 'Crear Contacto'
+        ]);
+        Permission::create([
+            'name' => 'update_contactName',
+            'description' => 'Modificar Contacto'
+        ]);
+        Permission::create([
+            'name' => 'destroy_contactName',
+            'description' => 'Eliminar Contacto'
+        ]);
+
+        Permission::create([
+            'name' => 'list_transfer',
+            'description' => 'Listar Transferencias'
+        ]);
+        Permission::create([
+            'name' => 'create_transfer',
+            'description' => 'Crear Transferencias'
+        ]);
+        Permission::create([
+            'name' => 'update_transfer',
+            'description' => 'Modificar Transferencias'
+        ]);
+        Permission::create([
+            'name' => 'destroy_transfer',
+            'description' => 'Eliminar Transferencias'
+        ]);
+
+        Permission::create([
+            'name' => 'list_typeScrap',
+            'description' => 'Listar tipos de retacería'
+        ]);
+        Permission::create([
+            'name' => 'create_typeScrap',
+            'description' => 'Crear tipos de retacería'
+        ]);
+        Permission::create([
+            'name' => 'update_typeScrap',
+            'description' => 'Modificar tipos de retacería'
+        ]);
+        Permission::create([
+            'name' => 'destroy_typeScrap',
+            'description' => 'Eliminar tipos de retacería'
+        ]);
+
+        // Entries
+        Permission::create([
+            'name' => 'list_entryPurchase',
+            'description' => 'Listar Ent. Compra'
+        ]);
+        Permission::create([
+            'name' => 'create_entryPurchase',
+            'description' => 'Crear Ent. Compra'
+        ]);
+        Permission::create([
+            'name' => 'update_entryPurchase',
+            'description' => 'Modificar Ent. Compra'
+        ]);
+        Permission::create([
+            'name' => 'destroy_entryPurchase',
+            'description' => 'Eliminar Ent. Compra'
+        ]);
+
+        Permission::create([
+            'name' => 'list_entryScrap',
+            'description' => 'Listar Retacería'
+        ]);
+        Permission::create([
+            'name' => 'create_entryScrap',
+            'description' => 'Crear Retacería'
+        ]);
+        Permission::create([
+            'name' => 'update_entryScrap',
+            'description' => 'Modificar Retacería'
+        ]);
+        Permission::create([
+            'name' => 'destroy_entryScrap',
+            'description' => 'Eliminar Retacería'
+        ]);
+
+        // Outputs
+        Permission::create([
+            'name' => 'list_output',
+            'description' => 'Listar Solicitudes'
+        ]);
+        Permission::create([
+            'name' => 'create_output',
+            'description' => 'Crear Solicitud'
+        ]);
+        Permission::create([
+            'name' => 'update_output',
+            'description' => 'Modificar Solicitud'
+        ]);
+        Permission::create([
+            'name' => 'attend_output',
+            'description' => 'Atender Solicitud'
+        ]);
+        Permission::create([
+            'name' => 'confirm_output',
+            'description' => 'Confirmar Solicitud'
+        ]);
+        Permission::create([
+            'name' => 'destroy_output',
+            'description' => 'Eliminar Solicitud'
+        ]);
+
     }
 }
