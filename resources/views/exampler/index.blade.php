@@ -43,7 +43,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de modelos</h5>
+    @can('create_exampler')
     <a href="{{ route('exampler.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo modelo </a>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -76,7 +78,7 @@
             </tbody>
         </table>
     </div>
-
+    @can('destroy_exampler')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -99,7 +101,7 @@
             </div>
         </div>
     </div>
-
+    @endcan
 @endsection
 
 @section('plugins')

@@ -48,7 +48,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de contenedores</h5>
+    @can('create_container')
     <button id="newContainer" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo contenedor </button>
+    @endcan
 @endsection
 
 @section('content')
@@ -60,19 +62,20 @@
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
-                <thead>
+            <thead>
                 <tr>
                     <th>#</th>
                     <th>Nombre</th>
                     <th>Comentario</th>
                     <th>Acciones</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     </div>
+    @can('create_container')
     <div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -107,7 +110,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('update_container')
     <div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -143,7 +147,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('destroy_container')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -166,6 +171,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @section('plugins')

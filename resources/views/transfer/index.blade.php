@@ -46,8 +46,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de transferencias</h5>
-
+    @can('create_transfer')
     <a href="{{ route('transfer.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo traslado </a>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -78,7 +79,7 @@
             </tbody>
         </table>
     </div>
-
+    @can('destroy_transfer')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -101,6 +102,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @section('plugins')

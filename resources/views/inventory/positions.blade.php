@@ -51,7 +51,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Posiciones</h5>
+    @can('create_position')
     <button id="newPosition" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Posición </button>
+    @endcan
 @endsection
 
 @section('content')
@@ -77,6 +79,7 @@
             </tbody>
         </table>
     </div>
+    @can('create_position')
     <div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -111,7 +114,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('update_position')
     <div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -147,7 +151,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('destroy_position')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -170,6 +175,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @section('plugins')

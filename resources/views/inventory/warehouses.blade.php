@@ -39,7 +39,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de almacenes</h5>
+    @can('create_warehouse')
     <button id="newArea" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo almacén </button>
+    @endcan
 @endsection
 
 @section('content')
@@ -48,19 +50,20 @@
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
-                <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Nombre</th>
-                    <th>Comentario</th>
-                    <th>Acciones</th>
-                </tr>
-                </thead>
-                <tbody>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Nombre</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
 
-                </tbody>
-            </table>
+            </tbody>
+        </table>
     </div>
+    @can('create_warehouse')
     <div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -95,7 +98,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('update_warehouse')
     <div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -131,7 +135,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('destroy_warehouse')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -154,6 +159,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @section('plugins')

@@ -43,7 +43,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de unidades de medida</h5>
+    @can('create_unitMeasure')
     <a href="{{ route('unitmeasure.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Unidad de medida </a>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -75,7 +77,7 @@
             </tbody>
         </table>
     </div>
-
+    @can('destroy_unitMeasure')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -98,7 +100,7 @@
             </div>
         </div>
     </div>
-
+    @endcan
 @endsection
 
 @section('plugins')

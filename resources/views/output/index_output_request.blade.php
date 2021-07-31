@@ -46,7 +46,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de solicitudes</h5>
+    @can('create_request')
     <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud </a>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -59,59 +61,6 @@
 @endsection
 
 @section('content')
-    <div>
-        <div class="row">
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="1" class="custom-control-input" id="customSwitch1">
-                <label class="custom-control-label" for="customSwitch1">Código</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch2">
-                <label class="custom-control-label" for="customSwitch2">Descripcion</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch3">
-                <label class="custom-control-label" for="customSwitch3">Medida</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch4">
-                <label class="custom-control-label" for="customSwitch4">Unidad Medida</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="4" class="custom-control-input" id="customSwitch5">
-                <label class="custom-control-label" for="customSwitch5">Stock Max</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="5" class="custom-control-input" id="customSwitch6">
-                <label class="custom-control-label" for="customSwitch6">Stock Min</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch7">
-                <label class="custom-control-label" for="customSwitch7">Stock Actual</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="4" class="custom-control-input" id="customSwitch8">
-                <label class="custom-control-label" for="customSwitch8">Prioridad</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="5" class="custom-control-input" id="customSwitch9">
-                <label class="custom-control-label" for="customSwitch9">Precio</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="6" class="custom-control-input" id="customSwitch10">
-                <label class="custom-control-label" for="customSwitch10">Imagen</label>
-            </div>--}}
-            {{--<div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="10" class="custom-control-input" id="customSwitch11">
-                <label class="custom-control-label" for="customSwitch11">Categoría</label>
-            </div>
-            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="11" class="custom-control-input" id="customSwitch12">
-                <label class="custom-control-label" for="customSwitch12">Tipo material</label>
-            </div>--}}
-
-        </div>
-    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
@@ -153,7 +102,7 @@
             </div>
         </div>
     </div>
-
+    @can('attend_request')
     <div id="modalAttend" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -178,7 +127,7 @@
             </div>
         </div>
     </div>
-
+    @endcan
     <div id="modalItems" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

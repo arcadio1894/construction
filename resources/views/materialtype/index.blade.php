@@ -43,7 +43,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Tipos de Materiales</h5>
+    @can('create_materialType')
     <a href="{{ route('materialtype.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Tipo de Material </a>
+    @endcan
 @endsection
 
 @section('content')
@@ -64,7 +66,7 @@
             </tbody>
         </table>
     </div>
-
+    @can('destroy_materialType')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -88,7 +90,7 @@
             </div>
         </div>
     </div>
-
+    @endcan
 @endsection
 
 @section('plugins')

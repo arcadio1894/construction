@@ -50,16 +50,34 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_user');
 
         //CUSTOMER
-        Route::get('/all/customers', 'CustomerController@getCustomers');
-        Route::get('clientes', 'CustomerController@index')->name('customer.index');
-        Route::get('crear/cliente', 'CustomerController@create')->name('customer.create');
-        Route::post('customer/store', 'CustomerController@store')->name('customer.store');
-        Route::get('/editar/cliente/{id}', 'CustomerController@edit')->name('customer.edit');
-        Route::post('customer/update', 'CustomerController@update')->name('customer.update');
-        Route::post('customer/destroy', 'CustomerController@destroy')->name('customer.destroy');
-        Route::get('clientes/restore', 'CustomerController@indexrestore')->name('customer.indexrestore');
-        Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy');
-        Route::post('customer/restore', 'CustomerController@restore')->name('customer.restore');
+        Route::get('/all/customers', 'CustomerController@getCustomers')
+            ->middleware('permission:list_customer');
+        Route::get('clientes', 'CustomerController@index')
+            ->name('customer.index')
+            ->middleware('permission:list_customer');
+        Route::get('crear/cliente', 'CustomerController@create')
+            ->name('customer.create')
+            ->middleware('permission:create_customer');
+        Route::post('customer/store', 'CustomerController@store')
+            ->name('customer.store')
+            ->middleware('permission:create_customer');
+        Route::get('/editar/cliente/{id}', 'CustomerController@edit')
+            ->name('customer.edit')
+            ->middleware('permission:update_customer');
+        Route::post('customer/update', 'CustomerController@update')
+            ->name('customer.update')
+            ->middleware('permission:update_customer');
+        Route::post('customer/destroy', 'CustomerController@destroy')
+            ->name('customer.destroy')
+            ->middleware('permission:destroy_customer');
+        Route::get('clientes/restore', 'CustomerController@indexrestore')
+            ->name('customer.indexrestore')
+            ->middleware('permission:destroy_customer');
+        Route::get('/all/customers/destroy', 'CustomerController@getCustomersDestroy')
+            ->middleware('permission:destroy_customer');
+        Route::post('customer/restore', 'CustomerController@restore')
+            ->name('customer.restore')
+            ->middleware('permission:destroy_customer');
 
         //SUPPLIER
         Route::get('/all/suppliers', 'SupplierController@getSuppliers')
@@ -84,126 +102,282 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_supplier');
 
         //CONTACT NAME
-        Route::get('/all/contacts', 'ContactNameController@getContacts');
-        Route::get('contactos', 'ContactNameController@index')->name('contactName.index');
-        Route::get('crear/contacto', 'ContactNameController@create')->name('contactName.create');
-        Route::post('contact/store', 'ContactNameController@store')->name('contactName.store');
-        Route::get('/editar/contacto/{id}', 'ContactNameController@edit')->name('contactName.edit');
-        Route::post('contact/update', 'ContactNameController@update')->name('contactName.update');
-        Route::post('contact/destroy', 'ContactNameController@destroy')->name('contactName.destroy');
-        Route::get('contactos/restore', 'ContactNameController@indexrestore')->name('contactName.indexrestore');
-        Route::get('/all/contacts/destroy', 'ContactNameController@getContactsDestroy');
-        Route::post('contact/restore', 'ContactNameController@restore')->name('contactName.restore');
+        Route::get('/all/contacts', 'ContactNameController@getContacts')
+            ->middleware('permission:list_contactName');
+        Route::get('contactos', 'ContactNameController@index')
+            ->name('contactName.index')
+            ->middleware('permission:list_contactName');
+        Route::get('crear/contacto', 'ContactNameController@create')
+            ->name('contactName.create')
+            ->middleware('permission:create_contactName');
+        Route::post('contact/store', 'ContactNameController@store')
+            ->name('contactName.store')
+            ->middleware('permission:create_contactName');
+        Route::get('/editar/contacto/{id}', 'ContactNameController@edit')
+            ->name('contactName.edit')
+            ->middleware('permission:update_contactName');
+        Route::post('contact/update', 'ContactNameController@update')
+            ->name('contactName.update')
+            ->middleware('permission:update_contactName');
+        Route::post('contact/destroy', 'ContactNameController@destroy')
+            ->name('contactName.destroy')
+            ->middleware('permission:destroy_contactName');
+        Route::get('contactos/restore', 'ContactNameController@indexrestore')
+            ->name('contactName.indexrestore')
+            ->middleware('permission:destroy_contactName');
+        Route::get('/all/contacts/destroy', 'ContactNameController@getContactsDestroy')
+            ->middleware('permission:destroy_contactName');
+        Route::post('contact/restore', 'ContactNameController@restore')
+            ->name('contactName.restore')
+            ->middleware('permission:destroy_contactName');
 
         //MATERIAL TYPE
-        Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes');
-        Route::get('TiposMateriales', 'MaterialTypeController@index')->name('materialtype.index');
-        Route::get('crear/tipomaterial', 'MaterialTypeController@create')->name('materialtype.create');
-        Route::post('materialtype/store', 'MaterialTypeController@store')->name('materialtype.store');
-        Route::get('/editar/tipomaterial/{id}', 'MaterialTypeController@edit')->name('materialtype.edit');
-        Route::post('materialtype/update', 'MaterialTypeController@update')->name('materialtype.update');
-        Route::post('materialtype/destroy', 'MaterialTypeController@destroy')->name('materialtype.destroy');
-        Route::get('/get/types/{subcategory_id}', 'MaterialTypeController@getTypesBySubCategory');
+        Route::get('/all/materialtypes', 'MaterialTypeController@getMaterialTypes')
+            ->middleware('permission:list_materialType');
+        Route::get('TiposMateriales', 'MaterialTypeController@index')
+            ->name('materialtype.index')
+            ->middleware('permission:list_materialType');
+        Route::get('crear/tipomaterial', 'MaterialTypeController@create')
+            ->name('materialtype.create')
+            ->middleware('permission:create_materialType');
+        Route::post('materialtype/store', 'MaterialTypeController@store')
+            ->name('materialtype.store')
+            ->middleware('permission:create_materialType');
+        Route::get('/editar/tipomaterial/{id}', 'MaterialTypeController@edit')
+            ->name('materialtype.edit')
+            ->middleware('permission:update_materialType');
+        Route::post('materialtype/update', 'MaterialTypeController@update')
+            ->name('materialtype.update')
+            ->middleware('permission:update_materialType');
+        Route::post('materialtype/destroy', 'MaterialTypeController@destroy')
+            ->name('materialtype.destroy')
+            ->middleware('permission:destroy_materialType');
+        Route::get('/get/types/{subcategory_id}', 'MaterialTypeController@getTypesBySubCategory')
+            ->middleware('permission:destroy_materialType');
 
         //SUB TYPE
-        Route::get('/all/subtypes', 'SubTypeController@getSubTypes');
-        Route::get('Subtipos', 'SubTypeController@index')->name('subtype.index');
-        Route::get('crear/subtipo', 'SubTypeController@create')->name('subtype.create');
-        Route::post('subtype/store', 'SubTypeController@store')->name('subtype.store');
-        Route::get('/editar/subtipo/{id}', 'SubTypeController@edit')->name('subtype.edit');
-        Route::post('subtype/update', 'SubTypeController@update')->name('subtype.update');
-        Route::post('subtype/destroy', 'SubTypeController@destroy')->name('subtype.destroy');
+        Route::get('/all/subtypes', 'SubTypeController@getSubTypes')
+            ->middleware('permission:list_subType');
+        Route::get('Subtipos', 'SubTypeController@index')
+            ->name('subtype.index')
+            ->middleware('permission:list_subType');
+        Route::get('crear/subtipo', 'SubTypeController@create')
+            ->name('subtype.create')
+            ->middleware('permission:create_subType');
+        Route::post('subtype/store', 'SubTypeController@store')
+            ->name('subtype.store')
+            ->middleware('permission:create_subType');
+        Route::get('/editar/subtipo/{id}', 'SubTypeController@edit')
+            ->name('subtype.edit')
+            ->middleware('permission:update_subType');
+        Route::post('subtype/update', 'SubTypeController@update')
+            ->name('subtype.update')
+            ->middleware('permission:update_subType');
+        Route::post('subtype/destroy', 'SubTypeController@destroy')
+            ->name('subtype.destroy')
+            ->middleware('permission:destroy_subType');
         Route::get('/get/subtypes/{type_id}', 'SubTypeController@getSubTypesByType');
 
         //CATEGORY
-        Route::get('/all/categories', 'CategoryController@getCategories');
-        Route::get('Categorias', 'CategoryController@index')->name('category.index');
-        Route::get('crear/categoria', 'CategoryController@create')->name('category.create');
-        Route::post('category/store', 'CategoryController@store')->name('category.store');
-        Route::get('/editar/categoria/{id}', 'CategoryController@edit')->name('category.edit');
-        Route::post('category/update', 'CategoryController@update')->name('category.update');
-        Route::post('category/destroy', 'CategoryController@destroy')->name('category.destroy');
+        Route::get('/all/categories', 'CategoryController@getCategories')
+            ->middleware('permission:list_category');
+        Route::get('Categorias', 'CategoryController@index')
+            ->name('category.index')
+            ->middleware('permission:list_category');
+        Route::get('crear/categoria', 'CategoryController@create')
+            ->name('category.create')
+            ->middleware('permission:create_category');
+        Route::post('category/store', 'CategoryController@store')
+            ->name('category.store')
+            ->middleware('permission:create_category');
+        Route::get('/editar/categoria/{id}', 'CategoryController@edit')
+            ->name('category.edit')
+            ->middleware('permission:update_category');
+        Route::post('category/update', 'CategoryController@update')
+            ->name('category.update')
+            ->middleware('permission:update_category');
+        Route::post('category/destroy', 'CategoryController@destroy')
+            ->name('category.destroy')
+            ->middleware('permission:destroy_category');
         Route::get('/get/subcategories/{category_id}', 'CategoryController@getSubcategoryByCategory');
 
         //SUBCATEGORY
-        Route::get('/all/subcategories', 'SubcategoryController@getSubcategories');
-        Route::get('Subcategorias', 'SubcategoryController@index')->name('subcategory.index');
-        Route::get('crear/subcategoria', 'SubcategoryController@create')->name('subcategory.create');
-        Route::post('subcategory/store', 'SubcategoryController@store')->name('subcategory.store');
-        Route::get('/editar/subcategoria/{id}', 'SubcategoryController@edit')->name('subcategory.edit');
-        Route::post('subcategory/update', 'SubcategoryController@update')->name('subcategory.update');
-        Route::post('subcategory/destroy', 'SubcategoryController@destroy')->name('subcategory.destroy');
+        Route::get('/all/subcategories', 'SubcategoryController@getSubcategories')
+            ->middleware('permission:list_subcategory');
+        Route::get('Subcategorias', 'SubcategoryController@index')
+            ->name('subcategory.index')
+            ->middleware('permission:list_subcategory');
+        Route::get('crear/subcategoria', 'SubcategoryController@create')
+            ->name('subcategory.create')
+            ->middleware('permission:create_subcategory');
+        Route::post('subcategory/store', 'SubcategoryController@store')
+            ->name('subcategory.store')
+            ->middleware('permission:create_subcategory');
+        Route::get('/editar/subcategoria/{id}', 'SubcategoryController@edit')
+            ->name('subcategory.edit')
+            ->middleware('permission:update_subcategory');
+        Route::post('subcategory/update', 'SubcategoryController@update')
+            ->name('subcategory.update')
+            ->middleware('permission:update_subcategory');
+        Route::post('subcategory/destroy', 'SubcategoryController@destroy')
+            ->name('subcategory.destroy')
+            ->middleware('permission:destroy_subcategory');
 
         //EXAMPLER
-        Route::get('/all/examplers', 'ExamplerController@getExamplers');
-        Route::get('Modelos', 'ExamplerController@index')->name('exampler.index');
-        Route::get('crear/modelo', 'ExamplerController@create')->name('exampler.create');
-        Route::post('exampler/store', 'ExamplerController@store')->name('exampler.store');
-        Route::get('/editar/modelo/{id}', 'ExamplerController@edit')->name('exampler.edit');
-        Route::post('exampler/update', 'ExamplerController@update')->name('exampler.update');
-        Route::post('exampler/destroy', 'ExamplerController@destroy')->name('exampler.destroy');
+        Route::get('/all/examplers', 'ExamplerController@getExamplers')
+            ->middleware('permission:list_exampler');
+        Route::get('Modelos', 'ExamplerController@index')
+            ->name('exampler.index')
+            ->middleware('permission:list_exampler');
+        Route::get('crear/modelo', 'ExamplerController@create')
+            ->name('exampler.create')
+            ->middleware('permission:create_exampler');
+        Route::post('exampler/store', 'ExamplerController@store')
+            ->name('exampler.store')
+            ->middleware('permission:create_exampler');
+        Route::get('/editar/modelo/{id}', 'ExamplerController@edit')
+            ->name('exampler.edit')
+            ->middleware('permission:update_exampler');
+        Route::post('exampler/update', 'ExamplerController@update')
+            ->name('exampler.update')
+            ->middleware('permission:update_exampler');
+        Route::post('exampler/destroy', 'ExamplerController@destroy')
+            ->name('exampler.destroy')
+            ->middleware('permission:destroy_exampler');
 
         //BRAND
-        Route::get('/all/brands', 'BrandController@getBrands');
-        Route::get('Marcas', 'BrandController@index')->name('brand.index');
-        Route::get('crear/marca', 'BrandController@create')->name('brand.create');
-        Route::post('brand/store', 'BrandController@store')->name('brand.store');
-        Route::get('/editar/marca/{id}', 'BrandController@edit')->name('brand.edit');
-        Route::post('brand/update', 'BrandController@update')->name('brand.update');
-        Route::post('brand/destroy', 'BrandController@destroy')->name('brand.destroy');
+        Route::get('/all/brands', 'BrandController@getBrands')
+            ->middleware('permission:list_brand');
+        Route::get('Marcas', 'BrandController@index')
+            ->name('brand.index')
+            ->middleware('permission:list_brand');
+        Route::get('crear/marca', 'BrandController@create')
+            ->name('brand.create')
+            ->middleware('permission:create_brand');
+        Route::post('brand/store', 'BrandController@store')
+            ->name('brand.store')
+            ->middleware('permission:create_brand');
+        Route::get('/editar/marca/{id}', 'BrandController@edit')
+            ->name('brand.edit')
+            ->middleware('permission:update_brand');
+        Route::post('brand/update', 'BrandController@update')
+            ->name('brand.update')
+            ->middleware('permission:update_brand');
+        Route::post('brand/destroy', 'BrandController@destroy')
+            ->name('brand.destroy')
+            ->middleware('permission:destroy_brand');
         Route::get('/get/exampler/{brand_id}', 'BrandController@getJsonBrands');
 
         //CEDULA
-        Route::get('/all/warrants', 'WarrantController@getWarrants');
-        Route::get('Cédulas', 'WarrantController@index')->name('warrant.index');
-        Route::get('crear/cedula', 'WarrantController@create')->name('warrant.create');
-        Route::post('warrant/store', 'WarrantController@store')->name('warrant.store');
-        Route::get('/editar/cedula/{id}', 'WarrantController@edit')->name('warrant.edit');
-        Route::post('warrant/update', 'WarrantController@update')->name('warrant.update');
-        Route::post('warrant/destroy', 'WarrantController@destroy')->name('warrant.destroy');
+        Route::get('/all/warrants', 'WarrantController@getWarrants')
+            ->middleware('permission:list_warrant');
+        Route::get('Cédulas', 'WarrantController@index')
+            ->name('warrant.index')
+            ->middleware('permission:list_warrant');
+        Route::get('crear/cedula', 'WarrantController@create')
+            ->name('warrant.create')
+            ->middleware('permission:create_warrant');
+        Route::post('warrant/store', 'WarrantController@store')
+            ->name('warrant.store')
+            ->middleware('permission:create_warrant');
+        Route::get('/editar/cedula/{id}', 'WarrantController@edit')
+            ->name('warrant.edit')
+            ->middleware('permission:update_warrant');
+        Route::post('warrant/update', 'WarrantController@update')
+            ->name('warrant.update')
+            ->middleware('permission:update_warrant');
+        Route::post('warrant/destroy', 'WarrantController@destroy')
+            ->name('warrant.destroy')
+            ->middleware('permission:destroy_warrant');
 
         //CALIDAD
-        Route::get('/all/qualities', 'QualityController@getQualities');
-        Route::get('Calidades', 'QualityController@index')->name('quality.index');
-        Route::get('crear/calidad', 'QualityController@create')->name('quality.create');
-        Route::post('quality/store', 'QualityController@store')->name('quality.store');
-        Route::get('/editar/calidad/{id}', 'QualityController@edit')->name('quality.edit');
-        Route::post('quality/update', 'QualityController@update')->name('quality.update');
-        Route::post('quality/destroy', 'QualityController@destroy')->name('quality.destroy');
+        Route::get('/all/qualities', 'QualityController@getQualities')
+            ->middleware('permission:list_quality');
+        Route::get('Calidades', 'QualityController@index')
+            ->name('quality.index')
+            ->middleware('permission:list_quality');
+        Route::get('crear/calidad', 'QualityController@create')
+            ->name('quality.create')
+            ->middleware('permission:create_quality');
+        Route::post('quality/store', 'QualityController@store')
+            ->name('quality.store')
+            ->middleware('permission:create_quality');
+        Route::get('/editar/calidad/{id}', 'QualityController@edit')
+            ->name('quality.edit')
+            ->middleware('permission:update_quality');
+        Route::post('quality/update', 'QualityController@update')
+            ->name('quality.update')
+            ->middleware('permission:update_quality');
+        Route::post('quality/destroy', 'QualityController@destroy')
+            ->name('quality.destroy')
+            ->middleware('permission:destroy_quality');
 
         //TYPESCRAP
-        Route::get('/all/typescraps', 'TypescrapController@getTypeScraps');
-        Route::get('Retacerías', 'TypescrapController@index')->name('typescrap.index');
-        Route::get('crear/retaceria', 'TypescrapController@create')->name('typescrap.create');
-        Route::post('typescrap/store', 'TypescrapController@store')->name('typescrap.store');
-        Route::get('/editar/retaceria/{id}', 'TypescrapController@edit')->name('typescrap.edit');
-        Route::post('typescrap/update', 'TypescrapController@update')->name('typescrap.update');
-        Route::post('typescrap/destroy', 'TypescrapController@destroy')->name('typescrap.destroy');
+        Route::get('/all/typescraps', 'TypescrapController@getTypeScraps')
+            ->middleware('permission:list_typeScrap');
+        Route::get('Retacerías', 'TypescrapController@index')
+            ->name('typescrap.index')
+            ->middleware('permission:list_typeScrap');
+        Route::get('crear/retaceria', 'TypescrapController@create')
+            ->name('typescrap.create')
+            ->middleware('permission:create_typeScrap');
+        Route::post('typescrap/store', 'TypescrapController@store')
+            ->name('typescrap.store')
+            ->middleware('permission:create_typeScrap');
+        Route::get('/editar/retaceria/{id}', 'TypescrapController@edit')
+            ->name('typescrap.edit')
+            ->middleware('permission:update_typeScrap');
+        Route::post('typescrap/update', 'TypescrapController@update')
+            ->name('typescrap.update')
+            ->middleware('permission:update_typeScrap');
+        Route::post('typescrap/destroy', 'TypescrapController@destroy')
+            ->name('typescrap.destroy')
+            ->middleware('permission:destroy_typeScrap');
 
         //UNITMEASURE
-        Route::get('/all/unitmeasure', 'UnitMeasureController@getUnitMeasure');
-        Route::get('Unidades', 'UnitMeasureController@index')->name('unitmeasure.index');
-        Route::get('crear/unidad', 'UnitMeasureController@create')->name('unitmeasure.create');
-        Route::post('unitmeasure/store', 'UnitMeasureController@store')->name('unitmeasure.store');
-        Route::get('/editar/unidad/{id}', 'UnitMeasureController@edit')->name('unitmeasure.edit');
-        Route::post('unitmeasure/update', 'UnitMeasureController@update')->name('unitmeasure.update');
-        Route::post('unitmeasure/destroy', 'UnitMeasureController@destroy')->name('unitmeasure.destroy');
+        Route::get('/all/unitmeasure', 'UnitMeasureController@getUnitMeasure')
+            ->middleware('permission:list_unitMeasure');
+        Route::get('Unidades', 'UnitMeasureController@index')
+            ->name('unitmeasure.index')
+            ->middleware('permission:list_unitMeasure');
+        Route::get('crear/unidad', 'UnitMeasureController@create')
+            ->name('unitmeasure.create')
+            ->middleware('permission:create_unitMeasure');
+        Route::post('unitmeasure/store', 'UnitMeasureController@store')
+            ->name('unitmeasure.store')
+            ->middleware('permission:create_unitMeasure');
+        Route::get('/editar/unidad/{id}', 'UnitMeasureController@edit')
+            ->name('unitmeasure.edit')
+            ->middleware('permission:update_unitMeasure');
+        Route::post('unitmeasure/update', 'UnitMeasureController@update')
+            ->name('unitmeasure.update')
+            ->middleware('permission:update_unitMeasure');
+        Route::post('unitmeasure/destroy', 'UnitMeasureController@destroy')
+            ->name('unitmeasure.destroy')
+            ->middleware('permission:destroy_unitMeasure');
 
         //ROL
-        Route::get('roles', 'RoleController@index')->name('role.index')
+        Route::get('roles', 'RoleController@index')
+            ->name('role.index')
             ->middleware('permission:list_role');
-        Route::post('role/store', 'RoleController@store')->name('role.store')
+        Route::post('role/store', 'RoleController@store')
+            ->name('role.store')
             ->middleware('permission:create_role');
-        Route::post('role/update', 'RoleController@update')->name('role.update')
+        Route::post('role/update', 'RoleController@update')
+            ->name('role.update')
             ->middleware('permission:update_role');
-        Route::get('role/permissions/{id}', 'RoleController@getPermissions')->name('role.permissions')
+        Route::get('role/permissions/{id}', 'RoleController@getPermissions')
+            ->name('role.permissions')
             ->middleware('permission:update_role');
-        Route::post('role/destroy', 'RoleController@destroy')->name('role.destroy')
+        Route::post('role/destroy', 'RoleController@destroy')
+            ->name('role.destroy')
             ->middleware('permission:destroy_role');
         Route::get('/all/roles', 'RoleController@getRoles');
-        Route::get('role/permissions/{id}', 'RoleController@getPermissions')->name('role.permissions')
+        Route::get('role/permissions/{id}', 'RoleController@getPermissions')
+            ->name('role.permissions')
             ->middleware('permission:update_role');
-        Route::get('/crear/rol', 'RoleController@create')->name('role.create');
+        Route::get('/crear/rol', 'RoleController@create')
+            ->name('role.create');
         Route::get('/editar/rol/{id}', 'RoleController@edit');
 
         //PERMISSION
@@ -310,85 +484,85 @@ Route::middleware('auth')->group(function (){
 
         // ENTRY
         Route::get('entradas/retaceria', 'EntryController@indexEntryScraps')->name('entry.scrap.index')
-            ->middleware('permission:list_material');
+            ->middleware('permission:list_entryScrap');
         Route::get('entradas/compra', 'EntryController@indexEntryPurchase')->name('entry.purchase.index')
-            ->middleware('permission:list_material');
+            ->middleware('permission:list_entryPurchase');
         Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
-            ->middleware('permission:create_material');
+            ->middleware('permission:create_entryPurchase');
         Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
-            ->middleware('permission:create_material');
+            ->middleware('permission:create_entryScrap');
         Route::post('entry_purchase/store', 'EntryController@storeEntryPurchase')->name('entry.purchase.store')
-            ->middleware('permission:create_material');
+            ->middleware('permission:create_entryPurchase');
         Route::post('entry_scrap/store', 'EntryController@storeEntryScrap')->name('entry.scrap.store')
-            ->middleware('permission:create_material');
-        Route::get('/get/materials', 'MaterialController@getJsonMaterials')
-            ->middleware('permission:list_material');
-        Route::get('/get/materials/scrap', 'MaterialController@getJsonMaterialsScrap')
-            ->middleware('permission:list_material');
-        Route::get('/get/locations', 'LocationController@getJsonLocations')
-            ->middleware('permission:list_material');
-        Route::get('/get/items/{id_material}', 'ItemController@getJsonItems')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/entries/purchase', 'EntryController@getJsonEntriesPurchase')
-            ->middleware('permission:list_material');
-        Route::get('/get/entries/purchase', 'EntryController@getEntriesPurchase')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_entryScrap');
+        Route::get('/get/materials', 'MaterialController@getJsonMaterials');
+        Route::get('/get/materials/scrap', 'MaterialController@getJsonMaterialsScrap');
+        Route::get('/get/locations', 'LocationController@getJsonLocations');
+        Route::get('/get/items/{id_material}', 'ItemController@getJsonItems');
+        Route::get('/get/json/entries/purchase', 'EntryController@getJsonEntriesPurchase');
+        Route::get('/get/entries/purchase', 'EntryController@getEntriesPurchase');
+        Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap');
+        Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail');
 
         // OUTPUT
-        Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')->name('output.request.index')
-            ->middleware('permission:list_material');
-        Route::get('salidas', 'OutputController@indexOutputs')->name('output.confirm')
-            ->middleware('permission:list_material');
-        Route::get('crear/solicitud', 'OutputController@createOutputRequest')->name('output.request.create')
-            ->middleware('permission:list_material');
-        Route::post('ouput/store', 'OutputController@storeOutput')->name('output.request.store')
-            ->middleware('permission:list_material');
+        Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
+            ->name('output.request.index')
+            ->middleware('permission:list_request');
+        Route::get('salidas', 'OutputController@indexOutputs')
+            ->name('output.confirm')
+            ->middleware('permission:list_output');
+        Route::get('crear/solicitud', 'OutputController@createOutputRequest')
+            ->name('output.request.create')
+            ->middleware('permission:create_request');
+        Route::post('ouput/store', 'OutputController@storeOutput')
+            ->name('output.request.store')
+            ->middleware('permission:create_request');
         Route::get('/get/users', 'UserController@getUsers2');
-        Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput')
-            ->middleware('permission:list_material');
-        Route::post('output_request/store', 'OutputController@storeOutputRequest')->name('output.request.store')
-            ->middleware('permission:create_material');
-        Route::get('/get/json/output/request', 'OutputController@getOutputRequest')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest')
-            ->middleware('permission:list_material');
-        Route::post('output_request/attend', 'OutputController@attendOutputRequest')->name('output.attend')
-            ->middleware('permission:create_material');
-        Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')->name('output.confirmed')
-            ->middleware('permission:create_material');
+        Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput');
+        Route::post('output_request/store', 'OutputController@storeOutputRequest')
+            ->name('output.request.store')
+            ->middleware('permission:create_output');
+        Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
+        Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
+        Route::post('output_request/attend', 'OutputController@attendOutputRequest')
+            ->name('output.attend')
+            ->middleware('permission:attend_request');
+        Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')
+            ->name('output.confirmed')
+            ->middleware('permission:confirm_output');
 
         // TRANSFER
-        Route::get('transferencias', 'TransferController@index')->name('transfer.index')
-            ->middleware('permission:list_material');
-        Route::get('crear/transferencia', 'TransferController@create')->name('transfer.create')
-            ->middleware('permission:list_material');
-        Route::post('transfer/store', 'TransferController@store')->name('transfer.store')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/transfer', 'TransferController@getTransfers')
-            ->middleware('permission:list_material');
-        Route::get('/get/json/transfer/material/{transfer_id}', 'TransferController@getJsonTransfers')
-            ->middleware('permission:list_material');
-        Route::post('editar/transferencia', 'TransferController@edit')->name('transfer.edit')
-            ->middleware('permission:create_material');
-        Route::post('transfer/update', 'TransferController@update')->name('transfer.update')
-            ->middleware('permission:create_material');
-        Route::post('transfer/cancel', 'TransferController@cancel')->name('transfer.cancel')
-            ->middleware('permission:create_material');
+        Route::get('transferencias', 'TransferController@index')
+            ->name('transfer.index')
+            ->middleware('permission:list_transfer');
+        Route::get('crear/transferencia', 'TransferController@create')
+            ->name('transfer.create')
+            ->middleware('permission:list_transfer');
+        Route::post('transfer/store', 'TransferController@store')
+            ->name('transfer.store')
+            ->middleware('permission:create_transfer');
+        Route::get('/get/json/transfer', 'TransferController@getTransfers');
+        Route::get('/get/json/transfer/material/{transfer_id}', 'TransferController@getJsonTransfers');
+        Route::post('editar/transferencia', 'TransferController@edit')
+            ->name('transfer.edit')
+            ->middleware('permission:update_transfer');
+        Route::post('transfer/update', 'TransferController@update')
+            ->name('transfer.update')
+            ->middleware('permission:update_transfer');
+        Route::post('transfer/cancel', 'TransferController@cancel')
+            ->name('transfer.cancel')
+            ->middleware('permission:destroy_transfer');
 
         Route::get('get/warehouse/area/{area_id}', 'TransferController@getWarehouse')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_transfer');
         Route::get('get/shelf/warehouse/{warehouse_id}', 'TransferController@getShelf')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_transfer');
         Route::get('get/level/shelf/{shelf_id}', 'TransferController@getLevel')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_transfer');
         Route::get('get/container/level/{level_id}', 'TransferController@getContainer')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_transfer');
         Route::get('get/position/container/{container_id}', 'TransferController@getPosition')
-            ->middleware('permission:list_material');
+            ->middleware('permission:create_transfer');
     });
 });
 

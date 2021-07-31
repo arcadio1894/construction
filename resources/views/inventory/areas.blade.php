@@ -36,7 +36,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de áreas</h5>
+    @can('create_area')
     <button id="newArea" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo área </button>
+    @endcan
 @endsection
 
 @section('content')
@@ -57,6 +59,7 @@
             </tbody>
         </table>
     </div>
+    @can('create_area')
     <div id="modalCreate" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -90,7 +93,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('update_area')
     <div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -126,7 +130,8 @@
             </div>
         </div>
     </div>
-
+    @endcan
+    @can('destroy_area')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -149,6 +154,7 @@
             </div>
         </div>
     </div>
+    @endcan
 @endsection
 
 @section('plugins')

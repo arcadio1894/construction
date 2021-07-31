@@ -492,28 +492,34 @@ class PermissionSeeder extends Seeder
 
         // Outputs
         Permission::create([
-            'name' => 'list_output',
+            'name' => 'list_request',
             'description' => 'Listar Solicitudes'
         ]);
         Permission::create([
-            'name' => 'create_output',
+            'name' => 'create_request',
             'description' => 'Crear Solicitud'
         ]);
         Permission::create([
-            'name' => 'update_output',
-            'description' => 'Modificar Solicitud'
-        ]);
-        Permission::create([
-            'name' => 'attend_output',
+            'name' => 'attend_request',
             'description' => 'Atender Solicitud'
         ]);
         Permission::create([
+            'name' => 'destroy_request',
+            'description' => 'Eliminar Solicitud'
+        ]);
+
+        Permission::create([
+            'name' => 'list_output',
+            'description' => 'Listar Salidas'
+        ]);
+
+        Permission::create([
             'name' => 'confirm_output',
-            'description' => 'Confirmar Solicitud'
+            'description' => 'Confirmar Salidas'
         ]);
         Permission::create([
             'name' => 'destroy_output',
-            'description' => 'Eliminar Solicitud'
+            'description' => 'Eliminar Salidas'
         ]);
 
     }

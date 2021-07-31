@@ -171,6 +171,7 @@
             <!-- Sidebar Menu -->
             <nav class="mt-2">
                 <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
                     @can('access_permission')
                     <li class="nav-header">ADMINISTRADOR</li>
                     <li class="nav-item has-treeview @yield('openAccess')">
@@ -210,7 +211,11 @@
                         </ul>
                     </li>
                     @endcan
+
+                    @canany('list_customer', 'list_contactName', 'list_supplier')
                     <li class="nav-header">MANTENEDORES</li>
+                    @endcanany
+                    @can('list_customer')
                     <li class="nav-item has-treeview @yield('openCustomer')">
 
                         <a href="#" class="nav-link @yield('activeCustomer')">
@@ -236,6 +241,8 @@
                                     <p>Crear clientes</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('destroy_customer')
                             <li class="nav-item">
                                 <a href="{{ route('customer.indexrestore') }}" class="nav-link @yield('activeRestoreCustomer')">
                                     <i class="far fa-circle nav-icon"></i>
@@ -245,7 +252,8 @@
                             @endcan
                         </ul>
                     </li>
-
+                    @endcan
+                    @can('list_contactName')
                     <li class="nav-item has-treeview @yield('openContactName')">
                         <a href="#" class="nav-link @yield('activeContactName')">
                             <i class="nav-icon fas fa-truck-loading"></i>
@@ -255,7 +263,7 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('list_customer')
+                            @can('list_contactName')
                                 <li class="nav-item">
                                     <a href="{{ route('contactName.index') }}" class="nav-link @yield('activeListContactName')">
                                         <i class="far fa-circle nav-icon"></i>
@@ -263,13 +271,15 @@
                                     </a>
                                 </li>
                             @endcan
-                            @can('create_customer')
+                            @can('create_contactName')
                                 <li class="nav-item">
                                     <a href="{{ route('contactName.create') }}" class="nav-link @yield('activeCreateContactName')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Crear contacto</p>
                                     </a>
                                 </li>
+                            @endcan
+                            @can('destroy_contactName')
                                 <li class="nav-item">
                                     <a href="{{ route('contactName.indexrestore') }}" class="nav-link @yield('activeRestoreContactName')">
                                         <i class="far fa-circle nav-icon"></i>
@@ -279,7 +289,8 @@
                             @endcan
                         </ul>
                     </li>
-
+                    @endcan
+                    @can('list_supplier')
                     <li class="nav-item has-treeview @yield('openSupplier')">
                         <a href="#" class="nav-link @yield('activeSupplier')">
                             <i class="nav-icon fas fa-boxes"></i>
@@ -323,7 +334,9 @@
                             @endcan--}}
                         </ul>
                     </li>
+                    @endcan
 
+                    @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
                     <li class="nav-header">MATERIALES</li>
                     <li class="nav-item has-treeview @yield('openConfig')">
                         <a href="#" class="nav-link @yield('activeConfig')">
@@ -637,6 +650,7 @@
 
                         </ul>
                     </li>
+                    @endcanany
                     @can('list_material')
                         <li class="nav-item has-treeview @yield('openMaterial')">
                             <a href="#" class="nav-link @yield('activeMaterial')">
@@ -719,7 +733,7 @@
                         </ul>
                     </li>
                     @endcan
-
+                    @can('list_transfer')
                     <li class="nav-header">TRANSFERENCIAS</li>
                     <li class="nav-item has-treeview @yield('openTransfer')">
                         <a href="#" class="nav-link @yield('activeTransfer')">
@@ -730,25 +744,30 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-
+                            @can('list_transfer')
                                 <li class="nav-item">
                                     <a href="{{ route('transfer.index') }}" class="nav-link @yield('activeListTransfer')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Listar traslados</p>
                                     </a>
                                 </li>
-
+                            @endcan
+                            @can('create_transfer')
                                 <li class="nav-item">
                                     <a href="{{ route('transfer.create') }}" class="nav-link @yield('activeCreateTransfer')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Crear traslado</p>
                                     </a>
                                 </li>
-
+                            @endcan
                         </ul>
                     </li>
+                    @endcan
 
+                    @canany('list_entryPurchase', 'list_entryScrap')
                     <li class="nav-header">ENTRADAS</li>
+                    @endcanany
+                    @can('list_entryPurchase')
                     <li class="nav-item has-treeview @yield('openEntryPurchase')">
                         <a href="#" class="nav-link @yield('activeEntryPurchase')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -758,20 +777,26 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            @can('list_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('create_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('entry.purchase.create') }}" class="nav-link @yield('activeCreateEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
+                            @endcan
                         </ul>
                     </li>
+                    @endcan
+                    @can('list_entryScrap')
                     <li class="nav-item has-treeview @yield('openEntryScrap')">
                         <a href="#" class="nav-link @yield('activeEntryScrap')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -781,22 +806,27 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            @can('list_entryScrap')
                             <li class="nav-item">
                                 <a href="{{ route('entry.scrap.index') }}" class="nav-link @yield('activeListEntryScrap')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('create_entryScrap')
                             <li class="nav-item">
                                 <a href="{{ route('entry.scrap.create') }}" class="nav-link @yield('activeCreateEntryScrap')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
+                            @endcan
                         </ul>
                     </li>
-
-                    <li class="nav-header">SALIDAS</li>
+                    @endcan
+                    @can('list_request')
+                    <li class="nav-header">SOLICITUDES</li>
                     <li class="nav-item has-treeview @yield('openOutputRequest')">
                         <a href="#" class="nav-link @yield('activeOutputRequest')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -806,20 +836,27 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
+                            @can('list_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.index') }}" class="nav-link @yield('activeListOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar solicitudes</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('create_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear solicitudes</p>
                                 </a>
                             </li>
+                            @endcan
                         </ul>
                     </li>
+                    @endcan
+                    @can('list_output')
+                    <li class="nav-header">SALIDAS</li>
                     <li class="nav-item has-treeview @yield('openOutputs')">
                         <a href="#" class="nav-link @yield('activeOutputs')">
                             <i class="nav-icon fas fa-tachometer-alt"></i>
@@ -838,95 +875,8 @@
 
                         </ul>
                     </li>
+                    @endcan
 
-                    {{--<li class="nav-header">NAVBAR HEADER</li>
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
-                            <p>
-                                EJEMPLO TREEVIEW
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Active Page</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Inactive Page</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item has-treeview">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-circle"></i>
-                            <p>
-                                Level 1
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Level 2</p>
-                                </a>
-                            </li>
-                            <li class="nav-item has-treeview">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>
-                                        Level 2
-                                        <i class="right fas fa-angle-left"></i>
-                                    </p>
-                                </a>
-                                <ul class="nav nav-treeview">
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="far fa-dot-circle nav-icon"></i>
-                                            <p>Level 3</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="far fa-dot-circle nav-icon"></i>
-                                            <p>Level 3</p>
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a href="#" class="nav-link">
-                                            <i class="far fa-dot-circle nav-icon"></i>
-                                            <p>Level 3</p>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="nav-item">
-                                <a href="#" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Level 2</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-header">NAVBAR HEADER</li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-th"></i>
-                            <p>
-                                EXAMPLE SIMPLE
-                                <span class="right badge badge-danger">New</span>
-                            </p>
-                        </a>
-                    </li>--}}
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->
