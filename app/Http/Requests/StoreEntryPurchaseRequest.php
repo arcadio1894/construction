@@ -28,6 +28,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'purchase_order' => 'nullable|string|min:5|max:255',
             'invoice' => 'required|string|min:5|max:255',
             'entry_type' => 'required',
+            'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
             'image' => 'image'
@@ -62,7 +63,8 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
-            'items' => 'items'
+            'items' => 'items',
+            'deferred_invoice' => 'opción diferido'
         ];
     }
 }

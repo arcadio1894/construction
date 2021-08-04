@@ -43,7 +43,7 @@ class EntryController extends Controller
 
     public function storeEntryPurchase(StoreEntryPurchaseRequest $request)
     {
-        //dd($request);
+        //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -52,6 +52,7 @@ class EntryController extends Controller
                 'referral_guide' => $request->get('referral_guide'),
                 'purchase_order' => $request->get('purchase_order'),
                 'invoice' => $request->get('invoice'),
+                'deferred_invoice' => $request->get('deferred_invoice'),
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type')
             ]);
@@ -239,6 +240,7 @@ class EntryController extends Controller
             $entry->referral_guide = $request->get('referral_guide');
             $entry->purchase_order = $request->get('purchase_order');
             $entry->invoice = $request->get('invoice');
+            $entry->deferred_invoice = $request->get('deferred_invoice');
             $entry->supplier_id = $request->get('supplier_id');
             $entry->save();
 

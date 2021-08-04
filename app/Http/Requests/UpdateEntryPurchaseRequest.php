@@ -27,6 +27,7 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'referral_guide' => 'nullable|string|min:5|max:255',
             'purchase_order' => 'nullable|string|min:5|max:255',
             'invoice' => 'required|string|min:5|max:255',
+            'deferred_invoice' => 'required',
             'entry_type' => 'required',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'image' => 'image'
@@ -43,6 +44,7 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'purchase_order.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'purchase_order.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'invoice.required' => 'La :attribute es obligatorio.',
+            'deferred_invoice.required' => 'La :attribute es obligatorio.',
             'invoice.string' => 'La :attribute debe contener caracteres válidos.',
             'invoice.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
@@ -60,6 +62,7 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
+            'deferred_invoice' => 'opción diferida'
         ];
     }
 }

@@ -13,6 +13,7 @@ class Entry extends Model
         'referral_guide',
         'purchase_order',
         'invoice',
+        'deferred_invoice',
         'supplier_id',
         'entry_type'
     ];

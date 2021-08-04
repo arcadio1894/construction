@@ -18,6 +18,7 @@ class CreateEntriesTable extends Migration
             $table->string('referral_guide')->nullable();
             $table->string('purchase_order')->nullable();
             $table->string('invoice')->nullable();
+            $table->enum('deferred_invoice', ['on', 'off'])->default('off');
             $table->foreignId('supplier_id')->nullable()
                 ->constrained('suppliers');
             $table->enum('entry_type', ['Por compra', 'Retacería'])->default('Por compra');

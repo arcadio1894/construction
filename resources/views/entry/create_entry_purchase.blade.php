@@ -97,9 +97,15 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="invoice">Factura <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="invoice" name="invoice" class="form-control">
+                                <div class="form-group row">
+                                    <div class="col-md-8">
+                                        <label for="invoice">Factura <span class="right badge badge-danger">(*)</span></label>
+                                        <input type="text" id="invoice" name="invoice" class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="btn-grouped"> Diferido <span class="right badge badge-danger">(*)</span></label> <br>
+                                        <input id="btn-grouped" type="checkbox" name="deferred_invoice" data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
+                                    </div>
                                 </div>
 
                                 <div class="form-group">
