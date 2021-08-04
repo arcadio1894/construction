@@ -162,7 +162,9 @@
 
                         <div class="form-group">
                             <label for="unit_price">Precio Unitario </label>
-                            <input type="text" id="unit_price" name="unit_price" class="form-control">
+                            <input type="number" id="unit_price" name="unit_price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
                         <div class="form-group">
                             <label for="image">Imagen </label>
@@ -190,11 +192,15 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="stock_max">Stock Máximo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_max" name="stock_max" class="form-control">
+                            <input type="number" id="stock_max" name="stock_max" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
                         <div class="form-group">
                             <label for="stock_min">Stock Mínimo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_min" name="stock_min" class="form-control">
+                            <input type="number" id="stock_min" name="stock_min" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
 
                         <div class="form-group row">
