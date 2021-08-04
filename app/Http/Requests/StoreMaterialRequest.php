@@ -58,7 +58,6 @@ class StoreMaterialRequest extends FormRequest
             'stock_min.numeric' => 'El :attribute debe ser un número.',
             'stock_min.min' => 'El :attribute debe ser mayor a 0.',
 
-            'unit_price.required' => 'El :attribute es obligatorio.',
             'unit_price.numeric' => 'El :attribute debe ser un número.',
             'unit_price.between' => 'El :attribute esta fuera del rango numérico.',
 

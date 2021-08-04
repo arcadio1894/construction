@@ -23,7 +23,7 @@ class CreateMaterialsTable extends Migration
             $table->decimal('stock_min', 6,2)->default(0);
             $table->decimal('stock_current', 6,2)->default(0);
             $table->enum('priority', ['Aceptable', 'Agotado', 'Completo', 'Por agotarse']);
-            $table->decimal('unit_price', 9,2)->default(0);
+            $table->decimal('unit_price', 9,2)->nullable()->default(0);
             $table->string('image')->nullable();
             $table->foreignId('category_id')->constrained('categories');
             $table->foreignId('subcategory_id')->nullable()->constrained('subcategories');
