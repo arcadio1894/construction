@@ -105,7 +105,7 @@
                                     </div>
                                     <div class="col-md-4">
                                         <label for="btn-grouped"> Diferido <span class="right badge badge-danger">(*)</span></label> <br>
-                                        <input id="btn-grouped" type="checkbox" name="deferred_invoice" {{ ($entry->deferred_invoice==='yes') ? 'checked':'' }} data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
+                                        <input id="btn-grouped" type="checkbox" name="deferred_invoice" {{ ($entry->deferred_invoice==='on') ? 'checked':'' }} data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
                                     </div>
                                 </div>
 
