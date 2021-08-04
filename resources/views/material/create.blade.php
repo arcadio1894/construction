@@ -240,7 +240,7 @@
                 </div>
                 <!-- /.card -->
             </div>
-            <div class="col-md-12">
+            {{--<div class="col-md-12">
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">Especificaciones (Opcional)</h3>
@@ -285,7 +285,7 @@
                     <!-- /.card-body -->
                 </div>
                 <!-- /.card -->
-            </div>
+            </div>--}}
         </div>
         <div class="row">
             <div class="col-12">

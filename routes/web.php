@@ -504,6 +504,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap');
         Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail');
 
+        Route::get('entrada/compra/editar/{entry}', 'EntryController@editEntryPurchase')->name('entry.purchase.edit')
+            ->middleware('permission:update_entryPurchase');
+        Route::post('entry_purchase/update', 'EntryController@updateEntryPurchase')->name('entry.purchase.update')
+            ->middleware('permission:update_entryScrap');
+
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
             ->name('output.request.index')
@@ -563,6 +568,13 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_transfer');
         Route::get('get/position/container/{container_id}', 'TransferController@getPosition')
             ->middleware('permission:create_transfer');
+
+        Route::get('cotizaciones', 'QuoteController@index')
+            ->name('quote.index')
+            ->middleware('permission:list_quote');
+        Route::get('crear/cotizacion', 'QuoteController@create')
+            ->name('quote.create')
+            ->middleware('permission:create_quote');
     });
 });
 

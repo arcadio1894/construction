@@ -30,6 +30,8 @@ $(document).ready(function () {
         multidate: false,
         autoclose: true
     });
+    $permissions = JSON.parse($('#permissions').val());
+    console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/entries/purchase",
@@ -47,7 +49,17 @@ $(document).ready(function () {
             { data: 'purchase_order' },
             { data: 'invoice' },
             { data: 'entry_type' },
-            { data: 'supplier.business_name' },
+            { data: null,
+                title: 'Proveedor',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.supplier !== null )
+                        return '<p> '+ item.supplier.bussines_name +'</p>';
+                    else
+                        return '<p> Sin proveedor </p>'
+                }
+            },
             { data: null,
                 title: 'Fecha',
                 wrap: true,
@@ -57,11 +69,25 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Imagen',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' } },
+                    var text = '';
+                    if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                    }
+                    return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
+                }
+            },
 
         ],
         "aaSorting": [],
@@ -253,7 +279,11 @@ $(document).ready(function () {
 
     $modalItems = $('#modalItems');
 
+    $modalImage = $('#modalImage');
+
     $(document).on('click', '[data-detail]', showItems);
+
+    $(document).on('click', '[data-image]', showImage);
 
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
@@ -295,6 +325,8 @@ $(document).ready(function () {
 
 let $modalItems;
 
+let $modalImage;
+
 let $formCreate;
 
 let $modalAddItems;
@@ -302,6 +334,14 @@ let $modalAddItems;
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+var $permissions;
+
+function showImage() {
+    var path = $(this).attr('src');
+    $('#image-document').attr('src', path);
+    $modalImage.modal('show');
+}
 
 function showItems() {
     $('#table-items').html('');

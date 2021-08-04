@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Location extends Model
 {
+    protected $appends = ['full_location'];
+
     protected $fillable = [
         'area_id',
         'warehouse_id',
@@ -15,6 +17,18 @@ class Location extends Model
         'position_id',
         'description'
     ];
+
+    public function getFullLocationAttribute()
+    {
+        $area = ( is_null($this->area) ) ? '': ' '.$this->area->name;
+        $warehouse = ( is_null($this->warehouse) ) ? '': ' '.$this->warehouse->name;
+        $shelf = ( is_null($this->shelf) ) ? '': ' '.$this->shelf->name;
+        $level = ( is_null($this->level) ) ? '': ' '.$this->level->name;
+        $container = ( is_null($this->container) ) ? '': ' '.$this->container->name;
+        $position = ( is_null($this->position) ) ? '': ' '.$this->position->name;
+
+        return "AR:" . $area . "|AL:" . $warehouse ."|E:". $shelf ."|N:". $level ."|C:". $container ."|P:". $position;
+    }
 
     public function area()
     {

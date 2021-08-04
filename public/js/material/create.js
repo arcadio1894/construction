@@ -20,6 +20,15 @@ $(document).ready(function () {
 
     $selectCategory.change(function () {
         $selectSubCategory.empty();
+        $('#feature-body').css("display","none");
+        $selectType.val('0');
+        $selectType.trigger('change');
+        $selectSubtype.val('0');
+        $selectSubtype.trigger('change');
+        $('#warrant').val('0');
+        $('#warrant').trigger('change');
+        $('#quality').val('0');
+        $('#quality').trigger('change');
         var category =  $selectCategory.val();
         $.get( "/dashboard/get/subcategories/"+category, function( data ) {
             $selectSubCategory.append($("<option>", {
@@ -58,8 +67,40 @@ $(document).ready(function () {
 
     $selectSubCategory.change(function () {
         let subcategory = $selectSubCategory.select2('data');
-        //alert(subcategory[0].text);
-        switch(subcategory[0].text) {
+        let option = $selectSubCategory.find(':selected');
+
+        console.log(option);
+        if(subcategory[0].text === 'INOX') {
+            $selectType.empty();
+            var subcategoria =  subcategory[0].id;
+            $.get( "/dashboard/get/types/"+subcategoria, function( data ) {
+                $selectType.append($("<option>", {
+                    value: '',
+                    text: 'Ninguno'
+                }));
+                for ( var i=0; i<data.length; i++ )
+                {
+                    $selectType.append($("<option>", {
+                        value: data[i].id,
+                        text: data[i].type
+                    }));
+                }
+            });
+            $('#feature-body').css("display","");
+        } else {
+            console.log(subcategory[0].text);
+            $('#feature-body').css("display","none");
+            $selectType.val('0');
+            $selectType.trigger('change');
+            $selectSubtype.val('0');
+            $selectSubtype.trigger('change');
+            $('#warrant').val('0');
+            $('#warrant').trigger('change');
+            $('#quality').val('0');
+            $('#quality').trigger('change');
+            $selectSubCategory.select2('close');
+        }
+        /*switch(subcategory[0].text) {
             case "INOX":
                 //alert('Metalico');
                 $selectType.empty();
@@ -90,28 +131,33 @@ $(document).ready(function () {
                 $('#warrant').trigger('change');
                 $('#quality').val('0');
                 $('#quality').trigger('change');
+                $selectSubCategory.trigger('change');
                 generateNameProduct();
                 break;
-        }
+        }*/
     });
 
     $selectType.change(function () {
         $selectSubtype.empty();
-        let type = $selectType.select2('data');
-
-        $.get( "/dashboard/get/subtypes/"+type[0].id, function( data ) {
-            $selectSubtype.append($("<option>", {
-                value: '',
-                text: 'Ninguno'
-            }));
-            for ( var i=0; i<data.length; i++ )
-            {
+        var type = $selectType.select2('data');
+        console.log(type);
+        if( type.length !== 0)
+        {
+            $.get( "/dashboard/get/subtypes/"+type[0].id, function( data ) {
                 $selectSubtype.append($("<option>", {
-                    value: data[i].id,
-                    text: data[i].subtype
+                    value: '',
+                    text: 'Ninguno'
                 }));
-            }
-        });
+                for ( var i=0; i<data.length; i++ )
+                {
+                    $selectSubtype.append($("<option>", {
+                        value: data[i].id,
+                        text: data[i].subtype
+                    }));
+                }
+            });
+        }
+
 
     });
 

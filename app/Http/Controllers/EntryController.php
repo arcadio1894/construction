@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use App\DetailEntry;
 use App\Entry;
 use App\Http\Requests\StoreEntryPurchaseRequest;
+use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
 use App\Supplier;
 use App\Typescrap;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class EntryController extends Controller
@@ -17,7 +19,10 @@ class EntryController extends Controller
 
     public function indexEntryPurchase()
     {
-        return view('entry.index_entry_purchase');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('entry.index_entry_purchase', compact('permissions'));
     }
 
     public function indexEntryScraps()
@@ -50,6 +55,19 @@ class EntryController extends Controller
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type')
             ]);
+
+            // TODO: Tratamiento de un archivo de forma tradicional
+            if (!$request->file('image')) {
+                $entry->image = 'no_image.png';
+                $entry->save();
+            } else {
+                $path = public_path().'/images/entries/';
+                $extension = $request->file('image')->getClientOriginalExtension();
+                $filename = $entry->id . '.' . $extension;
+                $request->file('image')->move($path, $filename);
+                $entry->image = $filename;
+                $entry->save();
+            }
 
             $items = json_decode($request->get('items'));
 
@@ -206,14 +224,45 @@ class EntryController extends Controller
         //
     }
 
-    public function edit(Entry $entry)
+    public function editEntryPurchase(Entry $entry)
     {
-        //
+        $suppliers = Supplier::all();
+        return view('entry.edit_entry_purchase', compact('entry', 'suppliers'));
     }
 
-    public function update(Request $request, Entry $entry)
+    public function updateEntryPurchase(UpdateEntryPurchaseRequest $request)
     {
-        //
+        $validated = $request->validated();
+        DB::beginTransaction();
+        try {
+            $entry = Entry::find($request->get('entry_id'));
+            $entry->referral_guide = $request->get('referral_guide');
+            $entry->purchase_order = $request->get('purchase_order');
+            $entry->invoice = $request->get('invoice');
+            $entry->supplier_id = $request->get('supplier_id');
+            $entry->save();
+
+            // TODO: Tratamiento de un archivo de forma tradicional
+            if (!$request->file('image')) {
+                if ($entry->image == 'no_image.png' || $entry->image == null) {
+                    $entry->image = 'no_image.png';
+                    $entry->save();
+                }
+            } else {
+                $path = public_path().'/images/entries/';
+                $extension = $request->file('image')->getClientOriginalExtension();
+                $filename = $entry->id . '.' . $extension;
+                $request->file('image')->move($path, $filename);
+                $entry->image = $filename;
+                $entry->save();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Ingreso por compra modificado con éxito.'], 200);
+
     }
 
     public function destroy(Entry $entry)

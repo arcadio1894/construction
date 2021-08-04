@@ -21,6 +21,7 @@ class CreateEntriesTable extends Migration
             $table->foreignId('supplier_id')->nullable()
                 ->constrained('suppliers');
             $table->enum('entry_type', ['Por compra', 'Retacería'])->default('Por compra');
+            $table->string('image')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

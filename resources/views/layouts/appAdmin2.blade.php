@@ -680,29 +680,38 @@
                             </ul>
                         </li>
                     @endcan
-                    @can('list_quotes')
+                    {{--@canany('list_quote')
                         <li class="nav-header">COTIZACIONES</li>
-                        <li class="nav-item">
-                            <a href="#" class="nav-link @yield('activeListQuotes')">
-                                <i class="nav-icon fas fa-th"></i>
+                    @endcanany
+                    @can('list_quote')
+                        <li class="nav-item has-treeview @yield('openQuote')">
+                            <a href="#" class="nav-link @yield('activeQuote')">
+                                <i class="nav-icon fas fa-boxes"></i>
                                 <p>
-                                    Listar cotizaciones
-                                    <span class="right badge badge-danger">New</span>
+                                    Cotizaciones
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_quote')
+                                    <li class="nav-item">
+                                        <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar cotizaciones</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_quote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('quote.create') }}" class="nav-link @yield('activeCreateQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear cotización</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
                         </li>
-                        {{--@can('create_quotes')
-                        <li class="nav-item">
-                            <a href="#" class="nav-link @yield('activeCreateQuotes')">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Crear cotizaciones
-                                    <span class="right badge badge-danger">New</span>
-                                </p>
-                            </a>
-                        </li>
-                        @endcan--}}
-                    @endcan
+                    @endcan--}}
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>
                     <li class="nav-item has-treeview @yield('openInventory')">
@@ -765,7 +774,7 @@
                     @endcan
 
                     @canany('list_entryPurchase', 'list_entryScrap')
-                    <li class="nav-header">ENTRADAS</li>
+                    <li class="nav-header">ENTRADAS A ALMACEN</li>
                     @endcanany
                     @can('list_entryPurchase')
                     <li class="nav-item has-treeview @yield('openEntryPurchase')">

@@ -66,6 +66,8 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <div class="row">
         <div class="col-md-3">
             <strong> Seleccione un rango de fechas: </strong>
@@ -91,6 +93,7 @@
                 <th>Tipo de entrada</th>
                 <th>Proveedor</th>
                 <th>Fecha</th>
+                <th>Imagen</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -119,6 +122,23 @@
                         <button type="submit" class="btn btn-danger">Eliminar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalImage" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Visualización del documento</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <img id="image-document" src="" alt="" width="100%">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>

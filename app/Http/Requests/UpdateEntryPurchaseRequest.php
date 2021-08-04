@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class StoreEntryPurchaseRequest extends FormRequest
+class UpdateEntryPurchaseRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -29,7 +29,6 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice' => 'required|string|min:5|max:255',
             'entry_type' => 'required',
             'supplier_id' => 'nullable|exists:suppliers,id',
-            'items' => 'required',
             'image' => 'image'
         ];
     }
@@ -49,7 +48,6 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'entry_type.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
-            'items.required' => 'Los :attribute son obligatorio.',
             'image.image' => 'Los :attribute son obligatorio.',
         ];
     }
@@ -62,7 +60,6 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
-            'items' => 'items'
         ];
     }
 }

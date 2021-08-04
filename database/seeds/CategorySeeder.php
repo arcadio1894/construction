@@ -17,8 +17,8 @@ class CategorySeeder extends Seeder
             'description' => 'EQUIPO PROTECCIÓN  PERSONAL',
         ]);
         Category::create([
-            'name' => 'EMBALAJES',
-            'description' => 'EMBALAJES',
+            'name' => 'CONSUMIBLES',
+            'description' => 'CONSUMIBLES',
         ]);
         Category::create([
             'name' => 'OFICINA',
@@ -29,8 +29,12 @@ class CategorySeeder extends Seeder
             'description' => 'ACCESORIOS VARIOS',
         ]);
         Category::create([
-            'name' => 'CONSUMIBLES',
-            'description' => 'VARIOS',
+            'name' => 'ESTRUCTURAS',
+            'description' => 'ESTRUCTURAS',
+        ]);
+        Category::create([
+            'name' => 'HERRAMIENTAS',
+            'description' => 'HERRAMIENTAS NUEVAS',
         ]);
     }
 }

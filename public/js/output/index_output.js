@@ -68,9 +68,9 @@ $(document).ready(function () {
                 {
                     if (item.state === 'confirmed' || item.state === 'created')
                     {
-                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>';
+                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> '; /*<button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>*/
                     }
-                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>';
+                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';/*'<button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="\'+item.id+\'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'*/
                 }
 
             },

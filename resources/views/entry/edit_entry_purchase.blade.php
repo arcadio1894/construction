@@ -46,7 +46,7 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nueva entrada por compra</h5>
+    <h5 class="card-title">Modificar entrada por compra</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -57,13 +57,14 @@
         <li class="breadcrumb-item">
             <a href="{{ route('entry.purchase.index') }}"><i class="fa fa-key"></i> Entradas por compra</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nueva entrada</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar entrada</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('entry.purchase.store') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('entry.purchase.update') }}" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="entry_id" value="{{ $entry->id }}">
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-success">
@@ -80,18 +81,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="referral_guide">Guía de remisión</label>
-                                    <input type="text" id="referral_guide" name="referral_guide" class="form-control">
+                                    <input type="text" id="referral_guide" name="referral_guide" class="form-control" value="{{ $entry->referral_guide }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="purchase_order">Orden de Compra</label>
-                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control">
+                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $entry->purchase_order }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="supplier">Proveedor </label>
                                     <select id="supplier" name="supplier_id" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $suppliers as $supplier )
-                                            <option value="{{ $supplier->id }}">{{ $supplier->business_name }}</option>
+                                            <option value="{{ $supplier->id }}" {{ ($supplier->id === $entry->supplier_id) ? 'selected':'' }}>{{ $supplier->business_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -99,16 +100,18 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="invoice">Factura <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="invoice" name="invoice" class="form-control">
+                                    <input type="text" id="invoice" name="invoice" class="form-control" value="{{ $entry->invoice }}">
                                 </div>
 
                                 <div class="form-group">
                                     <label for="entry_type">Tipo de Ingreso <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="image">Imagen </label>
                                     <input type="file" id="image" name="image" class="form-control">
+                                    <img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
                                 </div>
                             </div>
                         </div>
@@ -129,7 +132,7 @@
                     </div>
                     <div class="card-body">
 
-                        <div class="row">
+                        {{--<div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
@@ -160,7 +163,7 @@
 
                         </div>
 
-                        <hr>
+                        <hr>--}}
 
                         <div class="row">
                             <div class="col-md-12">
@@ -182,7 +185,20 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
-                                                <template id="materials-selected">
+                                                @foreach( $entry->details as $detail )
+                                                    @foreach($detail->items as $key => $item)
+                                                        <tr>
+                                                            <td data-id>{{ $key+1 }}</td>
+                                                            <td data-description>{{ $item->material->full_description }}</td>
+                                                            <td data-item>{{ $item->code }}</td>
+                                                            <td data-location>{{ $item->location->full_location }}</td>
+                                                            <td data-state>{{ $item->state }}</td>
+                                                            <td data-price>{{ $item->price }}</td>
+                                                        </tr>
+                                                    @endforeach
+
+                                                @endforeach
+                                                {{--<template id="materials-selected">
                                                     <tr>
                                                         <td data-id>183</td>
                                                         <td data-description>John Doe</td>
@@ -191,7 +207,7 @@
                                                         <td data-state>11-7-2014</td>
                                                         <td data-price>11-7-2014</td>
                                                     </tr>
-                                                </template>
+                                                </template>--}}
 
                                             </tbody>
                                         </table>
@@ -239,11 +255,28 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar orden de compra</button>
+                <button type="submit" class="btn btn-outline-success float-right">Guardar cambios</button>
             </div>
         </div>
         <!-- /.card-footer -->
     </form>
+
+    <div id="modalImage" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Visualización del documento</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <img id="image-document" src="" alt="" width="100%">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div id="modalAddItems" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-lg">
@@ -416,6 +449,6 @@
             placeholder: "Seleccione un proveedor",
         })
     </script>
-    <script src="{{ asset('js/entry/entry_purchase.js') }}"></script>
+    <script src="{{ asset('js/entry/edit_entry_purchase.js') }}"></script>
 
 @endsection

@@ -133,7 +133,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('update_material', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  '
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/material/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
                     }
                     if ( $.inArray('destroy_customer', $permissions) !== -1 ) {
                         text = text + '<button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  ';
