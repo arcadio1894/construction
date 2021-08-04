@@ -146,7 +146,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="quantity" class="form-control">
+                                    <input type="number" id="quantity" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">
