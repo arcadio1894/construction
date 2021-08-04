@@ -29,7 +29,7 @@
     <!-- Navbar -->
     <nav class="main-header navbar navbar-expand navbar-white navbar-light">
         <!-- Left navbar links -->
-        <ul class="navbar-nav">
+        {{--<ul class="navbar-nav">
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
@@ -39,10 +39,10 @@
             <li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
             </li>
-        </ul>
+        </ul>--}}
 
         <!-- SEARCH FORM -->
-        <form class="form-inline ml-3">
+        {{--<form class="form-inline ml-3">
             <div class="input-group input-group-sm">
                 <input class="form-control form-control-navbar" type="search" placeholder="Search" aria-label="Search">
                 <div class="input-group-append">
@@ -51,12 +51,12 @@
                     </button>
                 </div>
             </div>
-        </form>
+        </form>--}}
 
         <!-- Right navbar links -->
         <ul class="navbar-nav ml-auto">
             <!-- Messages Dropdown Menu -->
-            <li class="nav-item dropdown">
+            {{--<li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-comments"></i>
                     <span class="badge badge-danger navbar-badge">3</span>
@@ -65,7 +65,7 @@
                     <a href="#" class="dropdown-item">
                         <!-- Message Start -->
                         <div class="media">
-                            <img src="{{ asset('admin/dist/img/user1-128x128.jpg') }}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
+                            <img src="{{asset('images/users/'.Auth::user()->image)}}" alt="User Avatar" class="img-size-50 mr-3 img-circle">
                             <div class="media-body">
                                 <h3 class="dropdown-item-title">
                                     Brad Diesel
@@ -80,9 +80,9 @@
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
                 </div>
-            </li>
+            </li>--}}
             <!-- Notifications Dropdown Menu -->
-            <li class="nav-item dropdown">
+            {{--<li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-bell"></i>
                     <span class="badge badge-warning navbar-badge">15</span>
@@ -97,7 +97,7 @@
                     <div class="dropdown-divider"></div>
                     <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
                 </div>
-            </li>
+            </li>--}}
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                     <img src="{{asset('images/users/'.Auth::user()->image)}}" class="user-image img-circle elevation-2" alt="User Image">
@@ -114,20 +114,20 @@
                         </p>
                     </li>
                     <!-- Menu Body -->
-                    <li class="user-body">
-                        <div class="row">
-                            <div class="col-4 text-center">
-                                <a href="#">Followers</a>
-                            </div>
-                            <div class="col-4 text-center">
-                                <a href="#">Sales</a>
-                            </div>
-                            <div class="col-4 text-center">
-                                <a href="#">Friends</a>
-                            </div>
+                    {{--<li class="user-body">
+                    <div class="row">
+                        <div class="col-4 text-center">
+                            <a href="#">Followers</a>
                         </div>
+                        <div class="col-4 text-center">
+                            <a href="#">Sales</a>
+                        </div>
+                        <div class="col-4 text-center">
+                            <a href="#">Friends</a>
+                        </div>
+                    </div>
                         <!-- /.row -->
-                    </li>
+                    </li>--}}
                     <!-- Menu Footer-->
                     <li class="user-footer">
                         <a href="#" class="btn btn-default btn-flat">Perfil</a>
@@ -219,7 +219,7 @@
                     <li class="nav-item has-treeview @yield('openCustomer')">
 
                         <a href="#" class="nav-link @yield('activeCustomer')">
-                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <i class="nav-icon fas fa-briefcase"></i>
                             <p>
                                 Clientes
                                 <i class="right fas fa-angle-left"></i>
@@ -256,7 +256,7 @@
                     @can('list_contactName')
                     <li class="nav-item has-treeview @yield('openContactName')">
                         <a href="#" class="nav-link @yield('activeContactName')">
-                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <i class="nav-icon fas fa-address-book"></i>
                             <p>
                                 Contactos
                                 <i class="right fas fa-angle-left"></i>
@@ -293,7 +293,7 @@
                     @can('list_supplier')
                     <li class="nav-item has-treeview @yield('openSupplier')">
                         <a href="#" class="nav-link @yield('activeSupplier')">
-                            <i class="nav-icon fas fa-boxes"></i>
+                            <i class="nav-icon fas fa-building"></i>
                             <p>
                                 Proveedores
                                 <i class="right fas fa-angle-left"></i>
@@ -716,7 +716,7 @@
                     <li class="nav-header">INVENTARIO</li>
                     <li class="nav-item has-treeview @yield('openInventory')">
                         <a href="#" class="nav-link @yield('activeInventory')">
-                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <i class="nav-icon fas fa-book"></i>
                             <p>
                                 Inventario Físico
                                 <i class="right fas fa-angle-left"></i>
@@ -746,7 +746,7 @@
                     <li class="nav-header">TRANSFERENCIAS</li>
                     <li class="nav-item has-treeview @yield('openTransfer')">
                         <a href="#" class="nav-link @yield('activeTransfer')">
-                            <i class="nav-icon fas fa-truck-loading"></i>
+                            <i class="nav-icon fas fa-retweet"></i>
                             <p>
                                 Transferencias
                                 <i class="right fas fa-angle-left"></i>
@@ -779,7 +779,7 @@
                     @can('list_entryPurchase')
                     <li class="nav-item has-treeview @yield('openEntryPurchase')">
                         <a href="#" class="nav-link @yield('activeEntryPurchase')">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <i class="nav-icon fas fa-truck-loading"></i>
                             <p>
                                 Por compra
                                 <i class="right fas fa-angle-left"></i>
@@ -808,7 +808,7 @@
                     @can('list_entryScrap')
                     <li class="nav-item has-treeview @yield('openEntryScrap')">
                         <a href="#" class="nav-link @yield('activeEntryScrap')">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <i class="nav-icon fas fa-archive"></i>
                             <p>
                                 Por retazos
                                 <i class="right fas fa-angle-left"></i>
@@ -838,7 +838,7 @@
                     <li class="nav-header">SOLICITUDES</li>
                     <li class="nav-item has-treeview @yield('openOutputRequest')">
                         <a href="#" class="nav-link @yield('activeOutputRequest')">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <i class="nav-icon fas fa-file"></i>
                             <p>
                                 Solicitudes
                                 <i class="right fas fa-angle-left"></i>
@@ -868,7 +868,7 @@
                     <li class="nav-header">SALIDAS</li>
                     <li class="nav-item has-treeview @yield('openOutputs')">
                         <a href="#" class="nav-link @yield('activeOutputs')">
-                            <i class="nav-icon fas fa-tachometer-alt"></i>
+                            <i class="nav-icon fas fa-share"></i>
                             <p>
                                 Salidas
                                 <i class="right fas fa-angle-left"></i>

@@ -17,10 +17,5 @@ class ShelfSeeder extends Seeder
             'comment' => 'Estante general',
             'warehouse_id' => 1
         ]);
-        Shelf::create([
-            'name' => 'General',
-            'comment' => 'Estante general',
-            'warehouse_id' => 2
-        ]);
     }
 }

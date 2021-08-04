@@ -98,7 +98,7 @@ function saveTableItems() {
     if ($('[name="my-checkbox"]').is(':checked')) {
         let quantity = $('#quantity_GroupSelected').val();
         let material_name = $('#material_GroupSelected').val();
-        let material_price = $('#price_GroupSelected').val();
+        let material_price = parseFloat($('#price_GroupSelected').val()).toFixed(2);
         let material_location = $('#locationGroup').val();
         let material_state = $('#stateGroup').val();
         let state = $('#stateGroup').children("option:selected").val();
@@ -146,7 +146,7 @@ function saveTableItems() {
 
         let material_name = $('#material_selected').val();
         let material_quantity = $('#quantity_selected').val();
-        let material_price = $('#price_selected').val();
+        let material_price = parseFloat($('#price_selected').val()).toFixed(2);
 
         for ( var i=0; i<series_selected.length; i++ )
         {
@@ -243,7 +243,7 @@ function addItems() {
 
     let material_name = $('#material_search').val();
     let material_quantity = $('#quantity').val();
-    let material_price = $('#price').val();
+    let material_price = parseFloat($('#price').val()).toFixed(2);
 
     $('#locationGroup').typeahead('destroy');
 

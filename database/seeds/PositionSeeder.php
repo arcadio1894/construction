@@ -17,11 +17,5 @@ class PositionSeeder extends Seeder
             'comment' => 'Posicion general',
             'container_id' => 1
         ]);
-
-        Position::create([
-            'name' => 'General',
-            'comment' => 'Posicion general',
-            'container_id' => 2
-        ]);
     }
 }

@@ -17,10 +17,5 @@ class WarehouseSeeder extends Seeder
             'comment' => 'Almacén principal',
             'area_id' => 1
         ]);
-        Warehouse::create([
-            'name' => 'Principal',
-            'comment' => 'Almacén principal',
-            'area_id' => 2
-        ]);
     }
 }

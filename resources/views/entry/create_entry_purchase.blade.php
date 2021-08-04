@@ -152,7 +152,7 @@
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
                                 </div>

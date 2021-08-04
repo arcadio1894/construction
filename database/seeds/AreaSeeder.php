@@ -13,11 +13,6 @@ class AreaSeeder extends Seeder
     public function run()
     {
         Area::create([
-            'name' => 'Sistemas',
-            'comment' => 'Área de sistemas'
-        ]);
-
-        Area::create([
             'name' => 'Producción',
             'comment' => 'Área de producctión'
         ]);

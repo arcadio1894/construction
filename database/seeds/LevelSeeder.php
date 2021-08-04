@@ -17,10 +17,5 @@ class LevelSeeder extends Seeder
             'comment' => 'Nivel general',
             'shelf_id' => 1
         ]);
-        Level::create([
-            'name' => 'General',
-            'comment' => 'Nivel general',
-            'shelf_id' => 2
-        ]);
     }
 }

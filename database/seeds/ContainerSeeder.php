@@ -17,11 +17,5 @@ class ContainerSeeder extends Seeder
             'comment' => 'Contenedor general',
             'level_id' => 1
         ]);
-
-        Container::create([
-            'name' => 'General',
-            'comment' => 'Contenedor general',
-            'level_id' => 2
-        ]);
     }
 }
