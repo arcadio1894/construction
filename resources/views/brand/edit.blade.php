@@ -49,6 +49,18 @@
     <h5 class="card-title">Editar marca {{$brand->name}}</h5>
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('brand.index') }}"><i class="fa fa-archive"></i> Marcas</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+    </ol>
+@endsection
+
 @section('content')
     <form id="formEdit" class="form-horizontal" data-url="{{ route('brand.update') }}" enctype="multipart/form-data">
         @csrf

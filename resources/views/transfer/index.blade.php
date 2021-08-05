@@ -56,7 +56,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-key"></i> Transferencias </li>
+        <li class="breadcrumb-item"><i class="fa fa-archive"></i> Transferencias </li>
     </ol>
 @endsection
 

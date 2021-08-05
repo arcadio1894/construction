@@ -56,7 +56,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('brand.index') }}"><i class="fa fa-key"></i> Marcas</a>
+            <a href="{{ route('brand.index') }}"><i class="fa fa-archive"></i> Marcas</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>

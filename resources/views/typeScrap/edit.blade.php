@@ -50,6 +50,18 @@
     <a href="{{ route('typescrap.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Tipo de Material </a>
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('typescrap.index') }}"><i class="fa fa-archive"></i> Tipo de Retacería</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
+    </ol>
+@endsection
+
 @section('content')
     <form id="formEdit" class="form-horizontal" data-url="{{ route('typescrap.update') }}" enctype="multipart/form-data">
         @csrf

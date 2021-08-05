@@ -48,6 +48,18 @@
     @endcan
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('category.index') }}"><i class="fa fa-archive"></i> Categorías</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
+    </ol>
+@endsection
+
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
 

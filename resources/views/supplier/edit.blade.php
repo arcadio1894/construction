@@ -47,7 +47,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('supplier.index') }}"><i class="fa fa-key"></i> Proveedores</a>
+            <a href="{{ route('supplier.index') }}"><i class="fa fa-archive"></i> Proveedores</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>

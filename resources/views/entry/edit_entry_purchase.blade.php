@@ -55,7 +55,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('entry.purchase.index') }}"><i class="fa fa-key"></i> Entradas por compra</a>
+            <a href="{{ route('entry.purchase.index') }}"><i class="fa fa-archive"></i> Entradas por compra</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar entrada</li>
     </ol>

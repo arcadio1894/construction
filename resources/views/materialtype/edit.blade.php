@@ -56,7 +56,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('materialtype.index') }}"><i class="fa fa-key"></i> Tipo de materiales</a>
+            <a href="{{ route('materialtype.index') }}"><i class="fa fa-archive"></i> Tipo de materiales</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>

@@ -47,7 +47,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('contactName.index') }}"><i class="fa fa-key"></i> Contactos</a>
+            <a href="{{ route('contactName.index') }}"><i class="fa fa-users"></i> Contactos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>

@@ -56,7 +56,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('unitmeasure.index') }}"><i class="fa fa-key"></i> Unidades de medidas</a>
+            <a href="{{ route('unitmeasure.index') }}"><i class="fa fa-archive"></i> Unidades de medidas</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>

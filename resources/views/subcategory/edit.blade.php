@@ -55,7 +55,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('subcategory.index') }}"><i class="fa fa-key"></i> Subcategorías</a>
+            <a href="{{ route('subcategory.index') }}"><i class="fa fa-archive"></i> Subcategorías</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>

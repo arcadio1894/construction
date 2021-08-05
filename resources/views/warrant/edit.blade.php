@@ -49,6 +49,18 @@
     <h5 class="card-title">Editar cédula {{$warrant->name}}</h5>
 @endsection
 
+@section('page-breadcrumb')
+    <ol class="breadcrumb float-sm-right">
+        <li class="breadcrumb-item">
+            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
+        </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('warrant.index') }}"><i class="fa fa-archive"></i> Cédulas</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
+    </ol>
+@endsection
+
 @section('content')
     <form id="formEdit" class="form-horizontal" data-url="{{ route('warrant.update') }}" enctype="multipart/form-data">
         @csrf

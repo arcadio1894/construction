@@ -30,7 +30,7 @@ class UserController extends Controller
         $user = User::create([
             'name' => $request->get('name'),
             'email' => $request->get('email'),
-            'password' => bcrypt('password'),
+            'password' => bcrypt('$ermeind2021'),
         ]);
 
         // Sincronizar con roles
