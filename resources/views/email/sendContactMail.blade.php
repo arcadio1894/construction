@@ -120,7 +120,8 @@
                                                 <td class="es-m-p0r es-m-p20b" valign="top" align="center" style="padding:0;Margin:0;width:340px">
                                                     <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                         <tr style="border-collapse:collapse">
-                                                            <td class="es-m-txt-c" align="left" style="padding:0;Margin:0"><h1 style="Margin:0;line-height:36px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:36px;font-style:normal;font-weight:bold;color:#FFFFFF">SERMEIND</h1>
+                                                            <td class="es-m-txt-c" align="left" style="padding:0;Margin:0">
+                                                                <img src="{{ $message->embed(public_path() . '/admin/dist/img/logo2_footer.png') }}" />
                                                             </td>
                                                         </tr>
                                                     </table></td>
@@ -135,8 +136,8 @@
                                                             <td align="center" style="padding:0;Margin:0;padding-bottom:5px;font-size:0">
                                                                 <table width="100%" height="100%" cellspacing="0" cellpadding="0" border="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                                     <tr style="border-collapse:collapse">
-                                                                        <td style="padding:0;Margin:0;border-bottom:1px solid #044767;background:#FFFFFFnone repeat scroll 0% 0%;height:1px;width:100%;margin:0px"></td>
-                                                                    </tr>
+                                                                        {{--<td style="padding:0;margin:0;border-bottom:1px solid #044767;background:#FFFFFF none repeat scroll 0% 0%;height:1px;width:100%;margin:0px"></td>
+                                                                    --}}</tr>
                                                                 </table></td>
                                                         </tr>
                                                         <tr style="border-collapse:collapse">
@@ -200,11 +201,11 @@
                                                 <td valign="top" align="center" style="padding:0;Margin:0;width:530px">
                                                     <table width="100%" cellspacing="0" cellpadding="0" role="presentation" style="mso-table-lspace:0pt;mso-table-rspace:0pt;border-collapse:collapse;border-spacing:0px">
                                                         <tr style="border-collapse:collapse">
-                                                            <td align="center" style="padding:0;Margin:0"><h4 style="Margin:0;line-height:29px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:24px;font-style:normal;font-weight:bold;color:#333333">ASUNTO: {{$subject}}</h4></td>
+                                                            <td style="padding:0;Margin:0"><h4 style="Margin:0;line-height:29px;mso-line-height-rule:exactly;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;font-size:20px;font-style:normal;font-weight:bold;color:#333333">ASUNTO: {{$subject}}</h4></td>
                                                         </tr>
                                                         <tr style="border-collapse:collapse">
-                                                            <td align="center" style="padding:0;Margin:0;padding-top:15px">
-                                                                <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:16px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:24px;color:#777777">
+                                                            <td style="padding:0;Margin:0;padding-top:15px">
+                                                                <p style="Margin:0;-webkit-text-size-adjust:none;-ms-text-size-adjust:none;mso-line-height-rule:exactly;font-size:18px;font-family:'open sans', 'helvetica neue', helvetica, arial, sans-serif;line-height:24px;color:#777777">
                                                                     {{$content}}
                                                                 </p>
                                                             </td>
