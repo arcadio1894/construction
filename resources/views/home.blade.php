@@ -32,7 +32,7 @@
                     <div class="row justify-content-center">
                         <div class="col-md-8">
                             <div class="card">
-                                <div class="card-header">{{ __('Dashboard') }}</div>
+                                <div class="card-header">{{ __('Sermeind te da la bienvenida') }}</div>
 
                                 <div class="card-body">
                                     @if (session('status'))
@@ -41,7 +41,7 @@
                                         </div>
                                     @endif
 
-                                    AQUI SE PUEDE COLOCAR OTRA COSA
+                                    Hola {{ Auth::user()->name }}. Bienvenido a la intranet, puedes acceder a diferentes características en el menú superior.
                                 </div>
                             </div>
                         </div>
