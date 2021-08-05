@@ -9,7 +9,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('landing/img/favicon.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('admin/dist/img/loder-logo.ico') }}">
 
     <!-- CSS here -->
     <link rel="stylesheet" href="{{ asset('landing/css/bootstrap.min.css') }}">
@@ -69,9 +69,9 @@
                         <div class="col-xl-2 col-lg-2 col-md-2">
                             <div class="logo">
                                 <!-- logo-1 -->
-                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('landing/img/logo/logo.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('admin/dist/img/logo2_footer.png') }}" alt=""></a>
                                 <!-- logo-2 -->
-                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('landing/img/logo/loder-logo1.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('admin/dist/img/loder-logo.png') }}" alt=""></a>
                             </div>
                         </div>
                         <div class="col-xl-10 col-lg-10 col-md-10">
