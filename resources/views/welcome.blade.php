@@ -55,7 +55,7 @@
                             </div>
                             <div class="header-info-right">
                                 <ul class="header-social">
-                                    <li><a href="https://www.facebook.com/sermeind.fabricaciones.industriales/?ref=page_internal"><i class="fab fa-facebook-f"></i></a></li>
+                                    <li><a href="https://www.facebook.com/sermeind.fabricaciones.industriales/?ref=page_internal" target="_blank"><i class="fab fa-facebook-f"></i></a></li>
                                 </ul>
                             </div>
                         </div>
