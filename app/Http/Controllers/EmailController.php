@@ -24,7 +24,7 @@ class EmailController extends Controller
                 $subject = $request->get('subject');
                 $content = $request->get('message');
                 $subject = "Nuevo Mensaje: ".$subject;
-                Mail::to('elig.1614@gmail.com')->send( new ContactMail($name, $email, $subject, $content) );
+                Mail::to('rirojas@indracompany.com')->send( new ContactMail($name, $email, $subject, $content) );
 
                 DB::commit();
 
