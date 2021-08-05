@@ -95,7 +95,7 @@
                                         @endauth
                                         <li><a href="{{ route('landing.contact') }}">Contacto</a></li>
                                         @guest
-                                            <li><a href="{{ route('register') }}" > Registro</a></li>
+                                            {{--<li><a href="{{ route('register') }}" > Registro</a></li>--}}
                                             <li><a href="{{ route('login') }}" > Iniciar sesión</a></li>
                                         @else
                                             @can('access_dashboard')
