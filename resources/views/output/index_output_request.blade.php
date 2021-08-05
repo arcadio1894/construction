@@ -56,7 +56,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-key"></i> Solicitudes de salida </li>
+        <li class="breadcrumb-item"><i class="fa fa-archive"></i> Solicitudes de salida </li>
     </ol>
 @endsection
 
