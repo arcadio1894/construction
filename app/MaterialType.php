@@ -29,7 +29,7 @@ class MaterialType extends Model
 
     public function subtypes()
     {
-        return $this->hasMany('App\SubType');
+        return $this->hasMany('App\Subtype');
     }
 
     protected $dates = ['deleted_at'];

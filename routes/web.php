@@ -156,27 +156,27 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_materialType');
 
         //SUB TYPE
-        Route::get('/all/subtypes', 'SubTypeController@getSubTypes')
+        Route::get('/all/subtypes', 'SubtypeController@getSubTypes')
             ->middleware('permission:list_subType');
-        Route::get('Subtipos', 'SubTypeController@index')
+        Route::get('Subtipos', 'SubtypeController@index')
             ->name('subtype.index')
             ->middleware('permission:list_subType');
-        Route::get('crear/subtipo', 'SubTypeController@create')
+        Route::get('crear/subtipo', 'SubtypeController@create')
             ->name('subtype.create')
             ->middleware('permission:create_subType');
-        Route::post('subtype/store', 'SubTypeController@store')
+        Route::post('subtype/store', 'SubtypeController@store')
             ->name('subtype.store')
             ->middleware('permission:create_subType');
-        Route::get('/editar/subtipo/{id}', 'SubTypeController@edit')
+        Route::get('/editar/subtipo/{id}', 'SubtypeController@edit')
             ->name('subtype.edit')
             ->middleware('permission:update_subType');
-        Route::post('subtype/update', 'SubTypeController@update')
+        Route::post('subtype/update', 'SubtypeController@update')
             ->name('subtype.update')
             ->middleware('permission:update_subType');
-        Route::post('subtype/destroy', 'SubTypeController@destroy')
+        Route::post('subtype/destroy', 'SubtypeController@destroy')
             ->name('subtype.destroy')
             ->middleware('permission:destroy_subType');
-        Route::get('/get/subtypes/{type_id}', 'SubTypeController@getSubTypesByType');
+        Route::get('/get/subtypes/{type_id}', 'SubtypeController@getSubTypesByType');
 
         //CATEGORY
         Route::get('/all/categories', 'CategoryController@getCategories')
