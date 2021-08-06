@@ -160,7 +160,7 @@
                         <div class="form-group">
                             <label for="name">Nombre completo</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control rounded-0" id="name" name="name">
+                                <input type="text" class="form-control rounded-0" id="name" name="name" readonly>
                                 <span class="input-group-append">
                                     <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
                                 </span>
