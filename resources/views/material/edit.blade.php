@@ -321,7 +321,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
+                <a href="{{ route('material.index') }}" class="btn btn-outline-secondary">Cancelar</a>
                 <button type="submit" class="btn btn-outline-success float-right">Guardar material</button>
             </div>
         </div>
