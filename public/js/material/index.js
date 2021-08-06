@@ -1,4 +1,5 @@
 function format ( d ) {
+    var subcategory = (d.subcategory===null) ? 'Ninguno':d.subcategory.name;
     var type = (d.material_type===null) ? 'Ninguno':d.material_type.name;
     var subtype = (d.sub_type===null) ? 'Ninguno':d.sub_type.name;
     var warrant = (d.warrant===null) ? 'Ninguno':d.warrant.name;
@@ -11,7 +12,7 @@ function format ( d ) {
         'Stock máximo: '+d.stock_max+'<br>'+
         'Stock míximo: '+d.stock_min+'<br>'+
         'Categoría: '+d.category.name+'<br>'+
-        'SubCategoría: '+d.subcategory.name+'<br>'+
+        'SubCategoría: '+subcategory+'<br>'+
         'Tipo de material: '+type+'<br>'+
         'Sub tipo: '+subtype+'<br>'+
         'Cédula: '+warrant+'<br>'+
@@ -55,7 +56,16 @@ $(document).ready(function () {
                 }
             },
             { data: 'category.name' },
-            { data: 'subcategory.name' },
+            { data: null,
+                title: 'Subcategoría',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.subcategory === null )
+                        return '<p>Ninguno</p>';
+                    return '<p>'+ item.subcategory.name +'</p>';
+                }
+            },
             { data: null,
                 title: 'Tipo',
                 wrap: true,
