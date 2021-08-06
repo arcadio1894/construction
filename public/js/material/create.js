@@ -226,15 +226,21 @@ function generateNameProduct() {
     }
 
     $('#name').val('');
+    //alert($('#subcategory option:selected').text());
+    let subcategory = ($('#subcategory option:selected').text() === 'Ninguna' || $('#subcategory option:selected').text() === '') ? '': ' '+$('#subcategory option:selected').text()+' ';
+    console.log($('#subcategory option:selected').text());
+    let type = ($('#type option:selected').text() === 'Ninguno' || $('#type option:selected').text()==='') ? '': $('#type option:selected').text()+' ';
+    console.log($('#type option:selected').text());
+    let subtype = ($('#subtype option:selected').text() === 'Ninguno' || $('#subtype option:selected').text()==='') ? '': $('#subtype option:selected').text()+' ';
+    console.log($('#subtype option:selected').text());
+    let warrant = ($('#warrant option:selected').text() === 'Ninguno' || $('#warrant option:selected').text()==='') ? '': $('#warrant option:selected').text()+' ';
+    console.log($('#warrant option:selected').text());
+    let quality = ($('#quality option:selected').text() === 'Ninguno' || $('#quality option:selected').text()==='') ? '': $('#quality option:selected').text();
+    console.log($('#quality option:selected').text());
+    let measure = $('#measure').val();
+    console.log(measure);
 
-    let subcategory = ($('#subcategory option:selected').text() === 'Ninguno') ? '': ' '+$('#subcategory option:selected').text();
-    let type = ($('#type option:selected').text() === 'Ninguno') ? '': ' '+$('#type option:selected').text();
-    let subtype = ($('#subtype option:selected').text() === 'Ninguno') ? '': ' '+$('#subtype option:selected').text();
-    let warrant = ($('#warrant option:selected').text() === 'Ninguno') ? '': ' '+$('#warrant option:selected').text();
-    let quality = ($('#quality option:selected').text() === 'Ninguno') ? '': ' '+$('#quality option:selected').text();
-    let measure = ' ' + $('#measure').val();
-
-    let name = $('#description').val() + subcategory + type + subtype + warrant + quality + measure;
+    let name = $('#description').val() + subcategory + type + subtype + warrant + quality + ' '+measure;
     $('#name').val(name);
 
 }
