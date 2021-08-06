@@ -12,7 +12,7 @@ class CustomerSeeder extends Seeder
      */
     public function run()
     {
-        Customer::create([
+        /*Customer::create([
             'business_name' => 'Danper S.A.C',
             'RUC' => '20170040938',
             'code' => 'C-00001',
@@ -32,6 +32,6 @@ class CustomerSeeder extends Seeder
             'code' => 'C-00003',
             'address' => 'Av. El Derby #250 Urb. El Derby de Monterrico',
             'location' => 'Santiago de Surco - Perú',
-        ]);
+        ]);*/
     }
 }

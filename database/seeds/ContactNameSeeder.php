@@ -12,7 +12,7 @@ class ContactNameSeeder extends Seeder
      */
     public function run()
     {
-        ContactName::create([
+        /*ContactName::create([
             'code' => 'CN-00001',
             'name' => 'Ing. Yolving Juárez',
             'customer_id' => 2,
@@ -34,6 +34,6 @@ class ContactNameSeeder extends Seeder
             'customer_id' => 3,
             'phone' => '964133354',
             'email' => 'contacto3@camposol.com'
-        ]);
+        ]);*/
     }
 }
