@@ -11,7 +11,8 @@ class DetailEntry extends Model
         'material_id',
         'ordered_quantity',
         'entered_quantity',
-        'isComplete'
+        'isComplete',
+        'unit_price'
     ];
 
     public function entry()

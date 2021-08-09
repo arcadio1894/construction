@@ -575,6 +575,15 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/cotizacion', 'QuoteController@create')
             ->name('quote.create')
             ->middleware('permission:create_quote');
+
+        Route::get('perfil', 'UserController@profile')
+            ->name('user.profile');
+        Route::post('change/image/user/{user}', 'UserController@changeImage')
+            ->name('user.change.image');
+        Route::post('change/settings/user/{user}', 'UserController@changeSettings')
+            ->name('user.change.settings');
+        Route::post('change/password/user/{user}', 'UserController@changePassword')
+            ->name('user.change.password');
     });
 });
 

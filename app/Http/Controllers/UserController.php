@@ -3,11 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\DeleteUserRequest;
+use App\Http\Requests\RestoreSupplierRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Http\Requests\UpdateUserSettingsRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -132,5 +137,81 @@ class UserController extends Controller
         $users = User::select('id', 'name')
             ->where('id', '!=' , Auth::user()->id)->get();
         return json_encode($users);
+    }
+
+    public function profile()
+    {
+        $user = User::with('roles')->find(Auth::user()->id);
+        return view('user.profile', compact('user'));
+    }
+
+    public function changeImage(Request $request, User $user)
+    {
+        //dump($user);
+        //dd($request);
+        if ($request->file('image')) {
+            $path = public_path() . '/images/users/';
+            $extension = $request->file('image')->getClientOriginalExtension();
+            $filename = $user->id . '.' . $extension;
+            $request->file('image')->move($path, $filename);
+            $user->image = $filename;
+            $user->save();
+
+            return response()->json(['message' => 'Imagen cambiada con éxito.'], 200);
+
+        }
+
+        return response()->json(['message' => 'No se pudo guardar la imagen.'], 422);
+
+    }
+
+    public function changeSettings(UpdateUserSettingsRequest $request, User $user)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $user->name = $request->get('name');
+            $user->email = $request->get('email');
+            $user->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Datos actualizados con éxito.'], 200);
+
+    }
+
+    public function changePassword(UpdateUserPasswordRequest $request, User $user)
+    {
+        //dd();
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $passwordCurrent = $request->get('current_password');
+            if ( ! Hash::check($request->get('current_password'), $user->password) )
+            {
+                return response()->json(['message' => 'Debe conocer su contraseña actual.'], 422);
+            }
+            $passwordNew = $request->get('new_password');
+            $user->password = bcrypt($passwordNew) ;
+            $user->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Contraseña actualizada con éxito.'], 200);
+
     }
 }

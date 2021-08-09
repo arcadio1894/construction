@@ -130,7 +130,7 @@
                     </li>--}}
                     <!-- Menu Footer-->
                     <li class="user-footer">
-                        <a href="#" class="btn btn-default btn-flat">Perfil</a>
+                        <a href="{{ route('user.profile') }}" class="btn btn-default btn-flat">Perfil</a>
                         <a class="btn btn-default btn-flat float-right" href="{{ route('logout') }}" onclick="event.preventDefault();
                              document.getElementById('logout-form').submit();">
                             <i class="fa fa-power-off"></i>

@@ -15,7 +15,9 @@ class Entry extends Model
         'invoice',
         'deferred_invoice',
         'supplier_id',
-        'entry_type'
+        'entry_type',
+        'date_entry',
+        'finance'
     ];
 
     public function details()

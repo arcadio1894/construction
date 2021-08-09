@@ -33,7 +33,7 @@ class Item extends Model
 
     public function typescrap()
     {
-        return $this->belongsTo('App\TypeScrap', 'typescrap_id');
+        return $this->belongsTo('App\Typescrap', 'typescrap_id');
     }
 
     public function location()

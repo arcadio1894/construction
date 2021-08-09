@@ -20,7 +20,7 @@ class TypescrapController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('typescrap.index', compact('typescraps', 'permissions'));
+        return view('typeScrap.index', compact('typescraps', 'permissions'));
     }
 
     public function store(StoreTypeScrapRequest $request)
@@ -52,7 +52,7 @@ class TypescrapController extends Controller
         DB::beginTransaction();
         try {
 
-            $typeScrap = TypeScrap::find($request->get('typeScrap_id'));
+            $typeScrap = Typescrap::find($request->get('typeScrap_id'));
 
             $typeScrap->name = $request->get('name');
             $typeScrap->width = $request->get('width');
@@ -66,7 +66,7 @@ class TypescrapController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['message' => 'Tipo de retacería modificada con éxito.','url'=>route('typescrap.index')], 200);
+        return response()->json(['message' => 'Tipo de retacería modificada con éxito.','url'=>route('typeScrap.index')], 200);
     }
 
     public function destroy(DeleteTypeScrapRequest $request)
@@ -76,7 +76,7 @@ class TypescrapController extends Controller
         DB::beginTransaction();
         try {
 
-            $typeScrap = TypeScrap::find($request->get('typeScrap_id'));
+            $typeScrap = Typescrap::find($request->get('typeScrap_id'));
 
             $typeScrap->delete();
 
@@ -92,13 +92,13 @@ class TypescrapController extends Controller
 
     public function create()
     {
-        return view('typescrap.create');
+        return view('typeScrap.create');
     }
 
     public function edit($id)
     {
-        $typeScrap = TypeScrap::find($id);
-        return view('typescrap.edit', compact('typeScrap'));
+        $typeScrap = Typescrap::find($id);
+        return view('typeScrap.edit', compact('typeScrap'));
     }
 
 
