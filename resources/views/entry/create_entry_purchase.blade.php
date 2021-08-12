@@ -21,6 +21,10 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
 
 @endsection
 
@@ -78,6 +82,12 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-6">
+                                <div class="form-group " id="sandbox-container">
+                                    <label for="date_invoice">Fecha de Factura</label>
+                                    <div class="input-daterange" id="datepicker">
+                                        <input type="text" class="form-control date-range-filter" id="date_invoice" name="date_invoice">
+                                    </div>
+                                </div>
                                 <div class="form-group">
                                     <label for="referral_guide">Guía de remisión</label>
                                     <input type="text" id="referral_guide" name="referral_guide" class="form-control">
@@ -412,11 +422,27 @@
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-switch/js/bootstrap-switch.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+
 @endsection
 
 @section('scripts')
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
     <script>
+        $('#date_invoice').attr("value", moment().format('DD/MM/YYYY'));
+
+        $('#sandbox-container .input-daterange').datepicker({
+            todayBtn: "linked",
+            clearBtn: true,
+            language: "es",
+            multidate: false,
+            autoclose: true,
+            todayHighlight: true,
+            defaultViewDate: moment().format('L')
+        });
+
         $("input[data-bootstrap-switch]").each(function(){
             $(this).bootstrapSwitch();
         });

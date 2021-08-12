@@ -507,7 +507,7 @@ Route::middleware('auth')->group(function (){
         Route::get('entrada/compra/editar/{entry}', 'EntryController@editEntryPurchase')->name('entry.purchase.edit')
             ->middleware('permission:update_entryPurchase');
         Route::post('entry_purchase/update', 'EntryController@updateEntryPurchase')->name('entry.purchase.update')
-            ->middleware('permission:update_entryScrap');
+            ->middleware('permission:update_entryPurchase');
 
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
@@ -584,6 +584,22 @@ Route::middleware('auth')->group(function (){
             ->name('user.change.settings');
         Route::post('change/password/user/{user}', 'UserController@changePassword')
             ->name('user.change.password');
+
+        // INVOICE
+        Route::get('factura/compra', 'InvoiceController@indexInvoices')->name('invoice.index')
+            ->middleware('permission:list_entryPurchase');
+        Route::get('crear/factura/compra', 'InvoiceController@createInvoice')->name('invoice.create')
+            ->middleware('permission:create_entryPurchase');
+        Route::post('invoice/store', 'InvoiceController@storeInvoice')->name('invoice.store')
+            ->middleware('permission:create_entryPurchase');
+
+        Route::get('/get/json/invoices/purchase', 'InvoiceController@getJsonInvoices');
+        Route::get('/get/invoices/purchase', 'InvoiceController@getInvoices');
+
+        Route::get('factura/compra/editar/{entry}', 'InvoiceController@editInvoice')->name('invoice.edit')
+            ->middleware('permission:update_entryPurchase');
+        Route::post('invoice/update', 'InvoiceController@updateInvoice')->name('invoice.update')
+            ->middleware('permission:update_entryScrap');
     });
 });
 

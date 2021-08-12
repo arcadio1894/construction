@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class UpdateEntryPurchaseRequest extends FormRequest
+class StoreInvoiceRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,33 +24,30 @@ class UpdateEntryPurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            'date_invoice' => 'required',
-            'referral_guide' => 'nullable|string|min:5|max:255',
             'purchase_order' => 'nullable|string|min:5|max:255',
             'invoice' => 'required|string|min:5|max:255',
-            'deferred_invoice' => 'nullable',
             'entry_type' => 'required',
+            'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
-            'image' => 'image'
+            'items' => 'required',
+            'image' => 'image',
+            'date_invoice' => 'required'
         ];
     }
 
     public function messages()
     {
         return [
-            'referral_guide.string' => 'El :attribute debe contener caracteres válidos.',
-            'referral_guide.min' => 'El :attribute debe contener mínimo 5 caracteres.',
-            'referral_guide.max' => 'El :attribute debe contener máximo 255 caracteres.',
             'purchase_order.string' => 'La :attribute debe contener caracteres válidos.',
             'purchase_order.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'purchase_order.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'invoice.required' => 'La :attribute es obligatorio.',
-            'deferred_invoice.required' => 'La :attribute es obligatorio.',
             'invoice.string' => 'La :attribute debe contener caracteres válidos.',
             'invoice.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'entry_type.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
+            'items.required' => 'Los :attribute son obligatorio.',
             'image.image' => 'Los :attribute son obligatorio.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
@@ -60,12 +57,12 @@ class UpdateEntryPurchaseRequest extends FormRequest
     {
         return [
             'date_invoice' => 'fecha de factura',
-            'referral_guide' => 'guía de remisión',
             'purchase_order' => 'orden de compra',
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
-            'deferred_invoice' => 'opción diferida'
+            'items' => 'items',
+            'deferred_invoice' => 'opción diferido'
         ];
     }
 }

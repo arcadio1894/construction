@@ -9,6 +9,8 @@ class Entry extends Model
 {
     use SoftDeletes;
 
+    protected $appends = ['sub_total', 'taxes', 'total'];
+
     protected $fillable = [
         'referral_guide',
         'purchase_order',
@@ -20,6 +22,38 @@ class Entry extends Model
         'finance'
     ];
 
+    public function getSubTotalAttribute()
+    {
+        $subtotal = 0;
+        foreach ( $this->details as $detail )
+        {
+            $subtotal += ($detail->entered_quantity * $detail->unit_price)/1.18;
+        }
+        //$number = ($this->entered_quantity * $this->unit_price)/1.18;
+        return "S/. " . number_format($subtotal, 2);
+    }
+
+    public function getTaxesAttribute()
+    {
+        $taxes = 0;
+        foreach ( $this->details as $detail )
+        {
+            $taxes += (($detail->entered_quantity * $detail->unit_price)/1.18)*0.18;
+        }
+
+        return "S/. " . number_format($taxes, 2);
+    }
+
+    public function getTotalAttribute()
+    {
+        $total = 0;
+        foreach ( $this->details as $detail )
+        {
+            $total += $detail->entered_quantity * $detail->unit_price;
+        }
+        return "S/. " . number_format($total, 2);
+    }
+
     public function details()
     {
         return $this->hasMany('App\DetailEntry');
@@ -30,5 +64,5 @@ class Entry extends Model
         return $this->belongsTo('App\Supplier');
     }
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date_entry'];
 }

@@ -886,6 +886,39 @@
                     </li>
                     @endcan
 
+                    @canany('list_quote')
+                        <li class="nav-header">FINANZAS</li>
+                    @endcanany
+                    {{--@can('list_quote')--}}
+                        <li class="nav-item has-treeview @yield('openInvoice')">
+                            <a href="#" class="nav-link @yield('activeInvoice')">
+                                <i class="nav-icon fas fa-boxes"></i>
+                                <p>
+                                    Compras
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                               {{-- @can('list_quote')--}}
+                                    <li class="nav-item">
+                                        <a href="{{route('invoice.index')}}" class="nav-link @yield('activeListInvoice')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar compras</p>
+                                        </a>
+                                    </li>
+                                {{--@endcan
+                                @can('create_quote')--}}
+                                    <li class="nav-item">
+                                        <a href="{{ route('invoice.create') }}" class="nav-link @yield('activeCreateInvoice')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear compra</p>
+                                        </a>
+                                    </li>
+                                {{--@endcan--}}
+                            </ul>
+                        </li>
+                    {{--@endcan--}}
+
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

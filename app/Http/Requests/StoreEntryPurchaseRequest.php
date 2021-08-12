@@ -31,7 +31,8 @@ class StoreEntryPurchaseRequest extends FormRequest
             'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
-            'image' => 'image'
+            'image' => 'image',
+            'date_invoice' => 'required'
         ];
     }
 
@@ -52,12 +53,14 @@ class StoreEntryPurchaseRequest extends FormRequest
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
             'image.image' => 'Los :attribute son obligatorio.',
+            'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }
 
     public function attributes()
     {
         return [
+            'date_invoice' => 'fecha de factura',
             'referral_guide' => 'guía de remisión',
             'purchase_order' => 'orden de compra',
             'invoice' => 'factura',

@@ -13,10 +13,12 @@ function format ( d ) {
         var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
         mensaje = mensaje +
             'Material: '+d.details[i].material.full_description+'<br>'+
-            'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
-            'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
-            'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
+            'Cantidad: '+d.details[i].ordered_quantity+'<br>'+
+            'Precio: '+d.details[i].unit_price+'<br>'+
+            'Subtotal: '+d.details[i].sub_total+'<br>'+
+            'Impuestos: '+d.details[i].taxes+'<br>'+
+            'Total: '+d.details[i].total+'<br>'+
+            'Estado: '+state+'<br>';
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
@@ -34,7 +36,7 @@ $(document).ready(function () {
     console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/get/json/entries/purchase",
+            url: "/dashboard/get/json/invoices/purchase",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -45,7 +47,14 @@ $(document).ready(function () {
                 "data":           null,
                 "defaultContent": ""
             },
-            { data: 'referral_guide' },
+            { data: null,
+                title: 'Fecha de Factura',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ moment(item.date_entry).format('DD/MM/YYYY') +'</p>'
+                }
+            },
             { data: 'purchase_order' },
             { data: 'invoice' },
             { data: 'entry_type' },
@@ -60,14 +69,9 @@ $(document).ready(function () {
                         return '<p> Sin proveedor </p>'
                 }
             },
-            { data: null,
-                title: 'Fecha',
-                wrap: true,
-                "render": function (item)
-                {
-                    return '<p> '+ moment(item.date_entry).format('DD/MM/YYYY') +'</p>'
-                }
-            },
+            { data: 'sub_total' },
+            { data: 'taxes' },
+            { data: 'total' },
             { data: null,
                 title: 'Imagen',
                 wrap: true,
@@ -83,7 +87,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/factura/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
                     }
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -290,7 +294,7 @@ $(document).ready(function () {
         function( settings, data, dataIndex ) {
             var min  = $('#start').val();
             var max  = $('#end').val();
-            var createdAt = data[6]; // Our date column in the table
+            var createdAt = data[1]; // Our date column in the table
             var startDate   = moment(min, "DD/MM/YYYY");
             var endDate     = moment(max, "DD/MM/YYYY");
             var diffDate = moment(createdAt, "DD/MM/YYYY");

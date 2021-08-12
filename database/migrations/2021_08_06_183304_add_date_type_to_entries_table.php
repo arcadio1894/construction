@@ -15,7 +15,7 @@ class AddDateTypeToEntriesTable extends Migration
     {
         Schema::table('entries', function (Blueprint $table) {
             $table->dateTime('date_entry',0)->nullable()->default(null);
-            $table->boolean('finance')->nullable()->default(true);
+            $table->boolean('finance')->nullable()->default(false);
         });
     }
 
