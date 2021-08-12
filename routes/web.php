@@ -587,19 +587,19 @@ Route::middleware('auth')->group(function (){
 
         // INVOICE
         Route::get('factura/compra', 'InvoiceController@indexInvoices')->name('invoice.index')
-            ->middleware('permission:list_entryPurchase');
+            ->middleware('permission:list_invoice');
         Route::get('crear/factura/compra', 'InvoiceController@createInvoice')->name('invoice.create')
-            ->middleware('permission:create_entryPurchase');
+            ->middleware('permission:create_invoice');
         Route::post('invoice/store', 'InvoiceController@storeInvoice')->name('invoice.store')
-            ->middleware('permission:create_entryPurchase');
+            ->middleware('permission:create_invoice');
 
         Route::get('/get/json/invoices/purchase', 'InvoiceController@getJsonInvoices');
         Route::get('/get/invoices/purchase', 'InvoiceController@getInvoices');
 
         Route::get('factura/compra/editar/{entry}', 'InvoiceController@editInvoice')->name('invoice.edit')
-            ->middleware('permission:update_entryPurchase');
+            ->middleware('permission:update_invoice');
         Route::post('invoice/update', 'InvoiceController@updateInvoice')->name('invoice.update')
-            ->middleware('permission:update_entryScrap');
+            ->middleware('permission:update_invoice');
     });
 });
 

@@ -46,6 +46,7 @@ class RoleController extends Controller
         'output' => 'SALIDAS',
         'request' => 'SOLICITUDES',
         'typeScrap' => 'TIPO RETACERÍA',
+        'invoice' => 'FACTURAS',
     ];
 
     public function index()
