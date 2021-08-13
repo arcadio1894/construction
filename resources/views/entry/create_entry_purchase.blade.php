@@ -191,62 +191,71 @@
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                                 <tr>
-                                                    <th>ID</th>
+                                                    <th>Codigo</th>
                                                     <th>Material</th>
-                                                    <th>Item</th>
-                                                    <th>Ubicación</th>
-                                                    <th>Estado</th>
-                                                    <th>Precio</th>
+                                                    <th>Cantidad</th>
+                                                    <th>Und</th>
+                                                    <th>Precio Unit.</th>
+                                                    <th>Total sin Imp.</th>
+                                                    <th>Total Imp.</th>
+                                                    <th>Importe</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
-                                                <template id="materials-selected">
-                                                    <tr>
-                                                        <td data-id>183</td>
-                                                        <td data-description>John Doe</td>
-                                                        <td data-item>John Doe</td>
-                                                        <td data-location>11-7-2014</td>
-                                                        <td data-state>11-7-2014</td>
-                                                        <td data-price>11-7-2014</td>
-                                                    </tr>
-                                                </template>
 
                                             </tbody>
+                                            <template id="materials-selected">
+                                                <tr>
+                                                    <td data-code>183</td>
+                                                    <td data-description>John Doe</td>
+                                                    <td data-quantity>John Doe</td>
+                                                    <td data-unit>11-7-2014</td>
+                                                    <td data-price>11-7-2014</td>
+                                                    <td data-subtotal>11-7-2014</td>
+                                                    <td data-taxes>11-7-2014</td>
+                                                    <td data-total>11-7-2014</td>
+                                                    <td>
+                                                        <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
                                 </div>
                                 <!-- /.card -->
                             </div>
+
                         </div>
-                        {{--<div class="row">
+                        <div class="row">
                             <!-- accepted payments column -->
                             <div class="col-6">
 
                             </div>
                             <!-- /.col -->
                             <div class="col-6">
-                                <p class="lead">Amount Due 2/22/2014</p>
+                                <p class="lead">Resumen de factura</p>
 
                                 <div class="table-responsive">
                                     <table class="table">
                                         <tr>
                                             <th style="width:50%">Subtotal: </th>
-                                            <td id="subtotal ">$250.30</td>
+                                            <td id="subtotal">S/. 0.00</td>
                                         </tr>
                                         <tr>
                                             <th>Igv: </th>
-                                            <td id="igv">$10.34</td>
+                                            <td id="taxes">S/. 0.00</td>
                                         </tr>
                                         <tr>
                                             <th>Total: </th>
-                                            <td id="total">$265.24</td>
+                                            <td id="total">S/. 0.00</td>
                                         </tr>
                                     </table>
                                 </div>
                             </div>
                             <!-- /.col -->
-                        </div>--}}
+                        </div>
                         <!-- /.row -->
                     </div>
                     <!-- /.card-body -->

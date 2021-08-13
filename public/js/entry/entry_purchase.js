@@ -89,6 +89,23 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 let $longitud = 20;
 
+function updateSummaryInvoice() {
+    var subtotal = 0;
+    var total = 0;
+    var taxes = 0;
+
+    for ( var i=0; i<$items.length; i++ )
+    {
+        subtotal += parseFloat( (parseFloat($items[i].price)*parseFloat($items[i].quantity))/1.18 );
+        total += parseFloat((parseFloat($items[i].price)*parseFloat($items[i].quantity)));
+        taxes = subtotal*0.18;
+    }
+
+    $('#subtotal').html('$/. '+ subtotal.toFixed(2));
+    $('#taxes').html('$/. '+taxes.toFixed(2));
+    $('#total').html('$/. '+total.toFixed(2));
+}
+
 function saveTableItems() {
 
     var series_selected = [];
@@ -110,9 +127,16 @@ function saveTableItems() {
             const location = $locationsComplete.find( location => location.location === material_location );
             const code = rand_code($caracteres, $longitud);
 
-            $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': material.id, 'item': code, 'location': location.location, 'id_location':location.id, 'state': state, 'state_description': state_description });
-            renderTemplateMaterial($items.length, material_price, material_name, code,  location.location, state_description);
+            $items.push({ 'id': $items.length+1, 'price': material_price, 'quantity':1 ,'material': material_name, 'id_material': material.id, 'item': code, 'location': location.location, 'id_location':location.id, 'state': state, 'state_description': state_description });
+            //renderTemplateMaterial($items.length, material_price, material_name, code,  location.location, state_description);
         }
+        const material = $materialsComplete.find( material => material.material === material_name );
+        console.log(material);
+        var subtotal =((quantity*material_price)/1.18).toFixed(2);
+        var taxes = (subtotal*0.18).toFixed(2);
+        var total = (quantity*material_price).toFixed(2);
+
+        renderTemplateMaterial(material.id, material.code, material.material, quantity, material.unit, material_price, subtotal, taxes, total);
 
         $('#material_search').val('');
         $('#quantity').val('');
@@ -122,6 +146,8 @@ function saveTableItems() {
         $('#price_GroupSelected').val('');
         $('#locationGroup').val('');
         $('#locationGroup').typeahead('destroy');
+
+        updateSummaryInvoice();
         $modalAddGroupItems.modal('hide');
 
     } else {
@@ -152,9 +178,17 @@ function saveTableItems() {
         {
             const result = $materialsComplete.find( material => material.material === material_name );
             $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
-            renderTemplateMaterial($items.length, material_price, material_name, series_selected[i],  locations_selected[i].location, states_selected[i].description);
+            //renderTemplateMaterial($items.length, material_price, material_name, series_selected[i],  locations_selected[i].location, states_selected[i].description);
             $('.select2').select2();
         }
+
+        const material = $materialsComplete.find( material => material.material === material_name );
+        console.log(material);
+        var subtotal2 =((material_quantity*material_price)/1.18).toFixed(2);
+        var taxes2 = (subtotal2*0.18).toFixed(2);
+        var total2 = (material_quantity*material_price).toFixed(2);
+
+        renderTemplateMaterial(material.id, material.code, material.material, material_quantity, material.unit, material_price, subtotal2, taxes2, total2);
 
         $('#material_search').val('');
         $('#quantity').val('');
@@ -165,6 +199,8 @@ function saveTableItems() {
         $('#body-items').html('');
         $('#locationGroup').val(' ');
         $('#locationGroup').typeahead('destroy');
+
+        updateSummaryInvoice();
         $modalAddItems.modal('hide');
     }
 
@@ -313,17 +349,23 @@ function rand_code($caracteres, $longitud){
 
 function deleteItem() {
     //console.log($(this).parent().parent().parent());
-    $(this).parent().parent().parent().remove();
+    $(this).parent().parent().remove();
+    var materialId = $(this).data('delete');
+    $items = $items.filter(material => material.id_material !== materialId);
+    updateSummaryInvoice();
 }
 
-function renderTemplateMaterial(id, price, material, item, location, state) {
+function renderTemplateMaterial(id, code, description, quantity, unit, price, subtotal, taxes, total) {
     var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-id]").innerHTML = id;
-    clone.querySelector("[data-description]").innerHTML = material;
-    clone.querySelector("[data-item]").innerHTML = item;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = state;
+    clone.querySelector("[data-code]").innerHTML = id;
+    clone.querySelector("[data-description]").innerHTML = description;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-unit]").innerHTML = unit;
     clone.querySelector("[data-price]").innerHTML = price;
+    clone.querySelector("[data-subtotal]").innerHTML = subtotal;
+    clone.querySelector("[data-taxes]").innerHTML = taxes;
+    clone.querySelector("[data-total]").innerHTML = total;
+    clone.querySelector("[data-delete]").setAttribute('data-delete', id);
     $('#body-materials').append(clone);
 }
 
