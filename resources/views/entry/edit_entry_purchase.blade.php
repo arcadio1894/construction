@@ -188,45 +188,66 @@
                                         <h3 class="card-title">Materiales</h3>
                                     </div>
                                     <!-- /.card-header -->
-                                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                                    <div class="card-body table-responsive p-0">
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
-                                                <tr>
-                                                    <th>ID</th>
-                                                    <th>Material</th>
-                                                    <th>Item</th>
-                                                    <th>Ubicación</th>
-                                                    <th>Estado</th>
-                                                    <th>Precio</th>
-                                                </tr>
+                                            <tr>
+                                                <th>Codigo</th>
+                                                <th>Material</th>
+                                                <th>Cantidad</th>
+                                                <th>Und</th>
+                                                <th>Precio Unit.</th>
+                                                <th>Total sin Imp.</th>
+                                                <th>Total Imp.</th>
+                                                <th>Importe</th>
+                                            </tr>
                                             </thead>
                                             <tbody id="body-materials">
-                                                @foreach( $entry->details as $detail )
-                                                    @foreach($detail->items as $key => $item)
-                                                        <tr>
-                                                            <td data-id>{{ $key+1 }}</td>
-                                                            <td data-description>{{ $item->material->full_description }}</td>
-                                                            <td data-item>{{ $item->code }}</td>
-                                                            <td data-location>{{ $item->location->full_location }}</td>
-                                                            <td data-state>{{ $item->state }}</td>
-                                                            <td data-price>{{ $item->price }}</td>
-                                                        </tr>
-                                                    @endforeach
-
-                                                @endforeach
-                                                {{--<template id="materials-selected">
-                                                    <tr>
-                                                        <td data-id>183</td>
-                                                        <td data-description>John Doe</td>
-                                                        <td data-item>John Doe</td>
-                                                        <td data-location>11-7-2014</td>
-                                                        <td data-state>11-7-2014</td>
-                                                        <td data-price>11-7-2014</td>
-                                                    </tr>
-                                                </template>--}}
+                                            @foreach( $entry->details as $detail )
+                                                <tr>
+                                                    <td data-code>{{$detail->material->code}}</td>
+                                                    <td data-description>{{$detail->material_description}}</td>
+                                                    <td data-quantity>{{$detail->entered_quantity}}</td>
+                                                    <td data-unit>{{$detail->unit}}</td>
+                                                    <td data-price>{{$detail->unit_price}}</td>
+                                                    <td data-subtotal>{{ $detail->sub_total }}</td>
+                                                    <td data-taxes>{{ $detail->taxes }}</td>
+                                                    <td data-total>{{ $detail->total }}</td>
+                                                </tr>
+                                            @endforeach
 
                                             </tbody>
                                         </table>
+                                    </div>
+                                    <hr>
+                                    <!-- /.card-body -->
+                                    <div class="row">
+                                        <!-- accepted payments column -->
+                                        <div class="col-6">
+
+                                        </div>
+                                        <!-- /.col -->
+                                        <div class="col-6">
+                                            <p class="lead">Resumen de factura</p>
+
+                                            <div class="table-responsive">
+                                                <table class="table">
+                                                    <tr>
+                                                        <th style="width:50%">Subtotal: </th>
+                                                        <td id="subtotal">{{ $entry->sub_total }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Igv: </th>
+                                                        <td id="taxes">{{ $entry->taxes }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Total: </th>
+                                                        <td id="total">{{ $entry->total }}</td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <!-- /.col -->
                                     </div>
                                     <!-- /.card-body -->
                                 </div>

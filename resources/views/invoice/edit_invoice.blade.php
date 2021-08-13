@@ -150,11 +150,10 @@
                                         <h3 class="card-title">Materiales</h3>
                                     </div>
                                     <!-- /.card-header -->
-                                    <div class="card-body table-responsive p-0" style="height: 300px;">
+                                    <div class="card-body table-responsive p-0">
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                                 <tr>
-                                                    <th>Codigo</th>
                                                     <th>Material</th>
                                                     <th>Cantidad</th>
                                                     <th>Und</th>
@@ -162,16 +161,14 @@
                                                     <th>Total sin Imp.</th>
                                                     <th>Total Imp.</th>
                                                     <th>Importe</th>
-                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
                                                 @foreach( $entry->details as $detail )
                                                     <tr>
-                                                        <td data-code>{{$detail->material->code}}</td>
-                                                        <td data-description>{{$detail->material->full_description}}</td>
+                                                        <td data-description>{{$detail->material_description}}</td>
                                                         <td data-quantity>{{$detail->entered_quantity}}</td>
-                                                        <td data-unit>{{$detail->material->unitMeasure->name}}</td>
+                                                        <td data-unit>{{$detail->unit}}</td>
                                                         <td data-price>{{$detail->unit_price}}</td>
                                                         <td data-subtotal>{{ $detail->sub_total }}</td>
                                                         <td data-taxes>{{ $detail->taxes }}</td>
@@ -183,6 +180,7 @@
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
+                                    <hr>
                                     <div class="row">
                                         <!-- accepted payments column -->
                                         <div class="col-6">
