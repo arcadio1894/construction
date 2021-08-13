@@ -62,6 +62,20 @@ class InvoiceController extends Controller
 
             $items = json_decode($request->get('items'));
 
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $detail_entry = DetailEntry::create([
+                    'entry_id' => $entry->id,
+                    'material_name' => $items[$i]->material,
+                    'ordered_quantity' => $items[$i]->quantity,
+                    'entered_quantity' => $items[$i]->quantity,
+                    'unit_price' => $items[$i]->price,
+                    'material_unit' => $items[$i]->unit,
+                ]);
+            }
+
+            /*$items = json_decode($request->get('items'));
+
             //dd($item->id);
             $materials_id = [];
 
@@ -136,7 +150,7 @@ class InvoiceController extends Controller
 
                     }
                 }
-            }
+            }*/
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -150,20 +164,24 @@ class InvoiceController extends Controller
     public function getJsonInvoices()
     {
         $entries = Entry::with('supplier')->with(['details' => function ($query) {
-            $query->with('material')->with(['items' => function ($query) {
-                $query->where('state_item', 'entered')
-                    ->with('typescrap')
-                    ->with(['location' => function ($query) {
-                        $query->with(['area', 'warehouse', 'shelf', 'level', 'container']);
-                    }]);
-                }]);
+                $query->with('material');
             }])
             ->where('entry_type', 'Por compra')
-            ->where('finance', true)
             ->get();
 
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
+    }
+
+    public function getInvoiceById( $id )
+    {
+        $entry = Entry::with('supplier')->with(['details' => function ($query) {
+            $query->with('material');
+        }])
+            ->where('id', $id)
+            ->get();
+        return json_encode($entry);
+
     }
 
     public function getInvoices()
@@ -178,7 +196,6 @@ class InvoiceController extends Controller
             }]);
         }])
             ->where('entry_type', 'Por compra')
-            ->where('finance', true)
             ->get();
 
         //dd(datatables($entries)->toJson());

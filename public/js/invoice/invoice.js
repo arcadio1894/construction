@@ -194,13 +194,14 @@ function saveTableItems() {
 function updateSummaryInvoice() {
     var subtotal = 0;
     var total = 0;
+    var taxes = 0;
 
     for ( var i=0; i<$items.length; i++ )
     {
-        subtotal += parseFloat(parseFloat($items[i].price)/1.18);
-        total += parseFloat($items[i].price);
+        subtotal += parseFloat( (parseFloat($items[i].price)*parseFloat($items[i].quantity))/1.18 );
+        total += parseFloat((parseFloat($items[i].price)*parseFloat($items[i].quantity)));
+        taxes = subtotal*0.18;
     }
-    var taxes = subtotal*0.18;
 
     $('#subtotal').html('$/. '+ subtotal.toFixed(2));
     $('#taxes').html('$/. '+taxes.toFixed(2));
@@ -278,63 +279,24 @@ function addItems() {
     }
 
     let material_name = $('#material_search').val();
-    let material_quantity = $('#quantity').val();
+    let material_unit = $('#material_unit').val();
+    let material_quantity = parseFloat($('#quantity').val()).toFixed(2);
     let material_price = parseFloat($('#price').val()).toFixed(2);
 
-    $('#locationGroup').typeahead('destroy');
+    var subtotal =((material_quantity*material_price)/1.18).toFixed(2);
+    var taxes = (subtotal*0.18).toFixed(2);
+    var total = (material_quantity*material_price).toFixed(2);
 
-    if($('[name="my-checkbox"]').is(':checked'))
-    {
-        //alert('Es agrupado');
+    $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'quantity': material_quantity, 'unit': material_unit, 'subtotal': subtotal, 'taxes': taxes, 'total':total});
 
-        $modalAddGroupItems.find('[id=material_GroupSelected]').val(material_name);
-        $modalAddGroupItems.find('[id=material_GroupSelected]').prop('disabled', true);
-        $modalAddGroupItems.find('[id=quantity_GroupSelected]').val(material_quantity);
-        $modalAddGroupItems.find('[id=quantity_GroupSelected]').prop('disabled', true);
-        $modalAddGroupItems.find('[id=price_GroupSelected]').val(material_price);
-        $modalAddGroupItems.find('[id=price_GroupSelected]').prop('disabled', true);
+    renderTemplateMaterial($items.length, material_name, material_quantity, material_unit, material_price, subtotal, taxes, total);
 
-        $('#locationGroup').typeahead({
-                hint: true,
-                highlight: true, /* Enable substring highlighting */
-                minLength: 1 /* Specify minimum characters required for showing suggestions */
-            },
-            {
-                limit: 12,
-                source: substringMatcher($locations)
-            });
+    $('#material_search').val('');
+    $('#quantity').val('');
+    $('#material_unit').val('');
+    $('#price').val('');
 
-        $modalAddGroupItems.modal('show');
-
-    }else{
-        //alert('NO es agrupado');
-        $modalAddItems.find('[id=material_selected]').val(material_name);
-        $modalAddItems.find('[id=material_selected]').prop('disabled', true);
-        $modalAddItems.find('[id=quantity_selected]').val(material_quantity);
-        $modalAddItems.find('[id=quantity_selected]').prop('disabled', true);
-        $modalAddItems.find('[id=price_selected]').val(material_price);
-        $modalAddItems.find('[id=price_selected]').prop('disabled', true);
-
-        $('#body-items').html('');
-
-        for (var i = 0; i<material_quantity; i++)
-        {
-            renderTemplateItem();
-            $('.select2').select2();
-        }
-
-        $('.locations').typeahead({
-                hint: true,
-                highlight: true, /* Enable substring highlighting */
-                minLength: 1 /* Specify minimum characters required for showing suggestions */
-            },
-            {
-                limit: 12,
-                source: substringMatcher($locations)
-            });
-
-        $modalAddItems.modal('show');
-    }
+    updateSummaryInvoice();
 }
 
 function rand_code($caracteres, $longitud){
@@ -351,13 +313,13 @@ function deleteItem() {
     //console.log($(this).parent().parent().parent());
     $(this).parent().parent().remove();
     var materialId = $(this).data('delete');
-    $items = $items.filter(material => material.id_material !== materialId);
+    $items = $items.filter(material => material.id !== materialId);
     updateSummaryInvoice();
 }
 
-function renderTemplateMaterial(id, code, description, quantity, unit, price, subtotal, taxes, total) {
+function renderTemplateMaterial(id, description, quantity, unit, price, subtotal, taxes, total) {
     var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-id]").innerHTML = id;
     clone.querySelector("[data-description]").innerHTML = description;
     clone.querySelector("[data-quantity]").innerHTML = quantity;
     clone.querySelector("[data-unit]").innerHTML = unit;

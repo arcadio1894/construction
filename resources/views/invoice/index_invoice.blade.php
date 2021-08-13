@@ -149,42 +149,74 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Listado de items</h4>
+                    <h4 class="modal-title">Listado de detalles</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <div class="modal-body table-responsive">
-                    <table class="table table-head-fixed text-nowrap table-hover">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Material</th>
-                            <th>Código</th>
-                            <th>Largo</th>
-                            <th>Ancho</th>
-                            <th>Peso</th>
-                            <th>Precio</th>
-                            <th>Ubicación</th>
-                            <th>Estado</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-items">
+                    <div class="card-body table-responsive p-0" >
+                        <table class="table table-head-fixed text-nowrap">
+                            <thead>
+                            <tr>
+                                <th>Material</th>
+                                <th>Cantidad</th>
+                                <th>Und</th>
+                                <th>Precio Unit.</th>
+                                <th>Total sin Imp.</th>
+                                <th>Total Imp.</th>
+                                <th>Importe</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-materials">
 
-                        </tbody>
+
+                            </tbody>
+
+                        </table>
                         <template id="template-item">
                             <tr>
-                                <td data-i></td>
-                                <td data-material></td>
-                                <td data-code></td>
-                                <td data-length></td>
-                                <td data-width><span class="badge bg-danger">55%</span></td>
-                                <td data-weight></td>
+                                <td data-description></td>
+                                <td data-quantity></td>
+                                <td data-unit></td>
                                 <td data-price></td>
-                                <td data-location></td>
-                                <td data-state></td>
+                                <td data-subtotal></td>
+                                <td data-taxes></td>
+                                <td data-total></td>
                             </tr>
                         </template>
-                    </table>
+                    </div>
+                    <!-- /.card-body -->
+                    <div class="row">
+                        <!-- accepted payments column -->
+                        <div class="col-6">
+
+                        </div>
+                        <!-- /.col -->
+                        <div class="col-6">
+                            <p class="lead">Resumen de factura</p>
+
+                            <div class="table-responsive" id="body-summary">
+
+                            </div>
+                            <template id="template-summary">
+                                <table class="table">
+                                    <tr>
+                                        <th style="width:50%">Subtotal: </th>
+                                        <td data-subtotal="subtotal"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Igv: </th>
+                                        <td data-taxes="taxes"></td>
+                                    </tr>
+                                    <tr>
+                                        <th>Total: </th>
+                                        <td data-total="total"></td>
+                                    </tr>
+                                </table>
+                            </template>
+                        </div>
+                        <!-- /.col -->
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

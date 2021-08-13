@@ -12,16 +12,10 @@ function format ( d ) {
     {
         var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
         mensaje = mensaje +
-            'Material: '+d.details[i].material.full_description+'<br>'+
-            'Cantidad: '+d.details[i].ordered_quantity+'<br>'+
-            'Precio: '+d.details[i].unit_price+'<br>'+
-            'Subtotal: '+d.details[i].sub_total+'<br>'+
-            'Impuestos: '+d.details[i].taxes+'<br>'+
-            'Total: '+d.details[i].total+'<br>'+
-            'Estado: '+state+'<br>';
+            'Material: '+d.details[i].material_description+'<br>';
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
-        mensaje;
+        mensaje ;
 }
 
 $(document).ready(function () {
@@ -86,9 +80,22 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/factura/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                    console.log(item.material_name);
+                    if( !item.finance ) {
+                        if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                        }
+                        text = text + '<button type="button" data-details="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-eye"></i> </button>';
+
+                    } else {
+                        if ( $.inArray('update_invoice', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/factura/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                        }
+                        text = text + '<button type="button" data-details="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-eye"></i> </button>';
+
                     }
+
+
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
             },
@@ -285,7 +292,7 @@ $(document).ready(function () {
 
     $modalImage = $('#modalImage');
 
-    $(document).on('click', '[data-detail]', showItems);
+    $(document).on('click', '[data-details]', showDetails);
 
     $(document).on('click', '[data-image]', showImage);
 
@@ -347,41 +354,48 @@ function showImage() {
     $modalImage.modal('show');
 }
 
-function showItems() {
-    $('#table-items').html('');
-    var detail_id = $(this).data('detail');
+function showDetails() {
+    $('#body-materials').html('');
+    $('#body-summary').html('');
+    var entry_id = $(this).data('details');
     $.ajax({
-        url: "/dashboard/get/json/items/"+detail_id,
+        url: "/dashboard/get/invoice/by/id/"+entry_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
             //
-            for (var i=0; i<json.length; i++)
+            console.log(json[0].details);
+            for (var i=0; i< json[0].details.length; i++)
             {
-                renderTemplateItemDetail(json[i].id, json[i].material, json[i].code, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].location, json[i].state);
+                //console.log(json[0].details[i].material_description);
+                renderTemplateItemDetail(json[0].details[i].material_description, json[0].details[i].ordered_quantity, json[0].details[i].unit, json[0].details[i].unit_price, json[0].details[i].sub_total, json[0].details[i].taxes, json[0].details[i].total);
                 //$materials.push(json[i].material);
             }
+            renderTemplateSummary(json[0].sub_total, json[0].taxes, json[0].total);
 
         }
     });
     $modalItems.modal('show');
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
-    var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
-        (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
-            'Indefinido';
+function renderTemplateItemDetail(material, quantity, unit, price, subtotal, taxes, total) {
     var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
+    clone.querySelector("[data-description]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-unit]").innerHTML = unit;
     clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = status;
-    $('#table-items').append(clone);
+    clone.querySelector("[data-subtotal]").innerHTML = subtotal;
+    clone.querySelector("[data-taxes]").innerHTML = taxes;
+    clone.querySelector("[data-total]").innerHTML = total;
+    $('#body-materials').append(clone);
+}
+
+function renderTemplateSummary(subtotal, taxes, total) {
+    var clone = activateTemplate('#template-summary');
+    clone.querySelector("[data-subtotal]").innerHTML = subtotal;
+    clone.querySelector("[data-taxes]").innerHTML = taxes;
+    clone.querySelector("[data-total]").innerHTML = total;
+    $('#body-summary').append(clone);
 }
 
 function addItems() {

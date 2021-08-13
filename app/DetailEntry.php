@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class DetailEntry extends Model
 {
-    protected $appends = ['sub_total', 'taxes', 'total'];
+    protected $appends = ['sub_total', 'taxes', 'total', 'unit', 'material_description'];
 
     protected $fillable = [
         'entry_id',
@@ -14,8 +14,20 @@ class DetailEntry extends Model
         'ordered_quantity',
         'entered_quantity',
         'isComplete',
-        'unit_price'
+        'unit_price',
+        'material_name',
+        'material_unit'
     ];
+
+    public function getMaterialDescriptionAttribute()
+    {
+        return (is_null($this->material)) ? $this->material_name : $this->material->full_description;
+    }
+
+    public function getUnitAttribute()
+    {
+        return (is_null($this->material)) ? $this->material_unit : $this->material->unitMeasure->name;
+    }
 
     public function getSubTotalAttribute()
     {

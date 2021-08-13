@@ -144,9 +144,15 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+                                    <label for="material_search">Ingresar material <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="material_search" class="form-control">
 
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="material_unit">Unidad <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="material_unit" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -162,10 +168,6 @@
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
                                 </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="btn-grouped"> Agrupado </label> <br>
-                                <input id="btn-grouped" type="checkbox" name="my-checkbox" data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
                             </div>
                             <div class="col-md-2">
                                 <label for="btn-add"> &nbsp; </label>
@@ -201,7 +203,7 @@
                                             <tbody id="body-materials">
                                                 <template id="materials-selected">
                                                     <tr>
-                                                        <td data-code>183</td>
+                                                        <td data-id>183</td>
                                                         <td data-description>John Doe</td>
                                                         <td data-quantity>John Doe</td>
                                                         <td data-unit>11-7-2014</td>
