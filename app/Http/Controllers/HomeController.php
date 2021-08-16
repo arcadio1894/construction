@@ -2,6 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\ContactName;
+use App\Customer;
+use App\Entry;
+use App\Material;
+use App\Output;
+use App\Supplier;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -28,6 +34,20 @@ class HomeController extends Controller
 
     public function dashboard()
     {
-        return view('dashboard.dashboard');
+        $customerCount = Customer::count();
+        $contactNameCount = ContactName::count();
+        $supplierCount = Supplier::count();
+        $materialCount = Material::count();
+        $entriesCount = Entry::where('finance', false)->count();
+        $invoiceCount = Entry::where('finance', true)->count();
+        $outputCount = Output::count();
+        return view('dashboard.dashboard',
+            compact('customerCount',
+                'contactNameCount',
+                'supplierCount',
+                'materialCount',
+                'entriesCount',
+                'invoiceCount',
+                'outputCount'));
     }
 }

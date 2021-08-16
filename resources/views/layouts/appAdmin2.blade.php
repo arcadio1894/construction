@@ -10,6 +10,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/fontawesome-free/css/all.min.css') }}">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/toastr/toastr.min.css') }}">
 
@@ -892,7 +895,7 @@
                     @can('list_invoice')
                         <li class="nav-item has-treeview @yield('openInvoice')">
                             <a href="#" class="nav-link @yield('activeInvoice')">
-                                <i class="nav-icon fas fa-boxes"></i>
+                                <i class="nav-icon fas fa-credit-card"></i>
                                 <p>
                                     Compras
                                     <i class="right fas fa-angle-left"></i>
