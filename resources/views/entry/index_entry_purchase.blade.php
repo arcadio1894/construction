@@ -93,6 +93,7 @@
                 <th>Tipo de entrada</th>
                 <th>Proveedor</th>
                 <th>Fecha</th>
+                <th>Diferido</th>
                 <th>Imagen</th>
                 <th>Acciones</th>
             </tr>

@@ -63,6 +63,17 @@ $(document).ready(function () {
                         return '<p> Sin proveedor </p>'
                 }
             },
+            { data: null,
+                title: 'Diferido',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.deferred_invoice === 'off' )
+                        return '<span class="badge bg-success">NO</span>';
+                    else
+                        return '<span class="badge bg-warning">SI</span>';
+                }
+            },
             { data: 'sub_total' },
             { data: 'taxes' },
             { data: 'total' },
