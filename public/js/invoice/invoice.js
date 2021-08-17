@@ -89,6 +89,10 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 
 let $longitud = 20;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function saveTableItems() {
 
     var series_selected = [];
@@ -279,7 +283,7 @@ function addItems() {
     }
 
     let material_name = $('#material_search').val();
-    let material_unit = $('#material_unit').val();
+    let material_unit = $( "#material_unit option:selected" ).text();
     let material_quantity = parseFloat($('#quantity').val()).toFixed(2);
     let material_price = parseFloat($('#price').val()).toFixed(2);
 

@@ -145,14 +145,19 @@
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="material_search">Ingresar material <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_search" class="form-control">
+                                    <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
 
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="material_unit">Unidad <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_unit" class="form-control">
+                                    <select id="material_unit" name="material_unit" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $unitMeasures as $unitMeasure )
+                                            <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -373,7 +378,7 @@
                             <label class="col-sm-12 control-label" for="material_GroupSelected"> Material </label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="material_GroupSelected" name="material_GroupSelected" class="form-control" />
+                                <input type="text" id="material_GroupSelected" onkeyup="mayus(this);" name="material_GroupSelected" class="form-control" />
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -454,7 +459,10 @@
         });
         $('#supplier').select2({
             placeholder: "Seleccione un proveedor",
-        })
+        });
+        $('#material_unit').select2({
+            placeholder: "Seleccione unidad",
+        });
     </script>
     <script src="{{ asset('js/invoice/invoice.js') }}"></script>
 

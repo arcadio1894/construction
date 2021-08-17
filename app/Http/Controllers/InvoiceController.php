@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Item;
 use App\Material;
 use App\Supplier;
+use App\UnitMeasure;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -27,7 +28,8 @@ class InvoiceController extends Controller
     public function createInvoice()
     {
         $suppliers = Supplier::all();
-        return view('invoice.create_invoice', compact('suppliers'));
+        $unitMeasures = UnitMeasure::all();
+        return view('invoice.create_invoice', compact('suppliers', 'unitMeasures'));
     }
 
     public function storeInvoice(StoreInvoiceRequest $request)
