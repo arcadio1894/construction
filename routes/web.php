@@ -526,7 +526,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput');
         Route::post('output_request/store', 'OutputController@storeOutputRequest')
             ->name('output.request.store')
-            ->middleware('permission:create_output');
+            ->middleware('permission:create_request');
         Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
         Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
         Route::post('output_request/attend', 'OutputController@attendOutputRequest')
