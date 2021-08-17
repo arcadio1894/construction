@@ -74,14 +74,14 @@
                             <label class="col-sm-3 control-label" for="name"> Área <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: Sistemas" required />
+                                <input type="text" id="name" name="name" onkeyup="mayus(this);" class="form-control" placeholder="Ejm: Sistemas" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label" for="comment"> Comentario </label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="comment" name="comment" class="form-control" placeholder="Ejm: Área de Sistemas" />
+                                <input type="text" id="comment" name="comment" onkeyup="mayus(this);" class="form-control" placeholder="Ejm: Área de Sistemas" />
                             </div>
                         </div>
                     </div>
@@ -110,14 +110,14 @@
                             <label class="col-sm-3 control-label " for="nameE"> Área <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="nameE" name="name" class="form-control" placeholder="Ejm: product_list" required />
+                                <input type="text" id="nameE" name="name" onkeyup="mayus(this);" class="form-control" placeholder="Ejm: product_list" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label" for="commentE"> Comentario </label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="commentE" name="comment" class="form-control" placeholder="Ejm: Listar productos" required />
+                                <input type="text" id="commentE" name="comment" onkeyup="mayus(this);" class="form-control" placeholder="Ejm: Listar productos" required />
                             </div>
                         </div>
                     </div>

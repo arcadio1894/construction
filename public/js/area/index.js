@@ -197,6 +197,10 @@ var $modalDelete;
 
 var $permissions;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function openModalCreate() {
     $modalCreate.modal('show');
 }

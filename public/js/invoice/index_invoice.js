@@ -58,7 +58,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( item.supplier !== null )
-                        return '<p> '+ item.supplier.bussines_name +'</p>';
+                        return '<p> '+ item.supplier.business_name +'</p>';
                     else
                         return '<p> Sin proveedor </p>'
                 }

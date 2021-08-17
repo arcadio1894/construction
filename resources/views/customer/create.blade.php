@@ -67,7 +67,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Razon Social <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="business_name" placeholder="Ejm: Edesce EIRL">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="business_name" placeholder="Ejm: Edesce EIRL">
                 </div>
             </div>
         </div>
@@ -76,14 +76,14 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Direccion</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="address" placeholder="Ejm: Jr Union">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="address" placeholder="Ejm: Jr Union">
                 </div>
             </div>
 
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Ubicacion</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="location" placeholder="Ejm: Moche">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="location" placeholder="Ejm: Moche">
                 </div>
             </div>
         </div>

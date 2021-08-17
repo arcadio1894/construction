@@ -77,14 +77,14 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="description" name="description" class="form-control" value="{{ $material->description }}">
+                                <input type="text" id="description" onkeyup="mayus(this);" name="description" class="form-control" value="{{ $material->description }}">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="measure" name="measure" class="form-control" value="{{ $material->measure }}">
+                                <input type="text" id="measure" onkeyup="mayus(this);" name="measure" class="form-control" value="{{ $material->measure }}">
                             </div>
                             <div class="col-md-6">
                                 <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
@@ -160,7 +160,7 @@
                         <div class="form-group">
                             <label for="name">Nombre completo</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control rounded-0" id="name" name="name" readonly>
+                                <input type="text" class="form-control rounded-0" id="name" onkeyup="mayus(this);" name="name" readonly>
                                 <span class="input-group-append">
                                     <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
                                 </span>
@@ -170,7 +170,9 @@
 
                         <div class="form-group">
                             <label for="unit_price">Precio Unitario </label>
-                            <input type="text" id="unit_price" name="unit_price" class="form-control" value="{{ $material->unit_price }}">
+                            <input type="number" id="unit_price" name="unit_price" class="form-control" value="{{ $material->unit_price }}" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
                         <div class="form-group">
                             <label for="priority">Prioridad <span class="right badge badge-danger">(*)</span></label>
@@ -205,16 +207,22 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label for="stock_max">Stock Máximo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_max" name="stock_max" class="form-control" value="{{ $material->stock_max }}">
+                            <input type="number" id="stock_max" name="stock_max" class="form-control" placeholder="0.00" min="0" value="{{ $material->stock_max }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
                         <div class="form-group">
                             <label for="stock_min">Stock Mínimo <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_min" name="stock_min" class="form-control" value="{{ $material->stock_min }}" readonly>
+                            <input type="number" id="stock_min" name="stock_min" class="form-control" placeholder="0.00" min="0" value="{{ $material->stock_min }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
 
                         <div class="form-group">
                             <label for="stock_current">Stock Actual <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="stock_current" name="stock_current" class="form-control" value="{{ $material->stock_current }}">
+                            <input type="number" id="stock_current" name="stock_current" class="form-control" placeholder="0.00" min="0" value="{{ $material->stock_current }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                         </div>
 
                         <div class="form-group row">

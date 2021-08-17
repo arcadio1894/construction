@@ -200,6 +200,10 @@ var $selectExample;
 var $selectType;
 var $selectSubtype;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function generateNameProduct() {
     if( $('#description').val().trim() === '' )
     {

@@ -10,6 +10,10 @@ $(document).ready(function () {
 
 var $formEdit;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function updateSubCategory() {
     event.preventDefault();
     // Obtener la URL

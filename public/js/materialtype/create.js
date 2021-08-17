@@ -10,6 +10,10 @@ $(document).ready(function () {
 
 var $formCreate;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function storeMaterialType() {
     event.preventDefault();
     // Obtener la URL

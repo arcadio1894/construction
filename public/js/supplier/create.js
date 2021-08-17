@@ -7,6 +7,10 @@ $(document).ready(function () {
 
 var $formCreate;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function storeSupplier() {
     event.preventDefault();
     // Obtener la URL

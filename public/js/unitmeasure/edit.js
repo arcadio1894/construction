@@ -7,6 +7,10 @@ $(document).ready(function () {
 
 var $formEdit;
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function updateUnitMeasure() {
     event.preventDefault();
     // Obtener la URL

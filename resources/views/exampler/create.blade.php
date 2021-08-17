@@ -69,7 +69,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Modelo <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Modelo">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="name" placeholder="Ejm: Modelo">
                 </div>
             </div>
 
@@ -88,7 +88,7 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Comentario</label>
                 <div class="col-sm-10">
-                     <input type="text" class="form-control" name="comment" placeholder="Ejm: Descripción">
+                     <input type="text" class="form-control" onkeyup="mayus(this);" name="comment" placeholder="Ejm: Descripción">
                 </div>
             </div>
         </div>

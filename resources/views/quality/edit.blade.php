@@ -70,14 +70,14 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Calidad <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="name" placeholder="Ejm: Calidad" value="{{$quality->name}}">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="name" placeholder="Ejm: Calidad" value="{{$quality->name}}">
                 </div>
             </div>
 
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" name="description" placeholder="Ejm: Descripción" value="{{$quality->description}}">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="description" placeholder="Ejm: Descripción" value="{{$quality->description}}">
                 </div>
             </div>
         </div>

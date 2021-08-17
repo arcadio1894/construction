@@ -95,14 +95,14 @@
                             <label class="col-sm-3 control-label" for="name"> Posición <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="name" name="name" class="form-control" placeholder="Ejm: X" required />
+                                <input type="text" id="name" onkeyup="mayus(this);" name="name" class="form-control" placeholder="Ejm: X" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label" for="comment"> Comentario </label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="comment" name="comment" class="form-control" placeholder="Ejm: Posición X" />
+                                <input type="text" id="comment" onkeyup="mayus(this);" name="comment" class="form-control" placeholder="Ejm: Posición X" />
                             </div>
                         </div>
                     </div>
@@ -131,14 +131,14 @@
                             <label class="col-sm-3 control-label " for="nameE"> Posición <span class="right badge badge-danger">(*)</span></label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="nameE" name="name" class="form-control" required />
+                                <input type="text" id="nameE" onkeyup="mayus(this);" name="name" class="form-control" required />
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-3 control-label" for="commentE"> Comentario </label>
 
                             <div class="col-sm-12">
-                                <input type="text" id="commentE" name="comment" class="form-control" />
+                                <input type="text" id="commentE" onkeyup="mayus(this);" name="comment" class="form-control" />
                             </div>
                         </div>
                     </div>
