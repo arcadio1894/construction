@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEquipmentTable extends Migration
+class CreateWorkforcesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,13 +13,11 @@ class CreateEquipmentTable extends Migration
      */
     public function up()
     {
-        Schema::create('equipments', function (Blueprint $table) {
+        Schema::create('workforces', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quote_id')->constrained('quotes');
-            $table->text('description');
-            $table->text('detail');
-            $table->integer('quantity');
-            $table->decimal('total', 9,2)->default(0);
+            $table->string('description');
+            $table->foreignId('unit_measure_id')->constrained('unit_measures');
+            $table->decimal('unit_price', 9,2)->nullable()->default(0);
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ class CreateEquipmentTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('equipments');
+        Schema::dropIfExists('workforces');
     }
 }

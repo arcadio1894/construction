@@ -7,10 +7,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'code',
+        'description_quote',
         'description',
         'date_quote',
         'way_to_pay',
@@ -30,7 +29,5 @@ class Quote extends Model
     {
         return $this->hasMany('App\Equipment');
     }
-
-    protected $dates = ['deleted_at'];
 
 }

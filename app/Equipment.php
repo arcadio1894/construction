@@ -7,11 +7,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Equipment extends Model
 {
-    use SoftDeletes;
+    protected $table = 'equipments';
 
     protected $fillable = [
         'quote_id',
         'description',
+        'detail',
+        'quantity',
         'total'
     ];
 
@@ -22,19 +24,16 @@ class Equipment extends Model
 
     public function materials()
     {
-        return $this->belongsToMany('App\Material', 'equipment_materials')
-            ->withPivot('material_id', 'quantity', 'unit_price', 'long', 'width', 'kilos', 'percentage', 'state', 'price', 'availability');
+        return $this->hasMany('App\EquipmentMaterial');
     }
 
-    public function defaultItem()
+    public function consumables()
     {
-        return $this->hasMany('App\DefaultItem');
+        return $this->hasMany('App\EquipmentConsumable');
     }
 
-    public function equipmentFeatures()
+    public function workforces()
     {
-        return $this->hasMany('App\EquipmentFeature');
+        return $this->hasMany('App\EquipmentWorkforce');
     }
-
-    protected $dates = ['deleted_at'];
 }

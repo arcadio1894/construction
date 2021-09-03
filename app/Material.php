@@ -33,15 +33,34 @@ class Material extends Model
         'typescrap_id'
     ];
 
+    public function scopeWhereConsumable($query, $column, $value)
+    {
+        return $query->where($column, 'like', $value.'%');
+    }
+
+
     public function getFullDescriptionAttribute()
     {
+        $description='';
         $subcategory = ( is_null($this->subcategory) ) ? '': ' '.$this->subcategory->name;
         $type = ( is_null($this->materialType) ) ? '': ' '.$this->materialType->name;
         $subtype = ( is_null($this->subType) ) ? '': ' '.$this->subType->name;
         $warrant = ( is_null($this->warrant) ) ? '': ' '.$this->warrant->name;
         $quality = ( is_null($this->quality) ) ? '': ' '.$this->quality->name;
 
-        return "{$this->description}". $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
+        if($this->category_id == 2)
+        {
+            $pos = strripos($this->description, "(*) ");
+            if ( $pos !== false ) {
+                $description = $description . substr($this->description, 4);
+            } else {
+                $description = $description.$this->description;
+            }
+        } else {
+            $description = $description.$this->description;
+        }
+
+        return $description . $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
     }
 
     public function unitMeasure()
@@ -92,12 +111,6 @@ class Material extends Model
     public function typeScrap()
     {
         return $this->belongsTo('App\Typescrap', 'typescrap_id');
-    }
-
-    public function equipments()
-    {
-        return $this->belongsToMany('App\Equipment', 'equipment_materials')
-            ->withPivot('equipment_id', 'quantity', 'unit_price', 'long', 'width', 'kilos', 'percentage', 'state', 'price', 'availability');
     }
 
     public function defaultItems()

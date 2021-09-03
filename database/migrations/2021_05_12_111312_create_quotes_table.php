@@ -16,15 +16,14 @@ class CreateQuotesTable extends Migration
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
-            $table->string('description');
+            $table->text('description_quote');
             $table->dateTime('date_quote');
-            $table->string('way_to_pay');
-            $table->string('delivery_time');
-            $table->foreignId('customer_id')->constrained('customers');
             $table->dateTime('date_validate');
+            $table->text('way_to_pay');
+            $table->text('delivery_time');
+            $table->foreignId('customer_id')->constrained('customers');
             $table->decimal('total', 9,2)->default(0);
-            $table->boolean('state');
-            $table->softDeletes();
+            $table->enum('state', ['created', 'confirmed', 'canceled']);
             $table->timestamps();
         });
     }

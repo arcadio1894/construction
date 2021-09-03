@@ -15,6 +15,7 @@
 
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/toastr/toastr.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.css') }}">
 
     @yield('styles-plugins')
 
@@ -683,7 +684,7 @@
                             </ul>
                         </li>
                     @endcan
-                    {{--@canany('list_quote')
+                    @canany('list_quote')
                         <li class="nav-header">COTIZACIONES</li>
                     @endcanany
                     @can('list_quote')
@@ -714,7 +715,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>
                     <li class="nav-item has-treeview @yield('openInventory')">
@@ -996,6 +997,7 @@
 <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <!-- Toastr -->
 <script src="{{ asset('admin/plugins/toastr/toastr.min.js') }}"></script>
+<script src="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>
 
 @yield('plugins')
 

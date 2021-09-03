@@ -569,13 +569,28 @@ Route::middleware('auth')->group(function (){
         Route::get('get/position/container/{container_id}', 'TransferController@getPosition')
             ->middleware('permission:create_transfer');
 
+        // COTIZACIONES
         Route::get('cotizaciones', 'QuoteController@index')
             ->name('quote.index')
             ->middleware('permission:list_quote');
         Route::get('crear/cotizacion', 'QuoteController@create')
             ->name('quote.create')
             ->middleware('permission:create_quote');
+        Route::get('/select/materials', 'QuoteController@selectMaterials')
+            ->middleware('permission:create_quote');
+        Route::get('/get/quote/materials', 'QuoteController@getMaterials')
+            ->middleware('permission:create_quote');
+        Route::get('/select/consumables', 'QuoteController@selectConsumables')
+            ->middleware('permission:create_quote');
+        Route::get('/get/quote/consumables', 'QuoteController@getConsumables')
+            ->middleware('permission:create_quote');
+        Route::post('store/quote', 'QuoteController@store')
+            ->name('quote.store')
+            ->middleware('permission:create_quote');
+        Route::get('/all/quotes', 'QuoteController@getAllQuotes');
 
+
+        // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');
         Route::post('change/image/user/{user}', 'UserController@changeImage')

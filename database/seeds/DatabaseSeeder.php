@@ -38,5 +38,9 @@ class DatabaseSeeder extends Seeder
         $this->call(ContainerSeeder::class);
         $this->call(PositionSeeder::class);
         $this->call(LocationSeeder::class);
+
+        $this->call(ConsumableSeeder::class);
+        $this->call(InvoicePurchaseSeeder::class);
+        $this->call(WorkforceSeeder::class);
     }
 }
