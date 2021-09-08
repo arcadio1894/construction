@@ -34,6 +34,7 @@ class CreateMaterialsTable extends Migration
             $table->foreignId('warrant_id')->nullable()->constrained('warrants');
             $table->foreignId('quality_id')->nullable()->constrained('qualities');
             $table->foreignId('typescrap_id')->nullable()->constrained('typescraps');
+            $table->boolean('consumable_default')->nullable()->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
