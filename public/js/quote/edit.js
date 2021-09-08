@@ -45,7 +45,7 @@ $(document).ready(function () {
     
     $('#btnCalculate').on('click', calculatePercentage);
 
-    $formCreate = $('#formCreate');
+    $formCreate = $('#formEdit');
     $formCreate.on('submit', storeQuote);
 
     $('input[type=radio][name=presentation]').on('change', function() {
@@ -500,6 +500,7 @@ function calculateTotal2(e) {
 }
 
 function addEquipment() {
+    // TODO: Aqui voy a preguntar si hay equipos con
     var confirmEquipment = $(this).parent().parent().next().children().children();
     $equipmentStatus = confirmEquipment.css('display') === 'none';
 
@@ -525,9 +526,7 @@ function addEquipment() {
             });
         return;
     }
-
     renderTemplateEquipment();
-
     $('.material_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
@@ -568,7 +567,6 @@ function addEquipment() {
             }
         }
     });
-
     $equipmentStatus = false;
 }
 
@@ -943,7 +941,7 @@ function addMaterial() {
 
 function storeQuote() {
     event.preventDefault();
-    if( $equipments.length === 0 )
+    /*if( $equipments.length === 0 )
     {
         toastr.error('No se puede crear una cotización sin equipos.', 'Error',
             {
@@ -964,7 +962,7 @@ function storeQuote() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }
+    }*/
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);

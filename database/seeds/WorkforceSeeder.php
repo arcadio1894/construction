@@ -13,10 +13,9 @@ class WorkforceSeeder extends Seeder
      */
     public function run()
     {
-        $unit = UnitMeasure::create(['name' => 'DIAS', 'description' => 'DIAS']);
         Workforce::create([
             'description' => 'DÍAS DE TRABAJO',
-            'unit_measure_id' => $unit->id,
+            'unit_measure_id' => 15,
             'unit_price' => 0
         ]);
         Workforce::create([
@@ -26,7 +25,7 @@ class WorkforceSeeder extends Seeder
         ]);
         Workforce::create([
             'description' => 'SEGURO',
-            'unit_measure_id' => $unit->id,
+            'unit_measure_id' => 15,
             'unit_price' => 0
         ]);
         Workforce::create([
@@ -36,11 +35,6 @@ class WorkforceSeeder extends Seeder
         ]);
         Workforce::create([
             'description' => 'FLETE',
-            'unit_measure_id' => 1,
-            'unit_price' => 0
-        ]);
-        Workforce::create([
-            'description' => 'SERVICIO DE TORNO',
             'unit_measure_id' => 1,
             'unit_price' => 0
         ]);

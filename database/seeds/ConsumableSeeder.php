@@ -12,7 +12,7 @@ class ConsumableSeeder extends Seeder
      */
     public function run()
     {
-        Material::create(
+        /*Material::create(
             ['code' => 'P-02000',
                 'description' => '(*) DISCO DE CORTE',
                 'measure' => '7"',
@@ -341,6 +341,6 @@ class ConsumableSeeder extends Seeder
                 'brand_id' => null,
                 'exampler_id' => null
             ]
-        );
+        );*/
     }
 }

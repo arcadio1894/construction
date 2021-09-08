@@ -16,7 +16,7 @@ class StoreMaterialRequest extends FormRequest
     {
         return [
             'description' => 'required|string|max:255',
-            'measure' => 'required|string|max:255',
+            'measure' => 'string|max:255',
             'unit_measure' => 'required|exists:unit_measures,id',
             'typescrap' => 'nullable|exists:typescraps,id',
             'stock_max' => 'nullable|numeric|min:0',
@@ -41,7 +41,6 @@ class StoreMaterialRequest extends FormRequest
             'description.string' => 'El :attribute debe contener caracteres válidos',
             'description.max' => 'El :attribute es demasiado largo.',
 
-            'measure.required' => 'El :attribute es obligatorio.',
             'measure.string' => 'El :attribute debe contener caracteres válidos.',
             'measure.max' => 'El :attribute es demasiado largo.',
 

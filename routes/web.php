@@ -588,7 +588,15 @@ Route::middleware('auth')->group(function (){
             ->name('quote.store')
             ->middleware('permission:create_quote');
         Route::get('/all/quotes', 'QuoteController@getAllQuotes');
-
+        Route::get('ver/cotizacion/{quote}', 'QuoteController@show')
+            ->name('quote.show')
+            ->middleware('permission:list_quote');
+        Route::get('editar/cotizacion/{quote}', 'QuoteController@edit')
+            ->name('quote.edit')
+            ->middleware('permission:update_quote');
+        Route::post('update/quote', 'QuoteController@update')
+            ->name('quote.update')
+            ->middleware('permission:update_quote');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

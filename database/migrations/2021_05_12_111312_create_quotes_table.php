@@ -23,7 +23,7 @@ class CreateQuotesTable extends Migration
             $table->text('delivery_time');
             $table->foreignId('customer_id')->constrained('customers');
             $table->decimal('total', 9,2)->default(0);
-            $table->enum('state', ['created', 'confirmed', 'canceled']);
+            $table->enum('state', ['created', 'confirmed', 'canceled', 'expired']);
             $table->timestamps();
         });
     }

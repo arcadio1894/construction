@@ -36,5 +36,9 @@ class CategorySeeder extends Seeder
             'name' => 'HERRAMIENTAS',
             'description' => 'HERRAMIENTAS NUEVAS',
         ]);
+        Category::create([
+            'name' => 'PERNERÍA',
+            'description' => 'PERNOS EN GENERAL',
+        ]);
     }
 }

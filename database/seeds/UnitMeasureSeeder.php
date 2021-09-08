@@ -26,5 +26,7 @@ class UnitMeasureSeeder extends Seeder
         UnitMeasure::create(['name' => 'BLIS', 'description' => 'BLISTER']);
         UnitMeasure::create(['name' => 'CJA', 'description' => 'CAJA']);
         UnitMeasure::create(['name' => 'M3', 'description' => 'METROS CUBICOS']);
+        UnitMeasure::create(['name' => 'DIAS', 'description' => 'DIAS']);
+        UnitMeasure::create(['name' => 'SACO', 'description' => 'SACO']);
     }
 }

@@ -15,7 +15,7 @@ class UpdateMaterialRequest extends FormRequest
     {
         return [
             'description' => 'required|string|max:255|unique:materials,description,'.$this->get('material_id'),
-            'measure' => 'required|string|max:255',
+            'measure' => 'string|max:255',
             'unit_measure' => 'required|exists:unit_measures,id',
             'typescrap' => 'nullable|exists:typescraps,id',
             'stock_max' => 'nullable|numeric|min:0',
@@ -41,7 +41,6 @@ class UpdateMaterialRequest extends FormRequest
             'description.max' => 'El :attribute es demasiado largo.',
             'description.unique' => 'El :attribute ya está registrado.',
 
-            'measure.required' => 'El :attribute es obligatorio.',
             'measure.string' => 'El :attribute debe contener caracteres válidos.',
             'measure.max' => 'El :attribute es demasiado largo.',
 

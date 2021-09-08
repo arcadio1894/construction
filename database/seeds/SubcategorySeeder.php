@@ -37,6 +37,16 @@ class SubcategorySeeder extends Seeder
             'description' => 'NYLON',
             'category_id' => 4
         ]);
+        Subcategory::create([
+            'name' => 'TERMOPLASTICA',
+            'description' => 'TERMOPLASTICA',
+            'category_id' => 4
+        ]);
+        Subcategory::create([
+            'name' => 'UHMW',
+            'description' => 'UHMW',
+            'category_id' => 4
+        ]);
 
         Subcategory::create([
             'name' => 'INOX',
@@ -72,6 +82,32 @@ class SubcategorySeeder extends Seeder
             'name' => 'TEFLON',
             'description' => 'TEFLON',
             'category_id' => 5
+        ]);
+        Subcategory::create([
+            'name' => 'ANTINIT KWB',
+            'description' => 'ANTINIT KWB',
+            'category_id' => 5
+        ]);
+        Subcategory::create([
+            'name' => 'POLICARBONATO',
+            'description' => 'POLICARBONATO',
+            'category_id' => 5
+        ]);
+
+        Subcategory::create([
+            'name' => 'INOX',
+            'description' => 'INOXIDABLE',
+            'category_id' => 7
+        ]);
+        Subcategory::create([
+            'name' => 'FEGA',
+            'description' => 'FEGA',
+            'category_id' => 7
+        ]);
+        Subcategory::create([
+            'name' => 'FENE',
+            'description' => 'FENE',
+            'category_id' => 7
         ]);
     }
 }

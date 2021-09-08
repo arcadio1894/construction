@@ -17,7 +17,7 @@ class CreateMaterialsTable extends Migration
             $table->id();
             $table->string('code')->unique()->nullable();
             $table->string('description');
-            $table->string('measure');
+            $table->string('measure')->nullable();
             $table->foreignId('unit_measure_id')->constrained('unit_measures');
             $table->decimal('stock_max', 6,2)->default(0);
             $table->decimal('stock_min', 6,2)->default(0);

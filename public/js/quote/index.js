@@ -10,6 +10,7 @@ $(document).ready(function () {
         "aoColumns": [
             { data: 'id' },
             { data: 'code' },
+            { data: 'description_quote' },
             { data: null,
                 title: 'Fecha Cotización',
                 wrap: true,
@@ -58,23 +59,41 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Acciones',
+                title: '',
                 wrap: true,
+                sortable:false,
                 "render": function (item)
                 {
                     var text = '';
                     if ( $.inArray('list_quote', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
-                            '" class="btn btn-outline-primary btn-sm"><i class="fa fa-eye"></i></a> <br>';
+                            '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    if ( $.inArray('update_quote', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
-                            '" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a> <br>';
+                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/cotizacion/'+item.id+
+                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir"><i class="fa fa-print"></i></a> ';
+
+                    if ( item.state === 'created' ) {
+                        if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
+                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                        }
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-confirm="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Confirmar"><i class="fa fa-check"></i></button>';
+                        }
+                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
+                        }
                     }
-                    if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
-                        text = text + ' <button data-delete="'+item.id+'" data-name="'+item.name+'" '+
-                            ' class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>';
+
+                    if ( item.state === 'confirmed' ) {
+                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
+                        }
                     }
+
                     return text;
                 }
             },
@@ -220,6 +239,10 @@ $(document).ready(function () {
         }
 
     } );
+
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
 
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroySubCategory);

@@ -206,29 +206,6 @@ function generateNameProduct() {
         return;
     }
 
-    if( $('#measure').val().trim() === '' )
-    {
-        toastr.error('Debe escribir una medida', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-
     $('#name').val('');
     //alert($('#subcategory option:selected').text());
     let subcategory = ($('#subcategory option:selected').text() === 'Ninguna' || $('#subcategory option:selected').text() === '') ? '': ' '+$('#subcategory option:selected').text()+' ';

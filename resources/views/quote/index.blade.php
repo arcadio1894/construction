@@ -61,15 +61,16 @@
             <tr>
                 <th>ID</th>
                 <th>Código</th>
+                <th>Descripción</th>
                 <th>Fecha Cotización</th>
                 <th>Fecha Válida</th>
-                <th>Forma de pago</th>
-                <th>Tiempo de entrega</th>
+                <th>Forma Pago</th>
+                <th>Tiempo Entrega</th>
                 <th>Cliente</th>
                 <th>Total</th>
                 <th>Estado</th>
-                <th>Fecha de creación</th>
-                <th>Acciones</th>
+                <th>Fecha Creación</th>
+                <th></th>
             </tr>
             </thead>
             <tbody>

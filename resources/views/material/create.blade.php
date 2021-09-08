@@ -75,7 +75,7 @@
 
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="measure">Medida <span class="right badge badge-danger">(*)</span></label>
+                                <label for="measure">Medida </label>
                                 <input type="text" id="measure" onkeyup="mayus(this);" name="measure" class="form-control">
                             </div>
                             <div class="col-md-6">

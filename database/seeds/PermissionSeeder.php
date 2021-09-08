@@ -177,6 +177,14 @@ class PermissionSeeder extends Seeder
             'name' => 'destroy_quote',
             'description' => 'Eliminar Cotizaciones'
         ]);
+        Permission::create([
+            'name' => 'confirm_quote',
+            'description' => 'Confirmar Cotizaciones'
+        ]);
+        Permission::create([
+            'name' => 'renew_quote',
+            'description' => 'Renovar Cotizaciones'
+        ]);
 
         Permission::create([
             'name' => 'list_area',
