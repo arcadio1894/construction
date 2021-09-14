@@ -130,7 +130,7 @@
 
         <div class="row" id="body-equipment">
             <div class="col-md-12">
-                <div class="card card-success">
+                <div class="card card-success" data-equip="asd">
                     <div class="card-header">
                         <h3 class="card-title">EQUIPOS</h3>
 
@@ -462,22 +462,11 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
-                                                    <label for="material_search">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                    <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
+                                                    <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control">
 
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label >Unidad <span class="right badge badge-danger">(*)</span></label>
-                                                    <select class="form-control select2 unitMeasure" style="width: 100%;">
-                                                        <option></option>
-                                                        @foreach( $unitMeasures as $unitMeasure )
-                                                            <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
-                                                        @endforeach
-                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -535,7 +524,16 @@
                         </tr>
                         <tr>
                             <th>Margen Utilidad: </th>
-                            <td id="utility">15%</td>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" onkeyup="calculateMargen(this);" class="form-control form-control-sm" name="utility" id="utility" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <th style="width:50%">Subtotal: </th>
@@ -543,15 +541,33 @@
                         </tr>
                         <tr>
                             <th>Letra: </th>
-                            <td id="letter">3.7%</td>
+                            <td >
+                                <div class="input-group input-group-sm">
+                                    <input type="number" onkeyup="calculateLetter(this);" class="form-control form-control-sm" name="letter" id="letter" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <th style="width:50%">Subtotal: </th>
                             <td id="subtotal3">S/. 0.00</td>
                         </tr>
                         <tr>
-                            <th>Letra: </th>
-                            <td id="taxes">2%</td>
+                            <th>Renta: </th>
+                            <td>
+                                <div class="input-group input-group-sm">
+                                    <input type="number" onkeyup="calculateRent(this);" class="form-control form-control-sm" name="taxes" id="taxes" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">%</span>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         <tr>
                             <th>Total: </th>
@@ -661,9 +677,45 @@
             </div>
         </template>
 
+        <template id="template-torno">
+            <div class="row">
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
+                        <input type="hidden" data-tornoId>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal(this);" data-tornoQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            ">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            ">
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-tornoTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                </div>
+            </div>
+        </template>
+
         <template id="template-equipment">
             <div class="col-md-12">
-                <div class="card card-success">
+                <div class="card card-success" data-equip>
                     <div class="card-header">
                         <h3 class="card-title">EQUIPOS</h3>
 
@@ -920,7 +972,52 @@
                                         </div>
                                     @endforeach
                                 </div>
+                                <div class="card card-lightblue collapsed-card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
 
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="btn-add"> &nbsp; </label>
+                                                <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                            </div>
+
+                                        </div>
+                                        <hr>
+                                        <div data-bodyTorno>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

@@ -36,4 +36,9 @@ class Equipment extends Model
     {
         return $this->hasMany('App\EquipmentWorkforce');
     }
+
+    public function turnstiles()
+    {
+        return $this->hasMany('App\EquipmentTurnstile');
+    }
 }

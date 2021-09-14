@@ -104,12 +104,7 @@
                         </div>
                         <div class="col-md-4">
                             <label for="customer_id">Cliente <span class="right badge badge-danger">(*)</span></label>
-                            <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
-                                <option></option>
-                                @foreach( $customers as $customer )
-                                    <option value="{{ $customer->id }}" {{ ($customer->id == $quote->customer_id) ? 'selected':'' }} >{{ $customer->business_name }}</option>
-                                @endforeach
-                            </select>
+                            <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->customer->business_name }}" readonly>
                         </div>
                     </div>
 
@@ -297,7 +292,82 @@
                                     </div>
                                 @endforeach
                             </div>
+                            <div class="card card-lightblue collapsed-card">
+                                <div class="card-header">
+                                    <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
 
+                                    <div class="card-tools">
+                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                                <input type="text" onkeyup="mayus(this);" class="form-control">
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                                <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                                <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label for="btn-add"> &nbsp; </label>
+                                            <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                        </div>
+
+                                    </div>
+                                    <hr>
+                                    <div data-bodyTorno>
+                                        @foreach( $equipment->turnstiles as $turnstile )
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->quantity }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->price }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->total }}" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -309,7 +379,82 @@
         @endforeach
     </div>
     <!-- /.card-footer -->
+    <div class="row">
+        <!-- accepted payments column -->
+        <div class="col-6">
 
+        </div>
+        <!-- /.col -->
+        <div class="col-6">
+            <p class="lead">Resumen de Cotización</p>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <tr>
+                        <th style="width:50%">Subtotal: </th>
+                        <td id="subtotal">S/. {{ $quote->total }}</td>
+                        <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
+                        <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
+                        <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
+                        <input type="hidden" name="quote_subtotal_rent" id="quote_subtotal_rent" value="{{ $quote->subtotal_rent }}">
+
+                    </tr>
+                    <tr>
+                        <th>Margen Utilidad: </th>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <input type="number" onkeyup="calculateMargen(this);" value="{{ $quote->utility }}" class="form-control form-control-sm" name="utility" id="utility" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:50%">Subtotal: </th>
+                        <td id="subtotal2">S/. {{ $quote->subtotal_utility }}</td>
+                    </tr>
+                    <tr>
+                        <th>Letra: </th>
+                        <td >
+                            <div class="input-group input-group-sm">
+                                <input type="number" onkeyup="calculateLetter(this);" class="form-control form-control-sm" name="letter" id="letter" placeholder="0.00" min="0" value="{{ $quote->letter }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th style="width:50%">Subtotal: </th>
+                        <td id="subtotal3">S/. {{ $quote->subtotal_letter }}</td>
+                    </tr>
+                    <tr>
+                        <th>Renta: </th>
+                        <td>
+                            <div class="input-group input-group-sm">
+                                <input type="number" onkeyup="calculateRent(this);" class="form-control form-control-sm" name="taxes" id="taxes" placeholder="0.00" min="0" value="{{ $quote->rent }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Total: </th>
+                        <td id="total">S/. {{ $quote->subtotal_rent }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
     <div id="modalAddMaterial" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

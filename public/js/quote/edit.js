@@ -3,6 +3,10 @@ let $consumables=[];
 let $items=[];
 let $equipments=[];
 let $equipmentStatus=false;
+let $total=0;
+let $subtotal=0;
+let $subtotal2=0;
+let $subtotal3=0;
 
 $(document).ready(function () {
     $.ajax({
@@ -36,6 +40,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-confirm]', confirmEquipment);
 
     $(document).on('click', '[data-addMano]', addMano);
+
+    $(document).on('click', '[data-addTorno]', addTorno);
 
     $(document).on('click', '[data-addConsumable]', addConsumable);
 
@@ -117,7 +123,14 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-deleteMano]', deleteMano);
 
+    $(document).on('click', '[data-deleteTorno]', deleteTorno);
+
     $(document).on('click', '[data-deleteEquipment]', deleteEquipment);
+
+    $total = parseFloat($('#quote_total').val());
+    $subtotal = parseFloat($('#quote_subtotal_utility').val());
+    $subtotal2 = parseFloat($('#quote_subtotal_letter').val());
+    $subtotal3 = parseFloat($('#quote_subtotal_rent').val());
 });
 
 var $formCreate;
@@ -141,13 +154,24 @@ function deleteEquipment() {
                 action: function (e) {
                     var equipmentId = parseInt(button.data('deleteequipment'));
                     console.log(equipmentId);
+
+                    var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                    console.log(equipmentDeleted);
+
                     $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
                     button.parent().parent().parent().parent().remove();
                     if ( $equipments.length === 0 ) {
                         renderTemplateEquipment();
                         $equipmentStatus = false;
                     }
-                    $.alert("Equipo confirmado!");
+
+                    $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                    $('#subtotal').html('S/. '+$total);
+                    calculateMargen2($('#utility').val());
+                    calculateLetter2($('#letter').val());
+                    calculateRent2($('#taxes').val());
+
+                    $.alert("Equipo eliminado!");
 
                 },
             },
@@ -168,6 +192,11 @@ function deleteConsumable() {
 }
 
 function deleteMano() {
+    //console.log($(this).parent().parent().parent());
+    $(this).parent().parent().remove();
+}
+
+function deleteTorno() {
     //console.log($(this).parent().parent().parent());
     $(this).parent().parent().remove();
 }
@@ -366,6 +395,86 @@ function addMano() {
     renderTemplateMano(render, descripcion, unidad, cantidad, precio);
 }
 
+function addTorno() {
+    var precio = $(this).parent().prev().children().children().next().val();
+    var cantidad = $(this).parent().prev().prev().children().children().next().val();
+    var descripcion = $(this).parent().prev().prev().prev().children().children().next().val();
+
+    if ( descripcion === '' )
+    {
+        toastr.error('Escriba una descripción adecuada.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+    if ( cantidad === '' || parseInt(cantidad) === 0 )
+    {
+        toastr.error('Agregue una cantidad válida.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+    if ( precio === '' || parseFloat(precio) === 0 )
+    {
+        toastr.error('Agregue un precio válido.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    $(this).parent().prev().prev().prev().children().children().next().val('');
+    $(this).parent().prev().prev().children().children().next().val(0);
+    $(this).parent().prev().children().children().next().val(0);
+    //console.log(descripcion);
+    var render = $(this).parent().parent().next().next();
+    renderTemplateTorno(render, descripcion, cantidad, precio);
+}
+
 function confirmEquipment() {
     var button = $(this);
     $.confirm({
@@ -393,6 +502,8 @@ function confirmEquipment() {
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
+                    var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+
                     var consumablesDescription = [];
                     var consumablesIds = [];
                     var consumablesUnit = [];
@@ -461,8 +572,57 @@ function confirmEquipment() {
                         manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
                     }
 
+                    var tornosDescription = [];
+                    var tornosQuantity = [];
+                    var tornosPrice = [];
+                    var tornosTotal = [];
+
+                    tornos.each(function(e){
+                        $(this).find('[data-tornoDescription]').each(function(){
+                            tornosDescription.push($(this).val());
+                        });
+                        $(this).find('[data-tornoQuantity]').each(function(){
+                            tornosQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-tornoPrice]').each(function(){
+                            tornosPrice.push($(this).val());
+                        });
+                        $(this).find('[data-tornoTotal]').each(function(){
+                            tornosTotal.push($(this).val());
+                        });
+                    });
+
+                    var tornosArray = [];
+
+                    for (let i = 0; i < tornosDescription.length; i++) {
+                        tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
+                    }
+
+                    var totalEquipment = 0;
+                    for (let i = 0; i < $items.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                    }
+                    for (let i = 0; i < tornosTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
+                    }
+                    for (let i = 0; i < manosTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
+                    }
+                    for (let i = 0; i < consumablesTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+                    }
+                    totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+
+                    $total = parseFloat($total) + parseFloat(totalEquipment);
+
+                    $('#subtotal').html('S/. '+$total);
+
+                    calculateMargen2($('#utility').val());
+                    calculateLetter2($('#letter').val());
+                    calculateRent2($('#taxes').val());
+
                     button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray});
 
                     $items = [];
                     $.alert("Equipo confirmado!");
@@ -485,6 +645,84 @@ function mayus(e) {
     e.value = e.value.toUpperCase();
 }
 
+function calculateMargen(e) {
+    var margen = e.value;
+
+    var letter = $('#letter').val() ;
+    var rent = $('#taxes').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+
+    $('#subtotal2').html('S/. '+$subtotal);
+    $('#subtotal3').html('S/. '+$subtotal2);
+    $('#total').html('S/. '+$subtotal3);
+}
+
+function calculateLetter(e) {
+    var letter = e.value;
+    var margen = $('#utility').val() ;
+    var rent = $('#taxes').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+    $('#subtotal3').html('S/. '+$subtotal2);
+    $('#total').html('S/. '+$subtotal3);
+}
+
+function calculateRent(e) {
+    var rent = e.value;
+    var margen = $('#utility').val();
+    var letter = $('#letter').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+
+    $('#total').html('S/. '+$subtotal3);
+
+}
+
+function calculateMargen2(margen) {
+    var letter = $('#letter').val() ;
+    var rent = $('#taxes').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+
+    $('#subtotal2').html('S/. '+$subtotal);
+    $('#subtotal3').html('S/. '+$subtotal2);
+    $('#total').html('S/. '+$subtotal3);
+
+}
+
+function calculateLetter2(letter) {
+    var margen = $('#utility').val() ;
+    var rent = $('#taxes').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+    $('#subtotal3').html('S/. '+$subtotal2);
+    $('#total').html('S/. '+$subtotal3);
+
+}
+
+function calculateRent2(rent) {
+    var margen = $('#utility').val();
+    var letter = $('#letter').val() ;
+
+    $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
+    $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
+    $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
+
+    $('#total').html('S/. '+$subtotal3);
+
+}
+
 function calculateTotal(e) {
     var cantidad = e.value;
     var precio = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
@@ -501,8 +739,16 @@ function calculateTotal2(e) {
 
 function addEquipment() {
     // TODO: Aqui voy a preguntar si hay equipos con
-    var confirmEquipment = $(this).parent().parent().next().children().children();
-    $equipmentStatus = confirmEquipment.css('display') === 'none';
+    var result = document.querySelectorAll('[data-equip]');
+    //console.log(result);
+    for (var index in result){
+        if (result.hasOwnProperty(index)){
+            if(result[index].getAttribute('style')!==null){
+                //console.log(result[index].getAttribute('style'));
+                $equipmentStatus=true;
+            }
+        }
+    }
 
     if ( !$equipmentStatus )
     {
@@ -1077,6 +1323,16 @@ function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
     clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
     clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+
+    render.append(clone);
+}
+
+function renderTemplateTorno(render, description, quantity, unitPrice) {
+    var clone = activateTemplate('#template-torno');
+    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+    clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
+    clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
 
     render.append(clone);
 }

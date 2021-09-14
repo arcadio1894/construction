@@ -6,6 +6,7 @@ use App\Customer;
 use App\Equipment;
 use App\EquipmentConsumable;
 use App\EquipmentMaterial;
+use App\EquipmentTurnstile;
 use App\EquipmentWorkforce;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
@@ -56,7 +57,10 @@ class QuoteController extends Controller
                 'way_to_pay' => $request->get('way_to_pay'),
                 'delivery_time' => $request->get('delivery_time'),
                 'customer_id' => $request->get('customer_id'),
-                'state' => 'created'
+                'state' => 'created',
+                'utility' => $request->get('utility'),
+                'letter' => $request->get('letter'),
+                'rent' => $request->get('taxes')
             ]);
 
             $equipments = json_decode($request->get('equipments'));
@@ -78,11 +82,15 @@ class QuoteController extends Controller
 
                 $totalWorkforces = 0;
 
+                $totalTornos = 0;
+
                 $materials = $equipments[$i]->materials;
 
                 $consumables = $equipments[$i]->consumables;
 
                 $workforces = $equipments[$i]->workforces;
+
+                $tornos = $equipments[$i]->tornos;
 
                 for ( $j=0; $j<sizeof($materials); $j++ )
                 {
@@ -133,9 +141,22 @@ class QuoteController extends Controller
                     $totalWorkforces += $equipmentWorkforce->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces) * (float)$equipment->quantity;;
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmenttornos = EquipmentTurnstile::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'price' => (float) $tornos[$r]->price,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'total' => (float) $tornos[$r]->total
+                    ]);
 
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces)* (float)$equipment->quantity;
+                    $totalTornos += $equipmenttornos->total;
+                }
+
+                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity;;
+
+                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos)* (float)$equipment->quantity;
 
                 $equipment->save();
             }
@@ -164,7 +185,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces']);
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
         //dump($quote);
         return view('quote.show', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
@@ -181,7 +202,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces']);
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
         //dump($quote);
         return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
@@ -203,6 +224,9 @@ class QuoteController extends Controller
             $quote->way_to_pay = $request->get('way_to_pay');
             $quote->delivery_time = $request->get('delivery_time');
             $quote->customer_id = $request->get('customer_id');
+            $quote->utility = $request->get('utility');
+            $quote->letter = $request->get('letter');
+            $quote->rent = $request->get('taxes');
             $quote->save();
 
             $equipments = json_decode($request->get('equipments'));
@@ -224,11 +248,15 @@ class QuoteController extends Controller
 
                 $totalWorkforces = 0;
 
+                $totalTornos = 0;
+
                 $materials = $equipments[$i]->materials;
 
                 $consumables = $equipments[$i]->consumables;
 
                 $workforces = $equipments[$i]->workforces;
+
+                $tornos = $equipments[$i]->tornos;
 
                 for ( $j=0; $j<sizeof($materials); $j++ )
                 {
@@ -279,9 +307,22 @@ class QuoteController extends Controller
                     $totalWorkforces += $equipmentWorkforce->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces) * (float)$equipment->quantity;;
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmentTornos = EquipmentTurnstile::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'price' => (float) $tornos[$r]->price,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'total' => (float) $tornos[$r]->total
+                    ]);
 
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces)* (float)$equipment->quantity;
+                    $totalTornos += $equipmentTornos->total;
+                }
+
+                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity;;
+
+                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos)* (float)$equipment->quantity;
 
                 $equipment->save();
             }
@@ -301,7 +342,8 @@ class QuoteController extends Controller
 
     public function destroy(Quote $quote)
     {
-        //
+        $quote->state = 'canceled';
+        $quote->save();
     }
 
     public function selectMaterials(Request $request)
@@ -351,5 +393,15 @@ class QuoteController extends Controller
     {
         $quotes = Quote::with('customer')->get();
         return datatables($quotes)->toJson();
+    }
+
+    public function printQuoteToCustomer()
+    {
+        
+    }
+
+    public function printQuoteToInternal()
+    {
+
     }
 }

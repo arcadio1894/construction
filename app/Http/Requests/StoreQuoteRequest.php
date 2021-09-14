@@ -32,6 +32,9 @@ class StoreQuoteRequest extends FormRequest
             'delivery_time' => 'required|string',
             'customer_id' => 'required|exists:customers,id',
             'equipments' => 'required',
+            'utility' => 'required|numeric|between:0,99.99',
+            'letter' => 'required|numeric|between:0,99.99',
+            'taxes' => 'required|numeric|between:0,99.99'
         ];
     }
 
@@ -51,6 +54,15 @@ class StoreQuoteRequest extends FormRequest
             'customer_id.required' => 'El :attribute es obligatoria.',
             'customer_id.exists' => 'El :attribute no existe en la base de datos.',
             'equipments.required' => 'Los :attribute son obligatorios.',
+            'utility.required' => 'La :attribute es obligatoria.',
+            'utility.numeric' => 'La :attribute debe ser un valor numérico.',
+            'utility.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
+            'letter.required' => 'La :attribute es obligatoria.',
+            'letter.numeric' => 'La :attribute debe ser un valor numérico.',
+            'letter.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
+            'taxes.required' => 'La :attribute es obligatoria.',
+            'taxes.numeric' => 'La :attribute debe ser un valor numérico.',
+            'taxes.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
         ];
     }
 
@@ -64,7 +76,10 @@ class StoreQuoteRequest extends FormRequest
             'way_to_pay' => 'formade pago',
             'delivery_time' => 'tiempo de entrega',
             'customer_id' => 'cliente',
-            'equipments' => 'equipos'
+            'equipments' => 'equipos',
+            'utility' => 'utilidad',
+            'letter' => 'letra',
+            'taxes' => 'renta'
         ];
     }
 }

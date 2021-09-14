@@ -597,6 +597,15 @@ Route::middleware('auth')->group(function (){
         Route::post('update/quote', 'QuoteController@update')
             ->name('quote.update')
             ->middleware('permission:update_quote');
+        Route::post('/destroy/quote/{quote}', 'QuoteController@destroy')
+            ->name('quote.destroy')
+            ->middleware('permission:destroy_quote');
+        Route::get('imprimir/cliente/{quote}', 'QuoteController@printQuoteToCustomer')
+            ->name('quote.edit')
+            ->middleware('permission:list_quote');
+        Route::get('imprimir/interno/{quote}', 'QuoteController@printQuoteToInternal')
+            ->name('quote.edit')
+            ->middleware('permission:list_quote');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

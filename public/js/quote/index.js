@@ -69,8 +69,10 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/cotizacion/'+item.id+
-                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir"><i class="fa fa-print"></i></a> ';
+                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
+                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                        '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
 
                     if ( item.state === 'created' ) {
                         if ( $.inArray('update_quote', $permissions) !== -1 ) {
@@ -247,7 +249,7 @@ $(document).ready(function () {
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
-    $(document).on('click', '[data-delete]', openModalDelete);
+    $(document).on('click', '[data-delete]', cancelQuote);
 });
 
 var $formDelete;
@@ -255,14 +257,50 @@ var $modalDelete;
 
 var $permissions;
 
-function openModalDelete() {
-    var subcategory_id = $(this).data('delete');
-    var name = $(this).data('name');
+function cancelQuote() {
+    var quote_id = $(this).data('delete');
+    var description = $(this).data('name');
 
-    $modalDelete.find('[id=subcategory_id]').val(subcategory_id);
-    $modalDelete.find('[id=name]').html(name);
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de eliminar este equipo?',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/destroy/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización anulada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
 
-    $modalDelete.modal('show');
 }
 
 function destroySubCategory() {
