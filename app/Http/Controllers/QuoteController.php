@@ -14,6 +14,7 @@ use App\Material;
 use App\Quote;
 use App\UnitMeasure;
 use App\Workforce;
+use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -395,13 +396,37 @@ class QuoteController extends Controller
         return datatables($quotes)->toJson();
     }
 
-    public function printQuoteToCustomer()
+    public function printQuoteToCustomer($id)
     {
-        
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+            }])->first();
+
+        $view = view('exports.quoteCustomer', compact('quote'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = $quote->code . '.pdf';
+
+        return $pdf->stream($name);
     }
 
-    public function printQuoteToInternal()
+    public function printQuoteToInternal($id)
     {
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+            }])->first();
 
+        $view = view('exports.quoteInternal', compact('quote'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = $quote->code . '.pdf';
+
+        return $pdf->stream($name);
     }
 }

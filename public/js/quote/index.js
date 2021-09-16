@@ -69,9 +69,9 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
+                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
                         '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                    text = text + '<a href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
                         '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
 
                     if ( item.state === 'created' ) {
