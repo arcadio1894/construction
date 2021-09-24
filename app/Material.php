@@ -33,6 +33,11 @@ class Material extends Model
         'typescrap_id'
     ];
 
+    public function setNameProductAttribute($value)
+    {
+        $this->attributes['name_product'] = strtoupper($value);
+    }
+
     public function scopeWhereConsumable($query, $column, $value)
     {
         return $query->where($column, 'like', $value.'%');

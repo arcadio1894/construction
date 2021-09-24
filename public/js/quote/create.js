@@ -1,4 +1,5 @@
 let $materials=[];
+let $materialsTypeahead=[];
 let $consumables=[];
 let $items=[];
 let $equipments=[];
@@ -20,6 +21,17 @@ $(document).ready(function () {
             }
         }
     });
+    $.ajax({
+        url: "/dashboard/get/quote/typeahead/",
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            for (var i=0; i<json.length; i++)
+            {
+                $materialsTypeahead.push(json[i].full_description);
+            }
+        }
+    });
 
     $.ajax({
         url: "/dashboard/get/quote/consumables/",
@@ -29,6 +41,36 @@ $(document).ready(function () {
             for (var i=0; i<json.length; i++)
             {
                 $consumables.push(json[i]);
+            }
+        }
+    });
+
+    /*$('.materialTypeahead').typeahead({
+            hint: true,
+            highlight: true, /!* Enable substring highlighting *!/
+            minLength: 1 /!* Specify minimum characters required for showing suggestions *!/
+        },
+        {
+            limit: 12,
+            source: substringMatcher($materialsTypeahead)
+        });*/
+    $('.material_search').select2({
+        placeholder: 'Selecciona un material',
+        ajax: {
+            url: '/dashboard/select/materials',
+            dataType: 'json',
+            type: 'GET',
+            processResults(data) {
+                //console.log(data);
+                return {
+                    results: $.map(data, function (item) {
+                        //console.log(item.full_description);
+                        return {
+                            text: item.full_description,
+                            id: item.id,
+                        }
+                    })
+                }
             }
         }
     });
@@ -75,26 +117,33 @@ $(document).ready(function () {
         }
     });
 
-    $('.material_search').select2({
+    /*$('.material_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
             url: '/dashboard/select/materials',
             dataType: 'json',
+            delay: 250,
             type: 'GET',
-            processResults(data) {
-                //console.log(data);
+            data: function(params) {
                 return {
-                    results: $.map(data, function (item) {
+                    term: params.term || '',
+                    page: params.page || 1
+                }
+            },
+            processResults: function (data) {
+                return {
+                    results: $.map(data.results, function (item) {
                         //console.log(item.full_description);
                         return {
                             text: item.full_description,
                             id: item.id,
                         }
                     })
-                }
-            }
+                };
+            },
+            cache: true
         }
-    });
+    });*/
 
     $('.consumable_search').select2({
         placeholder: 'Selecciona un consumible',
@@ -127,12 +176,36 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-deleteEquipment]', deleteEquipment);
 
+    $(document).on('click', '[data-saveEquipment]', saveEquipment);
+
 });
 
 var $formCreate;
 var $modalAddMaterial;
 var $material;
 var $renderMaterial;
+
+var substringMatcher = function(strs) {
+    return function findMatches(q, cb) {
+        var matches, substringRegex;
+
+        // an array that will be populated with substring matches
+        matches = [];
+
+        // regex used to determine if a string contains the substring `q`
+        substrRegex = new RegExp(q, 'i');
+
+        // iterate through the pool of strings and for any string that
+        // contains the substring `q`, add it to the `matches` array
+        $.each(strs, function(i, str) {
+            if (substrRegex.test(str)) {
+                matches.push(str);
+            }
+        });
+
+        cb(matches);
+    };
+};
 
 function deleteEquipment() {
     var button = $(this);
@@ -167,6 +240,185 @@ function deleteEquipment() {
                     calculateRent2($('#taxes').val());
 
                     $.alert("Equipo eliminado!");
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Eliminación cancelada.");
+                },
+            },
+        },
+    });
+
+}
+
+function saveEquipment() {
+    var button = $(this);
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'orange',
+        title: 'Guardar cambios',
+        content: '¿Está seguro de guardar los cambios en este equipo?',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    var equipmentId = parseInt(button.data('saveequipment'));
+                    console.log(equipmentId);
+                    var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                    console.log(equipmentDeleted);
+
+                    $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
+                    //button.parent().parent().parent().parent().remove();
+                    /*if ( $equipments.length === 0 ) {
+                        renderTemplateEquipment();
+                        $equipmentStatus = false;
+                    }*/
+
+                    $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                    $('#subtotal').html('S/. '+$total);
+                    calculateMargen2($('#utility').val());
+                    calculateLetter2($('#letter').val());
+                    calculateRent2($('#taxes').val());
+
+                    //TODO: Otra vez guardamos el equipo
+
+                    var quantity = button.parent().parent().next().children().children().children().next().val();
+                    var description = button.parent().parent().next().children().children().next().next().children().next().val();
+                    var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
+                    var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
+                    var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+
+                    var consumablesDescription = [];
+                    var consumablesIds = [];
+                    var consumablesUnit = [];
+                    var consumablesQuantity = [];
+                    var consumablesPrice = [];
+                    var consumablesTotal = [];
+
+                    consumables.each(function(e){
+                        $(this).find('[data-consumableDescription]').each(function(){
+                            consumablesDescription.push($(this).val());
+                        });
+                        $(this).find('[data-consumableId]').each(function(){
+                            consumablesIds.push($(this).val());
+                        });
+                        $(this).find('[data-consumableUnit]').each(function(){
+                            consumablesUnit.push($(this).val());
+                        });
+                        $(this).find('[data-consumableQuantity]').each(function(){
+                            consumablesQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-consumablePrice]').each(function(){
+                            consumablesPrice.push($(this).val());
+                        });
+                        $(this).find('[data-consumableTotal]').each(function(){
+                            consumablesTotal.push($(this).val());
+                        });
+                    });
+
+                    var consumablesArray = [];
+
+                    for (let i = 0; i < consumablesDescription.length; i++) {
+                        consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
+                    }
+
+                    var manosDescription = [];
+                    var manosIds = [];
+                    var manosUnit = [];
+                    var manosQuantity = [];
+                    var manosPrice = [];
+                    var manosTotal = [];
+
+                    workforces.each(function(e){
+                        $(this).find('[data-manoDescription]').each(function(){
+                            manosDescription.push($(this).val());
+                        });
+                        $(this).find('[data-manoId]').each(function(){
+                            manosIds.push($(this).val());
+                        });
+                        $(this).find('[data-manoUnit]').each(function(){
+                            manosUnit.push($(this).val());
+                        });
+                        $(this).find('[data-manoQuantity]').each(function(){
+                            manosQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-manoPrice]').each(function(){
+                            manosPrice.push($(this).val());
+                        });
+                        $(this).find('[data-manoTotal]').each(function(){
+                            manosTotal.push($(this).val());
+                        });
+                    });
+
+                    var manosArray = [];
+
+                    for (let i = 0; i < manosDescription.length; i++) {
+                        manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
+                    }
+
+                    var tornosDescription = [];
+                    var tornosQuantity = [];
+                    var tornosPrice = [];
+                    var tornosTotal = [];
+
+                    tornos.each(function(e){
+                        $(this).find('[data-tornoDescription]').each(function(){
+                            tornosDescription.push($(this).val());
+                        });
+                        $(this).find('[data-tornoQuantity]').each(function(){
+                            tornosQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-tornoPrice]').each(function(){
+                            tornosPrice.push($(this).val());
+                        });
+                        $(this).find('[data-tornoTotal]').each(function(){
+                            tornosTotal.push($(this).val());
+                        });
+                    });
+
+                    var tornosArray = [];
+
+                    for (let i = 0; i < tornosDescription.length; i++) {
+                        tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
+                    }
+
+                    var totalEquipment = 0;
+                    for (let i = 0; i < $items.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                    }
+                    for (let i = 0; i < tornosTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
+                    }
+                    for (let i = 0; i < manosTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
+                    }
+                    for (let i = 0; i < consumablesTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+                    }
+                    totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+
+                    $total = parseFloat($total) + parseFloat(totalEquipment);
+
+                    $('#subtotal').html('S/. '+$total);
+
+                    calculateMargen2($('#utility').val());
+                    calculateLetter2($('#letter').val());
+                    calculateRent2($('#taxes').val());
+
+                    button.attr('data-saveEquipment', $equipments.length);
+                    button.next().attr('data-deleteEquipment', $equipments.length);
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
+
+                    $items = [];
+
+                    $.alert("Equipo guardado!");
 
                 },
             },
@@ -486,12 +738,14 @@ function confirmEquipment() {
                 action: function (e) {
                     //var cantidad = button.parent().parent().next().children().children().children().next();
                     //console.log($(this));
-                    $equipmentStatus = true;
+                    /*$equipmentStatus = true;*/
                     // Quitamos el boton
                     button.hide();
                     //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total});
                     //console.log(button);
                     button.next().show();
+                    button.next().next().show();
+
                     var quantity = button.parent().parent().next().children().children().children().next().val();
                     var description = button.parent().parent().next().children().children().next().next().children().next().val();
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
@@ -616,7 +870,8 @@ function confirmEquipment() {
                     calculateLetter2($('#letter').val());
                     calculateRent2($('#taxes').val());
 
-                    button.next().attr('data-deleteEquipment', $equipments.length);
+                    button.next().attr('data-saveEquipment', $equipments.length);
+                    button.next().next().attr('data-deleteEquipment', $equipments.length);
                     $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
 
                     $items = [];
@@ -736,19 +991,19 @@ function calculateTotal2(e) {
 }
 
 function addEquipment() {
-    var result = document.querySelectorAll('[data-equip]');
+    //var result = document.querySelectorAll('[data-equip]');
     //console.log(result);
-    for (var index in result){
+    /*for (var index in result){
         if (result.hasOwnProperty(index)){
             if(result[index].getAttribute('style')!==null){
                 //console.log(result[index].getAttribute('style'));
                 $equipmentStatus=true;
             }
         }
-    }
+    }*/
     //var equipmentStat = confirmEquipment.css('display') === 'none';
     //console.log(confirmEquipment);
-    if ( !$equipmentStatus )
+    /*if ( !$equipmentStatus )
     {
         toastr.error('Confirme el equipo antes de agregar otro.', 'Error',
             {
@@ -769,7 +1024,7 @@ function addEquipment() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }
+    }*/
 
     renderTemplateEquipment();
 
@@ -793,6 +1048,13 @@ function addEquipment() {
             }
         }
     });
+
+    /*for (var i=0; i<$materials.length; i++)
+    {
+        var newOption = new Option($materials[i].full_description, $materials[i].id, false, false);
+        $('.material_search').append(newOption).trigger('change');
+    }*/
+
     $('.consumable_search').select2({
         placeholder: 'Selecciona un consumible',
         ajax: {
@@ -814,7 +1076,7 @@ function addEquipment() {
         }
     });
 
-    $equipmentStatus = false;
+    //$equipmentStatus = false;
 }
 
 function deleteItem() {

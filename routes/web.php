@@ -580,6 +580,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_quote');
         Route::get('/get/quote/materials', 'QuoteController@getMaterials')
             ->middleware('permission:create_quote');
+        Route::get('/get/quote/typeahead', 'QuoteController@getMaterialsTypeahead')
+            ->middleware('permission:create_quote');
         Route::get('/select/consumables', 'QuoteController@selectConsumables')
             ->middleware('permission:create_quote');
         Route::get('/get/quote/consumables', 'QuoteController@getConsumables')

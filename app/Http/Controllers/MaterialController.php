@@ -72,6 +72,29 @@ class MaterialController extends Controller
 
             ]);
 
+            $description='';
+            $subcategory = ( is_null($material->subcategory) ) ? '': ' '.$material->subcategory->name;
+            $type = ( is_null($material->materialType) ) ? '': ' '.$material->materialType->name;
+            $subtype = ( is_null($material->subType) ) ? '': ' '.$material->subType->name;
+            $warrant = ( is_null($material->warrant) ) ? '': ' '.$material->warrant->name;
+            $quality = ( is_null($material->quality) ) ? '': ' '.$material->quality->name;
+
+            if($material->category_id == 2)
+            {
+                $pos = strripos($material->description, "(*) ");
+                if ( $pos !== false ) {
+                    $description = $description . substr($material->description, 4);
+                } else {
+                    $description = $description.$material->description;
+                }
+            } else {
+                $description = $description.$material->description;
+            }
+
+            $nameComplete = $description . $subcategory . $type . $subtype . $warrant . $quality . $material->measure;
+
+            $material->name_product = $nameComplete;
+
             $length = 5;
             $string = $material->id;
             $code = 'P-'.str_pad($string,$length,"0", STR_PAD_LEFT);
@@ -180,6 +203,29 @@ class MaterialController extends Controller
                 $material->image = $filename;
                 $material->save();
             }
+
+            $description='';
+            $subcategory = ( is_null($material->subcategory) ) ? '': ' '.$material->subcategory->name;
+            $type = ( is_null($material->materialType) ) ? '': ' '.$material->materialType->name;
+            $subtype = ( is_null($material->subType) ) ? '': ' '.$material->subType->name;
+            $warrant = ( is_null($material->warrant) ) ? '': ' '.$material->warrant->name;
+            $quality = ( is_null($material->quality) ) ? '': ' '.$material->quality->name;
+
+            if($material->category_id == 2)
+            {
+                $pos = strripos($material->description, "(*) ");
+                if ( $pos !== false ) {
+                    $description = $description . substr($material->description, 4);
+                } else {
+                    $description = $description.$material->description;
+                }
+            } else {
+                $description = $description.$material->description;
+            }
+
+            $nameComplete = $description . $subcategory . $type . $subtype . $warrant . $quality . $material->measure;
+
+            $material->name_product = $nameComplete;
 
             // TODO: Insertamos las especificaciones
             $specifications = $request->get('specifications');

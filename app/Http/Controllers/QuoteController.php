@@ -40,7 +40,11 @@ class QuoteController extends Controller
         $defaultConsumable = '(*)';
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
-        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces'));
+        $maxId = Quote::max('id')+1;
+        $length = 5;
+        $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote'));
     }
 
     public function store(StoreQuoteRequest $request)
@@ -349,6 +353,40 @@ class QuoteController extends Controller
 
     public function selectMaterials(Request $request)
     {
+        /*$page = $request->get('page');
+
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $search = $request->get('term');
+
+        //$materials = Material::where('description', 'LIKE',  '%' . $search . '%')->orderBy('description')->skip($offset)->take($resultCount)->get(['id','description']);
+        $materials = Material::skip($offset)->take($resultCount)->get()->filter(function ($item) use ($search) {
+            // replace stristr with your choice of matching function
+            return stripos($item->full_description, $search) === false ? false : true;
+
+        });
+
+        //dump($materials[0]->name_product);
+        $count = Count(Material::get()->filter(function ($item) use ($search) {
+            // replace stristr with your choice of matching function
+            return stripos($item->full_description, $search) === false ? false : true;
+
+        }));
+        //dump($count);
+        $endCount = $offset + $resultCount;
+        //dump($endCount);
+        $morePages = $count > $endCount;
+
+        $results = array(
+            "results" => $materials,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+        //dump($results);
+        return response()->json($results);*/
         $materials = [];
 
         if($request->has('q')){
@@ -356,9 +394,11 @@ class QuoteController extends Controller
             $materials = Material::get()->filter(function ($item) use ($search) {
                 // replace stristr with your choice of matching function
                 return false !== stristr($item->full_description, $search);
+
             });
         }
         return json_encode($materials);
+
 
     }
 
@@ -368,18 +408,39 @@ class QuoteController extends Controller
         return $materials;
     }
 
+    public function getMaterialsTypeahead()
+    {
+        $materials = Material::all();
+        return $materials;
+    }
+
     public function selectConsumables(Request $request)
     {
-        $materials = [];
 
-        if($request->has('q')){
-            $search = $request->get('q');
-            $materials = Material::where('category_id', 2)->get()->filter(function ($item) use ($search) {
-                // replace stristr with your choice of matching function
-                return false !== stristr($item->full_description, $search);
-            });
-        }
-        return json_encode($materials);
+        $page = $request->get('page');
+        dump($page);
+        $resultCount = 25;
+
+        $offset = ($page - 1) * $resultCount;
+
+        $search = $request->get('term');
+        $materials = Material::where('category_id', 2)->get()->filter(function ($item) use ($search) {
+            // replace stristr with your choice of matching function
+            return false !== stristr($item->full_description, $search);
+        });
+        dump($materials);
+        $count = Count($materials);
+        $endCount = $offset + $resultCount;
+        $morePages = $count > $endCount;
+
+        $results = array(
+            "results" => $materials,
+            "pagination" => array(
+                "more" => $morePages
+            )
+        );
+        dump($results);
+        //return response()->json($results);
 
     }
 

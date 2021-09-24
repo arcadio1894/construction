@@ -80,7 +80,7 @@
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label for="description">Código de cotización <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="codeQuote" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm">
+                                <input type="text" id="codeQuote" readonly value="{{ $codeQuote }}" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm">
                             </div>
                             <div class="col-md-4" id="sandbox-container">
                                 <label for="date_quote">Fecha de cotización <span class="right badge badge-danger">(*)</span></label>
@@ -138,13 +138,15 @@
                             <a data-confirm class="btn btn-primary btn-sm" data-toggle="tooltip" title="Confirmar" style="">
                                 <i class="fas fa-check-square"></i> Confirmar equipo
                             </a>
+                            <a class="btn btn-warning btn-sm" data-saveEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
+                                <i class="fas fa-check-square"></i> Guardar cambios
+                            </a>
                             <a class="btn btn-danger btn-sm" data-deleteEquipment="" style="display:none" data-toggle="tooltip" title="Quitar">
                                 <i class="fas fa-check-square"></i> Eliminar equipo
                             </a>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
 
                         </div>
                     </div>
@@ -186,6 +188,15 @@
                                             <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
                                             <select class="form-control material_search" style="width:100%" name="material_search"></select>
                                         </div>
+                                        {{--<div class="form-group">
+                                            <label for="material_search">Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control rounded-0 typeahead materialTypeahead" id="name" onkeyup="mayus(this);" name="material_search">
+                                                <span class="input-group-append">
+                                                    <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
+                                                </span>
+                                            </div>
+                                        </div>--}}
                                     </div>
                                     <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
@@ -507,6 +518,7 @@
             </div>
         </div>
 
+        @can('showprices_quote')
         <div class="row">
             <!-- accepted payments column -->
             <div class="col-6">
@@ -723,13 +735,15 @@
                             <a data-confirm class="btn btn-primary btn-sm" data-toggle="tooltip" title="Confirmar" >
                                 <i class="fas fa-check-square"></i> Confirmar equipo
                             </a>
+                            <a class="btn btn-warning btn-sm" data-saveEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
+                                <i class="fas fa-check-square"></i> Guardar cambios
+                            </a>
                             <a class="btn btn-danger btn-sm" data-deleteEquipment="" style="display:none" data-toggle="tooltip" title="Quitar">
                                 <i class="fas fa-check-square"></i> Eliminar equipo
                             </a>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
-                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
 
                         </div>
                     </div>
@@ -1168,6 +1182,7 @@
 @endsection
 
 @section('scripts')
+
     <script>
         $(function () {
             //Initialize Select2 Elements
@@ -1178,6 +1193,10 @@
             $('.unitMeasure').select2({
                 placeholder: "Seleccione unidad",
             });
+
+            $('#date_quote').attr("value", moment().format('DD/MM/YYYY'));
+
+            $('#date_validate').attr("value", moment().add(5, 'days').format('DD/MM/YYYY'));
 
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",
