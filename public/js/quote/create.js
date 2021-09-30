@@ -8,8 +8,11 @@ let $total=0;
 let $subtotal=0;
 let $subtotal2=0;
 let $subtotal3=0;
+var $permissions;
 
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+
     $.ajax({
         url: "/dashboard/get/quote/materials/",
         type: 'GET',
@@ -256,6 +259,7 @@ function deleteEquipment() {
 
 function saveEquipment() {
     var button = $(this);
+    console.log(button);
     $.confirm({
         icon: 'fas fa-frown',
         theme: 'modern',
@@ -279,6 +283,8 @@ function saveEquipment() {
                         renderTemplateEquipment();
                         $equipmentStatus = false;
                     }*/
+                    // TODO: Capturar los materiales y recorrerlos y agregar al anterior
+                    // TODO: En data-delete (material) debe estar el equipo tambien
 
                     $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
                     $('#subtotal').html('S/. '+$total);
@@ -291,9 +297,49 @@ function saveEquipment() {
                     var quantity = button.parent().parent().next().children().children().children().next().val();
                     var description = button.parent().parent().next().children().children().next().next().children().next().val();
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+
+                    var materialsDescription = [];
+                    var materialsUnit = [];
+                    var materialsLargo = [];
+                    var materialsAncho = [];
+                    var materialsQuantity = [];
+                    var materialsPrice = [];
+                    var materialsTotal = [];
+
+                    materials.each(function(e){
+                        $(this).find('[data-materialDescription]').each(function(){
+                            materialsDescription.push($(this).val());
+                        });
+                        $(this).find('[data-materialUnit]').each(function(){
+                            materialsUnit.push($(this).val());
+                        });
+                        $(this).find('[data-materialLargo]').each(function(){
+                            materialsLargo.push($(this).val());
+                        });
+                        $(this).find('[data-materialAncho]').each(function(){
+                            materialsAncho.push($(this).val());
+                        });
+                        $(this).find('[data-materialQuantity]').each(function(){
+                            materialsQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-materialPrice]').each(function(){
+                            materialsPrice.push($(this).val());
+                        });
+                        $(this).find('[data-materialTotal]').each(function(){
+                            materialsTotal.push($(this).val());
+                        });
+                    });
+
+                    var materialsArray = [];
+
+                    for (let i = 0; i < materialsDescription.length; i++) {
+                        var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                        materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                    }
 
                     var consumablesDescription = [];
                     var consumablesIds = [];
@@ -414,7 +460,7 @@ function saveEquipment() {
 
                     button.attr('data-saveEquipment', $equipments.length);
                     button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
 
                     $items = [];
 
@@ -449,68 +495,14 @@ function deleteTorno() {
 }
 
 function addConsumable() {
-    var consumableID = $(this).parent().parent().find('[data-consumable]').val();
-    //console.log(material);
-    var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
-    var cantidad = inputQuantity.val();
-    if ( cantidad === '' || parseInt(cantidad) === 0 )
-    {
-        toastr.error('Debe ingresar una cantidad', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-
-    if ( consumableID === '' || consumableID === null )
-    {
-        toastr.error('Debe seleccionar un consumible', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-
-    var render = $(this).parent().parent().next().next();
-
-    var consumable = $consumables.find( mat=>mat.id === parseInt(consumableID) );
-
-    var consumables = $(this).parent().parent().next().next().children();
-
-    consumables.each(function(e){
-        var id = $(this).children().children().children().next().val();
-        if (parseInt(consumable.id) === parseInt(id)) {
-            inputQuantity.val(0);
-            $(".consumable_search").empty().trigger('change');
-            toastr.error('Este material ya esta seleccionado', 'Error',
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var consumableID = $(this).parent().parent().find('[data-consumable]').val();
+        //console.log(material);
+        var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
+        var cantidad = inputQuantity.val();
+        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        {
+            toastr.error('Debe ingresar una cantidad', 'Error',
                 {
                     "closeButton": true,
                     "debug": false,
@@ -528,198 +520,488 @@ function addConsumable() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
-            e.stopPropagation();
-            return false ;
+            return;
         }
-    });
-    inputQuantity.val(0);
-    $(".consumable_search").empty().trigger('change');
-    renderTemplateConsumable(render, consumable, cantidad);
+
+        if ( consumableID === '' || consumableID === null )
+        {
+            toastr.error('Debe seleccionar un consumible', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var render = $(this).parent().parent().next().next();
+
+        var consumable = $consumables.find( mat=>mat.id === parseInt(consumableID) );
+
+        var consumables = $(this).parent().parent().next().next().children();
+
+        consumables.each(function(e){
+            var id = $(this).children().children().children().next().val();
+            if (parseInt(consumable.id) === parseInt(id)) {
+                inputQuantity.val(0);
+                $(".consumable_search").empty().trigger('change');
+                toastr.error('Este material ya esta seleccionado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                e.stopPropagation();
+                return false ;
+            }
+        });
+        inputQuantity.val(0);
+        $(".consumable_search").empty().trigger('change');
+        renderTemplateConsumable(render, consumable, cantidad);
+    } else {
+        var consumableID2 = $(this).parent().parent().find('[data-consumable]').val();
+        //console.log(material);
+        var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
+        var cantidad2 = inputQuantity2.val();
+        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
+        {
+            toastr.error('Debe ingresar una cantidad', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        if ( consumableID2 === '' || consumableID2 === null )
+        {
+            toastr.error('Debe seleccionar un consumible', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var render2 = $(this).parent().parent().next().next();
+
+        var consumable2 = $consumables.find( mat=>mat.id === parseInt(consumableID2) );
+
+        var consumables2 = $(this).parent().parent().next().next().children();
+
+        consumables2.each(function(e){
+            var id = $(this).children().children().children().next().val();
+            if (parseInt(consumable2.id) === parseInt(id)) {
+                inputQuantity2.val(0);
+                $(".consumable_search").empty().trigger('change');
+                toastr.error('Este material ya esta seleccionado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                e.stopPropagation();
+                return false ;
+            }
+        });
+        inputQuantity2.val(0);
+        $(".consumable_search").empty().trigger('change');
+        renderTemplateConsumable(render2, consumable2, cantidad2);
+    }
+
 }
 
 function addMano() {
-    var precio = $(this).parent().prev().children().children().next().val();
-    var cantidad = $(this).parent().prev().prev().children().children().next().val();
-    var unidad = $(this).parent().prev().prev().prev().children().children().next().next().text();
-    var unidadID = $(this).parent().prev().prev().prev().children().children().next().val();
-    var descripcion = $(this).parent().prev().prev().prev().prev().children().children().next().val();
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var precio = $(this).parent().prev().children().children().next().val();
+        var cantidad = $(this).parent().prev().prev().children().children().next().val();
+        var unidad = $(this).parent().prev().prev().prev().children().children().next().next().text();
+        var unidadID = $(this).parent().prev().prev().prev().children().children().next().val();
+        var descripcion = $(this).parent().prev().prev().prev().prev().children().children().next().val();
 
-    if ( descripcion === '' )
-    {
-        toastr.error('Escriba una descripción adecuada.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if ( unidadID === '' || parseInt(unidadID) === 0 )
-    {
-        toastr.error('Seleccione una unidad válida.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if ( cantidad === '' || parseInt(cantidad) === 0 )
-    {
-        toastr.error('Agregue una cantidad válida.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if ( precio === '' || parseFloat(precio) === 0 )
-    {
-        toastr.error('Agregue un precio válido.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
+        if ( descripcion === '' )
+        {
+            toastr.error('Escriba una descripción adecuada.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( unidadID === '' || parseInt(unidadID) === 0 )
+        {
+            toastr.error('Seleccione una unidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        {
+            toastr.error('Agregue una cantidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( precio === '' || parseFloat(precio) === 0 )
+        {
+            toastr.error('Agregue un precio válido.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $(this).parent().prev().prev().prev().prev().children().children().next().val('');
+        $(".unitMeasure").val('').trigger('change');
+        $(this).parent().prev().prev().children().children().next().val(0);
+        $(this).parent().prev().children().children().next().val(0);
+        //console.log(descripcion);
+        var render = $(this).parent().next().next().next();
+        renderTemplateMano(render, descripcion, unidad, cantidad, precio);
+    } else {
+        var precio2 = 0;
+        var cantidad2 = $(this).parent().prev().children().children().next().val();
+        var unidad2 = $(this).parent().prev().prev().children().children().next().next().text();
+        var unidadID2 = $(this).parent().prev().prev().children().children().next().val();
+        var descripcion2 = $(this).parent().prev().prev().prev().children().children().next().val();
+
+        if ( descripcion2 === '' )
+        {
+            toastr.error('Escriba una descripción adecuada.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( unidadID2 === '' || parseInt(unidadID2) === 0 )
+        {
+            toastr.error('Seleccione una unidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
+        {
+            toastr.error('Agregue una cantidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+
+        $(this).parent().prev().prev().prev().children().children().next().val('');
+        $(".unitMeasure").val('').trigger('change');
+        $(this).parent().prev().children().children().next().val(0);
+        $(this).parent().children().children().next().val(0);
+        //console.log(descripcion);
+        var render2 = $(this).parent().parent().next().next().next();
+        console.log(render2);
+        renderTemplateMano(render2, descripcion2, unidad2, cantidad2, precio2);
     }
 
-    $(this).parent().prev().prev().prev().prev().children().children().next().val('');
-    $(".unitMeasure").empty().trigger('change');
-    $(this).parent().prev().prev().children().children().next().val(0);
-    $(this).parent().prev().children().children().next().val(0);
-    //console.log(descripcion);
-    var render = $(this).parent().parent().next().next();
-    renderTemplateMano(render, descripcion, unidad, cantidad, precio);
 }
 
 function addTorno() {
-    var precio = $(this).parent().prev().children().children().next().val();
-    var cantidad = $(this).parent().prev().prev().children().children().next().val();
-    var descripcion = $(this).parent().prev().prev().prev().children().children().next().val();
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var precio = $(this).parent().prev().children().children().next().val();
+        var cantidad = $(this).parent().prev().prev().children().children().next().val();
+        var descripcion = $(this).parent().prev().prev().prev().children().children().next().val();
 
-    if ( descripcion === '' )
-    {
-        toastr.error('Escriba una descripción adecuada.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if ( cantidad === '' || parseInt(cantidad) === 0 )
-    {
-        toastr.error('Agregue una cantidad válida.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if ( precio === '' || parseFloat(precio) === 0 )
-    {
-        toastr.error('Agregue un precio válido.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
+        if ( descripcion === '' )
+        {
+            toastr.error('Escriba una descripción adecuada.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        {
+            toastr.error('Agregue una cantidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( precio === '' || parseFloat(precio) === 0 )
+        {
+            toastr.error('Agregue un precio válido.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $(this).parent().prev().prev().prev().children().children().next().val('');
+        $(this).parent().prev().prev().children().children().next().val(0);
+        $(this).parent().prev().children().children().next().val(0);
+        //console.log(descripcion);
+        var render = $(this).parent().parent().next().next();
+        renderTemplateTorno(render, descripcion, cantidad, precio);
+    } else {
+        var precio2 = 0;
+        var cantidad2 = $(this).parent().prev().children().children().next().val();
+        var descripcion2 = $(this).parent().prev().prev().children().children().next().val();
+        console.log($(this).parent().prev().children().children().next());
+        console.log($(this).parent().prev().prev().children().children().next());
+        if ( descripcion2 === '' )
+        {
+            toastr.error('Escriba una descripción adecuada.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
+        {
+            toastr.error('Agregue una cantidad válida.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $(this).parent().prev().children().children().next().val(0);
+        $(this).parent().prev().prev().children().children().next().val('');
+
+        //console.log(descripcion);
+        var render2 = $(this).parent().parent().next().next();
+        renderTemplateTorno(render2, descripcion2, cantidad2, precio2);
     }
 
-    $(this).parent().prev().prev().prev().children().children().next().val('');
-    $(this).parent().prev().prev().children().children().next().val(0);
-    $(this).parent().prev().children().children().next().val(0);
-    //console.log(descripcion);
-    var render = $(this).parent().parent().next().next();
-    renderTemplateTorno(render, descripcion, cantidad, precio);
 }
 
 function confirmEquipment() {
@@ -749,9 +1031,49 @@ function confirmEquipment() {
                     var quantity = button.parent().parent().next().children().children().children().next().val();
                     var description = button.parent().parent().next().children().children().next().next().children().next().val();
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+
+                    var materialsDescription = [];
+                    var materialsUnit = [];
+                    var materialsLargo = [];
+                    var materialsAncho = [];
+                    var materialsQuantity = [];
+                    var materialsPrice = [];
+                    var materialsTotal = [];
+
+                    materials.each(function(e){
+                        $(this).find('[data-materialDescription]').each(function(){
+                            materialsDescription.push($(this).val());
+                        });
+                        $(this).find('[data-materialUnit]').each(function(){
+                            materialsUnit.push($(this).val());
+                        });
+                        $(this).find('[data-materialLargo]').each(function(){
+                            materialsLargo.push($(this).val());
+                        });
+                        $(this).find('[data-materialAncho]').each(function(){
+                            materialsAncho.push($(this).val());
+                        });
+                        $(this).find('[data-materialQuantity]').each(function(){
+                            materialsQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-materialPrice]').each(function(){
+                            materialsPrice.push($(this).val());
+                        });
+                        $(this).find('[data-materialTotal]').each(function(){
+                            materialsTotal.push($(this).val());
+                        });
+                    });
+
+                    var materialsArray = [];
+
+                    for (let i = 0; i < materialsDescription.length; i++) {
+                        var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                        materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                    }
 
                     var consumablesDescription = [];
                     var consumablesIds = [];
@@ -872,7 +1194,7 @@ function confirmEquipment() {
 
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': $items, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
 
                     $items = [];
                     $.alert("Equipo confirmado!");
@@ -1083,7 +1405,7 @@ function deleteItem() {
     //console.log($(this).parent().parent().parent());
     $(this).parent().parent().remove();
     var itemId = $(this).data('delete');
-    $items = $items.filter(item => item.id !== itemId);
+    //$items = $items.filter(item => item.id !== itemId);
 }
 
 function calculatePercentage() {
@@ -1194,132 +1516,239 @@ function calculatePercentage() {
 }
 
 function addTableMaterials() {
-    if( $('#material_length_entered').val().trim() === '' && $("#length_entered_material").attr('style') === '' )
-    {
-        toastr.error('Debe ingresar la longitud del material', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if( $('#material_width_entered').val().trim() === '' && $("#width_entered_material").attr('style') === '' )
-    {
-        toastr.error('Debe ingresar el ancho del material', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if( $("#material_quantity_entered").css('display') === '' && $('#material_quantity_entered').val().trim() === '' )
-    {
-        toastr.error('Debe ingresar la cantidad del material', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if( $('#material_percentage_entered').val().trim() === '' )
-    {
-        toastr.error('Debe hacer click en calcular', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-    if( $('#material_price_entered').val().trim() === '' )
-    {
-        toastr.error('Debe hacer click en calcular', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        if( $('#material_length_entered').val().trim() === '' && $("#length_entered_material").attr('style') === '' )
+        {
+            toastr.error('Debe ingresar la longitud del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $('#material_width_entered').val().trim() === '' && $("#width_entered_material").attr('style') === '' )
+        {
+            toastr.error('Debe ingresar el ancho del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $("#material_quantity_entered").css('display') === '' && $('#material_quantity_entered').val().trim() === '' )
+        {
+            toastr.error('Debe ingresar la cantidad del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $('#material_percentage_entered').val().trim() === '' )
+        {
+            toastr.error('Debe hacer click en calcular', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $('#material_price_entered').val().trim() === '' )
+        {
+            toastr.error('Debe hacer click en calcular', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var material_quantity = ($("#material_quantity_entered").css('display') === '') ? $("#material_quantity_entered").val(): $("#material_percentage_entered").val();
+        var total = $("#material_price_entered").val();
+        var length = $('#material_length_entered').val();
+        var witdh = $('#material_width_entered').val();
+
+        //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
+        console.log($renderMaterial);
+        renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh);
+
+        $('#material_length_entered').val('');
+        $('#material_width_entered').val('');
+        $('#material_percentage_entered').val('');
+        $('#material_price_entered').val('');
+        $('#material_quantity_entered').val('');
+        $(".material_search").empty().trigger('change');
+        $modalAddMaterial.modal('hide');
+    } else {
+        if( $('#material_length_entered').val().trim() === '' && $("#length_entered_material").attr('style') === '' )
+        {
+            toastr.error('Debe ingresar la longitud del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $('#material_width_entered').val().trim() === '' && $("#width_entered_material").attr('style') === '' )
+        {
+            toastr.error('Debe ingresar el ancho del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $("#material_quantity_entered").css('display') === '' && $('#material_quantity_entered').val().trim() === '' )
+        {
+            toastr.error('Debe ingresar la cantidad del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( $('#material_percentage_entered').val().trim() === '' )
+        {
+            toastr.error('Debe hacer click en calcular', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var material_quantity2 = ($("#material_quantity_entered").css('display') === '') ? $("#material_quantity_entered").val(): $("#material_percentage_entered").val();
+        var length2 = $('#material_length_entered').val();
+        var witdh2 = $('#material_width_entered').val();
+        console.log($renderMaterial);
+        //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity2, 'material_price':0, 'material_length':length2, 'material_width':witdh2});
+        renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2);
+
+        $('#material_length_entered').val('');
+        $('#material_width_entered').val('');
+        $('#material_percentage_entered').val('');
+        $('#material_quantity_entered').val('');
+        $(".material_search").empty().trigger('change');
+        $modalAddMaterial.modal('hide');
     }
 
-    var material_quantity = ($("#material_quantity_entered").css('display') === '') ? $("#material_quantity_entered").val(): $("#material_percentage_entered").val();
-    var total = $("#material_price_entered").val();
-    var length = $('#material_length_entered').val();
-    var witdh = $('#material_width_entered').val();
-
-    $items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
-    renderTemplateMaterial($items.length, $material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial);
-
-    $('#material_length_entered').val('');
-    $('#material_width_entered').val('');
-    $('#material_percentage_entered').val('');
-    $('#material_price_entered').val('');
-    $('#material_quantity_entered').val('');
-    $(".material_search").empty().trigger('change');
-    $modalAddMaterial.modal('hide');
 }
 
 function addMaterial() {
@@ -1390,7 +1819,7 @@ function addMaterial() {
         $('#quantity_entered_material').show();
         $('#material_price').val($material.unit_price);
 
-        $renderMaterial = $(this).parent().parent().next().next().children().children().next();
+        $renderMaterial = $(this).parent().parent().next().next().next();
 
         $modalAddMaterial.modal('show');
     } else {
@@ -1440,7 +1869,7 @@ function addMaterial() {
         }
         //var idMaterial = $(this).select2('data').id;
 
-        $renderMaterial = $(this).parent().parent().next().next().children().children().next();
+        $renderMaterial = $(this).parent().parent().next().next().next();
 
         $modalAddMaterial.modal('show');
     }
@@ -1450,7 +1879,7 @@ function addMaterial() {
 
 function storeQuote() {
     event.preventDefault();
-    if( $equipments.length === 0 )
+    /*if( $equipments.length === 0 )
     {
         toastr.error('No se puede crear una cotización sin equipos.', 'Error',
             {
@@ -1471,7 +1900,7 @@ function storeQuote() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }
+    }*/
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
@@ -1555,28 +1984,60 @@ function storeQuote() {
     });
 }
 
-function renderTemplateMaterial(id, code, description, quantity, unit, price, total, render) {
-    var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-description]").innerHTML = description;
-    clone.querySelector("[data-unit]").innerHTML = unit;
-    clone.querySelector("[data-quantity]").innerHTML = quantity;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-total]").innerHTML = total;
-    clone.querySelector("[data-delete]").setAttribute('data-delete', id);
-    render.append(clone);
+function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width) {
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var clone = activateTemplate('#materials-selected');
+        clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+        clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
+        clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+        clone.querySelector("[data-materialAncho]").setAttribute('value', width);
+        clone.querySelector("[data-materialQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-materialPrice]").setAttribute('value', price);
+        clone.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
+        clone.querySelector("[data-delete]").setAttribute('data-delete', code);
+        render.append(clone);
+    } else {
+        var clone2 = activateTemplate('#materials-selected');
+        clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+        clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
+        clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
+        clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
+        clone2.querySelector("[data-materialQuantity]").setAttribute('value', quantity);
+        clone2.querySelector("[data-materialPrice]").setAttribute('value', price);
+        clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
+        clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-materialTotal]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-delete]").setAttribute('data-delete', code);
+        render.append(clone2);
+    }
 }
 
 function renderTemplateConsumable(render, consumable, quantity) {
-    var clone = activateTemplate('#template-consumable');
-    clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-    clone.querySelector("[data-consumableId]").setAttribute('value', consumable.id);
-    clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
-    clone.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
-    clone.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
-    clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
-    clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
-    render.append(clone);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var clone = activateTemplate('#template-consumable');
+        clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        clone.querySelector("[data-consumableId]").setAttribute('value', consumable.id);
+        clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
+        clone.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
+        clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
+        render.append(clone);
+    } else {
+        var clone2 = activateTemplate('#template-consumable');
+        clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        clone2.querySelector("[data-consumableId]").setAttribute('value', consumable.id);
+        clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
+        clone2.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
+        clone2.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
+        clone2.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-consumablePrice]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-consumableTotal]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
+        render.append(clone2);
+    }
+
+
 }
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {

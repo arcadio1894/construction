@@ -57,6 +57,8 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <form id="formCreate" class="form-horizontal" data-url="{{ route('quote.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
@@ -188,15 +190,6 @@
                                             <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
                                             <select class="form-control material_search" style="width:100%" name="material_search"></select>
                                         </div>
-                                        {{--<div class="form-group">
-                                            <label for="material_search">Seleccionar material <span class="right badge badge-danger">(*)</span></label>
-                                            <div class="input-group mb-3">
-                                                <input type="text" class="form-control rounded-0 typeahead materialTypeahead" id="name" onkeyup="mayus(this);" name="material_search">
-                                                <span class="input-group-append">
-                                                    <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
-                                                </span>
-                                            </div>
-                                        </div>--}}
                                     </div>
                                     <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
@@ -205,6 +198,51 @@
                                 </div>
                                 <hr>
                                 <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <strong>Material</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Largo</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Ancho</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyMaterials>
+
+                                </div>
+                                {{--<div class="row">
                                     <table class="table table-head-fixed text-nowrap">
                                         <thead>
                                         <tr>
@@ -222,7 +260,7 @@
                                         </tbody>
 
                                     </table>
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
 
@@ -372,6 +410,7 @@
                                                 ">
                                         </div>
                                     </div>
+                                    @can('showPrices_quote')
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -380,6 +419,7 @@
                                                 ">
                                         </div>
                                     </div>
+                                    @endcan
                                     <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-addMano class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -446,7 +486,7 @@
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $workforce->unit_price }}" onkeyup="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " >
+                                                " @cannot('showPrices_quote') readonly @endcannot >
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -488,6 +528,7 @@
                                                 ">
                                                 </div>
                                             </div>
+                                            @can('showPrices_quote')
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -496,6 +537,7 @@
                                                 ">
                                                 </div>
                                             </div>
+                                            @endcan
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -518,7 +560,7 @@
             </div>
         </div>
 
-        @can('showprices_quote')
+        @can('showPrices_quote')
         <div class="row">
             <!-- accepted payments column -->
             <div class="col-6">
@@ -590,19 +632,63 @@
             </div>
             <!-- /.col -->
         </div>
+        @endcan
 
         <template id="materials-selected">
-            <tr>
-                <td data-code>183</td>
-                <td data-description>John Doe</td>
-                <td data-unit>11-7-2014</td>
-                <td data-quantity>John Doe</td>
-                <td data-price>11-7-2014</td>
-                <td data-total>11-7-2014</td>
-                <td>
-                    <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                </td>
-            </tr>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialUnit readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialLargo step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialAncho step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" data-delete class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                </div>
+            </div>
         </template>
 
         <template id="template-consumable">
@@ -673,7 +759,7 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal2(this);" data-manoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            ">
+                            " @cannot('showPrices_quote') readonly @endcannot >
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -709,7 +795,7 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            ">
+                            " @cannot('showPrices_quote') readonly @endcannot  >
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -793,23 +879,49 @@
                                 </div>
                                 <hr>
                                 <div class="row">
-                                    <table class="table table-head-fixed text-nowrap">
-                                        <thead>
-                                        <tr>
-                                            <th>Codigo</th>
-                                            <th>Material</th>
-                                            <th>Unidad</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio</th>
-                                            <th>Importe</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody data-bodyMaterials>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <strong>Material</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Largo</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Ancho</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyMaterials>
 
-                                        </tbody>
-
-                                    </table>
                                 </div>
                             </div>
                         </div>
@@ -1081,6 +1193,7 @@
                                 <input type="text" id="material_quantity" name="material_quantity" class="form-control" readonly />
                             </div>
                         </div>
+                        @can('showPrices_quote')
                         <div class="col-md-3" id="price_material">
                             <label class="col-sm-12 control-label" for="material_price"> Precio </label>
 
@@ -1088,7 +1201,7 @@
                                 <input type="text" id="material_price" name="material_price" class="form-control" readonly />
                             </div>
                         </div>
-
+                        @endcan
                     </div>
                     <br>
                     <div class="row" id="presentation">
@@ -1149,6 +1262,7 @@
                                 <input type="text" id="material_percentage_entered" name="material_percentage_entered" class="form-control" readonly />
                             </div>
                         </div>
+                        @can('showPrices_quote')
                         <div class="col-md-2" id="price_entered_material">
                             <label class="col-sm-12 control-label" for="material_price_entered"> Total </label>
 
@@ -1156,7 +1270,7 @@
                                 <input type="text" id="material_price_entered" name="material_price_entered" class="form-control" readonly />
                             </div>
                         </div>
-
+                        @endcan
                     </div>
 
                 </div>

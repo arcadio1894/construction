@@ -35,6 +35,8 @@ class QuoteController extends Controller
 
     public function create()
     {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
@@ -44,7 +46,7 @@ class QuoteController extends Controller
         $length = 5;
         $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote'));
+        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions'));
     }
 
     public function store(StoreQuoteRequest $request)
@@ -63,9 +65,9 @@ class QuoteController extends Controller
                 'delivery_time' => $request->get('delivery_time'),
                 'customer_id' => $request->get('customer_id'),
                 'state' => 'created',
-                'utility' => $request->get('utility'),
-                'letter' => $request->get('letter'),
-                'rent' => $request->get('taxes')
+                'utility' => ($request->has('utility')) ? $request->has('utility'): 0,
+                'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
+                'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
             ]);
 
             $equipments = json_decode($request->get('equipments'));
@@ -198,6 +200,8 @@ class QuoteController extends Controller
 
     public function edit($id)
     {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
@@ -210,7 +214,7 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
         //dump($quote);
-        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
+        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
 
     }
 
@@ -229,9 +233,9 @@ class QuoteController extends Controller
             $quote->way_to_pay = $request->get('way_to_pay');
             $quote->delivery_time = $request->get('delivery_time');
             $quote->customer_id = $request->get('customer_id');
-            $quote->utility = $request->get('utility');
-            $quote->letter = $request->get('letter');
-            $quote->rent = $request->get('taxes');
+            $quote->utility = ($request->has('utility')) ? $request->has('utility'): 0;
+            $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
+            $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
             $quote->save();
 
             $equipments = json_decode($request->get('equipments'));
@@ -417,7 +421,7 @@ class QuoteController extends Controller
     public function selectConsumables(Request $request)
     {
 
-        $page = $request->get('page');
+        /*$page = $request->get('page');
         dump($page);
         $resultCount = 25;
 
@@ -439,9 +443,18 @@ class QuoteController extends Controller
                 "more" => $morePages
             )
         );
-        dump($results);
+        dump($results);*/
         //return response()->json($results);
+        $materials = [];
 
+        if($request->has('q')){
+            $search = $request->get('q');
+            $materials = Material::where('category_id', 2)->get()->filter(function ($item) use ($search) {
+                // replace stristr with your choice of matching function
+                return false !== stristr($item->full_description, $search);
+            });
+        }
+        return json_encode($materials);
     }
 
     public function getConsumables()
