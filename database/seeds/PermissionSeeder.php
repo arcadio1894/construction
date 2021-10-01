@@ -187,6 +187,11 @@ class PermissionSeeder extends Seeder
         ]);
 
         Permission::create([
+            'name' => 'showPrices_quote',
+            'description' => 'Ver precios Cotizacion'
+        ]);
+
+        Permission::create([
             'name' => 'list_area',
             'description' => 'Listar Áreas'
         ]);
