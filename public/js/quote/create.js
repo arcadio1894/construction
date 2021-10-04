@@ -24,17 +24,6 @@ $(document).ready(function () {
             }
         }
     });
-    $.ajax({
-        url: "/dashboard/get/quote/typeahead/",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $materialsTypeahead.push(json[i].full_description);
-            }
-        }
-    });
 
     $.ajax({
         url: "/dashboard/get/quote/consumables/",
@@ -48,16 +37,29 @@ $(document).ready(function () {
         }
     });
 
-    /*$('.materialTypeahead').typeahead({
+    $.ajax({
+        url: "/dashboard/get/materials",
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            for (var i=0; i<json.length; i++)
+            {
+                $materialsTypeahead.push(json[i].material);
+            }
+
+        }
+    });
+
+    $('.materialTypeahead').typeahead({
             hint: true,
-            highlight: true, /!* Enable substring highlighting *!/
-            minLength: 1 /!* Specify minimum characters required for showing suggestions *!/
+            highlight: true, /* Enable substring highlighting */
+            minLength: 1 /* Specify minimum characters required for showing suggestions */
         },
         {
             limit: 12,
             source: substringMatcher($materialsTypeahead)
-        });*/
-    $('.material_search').select2({
+        });
+    /*$('.material_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
             url: '/dashboard/select/materials',
@@ -76,7 +78,7 @@ $(document).ready(function () {
                 }
             }
         }
-    });
+    });*/
 
     $modalAddMaterial = $('#modalAddMaterial');
 
@@ -87,6 +89,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-addMano]', addMano);
 
     $(document).on('click', '[data-addTorno]', addTorno);
+
+    $(document).on('click', '[data-addDia]', addDia);
 
     $(document).on('click', '[data-addConsumable]', addConsumable);
 
@@ -177,10 +181,134 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-deleteTorno]', deleteTorno);
 
+    $(document).on('click', '[data-deleteDia]', deleteDia);
+
     $(document).on('click', '[data-deleteEquipment]', deleteEquipment);
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
 
+    $('.materialTypeahead').bind('typeahead:select', function(ev, suggestion) {
+        var select_material = $(this);
+        console.log($(this).val());
+        // TODO: Tomar el texto no el val()
+        var material_search = select_material.val();
+
+        $material = $materials.find( mat=>mat.full_description === material_search );
+
+        if( $material === undefined )
+        {
+            toastr.error('Debe seleccionar un material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        /*for (var i=0; i<$items.length; i++)
+        {
+            var mat = $items.find( mat=>mat.material.id === $material.id );
+            if (mat !== undefined)
+            {
+                toastr.error('Este material ya esta seleccionado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }*/
+
+        if ( $material.type_scrap === null )
+        {
+            $('#presentation').hide();
+            $('#length_material').hide();
+            $('#width_material').hide();
+            $('#width_entered_material').hide();
+            $('#length_entered_material').hide();
+            $('#material_quantity').val($material.stock_current);
+            $('#quantity_entered_material').show();
+            $('#material_price').val($material.unit_price);
+
+            // TODO: Render esta fallando
+            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
+            $modalAddMaterial.modal('show');
+        } else {
+            switch($material.type_scrap.id) {
+                case 1:
+                    $('#presentation').show();
+                    $("#fraction").prop("checked", true);
+                    $('#length_entered_material').show();
+                    $('#width_entered_material').show();
+                    $('#material_length').val($material.type_scrap.length);
+                    $('#material_width').val($material.type_scrap.width);
+                    $('#material_quantity').val($material.stock_current);
+                    $('#quantity_entered_material').hide();
+                    $('#material_price').val($material.unit_price);
+                    break;
+                case 2:
+                    $('#presentation').show();
+                    $("#fraction").prop("checked", true);
+                    $('#length_entered_material').show();
+                    $('#width_entered_material').show();
+                    $('#material_length').val($material.type_scrap.length);
+                    $('#material_width').val($material.type_scrap.width);
+                    $('#quantity_entered_material').hide();
+                    $('#material_quantity').val($material.stock_current);
+                    $('#material_price').val($material.unit_price);
+                    break;
+                case 3:
+                    $('#presentation').show();
+                    $("#fraction").prop("checked", true);
+                    $('#length_entered_material').show();
+                    $('#material_length').val($material.type_scrap.length);
+                    $('#width_material').hide();
+                    $('#width_entered_material').hide();
+                    $('#quantity_entered_material').hide();
+                    $('#material_quantity').val($material.stock_current);
+                    $('#material_price').val($material.unit_price);
+                    break;
+                default:
+                    $('#length_material').hide();
+                    $('#width_material').hide();
+                    $('#width_entered_material').hide();
+                    $('#length_entered_material').hide();
+                    $('#material_quantity').val($material.stock_current);
+                    $('#material_percentage_entered').hide();
+                    $('#material_price').val($material.unit_price);
+
+            }
+            //var idMaterial = $(this).select2('data').id;
+            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
+            $modalAddMaterial.modal('show');
+        }
+    });
 });
 
 var $formCreate;
@@ -261,7 +389,7 @@ function saveEquipment() {
     var button = $(this);
     console.log(button);
     $.confirm({
-        icon: 'fas fa-frown',
+        icon: 'fas fa-smile',
         theme: 'modern',
         closeIcon: true,
         animation: 'zoom',
@@ -301,6 +429,7 @@ function saveEquipment() {
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+                    var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
 
                     var materialsDescription = [];
                     var materialsUnit = [];
@@ -338,7 +467,33 @@ function saveEquipment() {
 
                     for (let i = 0; i < materialsDescription.length; i++) {
                         var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
-                        materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                        materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                    }
+
+                    var diasCantidad = [];
+                    var diasHoras = [];
+                    var diasPrecio = [];
+                    var diasTotal = [];
+
+                    dias.each(function(e){
+                        $(this).find('[data-cantidad]').each(function(){
+                            diasCantidad.push($(this).val());
+                        });
+                        $(this).find('[data-horas]').each(function(){
+                            diasHoras.push($(this).val());
+                        });
+                        $(this).find('[data-precio]').each(function(){
+                            diasPrecio.push($(this).val());
+                        });
+                        $(this).find('[data-total]').each(function(){
+                            diasTotal.push($(this).val());
+                        });
+                    });
+
+                    var diasArray = [];
+
+                    for (let i = 0; i < diasCantidad.length; i++) {
+                        diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
                     }
 
                     var consumablesDescription = [];
@@ -448,6 +603,9 @@ function saveEquipment() {
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
+                    for (let i = 0; i < diasTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                    }
                     totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
 
                     $total = parseFloat($total) + parseFloat(totalEquipment);
@@ -460,7 +618,7 @@ function saveEquipment() {
 
                     button.attr('data-saveEquipment', $equipments.length);
                     button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
 
                     $items = [];
 
@@ -485,6 +643,11 @@ function deleteConsumable() {
 }
 
 function deleteMano() {
+    //console.log($(this).parent().parent().parent());
+    $(this).parent().parent().remove();
+}
+
+function deleteDia() {
     //console.log($(this).parent().parent().parent());
     $(this).parent().parent().remove();
 }
@@ -864,6 +1027,148 @@ function addMano() {
 
 }
 
+function addDia() {
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var pricePerHour = $(this).parent().prev().children().children().next().val();
+        var hoursPerPerson = $(this).parent().prev().prev().children().children().next().val();
+        var quantityPerson = $(this).parent().prev().prev().prev().children().children().next().val();
+
+        if ( quantityPerson === '' || parseFloat(quantityPerson) === 0 )
+        {
+            toastr.error('Ingrese un valor correcto.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( hoursPerPerson === '' || parseFloat(hoursPerPerson) === 0 )
+        {
+            toastr.error('Ingrese un valor válido.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( pricePerHour === '' || parseFloat(pricePerHour) === 0 )
+        {
+            toastr.error('Ingrese un precio válido.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $(this).parent().prev().children().children().next().val(0);
+        $(this).parent().prev().prev().children().children().next().val(0);
+        $(this).parent().prev().prev().prev().children().children().next().next().val(0);
+        //console.log(descripcion);
+        var render = $(this).parent().parent().next().next().next();
+        var total = parseFloat(pricePerHour)*parseFloat(hoursPerPerson)*parseFloat(quantityPerson);
+        renderTemplateDia(render, pricePerHour, hoursPerPerson, quantityPerson, total.toFixed(2));
+    } else {
+        var pricePerHour2 = 0;
+        var hoursPerPerson2 = $(this).parent().prev().children().children().next().val();
+        var quantityPerson2 = $(this).parent().prev().prev().children().children().next().val();
+
+        if ( quantityPerson2 === '' || parseFloat(quantityPerson2) === 0 )
+        {
+            toastr.error('Ingrese un valor correcto.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ( hoursPerPerson2 === '' || parseFloat(hoursPerPerson2) === 0 )
+        {
+            toastr.error('Ingrese un valor válido.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        //$(this).parent().prev().children().children().next().val(0);
+        $(this).parent().prev().prev().children().children().next().val(0);
+        $(this).parent().prev().children().children().next().val(0);
+        //console.log(descripcion);
+        var render2 = $(this).parent().parent().next().next().next();
+        console.log(render2);
+        var total2 = 0;
+        renderTemplateDia(render2, pricePerHour2, hoursPerPerson2, quantityPerson2, total2);
+    }
+
+}
+
 function addTorno() {
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var precio = $(this).parent().prev().children().children().next().val();
@@ -1035,6 +1340,7 @@ function confirmEquipment() {
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+                    var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
 
                     var materialsDescription = [];
                     var materialsUnit = [];
@@ -1072,7 +1378,33 @@ function confirmEquipment() {
 
                     for (let i = 0; i < materialsDescription.length; i++) {
                         var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
-                        materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                        materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                    }
+
+                    var diasCantidad = [];
+                    var diasHoras = [];
+                    var diasPrecio = [];
+                    var diasTotal = [];
+
+                    dias.each(function(e){
+                        $(this).find('[data-cantidad]').each(function(){
+                            diasCantidad.push($(this).val());
+                        });
+                        $(this).find('[data-horas]').each(function(){
+                            diasHoras.push($(this).val());
+                        });
+                        $(this).find('[data-precio]').each(function(){
+                            diasPrecio.push($(this).val());
+                        });
+                        $(this).find('[data-total]').each(function(){
+                            diasTotal.push($(this).val());
+                        });
+                    });
+
+                    var diasArray = [];
+
+                    for (let i = 0; i < diasCantidad.length; i++) {
+                        diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
                     }
 
                     var consumablesDescription = [];
@@ -1182,6 +1514,9 @@ function confirmEquipment() {
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
+                    for (let i = 0; i < diasTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                    }
                     totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
 
                     $total = parseFloat($total) + parseFloat(totalEquipment);
@@ -1194,7 +1529,7 @@ function confirmEquipment() {
 
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
 
                     $items = [];
                     $.alert("Equipo confirmado!");
@@ -1350,7 +1685,17 @@ function addEquipment() {
 
     renderTemplateEquipment();
 
-    $('.material_search').select2({
+    $('.materialTypeahead').typeahead({
+            hint: true,
+            highlight: true, /* Enable substring highlighting */
+            minLength: 1 /* Specify minimum characters required for showing suggestions */
+        },
+        {
+            limit: 12,
+            source: substringMatcher($materialsTypeahead)
+        });
+
+    /*$('.material_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
             url: '/dashboard/select/materials',
@@ -1370,7 +1715,7 @@ function addEquipment() {
             }
         }
     });
-
+*/
     /*for (var i=0; i<$materials.length; i++)
     {
         var newOption = new Option($materials[i].full_description, $materials[i].id, false, false);
@@ -1634,7 +1979,7 @@ function addTableMaterials() {
         var witdh = $('#material_width_entered').val();
 
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
-        console.log($renderMaterial);
+        //console.log($renderMaterial);
         renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh);
 
         $('#material_length_entered').val('');
@@ -1753,7 +2098,7 @@ function addTableMaterials() {
 
 function addMaterial() {
     var select_material = $(this).parent().parent().children().children().children().next();
-    //console.log(select_material.val());
+    // TODO: Tomar el texto no el val()
     var material_search = select_material.val();
 
     $material = $materials.find( mat=>mat.id === parseInt(material_search) );
@@ -1879,7 +2224,7 @@ function addMaterial() {
 
 function storeQuote() {
     event.preventDefault();
-    /*if( $equipments.length === 0 )
+    if( $equipments.length === 0 )
     {
         toastr.error('No se puede crear una cotización sin equipos.', 'Error',
             {
@@ -1900,7 +2245,7 @@ function storeQuote() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }*/
+    }
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
@@ -2057,6 +2402,16 @@ function renderTemplateTorno(render, description, quantity, unitPrice) {
     clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
     clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
     clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+
+    render.append(clone);
+}
+
+function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
+    var clone = activateTemplate('#template-dia');
+    clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
+    clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
+    clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
+    clone.querySelector("[data-total]").setAttribute( 'value', total2);
 
     render.append(clone);
 }

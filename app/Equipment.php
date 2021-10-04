@@ -41,4 +41,9 @@ class Equipment extends Model
     {
         return $this->hasMany('App\EquipmentTurnstile');
     }
+
+    public function workdays()
+    {
+        return $this->hasMany('App\EquipmentWorkday');
+    }
 }

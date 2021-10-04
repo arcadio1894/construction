@@ -187,14 +187,18 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <div class="form-group">
-                                            <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" id="material_search" class="form-control rounded-0 typeahead materialTypeahead">
+
+                                            {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
                                             <select class="form-control material_search" style="width:100%" name="material_search"></select>
+                                        --}}
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    {{--<div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                    </div>
+                                    </div>--}}
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -553,6 +557,82 @@
                             </div>
                         </div>
 
+                        <div class="card card-orange collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">DIAS DE TRABAJO</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad de personas <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="hours">Horas por persona <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    @can('showPrices_quote')
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="price">Precio por hora <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    @endcan
+                                    <div class="col-md-3">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Cantidad de personas</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Horas por persona</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Precio por hora</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyDia>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -733,6 +813,42 @@
             </div>
         </template>
 
+        <template id="template-dia">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                </div>
+            </div>
+        </template>
+
         <template id="template-mano">
             <div class="row">
                 <div class="col-md-3">
@@ -868,14 +984,18 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <div class="form-group">
-                                            <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" id="material_search" class="form-control rounded-0 typeahead materialTypeahead">
+
+                                            {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
                                             <select class="form-control material_search" style="width:100%" name="material_search"></select>
+                                        --}}
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    {{--<div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                    </div>
+                                    </div>--}}
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -1147,6 +1267,82 @@
                             </div>
                         </div>
 
+                        <div class="card card-orange collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">DIAS DE TRABAJO</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad de personas <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label for="hours">Horas por persona <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    @can('showPrices_quote')
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <label for="price">Precio por hora <span class="right badge badge-danger">(*)</span></label>
+                                                <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                            </div>
+                                        </div>
+                                    @endcan
+                                    <div class="col-md-3">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Cantidad de personas</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Horas por persona</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Precio por hora</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyDia>
+
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -1296,7 +1492,7 @@
 @endsection
 
 @section('scripts')
-
+    <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
     <script>
         $(function () {
             //Initialize Select2 Elements

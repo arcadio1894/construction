@@ -602,6 +602,9 @@ Route::middleware('auth')->group(function (){
         Route::post('/destroy/quote/{quote}', 'QuoteController@destroy')
             ->name('quote.destroy')
             ->middleware('permission:destroy_quote');
+        Route::post('/destroy/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@destroyEquipmentOfQuote')
+            ->name('quote.destroy')
+            ->middleware('permission:update_quote');
         Route::get('imprimir/cliente/{quote}', 'QuoteController@printQuoteToCustomer')
             ->name('quote.edit')
             ->middleware('permission:list_quote');

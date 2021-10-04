@@ -14,11 +14,6 @@ class WorkforceSeeder extends Seeder
     public function run()
     {
         Workforce::create([
-            'description' => 'DÍAS DE TRABAJO',
-            'unit_measure_id' => 15,
-            'unit_price' => 0
-        ]);
-        Workforce::create([
             'description' => 'HERRAMIENTAS',
             'unit_measure_id' => 1,
             'unit_price' => 0

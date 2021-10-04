@@ -7,11 +7,13 @@ use App\Equipment;
 use App\EquipmentConsumable;
 use App\EquipmentMaterial;
 use App\EquipmentTurnstile;
+use App\EquipmentWorkday;
 use App\EquipmentWorkforce;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Material;
 use App\Quote;
+use App\QuoteUser;
 use App\UnitMeasure;
 use App\Workforce;
 use Barryvdh\DomPDF\Facade as PDF;
@@ -70,6 +72,11 @@ class QuoteController extends Controller
                 'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
             ]);
 
+            QuoteUser::create([
+                'quote_id' => $quote->id,
+                'user_id' => Auth::user()->id,
+            ]);
+
             $equipments = json_decode($request->get('equipments'));
 
             $totalQuote = 0;
@@ -91,6 +98,8 @@ class QuoteController extends Controller
 
                 $totalTornos = 0;
 
+                $totalDias = 0;
+
                 $materials = $equipments[$i]->materials;
 
                 $consumables = $equipments[$i]->consumables;
@@ -99,19 +108,21 @@ class QuoteController extends Controller
 
                 $tornos = $equipments[$i]->tornos;
 
+                $dias = $equipments[$i]->dias;
+
                 for ( $j=0; $j<sizeof($materials); $j++ )
                 {
                     $equipmentMaterial = EquipmentMaterial::create([
                         'equipment_id' => $equipment->id,
                         'material_id' => $materials[$j]->material->id,
-                        'quantity' => (float) $materials[$j]->material_quantity,
+                        'quantity' => (float) $materials[$j]->quantity,
                         'price' => (float) $materials[$j]->material->unit_price,
-                        'length' => (float) ($materials[$j]->material_length == '') ? 0: $materials[$j]->material_length,
-                        'width' => (float) ($materials[$j]->material_width == '') ? 0: $materials[$j]->material_width,
-                        'percentage' => (float) $materials[$j]->material_quantity,
-                        'state' => ($materials[$j]->material_quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
-                        'availability' => ($materials[$j]->material_quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
-                        'total' => (float) $materials[$j]->material_price,
+                        'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                        'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                        'percentage' => (float) $materials[$j]->quantity,
+                        'state' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
+                        'total' => (float) $materials[$j]->price,
                     ]);
 
                     $totalMaterial += $equipmentMaterial->total;
@@ -161,9 +172,22 @@ class QuoteController extends Controller
                     $totalTornos += $equipmenttornos->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity;;
+                for ( $d=0; $d<sizeof($dias); $d++ )
+                {
+                    $equipmentdias = EquipmentWorkday::create([
+                        'equipment_id' => $equipment->id,
+                        'quantityPerson' => (float) $dias[$d]->quantity,
+                        'hoursPerPerson' => (float) $dias[$d]->hours,
+                        'pricePerHour' => (float) $dias[$d]->price,
+                        'total' => (float) $dias[$d]->total
+                    ]);
 
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos)* (float)$equipment->quantity;
+                    $totalDias += $equipmentdias->total;
+                }
+
+                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+
+                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
                 $equipment->save();
             }
@@ -211,7 +235,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
         //dump($quote);
         return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
@@ -502,5 +526,13 @@ class QuoteController extends Controller
         $name = $quote->code . '.pdf';
 
         return $pdf->stream($name);
+    }
+
+    public function destroyEquipmentOfQuote($id_equipment, $id_quote)
+    {
+        $user = Auth::user();
+        $quote = Quote::find($id_quote);
+
+
     }
 }
