@@ -268,96 +268,117 @@ class QuoteController extends Controller
 
             for ( $i=0; $i<sizeof($equipments); $i++ )
             {
-                $equipment = Equipment::create([
-                    'quote_id' => $quote->id,
-                    'description' => $equipments[$i]->description,
-                    'detail' => $equipments[$i]->detail,
-                    'quantity' => $equipments[$i]->quantity
-                ]);
-
-                $totalMaterial = 0;
-
-                $totalConsumable = 0;
-
-                $totalWorkforces = 0;
-
-                $totalTornos = 0;
-
-                $materials = $equipments[$i]->materials;
-
-                $consumables = $equipments[$i]->consumables;
-
-                $workforces = $equipments[$i]->workforces;
-
-                $tornos = $equipments[$i]->tornos;
-
-                for ( $j=0; $j<sizeof($materials); $j++ )
+                if ($equipments[$i]->quote === '' )
                 {
-                    $equipmentMaterial = EquipmentMaterial::create([
-                        'equipment_id' => $equipment->id,
-                        'material_id' => $materials[$j]->material->id,
-                        'quantity' => (float) $materials[$j]->material_quantity,
-                        'price' => (float) $materials[$j]->material->unit_price,
-                        'length' => (float) ($materials[$j]->material_length == '') ? 0: $materials[$j]->material_length,
-                        'width' => (float) ($materials[$j]->material_width == '') ? 0: $materials[$j]->material_width,
-                        'percentage' => (float) $materials[$j]->material_quantity,
-                        'state' => ($materials[$j]->material_quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
-                        'availability' => ($materials[$j]->material_quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
-                        'total' => (float) $materials[$j]->material_price,
+                    $equipment = Equipment::create([
+                        'quote_id' => $quote->id,
+                        'description' => $equipments[$i]->description,
+                        'detail' => $equipments[$i]->detail,
+                        'quantity' => $equipments[$i]->quantity
                     ]);
 
-                    $totalMaterial += $equipmentMaterial->total;
+                    $totalMaterial = 0;
+
+                    $totalConsumable = 0;
+
+                    $totalWorkforces = 0;
+
+                    $totalTornos = 0;
+
+                    $totalDias = 0;
+
+                    $materials = $equipments[$i]->materials;
+
+                    $consumables = $equipments[$i]->consumables;
+
+                    $workforces = $equipments[$i]->workforces;
+
+                    $tornos = $equipments[$i]->tornos;
+
+                    $dias = $equipments[$i]->dias;
+
+                    for ( $j=0; $j<sizeof($materials); $j++ )
+                    {
+                        $equipmentMaterial = EquipmentMaterial::create([
+                            'equipment_id' => $equipment->id,
+                            'material_id' => $materials[$j]->material->id,
+                            'quantity' => (float) $materials[$j]->quantity,
+                            'price' => (float) $materials[$j]->material->unit_price,
+                            'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                            'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                            'percentage' => (float) $materials[$j]->quantity,
+                            'state' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
+                            'availability' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
+                            'total' => (float) $materials[$j]->price,
+                        ]);
+
+                        $totalMaterial += $equipmentMaterial->total;
+                    }
+
+                    for ( $k=0; $k<sizeof($consumables); $k++ )
+                    {
+                        $material = Material::find($consumables[$k]->id);
+
+                        $equipmentConsumable = EquipmentConsumable::create([
+                            'equipment_id' => $equipment->id,
+                            'material_id' => $consumables[$k]->id,
+                            'quantity' => (float) $consumables[$k]->quantity,
+                            'price' => (float) $consumables[$k]->price,
+                            'total' => (float) $consumables[$k]->total,
+                            'state' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
+                            'availability' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Agotado':'Completo',
+                        ]);
+
+                        $totalConsumable += $equipmentConsumable->total;
+                    }
+
+                    for ( $w=0; $w<sizeof($workforces); $w++ )
+                    {
+                        $equipmentWorkforce = EquipmentWorkforce::create([
+                            'equipment_id' => $equipment->id,
+                            'description' => $workforces[$w]->description,
+                            'price' => (float) $workforces[$w]->price,
+                            'quantity' => (float) $workforces[$w]->quantity,
+                            'total' => (float) $workforces[$w]->total,
+                            'unit' => $workforces[$w]->unit,
+                        ]);
+
+                        $totalWorkforces += $equipmentWorkforce->total;
+                    }
+
+                    for ( $r=0; $r<sizeof($tornos); $r++ )
+                    {
+                        $equipmenttornos = EquipmentTurnstile::create([
+                            'equipment_id' => $equipment->id,
+                            'description' => $tornos[$r]->description,
+                            'price' => (float) $tornos[$r]->price,
+                            'quantity' => (float) $tornos[$r]->quantity,
+                            'total' => (float) $tornos[$r]->total
+                        ]);
+
+                        $totalTornos += $equipmenttornos->total;
+                    }
+
+                    for ( $d=0; $d<sizeof($dias); $d++ )
+                    {
+                        $equipmentdias = EquipmentWorkday::create([
+                            'equipment_id' => $equipment->id,
+                            'quantityPerson' => (float) $dias[$d]->quantity,
+                            'hoursPerPerson' => (float) $dias[$d]->hours,
+                            'pricePerHour' => (float) $dias[$d]->price,
+                            'total' => (float) $dias[$d]->total
+                        ]);
+
+                        $totalDias += $equipmentdias->total;
+                    }
+
+                    $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+
+                    $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+
+                    $equipment->save();
                 }
 
-                for ( $k=0; $k<sizeof($consumables); $k++ )
-                {
-                    $material = Material::find($consumables[$k]->id);
-
-                    $equipmentConsumable = EquipmentConsumable::create([
-                        'equipment_id' => $equipment->id,
-                        'material_id' => $consumables[$k]->id,
-                        'quantity' => (float) $consumables[$k]->quantity,
-                        'price' => (float) $consumables[$k]->price,
-                        'total' => (float) $consumables[$k]->total,
-                        'state' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
-                        'availability' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Agotado':'Completo',
-                    ]);
-
-                    $totalConsumable += $equipmentConsumable->total;
-                }
-
-                for ( $w=0; $w<sizeof($workforces); $w++ )
-                {
-                    $equipmentWorkforce = EquipmentWorkforce::create([
-                        'equipment_id' => $equipment->id,
-                        'description' => $workforces[$w]->description,
-                        'price' => (float) $workforces[$w]->price,
-                        'quantity' => (float) $workforces[$w]->quantity,
-                        'total' => (float) $workforces[$w]->total,
-                        'unit' => $workforces[$w]->unit,
-                    ]);
-
-                    $totalWorkforces += $equipmentWorkforce->total;
-                }
-
-                for ( $r=0; $r<sizeof($tornos); $r++ )
-                {
-                    $equipmentTornos = EquipmentTurnstile::create([
-                        'equipment_id' => $equipment->id,
-                        'description' => $tornos[$r]->description,
-                        'price' => (float) $tornos[$r]->price,
-                        'quantity' => (float) $tornos[$r]->quantity,
-                        'total' => (float) $tornos[$r]->total
-                    ]);
-
-                    $totalTornos += $equipmentTornos->total;
-                }
-
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity;;
-
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos)* (float)$equipment->quantity;
-
-                $equipment->save();
             }
 
             $quote->total += $totalQuote;
@@ -369,7 +390,7 @@ class QuoteController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Cotización modificada con éxito.'], 200);
+        return response()->json(['message' => 'Nuevos equipos guardados con éxito.'], 200);
 
     }
 
@@ -532,7 +553,218 @@ class QuoteController extends Controller
     {
         $user = Auth::user();
         $quote = Quote::find($id_quote);
+        $quote_user = QuoteUser::where('quote_id', $id_quote)
+            ->where('user_id', $user->id)->first();
+        if ( !$quote_user ) {
+            return response()->json(['message' => 'No puede eliminar un equipo que no es de su propiedad'], 422);
+        }
 
+        DB::beginTransaction();
+        try {
+            $equipment_quote = Equipment::where('id', $id_equipment)
+                ->where('quote_id',$quote->id)->first();
+
+            foreach( $equipment_quote->materials as $material ) {
+                $material->delete();
+            }
+            foreach( $equipment_quote->consumables as $consumable ) {
+                $consumable->delete();
+            }
+            foreach( $equipment_quote->workforces as $workforce ) {
+                $workforce->delete();
+            }
+            foreach( $equipment_quote->turnstiles as $turnstile ) {
+                $turnstile->delete();
+            }
+            foreach( $equipment_quote->workdays as $workday ) {
+                $workday->delete();
+            }
+
+            $equipment_quote->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Equipo eliminada con éxito.'], 200);
+
+    }
+
+    public function updateEquipmentOfQuote(Request $request, $id_equipment, $id_quote)
+    {
+        //dump($request);
+        $user = Auth::user();
+        $quote = Quote::find($id_quote);
+        $quote_user = QuoteUser::where('quote_id', $id_quote)
+            ->where('user_id', $user->id)->first();
+        if ( !$quote_user ) {
+            return response()->json(['message' => 'No puede eliminar un equipo que no es de su propiedad'], 422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $equipment_quote = Equipment::where('id', $id_equipment)
+                ->where('quote_id',$quote->id)->first();
+
+            $totalDeleted = 0;
+            foreach( $equipment_quote->materials as $material ) {
+                $totalDeleted = $totalDeleted + (float) $material->total;
+                $material->delete();
+            }
+            foreach( $equipment_quote->consumables as $consumable ) {
+                $totalDeleted = $totalDeleted + (float) $consumable->total;
+                $consumable->delete();
+            }
+            foreach( $equipment_quote->workforces as $workforce ) {
+                $totalDeleted = $totalDeleted + (float) $workforce->total;
+                $workforce->delete();
+            }
+            foreach( $equipment_quote->turnstiles as $turnstile ) {
+                $totalDeleted = $totalDeleted + (float) $turnstile->total;
+                $turnstile->delete();
+            }
+            foreach( $equipment_quote->workdays as $workday ) {
+                $totalDeleted = $totalDeleted + (float) $workday->total;
+                $workday->delete();
+            }
+
+            $totalDeleted = $totalDeleted * (float) $equipment_quote->quantity;
+
+            $quote->total = $quote->total - $totalDeleted;
+            $quote->save();
+
+            $equipment_quote->delete();
+
+            $equipments = $request->input('equipment');
+
+            $totalQuote = 0;
+
+            foreach ( $equipments as $equip )
+            {
+                //dump($equip['quantity']);
+                $equipment = Equipment::create([
+                    'quote_id' => $quote->id,
+                    'description' => $equip['description'],
+                    'detail' => $equip['detail'],
+                    'quantity' => $equip['quantity']
+                ]);
+
+                $totalMaterial = 0;
+
+                $totalConsumable = 0;
+
+                $totalWorkforces = 0;
+
+                $totalTornos = 0;
+
+                $totalDias = 0;
+
+                $materials = $equip['materials'];
+
+                $consumables = $equip['consumables'];
+
+                $workforces = $equip['workforces'];
+
+                $tornos = $equip['tornos'];
+
+                $dias = $equip['dias'];
+                //dump($materials);
+                foreach ( $materials as $material )
+                {
+                    //dump($material['material']['quantity']);
+                    $equipmentMaterial = EquipmentMaterial::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $material['material']['id'],
+                        'quantity' => (float) $material['quantity'],
+                        'price' => (float) $material['material']['unit_price'],
+                        'length' => (float) ($material['length'] == '') ? 0: $material['length'],
+                        'width' => (float) ($material['width'] == '') ? 0: $material['width'],
+                        'percentage' => (float) $material['quantity'],
+                        'state' => ($material['quantity'] > $material['material']['stock_current']) ? 'Falta comprar':'En compra',
+                        'availability' => ($material['quantity'] > $material['material']['stock_current']) ? 'Agotado':'Completo',
+                        'total' => (float) $material['price'],
+                    ]);
+
+                    $totalMaterial += $equipmentMaterial->total;
+                }
+
+                foreach ( $consumables as $consumable )
+                {
+                    //dump($consumable['id']);
+                    $material = Material::find($consumable['id']);
+                    //dump($material);
+                    $equipmentConsumable = EquipmentConsumable::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $consumable['id'],
+                        'quantity' => (float) $consumable['quantity'],
+                        'price' => (float) $consumable['price'],
+                        'total' => (float) $consumable['total'],
+                        'state' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    $totalConsumable += $equipmentConsumable->total;
+                }
+
+                foreach ( $workforces as $workforce )
+                {
+                    $equipmentWorkforce = EquipmentWorkforce::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $workforce['description'],
+                        'price' => (float) $workforce['price'],
+                        'quantity' => (float) $workforce['quantity'],
+                        'total' => (float) $workforce['total'],
+                        'unit' => $workforce['unit'],
+                    ]);
+
+                    $totalWorkforces += $equipmentWorkforce->total;
+                }
+
+                foreach ( $tornos as $torno )
+                {
+                    $equipmenttornos = EquipmentTurnstile::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $torno['description'],
+                        'price' => (float) $torno['price'],
+                        'quantity' => (float) $torno['quantity'],
+                        'total' => (float) $torno['total']
+                    ]);
+
+                    $totalTornos += $equipmenttornos->total;
+                }
+
+                foreach ( $dias as $dia )
+                {
+                    $equipmentdias = EquipmentWorkday::create([
+                        'equipment_id' => $equipment->id,
+                        'quantityPerson' => (float) $dia['quantity'],
+                        'hoursPerPerson' => (float) $dia['hours'],
+                        'pricePerHour' => (float) $dia['price'],
+                        'total' => (float) $dia['total']
+                    ]);
+
+                    $totalDias += $equipmentdias->total;
+                }
+
+                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+
+                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+
+                $equipment->save();
+
+            }
+
+            $quote->total += $totalQuote;
+
+            $quote->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Equipo guardado con éxito.'], 200);
 
     }
 }

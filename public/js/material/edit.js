@@ -189,6 +189,7 @@ $(document).ready(function () {
     $selectExample.select2({
         placeholder: "Selecione un modelo",
     });
+    $('#btn-generate').on('click', generateNameProduct);
 
 });
 

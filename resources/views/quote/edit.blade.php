@@ -77,7 +77,7 @@
                             <div class="col-md-12">
                                 <label for="descriptionQuote">Descripción general de cotización <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm" value="{{ $quote->description_quote }}">
-                                <input type="hidden" name="quote_id" value="{{ $quote->id }}">
+                                <input type="hidden" id="quote_id" name="quote_id" value="{{ $quote->id }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -430,25 +430,26 @@
                                                 <div class="col-md-4">
                                                     <div class="form-group">
                                                         <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" data-consumableDescription readonly>
+                                                        <input type="hidden" data-consumableId="{{ $consumable->material_id }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->unitMeasure->name }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->unitMeasure->name }}" data-consumableUnit readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="{{ $consumable->quantity }}" >
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumablePrice onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="0" >
                                                     </div>
@@ -471,25 +472,26 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" data-consumableDescription readonly>
+                                                        <input type="hidden" data-consumableId="{{ $consumable->material_id }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->unitMeasure->name }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->unitMeasure->name }}" data-consumableUnit readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="0" >
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumablePrice onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="0" readonly>
                                                     </div>
@@ -604,26 +606,26 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" readonly>
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unit }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unit }}" data-manoUnit readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-manoQuantity onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " value="{{ $workforce->quantity }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-manoPrice onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " value="{{ $workforce->price }}" readonly>
                                                     </div>
@@ -645,26 +647,26 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" readonly>
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unit }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unit }}" data-manoUnit readonly>
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-manoQuantity onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " value="{{ $workforce->quantity }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-manoPrice onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " value="0.00" readonly>
                                                     </div>
@@ -733,27 +735,27 @@
                                                     <div class="row">
                                                         <div class="col-md-5">
                                                             <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" readonly>
+                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription readonly>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoQuantity pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="{{ $turnstile->quantity }}" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoPrice pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="{{ $turnstile->price }}" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-tornoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="{{ $turnstile->total }}" readonly>
                                                             </div>
@@ -768,27 +770,27 @@
                                                     <div class="row">
                                                         <div class="col-md-5">
                                                             <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" readonly>
+                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription readonly>
                                                             </div>
                                                         </div>
 
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoQuantity pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="{{ $turnstile->quantity }}">
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoPrice pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="0.00" readonly>
                                                             </div>
                                                         </div>
                                                         <div class="col-md-2">
                                                             <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-tornoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                                 " value="0.00" readonly>
                                                             </div>
@@ -989,8 +991,8 @@
                             <div class="col-md-3">
                                 <label for="description">Cantidad de equipo <span class="right badge badge-danger">(*)</span></label>
                                 <input type="number" data-quantityequipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                ">
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
                             </div>
                             <div class="col-md-9">
                                 <label for="description"> <span class="right badge badge-danger">Importante</span></label>
@@ -1021,6 +1023,10 @@
                                         <div class="form-group">
                                             <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                             <input type="text" id="material_search" class="form-control rounded-0 typeahead materialTypeahead">
+
+                                            {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control material_search" style="width:100%" name="material_search"></select>
+                                        --}}
                                         </div>
                                     </div>
                                     {{--<div class="col-md-2">
@@ -1117,8 +1123,8 @@
                                         <div class="form-group">
                                             <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -1178,22 +1184,22 @@
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" data-consumableQuantity min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $consumable->unit_price }}" class="form-control form-control-sm" data-consumablePrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " readonly>
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " readonly>
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
@@ -1238,8 +1244,8 @@
                                         <div class="form-group">
                                             <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" id="quantity" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                         </div>
                                     </div>
                                     @can('showPrices_quote')
@@ -1247,8 +1253,8 @@
                                             <div class="form-group">
                                                 <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                             </div>
                                         </div>
                                     @endcan
@@ -1310,22 +1316,22 @@
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" data-manoQuantity min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $workforce->unit_price }}" onkeyup="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " @cannot('showPrices_quote') readonly @endcannot >
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') readonly @endcannot >
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " readonly>
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
@@ -1356,8 +1362,8 @@
                                                 <div class="form-group">
                                                     <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
                                                     <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                                 </div>
                                             </div>
                                             @can('showPrices_quote')
@@ -1365,8 +1371,8 @@
                                                     <div class="form-group">
                                                         <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
                                                         <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                                     </div>
                                                 </div>
                                             @endcan
@@ -1466,7 +1472,6 @@
                 </div>
                 <!-- /.card -->
             </div>
-
         </div>
 
         @can('showPrices_quote')
@@ -2223,14 +2228,15 @@
                                 <input type="text" id="material_quantity" name="material_quantity" class="form-control" readonly />
                             </div>
                         </div>
-                        <div class="col-md-3" id="price_material">
-                            <label class="col-sm-12 control-label" for="material_price"> Precio </label>
+                        @can('showPrices_quote')
+                            <div class="col-md-3" id="price_material">
+                                <label class="col-sm-12 control-label" for="material_price"> Precio </label>
 
-                            <div class="col-sm-12">
-                                <input type="text" id="material_price" name="material_price" class="form-control" readonly />
+                                <div class="col-sm-12">
+                                    <input type="text" id="material_price" name="material_price" class="form-control" readonly />
+                                </div>
                             </div>
-                        </div>
-
+                        @endcan
                     </div>
                     <br>
                     <div class="row" id="presentation">
@@ -2291,14 +2297,15 @@
                                 <input type="text" id="material_percentage_entered" name="material_percentage_entered" class="form-control" readonly />
                             </div>
                         </div>
-                        <div class="col-md-2" id="price_entered_material">
-                            <label class="col-sm-12 control-label" for="material_price_entered"> Total </label>
+                        @can('showPrices_quote')
+                            <div class="col-md-2" id="price_entered_material">
+                                <label class="col-sm-12 control-label" for="material_price_entered"> Total </label>
 
-                            <div class="col-sm-12">
-                                <input type="text" id="material_price_entered" name="material_price_entered" class="form-control" readonly />
+                                <div class="col-sm-12">
+                                    <input type="text" id="material_price_entered" name="material_price_entered" class="form-control" readonly />
+                                </div>
                             </div>
-                        </div>
-
+                        @endcan
                     </div>
 
                 </div>
