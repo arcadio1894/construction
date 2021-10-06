@@ -1231,7 +1231,13 @@ function saveEquipment() {
                                         "showMethod": "fadeIn",
                                         "hideMethod": "fadeOut"
                                     });*/
+                                var equipment = data.equipment;
+                                var quote = data.quote;
                                 button2.parent().prev().html('EQUIPO: '+description);
+                                button2.attr('data-quote', quote.id);
+                                button2.attr('data-idEquipment', equipment.id);
+                                button2.next().attr('data-quote', quote.id);
+                                button2.next().attr('data-idEquipment', equipment.id);
                                 $.alert(data.message);
 
                             },

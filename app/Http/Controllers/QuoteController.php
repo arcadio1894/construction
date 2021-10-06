@@ -602,6 +602,8 @@ class QuoteController extends Controller
             return response()->json(['message' => 'No puede eliminar un equipo que no es de su propiedad'], 422);
         }
 
+        $equipmentSent = null;
+
         DB::beginTransaction();
         try {
             $equipment_quote = Equipment::where('id', $id_equipment)
@@ -753,6 +755,8 @@ class QuoteController extends Controller
 
                 $equipment->save();
 
+                $equipmentSent = $equipment;
+
             }
 
             $quote->total += $totalQuote;
@@ -764,7 +768,7 @@ class QuoteController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Equipo guardado con éxito.'], 200);
+        return response()->json(['message' => 'Equipo guardado con éxito.', 'equipment'=>$equipmentSent, 'quote'=>$quote], 200);
 
     }
 }
