@@ -29,7 +29,17 @@ $(document).ready(function () {
             },
             { data: 'way_to_pay' },
             { data: 'delivery_time' },
-            { data: 'customer.business_name' },
+            { data: null,
+                title: 'Cliente',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.customer !== null )
+                        return '<p> '+ item.customer.business_name +'</p>';
+                    else
+                        return '<p> Sin cliente </p>'
+                }
+            },
             { data: 'total' },
             { data: null,
                 title: 'Estado',

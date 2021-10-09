@@ -24,14 +24,10 @@ class StoreQuoteRequest extends FormRequest
     public function rules()
     {
         return [
-            'code_quote' => 'required|string',
-            'code_description' => 'required|string',
-            'date_quote' => 'required',
-            'date_validate' => 'required',
-            'way_to_pay' => 'required|string',
-            'delivery_time' => 'required|string',
-            'customer_id' => 'required|exists:customers,id',
-            'equipments' => 'required',
+            'code_quote' => 'string',
+            'code_description' => 'string',
+            'way_to_pay' => 'string',
+            'delivery_time' => 'string',
             'utility' => 'numeric|between:0,99.99',
             'letter' => 'numeric|between:0,99.99',
             'taxes' => 'numeric|between:0,99.99'
@@ -41,19 +37,11 @@ class StoreQuoteRequest extends FormRequest
     public function messages()
     {
         return [
-            'code_description.required' => 'El :attribute es obligatorio.',
             'code_description.string' => 'El :attribute debe contener caracteres válidos.',
-            'code_quote.required' => 'El :attribute es obligatorio.',
             'code_quote.string' => 'El :attribute debe contener caracteres válidos.',
-            'date_quote.required' => 'El :attribute es obligatorio.',
-            'date_validate.required' => 'La :attribute es obligatorio.',
-            'way_to_pay.required' => 'La :attribute es obligatorio.',
             'way_to_pay.string' => 'La :attribute debe contener caracteres válidos.',
-            'delivery_time.required' => 'El :attribute es obligatorio.',
             'delivery_time.string' => 'El :attribute debe contener caracteres válidos.',
-            'customer_id.required' => 'El :attribute es obligatoria.',
             'customer_id.exists' => 'El :attribute no existe en la base de datos.',
-            'equipments.required' => 'Los :attribute son obligatorios.',
             'utility.numeric' => 'La :attribute debe ser un valor numérico.',
             'utility.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
             'letter.numeric' => 'La :attribute debe ser un valor numérico.',

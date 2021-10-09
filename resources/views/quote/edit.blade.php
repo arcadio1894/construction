@@ -75,40 +75,45 @@
                     <div class="card-body">
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <label for="descriptionQuote">Descripción general de cotización <span class="right badge badge-danger">(*)</span></label>
+                                <label for="descriptionQuote">Descripción general de cotización </label>
                                 <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm" value="{{ $quote->description_quote }}">
                                 <input type="hidden" id="quote_id" name="quote_id" value="{{ $quote->id }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="description">Código de cotización <span class="right badge badge-danger">(*)</span></label>
+                                <label for="description">Código de cotización </label>
                                 <input type="text" id="codeQuote" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm" value="{{ $quote->code }}">
                             </div>
+                            @hasanyrole('logistic|admin')
                             <div class="col-md-4" id="sandbox-container">
-                                <label for="date_quote">Fecha de cotización <span class="right badge badge-danger">(*)</span></label>
+                                <label for="date_quote">Fecha de cotización </label>
                                 <div class="input-daterange" id="datepicker">
                                     <input type="text" class="form-control form-control-sm date-range-filter" id="date_quote" name="date_quote" value="{{ date('d/m/Y', strtotime($quote->date_quote)) }}">
                                 </div>
                             </div>
                             <div class="col-md-4" id="sandbox-container">
-                                <label for="date_end">Válido hasta <span class="right badge badge-danger">(*)</span></label>
+                                <label for="date_end">Válido hasta </label>
                                 <div class="input-daterange" id="datepicker2">
                                     <input type="text" class="form-control form-control-sm date-range-filter" id="date_validate" name="date_validate" value="{{ date('d/m/Y', strtotime($quote->date_validate)) }}">
                                 </div>
                             </div>
+                            @endhasanyrole
                         </div>
                         <div class="form-group row">
+                            @hasanyrole('logistic|admin')
                             <div class="col-md-4">
-                                <label for="description">Forma de pago <span class="right badge badge-danger">(*)</span></label>
+                                <label for="description">Forma de pago </label>
                                 <input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ $quote->way_to_pay }}">
                             </div>
+                            @endhasanyrole
                             <div class="col-md-4">
-                                <label for="description">Tiempo de entrega <span class="right badge badge-danger">(*)</span></label>
+                                <label for="description">Tiempo de entrega </label>
                                 <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}">
                             </div>
+                            @hasanyrole('logistic|admin')
                             <div class="col-md-4">
-                                <label for="customer_id">Cliente <span class="right badge badge-danger">(*)</span></label>
+                                <label for="customer_id">Cliente </label>
                                 <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
                                     <option></option>
                                     @foreach( $customers as $customer )
@@ -116,6 +121,7 @@
                                     @endforeach
                                 </select>
                             </div>
+                            @endhasanyrole
                         </div>
 
                     </div>
