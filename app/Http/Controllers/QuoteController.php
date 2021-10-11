@@ -61,11 +61,11 @@ class QuoteController extends Controller
             $quote = Quote::create([
                 'code' => $request->get('code_quote'),
                 'description_quote' => $request->get('code_description'),
-                'date_quote' => Carbon::createFromFormat('d/m/Y', $request->get('date_quote')),
-                'date_validate' => Carbon::createFromFormat('d/m/Y', $request->get('date_validate')),
-                'way_to_pay' => $request->get('way_to_pay'),
-                'delivery_time' => $request->get('delivery_time'),
-                'customer_id' => $request->get('customer_id'),
+                'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : null,
+                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : null,
+                'way_to_pay' => ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '',
+                'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
+                'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
                 'state' => 'created',
                 'utility' => ($request->has('utility')) ? $request->has('utility'): 0,
                 'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
@@ -252,11 +252,11 @@ class QuoteController extends Controller
 
             $quote->code = $request->get('code_quote');
             $quote->description_quote = $request->get('code_description');
-            $quote->date_quote = Carbon::createFromFormat('d/m/Y', $request->get('date_quote'));
-            $quote->date_validate = Carbon::createFromFormat('d/m/Y', $request->get('date_validate'));
-            $quote->way_to_pay = $request->get('way_to_pay');
-            $quote->delivery_time = $request->get('delivery_time');
-            $quote->customer_id = $request->get('customer_id');
+            $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : null;
+            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : null;
+            $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
+            $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
+            $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
             $quote->utility = ($request->has('utility')) ? $request->has('utility'): 0;
             $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
             $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
