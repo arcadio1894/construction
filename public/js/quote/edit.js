@@ -2310,6 +2310,34 @@ function calculateTotal2(e) {
 
 }
 
+function calculateTotalQuatity(e) {
+    var cantidad = e.value;
+    var hour = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
+    var price = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
+
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(hour)*parseFloat(price)).toFixed(2);
+
+}
+
+function calculateTotalHour(e) {
+    var cantidad = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
+    var hour = e.value;
+    var price = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(hour)*parseFloat(price)).toFixed(2);
+
+}
+
+function calculateTotalPrice(e) {
+    var cantidad = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+    var hour = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
+    var price = e.value;
+    console.log(cantidad);
+    console.log(hour);
+    console.log(price);
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(hour)*parseFloat(price)).toFixed(2);
+    console.log(e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value);
+}
+
 function addEquipment() {
     //var result = document.querySelectorAll('[data-equip]');
     //console.log(result);
