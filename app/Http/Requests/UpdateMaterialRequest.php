@@ -15,7 +15,7 @@ class UpdateMaterialRequest extends FormRequest
     {
         return [
             'description' => 'required|string|max:255',
-            'measure' => 'string|max:255',
+            'measure' => 'nullable|string|max:255',
             'unit_measure' => 'required|exists:unit_measures,id',
             'typescrap' => 'nullable|exists:typescraps,id',
             'stock_max' => 'nullable|numeric|min:0',
