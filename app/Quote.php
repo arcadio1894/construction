@@ -22,7 +22,9 @@ class Quote extends Model
         'state',
         'utility',
         'letter',
-        'rent'
+        'rent',
+        'code_customer',
+        'raise_status'
     ];
 
     public function getSubtotalUtilityAttribute()

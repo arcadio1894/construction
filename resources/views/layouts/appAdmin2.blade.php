@@ -685,7 +685,7 @@
                         </li>
                     @endcan
 
-                    @canany('list_quote')
+                    {{--@canany('list_quote')
                         <li class="nav-header">COTIZACIONES</li>
                     @endcanany
                     @can('list_quote')
@@ -714,9 +714,17 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('create_quote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Elevar cotización</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
-                    @endcan
+                    @endcan--}}
 
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>

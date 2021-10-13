@@ -614,6 +614,10 @@ Route::middleware('auth')->group(function (){
         Route::get('imprimir/interno/{quote}', 'QuoteController@printQuoteToInternal')
             ->name('quote.edit')
             ->middleware('permission:list_quote');
+        Route::get('elevar/cotizacion', 'QuoteController@raise')
+            ->name('quote.raise')
+            ->middleware('permission:create_quote');
+        Route::get('/all/quotes/confirmed', 'QuoteController@getAllQuotesConfirmed');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

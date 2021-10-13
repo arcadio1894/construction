@@ -771,4 +771,20 @@ class QuoteController extends Controller
         return response()->json(['message' => 'Equipo guardado con éxito.', 'equipment'=>$equipmentSent, 'quote'=>$quote], 200);
 
     }
+
+    public function raise()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('quote.raise', compact( 'permissions'));
+    }
+
+    public function getAllQuotesConfirmed()
+    {
+        $quotes = Quote::with(['customer'])
+            ->where('state','confirmed')
+            ->get();
+        return datatables($quotes)->toJson();
+    }
 }
