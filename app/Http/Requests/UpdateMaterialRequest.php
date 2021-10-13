@@ -14,7 +14,7 @@ class UpdateMaterialRequest extends FormRequest
     public function rules()
     {
         return [
-            'description' => 'required|string|max:255|unique:materials,description,'.$this->get('material_id'),
+            'description' => 'required|string|max:255',
             'measure' => 'string|max:255',
             'unit_measure' => 'required|exists:unit_measures,id',
             'typescrap' => 'nullable|exists:typescraps,id',
