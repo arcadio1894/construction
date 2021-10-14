@@ -171,13 +171,13 @@ function saveTableItems() {
         });
 
         let material_name = $('#material_selected').val();
-        let material_quantity = $('#quantity_selected').val();
+        let material_quantity = parseFloat($('#quantity_selected').val()).toFixed(2);
         let material_price = parseFloat($('#price_selected').val()).toFixed(2);
 
         for ( var i=0; i<series_selected.length; i++ )
         {
             const result = $materialsComplete.find( material => material.material === material_name );
-            $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
+            $items.push({ 'id': $items.length+1, 'price': material_price, 'quantity':1, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
             //renderTemplateMaterial($items.length, material_price, material_name, series_selected[i],  locations_selected[i].location, states_selected[i].description);
             $('.select2').select2();
         }

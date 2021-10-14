@@ -52,7 +52,8 @@ class OutputController extends Controller
             array_push($array,
                 [
                     'id'=> $key+1,
-                    'material' => $item->material->description,
+                    'material' => $item->material->full_description,
+                    'id_item' => $item->id,
                     'code' => $item->code,
                     'length' => $item->length,
                     'width' => $item->width,
@@ -154,6 +155,106 @@ class OutputController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Solicitud de salida guardada con éxito.'], 200);
+
+    }
+
+    public function destroyTotalOutputRequest(Request $request)
+    {
+        //dump($request);
+
+        DB::beginTransaction();
+        try {
+
+            $output = Output::find($request->get('output_id'));
+
+            if ($output->state === 'created')
+            {
+                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+                foreach ( $outputDetails as $outputDetail )
+                {
+                    $item = Item::find($outputDetail->item_id);
+                    $item->state_item = 'entered';
+                    $item->save();
+                    $outputDetail->delete();
+                }
+                $output->delete();
+            }
+
+            if ($output->state !== 'created')
+            {
+                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+                foreach ( $outputDetails as $outputDetail )
+                {
+                    $item = Item::find($outputDetail->item_id);
+                    $item->state_item = 'entered';
+                    $item->save();
+
+                    // TODO: Dismunir el stock del material
+                    $material = Material::find($item->material_id);
+                    $material->stock_current = $material->stock_current + $item->percentage;
+                    $material->save();
+
+                    $outputDetail->delete();
+
+                }
+                $output->delete();
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Eliminación total con éxito.'], 200);
+
+    }
+
+    public function destroyPartialOutputRequest(Request $request, $id_output, $id_item)
+    {
+        //dump($request);
+
+        DB::beginTransaction();
+        try {
+
+            $output = Output::find($id_output);
+
+            if ($output->state === 'created')
+            {
+                $outputDetail = OutputDetail::where('output_id', $output->id)
+                    ->where('item_id', $id_item)->first();
+
+                $item = Item::find($outputDetail->item_id);
+                $item->state_item = 'entered';
+                $item->save();
+                $outputDetail->delete();
+            }
+
+            if ($output->state !== 'created')
+            {
+                $outputDetail = OutputDetail::where('output_id', $output->id)
+                    ->where('item_id', $id_item)->first();
+
+                $item = Item::find($outputDetail->item_id);
+                $item->state_item = 'entered';
+                $item->save();
+
+                // TODO: Dismunir el stock del material
+                $material = Material::find($item->material_id);
+                $material->stock_current = $material->stock_current + $item->percentage;
+                $material->save();
+
+                $outputDetail->delete();
+
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Eliminación del item con éxito.'], 200);
 
     }
 

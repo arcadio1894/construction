@@ -80,19 +80,24 @@
         </table>
     </div>
 
-    <div id="modalDelete" class="modal fade" tabindex="-1">
+    <div id="modalDeleteTotal" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar eliminación</h4>
+                    <h4 class="modal-title">Confirmar eliminación total</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('material.destroy') }}">
+                <form id="formDeleteTotal" data-url="{{ route('output.request.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="material_id" name="material_id">
-                        <p>¿Está seguro de eliminar este material?</p>
-                        <p id="descriptionDelete"></p>
+                        <input type="hidden" id="output_id" name="output_id">
+                        <div class="col-md-12">
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                <strong>Importante!</strong> Se van a eliminar permanentemente todos los items solicitados y la solicitud será eliminada.
+                            </div>
+                        </div>
+                        <h5>¿Está seguro de eliminar esta salida?</h5>
+                        <h5 id="descriptionDeleteTotal"></h5>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -102,6 +107,51 @@
             </div>
         </div>
     </div>
+
+    <div id="modalDeletePartial" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Quitar items de la solicitud</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Importante!</strong> Al hacer click en eliminar se eliminará en la base de datos.
+                        </div>
+                    </div>
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Material</th>
+                                <th>Código</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-itemsDelete">
+
+                        </tbody>
+                        <template id="template-itemDelete">
+                            <tr>
+                                <td data-i></td>
+                                <td data-material></td>
+                                <td data-code></td>
+                                <td >
+                                    <button type="button" data-itemDelete data-output class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Quitar</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @can('attend_request')
     <div id="modalAttend" class="modal fade" tabindex="-1">
         <div class="modal-dialog">

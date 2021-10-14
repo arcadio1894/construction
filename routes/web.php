@@ -535,6 +535,11 @@ Route::middleware('auth')->group(function (){
         Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')
             ->name('output.confirmed')
             ->middleware('permission:confirm_output');
+        Route::post('output_request/delete/total', 'OutputController@destroyTotalOutputRequest')
+            ->name('output.request.destroy')
+            ->middleware('permission:confirm_output');
+        Route::post('/destroy/output/{id_output}/item/{id_item}', 'OutputController@destroyPartialOutputRequest')
+            ->middleware('permission:confirm_output');
 
         // TRANSFER
         Route::get('transferencias', 'TransferController@index')

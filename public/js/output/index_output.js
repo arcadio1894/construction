@@ -68,9 +68,13 @@ $(document).ready(function () {
                 {
                     if (item.state === 'confirmed' || item.state === 'created')
                     {
-                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> '; /*<button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>*/
+                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
+                            '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
                     }
-                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';/*'<button data-toggle="tooltip" data-placement="top" title="Anular" data-delete="\'+item.id+\'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>'*/
+                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ' +
+                        '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
+                        '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
                 }
 
             },
@@ -267,11 +271,25 @@ $(document).ready(function () {
 
     $modalConfirm = $('#modalConfirm');
 
+    $modalDeleteTotal = $('#modalDeleteTotal');
+
+    $formDeleteTotal = $('#formDeleteTotal');
+
+    $modalItemsDelete = $('#modalDeletePartial');
+
     $formConfirm = $('#formConfirm');
 
     $formConfirm.on('submit', confirmOutput);
 
+    $formDeleteTotal.on('submit', deleteTotalOutput);
+
     $(document).on('click', '[data-details]', showItems);
+
+    $(document).on('click', '[data-deleteTotal]', showModalDeleteTotal);
+
+    $(document).on('click', '[data-deletePartial]', showModalDeletePartial);
+
+    $(document).on('click', '[data-itemDelete]', deletePartialOutput);
 
     $('body').tooltip({
         selector: '[data-toggle]'
@@ -288,11 +306,46 @@ let $formCreate;
 
 var $formConfirm;
 
+let $modalDeleteTotal;
+
+let $modalItemsDelete;
+
+var $formDeleteTotal;
+
 let $modalAddItems;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function showModalDeleteTotal() {
+    var output_id = $(this).data('deletetotal');
+
+    $modalDeleteTotal.find('[id=output_id]').val(output_id);
+    $modalDeleteTotal.find('[id=descriptionDeleteTotal]').html('Solicitud-'+output_id);
+
+    $modalDeleteTotal.modal('show');
+}
+
+function showModalDeletePartial() {
+    $('#table-itemsDelete').html('');
+    var output_id = $(this).data('deletepartial');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.length; i++)
+            {
+                renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
+    });
+    $modalItemsDelete.modal('show');
+}
 
 function showItems() {
     $('#table-items').html('');
@@ -331,6 +384,16 @@ function renderTemplateItemDetail(id, material, code, length, width, weight, pri
     $('#table-items').append(clone);
 }
 
+function renderTemplateItemDetailDelete(id, item, output, material, code) {
+    var clone = activateTemplate('#template-itemDelete');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', item);
+    clone.querySelector("[data-itemDelete]").setAttribute('data-output', output);
+    $('#table-itemsDelete').append(clone);
+}
+
 function openModalConfirm() {
     var output_id = $(this).data('confirm');
 
@@ -338,6 +401,172 @@ function openModalConfirm() {
     $modalConfirm.find('[id=descriptionAttend]').html('Solicitud-'+output_id);
 
     $modalConfirm.modal('show');
+}
+
+function deleteTotalOutput() {
+    console.log('Llegue');
+    event.preventDefault();
+    // Obtener la URL
+    var attendUrl = $formDeleteTotal.data('url');
+    $.ajax({
+        url: attendUrl,
+        method: 'POST',
+        data: new FormData(this),
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalDeleteTotal.modal('hide');
+            setTimeout( function () {
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
+}
+
+function deletePartialOutput() {
+    console.log('Llegue');
+    event.preventDefault();
+    // Obtener la URL
+    var idOutput = $(this).data('output');
+    var idItem = $(this).data('itemdelete');
+    $.ajax({
+        url: '/dashboard/destroy/output/'+idOutput+'/item/'+idItem,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
+    $(this).parent().parent().remove();
 }
 
 function confirmOutput() {
