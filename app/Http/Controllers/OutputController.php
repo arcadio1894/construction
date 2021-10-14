@@ -140,13 +140,19 @@ class OutputController extends Controller
             foreach ( $items as $item )
             {
                 $item_selected = Item::find($item->item);
-                $item_selected->state_item = 'reserved';
-                $item_selected->save();
+                if ( $item_selected->state_item === 'reserved' )
+                {
+                    return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                } else {
+                    $item_selected->state_item = 'reserved';
+                    $item_selected->save();
 
-                $detail_output = OutputDetail::create([
-                    'output_id' => $output->id,
-                    'item_id' => $item->item,
-                ]);
+                    $detail_output = OutputDetail::create([
+                        'output_id' => $output->id,
+                        'item_id' => $item->item,
+                    ]);
+                }
+
 
             }
             DB::commit();
