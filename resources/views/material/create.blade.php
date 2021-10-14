@@ -69,14 +69,14 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="description" onkeyup="mayus(this);" name="description" class="form-control">
+                                <input type="text" id="description" {{--onkeyup="mayus(this);"--}} name="description" class="form-control">
                             </div>
                         </div>
 
                         <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="measure">Medida </label>
-                                <input type="text" id="measure" onkeyup="mayus(this);" name="measure" class="form-control">
+                                <input type="text" id="measure" {{--onkeyup="mayus(this);"--}} name="measure" class="form-control">
                             </div>
                             <div class="col-md-6">
                                 <label for="unit_measure">Unidad de medida <span class="right badge badge-danger">(*)</span></label>
@@ -152,7 +152,7 @@
                         <div class="form-group">
                             <label for="name">Nombre completo</label>
                             <div class="input-group mb-3">
-                                <input type="text" class="form-control rounded-0" id="name" onkeyup="mayus(this);" name="name" readonly>
+                                <input type="text" class="form-control rounded-0" id="name" {{--onkeyup="mayus(this);"--}} name="name" readonly>
                                 <span class="input-group-append">
                                     <button type="button" class="btn btn-info btn-flat" id="btn-generate"> <i class="fa fa-redo"></i> Actualizar</button>
                                 </span>
