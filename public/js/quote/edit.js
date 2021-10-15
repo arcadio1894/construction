@@ -836,7 +836,7 @@ function saveEquipment() {
                             });
                             $(this).find('[data-consumableId]').each(function(){
                                 console.log($(this).attr('data-consumableId'));
-                                consumablesIds.push($(this).attr('data-consumableId'));
+                                consumablesIds.push($(this).val());
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
                                 consumablesUnit.push($(this).val());
