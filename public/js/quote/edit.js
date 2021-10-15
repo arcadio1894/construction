@@ -836,7 +836,7 @@ function saveEquipment() {
                             });
                             $(this).find('[data-consumableId]').each(function(){
                                 console.log($(this).attr('data-consumableId'));
-                                consumablesIds.push($(this).val());
+                                consumablesIds.push($(this).attr('data-consumableId'));
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
                                 consumablesUnit.push($(this).val());
@@ -1088,7 +1088,7 @@ function saveEquipment() {
                             });
                             $(this).find('[data-consumableId]').each(function(){
                                 console.log($(this).attr('data-consumableId'));
-                                consumablesIds.push($(this).val());
+                                consumablesIds.push($(this).attr('data-consumableId'));
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
                                 consumablesUnit.push($(this).val());

@@ -508,7 +508,7 @@ function saveEquipment() {
                             consumablesDescription.push($(this).val());
                         });
                         $(this).find('[data-consumableId]').each(function(){
-                            consumablesIds.push($(this).val());
+                            consumablesIds.push($(this).attr('data-consumableId'));
                         });
                         $(this).find('[data-consumableUnit]').each(function(){
                             consumablesUnit.push($(this).val());
