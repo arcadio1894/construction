@@ -1199,7 +1199,7 @@ function saveEquipment() {
 
                         button2.attr('data-saveEquipment', $equipments.length);
                         button2.next().attr('data-deleteEquipment', $equipments.length);
-                        $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        $equipments.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         modifiedEquipment.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         //console.log(modifiedEquipment);
                         $items = [];
