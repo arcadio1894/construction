@@ -2361,7 +2361,7 @@ function renderTemplateConsumable(render, consumable, quantity) {
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
         clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-        clone.querySelector("[data-consumableId]").setAttribute('value', consumable.id);
+        clone.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
         clone.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
         clone.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
@@ -2371,7 +2371,7 @@ function renderTemplateConsumable(render, consumable, quantity) {
     } else {
         var clone2 = activateTemplate('#template-consumable');
         clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-        clone2.querySelector("[data-consumableId]").setAttribute('value', consumable.id);
+        clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
         clone2.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
         clone2.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
