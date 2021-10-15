@@ -62,7 +62,7 @@ class QuoteController extends Controller
                 'code' => $request->get('code_quote'),
                 'description_quote' => $request->get('code_description'),
                 'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
-                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now(),
+                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5),
                 'way_to_pay' => ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '',
                 'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
                 'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
@@ -253,7 +253,7 @@ class QuoteController extends Controller
             $quote->code = $request->get('code_quote');
             $quote->description_quote = $request->get('code_description');
             $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now();
-            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now();
+            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5);
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
@@ -605,7 +605,7 @@ class QuoteController extends Controller
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
             ->where('user_id', $user->id)->first();
-        if ( !$quote_user ) {
+        if ( !$quote_user && !$user->hasRole(['admin', 'logistic']) ) {
             return response()->json(['message' => 'No puede eliminar un equipo que no es de su propiedad'], 422);
         }
 

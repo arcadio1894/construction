@@ -187,7 +187,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
 
-    $('.materialTypeahead').bind('typeahead:select', function(ev, suggestion) {
+    //$("input[id='"+this.id+"']")   $('.materialTypeahead')
+    $(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
         var select_material = $(this);
         console.log($(this).val());
         // TODO: Tomar el texto no el val()
@@ -507,8 +508,9 @@ function saveEquipment() {
                         $(this).find('[data-consumableDescription]').each(function(){
                             consumablesDescription.push($(this).val());
                         });
-                        $(this).find('[data-consumableId]').each(function(){
-                            consumablesIds.push($(this).attr('data-consumableId'));
+                        $(this).find('[data-consumableid]').each(function(){
+                            console.log($(this).attr('data-consumableid'));
+                            consumablesIds.push($(this).attr('data-consumableid'));
                         });
                         $(this).find('[data-consumableUnit]').each(function(){
                             consumablesUnit.push($(this).val());
@@ -1419,7 +1421,7 @@ function confirmEquipment() {
                             consumablesDescription.push($(this).val());
                         });
                         $(this).find('[data-consumableId]').each(function(){
-                            consumablesIds.push($(this).val());
+                            consumablesIds.push($(this).attr('data-consumableid'));
                         });
                         $(this).find('[data-consumableUnit]').each(function(){
                             consumablesUnit.push($(this).val());
@@ -2349,7 +2351,7 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
         clone2.querySelector("[data-materialQuantity]").setAttribute('value', quantity);
         clone2.querySelector("[data-materialPrice]").setAttribute('value', price);
-        clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
+        clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(price)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-materialTotal]").setAttribute("style","display:none;");
         clone2.querySelector("[data-delete]").setAttribute('data-delete', code);

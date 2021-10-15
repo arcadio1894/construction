@@ -161,7 +161,7 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
 
-    $('.materialTypeahead').bind('typeahead:select', function(ev, suggestion) {
+    $(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
         var select_material = $(this);
         console.log($(this).val());
         // TODO: Tomar el texto no el val()
@@ -835,8 +835,8 @@ function saveEquipment() {
                                 consumablesDescription.push($(this).val());
                             });
                             $(this).find('[data-consumableId]').each(function(){
-                                console.log($(this).attr('data-consumableId'));
-                                consumablesIds.push($(this).attr('data-consumableId'));
+                                console.log($(this).attr('data-consumableid'));
+                                consumablesIds.push($(this).attr('data-consumableid'));
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
                                 consumablesUnit.push($(this).val());
@@ -1087,8 +1087,8 @@ function saveEquipment() {
                                 consumablesDescription.push($(this).val());
                             });
                             $(this).find('[data-consumableId]').each(function(){
-                                console.log($(this).attr('data-consumableId'));
-                                consumablesIds.push($(this).attr('data-consumableId'));
+                                console.log($(this).attr('data-consumableid'));
+                                consumablesIds.push($(this).attr('data-consumableid'));
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
                                 consumablesUnit.push($(this).val());
@@ -1213,24 +1213,6 @@ function saveEquipment() {
                             contentType:'application/json; charset=utf-8',
                             success: function (data) {
                                 console.log(data);
-                                /*toastr.success(data.message, 'Éxito',
-                                    {
-                                        "closeButton": true,
-                                        "debug": false,
-                                        "newestOnTop": false,
-                                        "progressBar": true,
-                                        "positionClass": "toast-top-right",
-                                        "preventDuplicates": false,
-                                        "onclick": null,
-                                        "showDuration": "300",
-                                        "hideDuration": "1000",
-                                        "timeOut": "2000",
-                                        "extendedTimeOut": "1000",
-                                        "showEasing": "swing",
-                                        "hideEasing": "linear",
-                                        "showMethod": "fadeIn",
-                                        "hideMethod": "fadeOut"
-                                    });*/
                                 var equipment = data.equipment;
                                 var quote = data.quote;
                                 button2.parent().prev().html('EQUIPO: '+description);
@@ -2084,7 +2066,7 @@ function confirmEquipment() {
                             consumablesDescription.push($(this).val());
                         });
                         $(this).find('[data-consumableId]').each(function(){
-                            consumablesIds.push($(this).val());
+                            consumablesIds.push($(this).attr('data-consumbaleid'));
                         });
                         $(this).find('[data-consumableUnit]').each(function(){
                             consumablesUnit.push($(this).val());

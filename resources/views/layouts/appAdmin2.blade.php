@@ -714,7 +714,7 @@
                                         </a>
                                     </li>
                                 @endcan
-                                @can('create_quote')
+                                @can('confirm_quote')
                                     <li class="nav-item">
                                         <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
                                             <i class="far fa-circle nav-icon"></i>

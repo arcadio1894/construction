@@ -583,7 +583,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="hours">Horas por persona <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -592,7 +592,7 @@
                                     @can('showPrices_quote')
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="price">Precio por hora <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -613,12 +613,12 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Horas por persona</strong>
+                                            <strong>Días por persona</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Precio por hora</strong>
+                                            <strong>Precio por día</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -990,7 +990,7 @@
                                     <div class="col-md-10">
                                         <div class="form-group">
                                             <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                            <input type="text" id="material_search" class="form-control rounded-0 typeahead materialTypeahead">
+                                            <input type="text" class="form-control rounded-0 typeahead materialTypeahead">
 
                                             {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
                                             <select class="form-control material_search" style="width:100%" name="material_search"></select>
@@ -1083,6 +1083,38 @@
                                 </div>
                                 <hr>
                                 <div data-bodyConsumable>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <strong>Descripción</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Unidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Cantidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Precio</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Total</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Acción</strong>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @foreach( $consumables as $consumable )
                                         <div class="row">
                                             <div class="col-md-3">
@@ -1293,7 +1325,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label for="hours">Horas por persona <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -1323,12 +1355,12 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Horas por persona</strong>
+                                            <strong>Días por persona</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Precio por hora</strong>
+                                            <strong>Precio por día</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">

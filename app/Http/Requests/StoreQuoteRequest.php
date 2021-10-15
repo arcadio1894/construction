@@ -25,12 +25,12 @@ class StoreQuoteRequest extends FormRequest
     {
         return [
             'code_quote' => 'string',
-            'code_description' => 'string',
-            'way_to_pay' => 'string',
-            'delivery_time' => 'string',
-            'utility' => 'numeric|between:0,99.99',
-            'letter' => 'numeric|between:0,99.99',
-            'taxes' => 'numeric|between:0,99.99'
+            'code_description' => 'nullable|string',
+            'way_to_pay' => 'nullable|string',
+            'delivery_time' => 'nullable|string',
+            'utility' => 'nullable|numeric|between:0,99.99',
+            'letter' => 'nullable|numeric|between:0,99.99',
+            'taxes' => 'nullable|numeric|between:0,99.99'
         ];
     }
 
