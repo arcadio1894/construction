@@ -2905,7 +2905,7 @@ function addMaterial() {
 
 function storeQuote() {
     event.preventDefault();
-    if( $equipments.length === 0 )
+    /*if( $equipments.length === 0 )
     {
         toastr.error('No se puede agregar más equipos si no existen.', 'Error',
             {
@@ -2926,7 +2926,7 @@ function storeQuote() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }
+    }*/
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
