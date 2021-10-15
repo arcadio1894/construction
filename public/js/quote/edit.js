@@ -727,8 +727,8 @@ function saveEquipment() {
                     action: function (e) {
                         var modifiedEquipment = [];
                         var equipmentId = parseInt(button.data('saveequipment'));
-                        var idEquipment = button.data('idequipment');
-                        var idQuote = button.data('quote');
+                        var idEquipment = button.attr('data-idequipment');
+                        var idQuote = button.attr('data-quote');
                         console.log(equipmentId);
                         var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
                         console.log(equipmentDeleted);
@@ -979,8 +979,8 @@ function saveEquipment() {
                     action: function (e) {
                         var modifiedEquipment = [];
                         var equipmentId = parseInt(button2.data('saveequipment'));
-                        var idEquipment = button2.data('idequipment');
-                        var idQuote = button2.data('quote');
+                        var idEquipment = button2.attr('data-idequipment');
+                        var idQuote = button2.attr('data-quote');
                         console.log(equipmentId);
                         var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
                         console.log(equipmentDeleted);
