@@ -260,6 +260,8 @@ $(document).ready(function () {
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', cancelQuote);
+
+    $(document).on('click', '[data-confirm]', confirmQuote);
 });
 
 var $formDelete;
@@ -277,7 +279,7 @@ function cancelQuote() {
         closeIcon: true,
         animation: 'zoom',
         type: 'red',
-        title: '¿Está seguro de eliminar este equipo?',
+        title: '¿Está seguro de eliminar esta cotización?',
         content: description,
         buttons: {
             confirm: {
@@ -292,6 +294,52 @@ function cancelQuote() {
                         success: function (data) {
                             console.log(data);
                             $.alert("Cotización anulada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+
+}
+
+function confirmQuote() {
+    var quote_id = $(this).data('confirm');
+    var description = $(this).data('name');
+
+    $.confirm({
+        icon: 'fas fa-smile',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de confirmar esta cotización? ',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/confirm/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización confirmada con éxito.");
                             setTimeout( function () {
                                 location.reload();
                             }, 2000 )

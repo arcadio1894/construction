@@ -87,7 +87,7 @@ $(document).ready(function () {
                     if ( item.state === 'confirmed' ) {
                         if ( $.inArray('create_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-raise="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-fist-raised"></i></button>';
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
                         }
                         if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
@@ -249,6 +249,8 @@ $(document).ready(function () {
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', cancelQuote);
+
+    $(document).on('click', '[data-raise]', raiseQuote);
 });
 
 var $formDelete;
@@ -266,7 +268,7 @@ function cancelQuote() {
         closeIcon: true,
         animation: 'zoom',
         type: 'red',
-        title: '¿Está seguro de eliminar este equipo?',
+        title: '¿Está seguro de eliminar esta cotización?',
         content: description,
         buttons: {
             confirm: {
@@ -298,6 +300,67 @@ function cancelQuote() {
                 },
             },
         },
+    });
+
+}
+
+function raiseQuote() {
+    var quote_id = $(this).data('raise');
+    var code = ($(this).data('code')) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de elevar esta cotización a orden de ejecución?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización elevada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
     });
 
 }

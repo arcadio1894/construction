@@ -400,6 +400,12 @@ class QuoteController extends Controller
         $quote->save();
     }
 
+    public function confirm(Quote $quote)
+    {
+        $quote->state = 'confirmed';
+        $quote->save();
+    }
+
     public function selectMaterials(Request $request)
     {
         /*$page = $request->get('page');
@@ -511,7 +517,8 @@ class QuoteController extends Controller
 
     public function getAllQuotes()
     {
-        $quotes = Quote::with('customer')->get();
+        $quotes = Quote::with('customer')
+            ->where('raise_status',false)->get();
         return datatables($quotes)->toJson();
     }
 
@@ -778,6 +785,14 @@ class QuoteController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         return view('quote.raise', compact( 'permissions'));
+    }
+
+    public function raiseQuote($quote_id, $code)
+    {
+        $quote = Quote::find($quote_id);
+        $quote->code_customer = $code;
+        $quote->raise_status = true;
+        $quote->save();
     }
 
     public function getAllQuotesConfirmed()

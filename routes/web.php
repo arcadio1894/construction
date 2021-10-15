@@ -607,6 +607,12 @@ Route::middleware('auth')->group(function (){
         Route::post('/destroy/quote/{quote}', 'QuoteController@destroy')
             ->name('quote.destroy')
             ->middleware('permission:destroy_quote');
+        Route::post('/confirm/quote/{quote}', 'QuoteController@confirm')
+            ->name('quote.confirm')
+            ->middleware('permission:confirm_quote');
+        Route::post('/raise/quote/{quote}/code/{code}', 'QuoteController@raiseQuote')
+            ->name('quote.raise.quote')
+            ->middleware('permission:confirm_quote');
         Route::post('/destroy/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@destroyEquipmentOfQuote')
             ->name('quote.destroy.equipment')
             ->middleware('permission:update_quote');
