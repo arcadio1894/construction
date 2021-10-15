@@ -61,8 +61,8 @@ class QuoteController extends Controller
             $quote = Quote::create([
                 'code' => $request->get('code_quote'),
                 'description_quote' => $request->get('code_description'),
-                'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : null,
-                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : null,
+                'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
+                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now(),
                 'way_to_pay' => ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '',
                 'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
                 'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
@@ -252,8 +252,8 @@ class QuoteController extends Controller
 
             $quote->code = $request->get('code_quote');
             $quote->description_quote = $request->get('code_description');
-            $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : null;
-            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : null;
+            $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now();
+            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now();
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
