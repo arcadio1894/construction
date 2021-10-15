@@ -98,8 +98,7 @@
                                 </div>
                             </div>
                             @endhasanyrole
-                        </div>
-                        <div class="form-group row">
+
                             @hasanyrole('logistic|admin')
                             <div class="col-md-4">
                                 <label for="description">Forma de pago </label>
