@@ -83,7 +83,7 @@
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label for="description">Código de cotización </label>
-                                <input type="text" id="codeQuote" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm" value="{{ $quote->code }}">
+                                <input type="text" id="codeQuote" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm" value="{{ $quote->code }}" readonly>
                             </div>
                             @hasanyrole('logistic|admin')
                             <div class="col-md-4" id="sandbox-container">

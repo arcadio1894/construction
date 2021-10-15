@@ -180,15 +180,15 @@
 
     <div id="company2" class="clearfix">
         <div>CLIENTE</div>
-        <div>{{ $quote->customer->business_name }}</div>
-        <div>{{ $quote->customer->address }}</div>
-        <div>{{ $quote->customer->location }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
     </div>
 
     <div id="project">
         <div><span>COTIZACIÓN #</span>: {{ $quote->id }}</div>
         <div><span>FECHA</span>: {{ date( "d/m/Y", strtotime( $quote->date_quote )) }}</div>
-        <div><span>CLIENTE ID</span>: {{ $quote->customer_id }}</div>
+        <div><span>CLIENTE ID</span>: {{ ($quote->customer !== null) ? $quote->customer_id : 'No tiene localización'}}</div>
         <div><span>VALIDO HASTA</span>: {{ date( "d/m/Y", strtotime( $quote->date_validate )) }} </div>
 
     </div>
@@ -359,15 +359,15 @@
 
     <div id="company2" class="clearfix">
         <div>CLIENTE</div>
-        <div>{{ $quote->customer->business_name }}</div>
-        <div>{{ $quote->customer->address }}</div>
-        <div>{{ $quote->customer->location }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
+        <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
     </div>
 
     <div id="project">
         <div><span>COTIZACIÓN #</span>: {{ $quote->id }}</div>
         <div><span>FECHA</span>: {{ date( "d/m/Y", strtotime( $quote->date_quote )) }}</div>
-        <div><span>CLIENTE ID</span>: {{ $quote->customer_id }}</div>
+        <div><span>CLIENTE ID</span>: {{ ($quote->customer !== null) ? $quote->customer_id : 'No tiene localización'}}</div>
         <div><span>VALIDO HASTA</span>: {{ date( "d/m/Y", strtotime( $quote->date_validate )) }} </div>
 
     </div>
