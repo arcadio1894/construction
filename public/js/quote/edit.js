@@ -2376,27 +2376,15 @@ function addEquipment() {
 
     renderTemplateEquipment();
 
-    $('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            type: 'GET',
-            processResults(data) {
-                //console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
-            }
-        }
-    });
-
+    $('.materialTypeahead').typeahead({
+            hint: true,
+            highlight: true, /* Enable substring highlighting */
+            minLength: 1 /* Specify minimum characters required for showing suggestions */
+        },
+        {
+            limit: 12,
+            source: substringMatcher($materialsTypeahead)
+        });
     /*for (var i=0; i<$materials.length; i++)
     {
         var newOption = new Option($materials[i].full_description, $materials[i].id, false, false);

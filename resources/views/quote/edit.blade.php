@@ -1836,10 +1836,10 @@
                                         --}}
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    {{--<div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                    </div>
+                                    </div>--}}
                                 </div>
                                 <hr>
                                 <div class="row">
