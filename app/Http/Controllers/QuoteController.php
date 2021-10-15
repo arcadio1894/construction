@@ -681,7 +681,7 @@ class QuoteController extends Controller
                 //dump($materials);
                 foreach ( $materials as $material )
                 {
-                    dump($material['material']['stock_current']);
+                    //dump($material['material']['stock_current']);
                     $equipmentMaterial = EquipmentMaterial::create([
                         'equipment_id' => $equipment->id,
                         'material_id' => $material['material']['id'],
