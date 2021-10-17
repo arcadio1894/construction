@@ -517,11 +517,11 @@ function fillEquipments() {
 
             $total = parseFloat($total) + parseFloat(totalEquipment);
 
-            $('#subtotal').html('S/. '+$total);
-
-            calculateMargen2($('#utility').val());
+            /*$('#subtotal').html('S/. '+$total);
+*/
+            /*calculateMargen2($('#utility').val());
             calculateLetter2($('#letter').val());
-            calculateRent2($('#taxes').val());
+            calculateRent2($('#taxes').val());*/
 
             var quote_id = $('#quote_id').val();
 
@@ -1396,9 +1396,11 @@ function addConsumable() {
         renderTemplateConsumable(render, consumable, cantidad);
     } else {
         var consumableID2 = $(this).parent().parent().find('[data-consumable]').val();
-        //console.log(material);
+        console.log(consumableID2);
         var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
+        console.log(inputQuantity2);
         var cantidad2 = inputQuantity2.val();
+        console.log(cantidad2);
         if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
         {
             toastr.error('Debe ingresar una cantidad', 'Error',
@@ -1446,11 +1448,10 @@ function addConsumable() {
         }
 
         var render2 = $(this).parent().parent().next().next();
-
+        console.log(render2);
         var consumable2 = $consumables.find( mat=>mat.id === parseInt(consumableID2) );
-
         var consumables2 = $(this).parent().parent().next().next().children();
-
+        console.log(consumable2);
         consumables2.each(function(e){
             var id = $(this).children().children().children().next().val();
             if (parseInt(consumable2.id) === parseInt(id)) {
@@ -1482,6 +1483,7 @@ function addConsumable() {
         $(".consumable_search").empty().trigger('change');
         renderTemplateConsumable(render2, consumable2, cantidad2);
     }
+
 }
 
 function addMano() {
@@ -2066,7 +2068,7 @@ function confirmEquipment() {
                             consumablesDescription.push($(this).val());
                         });
                         $(this).find('[data-consumableId]').each(function(){
-                            consumablesIds.push($(this).attr('data-consumbaleid'));
+                            consumablesIds.push($(this).attr('data-consumableid'));
                         });
                         $(this).find('[data-consumableUnit]').each(function(){
                             consumablesUnit.push($(this).val());
@@ -2393,7 +2395,6 @@ function addEquipment() {
             }
         }
     });
-
     //$equipmentStatus = false;
 }
 
@@ -2929,7 +2930,7 @@ function storeQuote() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                location.reload();
+                //location.reload();
             }, 2000 )
         },
         error: function (data) {
@@ -3037,31 +3038,67 @@ function renderTemplateConsumable(render, consumable, quantity) {
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     var clone = activateTemplate('#template-mano');
-    clone.querySelector("[data-manoDescription]").setAttribute('value', description);
-    clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
-    clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
-    clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
-    clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-manoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    } else {
+        clone.querySelector("[data-manoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-manoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-manoTotal]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
 
 function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
     var clone = activateTemplate('#template-dia');
-    clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
-    clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
-    clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
-    clone.querySelector("[data-total]").setAttribute( 'value', total2);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
+        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
+        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
+        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-total]").setAttribute("style","display:none;");
+
+    } else {
+        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
+        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
+        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
+        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-precio]").setAttribute("style","display:none;");
+        clone.querySelector("[data-total]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
 
 function renderTemplateTorno(render, description, quantity, unitPrice) {
     var clone = activateTemplate('#template-torno');
-    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-    clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
-    clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
-    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
+
+    } else {
+        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
@@ -3070,6 +3107,10 @@ function renderTemplateEquipment() {
     var clone = activateTemplate('#template-equipment');
 
     $('#body-equipment').append(clone);
+
+    $('.unitMeasure').select2({
+        placeholder: "Seleccione unidad",
+    });
 }
 
 function activateTemplate(id) {

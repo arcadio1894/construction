@@ -469,6 +469,7 @@
                                     </div>
                                 </div>
                                 <div data-bodyMano>
+
                                     @foreach( $workforces as $workforce )
                                         <div class="row">
                                             <div class="col-md-3">
@@ -495,14 +496,14 @@
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $workforce->unit_price }}" onkeyup="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " @cannot('showPrices_quote') readonly @endcannot >
+                                                " @cannot('showPrices_quote') style="display: none" @endcannot >
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " readonly>
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
@@ -780,14 +781,14 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-consumableDescription>
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-consumableDescription readonly>
                         <input type="hidden" data-consumableId>
                     </div>
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
                         <div class="form-group">
-                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-consumableUnit>
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-consumableUnit readonly>
                         </div>
                     </div>
                 </div>
@@ -1120,7 +1121,7 @@
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->full_description }}" data-consumableDescription>
-                                                    <input type="hidden" data-consumableId value="{{ $consumable->id }}">
+                                                    <input type="hidden" data-consumableId="{{ $consumable->id }}" value="{{ $consumable->id }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -1197,6 +1198,7 @@
                                                 ">
                                         </div>
                                     </div>
+                                    @can('showPrices_quote')
                                     <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -1205,6 +1207,7 @@
                                                 ">
                                         </div>
                                     </div>
+                                    @endcan
                                     <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-addMano class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -1212,6 +1215,38 @@
 
                                 </div>
                                 <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Precio</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div data-bodyMano>
                                     @foreach( $workforces as $workforce )
                                         <div class="row">
@@ -1239,14 +1274,14 @@
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $workforce->unit_price }}" onkeyup="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " >
+                                                " @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " readonly>
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
@@ -1281,6 +1316,7 @@
                                                 ">
                                                 </div>
                                             </div>
+                                            @can('showPrices_quote')
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -1289,6 +1325,7 @@
                                                 ">
                                                 </div>
                                             </div>
+                                            @endcan
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>

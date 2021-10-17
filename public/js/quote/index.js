@@ -41,7 +41,19 @@ $(document).ready(function () {
                         return '<p> Sin cliente </p>'
                 }
             },
-            { data: 'total' },
+            { data: null,
+                title: 'Total',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                        return '<span class="badge bg-primary">'+item.total+'</span>';
+                    } else {
+                        return '';
+                    }
+
+                }
+            },
             { data: null,
                 title: 'Estado',
                 wrap: true,

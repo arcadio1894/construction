@@ -801,7 +801,6 @@ function addConsumable() {
         var render2 = $(this).parent().parent().next().next();
 
         var consumable2 = $consumables.find( mat=>mat.id === parseInt(consumableID2) );
-
         var consumables2 = $(this).parent().parent().next().next().children();
 
         consumables2.each(function(e){
@@ -1744,7 +1743,6 @@ function addEquipment() {
             }
         }
     });
-
     //$equipmentStatus = false;
 }
 
@@ -2389,31 +2387,67 @@ function renderTemplateConsumable(render, consumable, quantity) {
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     var clone = activateTemplate('#template-mano');
-    clone.querySelector("[data-manoDescription]").setAttribute('value', description);
-    clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
-    clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
-    clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
-    clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-manoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    } else {
+        clone.querySelector("[data-manoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-manoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-manoTotal]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
 
 function renderTemplateTorno(render, description, quantity, unitPrice) {
     var clone = activateTemplate('#template-torno');
-    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-    clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
-    clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
-    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
+
+    } else {
+        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
+        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
 
 function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
     var clone = activateTemplate('#template-dia');
-    clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
-    clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
-    clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
-    clone.querySelector("[data-total]").setAttribute( 'value', total2);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
+        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
+        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
+        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-total]").setAttribute("style","display:none;");
+
+    } else {
+        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
+        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
+        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
+        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-precio]").setAttribute("style","display:none;");
+        clone.querySelector("[data-total]").setAttribute("style","display:none;");
+
+    }
 
     render.append(clone);
 }
@@ -2422,6 +2456,10 @@ function renderTemplateEquipment() {
     var clone = activateTemplate('#template-equipment');
 
     $('#body-equipment').append(clone);
+
+    $('.unitMeasure').select2({
+        placeholder: "Seleccione unidad",
+    });
 }
 
 function activateTemplate(id) {

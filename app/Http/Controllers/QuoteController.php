@@ -324,7 +324,7 @@ class QuoteController extends Controller
                             'material_id' => $consumables[$k]->id,
                             'quantity' => (float) $consumables[$k]->quantity,
                             'price' => (float) $consumables[$k]->price,
-                            'total' => (float) $consumables[$k]->total,
+                            'total' => (float) $consumables[$k]->quantity*(float) $consumables[$k]->price,
                             'state' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
                             'availability' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Agotado':'Completo',
                         ]);
@@ -339,7 +339,7 @@ class QuoteController extends Controller
                             'description' => $workforces[$w]->description,
                             'price' => (float) $workforces[$w]->price,
                             'quantity' => (float) $workforces[$w]->quantity,
-                            'total' => (float) $workforces[$w]->total,
+                            'total' => (float) $workforces[$w]->price*(float) $workforces[$w]->quantity,
                             'unit' => $workforces[$w]->unit,
                         ]);
 
@@ -353,7 +353,7 @@ class QuoteController extends Controller
                             'description' => $tornos[$r]->description,
                             'price' => (float) $tornos[$r]->price,
                             'quantity' => (float) $tornos[$r]->quantity,
-                            'total' => (float) $tornos[$r]->total
+                            'total' => (float) $tornos[$r]->price*(float) $tornos[$r]->quantity
                         ]);
 
                         $totalTornos += $equipmenttornos->total;
@@ -366,13 +366,13 @@ class QuoteController extends Controller
                             'quantityPerson' => (float) $dias[$d]->quantity,
                             'hoursPerPerson' => (float) $dias[$d]->hours,
                             'pricePerHour' => (float) $dias[$d]->price,
-                            'total' => (float) $dias[$d]->total
+                            'total' => (float) $dias[$d]->quantity*(float) $dias[$d]->hours*(float) $dias[$d]->price
                         ]);
 
                         $totalDias += $equipmentdias->total;
                     }
 
-                    $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+                    $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
 
                     $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
@@ -708,7 +708,7 @@ class QuoteController extends Controller
                         'material_id' => $consumable['id'],
                         'quantity' => (float) $consumable['quantity'],
                         'price' => (float) $consumable['price'],
-                        'total' => (float) $consumable['total'],
+                        'total' => (float) $consumable['quantity']*(float) $consumable['price'],
                         'state' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Falta comprar':'En compra',
                         'availability' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Agotado':'Completo',
                     ]);
@@ -723,7 +723,7 @@ class QuoteController extends Controller
                         'description' => $workforce['description'],
                         'price' => (float) $workforce['price'],
                         'quantity' => (float) $workforce['quantity'],
-                        'total' => (float) $workforce['total'],
+                        'total' => (float) $workforce['price']*(float) $workforce['quantity'],
                         'unit' => $workforce['unit'],
                     ]);
 
@@ -737,7 +737,7 @@ class QuoteController extends Controller
                         'description' => $torno['description'],
                         'price' => (float) $torno['price'],
                         'quantity' => (float) $torno['quantity'],
-                        'total' => (float) $torno['total']
+                        'total' => (float) $torno['price']*(float) $torno['quantity']
                     ]);
 
                     $totalTornos += $equipmenttornos->total;
@@ -750,7 +750,7 @@ class QuoteController extends Controller
                         'quantityPerson' => (float) $dia['quantity'],
                         'hoursPerPerson' => (float) $dia['hours'],
                         'pricePerHour' => (float) $dia['price'],
-                        'total' => (float) $dia['total']
+                        'total' => (float) $dia['quantity']*(float) $dia['hours']*(float) $dia['price']
                     ]);
 
                     $totalDias += $equipmentdias->total;

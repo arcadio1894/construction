@@ -25,7 +25,7 @@ class TypescrapSeeder extends Seeder
         ]);
 
         Typescrap::create([
-            'name' => 'Tubos',
+            'name' => 'Tubos/Platinas/Barras/Ángulos',
             'length' => 6000,
         ]);
     }
