@@ -11,6 +11,7 @@ let $subtotal3=0;
 var $permissions;
 
 $(document).ready(function () {
+    console.log($total);
     $permissions = JSON.parse($('#permissions').val());
 
     $.ajax({
@@ -22,6 +23,9 @@ $(document).ready(function () {
             {
                 $materials.push(json[i]);
             }
+
+        },
+        complete: function (data) {
             fillEquipments();
         }
     });
@@ -284,10 +288,10 @@ $(document).ready(function () {
         }
     });
 
-    $total = parseFloat($('#quote_total').val());
+    /*$total = parseFloat($('#quote_total').val());
     $subtotal = parseFloat($('#quote_subtotal_utility').val());
     $subtotal2 = parseFloat($('#quote_subtotal_letter').val());
-    $subtotal3 = parseFloat($('#quote_subtotal_rent').val());
+    $subtotal3 = parseFloat($('#quote_subtotal_rent').val());*/
 });
 
 var $formCreate;
@@ -330,12 +334,6 @@ function fillEquipments() {
             var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
             var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().children().next().children().next().next();
             var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
-
-            console.log(materials);
-            console.log(consumables);
-            console.log(workforces);
-            console.log(tornos);
-            console.log(dias);
 
             var materialsDescription = [];
             var materialsUnit = [];
@@ -476,7 +474,6 @@ function fillEquipments() {
 
             tornos.each(function(e){
                 $(this).find('[data-tornoDescription]').each(function(){
-                    console.log($(this).val());
                     tornosDescription.push($(this).val());
                 });
                 $(this).find('[data-tornoQuantity]').each(function(){
@@ -497,18 +494,22 @@ function fillEquipments() {
             }
 
             var totalEquipment = 0;
-            for (let i = 0; i < $items.length; i++) {
-                totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+            for (let i = 0; i < materialsTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
             }
+
             for (let i = 0; i < tornosTotal.length; i++) {
                 totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
             }
+
             for (let i = 0; i < manosTotal.length; i++) {
                 totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
             }
+
             for (let i = 0; i < consumablesTotal.length; i++) {
                 totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
             }
+
             for (let i = 0; i < diasTotal.length; i++) {
                 totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
             }
@@ -516,12 +517,6 @@ function fillEquipments() {
             totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
 
             $total = parseFloat($total) + parseFloat(totalEquipment);
-
-            /*$('#subtotal').html('S/. '+$total);
-*/
-            /*calculateMargen2($('#utility').val());
-            calculateLetter2($('#letter').val());
-            calculateRent2($('#taxes').val());*/
 
             var quote_id = $('#quote_id').val();
 
@@ -709,10 +704,10 @@ function deleteEquipment() {
 }
 
 function saveEquipment() {
+    console.log($total);
     if($(this).data('idequipment')==='')
     {
         var button = $(this);
-        console.log(button);
         $.confirm({
             icon: 'fas fa-smile',
             theme: 'modern',
@@ -734,18 +729,10 @@ function saveEquipment() {
                         console.log(equipmentDeleted);
 
                         $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
-                        //button.parent().parent().parent().parent().remove();
-                        /*if ( $equipments.length === 0 ) {
-                            renderTemplateEquipment();
-                            $equipmentStatus = false;
-                        }*/
+
                         // TODO: Capturar los materiales y recorrerlos y agregar al anterior
                         // TODO: En data-delete (material) debe estar el equipo tambien
                         $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                        $('#subtotal').html('S/. '+$total);
-                        calculateMargen2($('#utility').val());
-                        calculateLetter2($('#letter').val());
-                        calculateRent2($('#taxes').val());
 
                         //TODO: Otra vez guardamos el equipo
 
@@ -919,8 +906,8 @@ function saveEquipment() {
                         }
 
                         var totalEquipment = 0;
-                        for (let i = 0; i < $items.length; i++) {
-                            totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                        for (let i = 0; i < materialsTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                         }
                         for (let i = 0; i < tornosTotal.length; i++) {
                             totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
@@ -964,7 +951,6 @@ function saveEquipment() {
         });
     } else {
         var button2 = $(this);
-        console.log(button2);
         $.confirm({
             icon: 'fas fa-smile',
             theme: 'modern',
@@ -978,27 +964,17 @@ function saveEquipment() {
                     text: 'CONFIRMAR',
                     action: function (e) {
                         var modifiedEquipment = [];
-                        var equipmentId = parseInt(button2.data('saveequipment'));
+                        var equipmentId = parseInt(button2.attr('data-saveequipment'));
                         var idEquipment = button2.attr('data-idequipment');
                         var idQuote = button2.attr('data-quote');
-                        console.log(equipmentId);
                         var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
-                        console.log(equipmentDeleted);
-
                         $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
-                        //button.parent().parent().parent().parent().remove();
-                        /*if ( $equipments.length === 0 ) {
-                            renderTemplateEquipment();
-                            $equipmentStatus = false;
-                        }*/
+
                         // TODO: Capturar los materiales y recorrerlos y agregar al anterior
                         // TODO: En data-delete (material) debe estar el equipo tambien
+                        console.log($total);
                         $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                        $('#subtotal').html('S/. '+$total);
-                        calculateMargen2($('#utility').val());
-                        calculateLetter2($('#letter').val());
-                        calculateRent2($('#taxes').val());
-
+                        console.log($total);
                         //TODO: Otra vez guardamos el equipo
 
                         var quantity = button2.parent().parent().next().children().children().children().next().val();
@@ -1087,7 +1063,6 @@ function saveEquipment() {
                                 consumablesDescription.push($(this).val());
                             });
                             $(this).find('[data-consumableId]').each(function(){
-                                console.log($(this).attr('data-consumableid'));
                                 consumablesIds.push($(this).attr('data-consumableid'));
                             });
                             $(this).find('[data-consumableUnit]').each(function(){
@@ -1171,8 +1146,8 @@ function saveEquipment() {
                         }
 
                         var totalEquipment = 0;
-                        for (let i = 0; i < $items.length; i++) {
-                            totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                        for (let i = 0; i < materialsTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                         }
                         for (let i = 0; i < tornosTotal.length; i++) {
                             totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
@@ -1188,21 +1163,23 @@ function saveEquipment() {
                         }
 
                         totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
-
+                        console.log(totalEquipment);
+                        console.log($total);
                         $total = parseFloat($total) + parseFloat(totalEquipment);
-
-                        $('#subtotal').html('S/. '+$total);
-
+                        console.log($total);
+                        $('#subtotal').html('S/. '+ parseFloat($total).toFixed(2));
+                        console.log($total);
                         calculateMargen2($('#utility').val());
                         calculateLetter2($('#letter').val());
                         calculateRent2($('#taxes').val());
-
+                        console.log($total);
                         button2.attr('data-saveEquipment', $equipments.length);
                         button2.next().attr('data-deleteEquipment', $equipments.length);
                         $equipments.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         modifiedEquipment.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         //console.log(modifiedEquipment);
                         $items = [];
+                        console.log($total);
                         var equipos = JSON.stringify(modifiedEquipment);
                         $.ajax({
                             url: '/dashboard/update/equipment/'+idEquipment+'/quote/'+idQuote,
@@ -1270,7 +1247,7 @@ function saveEquipment() {
                             },
                         });
                         //$.alert("Equipo guardado!");
-
+                        console.log($total);
                     },
                 },
                 cancel: {
@@ -1588,7 +1565,7 @@ function addMano() {
         $(this).parent().prev().prev().children().children().next().val(0);
         $(this).parent().prev().children().children().next().val(0);
         //console.log(descripcion);
-        var render = $(this).parent().next().next().next();
+        var render = $(this).parent().parent().next().next().next();
         renderTemplateMano(render, descripcion, unidad, cantidad, precio);
     } else {
         var precio2 = 0;
@@ -2151,8 +2128,8 @@ function confirmEquipment() {
                     }
 
                     var totalEquipment = 0;
-                    for (let i = 0; i < $items.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                    for (let i = 0; i < materialsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                     }
                     for (let i = 0; i < tornosTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
@@ -3065,7 +3042,6 @@ function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerso
         clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
         clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
         clone.querySelector("[data-total]").setAttribute( 'value', total2);
-        clone.querySelector("[data-total]").setAttribute("style","display:none;");
 
     } else {
         clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
@@ -3087,9 +3063,6 @@ function renderTemplateTorno(render, description, quantity, unitPrice) {
         clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
         clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
         clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
-        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
-        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
-
     } else {
         clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
         clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);

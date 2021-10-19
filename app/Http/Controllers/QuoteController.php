@@ -67,7 +67,7 @@ class QuoteController extends Controller
                 'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
                 'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
                 'state' => 'created',
-                'utility' => ($request->has('utility')) ? $request->has('utility'): 0,
+                'utility' => ($request->has('utility')) ? $request->get('utility'): 0,
                 'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
                 'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
             ]);
@@ -257,7 +257,7 @@ class QuoteController extends Controller
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
-            $quote->utility = ($request->has('utility')) ? $request->has('utility'): 0;
+            $quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
             $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
             $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
             $quote->save();

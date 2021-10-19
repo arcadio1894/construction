@@ -593,8 +593,8 @@ function saveEquipment() {
                     }
 
                     var totalEquipment = 0;
-                    for (let i = 0; i < $items.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                    for (let i = 0; i < materialsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                     }
                     for (let i = 0; i < tornosTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
@@ -939,7 +939,7 @@ function addMano() {
         $(this).parent().prev().prev().children().children().next().val(0);
         $(this).parent().prev().children().children().next().val(0);
         //console.log(descripcion);
-        var render = $(this).parent().next().next().next();
+        var render = $(this).parent().parent().next().next().next();
         renderTemplateMano(render, descripcion, unidad, cantidad, precio);
     } else {
         var precio2 = 0;
@@ -1503,8 +1503,8 @@ function confirmEquipment() {
                     }
 
                     var totalEquipment = 0;
-                    for (let i = 0; i < $items.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat($items[i].material_price);
+                    for (let i = 0; i < materialsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                     }
                     for (let i = 0; i < tornosTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
@@ -2414,9 +2414,6 @@ function renderTemplateTorno(render, description, quantity, unitPrice) {
         clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
         clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
         clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
-        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
-        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
-
     } else {
         clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
         clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
@@ -2437,8 +2434,6 @@ function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerso
         clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
         clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
         clone.querySelector("[data-total]").setAttribute( 'value', total2);
-        clone.querySelector("[data-total]").setAttribute("style","display:none;");
-
     } else {
         clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
         clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);

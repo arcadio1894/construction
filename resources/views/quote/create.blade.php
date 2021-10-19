@@ -825,21 +825,21 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " @cannot('showPrices_quote') readonly @endcannot>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " @cannot('showPrices_quote') readonly @endcannot>
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " @cannot('showPrices_quote') readonly @endcannot>
                     </div>
                 </div>
                 <div class="col-md-2">

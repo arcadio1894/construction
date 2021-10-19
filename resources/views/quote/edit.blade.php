@@ -1782,7 +1782,7 @@
                             <a data-confirm class="btn btn-primary btn-sm" data-toggle="tooltip" title="Confirmar" >
                                 <i class="fas fa-check-square"></i> Confirmar equipo
                             </a>
-                            <a class="btn btn-warning btn-sm" data-saveEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
+                            <a class="btn btn-warning btn-sm" data-saveEquipment="" data-idEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
                                 <i class="fas fa-check-square"></i> Guardar cambios
                             </a>
                             <a class="btn btn-danger btn-sm" data-deleteEquipment="" style="display:none" data-toggle="tooltip" title="Quitar">
