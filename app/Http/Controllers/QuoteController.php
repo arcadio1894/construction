@@ -122,7 +122,7 @@ class QuoteController extends Controller
                         'percentage' => (float) $materials[$j]->quantity,
                         'state' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
                         'availability' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
-                        'total' => (float) $materials[$j]->price,
+                        'total' => (float) $materials[$j]->quantity*(float) $materials[$j]->material->unit_price,
                     ]);
 
                     $totalMaterial += $equipmentMaterial->total;
@@ -309,7 +309,7 @@ class QuoteController extends Controller
                             'percentage' => (float) $materials[$j]->quantity,
                             'state' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Falta comprar':'En compra',
                             'availability' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Agotado':'Completo',
-                            'total' => (float) $materials[$j]->price,
+                            'total' => (float) $materials[$j]->material->unit_price*(float) $materials[$j]->quantity,
                         ]);
 
                         $totalMaterial += $equipmentMaterial->total;
@@ -586,6 +586,9 @@ class QuoteController extends Controller
             foreach( $equipment_quote->workdays as $workday ) {
                 $workday->delete();
             }
+
+            $quote->total -= $equipment_quote->total;
+            $quote->save();
 
             $equipment_quote->delete();
 

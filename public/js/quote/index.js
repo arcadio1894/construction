@@ -117,6 +117,10 @@ $(document).ready(function () {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
+                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                        }
                     }
 
                     return text;
