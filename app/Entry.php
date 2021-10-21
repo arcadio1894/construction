@@ -19,7 +19,10 @@ class Entry extends Model
         'supplier_id',
         'entry_type',
         'date_entry',
-        'finance'
+        'finance',
+        'currency_invoice',
+        'currency_compra',
+        'currency_venta'
     ];
 
     public function getSubTotalAttribute()

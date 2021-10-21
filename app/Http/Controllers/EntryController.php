@@ -47,18 +47,46 @@ class EntryController extends Controller
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
         DB::beginTransaction();
         try {
+            //dump($tipoCambioSunat->compra);
             $entry = Entry::create([
                 'referral_guide' => $request->get('referral_guide'),
                 'purchase_order' => $request->get('purchase_order'),
                 'invoice' => $request->get('invoice'),
                 'deferred_invoice' => ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off',
-                'currency_invoice' => ($request->has('currency_invoice')) ? $request->get('deferred_invoice'):'off',
+                'currency_invoice' => ($request->has('currency_invoice')) ? 'USD':'PEN',
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type'),
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
-                'finance' => false
+                'finance' => false,
+                'currency_compra' => (float) $tipoCambioSunat->compra,
+                'currency_venta' => (float) $tipoCambioSunat->venta
             ]);
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -105,48 +133,96 @@ class EntryController extends Controller
                 {
                     if( $detail_entry->material_id == $items[$i]->id_material )
                     {
-                        $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
-                        $materialS = Material::find($detail_entry->material_id);
-                        if ( $materialS->price < $items[$i]->price )
+                        if ( $entry->currency_invoice === 'PEN' )
                         {
-                            $materialS->unit_price = $items[$i]->price;
-                            $materialS->save();
+                            $precio1 = (float)$items[$i]->price / (float) $entry->currency_compra;
+                            $price1 = ($detail_entry->material->price > $precio1) ? $detail_entry->material->price : $precio1;
+                            $materialS = Material::find($detail_entry->material_id);
+                            if ( $materialS->price < $price1 )
+                            {
+                                $materialS->unit_price = $price1;
+                                $materialS->save();
 
-                            $detail_entry->unit_price = $materialS->unit_price;
-                            $detail_entry->save();
-                        }
-                        //dd($detail_entry->material->materialType);
-                        if ( isset($detail_entry->material->typeScrap) )
-                        {
-                            $item = Item::create([
-                                'detail_entry_id' => $detail_entry->id,
-                                'material_id' => $detail_entry->material_id,
-                                'code' => $items[$i]->item,
-                                'length' => $detail_entry->material->typeScrap->length,
-                                'width' => $detail_entry->material->typeScrap->width,
-                                'weight' => 0,
-                                'price' => $price,
-                                'percentage' => 1,
-                                'typescrap_id' => $detail_entry->material->typeScrap->id,
-                                'location_id' => $items[$i]->id_location,
-                                'state' => $items[$i]->state,
-                                'state_item' => 'entered'
-                            ]);
+                                $detail_entry->unit_price = $items[$i]->price;
+                                $detail_entry->save();
+                            }
+                            //dd($detail_entry->material->materialType);
+                            if ( isset($detail_entry->material->typeScrap) )
+                            {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => $detail_entry->material->typeScrap->length,
+                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => $items[$i]->price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            } else {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => 0,
+                                    'width' => 0,
+                                    'weight' => 0,
+                                    'price' => $items[$i]->price,
+                                    'percentage' => 1,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            }
                         } else {
-                            $item = Item::create([
-                                'detail_entry_id' => $detail_entry->id,
-                                'material_id' => $detail_entry->material_id,
-                                'code' => $items[$i]->item,
-                                'length' => 0,
-                                'width' => 0,
-                                'weight' => 0,
-                                'price' => $price,
-                                'percentage' => 1,
-                                'location_id' => $items[$i]->id_location,
-                                'state' => $items[$i]->state,
-                                'state_item' => 'entered'
-                            ]);
+                            $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                            $materialS = Material::find($detail_entry->material_id);
+                            if ( $materialS->price < $items[$i]->price )
+                            {
+                                $materialS->unit_price = $items[$i]->price;
+                                $materialS->save();
+
+                                $detail_entry->unit_price = $materialS->unit_price;
+                                $detail_entry->save();
+                            }
+                            //dd($detail_entry->material->materialType);
+                            if ( isset($detail_entry->material->typeScrap) )
+                            {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => $detail_entry->material->typeScrap->length,
+                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => $price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            } else {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => 0,
+                                    'width' => 0,
+                                    'weight' => 0,
+                                    'price' => $price,
+                                    'percentage' => 1,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            }
                         }
+
 
                     }
                 }
