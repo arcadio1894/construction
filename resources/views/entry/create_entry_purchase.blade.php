@@ -126,6 +126,10 @@
                                     <label for="image">Imagen </label>
                                     <input type="file" id="image" name="image" class="form-control">
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
+                                    <input id="btn-currency" type="checkbox" name="currency_invoice" data-bootstrap-switch data-off-color="primary" data-on-text="DOLARES" data-off-text="SOLES" data-on-color="success">
+                                </div>
                             </div>
                         </div>
                     </div>

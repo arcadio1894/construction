@@ -77,7 +77,7 @@ $(document).ready(function () {
         let subcategory = $selectSubCategory.select2('data');
         let option = $selectSubCategory.find(':selected');
 
-        console.log(option);
+        console.log(subcategory[0].id);
         if(subcategory[0].text === 'INOX') {
             $selectType.empty();
             var subcategoria =  subcategory[0].id;
@@ -86,12 +86,23 @@ $(document).ready(function () {
                     value: '',
                     text: 'Ninguno'
                 }));
+                var type_id = $('#type_id').val();
                 for ( var i=0; i<data.length; i++ )
                 {
-                    $selectType.append($("<option>", {
+                    /*$selectType.append($("<option>", {
                         value: data[i].id,
                         text: data[i].type
-                    }));
+                    }));*/
+                    if (data[i].id === parseInt(type_id)) {
+                        var newOption = new Option(data[i].type, data[i].id, false, true);
+                        // Append it to the select
+                        $selectType.append(newOption).trigger('change');
+
+                    } else {
+                        var newOption2 = new Option(data[i].type, data[i].id, false, false);
+                        // Append it to the select
+                        $selectType.append(newOption2);
+                    }
                 }
             });
             $('#feature-body').css("display","");
@@ -184,7 +195,7 @@ $(document).ready(function () {
         }
     });
 
-    generateNameProduct();
+    //generateNameProduct();
 
     $selectExample.select2({
         placeholder: "Selecione un modelo",

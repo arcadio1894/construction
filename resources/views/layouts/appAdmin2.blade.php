@@ -37,10 +37,13 @@
             <li class="nav-item">
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
-            {{--<li class="nav-item d-none d-sm-inline-block">
-                <a href="index3.html" class="nav-link">Home</a>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="#" class="nav-link" id="tasaCompra"></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
+                <a href="#" class="nav-link" id="tasaVenta"></a>
+            </li>
+            {{--<li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>
             </li>--}}
         </ul>
@@ -685,7 +688,7 @@
                         </li>
                     @endcan
 
-                    @canany('list_quote')
+                    {{--@canany('list_quote')
                         <li class="nav-header">COTIZACIONES</li>
                     @endcanany
                     @can('list_quote')
@@ -724,7 +727,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan
+                    @endcan--}}
 
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>
@@ -1013,6 +1016,7 @@
 
 <!-- AdminLTE App -->
 <script src="{{ asset('admin/dist/js/adminlte.min.js') }}"></script>
+<script src="{{ asset('/js/layout/admin2.js') }}"></script>
 
 @yield('scripts')
 

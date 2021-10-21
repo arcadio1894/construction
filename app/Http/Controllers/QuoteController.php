@@ -216,7 +216,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
         //dump($quote);
         return view('quote.show', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));

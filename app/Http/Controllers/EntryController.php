@@ -54,6 +54,7 @@ class EntryController extends Controller
                 'purchase_order' => $request->get('purchase_order'),
                 'invoice' => $request->get('invoice'),
                 'deferred_invoice' => ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off',
+                'currency_invoice' => ($request->has('currency_invoice')) ? $request->get('deferred_invoice'):'off',
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type'),
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),

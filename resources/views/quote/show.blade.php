@@ -120,7 +120,7 @@
         <div class="col-md-12">
             <div class="card card-success">
                 <div class="card-header">
-                    <h3 class="card-title">EQUIPOS</h3>
+                    <h3 class="card-title">EQUIPO: {{ $equipment->description }}</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -179,8 +179,8 @@
                                                 <td data-description>{{ $material->material->full_description }}</td>
                                                 <td data-unit>{{ $material->material->unitMeasure->name }}</td>
                                                 <td data-quantity>{{ $material->percentage }}</td>
-                                                <td data-price>{{ $material->price }}</td>
-                                                <td data-total>{{ $material->total }}</td>
+                                                <td @cannot('showPrices_quote')style="display: none" @endcannot data-price>{{ $material->price }}</td>
+                                                <td @cannot('showPrices_quote')style="display: none" @endcannot data-total>{{ $material->total }}</td>
                                             </tr>
                                         @endforeach
                                     </tbody>
@@ -201,6 +201,33 @@
                         </div>
                         <div class="card-body">
                             <div data-bodyConsumable>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Precio</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                </div>
                                 @foreach( $equipment->consumables as $consumable )
                                     <div class="row">
                                         <div class="col-md-4">
@@ -226,14 +253,14 @@
                                             <div class="form-group">
                                                 <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " value="{{ $consumable->price }}" readonly>
+                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $consumable->price }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumableTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " value="{{ $consumable->price }}" readonly>
+                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $consumable->price }}" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -254,6 +281,33 @@
                         <div class="card-body">
 
                             <div data-bodyMano>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Precio</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                </div>
                                 @foreach( $equipment->workforces as $workforce )
                                     <div class="row">
                                         <div class="col-md-4">
@@ -279,14 +333,14 @@
                                             <div class="form-group">
                                                 <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " value="{{ $workforce->price }}" readonly>
+                                            " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $workforce->price }}" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                            " value="{{ $workforce->total }}" readonly>
+                                            " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $workforce->total }}" readonly>
                                             </div>
                                         </div>
                                     </div>
@@ -302,38 +356,29 @@
                                     </div>
                                 </div>
                                 <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group">
-                                                <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="text" onkeyup="mayus(this);" class="form-control">
-
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                ">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                ">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label for="btn-add"> &nbsp; </label>
-                                            <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                        </div>
-
-                                    </div>
-                                    <hr>
                                     <div data-bodyTorno>
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <strong>Descripción</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <strong>Cantidad</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <strong>Precio</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <strong>Total</strong>
+                                                </div>
+                                            </div>
+                                        </div>
                                         @foreach( $equipment->turnstiles as $turnstile )
                                             <div class="row">
                                                 <div class="col-md-6">
@@ -353,20 +398,89 @@
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                            " value="{{ $turnstile->price }}" readonly>
+                                                            " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $turnstile->price }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                            " value="{{ $turnstile->total }}" readonly>
+                                                            " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $turnstile->total }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
                                         @endforeach
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card card-orange collapsed-card">
+                        <div class="card-header">
+                            <h3 class="card-title">DIAS DE TRABAJO</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <strong>Cantidad de personas</strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <strong>Días por persona</strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <strong>Precio por día</strong>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <strong>Total</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-bodyDia>
+                                @foreach( $equipment->workdays as $workday )
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalQuatity(this);" value="{{ $workday->quantityPerson }}" placeholder="0.00" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalHour(this);" value="{{ $workday->hoursPerPerson }}" placeholder="0.00" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalPrice(this);" value="{{ $workday->pricePerHour }}" placeholder="0.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " @cannot('showPrices_quote')style="display: none" @endcannot readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" value="{{ $workday->total }}" placeholder="0.00" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " @cannot('showPrices_quote')style="display: none" @endcannot readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                     </div>

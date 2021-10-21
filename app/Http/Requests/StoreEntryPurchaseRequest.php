@@ -29,6 +29,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'invoice' => 'required|string|min:5|max:255',
             'entry_type' => 'required',
             'deferred_invoice' => 'nullable',
+            'currency_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
             'image' => 'image',
