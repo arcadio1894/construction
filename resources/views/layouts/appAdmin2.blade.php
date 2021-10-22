@@ -38,10 +38,13 @@
                 <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="#" class="nav-link" id="tasaCompra"></a>
+                <a href="#" class="nav-link" style="color: red"> Tipo de cambio </a>
             </li>
             <li class="nav-item d-none d-sm-inline-block">
-                <a href="#" class="nav-link" id="tasaVenta"></a>
+                <a href="#" class="nav-link" style="color: blue" id="tasaCompra"></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="#" class="nav-link" style="color: green" id="tasaVenta"></a>
             </li>
             {{--<li class="nav-item d-none d-sm-inline-block">
                 <a href="#" class="nav-link">Contact</a>

@@ -39,10 +39,12 @@ class InvoiceController extends Controller
 
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
+        $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
+
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?',
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 2,
