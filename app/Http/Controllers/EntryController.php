@@ -354,9 +354,60 @@ class EntryController extends Controller
 
     }
 
-    public function destroy(Entry $entry)
+    public function destroyEntryPurchase(Entry $entry)
     {
-        //
+        DB::beginTransaction();
+        try {
+            if ( $entry->entry_type === 'Por compra' )
+            {
+                $details_entry = $entry->details;
+
+                foreach ( $details_entry as $detail )
+                {
+                    $items = Item::where('detail_entry_id', $detail->id)
+                        ->whereIn('state_item', ['reserved','exited'])
+                        ->get();
+                    if (!isset($items))
+                    {
+                        return response()->json(['message' => 'Lo sentimos, no se puede eliminar la entrada porque hay items reservados o en salida.'], 422);
+                    }
+
+                }
+
+                foreach ( $details_entry as $detail )
+                {
+                    $material = Material::find($detail->material_id);
+                    $material->stock_current = $material->stock_current - $detail->entered_quantity;
+                    $material->save();
+
+                    $items = Item::where('detail_entry_id', $detail->id)->get();
+                    foreach ( $items as $item )
+                    {
+                        $item->delete();
+                    }
+
+                    $detail->delete();
+                }
+
+                if ($entry->image !== 'no_image.png')
+                {
+                    $my_image = public_path().'/images/entries/'.$entry->image;
+                    if (@getimagesize($my_image)) {
+                        unlink($my_image);
+                    }
+
+                }
+
+                $entry->delete();
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Ingreso por compra eliminado con éxito.'], 200);
+
     }
 
     public function getJsonEntriesPurchase()

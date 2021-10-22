@@ -383,6 +383,7 @@ function activateTemplate(id) {
 function storeOrderPurchase() {
     event.preventDefault();
     // Obtener la URL
+    $("#btn-submit").attr("disabled", true);
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
     var form = new FormData(this);
@@ -414,6 +415,7 @@ function storeOrderPurchase() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -439,7 +441,7 @@ function storeOrderPurchase() {
                     });
             }
 
-
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

@@ -508,6 +508,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_entryPurchase');
         Route::post('entry_purchase/update', 'EntryController@updateEntryPurchase')->name('entry.purchase.update')
             ->middleware('permission:update_entryPurchase');
+        Route::post('entry_purchase/destroy/{entry}', 'EntryController@destroyEntryPurchase')->name('entry.purchase.destroy')
+            ->middleware('permission:destroy_entryPurchase');
 
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')

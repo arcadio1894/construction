@@ -37,6 +37,31 @@ class InvoiceController extends Controller
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?',
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
         DB::beginTransaction();
         try {
             $entry = Entry::create([
@@ -46,7 +71,10 @@ class InvoiceController extends Controller
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type'),
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
-                'finance' => true
+                'finance' => true,
+                'currency_invoice' => ($request->has('currency_invoice')) ? 'USD':'PEN',
+                'currency_compra' => (float) $tipoCambioSunat->compra,
+                'currency_venta' => (float) $tipoCambioSunat->venta
             ]);
 
             // TODO: Tratamiento de un archivo de forma tradicional

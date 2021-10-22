@@ -93,8 +93,12 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('update_invoice', $permissions) !== -1 ) {
+                    if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                    }
+                    if ( $.inArray('destroy_entryPurchase', $permissions) !== -1 ) {
+                        text = text + ' <button data-delete="'+item.id+'" '+
+                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                     }
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -296,6 +300,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-image]', showImage);
 
+    $(document).on('click', '[data-delete]', cancelEntry);
+
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
@@ -347,6 +353,51 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function cancelEntry() {
+    var entry_id = $(this).data('delete');
+
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de eliminar esta entrada?',
+        content: 'También se eliminarán los items ingresados',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/entry_purchase/destroy/'+entry_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Entrada eliminada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+
+}
 
 function showImage() {
     var path = $(this).attr('src');
