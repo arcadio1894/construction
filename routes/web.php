@@ -631,6 +631,9 @@ Route::middleware('auth')->group(function (){
             ->name('quote.raise')
             ->middleware('permission:create_quote');
         Route::get('/all/quotes/confirmed', 'QuoteController@getAllQuotesConfirmed');
+        Route::get('cotizar/soles/cotizacion/{quote}', 'QuoteController@quoteInSoles')
+            ->name('quote.in.soles')
+            ->middleware('permission:confirm_quote');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

@@ -106,6 +106,10 @@ $(document).ready(function () {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
+                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+                        }
                     }
 
                     return text;
