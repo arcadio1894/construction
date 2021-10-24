@@ -691,7 +691,7 @@
                         </li>
                     @endcan
 
-                    @canany('list_quote')
+                    {{--@canany('list_quote')
                         <li class="nav-header">COTIZACIONES</li>
                     @endcanany
                     @can('list_quote')
@@ -730,7 +730,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan
+                    @endcan--}}
 
                     @can('list_area')
                     <li class="nav-header">INVENTARIO</li>
