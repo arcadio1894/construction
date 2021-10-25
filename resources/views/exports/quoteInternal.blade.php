@@ -327,7 +327,7 @@
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">RENTA {{ $quote->rent }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_rent }}</td>
+            <td class="total">S/. {{ $quote->subtotal_rent }}.00</td>
         </tr>
         </tbody>
     </table>
@@ -376,7 +376,8 @@
 <div id="notices">
     <div>CARACTERISTICAS DE {{ $quote->code }}:</div>
     @foreach( $quote->equipments as $equipment )
-    <div class="notice">- {{ $equipment->description }}</div>
+        <div class="notice"><strong>Equipo: {{ $equipment->description }}</strong> </div>
+        <div class="notice">- {{ $equipment->detail }} </div>
     @endforeach
 </div>
 <footer>

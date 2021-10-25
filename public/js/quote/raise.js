@@ -47,7 +47,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return '<span class="badge bg-primary">'+item.total+'</span>';
+                        return '<span class="badge bg-primary">'+item.subtotal_rent+'</span>';
                     } else {
                         return '';
                     }
@@ -63,8 +63,12 @@ $(document).ready(function () {
                         return '<span class="badge bg-primary">Creada</span>';
                     }
 
-                    if (item.state === 'confirmed'){
+                    if (item.state === 'confirmed' && item.raise_status === 0){
                         return '<span class="badge bg-success">Confirmada</span>';
+                    }
+
+                    if (item.state === 'confirmed' && item.raise_status === 1){
+                        return '<span class="badge bg-success">Elevada</span>';
                     }
 
                     if (item.state === 'canceled'){
@@ -92,13 +96,15 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
-                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
-                        '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
+                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                            '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                    }
 
-                    if ( item.state === 'confirmed' ) {
-                        if ( $.inArray('create_quote', $permissions) !== -1 ) {
+                    if ( item.state === 'confirmed' && item.raise_status === 0 ) {
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-raise="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
                         }
@@ -106,10 +112,19 @@ $(document).ready(function () {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
+
+                    }
+
+                    if ( item.state === 'confirmed' && item.raise_status === 1 ) {
                         if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
-                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+                            text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
                         }
+                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
+                        }
+
                     }
 
                     return text;
@@ -268,6 +283,7 @@ $(document).ready(function () {
     $(document).on('click', '[data-delete]', cancelQuote);
 
     $(document).on('click', '[data-raise]', raiseQuote);
+    $(document).on('click', '[data-raise2]', raise2Quote);
 });
 
 var $formDelete;
@@ -360,6 +376,67 @@ function raiseQuote() {
                         success: function (data) {
                             console.log(data);
                             $.alert("Cotización elevada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
+
+function raise2Quote() {
+    var quote_id = $(this).data('raise2');
+    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de modificar el codigo del cliente?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Código modificado correctamente.");
                             setTimeout( function () {
                                 location.reload();
                             }, 2000 )

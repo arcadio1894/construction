@@ -1649,6 +1649,7 @@ function calculateTotal2(e) {
 }
 
 function addEquipment() {
+
     //var result = document.querySelectorAll('[data-equip]');
     //console.log(result);
     /*for (var index in result){
@@ -1685,6 +1686,7 @@ function addEquipment() {
     }*/
 
     renderTemplateEquipment();
+    $('.materialTypeahead').typeahead('destroy');
 
     $('.materialTypeahead').typeahead({
             hint: true,

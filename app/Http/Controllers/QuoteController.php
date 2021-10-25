@@ -517,8 +517,7 @@ class QuoteController extends Controller
 
     public function getAllQuotes()
     {
-        $quotes = Quote::with('customer')
-            ->where('raise_status',false)->get();
+        $quotes = Quote::with('customer')->get();
         return datatables($quotes)->toJson();
     }
 

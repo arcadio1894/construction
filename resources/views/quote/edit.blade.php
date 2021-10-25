@@ -155,6 +155,7 @@
                             </a>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                             </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -449,7 +450,7 @@
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " value="{{ $consumable->quantity }}" >
+                                                    " value="{{ $consumable->quantity }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -491,7 +492,7 @@
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " value="{{ $consumable->quantity }}">
+                                                    " value="{{ $consumable->quantity }}" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -1791,7 +1792,7 @@
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i>
                             </button>
-
+                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
                         </div>
                     </div>
                     <div class="card-body">
@@ -1974,7 +1975,7 @@
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" data-consumableQuantity min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                ">
+                                                " readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">

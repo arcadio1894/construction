@@ -47,7 +47,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return '<span class="badge bg-primary">'+item.total+'</span>';
+                        return '<span class="badge bg-primary">'+item.subtotal_rent+'</span>';
                     } else {
                         return '';
                     }
@@ -63,8 +63,12 @@ $(document).ready(function () {
                         return '<span class="badge bg-primary">Creada</span>';
                     }
 
-                    if (item.state === 'confirmed'){
+                    if (item.state === 'confirmed' && item.raise_status === 0){
                         return '<span class="badge bg-success">Confirmada</span>';
+                    }
+
+                    if (item.state === 'confirmed' && item.raise_status === 1){
+                        return '<span class="badge bg-success">Elevada</span>';
                     }
 
                     if (item.state === 'canceled'){
@@ -92,11 +96,12 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
-                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
-                        '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
-
+                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
+                            '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                    }
                     if ( item.state === 'created' ) {
                         if ( $.inArray('update_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
@@ -120,6 +125,10 @@ $(document).ready(function () {
                         if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                        }
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
+                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
                         }
                     }
 

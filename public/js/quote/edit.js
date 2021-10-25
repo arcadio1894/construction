@@ -2336,7 +2336,7 @@ function addEquipment() {
     }*/
 
     renderTemplateEquipment();
-
+    $('.materialTypeahead').typeahead('destroy');
     $('.materialTypeahead').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
