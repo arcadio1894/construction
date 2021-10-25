@@ -31,7 +31,7 @@ $(document).ready(function () {
     });
 
     $.ajax({
-        url: "/dashboard/get/materials",
+        url: "/dashboard/get/materials/quote",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -91,12 +91,23 @@ $(document).ready(function () {
     $('input[type=radio][name=presentation]').on('change', function() {
         switch ($(this).val()) {
             case 'fraction':
-                $('#width_entered_material').show();
-                $('#length_entered_material').show();
-                $('#quantity_entered_material').hide();
-                $('#material_length_entered').val('');
-                $('#material_width_entered').val('');
-                $('#material_quantity_entered').val('');
+                if($material.typescrap_id === 3)
+                {
+                    $('#width_entered_material').hide();
+                    $('#length_entered_material').show();
+                    $('#quantity_entered_material').hide();
+                    $('#material_length_entered').val('');
+                    $('#material_width_entered').val('');
+                    $('#material_quantity_entered').val('');
+                } else {
+                    $('#width_entered_material').show();
+                    $('#length_entered_material').show();
+                    $('#quantity_entered_material').hide();
+                    $('#material_length_entered').val('');
+                    $('#material_width_entered').val('');
+                    $('#material_quantity_entered').val('');
+                }
+
                 break;
             case 'complete':
                 $('#width_entered_material').hide();
@@ -2405,7 +2416,7 @@ function calculatePercentage() {
             });
         return;
     }
-    if( $('#material_width_entered').val().trim() === '' && $("#quantity_entered_material").css('display') === 'none' )
+    if( $('#material_width_entered').val().trim() === '' && $("#quantity_entered_material").css('display') === 'none' && $("#width_entered_material").css('display') !== 'none' )
     {
         toastr.error('Debe ingresar el ancho del material', 'Error',
             {
@@ -2465,7 +2476,7 @@ function calculatePercentage() {
         $('#material_price_entered').val(new_price);
     }
 
-    if ($('#material_length_entered').val().trim() !== '' && $("#width_entered_material").attr('style') === '' )
+    if ($('#material_length_entered').val().trim() !== '' && $("#width_entered_material").css('display') === 'none' )
     {
         var price_material2 = parseFloat($('#material_price').val());
         var length_material2 = parseFloat($('#material_length').val());

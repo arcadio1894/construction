@@ -245,6 +245,21 @@ class MaterialController extends Controller
         return $array;
     }
 
+    public function getJsonMaterialsQuote()
+    {
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->whereNotIn('category_id', [2])->get();
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'unit' => $material->unitMeasure->name, 'code' => $material->code]);
+        }
+
+        //dd($materials);
+        return $array;
+    }
+
     public function getJsonMaterialsScrap()
     {
         $materials = Material::with('subcategory', 'materialType', 'subtype', 'warrant', 'quality')

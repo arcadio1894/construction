@@ -496,6 +496,7 @@ Route::middleware('auth')->group(function (){
         Route::post('entry_scrap/store', 'EntryController@storeEntryScrap')->name('entry.scrap.store')
             ->middleware('permission:create_entryScrap');
         Route::get('/get/materials', 'MaterialController@getJsonMaterials');
+        Route::get('/get/materials/quote', 'MaterialController@getJsonMaterialsQuote');
         Route::get('/get/materials/scrap', 'MaterialController@getJsonMaterialsScrap');
         Route::get('/get/locations', 'LocationController@getJsonLocations');
         Route::get('/get/items/{id_material}', 'ItemController@getJsonItems');

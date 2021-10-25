@@ -175,7 +175,7 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name="" data-detailequipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
+                                <textarea name="" data-detailequipment onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
                             </div>
                         </div>
 
@@ -796,7 +796,7 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal(this);" data-consumableQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            ">
+                            " readonly>
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -973,7 +973,7 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name="" data-detailEquipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
+                                <textarea name="" data-detailEquipment onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
                             </div>
                         </div>
 
