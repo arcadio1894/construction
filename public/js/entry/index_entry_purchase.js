@@ -87,6 +87,8 @@ $(document).ready(function () {
                     return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
                 }
             },
+            { data: 'total' },
+            { data: 'currency_invoice' },
             { data: null,
                 title: 'Acciones',
                 wrap: true,

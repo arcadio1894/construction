@@ -55,6 +55,20 @@ $(document).ready(function () {
     $formCreate = $("#formCreate");
     $formCreate.on('submit', storeOrderPurchase);
 
+    $('#btn-currency').on('switchChange.bootstrapSwitch', function (event, state) {
+
+        if (this.checked) // if changed state is "CHECKED"
+        {
+            console.log($(this));
+            $('.moneda').html('USD');
+
+        } else {
+            console.log($(this));
+            $('.moneda').html('PEN');
+        }
+    });
+
+
 });
 
 // Initializing the typeahead
@@ -101,9 +115,9 @@ function updateSummaryInvoice() {
         taxes = subtotal*0.18;
     }
 
-    $('#subtotal').html('$/. '+ subtotal.toFixed(2));
-    $('#taxes').html('$/. '+taxes.toFixed(2));
-    $('#total').html('$/. '+total.toFixed(2));
+    $('#subtotal').html(subtotal.toFixed(2));
+    $('#taxes').html(taxes.toFixed(2));
+    $('#total').html(total.toFixed(2));
 }
 
 function saveTableItems() {

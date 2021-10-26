@@ -33,7 +33,7 @@ class Entry extends Model
             $subtotal += ($detail->entered_quantity * $detail->unit_price)/1.18;
         }
         //$number = ($this->entered_quantity * $this->unit_price)/1.18;
-        return "S/. " . number_format($subtotal, 2);
+        return $this->currency_invoice. ' ' . number_format($subtotal, 2);
     }
 
     public function getTaxesAttribute()
@@ -44,7 +44,7 @@ class Entry extends Model
             $taxes += (($detail->entered_quantity * $detail->unit_price)/1.18)*0.18;
         }
 
-        return "S/. " . number_format($taxes, 2);
+        return $this->currency_invoice. ' ' . number_format($taxes, 2);
     }
 
     public function getTotalAttribute()
@@ -54,7 +54,7 @@ class Entry extends Model
         {
             $total += $detail->entered_quantity * $detail->unit_price;
         }
-        return "S/. " . number_format($total, 2);
+        return $this->currency_invoice. ' ' . number_format($total, 2);
     }
 
     public function details()

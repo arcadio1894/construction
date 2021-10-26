@@ -32,19 +32,19 @@ class DetailEntry extends Model
     public function getSubTotalAttribute()
     {
         $number = ($this->entered_quantity * $this->unit_price)/1.18;
-        return "S/. " . number_format($number, 2);
+        return number_format($number, 2);
     }
 
     public function getTaxesAttribute()
     {
         $number = (($this->entered_quantity * $this->unit_price)/1.18)*0.18;
-        return "S/. " . number_format($number, 2);
+        return number_format($number, 2);
     }
 
     public function getTotalAttribute()
     {
         $number = $this->entered_quantity * $this->unit_price;
-        return "S/. " . number_format($number, 2);
+        return number_format($number, 2);
     }
 
     public function entry()

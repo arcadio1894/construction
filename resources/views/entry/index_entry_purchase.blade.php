@@ -95,6 +95,8 @@
                 <th>Fecha</th>
                 <th>Diferido</th>
                 <th>Imagen</th>
+                <th>Total</th>
+                <th>Moneda</th>
                 <th>Acciones</th>
             </tr>
             </thead>

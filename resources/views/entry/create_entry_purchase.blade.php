@@ -245,15 +245,15 @@
                                     <table class="table">
                                         <tr>
                                             <th style="width:50%">Subtotal: </th>
-                                            <td id="subtotal">S/. 0.00</td>
+                                            <td ><span class="moneda">PEN</span> <span id="subtotal">0.00</span> </td>
                                         </tr>
                                         <tr>
                                             <th>Igv: </th>
-                                            <td id="taxes">S/. 0.00</td>
+                                            <td ><span class="moneda">PEN</span> <span id="taxes">0.00</span> </td>
                                         </tr>
                                         <tr>
                                             <th>Total: </th>
-                                            <td id="total">S/. 0.00</td>
+                                            <td ><span class="moneda">PEN</span> <span id="total">0.00</span> </td>
                                         </tr>
                                     </table>
                                 </div>

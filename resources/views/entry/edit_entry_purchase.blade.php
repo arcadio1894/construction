@@ -209,10 +209,10 @@
                                                     <td data-description>{{$detail->material_description}}</td>
                                                     <td data-quantity>{{$detail->entered_quantity}}</td>
                                                     <td data-unit>{{$detail->unit}}</td>
-                                                    <td data-price>{{$detail->unit_price}}</td>
-                                                    <td data-subtotal>{{ $detail->sub_total }}</td>
-                                                    <td data-taxes>{{ $detail->taxes }}</td>
-                                                    <td data-total>{{ $detail->total }}</td>
+                                                    <td data-price>{{$entry->currency_invoice .' '. $detail->unit_price}}</td>
+                                                    <td data-subtotal>{{$entry->currency_invoice .' '. $detail->sub_total }}</td>
+                                                    <td data-taxes>{{$entry->currency_invoice .' '. $detail->taxes }}</td>
+                                                    <td data-total>{{$entry->currency_invoice .' '. $detail->total }}</td>
                                                 </tr>
                                             @endforeach
 
