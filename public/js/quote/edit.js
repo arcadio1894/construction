@@ -384,12 +384,16 @@ function fillEquipments() {
                 materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
             }
 
+            var diasDescription = [];
             var diasCantidad = [];
             var diasHoras = [];
             var diasPrecio = [];
             var diasTotal = [];
 
             dias.each(function(e){
+                $(this).find('[data-description]').each(function(){
+                    diasDescription.push($(this).val());
+                });
                 $(this).find('[data-cantidad]').each(function(){
                     diasCantidad.push($(this).val());
                 });
@@ -407,7 +411,7 @@ function fillEquipments() {
             var diasArray = [];
 
             for (let i = 0; i < diasCantidad.length; i++) {
-                diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
             }
 
             var consumablesDescription = [];
@@ -795,12 +799,16 @@ function saveEquipment() {
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
+                        var diasDescription = [];
                         var diasCantidad = [];
                         var diasHoras = [];
                         var diasPrecio = [];
                         var diasTotal = [];
 
                         dias.each(function(e){
+                            $(this).find('[data-description]').each(function(){
+                                diasDescription.push($(this).val());
+                            });
                             $(this).find('[data-cantidad]').each(function(){
                                 diasCantidad.push($(this).val());
                             });
@@ -818,7 +826,7 @@ function saveEquipment() {
                         var diasArray = [];
 
                         for (let i = 0; i < diasCantidad.length; i++) {
-                            diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                            diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
                         }
 
                         var consumablesDescription = [];
@@ -1036,12 +1044,16 @@ function saveEquipment() {
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
+                        var diasDescription = [];
                         var diasCantidad = [];
                         var diasHoras = [];
                         var diasPrecio = [];
                         var diasTotal = [];
 
                         dias.each(function(e){
+                            $(this).find('[data-description]').each(function(){
+                                diasDescription.push($(this).val());
+                            });
                             $(this).find('[data-cantidad]').each(function(){
                                 diasCantidad.push($(this).val());
                             });
@@ -1059,7 +1071,7 @@ function saveEquipment() {
                         var diasArray = [];
 
                         for (let i = 0; i < diasCantidad.length; i++) {
-                            diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                            diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
                         }
 
                         var consumablesDescription = [];
@@ -1670,6 +1682,7 @@ function addDia() {
         var pricePerHour = $(this).parent().prev().children().children().next().val();
         var hoursPerPerson = $(this).parent().prev().prev().children().children().next().val();
         var quantityPerson = $(this).parent().prev().prev().prev().children().children().next().val();
+        var description = $(this).parent().prev().prev().prev().prev().children().children().next().val();
 
         if ( quantityPerson === '' || parseFloat(quantityPerson) === 0 )
         {
@@ -1737,18 +1750,43 @@ function addDia() {
                 });
             return;
         }
+        if ( description === '' )
+        {
+            toastr.error('Ingrese una descripción correcta.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
 
         $(this).parent().prev().children().children().next().val(0);
         $(this).parent().prev().prev().children().children().next().val(0);
         $(this).parent().prev().prev().prev().children().children().next().next().val(0);
+        $(this).parent().prev().prev().prev().prev().children().children().next().next().val('');
+
         //console.log(descripcion);
         var render = $(this).parent().parent().next().next().next();
         var total = parseFloat(pricePerHour)*parseFloat(hoursPerPerson)*parseFloat(quantityPerson);
-        renderTemplateDia(render, pricePerHour, hoursPerPerson, quantityPerson, total.toFixed(2));
+        renderTemplateDia(render, description, pricePerHour, hoursPerPerson, quantityPerson, total.toFixed(2));
     } else {
         var pricePerHour2 = 0;
         var hoursPerPerson2 = $(this).parent().prev().children().children().next().val();
         var quantityPerson2 = $(this).parent().prev().prev().children().children().next().val();
+        var description2 = $(this).parent().prev().prev().prev().children().children().next().val();
 
         if ( quantityPerson2 === '' || parseFloat(quantityPerson2) === 0 )
         {
@@ -1794,15 +1832,38 @@ function addDia() {
                 });
             return;
         }
+        if ( description2 === '' )
+        {
+            toastr.error('Ingrese una descripción correcta.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
 
         //$(this).parent().prev().children().children().next().val(0);
+        $(this).parent().prev().prev().prev().children().children().next().val('');
         $(this).parent().prev().prev().children().children().next().val(0);
         $(this).parent().prev().children().children().next().val(0);
         //console.log(descripcion);
         var render2 = $(this).parent().parent().next().next().next();
         console.log(render2);
         var total2 = 0;
-        renderTemplateDia(render2, pricePerHour2, hoursPerPerson2, quantityPerson2, total2);
+        renderTemplateDia(render2, description2, pricePerHour2, hoursPerPerson2, quantityPerson2, total2);
     }
 
 }
@@ -2018,12 +2079,16 @@ function confirmEquipment() {
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
+                    var diasDescription = [];
                     var diasCantidad = [];
                     var diasHoras = [];
                     var diasPrecio = [];
                     var diasTotal = [];
 
                     dias.each(function(e){
+                        $(this).find('[data-description]').each(function(){
+                            diasDescription.push($(this).val());
+                        });
                         $(this).find('[data-cantidad]').each(function(){
                             diasCantidad.push($(this).val());
                         });
@@ -2041,7 +2106,7 @@ function confirmEquipment() {
                     var diasArray = [];
 
                     for (let i = 0; i < diasCantidad.length; i++) {
-                        diasArray.push({'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                        diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
                     }
 
                     var consumablesDescription = [];
@@ -2864,6 +2929,7 @@ function addMaterial() {
 
 function storeQuote() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     /*if( $equipments.length === 0 )
     {
         toastr.error('No se puede agregar más equipos si no existen.', 'Error',
@@ -2918,7 +2984,8 @@ function storeQuote() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                //location.reload();
+                $("#btn-submit").attr("disabled", true);
+                location.reload();
             }, 2000 )
         },
         error: function (data) {
@@ -2963,7 +3030,7 @@ function storeQuote() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", true);
 
         },
     });
@@ -3046,15 +3113,17 @@ function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     render.append(clone);
 }
 
-function renderTemplateDia(render, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
+function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
     var clone = activateTemplate('#template-dia');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-description]").setAttribute('value', description);
         clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
         clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
         clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
         clone.querySelector("[data-total]").setAttribute( 'value', total2);
 
     } else {
+        clone.querySelector("[data-description]").setAttribute('value', description);
         clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
         clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
         clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);

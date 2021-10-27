@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class EquipmentWorkday extends Model
 {
     protected $fillable = [
+        'description',
         'equipment_id',
         'quantityPerson',
         'hoursPerPerson',

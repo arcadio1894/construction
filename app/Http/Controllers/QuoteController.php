@@ -176,6 +176,7 @@ class QuoteController extends Controller
                 {
                     $equipmentdias = EquipmentWorkday::create([
                         'equipment_id' => $equipment->id,
+                        'description' => $dias[$d]->description,
                         'quantityPerson' => (float) $dias[$d]->quantity,
                         'hoursPerPerson' => (float) $dias[$d]->hours,
                         'pricePerHour' => (float) $dias[$d]->price,
@@ -363,6 +364,7 @@ class QuoteController extends Controller
                     {
                         $equipmentdias = EquipmentWorkday::create([
                             'equipment_id' => $equipment->id,
+                            'description' => $dias[$d]->description,
                             'quantityPerson' => (float) $dias[$d]->quantity,
                             'hoursPerPerson' => (float) $dias[$d]->hours,
                             'pricePerHour' => (float) $dias[$d]->price,
@@ -749,6 +751,7 @@ class QuoteController extends Controller
                 {
                     $equipmentdias = EquipmentWorkday::create([
                         'equipment_id' => $equipment->id,
+                        'description' => $dia['description'],
                         'quantityPerson' => (float) $dia['quantity'],
                         'hoursPerPerson' => (float) $dia['hours'],
                         'pricePerHour' => (float) $dia['price'],
@@ -804,4 +807,22 @@ class QuoteController extends Controller
             ->get();
         return datatables($quotes)->toJson();
     }
+
+    public function quoteInSoles($id)
+    {
+        $unitMeasures = UnitMeasure::all();
+        $customers = Customer::all();
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+        //dump($quote);
+        return view('quote.quoteInSoles', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
+    }
+
 }

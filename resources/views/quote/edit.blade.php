@@ -827,15 +827,22 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="quantity">Cantidad de personas <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" data-description  onkeyup="mayus(this);" class="form-control">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">N° de personas <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
@@ -844,7 +851,7 @@
                                         </div>
                                     </div>
                                     @can('showPrices_quote')
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
@@ -853,7 +860,7 @@
                                             </div>
                                         </div>
                                     @endcan
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                                     </div>
@@ -862,15 +869,20 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Cantidad de personas</strong>
+                                            <strong>Descripción</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>N° de personas</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <strong>Días por persona</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <strong>Precio por día</strong>
                                         </div>
@@ -892,19 +904,24 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
+                                                        <input type="text" value="{{ $workday->description }}" onkeyup="mayus(this);" class="form-control form-control-sm" data-description >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalQuatity(this);" value="{{ $workday->quantityPerson }}" placeholder="0.00" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " >
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalHour(this);" value="{{ $workday->hoursPerPerson }}" placeholder="0.00" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                         " >
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalPrice(this);" value="{{ $workday->pricePerHour }}" placeholder="0.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -928,19 +945,24 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
+                                                        <input type="text" value="{{ $workday->description }}" onkeyup="mayus(this);" class="form-control form-control-sm" data-description >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalQuatity(this);" value="{{ $workday->quantityPerson }}" placeholder="0.00" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " >
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalHour(this);" value="{{ $workday->hoursPerPerson }}" placeholder="0.00" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " >
                                                     </div>
                                                 </div>
-                                                <div class="col-md-3">
+                                                <div class="col-md-2">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotalPrice(this);" value="{{ $workday->pricePerHour }}" placeholder="0.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -1495,7 +1517,7 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal">S/. {{ $quote->total }}</td>
+                                <td id="subtotal">USD {{ $quote->total }}</td>
                                 <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                                 <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                                 <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -1517,7 +1539,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal2">S/. {{ $quote->subtotal_utility }}</td>
+                                <td id="subtotal2">USD {{ $quote->subtotal_utility }}</td>
                             </tr>
                             <tr>
                                 <th>Letra: </th>
@@ -1534,7 +1556,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal3">S/. {{ $quote->subtotal_letter }}</td>
+                                <td id="subtotal3">USD {{ $quote->subtotal_letter }}</td>
                             </tr>
                             <tr>
                                 <th>Renta: </th>
@@ -1551,7 +1573,7 @@
                             </tr>
                             <tr>
                                 <th>Total: </th>
-                                <td id="total">S/. {{ $quote->subtotal_rent }}</td>
+                                <td id="total">USD {{ $quote->subtotal_rent }}</td>
                             </tr>
                         </table>
                     </div>
@@ -1741,19 +1763,24 @@
             <div class="row">
                 <div class="col-md-3">
                     <div class="form-group">
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description >
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" onkeyup="calculateTotalQuatity(this);" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                             " >
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" onkeyup="calculateTotalHour(this);" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                             " >
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm"  placeholder="0.00" onkeyup="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -2192,15 +2219,22 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
-                                    <div class="col-md-3">
+                                    <div class="col-md-4">
                                         <div class="form-group">
-                                            <label for="quantity">Cantidad de personas <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" data-description onkeyup="mayus(this);" class="form-control">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">N° de personas <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
@@ -2209,7 +2243,7 @@
                                         </div>
                                     </div>
                                     @can('showPrices_quote')
-                                        <div class="col-md-3">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
@@ -2218,7 +2252,7 @@
                                             </div>
                                         </div>
                                     @endcan
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label for="btn-add"> &nbsp; </label>
                                         <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                                     </div>
@@ -2227,15 +2261,20 @@
                                 <div class="row">
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <strong>Cantidad de personas</strong>
+                                            <strong>Descripción</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>N° de personas</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <strong>Días por persona</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <strong>Precio por día</strong>
                                         </div>
@@ -2267,7 +2306,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar nuevos equipos</button>
+                <button type="submit" id="btn-submit" class="btn btn-outline-success float-right">Guardar nuevos equipos</button>
             </div>
         </div>
         <!-- /.card-footer -->
