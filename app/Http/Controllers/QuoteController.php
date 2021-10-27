@@ -825,4 +825,45 @@ class QuoteController extends Controller
         return view('quote.quoteInSoles', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
     }
 
+    public function saveQuoteInSoles( Quote $quote )
+    {
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        //dump($request->get('date_invoice'));
+        $fecha = Carbon::parse($quote->date_quote);
+
+        //dump();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
+        $quote->currency_invoice = 'PEN';
+        $quote->currency_compra = (float) $tipoCambioSunat->compra;
+        $quote->currency_venta = (float) $tipoCambioSunat->venta;
+        $quote->total_soles = $quote->total * (float) $tipoCambioSunat->venta;
+        $quote->save();
+
+        return response()->json(['total' => $quote->total_soles, 'message'=>'Cotización cambiada a soles'], 200);
+
+    }
+
 }

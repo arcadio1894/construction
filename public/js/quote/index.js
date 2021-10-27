@@ -47,13 +47,14 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return '<span class="badge bg-primary">'+item.subtotal_rent+'</span>';
+                        return item.subtotal_rent;
                     } else {
                         return '';
                     }
 
                 }
             },
+            { data: 'currency_invoice' },
             { data: null,
                 title: 'Estado',
                 wrap: true,
@@ -122,14 +123,21 @@ $(document).ready(function () {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
-                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                        if ( item.state === 'confirmed' && item.raise_status == 0 )
+                        {
+                            if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                            }
                         }
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
-                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+
+                        if ( item.total_soles == 0 ) {
+                            if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+                            }
                         }
+
                     }
 
                     return text;

@@ -24,28 +24,56 @@ class Quote extends Model
         'letter',
         'rent',
         'code_customer',
-        'raise_status'
+        'raise_status',
+        'currency_invoice',
+        'currency_compra',
+        'currency_venta',
+        'total_soles'
     ];
 
     public function getSubtotalUtilityAttribute()
     {
-        $subtotal1 = $this->total * (($this->utility/100)+1);
-        return number_format($subtotal1, 2);
+        if ( $this->total_soles != 0 )
+        {
+            $subtotal1 = $this->total_soles * (($this->utility/100)+1);
+            return number_format($subtotal1, 2);
+        } else {
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            return number_format($subtotal1, 2);
+        }
+
     }
 
     public function getSubtotalLetterAttribute()
     {
-        $subtotal1 = $this->total * (($this->utility/100)+1);
-        $subtotal2 = $subtotal1 * (($this->letter/100)+1);
-        return number_format($subtotal2, 2);
+        if ( $this->total_soles != 0 )
+        {
+            $subtotal1 = $this->total_soles * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            return number_format($subtotal2, 2);
+        } else {
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            return number_format($subtotal2, 2);
+        }
+
     }
 
     public function getSubtotalRentAttribute()
     {
-        $subtotal1 = $this->total * (($this->utility/100)+1);
-        $subtotal2 = $subtotal1 * (($this->letter/100)+1);
-        $subtotal3 = $subtotal2 * (($this->rent/100)+1);
-        return number_format($subtotal3, 0);
+        if ( $this->total_soles != 0 )
+        {
+            $subtotal1 = $this->total_soles * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+            return number_format($subtotal3, 0);
+        } else {
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+            return number_format($subtotal3, 0);
+        }
+
     }
 
     public function customer()

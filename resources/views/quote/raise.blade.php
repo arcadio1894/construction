@@ -91,6 +91,7 @@
                 <th>Tiempo Entrega</th>
                 <th>Cliente</th>
                 <th>Total</th>
+                <th>Moneda</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
                 <th></th>

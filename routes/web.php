@@ -635,6 +635,9 @@ Route::middleware('auth')->group(function (){
         Route::get('cotizar/soles/cotizacion/{quote}', 'QuoteController@quoteInSoles')
             ->name('quote.in.soles')
             ->middleware('permission:confirm_quote');
+        Route::post('/quote/in/soles/quote/{quote}', 'QuoteController@saveQuoteInSoles')
+            ->name('quote.in.soles')
+            ->middleware('permission:confirm_quote');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

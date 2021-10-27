@@ -73,6 +73,7 @@
                         <div class="col-md-12">
                             <label for="descriptionQuote">Descripción general de cotización <span class="right badge badge-danger">(*)</span></label>
                             <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm" value="{{ $quote->description_quote }}" readonly>
+                            <input type="hidden" name="idQuote" id="idQuote" value="{{ $quote->id }}">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -506,7 +507,7 @@
                 <table class="table">
                     <tr>
                         <th style="width:50%">Subtotal: </th>
-                        <td id="subtotal">S/. {{ $quote->total }}</td>
+                        <td id="subtotal">{{ $quote->currency_invoice }} {{ ($quote->total_soles != 0) ? $quote->total_soles: $quote->total }}</td>
                         <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                         <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                         <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -528,7 +529,7 @@
                     </tr>
                     <tr>
                         <th style="width:50%">Subtotal: </th>
-                        <td id="subtotal2">S/. {{ $quote->subtotal_utility }}</td>
+                        <td id="subtotal2">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
                     </tr>
                     <tr>
                         <th>Letra: </th>
@@ -545,7 +546,7 @@
                     </tr>
                     <tr>
                         <th style="width:50%">Subtotal: </th>
-                        <td id="subtotal3">S/. {{ $quote->subtotal_letter }}</td>
+                        <td id="subtotal3">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
                     </tr>
                     <tr>
                         <th>Renta: </th>
@@ -562,13 +563,20 @@
                     </tr>
                     <tr>
                         <th>Total: </th>
-                        <td id="total">S/. {{ $quote->subtotal_rent }}</td>
+                        <td id="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}</td>
                     </tr>
                 </table>
             </div>
         </div>
         <!-- /.col -->
     </div>
+
+    <div class="row">
+        <div class="col-12">
+            <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Cotizar en soles</button>
+        </div>
+    </div>
+
     <div id="modalAddMaterial" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -724,5 +732,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/quote/create.js') }}"></script>
+    <script src="{{ asset('js/quote/quoteInSoles.js') }}"></script>
 @endsection

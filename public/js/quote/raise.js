@@ -47,13 +47,14 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return '<span class="badge bg-primary">'+item.subtotal_rent+'</span>';
+                        return item.subtotal_rent;
                     } else {
                         return '';
                     }
 
                 }
             },
+            { data: 'currency_invoice' },
             { data: null,
                 title: 'Estado',
                 wrap: true,

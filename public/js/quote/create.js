@@ -2349,7 +2349,7 @@ function storeQuote() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                $("#btn-submit").attr("disabled", true);
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -2395,7 +2395,7 @@ function storeQuote() {
                         "hideMethod": "fadeOut"
                     });
             }
-            $("#btn-submit").attr("disabled", true);
+            $("#btn-submit").attr("disabled", false);
 
         },
     });

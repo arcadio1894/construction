@@ -1517,7 +1517,7 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal">USD {{ $quote->total }}</td>
+                                <td id="subtotal">{{ $quote->currency_invoice }} {{ ($quote->total_soles != 0) ? $quote->total_soles: $quote->total}}</td>
                                 <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                                 <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                                 <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -1539,7 +1539,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal2">USD {{ $quote->subtotal_utility }}</td>
+                                <td id="subtotal2">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
                             </tr>
                             <tr>
                                 <th>Letra: </th>
@@ -1556,7 +1556,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal3">USD {{ $quote->subtotal_letter }}</td>
+                                <td id="subtotal3">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
                             </tr>
                             <tr>
                                 <th>Renta: </th>
@@ -1573,7 +1573,7 @@
                             </tr>
                             <tr>
                                 <th>Total: </th>
-                                <td id="total">USD {{ $quote->subtotal_rent }}</td>
+                                <td id="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}</td>
                             </tr>
                         </table>
                     </div>
