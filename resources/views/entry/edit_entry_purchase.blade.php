@@ -66,11 +66,12 @@
 @endsection
 
 @section('content')
-    <form id="formEdit" class="form-horizontal" data-url="{{ route('entry.purchase.update') }}" enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="entry_id" value="{{ $entry->id }}">
-        <div class="row">
-            <div class="col-md-12">
+
+    <input type="hidden" name="entry_id" value="{{ $entry->id }}">
+    <div class="row">
+        <div class="col-md-12">
+            <form id="formEdit" data-url="{{ route('entry.purchase.update') }}" enctype="multipart/form-data">
+                @csrf
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">Datos generales</h3>
@@ -133,170 +134,150 @@
                         </div>
                     </div>
                     <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-            <div class="col-md-12">
-                <div class="card card-warning">
-                    <div class="card-header">
-                        <h3 class="card-title">Materiales</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                        </div>
+                    <div class="card-footer">
+                        <button type="submit" class="btn btn-outline-success float-right">Guardar datos generales</button>
                     </div>
-                    <div class="card-body">
 
-                        {{--<div class="row">
-                            <div class="col-md-4">
-                                <div class="form-group">
-                                    <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+                </div>
+            <!-- /.card -->
+            </form>
+        </div>
 
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="quantity" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <div class="form-group">
-                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="price" class="form-control">
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="btn-grouped"> Agrupado </label> <br>
-                                <input id="btn-grouped" type="checkbox" name="my-checkbox" data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="btn-add"> &nbsp; </label>
-                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                            </div>
+        <div class="col-md-12">
+            <div class="card card-warning">
+                <div class="card-header">
+                    <h3 class="card-title">Materiales</h3>
 
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body">
+
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="quantity" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="price" class="form-control">
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label for="btn-grouped"> Agrupado </label> <br>
+                            <input id="btn-grouped" type="checkbox" name="my-checkbox" data-bootstrap-switch data-off-color="danger" data-on-text="SI" data-off-text="NO" data-on-color="success">
+                        </div>
+                        <div class="col-md-2">
+                            <label for="btn-add"> &nbsp; </label>
+                            <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                         </div>
 
-                        <hr>--}}
+                    </div>
 
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="card">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Materiales</h3>
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap">
-                                            <thead>
+                    <hr>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card card-primary">
+                                <div class="card-header">
+                                    <h3 class="card-title">Materiales</h3>
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body table-responsive p-0">
+                                    <table class="table table-head-fixed text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th>Codigo</th>
+                                            <th>Material</th>
+                                            <th>Cantidad</th>
+                                            <th>Und</th>
+                                            <th>Precio Unit.</th>
+                                            <th>Total sin Imp.</th>
+                                            <th>Total Imp.</th>
+                                            <th>Importe</th>
+                                            <th>Acciones</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="body-materials">
+                                        @foreach( $entry->details as $detail )
                                             <tr>
-                                                <th>Codigo</th>
-                                                <th>Material</th>
-                                                <th>Cantidad</th>
-                                                <th>Und</th>
-                                                <th>Precio Unit.</th>
-                                                <th>Total sin Imp.</th>
-                                                <th>Total Imp.</th>
-                                                <th>Importe</th>
+                                                <td data-code>{{$detail->material->code}}</td>
+                                                <td data-description>{{$detail->material_description}}</td>
+                                                <td data-quantity>{{$detail->entered_quantity}}</td>
+                                                <td data-unit>{{$detail->unit}}</td>
+                                                <td data-price>{{$entry->currency_invoice .' '. $detail->unit_price}}</td>
+                                                <td data-subtotal>{{$entry->currency_invoice .' '. $detail->sub_total }}</td>
+                                                <td data-taxes>{{$entry->currency_invoice .' '. $detail->taxes }}</td>
+                                                <td data-total>{{$entry->currency_invoice .' '. $detail->total }}</td>
+                                                <td><button data-deleteOld="{{ $detail->id }}" data-entry="{{ $entry->id }}" type="button" class="btn btn-sm btn-danger" ><i class="fas fa-trash"></i></button></td>
                                             </tr>
-                                            </thead>
-                                            <tbody id="body-materials">
-                                            @foreach( $entry->details as $detail )
-                                                <tr>
-                                                    <td data-code>{{$detail->material->code}}</td>
-                                                    <td data-description>{{$detail->material_description}}</td>
-                                                    <td data-quantity>{{$detail->entered_quantity}}</td>
-                                                    <td data-unit>{{$detail->unit}}</td>
-                                                    <td data-price>{{$entry->currency_invoice .' '. $detail->unit_price}}</td>
-                                                    <td data-subtotal>{{$entry->currency_invoice .' '. $detail->sub_total }}</td>
-                                                    <td data-taxes>{{$entry->currency_invoice .' '. $detail->taxes }}</td>
-                                                    <td data-total>{{$entry->currency_invoice .' '. $detail->total }}</td>
-                                                </tr>
-                                            @endforeach
+                                        @endforeach
 
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                    <hr>
-                                    <!-- /.card-body -->
-                                    <div class="row">
-                                        <!-- accepted payments column -->
-                                        <div class="col-6">
-
-                                        </div>
-                                        <!-- /.col -->
-                                        <div class="col-6">
-                                            <p class="lead">Resumen de factura</p>
-
-                                            <div class="table-responsive">
-                                                <table class="table">
-                                                    <tr>
-                                                        <th style="width:50%">Subtotal: </th>
-                                                        <td id="subtotal">{{ $entry->sub_total }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Igv: </th>
-                                                        <td id="taxes">{{ $entry->taxes }}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <th>Total: </th>
-                                                        <td id="total">{{ $entry->total }}</td>
-                                                    </tr>
-                                                </table>
-                                            </div>
-                                        </div>
-                                        <!-- /.col -->
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                                <!-- /.card -->
-                            </div>
-                        </div>
-                        {{--<div class="row">
-                            <!-- accepted payments column -->
-                            <div class="col-6">
-
-                            </div>
-                            <!-- /.col -->
-                            <div class="col-6">
-                                <p class="lead">Amount Due 2/22/2014</p>
-
-                                <div class="table-responsive">
-                                    <table class="table">
-                                        <tr>
-                                            <th style="width:50%">Subtotal: </th>
-                                            <td id="subtotal ">$250.30</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Igv: </th>
-                                            <td id="igv">$10.34</td>
-                                        </tr>
-                                        <tr>
-                                            <th>Total: </th>
-                                            <td id="total">$265.24</td>
-                                        </tr>
+                                        </tbody>
                                     </table>
                                 </div>
+                                <hr>
+                                <div class="card-footer">
+                                    <button type="button" class="btn btn-outline-success float-right">Guardar nuevos materiales</button>
+                                </div>
                             </div>
-                            <!-- /.col -->
-                        </div>--}}
-                        <!-- /.row -->
+                            <!-- /.card -->
+
+                        </div>
                     </div>
-                    <!-- /.card-body -->
+                    <!-- /.row -->
+
                 </div>
-                <!-- /.card -->
+                <!-- /.card-body -->
             </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar cambios</button>
+            <!-- /.card -->
+            <!-- /.card-body -->
+            <div class="row">
+                <!-- accepted payments column -->
+                <div class="col-6">
+
+                </div>
+                <!-- /.col -->
+                <div class="col-6">
+                    <p class="lead">Resumen de factura</p>
+
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tr>
+                                <th style="width:50%">Subtotal: </th>
+                                <td id="subtotal">{{ $entry->sub_total }}</td>
+                            </tr>
+                            <tr>
+                                <th>Igv: </th>
+                                <td id="taxes">{{ $entry->taxes }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total: </th>
+                                <td id="total">{{ $entry->total }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.col -->
             </div>
+            <!-- /.card-body -->
         </div>
-        <!-- /.card-footer -->
-    </form>
+
+    </div>
+
+    <!-- /.card-footer -->
 
     <div id="modalImage" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">

@@ -69,7 +69,7 @@ class LocationController extends Controller
 
     public function getItemsLocation($id)
     {
-        $items = Item::where('location_id', $id)->whereIn('state_item', ['entered', 'scraped'])->with('material')->with('MaterialType')->with('DetailEntry')->get();
+        $items = Item::where('location_id', $id)->whereIn('state_item', ['entered', 'scraped'])->with('material')->with('typescrap')->with('detailEntry')->get();
 
         //dd(datatables($items)->toJson());
         return datatables($items)->toJson();

@@ -1,7 +1,8 @@
 function format ( d ) {
+    var tipoRetazo = (d.typescrap===null) ? 'Ninguno': d.typescrap.name;
     return 'Estado: '+d.state+'<br>'+
         'Estado de Item: '+d.state_item+'<br>'+
-        'Tipo de Material: '+d.material_type.name+'<br>';
+        'Tipo de Material: '+tipoRetazo+'<br>';
 }
 
 $(document).ready(function () {
