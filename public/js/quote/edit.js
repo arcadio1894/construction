@@ -1328,7 +1328,7 @@ function saveEquipment() {
                             },
                         });
                         //$.alert("Equipo guardado!");
-                        var card = button.parent().parent().parent();
+                        var card = button2.parent().parent().parent();
                         card.removeClass('card-gray-dark');
                         card.addClass('card-success');
                         console.log($total);
