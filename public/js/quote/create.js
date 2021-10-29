@@ -707,7 +707,7 @@ function saveEquipment() {
             cancel: {
                 text: 'CANCELAR',
                 action: function (e) {
-                    $.alert("Eliminación cancelada.");
+                    $.alert("Modificación cancelada.");
                 },
             },
         },
