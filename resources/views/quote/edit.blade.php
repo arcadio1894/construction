@@ -654,7 +654,7 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription readonly>
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
@@ -742,7 +742,7 @@
                                                     <div class="row">
                                                         <div class="col-md-5">
                                                             <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription readonly>
+                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription >
                                                             </div>
                                                         </div>
 
@@ -777,7 +777,7 @@
                                                     <div class="row">
                                                         <div class="col-md-5">
                                                             <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription readonly>
+                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription>
                                                             </div>
                                                         </div>
 
