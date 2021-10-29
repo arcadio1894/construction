@@ -299,6 +299,61 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-manoQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-manoPrice]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-description]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-cantidad]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-horas]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-precio]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-tornoQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-tornoPrice]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-quantityequipment]', function() {
+        var card = $(this).parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-descriptionequipment]', function() {
+        var card = $(this).parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-detailequipment]', function() {
+        var card = $(this).parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
     /*$total = parseFloat($('#quote_total').val());
     $subtotal = parseFloat($('#quote_subtotal_utility').val());
     $subtotal2 = parseFloat($('#quote_subtotal_letter').val());
@@ -955,6 +1010,9 @@ function saveEquipment() {
                         button.next().attr('data-deleteEquipment', $equipments.length);
                         $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         //console.log(modifiedEquipment);
+                        var card = button.parent().parent().parent();
+                        card.removeClass('card-gray-dark');
+                        card.addClass('card-success');
                         $items = [];
                         //$.alert("Equipo guardado!");
 
@@ -1270,6 +1328,9 @@ function saveEquipment() {
                             },
                         });
                         //$.alert("Equipo guardado!");
+                        var card = button.parent().parent().parent();
+                        card.removeClass('card-gray-dark');
+                        card.addClass('card-success');
                         console.log($total);
                     },
                 },
@@ -1288,21 +1349,33 @@ function saveEquipment() {
 
 function deleteConsumable() {
     //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     $(this).parent().parent().remove();
 }
 
 function deleteMano() {
     //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     $(this).parent().parent().remove();
 }
 
 function deleteDia() {
     //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     $(this).parent().parent().remove();
 }
 
 function deleteTorno() {
     //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     $(this).parent().parent().remove();
 }
 
@@ -2234,6 +2307,9 @@ function confirmEquipment() {
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
                     $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
 
+                    var card = button.parent().parent().parent();
+                    card.removeClass('card-gray-dark');
+                    card.addClass('card-success');
                     $items = [];
                     $.alert("Equipo confirmado!");
 
@@ -2453,6 +2529,9 @@ function addEquipment() {
 
 function deleteItem() {
     //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     $(this).parent().parent().remove();
     var itemId = $(this).data('delete');
     //$items = $items.filter(item => item.id !== itemId);
@@ -3038,6 +3117,9 @@ function storeQuote() {
 
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width) {
     console.log(render);
+    var card = render.parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#materials-selected');
         clone.querySelector("[data-materialDescription]").setAttribute('value', description);
@@ -3066,6 +3148,9 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
 }
 
 function renderTemplateConsumable(render, consumable, quantity) {
+    var card = render.parent().parent().parent().parent();
+    card.removeClass('card-sucess');
+    card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
         clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
@@ -3092,6 +3177,9 @@ function renderTemplateConsumable(render, consumable, quantity) {
 }
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {
+    var card = render.parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     var clone = activateTemplate('#template-mano');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-manoDescription]").setAttribute('value', description);
@@ -3114,6 +3202,9 @@ function renderTemplateMano(render, description, unit, quantity, unitPrice) {
 }
 
 function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
+    var card = render.parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     var clone = activateTemplate('#template-dia');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-description]").setAttribute('value', description);
@@ -3137,6 +3228,9 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
 }
 
 function renderTemplateTorno(render, description, quantity, unitPrice) {
+    var card = render.parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
     var clone = activateTemplate('#template-torno');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-tornoDescription]").setAttribute('value', description);

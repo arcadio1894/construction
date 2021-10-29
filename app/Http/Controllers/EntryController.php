@@ -465,4 +465,12 @@ class EntryController extends Controller
         //dd(datatables($entries)->toJson());
         return $entries;
     }
+
+    public function destroyDetailOfEntry( $id_detail, $id_entry )
+    {
+        $entry = Entry::find($id_entry);
+        $detail = DetailEntry::find($id_detail);
+
+        $items = Item::where('detail_entry_id', $detail->id)->get();
+    }
 }

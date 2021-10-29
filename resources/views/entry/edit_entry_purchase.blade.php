@@ -217,15 +217,30 @@
                                                 <td data-description>{{$detail->material_description}}</td>
                                                 <td data-quantity>{{$detail->entered_quantity}}</td>
                                                 <td data-unit>{{$detail->unit}}</td>
-                                                <td data-price>{{$entry->currency_invoice .' '. $detail->unit_price}}</td>
-                                                <td data-subtotal>{{$entry->currency_invoice .' '. $detail->sub_total }}</td>
-                                                <td data-taxes>{{$entry->currency_invoice .' '. $detail->taxes }}</td>
-                                                <td data-total>{{$entry->currency_invoice .' '. $detail->total }}</td>
+                                                <td data-price>{{ $detail->unit_price}}</td>
+                                                <td data-subtotal>{{ $detail->sub_total }}</td>
+                                                <td data-taxes>{{ $detail->taxes }}</td>
+                                                <td data-total>{{ $detail->total }}</td>
                                                 <td><button data-deleteOld="{{ $detail->id }}" data-entry="{{ $entry->id }}" type="button" class="btn btn-sm btn-danger" ><i class="fas fa-trash"></i></button></td>
                                             </tr>
                                         @endforeach
 
                                         </tbody>
+                                        <template id="materials-selected">
+                                            <tr>
+                                                <td data-code>183</td>
+                                                <td data-description>John Doe</td>
+                                                <td data-quantity>John Doe</td>
+                                                <td data-unit>11-7-2014</td>
+                                                <td data-price>11-7-2014</td>
+                                                <td data-subtotal>11-7-2014</td>
+                                                <td data-taxes>11-7-2014</td>
+                                                <td data-total>11-7-2014</td>
+                                                <td>
+                                                    <button type="button" data-delete="" class="btn btn-sm btn-warning"><i class="fas fa-trash"></i></button>
+                                                </td>
+                                            </tr>
+                                        </template>
                                     </table>
                                 </div>
                                 <hr>
