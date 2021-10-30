@@ -54,7 +54,18 @@ $(document).ready(function () {
 
                 }
             },
-            { data: 'currency_invoice' },
+            { data: null,
+                title: 'Moneda',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        text = text + '<p> '+ item.currency_invoice +'</p>'
+                    }
+                    return text;
+                }
+            },
             { data: null,
                 title: 'Estado',
                 wrap: true,
@@ -97,12 +108,15 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
-                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
-                            '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                    if ( item.state === 'confirmed' ) {
+                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
+                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                        }
                     }
+
                     if ( item.state === 'created' ) {
                         if ( $.inArray('update_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
@@ -112,17 +126,17 @@ $(document).ready(function () {
                             text = text + ' <button data-confirm="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Confirmar"><i class="fa fa-check"></i></button>';
                         }
-                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                        /*if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
-                        }
+                        }*/
                     }
 
                     if ( item.state === 'confirmed' ) {
-                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                        /*if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
-                        }
+                        }*/
                         if ( item.state === 'confirmed' && item.raise_status == 0 )
                         {
                             if ( $.inArray('confirm_quote', $permissions) !== -1 ) {

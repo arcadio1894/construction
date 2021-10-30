@@ -883,7 +883,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <div class="form-group">
-                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-manoUnit>
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-manoUnit readonly>
                         </div>
                     </div>
                 </div>

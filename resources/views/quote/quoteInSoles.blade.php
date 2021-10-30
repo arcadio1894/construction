@@ -571,11 +571,13 @@
         <!-- /.col -->
     </div>
 
+    @if ($quote->currency_invoice === 'USD')
     <div class="row">
         <div class="col-12">
             <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Cotizar en soles</button>
         </div>
     </div>
+    @endif
 
     <div id="modalAddMaterial" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">

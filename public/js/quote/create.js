@@ -434,7 +434,7 @@ function deleteEquipment() {
                     }
 
                     $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                    $('#subtotal').html('S/. '+$total);
+                    $('#subtotal').html('USD '+$total);
                     calculateMargen2($('#utility').val());
                     calculateLetter2($('#letter').val());
                     calculateRent2($('#taxes').val());
@@ -484,7 +484,7 @@ function saveEquipment() {
                     // TODO: En data-delete (material) debe estar el equipo tambien
 
                     $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                    $('#subtotal').html('S/. '+$total);
+                    $('#subtotal').html('USD '+$total);
                     calculateMargen2($('#utility').val());
                     calculateLetter2($('#letter').val());
                     calculateRent2($('#taxes').val());
@@ -684,7 +684,7 @@ function saveEquipment() {
 
                     $total = parseFloat($total) + parseFloat(totalEquipment);
 
-                    $('#subtotal').html('S/. '+$total);
+                    $('#subtotal').html('USD '+$total);
 
                     calculateMargen2($('#utility').val());
                     calculateLetter2($('#letter').val());
@@ -1663,7 +1663,7 @@ function confirmEquipment() {
 
                     $total = parseFloat($total) + parseFloat(totalEquipment);
 
-                    $('#subtotal').html('S/. '+$total);
+                    $('#subtotal').html('USD '+$total);
 
                     calculateMargen2($('#utility').val());
                     calculateLetter2($('#letter').val());
@@ -1708,9 +1708,9 @@ function calculateMargen(e) {
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
 
-    $('#subtotal2').html('S/. '+$subtotal);
-    $('#subtotal3').html('S/. '+$subtotal2);
-    $('#total').html('S/. '+$subtotal3);
+    $('#subtotal2').html('USD '+$subtotal);
+    $('#subtotal3').html('USD '+$subtotal2);
+    $('#total').html('USD '+$subtotal3);
 
 }
 
@@ -1723,8 +1723,8 @@ function calculateLetter(e) {
     $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
-    $('#subtotal3').html('S/. '+$subtotal2);
-    $('#total').html('S/. '+$subtotal3);
+    $('#subtotal3').html('USD '+$subtotal2);
+    $('#total').html('USD '+$subtotal3);
 
 }
 
@@ -1738,7 +1738,7 @@ function calculateRent(e) {
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
 
-    $('#total').html('S/. '+$subtotal3);
+    $('#total').html('USD '+$subtotal3);
 
 }
 
@@ -1750,9 +1750,9 @@ function calculateMargen2(margen) {
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
 
-    $('#subtotal2').html('S/. '+$subtotal);
-    $('#subtotal3').html('S/. '+$subtotal2);
-    $('#total').html('S/. '+$subtotal3);
+    $('#subtotal2').html('USD '+$subtotal);
+    $('#subtotal3').html('USD '+$subtotal2);
+    $('#total').html('USD '+$subtotal3);
 
 }
 
@@ -1763,8 +1763,8 @@ function calculateLetter2(letter) {
     $subtotal = ($total * ((parseFloat(margen)/100)+1)).toFixed(2);
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
-    $('#subtotal3').html('S/. '+$subtotal2);
-    $('#total').html('S/. '+$subtotal3);
+    $('#subtotal3').html('USD '+$subtotal2);
+    $('#total').html('USD '+$subtotal3);
 
 }
 
@@ -1776,7 +1776,7 @@ function calculateRent2(rent) {
     $subtotal2 = ($subtotal * ((parseFloat(letter)/100)+1)).toFixed(2);
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
 
-    $('#total').html('S/. '+$subtotal3);
+    $('#total').html('USD '+$subtotal3);
 }
 
 function calculateTotal(e) {
@@ -2492,8 +2492,8 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         clone.querySelector("[data-materialLargo]").setAttribute('value', length);
         clone.querySelector("[data-materialAncho]").setAttribute('value', width);
-        clone.querySelector("[data-materialQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-materialPrice]").setAttribute('value', price);
+        clone.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
         clone.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
         clone.querySelector("[data-delete]").setAttribute('data-delete', code);
         render.append(clone);
@@ -2503,8 +2503,8 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
         clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
         clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
-        clone2.querySelector("[data-materialQuantity]").setAttribute('value', quantity);
-        clone2.querySelector("[data-materialPrice]").setAttribute('value', price);
+        clone2.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
         clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(price)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-materialTotal]").setAttribute("style","display:none;");
@@ -2522,8 +2522,8 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         clone.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
-        clone.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
+        clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
         clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
         render.append(clone);
@@ -2532,8 +2532,8 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.name);
-        clone2.querySelector("[data-consumableQuantity]").setAttribute('value', quantity);
-        clone2.querySelector("[data-consumablePrice]").setAttribute('value', consumable.unit_price);
+        clone2.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
         clone2.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
         clone2.querySelector("[data-consumablePrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-consumableTotal]").setAttribute("style","display:none;");
@@ -2552,14 +2552,14 @@ function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-manoDescription]").setAttribute('value', description);
         clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
-        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-manoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
     } else {
         clone.querySelector("[data-manoDescription]").setAttribute('value', description);
         clone.querySelector("[data-manoUnit]").setAttribute('value', unit);
-        clone.querySelector("[data-manoQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-manoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-manoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-manoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-manoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-manoPrice]").setAttribute("style","display:none;");
         clone.querySelector("[data-manoTotal]").setAttribute("style","display:none;");
@@ -2576,13 +2576,13 @@ function renderTemplateTorno(render, description, quantity, unitPrice) {
     var clone = activateTemplate('#template-torno');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
     } else {
         clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-        clone.querySelector("[data-tornoQuantity]").setAttribute('value', quantity);
-        clone.querySelector("[data-tornoPrice]").setAttribute('value', unitPrice);
+        clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
         clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
         clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
@@ -2599,16 +2599,16 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
     var clone = activateTemplate('#template-dia');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-description]").setAttribute('value', description);
-        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
-        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
-        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
-        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-cantidad]").setAttribute('value', (parseFloat(quantityPerson2)).toFixed(2));
+        clone.querySelector("[data-horas]").setAttribute('value', (parseFloat(hoursPerPerson2)).toFixed(2));
+        clone.querySelector("[data-precio]").setAttribute('value', (parseFloat(pricePerHour2)).toFixed(2));
+        clone.querySelector("[data-total]").setAttribute( 'value', (parseFloat(total2)).toFixed(2));
     } else {
         clone.querySelector("[data-description]").setAttribute('value', description);
-        clone.querySelector("[data-cantidad]").setAttribute('value', quantityPerson2);
-        clone.querySelector("[data-horas]").setAttribute('value', hoursPerPerson2);
-        clone.querySelector("[data-precio]").setAttribute('value', pricePerHour2);
-        clone.querySelector("[data-total]").setAttribute( 'value', total2);
+        clone.querySelector("[data-cantidad]").setAttribute('value', (parseFloat(quantityPerson2)).toFixed(2));
+        clone.querySelector("[data-horas]").setAttribute('value', (parseFloat(hoursPerPerson2)).toFixed(2));
+        clone.querySelector("[data-precio]").setAttribute('value', (parseFloat(pricePerHour2)).toFixed(2));
+        clone.querySelector("[data-total]").setAttribute( 'value', (parseFloat(total2)).toFixed(2));
         clone.querySelector("[data-precio]").setAttribute("style","display:none;");
         clone.querySelector("[data-total]").setAttribute("style","display:none;");
 

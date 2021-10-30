@@ -493,6 +493,7 @@
         @endforeach
     </div>
     <!-- /.card-footer -->
+    @can('showPrices_quote')
     <div class="row">
         <!-- accepted payments column -->
         <div class="col-6">
@@ -569,6 +570,7 @@
         </div>
         <!-- /.col -->
     </div>
+    @endcan
     <div id="modalAddMaterial" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">

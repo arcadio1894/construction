@@ -1517,7 +1517,7 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal">{{ $quote->currency_invoice }} {{ ($quote->total_soles != 0) ? $quote->total_soles: $quote->total}}</td>
+                                <td id="subtotal"> USD {{ $quote->total }}</td>
                                 <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                                 <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                                 <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -1539,7 +1539,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal2">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
+                                <td id="subtotal2">USD {{ $quote->subtotal_utility_edit }}</td>
                             </tr>
                             <tr>
                                 <th>Letra: </th>
@@ -1556,7 +1556,7 @@
                             </tr>
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal3">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
+                                <td id="subtotal3">USD {{ $quote->subtotal_letter_edit }}</td>
                             </tr>
                             <tr>
                                 <th>Renta: </th>
@@ -1573,7 +1573,7 @@
                             </tr>
                             <tr>
                                 <th>Total: </th>
-                                <td id="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}</td>
+                                <td id="total">USD {{ $quote->subtotal_rent_edit }}</td>
                             </tr>
                         </table>
                     </div>
@@ -1692,7 +1692,7 @@
                 <div class="col-md-2">
                     <div class="form-group">
                         <div class="form-group">
-                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-manoUnit>
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-manoUnit readonly>
                         </div>
                     </div>
                 </div>
@@ -2305,7 +2305,7 @@
 
         <div class="row">
             <div class="col-12">
-                <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
+                <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">Regresar</a>
                 <button type="submit" id="btn-submit" class="btn btn-outline-success float-right">Guardar nuevos equipos</button>
             </div>
         </div>

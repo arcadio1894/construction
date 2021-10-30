@@ -44,6 +44,13 @@ class Quote extends Model
 
     }
 
+    public function getSubtotalUtilityEditAttribute()
+    {
+        $subtotal1 = $this->total * (($this->utility/100)+1);
+        return number_format($subtotal1, 2);
+
+    }
+
     public function getSubtotalLetterAttribute()
     {
         if ( $this->total_soles != 0 )
@@ -57,6 +64,13 @@ class Quote extends Model
             return number_format($subtotal2, 2);
         }
 
+    }
+
+    public function getSubtotalLetterEditAttribute()
+    {
+        $subtotal1 = $this->total * (($this->utility/100)+1);
+        $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+        return number_format($subtotal2, 2);
     }
 
     public function getSubtotalRentAttribute()
@@ -74,6 +88,14 @@ class Quote extends Model
             return number_format($subtotal3, 0);
         }
 
+    }
+
+    public function getSubtotalRentEditAttribute()
+    {
+        $subtotal1 = $this->total * (($this->utility/100)+1);
+        $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+        $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+        return number_format($subtotal3, 0);
     }
 
     public function customer()

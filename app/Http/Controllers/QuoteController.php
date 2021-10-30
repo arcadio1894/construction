@@ -261,6 +261,10 @@ class QuoteController extends Controller
             $quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
             $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
             $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
+            $quote->currency_invoice = 'USD';
+            $quote->currency_compra = null;
+            $quote->currency_venta = null;
+            $quote->total_soles = 0;
             $quote->save();
 
             $equipments = json_decode($request->get('equipments'));
@@ -589,6 +593,10 @@ class QuoteController extends Controller
             }
 
             $quote->total -= $equipment_quote->total;
+            $quote->currency_invoice = 'USD';
+            $quote->currency_compra = null;
+            $quote->currency_venta = null;
+            $quote->total_soles = 0;
             $quote->save();
 
             $equipment_quote->delete();
@@ -772,6 +780,11 @@ class QuoteController extends Controller
             }
 
             $quote->total += $totalQuote;
+
+            $quote->currency_invoice = 'USD';
+            $quote->currency_compra = null;
+            $quote->currency_venta = null;
+            $quote->total_soles = 0;
 
             $quote->save();
 
