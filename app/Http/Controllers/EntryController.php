@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class EntryController extends Controller
 {
@@ -99,10 +100,29 @@ class EntryController extends Controller
                 $entry->save();
             } else {
                 $path = public_path().'/images/entries/';
+                $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
-                $filename = $entry->id . '.' . $extension;
-                $request->file('image')->move($path, $filename);
+                //$filename = $entry->id . '.' . $extension;
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->save($path.$filename, 80, 'jpg');
+                //$request->file('image')->move($path, $filename);
                 $entry->image = $filename;
+                $entry->save();
+            }
+
+            if (!$request->file('imageOb')) {
+                $entry->imageOb = 'no_image.png';
+                $entry->save();
+            } else {
+                $path = public_path().'/images/entries/observations/';
+                $image = $request->file('imageOb');
+                $extension = $image->getClientOriginalExtension();
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->save($path.$filename, 80, 'jpg');
+                //$request->file('image')->move($path, $filename);
+                $entry->imageOb = $filename;
                 $entry->save();
             }
 
@@ -343,12 +363,34 @@ class EntryController extends Controller
                 }
             } else {
                 $path = public_path().'/images/entries/';
+                $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
-                $filename = $entry->id . '.' . $extension;
-                $request->file('image')->move($path, $filename);
+                //$filename = $entry->id . '.' . $extension;
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->save($path.$filename, 80, 'jpg');
+                //$request->file('image')->move($path, $filename);
                 $entry->image = $filename;
                 $entry->save();
             }
+
+            if (!$request->file('imageOb')) {
+                if ($entry->imageOb == 'no_image.png' || $entry->imageOb == null) {
+                    $entry->imageOb = 'no_image.png';
+                    $entry->save();
+                }
+            } else {
+                $path = public_path().'/images/entries/observations/';
+                $image = $request->file('imageOb');
+                $extension = $image->getClientOriginalExtension();
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->save($path.$filename, 80, 'jpg');
+                //$request->file('image')->move($path, $filename);
+                $entry->imageOb = $filename;
+                $entry->save();
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -468,9 +510,177 @@ class EntryController extends Controller
 
     public function destroyDetailOfEntry( $id_detail, $id_entry )
     {
-        $entry = Entry::find($id_entry);
-        $detail = DetailEntry::find($id_detail);
+        DB::beginTransaction();
+        try {
+            $entry = Entry::find($id_entry);
+            $detail = DetailEntry::find($id_detail);
 
-        $items = Item::where('detail_entry_id', $detail->id)->get();
+            $items = Item::where('detail_entry_id', $detail->id)
+                ->whereIn('state_item', ['reserved','exited'])
+                ->get();
+            if (!isset($items))
+            {
+                return response()->json(['message' => 'Lo sentimos, no se puede eliminar porque hay items reservados o en salida.'], 422);
+            }
+
+            $items_deleted = Item::where('detail_entry_id', $detail->id)->get();
+            foreach ( $items_deleted as $item )
+            {
+                $material = Material::find($item->material_id);
+                $material->stock_current = $material->stock_current - $item->percentage;
+                $material->save();
+
+                $item->delete();
+            }
+
+            $detail->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Detalle de compra eliminado con éxito.'], 200);
+    }
+
+    public function addDetailOfEntry( Request $request, $id_entry )
+    {
+        //dump($request);
+        DB::beginTransaction();
+        try {
+            $entry = Entry::find($id_entry);
+
+            $items = json_decode($request->get('items'));
+
+            //dd($item->id);
+            $materials_id = [];
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                array_push($materials_id, $items[$i]->id_material);
+            }
+
+            $counter = array_count_values($materials_id);
+            //dd($counter);
+
+            foreach ( $counter as $id_material => $count )
+            {
+                $material = Material::find($id_material);
+                $material->stock_current = $material->stock_current + $count;
+                $material->save();
+
+                // TODO: ORDER_QUANTITY sera tomada de la orden de compra
+                $detail_entry = DetailEntry::create([
+                    'entry_id' => $entry->id,
+                    'material_id' => $id_material,
+                    'ordered_quantity' => $count,
+                    'entered_quantity' => $count,
+                ]);
+                //dd($id_material .' '. $count);
+                for ( $i=0; $i<sizeof($items); $i++ )
+                {
+                    if( $detail_entry->material_id == $items[$i]->id_material )
+                    {
+                        if ( $entry->currency_invoice === 'PEN' )
+                        {
+                            $precio1 = (float)$items[$i]->price / (float) $entry->currency_compra;
+                            $price1 = ($detail_entry->material->price > $precio1) ? $detail_entry->material->price : $precio1;
+                            $materialS = Material::find($detail_entry->material_id);
+                            if ( $materialS->price < $price1 )
+                            {
+                                $materialS->unit_price = $price1;
+                                $materialS->save();
+
+                                $detail_entry->unit_price = $items[$i]->price;
+                                $detail_entry->save();
+                            }
+                            //dd($detail_entry->material->materialType);
+                            if ( isset($detail_entry->material->typeScrap) )
+                            {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => $detail_entry->material->typeScrap->length,
+                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => $items[$i]->price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            } else {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => 0,
+                                    'width' => 0,
+                                    'weight' => 0,
+                                    'price' => $items[$i]->price,
+                                    'percentage' => 1,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            }
+                        } else {
+                            $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                            $materialS = Material::find($detail_entry->material_id);
+                            if ( $materialS->price < $items[$i]->price )
+                            {
+                                $materialS->unit_price = $items[$i]->price;
+                                $materialS->save();
+
+                                $detail_entry->unit_price = $materialS->unit_price;
+                                $detail_entry->save();
+                            }
+                            //dd($detail_entry->material->materialType);
+                            if ( isset($detail_entry->material->typeScrap) )
+                            {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => $detail_entry->material->typeScrap->length,
+                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => $price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            } else {
+                                $item = Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $items[$i]->item,
+                                    'length' => 0,
+                                    'width' => 0,
+                                    'weight' => 0,
+                                    'price' => $price,
+                                    'percentage' => 1,
+                                    'location_id' => $items[$i]->id_location,
+                                    'state' => $items[$i]->state,
+                                    'state_item' => 'entered'
+                                ]);
+                            }
+                        }
+
+
+                    }
+                }
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Detalles de compra guardados con éxito.'], 200);
     }
 }

@@ -56,6 +56,7 @@ $(document).ready(function () {
     $modalImage = $('#modalImage');
     $(document).on('click', '[data-image]', showImage);
     $(document).on('click', '[data-deleteOld]', deleteItemOld);
+    $('#btn-submit').on('click', saveNewDetails);
 
     $formEdit = $("#formEdit");
     $formEdit.on('submit', updateOrderPurchase);
@@ -106,10 +107,15 @@ function updateSummaryInvoice() {
         total += parseFloat((parseFloat($items[i].price)*parseFloat($items[i].quantity)));
         taxes = subtotal*0.18;
     }
+    var subtotalAntes = parseFloat($('#subtotal').html()) + subtotal ;
 
-    $('#subtotal').html(subtotal.toFixed(2));
-    $('#taxes').html(taxes.toFixed(2));
-    $('#total').html(total.toFixed(2));
+    var taxesAntes = parseFloat($('#taxes').html()) + taxes ;
+
+    var totalAntes = parseFloat($('#total').html()) + total ;
+
+    $('#subtotal').html(subtotalAntes.toFixed(2));
+    $('#taxes').html(taxesAntes.toFixed(2));
+    $('#total').html(totalAntes.toFixed(2));
 }
 
 function saveTableItems() {
@@ -365,12 +371,12 @@ function renderTemplateMaterial(id, code, description, quantity, unit, price, su
     var clone = activateTemplate('#materials-selected');
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-description]").innerHTML = description;
-    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-quantity]").innerHTML = parseFloat(quantity).toFixed(2);
     clone.querySelector("[data-unit]").innerHTML = unit;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-subtotal]").innerHTML = subtotal;
-    clone.querySelector("[data-taxes]").innerHTML = taxes;
-    clone.querySelector("[data-total]").innerHTML = total;
+    clone.querySelector("[data-price]").innerHTML = parseFloat(price).toFixed(2);
+    clone.querySelector("[data-subtotal]").innerHTML = parseFloat(subtotal).toFixed(2);
+    clone.querySelector("[data-taxes]").innerHTML = parseFloat(taxes).toFixed(2);
+    clone.querySelector("[data-total]").innerHTML = parseFloat(total).toFixed(2);
     clone.querySelector("[data-delete]").setAttribute('data-delete', id);
     $('#body-materials').append(clone);
 }
@@ -477,6 +483,97 @@ function deleteItemOld() {
     });
 }
 
+function saveNewDetails() {
+    var idEntry = $(this).data('entry');
+    $('#btn-submit').attr("disabled", true);
+    console.log(idEntry);
+    var valParam = JSON.stringify($items);
+    $.confirm({
+        icon: 'fas fa-smile',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de guardar estos nuevos materiales?',
+        content: 'Se agregarán estos materiales a la compra',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/add/materials/entry/'+idEntry,
+                        method: 'POST',
+                        data: { items: valParam} ,
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                $("#btn-submit").attr("disabled", false);
+                                location.reload();
+                            }, 2000 )
+
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+
+                            $("#btn-submit").attr("disabled", false);
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $("#btn-submit").attr("disabled", false);
+                    $.alert("Material cancelada.");
+                },
+
+            },
+        },
+    });
+}
+
 function showImage() {
     var path = $(this).attr('src');
     $('#image-document').attr('src', path);
@@ -490,6 +587,7 @@ function updateOrderPurchase() {
     /*var items = JSON.stringify($items);
     var form = new FormData(this);
     form.append('items', items);*/
+    $('#btn-submitForm').attr("disabled", true);
     $.ajax({
         url: createUrl,
         method: 'POST',
@@ -517,6 +615,7 @@ function updateOrderPurchase() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submitForm").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -541,7 +640,7 @@ function updateOrderPurchase() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submitForm").attr("disabled", false);
 
         },
     });

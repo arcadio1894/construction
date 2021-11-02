@@ -67,11 +67,11 @@
 
 @section('content')
 
-    <input type="hidden" name="entry_id" value="{{ $entry->id }}">
     <div class="row">
         <div class="col-md-12">
             <form id="formEdit" data-url="{{ route('entry.purchase.update') }}" enctype="multipart/form-data">
                 @csrf
+                <input type="hidden" name="entry_id" value="{{ $entry->id }}">
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">Datos generales</h3>
@@ -132,10 +132,25 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="observation">Observación </label>
+                                    <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="imageOb">Imagen Observación</label>
+                                    <input type="file" id="imageOb" name="imageOb" class="form-control">
+                                    <img data-image src="{{ asset('images/entries/observations/'.$entry->imageOb) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-outline-success float-right">Guardar datos generales</button>
+                        <button type="submit" id="btn-submitForm" class="btn btn-outline-success float-right">Guardar datos generales</button>
                     </div>
 
                 </div>
@@ -245,7 +260,7 @@
                                 </div>
                                 <hr>
                                 <div class="card-footer">
-                                    <button type="button" class="btn btn-outline-success float-right">Guardar nuevos materiales</button>
+                                    <button type="button" id="btn-submit" data-entry="{{ $entry->id }}" class="btn btn-outline-success float-right">Guardar nuevos materiales</button>
                                 </div>
                             </div>
                             <!-- /.card -->
@@ -272,15 +287,15 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal">{{ $entry->sub_total }}</td>
+                                <td><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="subtotal">{{ $entry->sub_total }}</span></td>
                             </tr>
                             <tr>
                                 <th>Igv: </th>
-                                <td id="taxes">{{ $entry->taxes }}</td>
+                                <td><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="taxes">{{ $entry->taxes }}</span></td>
                             </tr>
                             <tr>
                                 <th>Total: </th>
-                                <td id="total">{{ $entry->total }}</td>
+                                <td><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="total">{{ $entry->total }}</span></td>
                             </tr>
                         </table>
                     </div>

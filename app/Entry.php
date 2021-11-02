@@ -22,7 +22,10 @@ class Entry extends Model
         'finance',
         'currency_invoice',
         'currency_compra',
-        'currency_venta'
+        'currency_venta',
+        'observation',
+        'image',
+        'imageOb',
     ];
 
     public function getSubTotalAttribute()
@@ -33,7 +36,7 @@ class Entry extends Model
             $subtotal += ($detail->entered_quantity * $detail->unit_price)/1.18;
         }
         //$number = ($this->entered_quantity * $this->unit_price)/1.18;
-        return $this->currency_invoice. ' ' . number_format($subtotal, 2);
+        return number_format($subtotal, 2, '.', '');
     }
 
     public function getTaxesAttribute()
@@ -44,7 +47,7 @@ class Entry extends Model
             $taxes += (($detail->entered_quantity * $detail->unit_price)/1.18)*0.18;
         }
 
-        return $this->currency_invoice. ' ' . number_format($taxes, 2);
+        return number_format($taxes, 2,'.', '');
     }
 
     public function getTotalAttribute()
@@ -54,7 +57,7 @@ class Entry extends Model
         {
             $total += $detail->entered_quantity * $detail->unit_price;
         }
-        return $this->currency_invoice. ' ' . number_format($total, 2);
+        return number_format($total, 2, '.', '');
     }
 
     public function details()
