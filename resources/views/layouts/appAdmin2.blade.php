@@ -906,6 +906,38 @@
                     </li>
                     @endcan
 
+                    {{--@canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
+                    <li class="nav-header">ORDENES DE COMPRA</li>
+                    @endcanany
+                    @can('list_orderPurchaseExpress')
+                    <li class="nav-item has-treeview @yield('openOrderPurchaseExpress')">
+                        <a href="#" class="nav-link @yield('activeOrderPurchaseExpress')">
+                            <i class="nav-icon fas fa-credit-card"></i>
+                            <p>
+                                Ordenes Express
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('list_orderPurchaseExpress')
+                                <li class="nav-item">
+                                    <a href="{{route('order.purchase.express.index')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar ordenes</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('create_orderPurchaseExpress')
+                                <li class="nav-item">
+                                    <a href="{{ route('order.purchase.express.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Crear orden</p>
+                                    </a>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcan--}}
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany

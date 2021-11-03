@@ -227,9 +227,9 @@
             <tr>
                 <td class="desc">{{ $material->material->full_description }}</td>
                 <td class="unit">{{ $material->material->unitMeasure->name }}</td>
-                <td class="unit">S/. {{ $material->price }}</td>
+                <td class="unit">USD {{ $material->price }}</td>
                 <td class="qty">{{ $material->quantity }}</td>
-                <td class="qty">S/. {{ $material->total }}</td>
+                <td class="qty">USD {{ $material->total }}</td>
             </tr>
             @endforeach
             </tbody>
@@ -250,9 +250,9 @@
                 <tr>
                     <td class="desc">{{ $consumable->material->full_description }}</td>
                     <td class="unit">{{ $consumable->material->unitMeasure->name }}</td>
-                    <td class="unit">S/. {{ $consumable->price }}</td>
+                    <td class="unit">USD {{ $consumable->price }}</td>
                     <td class="qty">{{ $consumable->quantity }}</td>
-                    <td class="qty">S/. {{ $consumable->total }}</td>
+                    <td class="qty">USD {{ $consumable->total }}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -273,9 +273,9 @@
                 <tr>
                     <td class="desc">{{ $workforce->description }}</td>
                     <td class="unit">{{ $workforce->unit }}</td>
-                    <td class="unit">S/. {{ $workforce->price }}</td>
+                    <td class="unit">USD {{ $workforce->price }}</td>
                     <td class="qty">{{ $workforce->quantity }}</td>
-                    <td class="qty">S/. {{ $workforce->total }}</td>
+                    <td class="qty">USD {{ $workforce->total }}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -294,9 +294,9 @@
             @foreach( $equipment->turnstiles as $turnstile )
                 <tr>
                     <td class="desc">{{ $turnstile->description }}</td>
-                    <td class="unit">S/. {{ $turnstile->price }}</td>
+                    <td class="unit">USD {{ $turnstile->price }}</td>
                     <td class="qty">{{ $turnstile->quantity }}</td>
-                    <td class="qty">S/. {{ $turnstile->total }}</td>
+                    <td class="qty">USD {{ $turnstile->total }}</td>
                 </tr>
             @endforeach
             </tbody>
@@ -309,25 +309,25 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">SUBTOTAL</td>
-            <td class="total">S/. {{ $quote->total }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->total }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">UTILIDAD {{ $quote->utility }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_utility }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">LETRA {{ $quote->letter }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_letter }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">RENTA {{ $quote->rent }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_rent }}.00</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}.00</td>
         </tr>
         </tbody>
     </table>

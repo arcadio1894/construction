@@ -643,6 +643,14 @@ Route::middleware('auth')->group(function (){
             ->name('quote.in.soles')
             ->middleware('permission:confirm_quote');
 
+        // ORDER PURCHASE
+        Route::get('ordenes/compra/express', 'OrderPurchaseController@indexOrderPurchaseExpress')
+            ->name('order.purchase.express.index')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('crear/orden/compra/express', 'OrderPurchaseController@createOrderPurchaseExpress')
+            ->name('order.purchase.express.create')
+            ->middleware('permission:create_orderPurchaseExpress');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

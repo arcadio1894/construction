@@ -202,9 +202,9 @@
         @foreach( $quote->equipments as $equipment )
         <tr>
             <td class="desc">{{ $equipment->description }}</td>
-            <td class="unit"> S/. {{ number_format($equipment->total/$equipment->quantity, 2) }}</td>
+            <td class="unit"> USD {{ number_format($equipment->total/$equipment->quantity, 2) }}</td>
             <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="qty">S/. {{ $equipment->total }}</td>
+            <td class="qty">USD {{ $equipment->total }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -216,19 +216,19 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">SUBTOTAL</td>
-            <td class="total">S/. {{ $quote->total }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->total }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">UTILIDAD {{ $quote->utility }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_utility }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">LETRA {{ $quote->letter }}%</td>
-            <td class="total">S/. {{ $quote->subtotal_letter }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
