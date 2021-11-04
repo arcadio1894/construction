@@ -216,9 +216,9 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">SUBTOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ $quote->total }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice === 'USD') ? $quote->total: $quote->total_soles }}</td>
         </tr>
-        <tr>
+        {{--<tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">UTILIDAD {{ $quote->utility }}%</td>
@@ -235,7 +235,7 @@
             <td class="unit"></td>
             <td class="qty">RENTA {{ $quote->rent }}%</td>
             <td class="total">S/. {{ $quote->subtotal_rent }}.00</td>
-        </tr>
+        </tr>--}}
         </tbody>
     </table>
     <div id="notices">
@@ -288,9 +288,10 @@
 </header>
 <div id="notices">
     <div>CARACTERISTICAS DE {{ $quote->code }}:</div>
+    <br>
     @foreach( $quote->equipments as $equipment )
-        <div class="notice"><strong>Equipo: {{ $equipment->description }}</strong> </div>
-        <div class="notice">{!! nl2br($equipment->detail) !!}</div>
+        <div class="notice"><strong>Equipo: {{ $equipment->description }}</strong> </div><br>
+        <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
     @endforeach
 </div>
 <footer>

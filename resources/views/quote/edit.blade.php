@@ -2306,7 +2306,7 @@
         <div class="row">
             <div class="col-12">
                 <a href="{{ route('quote.index') }}" class="btn btn-outline-secondary">Regresar</a>
-                <button type="submit" id="btn-submit" class="btn btn-outline-success float-right">Guardar nuevos equipos</button>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar nuevos equipos</button>
             </div>
         </div>
         <!-- /.card-footer -->

@@ -101,7 +101,8 @@ $(document).ready(function () {
     $('#btnCalculate').on('click', calculatePercentage);
 
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeQuote);
+    $("#btn-submit").on("click", storeQuote);
+    //$formCreate.on('submit', storeQuote);
 
     $('input[type=radio][name=presentation]').on('change', function() {
         switch ($(this).val()) {
@@ -753,7 +754,7 @@ function addConsumable() {
         //console.log(material);
         var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
         var cantidad = inputQuantity.val();
-        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        if ( cantidad === '' || parseFloat(cantidad) === 0 )
         {
             toastr.error('Debe ingresar una cantidad', 'Error',
                 {
@@ -840,7 +841,7 @@ function addConsumable() {
         //console.log(material);
         var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
         var cantidad2 = inputQuantity2.val();
-        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
+        if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
         {
             toastr.error('Debe ingresar una cantidad', 'Error',
                 {
@@ -977,7 +978,7 @@ function addMano() {
                 });
             return;
         }
-        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        if ( cantidad === '' || parseFloat(cantidad) === 0 )
         {
             toastr.error('Agregue una cantidad válida.', 'Error',
                 {
@@ -1080,7 +1081,7 @@ function addMano() {
                 });
             return;
         }
-        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
+        if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
         {
             toastr.error('Agregue una cantidad válida.', 'Error',
                 {
@@ -1335,7 +1336,7 @@ function addTorno() {
                 });
             return;
         }
-        if ( cantidad === '' || parseInt(cantidad) === 0 )
+        if ( cantidad === '' || parseFloat(cantidad) === 0 )
         {
             toastr.error('Agregue una cantidad válida.', 'Error',
                 {
@@ -2396,12 +2397,14 @@ function storeQuote() {
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             });
+        $("#btn-submit").attr("disabled", false);
         return;
     }
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
-    var form = new FormData(this);
+    var formulario = $('#formCreate')[0];
+    var form = new FormData(formulario);
     form.append('equipments', equipos);
     $.ajax({
         url: createUrl,

@@ -177,6 +177,10 @@
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
                                 <textarea name="" data-detailequipment onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
                             </div>
+                            <div class="col-md-12">
+                                <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name="" data-texarea onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
+                            </div>
                         </div>
 
                         <div class="card card-cyan collapsed-card">
@@ -1456,7 +1460,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" id="btn-submit" class="btn btn-outline-success float-right">Guardar cotización</button>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar cotización</button>
             </div>
         </div>
         <!-- /.card-footer -->
