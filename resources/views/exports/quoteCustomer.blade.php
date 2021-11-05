@@ -290,7 +290,7 @@
     <div>CARACTERISTICAS DE {{ $quote->code }}:</div>
     <br>
     @foreach( $quote->equipments as $equipment )
-        <div class="notice"><strong>Equipo: {{ $equipment->description }}</strong> </div><br>
+        <div class="notice"><strong>{{ $equipment->description }}</strong> </div>
         <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
     @endforeach
 </div>

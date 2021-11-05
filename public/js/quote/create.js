@@ -378,7 +378,11 @@ $(document).ready(function () {
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-
+    $(document).on("summernote.change", ".textarea_edit",function (e) {   // callback as jquery custom event
+        var card = $(this).parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
 });
 
 var $formCreate;
@@ -1892,6 +1896,20 @@ function addEquipment() {
         }
     });
     //$equipmentStatus = false;
+
+    $('.textarea_edit').summernote({
+        lang: 'es-ES',
+        placeholder: 'Ingrese los detalles',
+        tabsize: 2,
+        height: 120,
+        toolbar: [
+            ['style', ['bold', 'italic', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['para', ['ul', 'ol']],
+            ['insert', ['link', 'picture']],
+            ['view', ['codeview', 'help']]
+        ]
+    });
 }
 
 function deleteItem() {
@@ -2434,7 +2452,7 @@ function storeQuote() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.reload();
+                //location.reload();
             }, 2000 )
         },
         error: function (data) {

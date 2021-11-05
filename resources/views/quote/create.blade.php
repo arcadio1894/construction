@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
-
+    <!-- summernote -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/summernote/summernote-bs4.css') }}">
 @endsection
 
 @section('styles')
@@ -173,13 +174,14 @@
                                 <label for="description">Descripción de equipo <span class="right badge badge-danger">(*)</span></label>
                                 <textarea name="" data-descriptionequipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
                             </div>
+                            {{--<div class="col-md-12">
+                                <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name=""  onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
+                            </div>--}}
                             <div class="col-md-12">
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name="" data-detailequipment onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
-                            </div>
-                            <div class="col-md-12">
-                                <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name="" data-texarea onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
+                                <textarea class="textarea_edit" data-detailequipment placeholder="Place some text here"
+                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
 
@@ -994,7 +996,8 @@
                             </div>
                             <div class="col-md-12">
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name="" data-detailEquipment onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
+                                <textarea class="textarea_edit" data-detailequipment placeholder="Place some text here"
+                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
 
@@ -1600,8 +1603,23 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
+    <script src="{{asset('admin/plugins/summernote/summernote-bs4.min.js')}}"></script>
+    <script src="{{asset('admin/plugins/summernote/lang/summernote-es-ES.js')}}"></script>
     <script>
         $(function () {
+            $('.textarea_edit').summernote({
+                lang: 'es-ES',
+                placeholder: 'Ingrese los detalles',
+                tabsize: 2,
+                height: 120,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['para', ['ul', 'ol']],
+                    ['insert', ['link', 'picture']],
+                    ['view', ['codeview', 'help']]
+                ]
+            });
             //Initialize Select2 Elements
             $('#customer_id').select2({
                 placeholder: "Selecione cliente",

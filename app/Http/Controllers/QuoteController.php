@@ -53,7 +53,7 @@ class QuoteController extends Controller
 
     public function store(StoreQuoteRequest $request)
     {
-        //dd($request);
+        //dump($request);
         $validated = $request->validated();
 
         DB::beginTransaction();
