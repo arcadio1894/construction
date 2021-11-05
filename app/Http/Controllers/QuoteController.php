@@ -233,11 +233,86 @@ class QuoteController extends Controller
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
 
+        $quote3 = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+
+        if ( $quote3->state === 'created' )
+        {
+            foreach( $quote3->equipments as $equipment )
+            {
+                // TODO: Actualizar los precios
+                foreach ( $equipment->materials as $equipment_material )
+                {
+                    if ( $equipment_material->price !== $equipment_material->material->unit_price )
+                    {
+                        $equipment_material->price = $equipment_material->material->unit_price;
+                        $equipment_material->total = $equipment_material->material->unit_price * $equipment_material->quantity;
+                        $equipment_material->save();
+                    }
+                }
+
+                foreach ( $equipment->consumables as $equipment_consumable )
+                {
+                    if ( $equipment_consumable->price !== $equipment_material->material->unit_price )
+                    {
+                        $equipment_consumable->price = $equipment_consumable->material->unit_price;
+                        $equipment_consumable->total = $equipment_consumable->material->unit_price * $equipment_consumable->quantity;
+                        $equipment_consumable->save();
+                    }
+                }
+            }
+
+            $quote2 = Quote::where('id', $id)
+                ->with('customer')
+                ->with(['equipments' => function ($query) {
+                    $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+                }])->first();
+
+            $new_total_quote = 0;
+            foreach( $quote2->equipments as $equipment )
+            {
+                $new_total_material = 0;
+                foreach ( $equipment->materials as $equipment_material )
+                {
+                    $new_total_material = $new_total_material + $equipment_material->total;
+                }
+                $new_total_consumable = 0;
+                foreach ( $equipment->consumables as $equipment_consumable )
+                {
+                    $new_total_consumable = $new_total_consumable + $equipment_consumable->total;
+                }
+                $new_total_workforce = 0;
+                foreach ( $equipment->workforces as $equipment_workforce )
+                {
+                    $new_total_workforce = $new_total_workforce + $equipment_workforce->total;
+                }
+                $new_total_turnstile = 0;
+                foreach ( $equipment->turnstiles as $equipment_turnstile )
+                {
+                    $new_total_turnstile = $new_total_turnstile + $equipment_turnstile->total;
+                }
+                $new_total_workday = 0;
+                foreach ( $equipment->workdays as $equipment_workday )
+                {
+                    $new_total_workday = $new_total_workday + $equipment_workday->total;
+                }
+                $new_total_quote = $new_total_quote + (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
+                $equipment->total = ($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity;
+                $equipment->save();
+            }
+            $quote2->total = $new_total_quote ;
+            $quote2->save();
+        }
+
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
+
         //dump($quote);
         return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
 
