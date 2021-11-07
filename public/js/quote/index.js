@@ -126,17 +126,17 @@ $(document).ready(function () {
                             text = text + ' <button data-confirm="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Confirmar"><i class="fa fa-check"></i></button>';
                         }
-                        /*if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
-                        }*/
+                        }
                     }
 
                     if ( item.state === 'confirmed' ) {
-                        /*if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
-                        }*/
+                        }
                         if ( item.state === 'confirmed' && item.raise_status == 0 )
                         {
                             if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
@@ -152,6 +152,11 @@ $(document).ready(function () {
                             }
                         }
 
+                    }
+
+                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
                     }
 
                     return text;
@@ -310,12 +315,62 @@ $(document).ready(function () {
     $(document).on('click', '[data-delete]', cancelQuote);
 
     $(document).on('click', '[data-confirm]', confirmQuote);
+
+    $(document).on('click', '[data-renew]', renewQuote);
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function renewQuote() {
+    var quote_id = $(this).data('renew');
+
+    $.confirm({
+        icon: 'fas fa-sync',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de renovar esta cotización?',
+        content: 'Se va a crear una nueva cotización pero con todos los mismos contenidos.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/renew/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.href = data.url;
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
 
 function cancelQuote() {
     var quote_id = $(this).data('delete');

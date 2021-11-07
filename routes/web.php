@@ -627,10 +627,8 @@ Route::middleware('auth')->group(function (){
             ->name('quote.update.equipment')
             ->middleware('permission:update_quote');
         Route::get('imprimir/cliente/{quote}', 'QuoteController@printQuoteToCustomer')
-            ->name('quote.edit')
             ->middleware('permission:list_quote');
         Route::get('imprimir/interno/{quote}', 'QuoteController@printQuoteToInternal')
-            ->name('quote.edit')
             ->middleware('permission:list_quote');
         Route::get('elevar/cotizacion', 'QuoteController@raise')
             ->name('quote.raise')
@@ -647,6 +645,12 @@ Route::middleware('auth')->group(function (){
         Route::post('adjust/quote', 'QuoteController@adjustQuote')
             ->name('quote.adjust')
             ->middleware('permission:confirm_quote');
+        Route::get('/all/quotes/deleted', 'QuoteController@getAllQuotesDeleted');
+        Route::get('cotizaciones/anuladas', 'QuoteController@deleted')
+            ->name('quote.deleted')
+            ->middleware('permission:destroy_quote');
+        Route::post('/renew/quote/{quote}', 'QuoteController@renewQuote')
+            ->middleware('permission:destroy_quote');
 
         // ORDER PURCHASE
         Route::get('ordenes/compra/express', 'OrderPurchaseController@indexOrderPurchaseExpress')

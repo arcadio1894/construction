@@ -47,6 +47,8 @@ class RoleController extends Controller
         'request' => 'SOLICITUDES',
         'typeScrap' => 'TIPO RETACERÍA',
         'invoice' => 'FACTURAS',
+        'orderPurchaseExpress' => 'ORDENES COMPRA EXPRESS',
+        'orderPurchaseNormal' => 'ORDENES COMPRA COMUN',
     ];
 
     public function index()

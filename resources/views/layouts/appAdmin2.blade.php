@@ -727,6 +727,12 @@
                                             <p>Elevar cotización</p>
                                         </a>
                                     </li>
+                                    <li class="nav-item">
+                                        <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Anuladas</p>
+                                        </a>
+                                    </li>
                                 @endcan
                             </ul>
                         </li>

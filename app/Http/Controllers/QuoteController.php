@@ -999,4 +999,172 @@ class QuoteController extends Controller
 
     }
 
+    public function deleted()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('quote.delete', compact( 'permissions'));
+    }
+
+    public function getAllQuotesDeleted()
+    {
+        $quotes = Quote::with(['customer'])
+            ->whereIn('state',['canceled', 'expired'])
+            ->get();
+        return datatables($quotes)->toJson();
+    }
+
+    public function renewQuote($id)
+    {
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+        //dump($quote);
+
+        DB::beginTransaction();
+        try {
+            $maxId = Quote::max('id')+1;
+            $length = 5;
+            $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+            $renew_quote = Quote::create([
+                'code' => $codeQuote,
+                'description_quote' => $quote->description_quote,
+                'date_quote' => Carbon::now(),
+                'date_validate' => Carbon::now()->addDays(5),
+                'way_to_pay' => $quote->way_to_pay,
+                'delivery_time' => $quote->delivery_time,
+                'customer_id' => $quote->customer_id,
+                'state' => 'created',
+                'utility' => $quote->utility,
+                'letter' => $quote->letter,
+                'rent' => $quote->rent,
+            ]);
+
+            QuoteUser::create([
+                'quote_id' => $renew_quote->id,
+                'user_id' => Auth::user()->id,
+            ]);
+
+            $totalQuote = 0;
+
+            foreach ( $quote->equipments as $equipment )
+            {
+                $renew_equipment = Equipment::create([
+                    'quote_id' => $renew_quote->id,
+                    'description' => $equipment->description,
+                    'detail' => $equipment->detail,
+                    'quantity' => $equipment->quantity,
+                ]);
+
+                $totalMaterial = 0;
+
+                $totalConsumable = 0;
+
+                $totalWorkforces = 0;
+
+                $totalTornos = 0;
+
+                $totalDias = 0;
+
+                foreach ( $equipment->materials as $material )
+                {
+                    $renew_equipmentMaterial = EquipmentMaterial::create([
+                        'equipment_id' => $renew_equipment->id,
+                        'material_id' => $material->material->id,
+                        'quantity' => (float) $material->quantity,
+                        'price' => (float) $material->material->unit_price,
+                        'length' => (float) $material->length,
+                        'width' => (float) $material->width,
+                        'percentage' => (float) $material->percentage,
+                        'state' => ($material->quantity > $material->material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ($material->quantity > $material->material->stock_current) ? 'Agotado':'Completo',
+                        'total' => (float) $material->quantity*(float) $material->material->unit_price,
+                    ]);
+
+                    $totalMaterial += $renew_equipmentMaterial->total;
+                }
+
+                foreach ( $equipment->consumables as $consumable )
+                {
+                    $material = Material::find($consumable->id);
+
+                    $renew_equipmentConsumable = EquipmentConsumable::create([
+                        'equipment_id' => $renew_equipment->id,
+                        'material_id' => $consumable->id,
+                        'quantity' => (float) $consumable->quantity,
+                        'price' => (float) $material->unit_price,
+                        'total' => (float) $consumable->quantity*$material->unit_price,
+                        'state' => ((float) $consumable->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ((float) $consumable->quantity > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    $totalConsumable += $renew_equipmentConsumable->total;
+                }
+
+                foreach ( $equipment->workforces as $workforce )
+                {
+                    $renew_equipmentWorkforce = EquipmentWorkforce::create([
+                        'equipment_id' => $renew_equipment->id,
+                        'description' => $workforce->description,
+                        'price' => (float) $workforce->price,
+                        'quantity' => (float) $workforce->quantity,
+                        'total' => (float) $workforce->total,
+                        'unit' => $workforce->unit,
+                    ]);
+
+                    $totalWorkforces += $renew_equipmentWorkforce->total;
+                }
+
+                foreach ( $equipment->turnstiles as $turnstile )
+                {
+                    $renew_equipmenttornos = EquipmentTurnstile::create([
+                        'equipment_id' => $renew_equipment->id,
+                        'description' => $turnstile->description,
+                        'price' => (float) $turnstile->price,
+                        'quantity' => (float) $turnstile->quantity,
+                        'total' => (float) $turnstile->total
+                    ]);
+
+                    $totalTornos += $renew_equipmenttornos->total;
+                }
+
+                foreach ( $equipment->workdays as $workday )
+                {
+                    $renew_equipmentdias = EquipmentWorkday::create([
+                        'equipment_id' => $renew_equipment->id,
+                        'description' => $workday->description,
+                        'quantityPerson' => (float) $workday->quantityPerson,
+                        'hoursPerPerson' => (float) $workday->hoursPerPerson,
+                        'pricePerHour' => (float) $workday->pricePerHour,
+                        'total' => (float) $workday->total
+                    ]);
+
+                    $totalDias += $renew_equipmentdias->total;
+                }
+
+                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$renew_equipment->quantity;;
+
+                $renew_equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$renew_equipment->quantity;
+
+                $renew_equipment->save();
+            }
+
+            $renew_quote->total = $totalQuote;
+
+            $renew_quote->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cotización renovada con éxito. Redireccionando ...', 'url'=>route('quote.edit', $renew_quote->id)], 200);
+
+    }
+
 }
