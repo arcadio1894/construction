@@ -146,7 +146,7 @@
                         </div>
                         <div class="col-md-12">
                             <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                            <textarea name="" data-detailequipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...." readonly>{{ $equipment->detail }}</textarea>
+                            {!! nl2br($equipment->detail) !!}
                         </div>
                     </div>
 

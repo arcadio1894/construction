@@ -318,6 +318,27 @@ class QuoteController extends Controller
 
     }
 
+    public function adjust($id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $unitMeasures = UnitMeasure::all();
+        $customers = Customer::all();
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+
+        //dump($quote);
+        return view('quote.adjust', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
+
+    }
+
     public function update(UpdateQuoteRequest $request)
     {
         $validated = $request->validated();
@@ -598,7 +619,10 @@ class QuoteController extends Controller
 
     public function getAllQuotes()
     {
-        $quotes = Quote::with('customer')->get();
+        $quotes = Quote::with('customer')
+            ->where('raise_status', 0)
+            ->whereNotIn('state', ['canceled', 'expired'])
+            ->get();
         return datatables($quotes)->toJson();
     }
 
@@ -951,6 +975,27 @@ class QuoteController extends Controller
         $quote->save();
 
         return response()->json(['total' => $quote->total_soles, 'message'=>'Cotización cambiada a soles'], 200);
+
+    }
+
+    public function adjustQuote(Request $request)
+    {
+        //dump($request);
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($request->get('quote_id'));
+
+            $quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
+            $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
+            $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
+            $quote->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Ajuste de porcentajes realizado con éxito.'], 200);
 
     }
 

@@ -642,6 +642,11 @@ Route::middleware('auth')->group(function (){
         Route::post('/quote/in/soles/quote/{quote}', 'QuoteController@saveQuoteInSoles')
             ->name('quote.in.soles')
             ->middleware('permission:confirm_quote');
+        Route::get('ajustar/cotizacion/{quote}', 'QuoteController@adjust')
+            ->middleware('permission:confirm_quote');
+        Route::post('adjust/quote', 'QuoteController@adjustQuote')
+            ->name('quote.adjust')
+            ->middleware('permission:confirm_quote');
 
         // ORDER PURCHASE
         Route::get('ordenes/compra/express', 'OrderPurchaseController@indexOrderPurchaseExpress')

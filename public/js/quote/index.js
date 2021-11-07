@@ -140,8 +140,8 @@ $(document).ready(function () {
                         if ( item.state === 'confirmed' && item.raise_status == 0 )
                         {
                             if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                                text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
-                                    '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fa fa-autoprefixer"></i></a> ';
                             }
                         }
 
