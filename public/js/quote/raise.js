@@ -120,7 +120,7 @@ $(document).ready(function () {
                     if ( item.state === 'confirmed' && item.raise_status === 0 ) {
                         if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
-                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fab fa-autoprefixer"></i></a> ';
+                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
                         }
                         if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+

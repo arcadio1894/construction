@@ -1616,7 +1616,7 @@
                     ['style', ['bold', 'italic', 'underline', 'clear']],
                     ['fontname', ['fontname']],
                     ['para', ['ul', 'ol']],
-                    ['insert', ['link', 'picture']],
+                    ['insert', ['link']],
                     ['view', ['codeview', 'help']]
                 ]
             });
