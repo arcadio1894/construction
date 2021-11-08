@@ -907,6 +907,17 @@ class QuoteController extends Controller
     public function raiseQuote($quote_id, $code)
     {
         $quote = Quote::find($quote_id);
+
+        if ( !isset( $quote->order_execution ) )
+        {
+            $all_quotes = Quote::whereNotNull('order_execution')->get();
+            $quantity = count($all_quotes) + 1;
+            $length = 5;
+            $codeOrderExecution = 'OE-'.str_pad($quantity,$length,"0", STR_PAD_LEFT);
+            $quote->order_execution = $codeOrderExecution;
+            $quote->save();
+        }
+
         $quote->code_customer = $code;
         $quote->raise_status = true;
         $quote->save();
