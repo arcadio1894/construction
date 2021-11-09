@@ -9,6 +9,7 @@ $(document).ready(function () {
         bAutoWidth: false,
         "aoColumns": [
             { data: 'id' },
+            { data: 'order_execution' },
             { data: 'code' },
             { data: 'description_quote' },
             { data: null,
@@ -19,16 +20,16 @@ $(document).ready(function () {
                     return '<p> '+ moment(item.date_quote).format('DD-MM-YYYY') +'</p>'
                 }
             },
-            { data: null,
+            /*{ data: null,
                 title: 'Fecha Válida',
                 wrap: true,
                 "render": function (item)
                 {
                     return '<p> '+ moment(item.date_validate).format('DD-MM-YYYY') +'</p>'
                 }
-            },
-            { data: 'way_to_pay' },
-            { data: 'delivery_time' },
+            },*/
+            /*{ data: 'way_to_pay' },
+            { data: 'delivery_time' },*/
             { data: null,
                 title: 'Cliente',
                 wrap: true,
@@ -47,14 +48,20 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return item.subtotal_rent;
+                        if (item.currency_invoice === 'USD')
+                        {
+                            return item.currency_invoice + ' ' + item.total;
+                        } else {
+                            return item.currency_invoice + ' ' + item.total_soles;
+                        }
+
                     } else {
                         return '';
                     }
 
                 }
             },
-            { data: null,
+            /*{ data: null,
                 title: 'Moneda',
                 wrap: true,
                 "render": function (item)
@@ -65,8 +72,8 @@ $(document).ready(function () {
                     }
                     return text;
                 }
-            },
-            { data: null,
+            },*/
+            /*{ data: null,
                 title: 'Estado',
                 wrap: true,
                 "render": function (item)
@@ -88,15 +95,15 @@ $(document).ready(function () {
                     }
 
                 }
-            },
-            { data: null,
+            },*/
+            /*{ data: null,
                 title: 'Fecha Creación',
                 wrap: true,
                 "render": function (item)
                 {
                     return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>'
                 }
-            },
+            },*/
             { data: null,
                 title: '',
                 wrap: true,
@@ -109,7 +116,7 @@ $(document).ready(function () {
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida"><i class="fas fa-sign-out-alt"></i></a> ';
                     }
                     if ( $.inArray('createOutputExtra_orderExecution', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/extra/'+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/extra/'+item.id+
                             '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida extra"><i class="fas fa-external-link-alt"></i></a> ';
                     }
 

@@ -861,7 +861,7 @@
                     </li>
                     @endcan
 
-                    {{--@can('list_output')
+                    {{--@can('list_orderExecution')
                         <li class="nav-header">ORDENES EJECUCIÓN</li>
                         <li class="nav-item has-treeview @yield('openOrderExecutions')">
                             <a href="#" class="nav-link @yield('activeOrderExecutions')">
@@ -902,14 +902,14 @@
                                 </a>
                             </li>
                             @endcan
-                            @can('create_request')
+                            {{--@can('create_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear solicitudes</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                         </ul>
                     </li>
                     @endcan
