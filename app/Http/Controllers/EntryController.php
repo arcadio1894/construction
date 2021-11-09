@@ -106,6 +106,7 @@ class EntryController extends Controller
                 //$filename = $entry->id . '.' . $extension;
                 $filename = $entry->id . '.jpg';
                 $img = Image::make($image);
+                $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
                 $entry->image = $filename;
@@ -121,6 +122,7 @@ class EntryController extends Controller
                 $extension = $image->getClientOriginalExtension();
                 $filename = $entry->id . '.jpg';
                 $img = Image::make($image);
+                $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
                 $entry->imageOb = $filename;
@@ -369,6 +371,7 @@ class EntryController extends Controller
                 //$filename = $entry->id . '.' . $extension;
                 $filename = $entry->id . '.jpg';
                 $img = Image::make($image);
+                $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
                 $entry->image = $filename;
@@ -386,6 +389,7 @@ class EntryController extends Controller
                 $extension = $image->getClientOriginalExtension();
                 $filename = $entry->id . '.jpg';
                 $img = Image::make($image);
+                $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
                 $entry->imageOb = $filename;
