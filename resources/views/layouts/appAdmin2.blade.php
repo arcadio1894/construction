@@ -894,14 +894,14 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            @can('list_request')
+                            {{--@can('list_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.index') }}" class="nav-link @yield('activeListOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar solicitudes</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                             {{--@can('create_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
@@ -913,7 +913,7 @@
                         </ul>
                     </li>
                     @endcan
-                    {{--@can('list_output')
+                    @can('list_output')
                     <li class="nav-header">SALIDAS</li>
                     <li class="nav-item has-treeview @yield('openOutputs')">
                         <a href="#" class="nav-link @yield('activeOutputs')">
@@ -933,7 +933,7 @@
 
                         </ul>
                     </li>
-                    @endcan--}}
+                    @endcan
 
                     {{--@canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
                     <li class="nav-header">ORDENES DE COMPRA</li>
