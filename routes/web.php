@@ -523,11 +523,11 @@ Route::middleware('auth')->group(function (){
         Route::get('salidas', 'OutputController@indexOutputs')
             ->name('output.confirm')
             ->middleware('permission:list_output');
-        Route::get('crear/solicitud/{output}', 'OutputController@createOutputRequest')
+        Route::get('crear/solicitud/', 'OutputController@createOutputRequest')
             ->name('output.request.create')
             ->middleware('permission:create_request');
         Route::get('crear/solicitud/extra/{output}', 'OutputController@createOutputRequest')
-            ->name('output.request.create')
+            ->name('output.request.extra.create')
             ->middleware('permission:create_request');
         Route::post('ouput/store', 'OutputController@storeOutput')
             ->name('output.request.store')

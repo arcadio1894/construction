@@ -894,22 +894,22 @@
                             </p>
                         </a>
                         <ul class="nav nav-treeview">
-                            {{--@can('list_request')
+                            @can('list_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.index') }}" class="nav-link @yield('activeListOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar solicitudes</p>
                                 </a>
                             </li>
-                            @endcan--}}
-                            {{--@can('create_request')
+                            @endcan
+                            @can('create_request')
                             <li class="nav-item">
                                 <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear solicitudes</p>
                                 </a>
                             </li>
-                            @endcan--}}
+                            @endcan
                         </ul>
                     </li>
                     @endcan
