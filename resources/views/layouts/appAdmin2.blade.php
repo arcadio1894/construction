@@ -865,7 +865,7 @@
                         <li class="nav-header">ORDENES EJECUCIÓN</li>
                         <li class="nav-item has-treeview @yield('openOrderExecutions')">
                             <a href="#" class="nav-link @yield('activeOrderExecutions')">
-                                <i class="nav-icon fas fa-share"></i>
+                                <i class="nav-icon fas fa-hammer"></i>
                                 <p>
                                     Orden de ejecución
                                     <i class="right fas fa-angle-left"></i>

@@ -523,7 +523,7 @@ Route::middleware('auth')->group(function (){
         Route::get('salidas', 'OutputController@indexOutputs')
             ->name('output.confirm')
             ->middleware('permission:list_output');
-        Route::get('crear/solicitud', 'OutputController@createOutputRequest')
+        Route::get('crear/solicitud/extra', 'OutputController@createOutputRequest')
             ->name('output.request.create')
             ->middleware('permission:create_request');
         Route::post('ouput/store', 'OutputController@storeOutput')
@@ -651,6 +651,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_quote');
         Route::post('/renew/quote/{quote}', 'QuoteController@renewQuote')
             ->middleware('permission:destroy_quote');
+
+        // ORDER EXECUTION
+        Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')
+            ->name('order.execution.index')
+            ->middleware('permission:list_orderExecution');
+        Route::get('/all/order/execution', 'OrderExecutionController@getAllOrderExecution');
 
         // ORDER PURCHASE
         Route::get('ordenes/compra/express', 'OrderPurchaseController@indexOrderPurchaseExpress')

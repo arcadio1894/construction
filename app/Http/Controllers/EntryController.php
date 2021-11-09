@@ -91,7 +91,8 @@ class EntryController extends Controller
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
                 'finance' => false,
                 'currency_compra' => (float) $tipoCambioSunat->compra,
-                'currency_venta' => (float) $tipoCambioSunat->venta
+                'currency_venta' => (float) $tipoCambioSunat->venta,
+                'observation' => $request->get('observation'),
             ]);
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -352,7 +353,7 @@ class EntryController extends Controller
             $entry->deferred_invoice = ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off';
             $entry->supplier_id = $request->get('supplier_id');
             $entry->date_entry = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
-
+            $entry->observation = $request->get('observation');
             $entry->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
