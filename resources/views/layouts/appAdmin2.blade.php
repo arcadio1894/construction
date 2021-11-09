@@ -913,7 +913,7 @@
                         </ul>
                     </li>
                     @endcan
-                    @can('list_output')
+                    {{--@can('list_output')
                     <li class="nav-header">SALIDAS</li>
                     <li class="nav-item has-treeview @yield('openOutputs')">
                         <a href="#" class="nav-link @yield('activeOutputs')">
@@ -933,7 +933,7 @@
 
                         </ul>
                     </li>
-                    @endcan
+                    @endcan--}}
 
                     {{--@canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
                     <li class="nav-header">ORDENES DE COMPRA</li>
