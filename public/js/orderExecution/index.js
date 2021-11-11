@@ -112,7 +112,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('createOutput_orderExecution', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/'+item.id+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/orden/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida"><i class="fas fa-sign-out-alt"></i></a> ';
                     }
                     if ( $.inArray('createOutputExtra_orderExecution', $permissions) !== -1 ) {

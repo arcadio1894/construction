@@ -7,6 +7,7 @@ use App\Item;
 use App\Material;
 use App\Output;
 use App\OutputDetail;
+use App\Quote;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -27,6 +28,51 @@ class OutputController extends Controller
     public function createOutputRequest()
     {
         return view('output.create_output_request');
+    }
+
+    public function createOutputRequestOrder($id_quote)
+    {
+        $quote = Quote::with('equipments')->find($id_quote);
+
+        $materials = [];
+
+        foreach ( $quote->equipments as $equipment )
+        {
+            foreach ( $equipment->materials as $material )
+            {
+                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+
+            }
+
+        }
+
+        /*foreach ( $materials as $key => $material )
+        {
+            dump($key);
+            dump($material['quantity']);
+            dump($material['material_complete']->id);
+        }*/
+
+        return view('output.create_output_request_order', compact('materials', 'quote'));
+    }
+
+    public function createOutputRequestOrderExtra($id_quote)
+    {
+        $quote = Quote::with('equipments')->find($id_quote);
+
+        $materials = [];
+
+        foreach ( $quote->equipments as $equipment )
+        {
+            foreach ( $equipment->materials as $material )
+            {
+                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+
+            }
+
+        }
+
+        return view('output.create_output_request_order_extra', compact('materials', 'quote'));
     }
 
     public function getOutputRequest()

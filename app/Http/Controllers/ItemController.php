@@ -122,6 +122,7 @@ class ItemController extends Controller
                     'width' => $item->width,
                     'weight' => $item->weight,
                     'detailEntry' => $item->detailEntry->id,
+                    'percentage' => $item->percentage,
                 ]);
         }
         //dd($array);

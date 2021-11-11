@@ -861,7 +861,7 @@
                     </li>
                     @endcan
 
-                    {{--@can('list_orderExecution')
+                    @can('list_orderExecution')
                         <li class="nav-header">ORDENES EJECUCIÓN</li>
                         <li class="nav-item has-treeview @yield('openOrderExecutions')">
                             <a href="#" class="nav-link @yield('activeOrderExecutions')">
@@ -881,7 +881,7 @@
 
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
 
                     @can('list_request')
                     <li class="nav-header">SOLICITUDES</li>

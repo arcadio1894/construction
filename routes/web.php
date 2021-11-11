@@ -526,8 +526,11 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/solicitud/', 'OutputController@createOutputRequest')
             ->name('output.request.create')
             ->middleware('permission:create_request');
-        Route::get('crear/solicitud/extra/{output}', 'OutputController@createOutputRequest')
+        Route::get('crear/solicitud/extra/{output}', 'OutputController@createOutputRequestOrderExtra')
             ->name('output.request.extra.create')
+            ->middleware('permission:create_request');
+        Route::get('crear/solicitud/orden/{id_quote}', 'OutputController@createOutputRequestOrder')
+            ->name('output.request.order.create')
             ->middleware('permission:create_request');
         Route::post('ouput/store', 'OutputController@storeOutput')
             ->name('output.request.store')
