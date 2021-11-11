@@ -49,6 +49,7 @@ class RoleController extends Controller
         'invoice' => 'FACTURAS',
         'orderPurchaseExpress' => 'ORDENES COMPRA EXPRESS',
         'orderPurchaseNormal' => 'ORDENES COMPRA COMUN',
+        'orderExecution' => 'ORDENES EJECUCIÓN',
     ];
 
     public function index()
