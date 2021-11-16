@@ -935,7 +935,7 @@
                     </li>
                     @endcan
 
-                    @canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
+                    {{--@canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
                     <li class="nav-header">ORDENES DE COMPRA</li>
                     @endcanany
                     @can('list_orderPurchaseExpress')
@@ -966,7 +966,7 @@
                             @endcan
                         </ul>
                     </li>
-                    @endcan
+                    @endcan--}}
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany
