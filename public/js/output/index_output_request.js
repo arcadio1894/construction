@@ -349,16 +349,23 @@ function showModalDeletePartial() {
 
 function showItems() {
     $('#table-items').html('');
+    $('#table-consumables').html('');
     var output_id = $(this).data('details');
     $.ajax({
         url: "/dashboard/get/json/items/output/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            //
-            for (var i=0; i<json.length; i++)
+            //console.log(json.consumables.length);
+            for (var i=0; i<json.array.length; i++)
             {
-                renderTemplateItemDetail(json[i].id, json[i].material, json[i].code, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].location, json[i].state);
+                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state);
+                //$materials.push(json[i].material);
+            }
+
+            for (var j=0; j<json.consumables.length; j++)
+            {
+                renderTemplateConsumable(json.consumables[j].id, json.consumables[j].material_complete.code, json.consumables[j].material, json.consumables[j].quantity);
                 //$materials.push(json[i].material);
             }
 
@@ -367,7 +374,7 @@ function showItems() {
     $modalItems.modal('show');
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
+function renderTemplateItemDetail(id, material, code, length, width, price, location, state) {
     var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
         (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
             'Indefinido';
@@ -377,11 +384,19 @@ function renderTemplateItemDetail(id, material, code, length, width, weight, pri
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-length]").innerHTML = length;
     clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
     clone.querySelector("[data-price]").innerHTML = price;
     clone.querySelector("[data-location]").innerHTML = location;
     clone.querySelector("[data-state]").innerHTML = status;
     $('#table-items').append(clone);
+}
+
+function renderTemplateConsumable(id, code, material, cantidad) {
+    var clone = activateTemplate('#template-consumable');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = cantidad;
+    $('#table-consumables').append(clone);
 }
 
 function renderTemplateItemDetailDelete(id, item, output, material, code) {

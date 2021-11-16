@@ -123,12 +123,26 @@ class OutputController extends Controller
 
         }
 
-        //$output = Output::find($output_id);
-        //$quote = Quote::where('order_execution', $output->execution_order)->first();
+        $output = Output::find($output_id);
+        $quote = Quote::where('order_execution', $output->execution_order)->first();
+
+        $consumables = [];
+        if ( isset( $quote ) )
+        {
+            foreach ( $quote->equipments as $equipment )
+            {
+                foreach ( $equipment->consumables as $key => $consumable )
+                {
+                    array_push($consumables, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+
+                }
+
+            }
+        }
 
 
         //dd($array);
-        return json_encode($array);
+        return json_encode(['array'=>$array, 'consumables'=>$consumables]);
     }
 
     public function attendOutputRequest(Request $request)

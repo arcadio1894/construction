@@ -195,7 +195,6 @@
                             <th>Código</th>
                             <th>Largo</th>
                             <th>Ancho</th>
-                            <th>Peso</th>
                             <th>Precio</th>
                             <th>Ubicación</th>
                             <th>Estado</th>
@@ -211,10 +210,30 @@
                                 <td data-code></td>
                                 <td data-length></td>
                                 <td data-width><span class="badge bg-danger">55%</span></td>
-                                <td data-weight></td>
                                 <td data-price></td>
                                 <td data-location></td>
                                 <td data-state></td>
+                            </tr>
+                        </template>
+                    </table>
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Código</th>
+                            <th>Consumible</th>
+                            <th>Cantidad</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-consumables">
+
+                        </tbody>
+                        <template id="template-consumable">
+                            <tr>
+                                <td data-i></td>
+                                <td data-code></td>
+                                <td data-material></td>
+                                <td data-quantity></td>
                             </tr>
                         </template>
                     </table>
