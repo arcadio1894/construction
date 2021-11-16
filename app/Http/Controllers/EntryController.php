@@ -316,7 +316,7 @@ class EntryController extends Controller
             }
             if( isset($material->typeScrap) && $material->typeScrap->id == 3 )
             {
-                $porcentaje = ($item->length)/($material->materialType->length);
+                $porcentaje = ($item->length)/($material->typeScrap->length);
                 $item->percentage = $porcentaje;
                 $item->save();
             }

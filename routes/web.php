@@ -671,6 +671,9 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/orden/compra/express', 'OrderPurchaseController@createOrderPurchaseExpress')
             ->name('order.purchase.express.create')
             ->middleware('permission:create_orderPurchaseExpress');
+        Route::post('store/order/purchase', 'OrderPurchaseController@store')
+            ->name('order.purchase.store')
+            ->middleware('permission:create_orderPurchaseExpress');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

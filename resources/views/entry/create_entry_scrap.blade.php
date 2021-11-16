@@ -156,21 +156,20 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label class="col-sm-12 control-label" for="length"> Largo </label>
+                            <label class="col-sm-12 control-label" for="length" id="label-largo"> Largo </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="length" name="length" class="form-control" />
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label class="col-sm-12 control-label" for="width"> Ancho </label>
+                            <label class="col-sm-12 control-label" for="width" id="label-ancho"> Ancho </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="width" name="width" class="form-control" />
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <label class="col-sm-12 control-label" for="weight"> Peso </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="weight" name="weight" class="form-control" />

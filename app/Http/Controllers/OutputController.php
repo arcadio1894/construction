@@ -46,6 +46,18 @@ class OutputController extends Controller
 
         }
 
+        $consumables = [];
+
+        foreach ( $quote->equipments as $equipment )
+        {
+            foreach ( $equipment->consumables as $consumable )
+            {
+                array_push($consumables, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+
+            }
+
+        }
+
         /*foreach ( $materials as $key => $material )
         {
             dump($key);
@@ -53,7 +65,7 @@ class OutputController extends Controller
             dump($material['material_complete']->id);
         }*/
 
-        return view('output.create_output_request_order', compact('materials', 'quote'));
+        return view('output.create_output_request_order', compact('consumables', 'materials', 'quote'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
@@ -110,6 +122,10 @@ class OutputController extends Controller
                 ]);
 
         }
+
+        //$output = Output::find($output_id);
+        //$quote = Quote::where('order_execution', $output->execution_order)->first();
+
 
         //dd($array);
         return json_encode($array);

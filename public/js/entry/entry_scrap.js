@@ -78,57 +78,109 @@ function saveTableItems() {
 
     const result = $itemsComplete.find( item => item.code === item_selected );
 
-    if ( parseFloat(result.length)*parseFloat(result.width) < parseFloat(length)*parseFloat(width) )
+    if ( result.typescrap === 1 || result.typescrap === 2 )
     {
-        toastr.error('Las medidas superan las mediads del material', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
+        if ( parseFloat(result.length)*parseFloat(result.width) < parseFloat(length)*parseFloat(width) )
+        {
+            toastr.error('Las medidas superan las mediads del material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
 
-    if ( length === '' || width === '' )
-    {
-        toastr.error('Las medidas no han sido ingresadas', 'Error',
+        if ( length === '' || width === '' )
+        {
+            toastr.error('Las medidas no han sido ingresadas', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    } else {
+        if ( result.typescrap === 3  )
+        {
+            if ( parseFloat(result.length) < parseFloat(length) )
             {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
+                toastr.error('Las medidas superan las medidas del material', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+
+            if ( length === '' )
+            {
+                toastr.error('Las medidas no han sido ingresadas', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }
     }
 
     let newPrice = 0;
     console.log(result.typescrap);
     if ( result.typescrap === 1 || result.typescrap === 2 )
     {
-        console.log('Entre a 1 y 2');
+        //console.log('Entre a 1 y 2');
         let priceTotal = parseFloat(result.price);
         let areaTotal = parseFloat(result.length)*parseFloat(result.width);
         let areaReal = parseFloat(length)*parseFloat(width);
@@ -137,7 +189,7 @@ function saveTableItems() {
 
     if ( result.typescrap === 3  )
     {
-        console.log('Entre a 3');
+        //console.log('Entre a 3');
         let priceTotal = parseFloat(result.price);
         let lengthTotal = parseFloat(result.length);
         let lengthReal = parseFloat(length);
@@ -147,7 +199,7 @@ function saveTableItems() {
     let state = ( result.state === "bad") ? 'Deficiente' : 'Buen estado';
 
     $item.push({ 'id': result.id, 'detailEntry': result.detailEntry, 'length':length, 'width':width, 'weight':weight, 'price': newPrice, 'material': material_name, 'typescrap_id': result.typescrap, 'material_id': result.material_id, 'code': result.code, 'location': result.location, 'location_id': result.location_id, 'state': result.state });
-    console.log($item);
+    //console.log($item);
 
     $('#item_selected').val('');
     $('#material_selected').val('');
@@ -212,7 +264,27 @@ function addItems() {
             limit: 12,
             source: substringMatcher($items)
         });
-    console.log($items);
+    //console.log($items);
+
+    if ( result.typescrap === 1 || result.typescrap === 2 )
+    {
+        $('#length').show();
+        $('#label-largo').show();
+        $('#width').show();
+        $('#label-ancho').show();
+        $('#weight').val(0);
+        $('#weight').hide();
+    } else {
+        if ( result.typescrap === 3  )
+        {
+            $('#length').show();
+            $('#label-largo').show();
+            $('#width').hide();
+            $('#label-ancho').hide();
+            $('#weight').val(0);
+            $('#weight').hide(0);
+        }
+    }
 
     $modalAddItems.modal('show');
 }
