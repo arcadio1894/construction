@@ -13,6 +13,7 @@ var $permissions;
 $(document).ready(function () {
     console.log($total);
     $permissions = JSON.parse($('#permissions').val());
+    $total = parseFloat($('#quote_total').val()) ;
 
     $formCreate = $('#formAdjust');
     $("#btn-submit").on("click", storeQuote);

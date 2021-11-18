@@ -216,7 +216,7 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">SUBTOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice === 'USD') ? $quote->total: $quote->total_soles }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice === 'USD') ? number_format((float)$quote->total, 0, '.', '') : number_format((float)$quote->total_soles, 0, '.', '') }}</td>
         </tr>
         {{--<tr>
             <td class="desc"></td>

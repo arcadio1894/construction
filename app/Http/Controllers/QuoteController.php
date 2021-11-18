@@ -803,7 +803,7 @@ class QuoteController extends Controller
                         'percentage' => (float) $material['quantity'],
                         'state' => ($material['quantity'] > $material['material']['stock_current']) ? 'Falta comprar':'En compra',
                         'availability' => ($material['quantity'] > $material['material']['stock_current']) ? 'Agotado':'Completo',
-                        'total' => (float) $material['price'],
+                        'total' => (float) $material['quantity']*(float) $material['material']['unit_price']
                     ]);
 
                     $totalMaterial += $equipmentMaterial->total;
