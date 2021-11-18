@@ -218,7 +218,7 @@ function addItems() {
             });
         return;
     } else {
-        let result2 = $materialsComplete.find( material => material.material === $('#material_search').val().trim() );
+        let result2 = $materialsComplete.find( material => material.material.trim() === $('#material_search').val().trim() );
         if ( !result2  ){
             toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
                 {
