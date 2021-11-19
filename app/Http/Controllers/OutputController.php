@@ -34,29 +34,55 @@ class OutputController extends Controller
     {
         $quote = Quote::with('equipments')->find($id_quote);
 
+        $materials_quantity = [];
         $materials = [];
 
         foreach ( $quote->equipments as $equipment )
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
 
             }
 
         }
 
+        $new_arr = array();
+        foreach($materials_quantity as $item) {
+            if(isset($new_arr[$item['material_id']])) {
+                $new_arr[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr[$item['material_id']] = $item;
+        }
+
+        $materials = array_values($new_arr);
+
         $consumables = [];
+        $consumables_quantity = [];
 
         foreach ( $quote->equipments as $equipment )
         {
             foreach ( $equipment->consumables as $consumable )
             {
-                array_push($consumables, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+                array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
 
             }
 
         }
+
+        $new_arr2 = array();
+        foreach($consumables_quantity as $item) {
+            if(isset($new_arr2[$item['material_id']])) {
+                $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['material_id']] = $item;
+        }
+
+        $consumables = array_values($new_arr2);
 
         /*foreach ( $materials as $key => $material )
         {
@@ -64,6 +90,9 @@ class OutputController extends Controller
             dump($material['quantity']);
             dump($material['material_complete']->id);
         }*/
+
+        //dump($materials);
+        //dump($consumables);
 
         return view('output.create_output_request_order', compact('consumables', 'materials', 'quote'));
     }
@@ -127,17 +156,30 @@ class OutputController extends Controller
         $quote = Quote::where('order_execution', $output->execution_order)->first();
 
         $consumables = [];
+        $consumables_quantity = [];
         if ( isset( $quote ) )
         {
             foreach ( $quote->equipments as $equipment )
             {
                 foreach ( $equipment->consumables as $key => $consumable )
                 {
-                    array_push($consumables, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+                    array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
 
                 }
 
             }
+
+            $new_arr2 = array();
+            foreach($consumables_quantity as $item) {
+                if(isset($new_arr2[$item['material_id']])) {
+                    $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                    continue;
+                }
+
+                $new_arr2[$item['material_id']] = $item;
+            }
+
+            $consumables = array_values($new_arr2);
         }
 
 
