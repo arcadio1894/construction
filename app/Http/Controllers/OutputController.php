@@ -11,27 +11,39 @@ use App\Quote;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class OutputController extends Controller
 {
     public function indexOutputRequest()
     {
-        return view('output.index_output_request');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('output.index_output_request', compact('permissions'));
     }
 
     public function indexOutputs()
     {
-        return view('output.index_output');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        return view('output.index_output', compact('permissions'));
     }
 
     public function createOutputRequest()
     {
-        return view('output.create_output_request');
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('output.create_output_request', compact('permissions'));
     }
 
     public function createOutputRequestOrder($id_quote)
     {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         $quote = Quote::with('equipments')->find($id_quote);
 
         $materials_quantity = [];
@@ -94,11 +106,14 @@ class OutputController extends Controller
         //dump($materials);
         //dump($consumables);
 
-        return view('output.create_output_request_order', compact('consumables', 'materials', 'quote'));
+        return view('output.create_output_request_order', compact('permissions', 'consumables', 'materials', 'quote'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
     {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
         $quote = Quote::with('equipments')->find($id_quote);
 
         $materials = [];
@@ -113,7 +128,7 @@ class OutputController extends Controller
 
         }
 
-        return view('output.create_output_request_order_extra', compact('materials', 'quote'));
+        return view('output.create_output_request_order_extra', compact('permissions', 'materials', 'quote'));
     }
 
     public function getOutputRequest()

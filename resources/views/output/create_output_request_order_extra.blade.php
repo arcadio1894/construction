@@ -64,6 +64,8 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <input type="hidden" id="materials" value="{{ json_encode($materials) }}">
 
     <form id="formCreate" class="form-horizontal" data-url="{{ route('output.request.store') }}" enctype="multipart/form-data">

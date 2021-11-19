@@ -312,7 +312,7 @@ function renderTemplateItem(id, price, material, item, location, state) {
     clone.querySelector("[data-location]").innerHTML = location;
     clone.querySelector("[data-state]").innerHTML = state;
     clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-deleteItem]").setAttribute('data-deleteItem', id);
+    //clone.querySelector("[data-deleteItem]").setAttribute('data-deleteItem', id);
     $('#body-items').append(clone);
 }
 

@@ -6,7 +6,11 @@ let $items=[];
 let $itemsComplete=[];
 let $itemsSelected=[];
 let $materials_order=[];
+var $permissions;
+
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+
     $materials_order = JSON.parse($('#materials').val());
     $("#element_loader").LoadingOverlay("show", {
         background  : "rgba(236, 91, 23, 0.5)"
@@ -293,26 +297,48 @@ function deleteItem() {
 
 function renderTemplateMaterial(material, item, location, state, price, id) {
     var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-description]").innerHTML = material;
-    clone.querySelector("[data-item]").innerHTML = item;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = state;
-    clone.querySelector("[data-price]").innerHTML = price;
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-description]").innerHTML = material;
+        clone.querySelector("[data-item]").innerHTML = item;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = state;
+        clone.querySelector("[data-price]").innerHTML = price;
+    } else {
+        clone.querySelector("[data-description]").innerHTML = material;
+        clone.querySelector("[data-item]").innerHTML = item;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = state;
+        clone.querySelector("[data-price]").innerHTML = '';
+    }
+
     $('#body-materials').append(clone);
 }
 
 function renderTemplateItem(i, code, location, length, width, weight, price, id) {
     var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-id]").innerHTML = i;
-    clone.querySelector("[data-serie]").innerHTML = code;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-selected]").setAttribute('data-selected', id);
-    clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
-    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-id]").innerHTML = i;
+        clone.querySelector("[data-serie]").innerHTML = code;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-selected]").setAttribute('data-selected', id);
+        clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
+        clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+
+    } else {
+        clone.querySelector("[data-id]").innerHTML = i;
+        clone.querySelector("[data-serie]").innerHTML = code;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-selected]").setAttribute('data-selected', id);
+        clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
+        clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+
+    }
     $('#body-items').append(clone);
 }
 

@@ -3,6 +3,7 @@ let $entriesJson=[];
 let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
+var $permissions;
 
 function format ( d ) {
     var mensaje = "";
@@ -23,6 +24,8 @@ function format ( d ) {
 }
 
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
+
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/output/request",
@@ -379,14 +382,26 @@ function renderTemplateItemDetail(id, material, code, length, width, price, loca
         (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
             'Indefinido';
     var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = status;
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-i]").innerHTML = id;
+        clone.querySelector("[data-material]").innerHTML = material;
+        clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = status;
+    } else {
+        clone.querySelector("[data-i]").innerHTML = id;
+        clone.querySelector("[data-material]").innerHTML = material;
+        clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = status;
+    }
+
     $('#table-items').append(clone);
 }
 

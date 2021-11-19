@@ -111,9 +111,9 @@
                                                     <td data-location>John Doe</td>
                                                     <td data-state>John Doe</td>
                                                     <td data-price>John Doe</td>
-                                                    <td>
+                                                    {{--<td>
                                                         <button data-deleteItem="" class="btn btn-danger">Eliminar</button>
-                                                    </td>
+                                                    </td>--}}
                                                 </tr>
                                             </template>
 

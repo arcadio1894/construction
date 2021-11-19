@@ -64,6 +64,8 @@
 @endsection
 
 @section('content')
+    <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+
     <input type="hidden" id="materials" value="{{ json_encode($materials) }}">
 
     <form id="formCreate" class="form-horizontal" data-url="{{ route('output.request.store') }}" enctype="multipart/form-data">
@@ -316,7 +318,6 @@
                                 <th>Ubicación</th>
                                 <th>Largo</th>
                                 <th>Ancho</th>
-                                <th>Peso</th>
                                 <th>Precio</th>
                                 <th>Selección</th>
                             </tr>
@@ -332,7 +333,6 @@
                                     <td data-location>John Doe</td>
                                     <td data-length>11-7-2014</td>
                                     <td data-width>11-7-2014</td>
-                                    <td data-weight>11-7-2014</td>
                                     <td data-price>11-7-2014</td>
                                     <td>
                                         <div class="icheck-success d-inline">
