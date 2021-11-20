@@ -160,7 +160,7 @@ class OutputController extends Controller
                     'length' => $item->length,
                     'width' => $item->width,
                     'weight' => $item->weight,
-                    'price' => $item->price,
+                    'price' => $item->material->unit_price,
                     'location' => $l,
                     'state' => $item->state,
                 ]);
@@ -312,8 +312,21 @@ class OutputController extends Controller
                 foreach ( $outputDetails as $outputDetail )
                 {
                     $item = Item::find($outputDetail->item_id);
-                    $item->state_item = 'entered';
-                    $item->save();
+                    $items = Item::where('code',$item->code)->get();
+                    $count_items = count($items);
+                    $last_item = Item::where('code',$item->code)
+                        ->orderBy('created_at', 'desc')->first();
+                    if ( $last_item->state_item === 'scraped' ) {
+                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                    } else {
+                        if ($count_items>1){
+                            $item->state_item = 'scraped';
+                            $item->save();
+                        } else {
+                            $item->state_item = 'entered';
+                            $item->save();
+                        }
+                    }
                     $outputDetail->delete();
                 }
                 $output->delete();
@@ -325,13 +338,29 @@ class OutputController extends Controller
                 foreach ( $outputDetails as $outputDetail )
                 {
                     $item = Item::find($outputDetail->item_id);
-                    $item->state_item = 'entered';
-                    $item->save();
+                    $items = Item::where('code',$item->code)->get();
+                    $count_items = count($items);
+                    $last_item = Item::where('code',$item->code)
+                        ->orderBy('created_at', 'desc')->first();
+                    if ( $last_item->state_item === 'scraped' ) {
+                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                    } else {
+                        if ($count_items>1){
+                            $item->state_item = 'scraped';
+                            $item->save();
+                            $material = Material::find($item->material_id);
+                            $material->stock_current = $material->stock_current + $item->percentage;
+                            $material->save();
+                        } else {
+                            $item->state_item = 'entered';
+                            $item->save();
+                            $material = Material::find($item->material_id);
+                            $material->stock_current = $material->stock_current + $item->percentage;
+                            $material->save();
+                        }
+                    }
 
                     // TODO: Dismunir el stock del material
-                    $material = Material::find($item->material_id);
-                    $material->stock_current = $material->stock_current + $item->percentage;
-                    $material->save();
 
                     $outputDetail->delete();
 
@@ -364,8 +393,21 @@ class OutputController extends Controller
                     ->where('item_id', $id_item)->first();
 
                 $item = Item::find($outputDetail->item_id);
-                $item->state_item = 'entered';
-                $item->save();
+                $items = Item::where('code',$item->code)->get();
+                $count_items = count($items);
+                $last_item = Item::where('code',$item->code)
+                    ->orderBy('created_at', 'desc')->first();
+                if ( $last_item->state_item === 'scraped' ) {
+                    return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                } else {
+                    if ($count_items>1){
+                        $item->state_item = 'scraped';
+                        $item->save();
+                    } else {
+                        $item->state_item = 'entered';
+                        $item->save();
+                    }
+                }
                 $outputDetail->delete();
             }
 
@@ -375,13 +417,29 @@ class OutputController extends Controller
                     ->where('item_id', $id_item)->first();
 
                 $item = Item::find($outputDetail->item_id);
-                $item->state_item = 'entered';
-                $item->save();
+                $items = Item::where('code',$item->code)->get();
+                $count_items = count($items);
+                $last_item = Item::where('code',$item->code)
+                    ->orderBy('created_at', 'desc')->first();
+                if ( $last_item->state_item === 'scraped' ) {
+                    return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                } else {
+                    if ($count_items>1){
+                        $item->state_item = 'scraped';
+                        $item->save();
+                        $material = Material::find($item->material_id);
+                        $material->stock_current = $material->stock_current + $item->percentage;
+                        $material->save();
+                    } else {
+                        $item->state_item = 'entered';
+                        $item->save();
+                        $material = Material::find($item->material_id);
+                        $material->stock_current = $material->stock_current + $item->percentage;
+                        $material->save();
+                    }
+                }
 
                 // TODO: Dismunir el stock del material
-                $material = Material::find($item->material_id);
-                $material->stock_current = $material->stock_current + $item->percentage;
-                $material->save();
 
                 $outputDetail->delete();
 
