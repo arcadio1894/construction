@@ -13,7 +13,7 @@ class StoreOrderPurchaseRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,27 @@ class StoreOrderPurchaseRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'purchase_order' => 'required',
+            'purchase_condition' => 'nullable|string',
+            'observation' => 'nullable|string',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'purchase_order.required' => 'El :attribute es obligatorio.',
+            'purchase_condition.string' => 'El :attribute debe contener caracteres válidos.',
+            'observation.string' => 'La :attribute debe contener caracteres válidos.',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'purchase_order' => 'código de la orden',
+            'purchase_condition' => 'código',
+            'observation' => 'fecha',
         ];
     }
 }

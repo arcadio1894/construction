@@ -591,7 +591,7 @@ function updateOrderPurchase() {
     $.ajax({
         url: createUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: new FormData($('#formEdit')[0]),
         processData:false,
         contentType:false,
         success: function (data) {

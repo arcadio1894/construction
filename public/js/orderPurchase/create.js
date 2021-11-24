@@ -26,6 +26,28 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-price]', function() {
+        var price = parseFloat($(this).val());
+        var quantity = parseFloat($(this).parent().parent().prev().children().children().val());
+        var description = $(this).parent().parent().prev().prev().children().children().children().val();
+        var id = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+
+        $items = $items.filter(material => material.id_material != id);
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        updateSummaryInvoice();
+
+    });
+
+    $(document).on('input', '[data-quantity]', function() {
+        var quantity = parseFloat($(this).val());
+        var price = parseFloat($(this).parent().parent().next().children().children().val());
+        var description = $(this).parent().parent().prev().children().children().children().val();
+        var id = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+
+        $items = $items.filter(material => material.id_material != id);
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        updateSummaryInvoice();
+    });
 });
 
 // Initializing the typeahead
@@ -55,10 +77,11 @@ let $formCreate;
 
 function addItem() {
 
-    let id = $(this).parent().prev().prev().prev().prev().html();
-    let code = $(this).parent().prev().prev().prev().html();
-    let description = $(this).parent().prev().prev().html();
-    let quantity = $(this).parent().prev().html();
+    let id = $(this).parent().prev().prev().prev().prev().prev().html();
+    let code = $(this).parent().prev().prev().prev().prev().html();
+    let description = $(this).parent().prev().prev().prev().html();
+    let quantity = $(this).parent().prev().prev().html();
+    let price = $(this).parent().prev().html();
 
     let flag = false;
 
@@ -88,7 +111,29 @@ function addItem() {
     });
 
     if ( !flag )
-        renderTemplateMaterial(id, code, description, quantity);
+    {
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        renderTemplateMaterial(id, code, description, quantity, price);
+        updateSummaryInvoice();
+    }
+
+}
+
+function updateSummaryInvoice() {
+    var subtotal = 0;
+    var total = 0;
+    var taxes = 0;
+
+    for ( var i=0; i<$items.length; i++ )
+    {
+        subtotal += parseFloat( (parseFloat($items[i].price)*parseFloat($items[i].quantity))/1.18 );
+        total += parseFloat((parseFloat($items[i].price)*parseFloat($items[i].quantity)));
+        taxes = subtotal*0.18;
+    }
+
+    $('#subtotal').html(subtotal.toFixed(2));
+    $('#taxes').html(taxes.toFixed(2));
+    $('#total').html(total.toFixed(2));
 
 }
 
@@ -107,20 +152,23 @@ function calculateTotal2(e) {
 }
 
 function deleteItem() {
-    //console.log($(this).parent().parent().parent());
-    $(this).parent().parent().remove();
     var materialId = $(this).data('delete');
-    $items = $items.filter(material => material.id_material !== materialId);
+    console.log(materialId);
+    $items = $items.filter(material => material.id_material != materialId);
+    $(this).parent().parent().remove();
+
     updateSummaryInvoice();
 }
 
-function renderTemplateMaterial(id, code, description, quantity) {
+function renderTemplateMaterial(id, code, description, quantity, price) {
     var clone = activateTemplate('#materials-selected');
     clone.querySelector("[data-id]").setAttribute('value', id);
     clone.querySelector("[data-code]").setAttribute('value', code);
     clone.querySelector("[data-description]").setAttribute('value', description);
     clone.querySelector("[data-quantity]").setAttribute('value', quantity);
     clone.querySelector("[data-quantity]").setAttribute('max', quantity);
+    clone.querySelector("[data-price]").setAttribute('value', price);
+    clone.querySelector("[data-total]").setAttribute('value', (parseFloat(price)*parseFloat(quantity)).toFixed(2) );
     clone.querySelector("[data-delete]").setAttribute('data-delete', id);
     $('#body-materials').append(clone);
 }
@@ -135,7 +183,11 @@ function storeOrderPurchase() {
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
 
-    var arrayId = [];
+    var subtotal_send = $('#subtotal').html();
+    var taxes_send = $('#taxes').html();
+    var total_send = $('#total').html();
+
+    /*var arrayId = [];
     var arrayCode = [];
     var arrayDescription = [];
     var arrayQuantity = [];
@@ -160,12 +212,15 @@ function storeOrderPurchase() {
     var itemsArray = [];
     for (let i = 0; i < arrayId.length; i++) {
         itemsArray.push({'id':arrayId[i], 'code':arrayCode[i], 'description':arrayDescription[i], 'quantity': arrayQuantity[i], 'price': arrayPrice[i]});
-    }
+    }*/
 
     var createUrl = $formCreate.data('url');
-    var items = JSON.stringify(itemsArray);
-    var form = new FormData(this);
+    var items = JSON.stringify($items);
+    var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
+    form.append('subtotal_send', subtotal_send);
+    form.append('taxes_send', taxes_send);
+    form.append('total_send', total_send);
     $.ajax({
         url: createUrl,
         method: 'POST',

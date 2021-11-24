@@ -671,9 +671,24 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/orden/compra/express', 'OrderPurchaseController@createOrderPurchaseExpress')
             ->name('order.purchase.express.create')
             ->middleware('permission:create_orderPurchaseExpress');
-        Route::post('store/order/purchase', 'OrderPurchaseController@store')
-            ->name('order.purchase.store')
+        Route::post('store/order/purchase', 'OrderPurchaseController@storeOrderPurchaseExpress')
+            ->name('order.purchase.express.store')
             ->middleware('permission:create_orderPurchaseExpress');
+        Route::get('/all/order/express', 'OrderPurchaseController@getAllOrderExpress');
+        Route::get('editar/orden/compra/express/{id}', 'OrderPurchaseController@editOrderPurchaseExpress')
+            ->middleware('permission:update_orderPurchaseExpress');
+        Route::post('update/order/purchase', 'OrderPurchaseController@updateOrderPurchaseExpress')
+            ->name('order.purchase.express.update')
+            ->middleware('permission:update_orderPurchaseExpress');
+        Route::post('/destroy/detail/order/purchase/express/{idDetail}/material/{materialId}', 'OrderPurchaseController@destroyDetail')
+            ->middleware('permission:destroy_orderPurchaseExpress');
+        Route::post('/update/detail/order/purchase/express/{idDetail}', 'OrderPurchaseController@updateDetail')
+            ->middleware('permission:update_orderPurchaseExpress');
+        Route::get('ver/orden/compra/express/{id}', 'OrderPurchaseController@showOrderPurchaseExpress')
+            ->middleware('permission:create_orderPurchaseExpress');
+        Route::post('destroy/order/purchase/express/{id}', 'OrderPurchaseController@destroyOrderPurchaseExpress')
+            ->name('order.purchase.express.update')
+            ->middleware('permission:update_orderPurchaseExpress');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

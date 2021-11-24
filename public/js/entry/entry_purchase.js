@@ -362,10 +362,10 @@ function rand_code($caracteres, $longitud){
 }
 
 function deleteItem() {
+    var materialId = $(this).data('delete');
+    $items = $items.filter(material => material.id_material != materialId);
     //console.log($(this).parent().parent().parent());
     $(this).parent().parent().remove();
-    var materialId = $(this).data('delete');
-    $items = $items.filter(material => material.id_material !== materialId);
     updateSummaryInvoice();
 }
 
@@ -400,7 +400,7 @@ function storeOrderPurchase() {
     $("#btn-submit").attr("disabled", true);
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
-    var form = new FormData(this);
+    var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
     $.ajax({
         url: createUrl,
