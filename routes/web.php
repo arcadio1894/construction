@@ -687,8 +687,31 @@ Route::middleware('auth')->group(function (){
         Route::get('ver/orden/compra/express/{id}', 'OrderPurchaseController@showOrderPurchaseExpress')
             ->middleware('permission:create_orderPurchaseExpress');
         Route::post('destroy/order/purchase/express/{id}', 'OrderPurchaseController@destroyOrderPurchaseExpress')
-            ->name('order.purchase.express.update')
             ->middleware('permission:update_orderPurchaseExpress');
+
+        Route::get('ordenes/compra/normal', 'OrderPurchaseController@indexOrderPurchaseNormal')
+            ->name('order.purchase.normal.index')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('crear/orden/compra/normal', 'OrderPurchaseController@createOrderPurchaseNormal')
+            ->name('order.purchase.normal.create')
+            ->middleware('permission:create_orderPurchaseNormal');
+        Route::post('store/order/purchase/normal', 'OrderPurchaseController@storeOrderPurchaseNormal')
+            ->name('order.purchase.normal.store')
+            ->middleware('permission:create_orderPurchaseNormal');
+        Route::get('/all/order/normal', 'OrderPurchaseController@getAllOrderNormal');
+        Route::get('editar/orden/compra/normal/{id}', 'OrderPurchaseController@editOrderPurchaseNormal')
+            ->middleware('permission:update_orderPurchaseNormal');
+        Route::post('update/order/purchase/normal', 'OrderPurchaseController@updateOrderPurchaseNormal')
+            ->name('order.purchase.normal.update')
+            ->middleware('permission:update_orderPurchaseNormal');
+        Route::post('/destroy/detail/order/purchase/normal/{idDetail}/material/{materialId}', 'OrderPurchaseController@destroyNormalDetail')
+            ->middleware('permission:destroy_orderPurchaseNormal');
+        Route::post('/update/detail/order/purchase/normal/{idDetail}', 'OrderPurchaseController@updateNormalDetail')
+            ->middleware('permission:update_orderPurchaseNormal');
+        Route::get('ver/orden/compra/normal/{id}', 'OrderPurchaseController@showOrderPurchaseNormal')
+            ->middleware('permission:create_orderPurchaseNormal');
+        Route::post('destroy/order/purchase/normal/{id}', 'OrderPurchaseController@destroyOrderPurchaseNormal')
+            ->middleware('permission:destroy_orderPurchaseNormal');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

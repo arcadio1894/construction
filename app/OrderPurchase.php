@@ -18,7 +18,8 @@ class OrderPurchase extends Model
         'currency_venta',
         'igv',
         'total',
-        'observation'
+        'observation',
+        'type'
     ];
 
     public function supplier()

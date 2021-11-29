@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseExpress')
+@section('openOrderPurchaseNormal')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseExpress')
+@section('activeOrderPurchaseNormal')
     active
 @endsection
 
-@section('activeCreateOrderPurchaseExpress')
+@section('activeListOrderPurchaseNormal')
     active
 @endsection
 
 @section('title')
-    Orden de compra express
+    Orden de compra normal
 @endsection
 
 @section('styles-plugins')
@@ -37,11 +37,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Crear orden de compra express</h1>
+    <h1 class="page-title">Editar orden de compra normal</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Orden de compra express</h5>
+    <h5 class="card-title">Orden de compra normal</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,12 +52,12 @@
         <li class="breadcrumb-item">
             <a href="{{route('order.purchase.express.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Crear</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.express.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.normal.update') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -74,24 +74,27 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <input type="hidden" name="order_id" value="{{ $order->id }}">
                                     <label for="purchase_order">Orden de Compra</label>
-                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $codeOrder }}" readonly>
+                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $order->code }}" readonly>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_order">Fecha de Orden</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_order" name="date_order">
+                                        <input type="text" class="form-control date-range-filter" id="date_order" name="date_order" value="{{ \Carbon\Carbon::parse($order->date_order)->format('d/m/Y') }}">
                                     </div>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_arrival">Fecha de Llegada</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival">
+                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival" value="{{ \Carbon\Carbon::parse($order->date_arrival)->format('d/m/Y')}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <label for="observation">Observación </label>
-                                    <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
+                                    <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">
+                                        {{ $order->observation }}
+                                    </textarea>
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -100,7 +103,7 @@
                                     <select id="supplier" name="supplier_id" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $suppliers as $supplier )
-                                            <option value="{{ $supplier->id }}">{{ $supplier->business_name }}</option>
+                                            <option value="{{ $supplier->id }}" {{ ($supplier->id === $order->supplier_id) ? 'selected':'' }}>{{ $supplier->business_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -109,17 +112,17 @@
                                     <select id="approved_by" name="approved_by" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $users as $user )
-                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                            <option value="{{ $user->id }}" {{ ($user->id === $order->approved_by) ? 'selected':'' }}>{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="purchase_condition">Forma de pago </label>
-                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control">
+                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control" value="{{ $order->payment_condition }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
-                                    <input id="btn-currency" type="checkbox" name="currency_order" data-bootstrap-switch data-off-color="primary" data-on-text="SOLES" data-off-text="DOLARES" data-on-color="success">
+                                    <input id="btn-currency" {{ ($order->currency_order === 'PEN') ? 'checked':''}} type="checkbox" name="currency_order" data-bootstrap-switch data-off-color="primary" data-on-text="SOLES" data-off-text="DOLARES" data-on-color="success">
                                 </div>
                             </div>
                         </div>
@@ -131,55 +134,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Materiales faltantes</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-head-fixed text-nowrap">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Codigo</th>
-                                <th>Material</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>Seleccionar</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ( $array_materials as $material )
-                                <tr>
-                                    <td>{{ $material['material_id'] }}</td>
-                                    <td>{{ $material['material_complete']->code }}</td>
-                                    <td>{{ $material['material'] }}</td>
-                                    <td>{{ number_format((float)$material['missing_amount'], 2)  }}</td>
-                                    <td>{{ $material['material_complete']->unit_price }}</td>
-                                    <td>
-                                        <button type="button" data-add class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
-                                        {{--<div class="icheck-success d-inline">
-                                            <input type="checkbox" data-selected id="checkboxSuccess1">
-                                            <label for="checkboxSuccess1" data-label></label>
-                                        </div>--}}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-        </div>
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-warning">
@@ -192,7 +146,30 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body ">
+                    <div class="card-body " id="element_loader">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="number" id="quantity" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-add"> &nbsp; </label>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
                         <div class="row">
                             <div class="col-md-1">
                                 <div class="form-group">
@@ -231,7 +208,56 @@
                             </div>
                         </div>
                         <div id="body-materials">
+                            @foreach( $details as $detail )
+                            <div class="row">
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id value="{{ $detail->material->id }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-code value="{{ $detail->material->code }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description value="{{ $detail->material->full_description }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" value="{{ $detail->quantity }}" data-quantity="{{$detail->id}}" step="0.01" >
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" data-price="{{$detail->id}}" value="{{ $detail->price }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ $detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        " readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="btn-group">
+                                        <button type="button" data-edit="{{ $detail->id }}" class="btn btn-outline-success btn-sm"><i class="fas fa-save"></i> </button> &nbsp;
+                                        <button type="button" data-delete="{{ $detail->id }}" data-material="{{ $detail->material->id }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                    </div>
+
+                                </div>
+                            </div>
+                            @endforeach
                         </div>
                     </div>
                     <!-- /.card-body -->
@@ -270,8 +296,8 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <a class="btn btn-outline-secondary" href="{{ route('order.purchase.express.index') }}">Regresar</a>
-                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar orden de compra</button>
+                <a class="btn btn-outline-secondary" href="#">Regresar</a>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar datos generales y nuevos detalles</button>
             </div>
         </div>
     </form>
@@ -318,7 +344,9 @@
                 </div>
             </div>
             <div class="col-md-1">
-                <button type="button" data-delete class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                <div class="btn-group">
+                    <button type="button" data-delete="" data-material="" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                </div>
             </div>
         </div>
     </template>
@@ -336,12 +364,14 @@
 @endsection
 
 @section('scripts')
+    <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+
     <script>
         $(function () {
             //Initialize Select2 Elements
-            $('#date_order').attr("value", moment().format('DD/MM/YYYY'));
+            /*$('#date_order').attr("value", moment().format('DD/MM/YYYY'));
             $('#date_arrival').attr("value", moment().format('DD/MM/YYYY'));
-
+*/
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",
                 clearBtn: true,
@@ -372,5 +402,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/create.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/editNormal.js') }}"></script>
 @endsection

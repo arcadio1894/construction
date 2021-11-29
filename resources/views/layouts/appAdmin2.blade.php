@@ -967,6 +967,36 @@
                         </ul>
                     </li>
                     @endcan
+                    @can('list_orderPurchaseNormal')
+                        <li class="nav-item has-treeview @yield('openOrderPurchaseNormal')">
+                            <a href="#" class="nav-link @yield('activeOrderPurchaseNormal')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Ordenes Normales
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.normal.index')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar ordenes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear orden</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
+
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany

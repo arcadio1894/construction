@@ -116,6 +116,7 @@ class OrderPurchaseController extends Controller
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
+                'type' => 'e'
             ]);
 
             $items = json_decode($request->get('items'));
@@ -179,8 +180,8 @@ class OrderPurchaseController extends Controller
             $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
             $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
             $orderPurchase->observation = $request->get('observation');
-            $orderPurchase->igv = $request->get('taxes_send');
-            $orderPurchase->total = $request->get('total_send');
+            $orderPurchase->igv = (float) $request->get('taxes_send');
+            $orderPurchase->total = (float) $request->get('total_send');
             $orderPurchase->save();
 
             $items = json_decode($request->get('items'));
@@ -196,9 +197,9 @@ class OrderPurchaseController extends Controller
                         'price' => (float) $items[$i]->price,
                     ]);
 
-                    $total = $orderPurchaseDetail->quantity*$orderPurchaseDetail->price;
-                    $subtotal = $total / 1.18;
-                    $igv = $total - $subtotal;
+                    $total = round($orderPurchaseDetail->quantity*$orderPurchaseDetail->price, 2);
+                    $subtotal = round($total / 1.18, 2);
+                    $igv = round($total - $subtotal, 2);
                     $orderPurchaseDetail->igv = $igv;
                     $orderPurchaseDetail->save();
 
@@ -289,46 +290,53 @@ class OrderPurchaseController extends Controller
 
     public function updateDetail(Request $request, $detail_id)
     {
-        $detail = OrderPurchaseDetail::find($detail_id);
-        $orderExpress = OrderPurchase::find($detail->order_purchase_id);
+        DB::beginTransaction();
+        try {
+            $detail = OrderPurchaseDetail::find($detail_id);
+            $orderExpress = OrderPurchase::find($detail->order_purchase_id);
 
-        $items = json_decode($request->get('items'));
+            $items = json_decode($request->get('items'));
 
-        for ( $i=0; $i<sizeof($items); $i++ )
-        {
-            $material_order = MaterialOrder::where('material_id', $items[$i]->id_material)
-                ->where('order_purchase_detail_id', $detail->id)->first();
-            if ( $material_order->quantity_entered > 0 ) {
-                return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
-            } else {
-                $total_last = $detail->total;
-                $igv_last = $detail->igv;
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $material_order = MaterialOrder::where('material_id', $items[$i]->id_material)
+                    ->where('order_purchase_detail_id', $detail->id)->first();
+                if ( $material_order->quantity_entered > 0 ) {
+                    return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+                } else {
+                    $total_last = $detail->price*$detail->quantity;
+                    $igv_last = $detail->igv;
 
-                $quantity = $items[$i]->quantity;
-                $price = $items[$i]->price;
+                    $quantity = (float) $items[$i]->quantity;
+                    $price = (float) $items[$i]->price;
 
-                $total = $quantity*$price;
-                $subtotal = $total / 1.18;
-                $igv = $total - $subtotal;
+                    $total = round($quantity*$price, 2);
+                    $subtotal = round($total / 1.18, 2);
+                    $igv = $total - $subtotal;
 
-                $detail->quantity = round($quantity, 2);
-                $detail->price = round($price, 2);
-                $detail->igv = round($igv);
-                $detail->save();
+                    $detail->quantity = round($quantity, 2);
+                    $detail->price = round($price, 2);
+                    $detail->igv = round($igv,2);
+                    $detail->save();
 
-                $material_order->quantity_request =  round($quantity, 2);
-                $material_order->save();
+                    $material_order->quantity_request =  round($quantity, 2);
+                    $material_order->save();
 
-                $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
-                $orderExpress->total = round(($orderExpress->total - $total_last),2);
-                $orderExpress->save();
+                    $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
+                    $orderExpress->total = round(($orderExpress->total - $total_last),2);
+                    $orderExpress->save();
 
-                $orderExpress->igv = round(($orderExpress->igv + $igv),2);
-                $orderExpress->total = round(($orderExpress->total + $total),2);
+                    $orderExpress->igv = round(($orderExpress->igv + $igv),2);
+                    $orderExpress->total = round(($orderExpress->total + $total),2);
 
-                $orderExpress->save();
+                    $orderExpress->save();
+                }
+
             }
-
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
         return response()->json(['message' => 'Detalle express modificado con éxito.'], 200);
@@ -337,25 +345,32 @@ class OrderPurchaseController extends Controller
 
     public function destroyDetail($idDetail, $idMaterial)
     {
-        $detail = OrderPurchaseDetail::find($idDetail);
-        $orderExpress = OrderPurchase::find($detail->order_purchase_id);
-        $orderExpress->igv = $orderExpress->igv - $detail->igv;
-        $orderExpress->total = $orderExpress->total - $detail->total;
-        $orderExpress->save();
-
-        $material_order = MaterialOrder::where('material_id', $idMaterial)
-            ->where('order_purchase_detail_id', $detail->id)->first();
-
-        if ( $material_order->quantity_entered > 0 ) {
-            return response()->json(['message' => 'No se puede eliminar el detalle porque ya hay un ingreso.'], 422);
-        } else {
-            $material_order->delete();
-            $igv = $detail->igv;
-            $total = $detail->total;
-            $orderExpress->igv = $orderExpress->igv - $igv;
-            $orderExpress->total = $orderExpress->total - $total;
+        DB::beginTransaction();
+        try {
+            $detail = OrderPurchaseDetail::find($idDetail);
+            $orderExpress = OrderPurchase::find($detail->order_purchase_id);
+            $orderExpress->igv = $orderExpress->igv - $detail->igv;
+            $orderExpress->total = $orderExpress->total - ($detail->quantity*$detail->price);
             $orderExpress->save();
-            $detail->delete();
+
+            $material_order = MaterialOrder::where('material_id', $idMaterial)
+                ->where('order_purchase_detail_id', $detail->id)->first();
+
+            if ( $material_order->quantity_entered > 0 ) {
+                return response()->json(['message' => 'No se puede eliminar el detalle porque ya hay un ingreso.'], 422);
+            } else {
+                $material_order->delete();
+                $igv = $detail->igv;
+                $total = $detail->quantity*$detail->price;
+                $orderExpress->igv = $orderExpress->igv - $igv;
+                $orderExpress->total = $orderExpress->total - $total;
+                $orderExpress->save();
+                $detail->delete();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
         return response()->json(['message' => 'Detalle express eliminado con éxito.'], 200);
@@ -380,14 +395,298 @@ class OrderPurchaseController extends Controller
         }
         $orderPurchase->delete();
 
-        return response()->json(['message' => 'Detalle express eliminado con éxito.'], 200);
+        return response()->json(['message' => 'Orden express eliminada con éxito.'], 200);
 
     }
 
     public function getAllOrderExpress()
     {
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->where('type', 'e')
             ->get();
         return datatables($orders)->toJson();
     }
+
+    public function createOrderPurchaseNormal()
+    {
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $maxId = OrderPurchase::max('id')+1;
+        $length = 5;
+        $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+        return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers'));
+
+    }
+
+    public function storeOrderPurchaseNormal(StoreOrderPurchaseRequest $request)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $orderPurchase = OrderPurchase::create([
+                'code' => $request->get('purchase_order'),
+                'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
+                'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
+                'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
+                'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
+                'payment_condition' => ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '',
+                'currency_order' => ($request->has('currency_order')) ? 'PEN':'USD',
+                'observation' => $request->get('observation'),
+                'igv' => $request->get('taxes_send'),
+                'total' => $request->get('total_send'),
+                'type' => 'n'
+            ]);
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $orderPurchaseDetail = OrderPurchaseDetail::create([
+                    'order_purchase_id' => $orderPurchase->id,
+                    'material_id' => $items[$i]->id_material,
+                    'quantity' => (float) $items[$i]->quantity,
+                    'price' => (float) $items[$i]->price,
+                ]);
+
+                $total = $orderPurchaseDetail->quantity*$orderPurchaseDetail->price;
+                $subtotal = $total / 1.18;
+                $igv = $total - $subtotal;
+                $orderPurchaseDetail->igv = $igv;
+                $orderPurchaseDetail->save();
+
+                MaterialOrder::create([
+                    'order_purchase_detail_id' => $orderPurchaseDetail->id,
+                    'material_id' => $orderPurchaseDetail->material_id,
+                    'quantity_request' => $orderPurchaseDetail->quantity,
+                    'quantity_entered' => 0
+                ]);
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Orden compra normal guardada con éxito.'], 200);
+
+    }
+
+    public function getAllOrderNormal()
+    {
+        $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->where('type', 'n')
+            ->get();
+        return datatables($orders)->toJson();
+    }
+
+    public function indexOrderPurchaseNormal()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderPurchase.indexNormal', compact('permissions'));
+    }
+
+    public function showOrderPurchaseNormal($id)
+    {
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
+        $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
+            ->with(['material'])->get();
+
+        return view('orderPurchase.showNormal', compact('order', 'details', 'suppliers', 'users'));
+
+    }
+
+    public function destroyOrderPurchaseNormal($order_id)
+    {
+        $orderPurchase = OrderPurchase::find($order_id);
+        $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
+        foreach ( $details as $detail )
+        {
+            $material_order = MaterialOrder::where('material_id', $detail->material_id)
+                ->where('order_purchase_detail_id', $detail->id)->first();
+            if ( $material_order->quantity_entered > 0 ) {
+                return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+            } else {
+                $material_order->delete();
+            }
+            $detail->delete();
+
+        }
+        $orderPurchase->delete();
+
+        return response()->json(['message' => 'Orden normal eliminada con éxito.'], 200);
+
+    }
+
+    public function editOrderPurchaseNormal($id)
+    {
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
+        $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
+            ->with(['material'])->get();
+
+        return view('orderPurchase.editNormal', compact('order', 'details', 'suppliers', 'users'));
+    }
+
+    public function updateNormalDetail(Request $request, $detail_id)
+    {
+        DB::beginTransaction();
+        try {
+            $detail = OrderPurchaseDetail::find($detail_id);
+            $orderExpress = OrderPurchase::find($detail->order_purchase_id);
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $material_order = MaterialOrder::where('material_id', $items[$i]->id_material)
+                    ->where('order_purchase_detail_id', $detail->id)->first();
+                if ( $material_order->quantity_entered > 0 ) {
+                    return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+                } else {
+                    $total_last = $detail->price*$detail->quantity;
+                    //600
+                    $igv_last = $detail->igv;
+                    //91.53
+
+                    $quantity = (float) $items[$i]->quantity;
+                    //4
+                    $price = (float) $items[$i]->price;
+                    //200
+
+                    $total = round($quantity*$price, 2);
+                    //800
+                    $subtotal = round($total / 1.18, 2);
+                    //677.97
+                    $igv = $total - $subtotal;
+                    //122.03
+                    $detail->quantity = round($quantity, 2);
+                    $detail->price = round($price, 2);
+                    $detail->igv = round($igv,2);
+                    $detail->save();
+
+                    $material_order->quantity_request =  round($quantity, 2);
+                    $material_order->save();
+
+                    $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
+                    $orderExpress->total = round(($orderExpress->total - $total_last),2);
+                    $orderExpress->save();
+
+                    $orderExpress->igv = round(($orderExpress->igv + $igv),2);
+                    $orderExpress->total = round(($orderExpress->total + $total),2);
+
+                    $orderExpress->save();
+                }
+
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Detalle normal modificado con éxito.'], 200);
+
+    }
+
+    public function destroyNormalDetail($idDetail, $idMaterial)
+    {
+        DB::beginTransaction();
+        try {
+            $detail = OrderPurchaseDetail::find($idDetail);
+            $orderExpress = OrderPurchase::find($detail->order_purchase_id);
+            $orderExpress->igv = $orderExpress->igv - $detail->igv;
+            $orderExpress->total = $orderExpress->total - ($detail->quantity*$detail->price);
+            $orderExpress->save();
+
+            $material_order = MaterialOrder::where('material_id', $idMaterial)
+                ->where('order_purchase_detail_id', $detail->id)->first();
+
+            if ( $material_order->quantity_entered > 0 ) {
+                return response()->json(['message' => 'No se puede eliminar el detalle porque ya hay un ingreso.'], 422);
+            } else {
+                $material_order->delete();
+                $igv = $detail->igv;
+                $total = $detail->quantity*$detail->price;
+                $orderExpress->igv = $orderExpress->igv - $igv;
+                $orderExpress->total = $orderExpress->total - $total;
+                $orderExpress->save();
+                $detail->delete();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Detalle normal eliminado con éxito.'], 200);
+
+    }
+
+    public function updateOrderPurchaseNormal(StoreOrderPurchaseRequest $request)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $orderPurchase = OrderPurchase::find($request->get('order_id'));
+            $orderPurchase->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
+            $orderPurchase->date_arrival = ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now();
+            $orderPurchase->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
+            $orderPurchase->approved_by = ($request->has('approved_by')) ? $request->get('approved_by') : null;
+            $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
+            $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
+            $orderPurchase->observation = $request->get('observation');
+            $orderPurchase->igv = (float) $request->get('taxes_send');
+            $orderPurchase->total = (float) $request->get('total_send');
+            $orderPurchase->save();
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                if ($items[$i]->detail_id === '')
+                {
+                    $orderPurchaseDetail = OrderPurchaseDetail::create([
+                        'order_purchase_id' => $orderPurchase->id,
+                        'material_id' => $items[$i]->id_material,
+                        'quantity' => (float) $items[$i]->quantity,
+                        'price' => (float) $items[$i]->price,
+                    ]);
+
+                    $total = round($orderPurchaseDetail->quantity*$orderPurchaseDetail->price, 2);
+                    $subtotal = round($total / 1.18, 2);
+                    $igv = round($total - $subtotal, 2);
+                    $orderPurchaseDetail->igv = $igv;
+                    $orderPurchaseDetail->save();
+
+                    MaterialOrder::create([
+                        'order_purchase_detail_id' => $orderPurchaseDetail->id,
+                        'material_id' => $orderPurchaseDetail->material_id,
+                        'quantity_request' => $orderPurchaseDetail->quantity,
+                        'quantity_entered' => 0
+                    ]);
+                }
+
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Orden compra normal modificada con éxito.'], 200);
+
+    }
+
 }

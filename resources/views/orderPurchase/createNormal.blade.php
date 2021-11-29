@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseExpress')
+@section('openOrderPurchaseNormal')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseExpress')
+@section('activeOrderPurchaseNormal')
     active
 @endsection
 
-@section('activeCreateOrderPurchaseExpress')
+@section('activeCreateOrderPurchaseNormal')
     active
 @endsection
 
 @section('title')
-    Orden de compra express
+    Orden de compra normal
 @endsection
 
 @section('styles-plugins')
@@ -37,11 +37,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Crear orden de compra express</h1>
+    <h1 class="page-title">Crear orden de compra normal</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Orden de compra express</h5>
+    <h5 class="card-title">Orden de compra normal</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -50,14 +50,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.express.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.purchase.normal.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Crear</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.express.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.normal.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -133,56 +133,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-primary">
-                    <div class="card-header">
-                        <h3 class="card-title">Materiales faltantes</h3>
-
-                        <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="card-body table-responsive p-0">
-                        <table class="table table-head-fixed text-nowrap">
-                            <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Codigo</th>
-                                <th>Material</th>
-                                <th>Cantidad</th>
-                                <th>Precio</th>
-                                <th>Seleccionar</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ( $array_materials as $material )
-                                <tr>
-                                    <td>{{ $material['material_id'] }}</td>
-                                    <td>{{ $material['material_complete']->code }}</td>
-                                    <td>{{ $material['material'] }}</td>
-                                    <td>{{ number_format((float)$material['missing_amount'], 2)  }}</td>
-                                    <td>{{ $material['material_complete']->unit_price }}</td>
-                                    <td>
-                                        <button type="button" data-add class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
-                                        {{--<div class="icheck-success d-inline">
-                                            <input type="checkbox" data-selected id="checkboxSuccess1">
-                                            <label for="checkboxSuccess1" data-label></label>
-                                        </div>--}}
-                                    </td>
-                                </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card card-warning">
+                <div class="card card-warning " id="element_loader">
                     <div class="card-header">
                         <h3 class="card-title">Detalles de compra</h3>
 
@@ -193,6 +144,29 @@
                         </div>
                     </div>
                     <div class="card-body ">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="form-group">
+                                    <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="number" id="quantity" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-add"> &nbsp; </label>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+
+                        </div>
+
+                        <hr>
+
                         <div class="row">
                             <div class="col-md-1">
                                 <div class="form-group">
@@ -270,7 +244,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <a class="btn btn-outline-secondary" href="{{ route('order.purchase.express.index') }}">Regresar</a>
+                <a class="btn btn-outline-secondary" href="{{ route('order.purchase.normal.index') }}">Regresar</a>
                 <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar orden de compra</button>
             </div>
         </div>
@@ -336,6 +310,8 @@
 @endsection
 
 @section('scripts')
+    <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+
     <script>
         $(function () {
             //Initialize Select2 Elements
@@ -372,5 +348,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/create.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/createNormal.js') }}"></script>
 @endsection
