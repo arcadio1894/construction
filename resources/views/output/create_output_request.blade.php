@@ -97,7 +97,12 @@
 
                                 <div class="form-group">
                                     <label for="responsible_user">Usuario responsable <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="responsible_user" name="responsible_user" class="form-control">
+                                    <select id="responsible_user" name="responsible_user" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $users as $user )
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                         </div>
@@ -272,6 +277,12 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
-
+    <script>
+        $(function () {
+            $('#responsible_user').select2({
+                placeholder: "Seleccione un usuario",
+            });
+        })
+    </script>
     <script src="{{ asset('js/output/output_request.js') }}"></script>
 @endsection

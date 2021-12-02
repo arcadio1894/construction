@@ -36,7 +36,8 @@ class OutputController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('output.create_output_request', compact('permissions'));
+        $users = User::all();
+        return view('output.create_output_request', compact('permissions', 'users'));
     }
 
     public function createOutputRequestOrder($id_quote)
@@ -105,8 +106,9 @@ class OutputController extends Controller
 
         //dump($materials);
         //dump($consumables);
+        $users = User::all();
 
-        return view('output.create_output_request_order', compact('permissions', 'consumables', 'materials', 'quote'));
+        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
@@ -128,13 +130,16 @@ class OutputController extends Controller
 
         }
 
-        return view('output.create_output_request_order_extra', compact('permissions', 'materials', 'quote'));
+        $users = User::all();
+
+        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote'));
     }
 
     public function getOutputRequest()
     {
         $outputs = Output::with('requestingUser')
             ->with('responsibleUser')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         //dd($outputs);
@@ -259,7 +264,7 @@ class OutputController extends Controller
         DB::beginTransaction();
         try {
             $requesting_user = User::where('name', $request->get('requesting_user'))->first();
-            $responsible_user = User::where('name', $request->get('responsible_user'))->first();
+            $responsible_user = User::where('id', $request->get('responsible_user'))->first();
             $output = Output::create([
                 'execution_order' => $request->get('execution_order'),
                 'request_date' => Carbon::createFromFormat( 'd/m/Y', ($request->get('request_date')) ),
@@ -293,7 +298,7 @@ class OutputController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Solicitud de salida guardada con éxito.'], 200);
+        return response()->json(['message' => 'Solicitud de salida guardada con éxito.', 'url'=>route('output.request.index')], 200);
 
     }
 

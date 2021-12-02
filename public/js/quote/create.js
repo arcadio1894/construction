@@ -279,7 +279,9 @@ $(document).ready(function () {
                     $("#fraction").prop("checked", true);
                     $('#length_entered_material').show();
                     $('#width_entered_material').show();
+                    $('#width_material').show();
                     $('#material_length').val($material.type_scrap.length);
+                    $('#length_material').show();
                     $('#material_width').val($material.type_scrap.width);
                     $('#material_quantity').val($material.stock_current);
                     $('#quantity_entered_material').hide();
@@ -290,6 +292,8 @@ $(document).ready(function () {
                     $("#fraction").prop("checked", true);
                     $('#length_entered_material').show();
                     $('#width_entered_material').show();
+                    $('#length_material').show();
+                    $('#width_material').show();
                     $('#material_length').val($material.type_scrap.length);
                     $('#material_width').val($material.type_scrap.width);
                     $('#quantity_entered_material').hide();
@@ -302,6 +306,7 @@ $(document).ready(function () {
                     $('#length_entered_material').show();
                     $('#material_length').val($material.type_scrap.length);
                     $('#width_material').hide();
+                    $('#length_material').show();
                     $('#width_entered_material').hide();
                     $('#quantity_entered_material').hide();
                     $('#material_quantity').val($material.stock_current);

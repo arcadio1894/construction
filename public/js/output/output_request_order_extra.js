@@ -83,15 +83,15 @@ $(document).ready(function () {
         }
     });
 
-    $('#responsible_user').typeahead({
+    /*$('#responsible_user').typeahead({
             hint: true,
-            highlight: true, /* Enable substring highlighting */
-            minLength: 1 /* Specify minimum characters required for showing suggestions */
+            highlight: true, /!* Enable substring highlighting *!/
+            minLength: 1 /!* Specify minimum characters required for showing suggestions *!/
         },
         {
             limit: 12,
             source: substringMatcher($users)
-        });
+        });*/
 
     $('.typeahead').typeahead({
             hint: true,
@@ -349,7 +349,7 @@ function storeOutputRequest() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
-                location.reload();
+                location.href = data.url;
             }, 2000 )
         },
         error: function (data) {
