@@ -733,6 +733,12 @@
                                             <p>Anuladas</p>
                                         </a>
                                     </li>
+                                        <li class="nav-item">
+                                            <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Finalizadas</p>
+                                            </a>
+                                        </li>
                                 @endcan
                             </ul>
                         </li>

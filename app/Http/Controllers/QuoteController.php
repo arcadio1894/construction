@@ -12,6 +12,7 @@ use App\EquipmentWorkforce;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Material;
+use App\MaterialTaken;
 use App\Quote;
 use App\QuoteUser;
 use App\UnitMeasure;
@@ -622,6 +623,7 @@ class QuoteController extends Controller
         $quotes = Quote::with('customer')
             ->where('raise_status', 0)
             ->whereNotIn('state', ['canceled', 'expired'])
+            ->where('state_active', 'open')
             ->get();
         return datatables($quotes)->toJson();
     }
@@ -926,6 +928,7 @@ class QuoteController extends Controller
     public function getAllQuotesConfirmed()
     {
         $quotes = Quote::with(['customer'])
+            ->where('state_active','open')
             ->where('state','confirmed')
             ->get();
         return datatables($quotes)->toJson();
@@ -1024,6 +1027,48 @@ class QuoteController extends Controller
             ->whereIn('state',['canceled', 'expired'])
             ->get();
         return datatables($quotes)->toJson();
+    }
+
+    public function getAllQuotesClosed()
+    {
+        $quotes = Quote::with(['customer'])
+            ->whereIn('state_active',['close'])
+            ->get();
+        return datatables($quotes)->toJson();
+    }
+
+    public function closeQuote($quote_id)
+    {
+        $quote = Quote::find($quote_id);
+
+        $quote->state_active = 'close';
+        $quote->save();
+
+        DB::beginTransaction();
+        try {
+
+            $material_takens = MaterialTaken::where('quote_id', $quote_id)->get();
+
+            foreach ( $material_takens as $material_taken )
+            {
+                $material_taken->delete();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cotización finalizada con éxito. Redireccionando ...', 'url'=>route('quote.closed')], 200);
+
+    }
+
+    public function closed()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('quote.close', compact( 'permissions'));
     }
 
     public function renewQuote($id)

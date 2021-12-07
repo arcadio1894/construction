@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Item;
 use App\Material;
+use App\MaterialTaken;
 use App\Output;
 use App\OutputDetail;
 use App\Quote;
@@ -54,7 +55,7 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
 
@@ -79,7 +80,7 @@ class OutputController extends Controller
         {
             foreach ( $equipment->consumables as $consumable )
             {
-                array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+                array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
             }
 
@@ -124,7 +125,7 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
 
@@ -226,6 +227,15 @@ class OutputController extends Controller
                 $material = Material::find($item->material_id);
                 $material->stock_current = $material->stock_current - $item->percentage;
                 $material->save();
+
+                $quote = Quote::where('order_execution', $output->execution_order)->first();
+
+                MaterialTaken::create([
+                    'material_id' => $material->id,
+                    'quantity_request' => $item->percentage,
+                    'quote_id' => $quote->id,
+                    'output_id' => $output->id
+                ]);
             }
 
             DB::commit();

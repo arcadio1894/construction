@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log($permissions);
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/quotes/confirmed",
+            url: "/dashboard/all/quotes/closed",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -71,20 +71,8 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.state === 'created' ) {
-                        return '<span class="badge bg-primary">Creada</span>';
-                    }
-
-                    if (item.state === 'confirmed' && item.raise_status === 0){
-                        return '<span class="badge bg-success">Confirmada</span>';
-                    }
-
-                    if (item.state === 'confirmed' && item.raise_status === 1){
-                        return '<span class="badge bg-success">Elevada</span>';
-                    }
-
-                    if (item.state === 'canceled'){
-                        return '<span class="badge bg-danger">Cancelada</span>';
+                    if (item.state_active === 'close'){
+                        return '<span class="badge bg-danger">Finalizada</span>';
                     }
 
                 }
@@ -107,40 +95,6 @@ $(document).ready(function () {
                     if ( $.inArray('list_quote', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
-                    }
-                    if ( item.state === 'confirmed' ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
-                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
-                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
-                        }
-                    }
-
-                    if ( item.state === 'confirmed' && item.raise_status === 0 ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
-                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
-                        }
-                        text = text + ' <button data-raise="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
-                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
-                        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
-                        }
-
-                    }
-
-                    if ( item.state === 'confirmed' && item.raise_status === 1 ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
-                        }
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
-                        }
-
                     }
 
                     if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
@@ -301,11 +255,6 @@ $(document).ready(function () {
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
-    $(document).on('click', '[data-delete]', cancelQuote);
-    $(document).on('click', '[data-finish]', finishQuote);
-
-    $(document).on('click', '[data-raise]', raiseQuote);
-    $(document).on('click', '[data-raise2]', raise2Quote);
 
     $(document).on('click', '[data-renew]', renewQuote);
 });
@@ -314,54 +263,6 @@ var $formDelete;
 var $modalDelete;
 
 var $permissions;
-
-function renewQuote() {
-    var quote_id = $(this).data('renew');
-
-    $.confirm({
-        icon: 'fas fa-sync',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        columnClass: 'medium',
-        title: '¿Está seguro de renovar esta cotización?',
-        content: 'Se va a crear una nueva cotización pero con todos los mismos contenidos.',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                btnClass: 'btn-blue',
-                action: function () {
-                    $.ajax({
-                        url: '/dashboard/renew/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                location.href = data.url;
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                    //$.alert('Your name is ' + name);
-                }
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Cotización no elevada.");
-                },
-            },
-        }
-    });
-
-}
 
 function cancelQuote() {
     var quote_id = $(this).data('delete');
@@ -390,52 +291,6 @@ function cancelQuote() {
                             $.alert("Cotización anulada.");
                             setTimeout( function () {
                                 location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Anulación cancelada.");
-                },
-            },
-        },
-    });
-
-}
-
-function finishQuote() {
-    var quote_id = $(this).data('finish');
-    var description = $(this).data('name');
-
-    $.confirm({
-        icon: 'fas fa-smile',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de finalizar esta cotización?',
-        content: description,
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: '/dashboard/finish/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                location.href = data.url;
                             }, 2000 )
                         },
                         error: function (data) {
@@ -516,47 +371,34 @@ function raiseQuote() {
 
 }
 
-function raise2Quote() {
-    var quote_id = $(this).data('raise2');
-    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+function renewQuote() {
+    var quote_id = $(this).data('renew');
 
     $.confirm({
-        icon: 'fa fa-level-up-alt',
+        icon: 'fas fa-sync',
         theme: 'modern',
         closeIcon: true,
         animation: 'zoom',
         type: 'green',
         columnClass: 'medium',
-        title: '¿Está seguro de modificar el codigo del cliente?',
-        content: '' +
-            '<form action="" class="formName">' +
-            '<div class="form-group">' +
-            '<strong>Código actual: </strong>' + code +
-            '<br><label>Ingrese el código del cliente aquí: </label>' +
-            '<input type="text" placeholder="Código" class="name form-control" required />' +
-            '</div>' +
-            '</form>',
+        title: '¿Está seguro de renovar esta cotización?',
+        content: 'Se va a crear una nueva cotización pero con todos los mismos contenidos.',
         buttons: {
             confirm: {
                 text: 'CONFIRMAR',
                 btnClass: 'btn-blue',
                 action: function () {
-                    var name = this.$content.find('.name').val();
-                    if(!name || name.trim()===''){
-                        $.alert('Ingrese un código válido');
-                        return false;
-                    }
                     $.ajax({
-                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        url: '/dashboard/renew/quote/'+quote_id,
                         method: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         processData:false,
                         contentType:false,
                         success: function (data) {
                             console.log(data);
-                            $.alert("Código modificado correctamente.");
+                            $.alert(data.message);
                             setTimeout( function () {
-                                location.reload();
+                                location.href = data.url;
                             }, 2000 )
                         },
                         error: function (data) {

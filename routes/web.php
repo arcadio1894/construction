@@ -657,6 +657,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_quote');
         Route::post('/renew/quote/{quote}', 'QuoteController@renewQuote')
             ->middleware('permission:destroy_quote');
+        Route::get('cotizaciones/finalizadas', 'QuoteController@closed')
+            ->name('quote.closed')
+            ->middleware('permission:destroy_quote');
+        Route::get('/all/quotes/closed', 'QuoteController@getAllQuotesClosed');
+        Route::post('/finish/quote/{quote}', 'QuoteController@closeQuote')
+            ->middleware('permission:destroy_quote');
 
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')

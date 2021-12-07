@@ -28,7 +28,9 @@ class Quote extends Model
         'currency_invoice',
         'currency_compra',
         'currency_venta',
-        'total_soles'
+        'total_soles',
+        'order_execution',
+        'state_active'
     ];
 
     public function getSubtotalUtilityAttribute()

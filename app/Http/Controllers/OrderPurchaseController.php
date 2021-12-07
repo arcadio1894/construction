@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOrderPurchaseRequest;
 use App\MaterialOrder;
+use App\MaterialTaken;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use App\Quote;
@@ -27,7 +28,9 @@ class OrderPurchaseController extends Controller
 
     public function createOrderPurchaseExpress()
     {
-        $quotesRaised = Quote::where('raise_status', 1)->with('equipments')->get();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')
+            ->with('equipments')->get();
 
         $suppliers = Supplier::all();
         $users = User::all();
@@ -47,7 +50,7 @@ class OrderPurchaseController extends Controller
                 foreach ( $equipment->materials as $material )
                 {
                     array_push($materials, $material->material_id);
-                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
                 }
 
@@ -74,14 +77,16 @@ class OrderPurchaseController extends Controller
             {
                 $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
                 $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request');
+                $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
                 $missing = (float)$item['quantity'] - (float)$item['material_complete']->stock_current;
                 if ( !isset($material_missing) )
                 {
-                    array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing));
+                    $missing_real = $missing - $materials_taken;
+                    array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
                 } else {
                     if ( $missing > $amount )
                     {
-                        $missing_real = $missing - $amount;
+                        $missing_real = $missing - $amount - $materials_taken;
                         array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
                     }
                 }
@@ -224,7 +229,9 @@ class OrderPurchaseController extends Controller
 
     public function editOrderPurchaseExpress($id)
     {
-        $quotesRaised = Quote::where('raise_status', 1)->with('equipments')->get();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')
+            ->with('equipments')->get();
 
         $suppliers = Supplier::all();
         $users = User::all();
@@ -239,7 +246,7 @@ class OrderPurchaseController extends Controller
                 foreach ( $equipment->materials as $material )
                 {
                     array_push($materials, $material->material_id);
-                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity));
+                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
                 }
 
