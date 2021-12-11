@@ -230,12 +230,16 @@ class OutputController extends Controller
 
                 $quote = Quote::where('order_execution', $output->execution_order)->first();
 
-                MaterialTaken::create([
-                    'material_id' => $material->id,
-                    'quantity_request' => $item->percentage,
-                    'quote_id' => $quote->id,
-                    'output_id' => $output->id
-                ]);
+                if (isset($quote))
+                {
+                    MaterialTaken::create([
+                        'material_id' => $material->id,
+                        'quantity_request' => $item->percentage,
+                        'quote_id' => $quote->id,
+                        'output_id' => $output->id
+                    ]);
+                }
+
             }
 
             DB::commit();
