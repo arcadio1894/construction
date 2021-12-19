@@ -31,4 +31,9 @@ class OrderPurchase extends Model
     {
         return $this->belongsTo('App\User', 'approved_by');
     }
+
+    public function details()
+    {
+        return $this->hasMany('App\OrderPurchaseDetail');
+    }
 }

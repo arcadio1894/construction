@@ -489,6 +489,14 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_entryPurchase');
         Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
             ->middleware('permission:create_entryPurchase');
+        Route::get('entradas/compra/ordenes', 'EntryController@listOrderPurchase')->name('order.purchase.list')
+            ->middleware('permission:create_entryPurchase');
+        Route::get('crear/entrada/compra/orden/{id}', 'EntryController@createEntryOrder')->name('order.purchase.create')
+            ->middleware('permission:create_entryPurchase');
+        Route::get('/get/all/orders/entries', 'EntryController@getAllOrders');
+        Route::get('/get/order/complete/{code}', 'EntryController@getOrderPurchaseComplete');
+        Route::post('entry/purchase/order/store', 'EntryController@storeEntryPurchaseOrder')->name('entry.purchase.order.store')
+            ->middleware('permission:create_entryPurchase');
         Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
             ->middleware('permission:create_entryScrap');
         Route::post('entry_purchase/store', 'EntryController@storeEntryPurchase')->name('entry.purchase.store')

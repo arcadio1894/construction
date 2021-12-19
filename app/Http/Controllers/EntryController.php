@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\DetailEntry;
 use App\Entry;
+use App\Http\Requests\StoreEntryPurchaseOrderRequest;
 use App\Http\Requests\StoreEntryPurchaseRequest;
 use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
+use App\OrderPurchase;
 use App\Supplier;
 use App\Typescrap;
 use Carbon\Carbon;
@@ -688,4 +690,228 @@ class EntryController extends Controller
         }
         return response()->json(['message' => 'Detalles de compra guardados con éxito.'], 200);
     }
+
+    public function getAllOrders()
+    {
+        $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->get();
+        return datatables($orders)->toJson();
+    }
+
+    public function listOrderPurchase()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('entry.listOrderPurchase', compact('permissions'));
+
+    }
+
+    public function createEntryOrder($id)
+    {
+        $suppliers = Supplier::all();
+        $orderPurchase = OrderPurchase::
+            with(['details' => function ($query) {
+                $query->with(['material']);
+            }])
+            ->with('supplier')->find($id);
+        return view('entry.create_entry_purchase_order', compact('suppliers', 'orderPurchase'));
+    }
+
+    public function storeEntryPurchaseOrder(StoreEntryPurchaseOrderRequest $request)
+    {
+        //dd($request->get('deferred_invoice'));
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $orderPurchase = OrderPurchase::find($request->get('purchase_order_id'));
+            //dump($tipoCambioSunat->compra);
+            $entry = Entry::create([
+                'referral_guide' => $request->get('referral_guide'),
+                'purchase_order' => $request->get('purchase_order'),
+                'invoice' => $request->get('invoice'),
+                'deferred_invoice' => ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off',
+                'currency_invoice' => $orderPurchase->currency_order,
+                'supplier_id' => $orderPurchase->supplier_id,
+                'entry_type' => 'Por compra',
+                'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
+                'finance' => false,
+                'currency_compra' => (float) $orderPurchase->currency_compra,
+                'currency_venta' => (float) $orderPurchase->currency_venta,
+                'observation' => $request->get('observation'),
+            ]);
+
+            // TODO: Tratamiento de un archivo de forma tradicional
+            if (!$request->file('image')) {
+                $entry->image = 'no_image.png';
+                $entry->save();
+            } else {
+                $path = public_path().'/images/entries/';
+                $image = $request->file('image');
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'jpg');
+                //$request->file('image')->move($path, $filename);
+                $entry->image = $filename;
+                $entry->save();
+            }
+
+            if (!$request->file('imageOb')) {
+                $entry->imageOb = 'no_image.png';
+                $entry->save();
+            } else {
+                $path = public_path().'/images/entries/observations/';
+                $image = $request->file('imageOb');
+                $filename = $entry->id . '.jpg';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'jpg');
+                $entry->imageOb = $filename;
+                $entry->save();
+            }
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $detail_entry = DetailEntry::create([
+                    'entry_id' => $entry->id,
+                    'material_id' => $items[$i]->id,
+                    'ordered_quantity' => $items[$i]->quantity,
+                    'entered_quantity' => $items[$i]->entered,
+                    'isComplete' => ($items[$i]->quantity == $items[$i]->entered) ? true:false,
+                ]);
+
+                $material = Material::find($detail_entry->material_id);
+                $material->stock_current = $material->stock_current + $detail_entry->entered_quantity;
+                $material->save();
+
+                if ( $entry->currency_invoice === 'PEN' )
+                {
+                    $precio1 = (float)$items[$i]->price / (float) $entry->currency_compra;
+                    $price1 = ($detail_entry->material->price > $precio1) ? $detail_entry->material->price : $precio1;
+                    $materialS = Material::find($detail_entry->material_id);
+                    if ( $materialS->price < $price1 )
+                    {
+                        $materialS->unit_price = $price1;
+                        $materialS->save();
+
+                        $detail_entry->unit_price = $items[$i]->price;
+                        $detail_entry->save();
+                    }
+                    //dd($detail_entry->material->materialType);
+                    if ( isset($detail_entry->material->typeScrap) )
+                    {
+                        Item::create([
+                            'detail_entry_id' => $detail_entry->id,
+                            'material_id' => $detail_entry->material_id,
+                            'code' => $this->generateRandomString(20),
+                            'length' => $detail_entry->material->typeScrap->length,
+                            'width' => $detail_entry->material->typeScrap->width,
+                            'weight' => 0,
+                            'price' => $items[$i]->price,
+                            'percentage' => 1,
+                            'typescrap_id' => $detail_entry->material->typeScrap->id,
+                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                            'state' => 'good',
+                            'state_item' => 'entered'
+                        ]);
+                    } else {
+                        Item::create([
+                            'detail_entry_id' => $detail_entry->id,
+                            'material_id' => $detail_entry->material_id,
+                            'code' => $this->generateRandomString(20),
+                            'length' => 0,
+                            'width' => 0,
+                            'weight' => 0,
+                            'price' => $items[$i]->price,
+                            'percentage' => 1,
+                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                            'state' => 'good',
+                            'state_item' => 'entered'
+                        ]);
+                    }
+                } else {
+                    $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                    $materialS = Material::find($detail_entry->material_id);
+                    if ( $materialS->price < $items[$i]->price )
+                    {
+                        $materialS->unit_price = $items[$i]->price;
+                        $materialS->save();
+
+                        $detail_entry->unit_price = $materialS->unit_price;
+                        $detail_entry->save();
+                    }
+                    //dd($detail_entry->material->materialType);
+                    if ( isset($detail_entry->material->typeScrap) )
+                    {
+                        Item::create([
+                            'detail_entry_id' => $detail_entry->id,
+                            'material_id' => $detail_entry->material_id,
+                            'code' => $this->generateRandomString(20),
+                            'length' => $detail_entry->material->typeScrap->length,
+                            'width' => $detail_entry->material->typeScrap->width,
+                            'weight' => 0,
+                            'price' => $price,
+                            'percentage' => 1,
+                            'typescrap_id' => $detail_entry->material->typeScrap->id,
+                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                            'state' => 'good',
+                            'state_item' => 'entered'
+                        ]);
+                    } else {
+                        Item::create([
+                            'detail_entry_id' => $detail_entry->id,
+                            'material_id' => $detail_entry->material_id,
+                            'code' => $this->generateRandomString(20),
+                            'length' => 0,
+                            'width' => 0,
+                            'weight' => 0,
+                            'price' => $price,
+                            'percentage' => 1,
+                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                            'state' => 'good',
+                            'state_item' => 'entered'
+                        ]);
+                    }
+                }
+
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Ingreso por compra guardado con éxito.', 'url'=>route('entry.purchase.index')], 200);
+
+    }
+
+    function generateRandomString($length = 25) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public function getOrderPurchaseComplete($order)
+    {
+        $order = Entry::where('purchase_order', $order)
+            ->first();
+        $details = DetailEntry::where('entry_id', $order->id)->get();
+        foreach ($details as $detail)
+        {
+            if ($detail->isComplete == false)
+            {
+                return 0;
+            }
+        }
+        return 1;
+    }
+
 }

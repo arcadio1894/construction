@@ -108,6 +108,36 @@ class OrderPurchaseController extends Controller
     {
         $validated = $request->validated();
 
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        //dump($request->get('date_invoice'));
+        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
+        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
+
+        //dump();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
         DB::beginTransaction();
         try {
             $orderPurchase = OrderPurchase::create([
@@ -118,6 +148,8 @@ class OrderPurchaseController extends Controller
                 'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
                 'payment_condition' => ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '',
                 'currency_order' => ($request->has('currency_order')) ? 'PEN':'USD',
+                'currency_compra' => $tipoCambioSunat->compra,
+                'currency_venta' => $tipoCambioSunat->venta,
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
@@ -431,6 +463,36 @@ class OrderPurchaseController extends Controller
     {
         $validated = $request->validated();
 
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        //dump($request->get('date_invoice'));
+        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
+        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
+
+        //dump();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
         DB::beginTransaction();
         try {
             $orderPurchase = OrderPurchase::create([
@@ -441,6 +503,8 @@ class OrderPurchaseController extends Controller
                 'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
                 'payment_condition' => ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '',
                 'currency_order' => ($request->has('currency_order')) ? 'PEN':'USD',
+                'currency_compra' => $tipoCambioSunat->compra,
+                'currency_venta' => $tipoCambioSunat->venta,
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),

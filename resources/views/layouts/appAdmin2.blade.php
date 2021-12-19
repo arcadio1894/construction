@@ -833,6 +833,13 @@
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
+
+                            <li class="nav-item">
+                                <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar órdenes</p>
+                                </a>
+                            </li>
                             @endcan
                         </ul>
                     </li>
