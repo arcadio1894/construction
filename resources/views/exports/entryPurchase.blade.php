@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Cotización</title>
+    <title>Orden de compra</title>
     <style>
         .clearfix:after {
             content: "";
