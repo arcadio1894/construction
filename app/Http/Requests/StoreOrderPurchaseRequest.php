@@ -27,6 +27,7 @@ class StoreOrderPurchaseRequest extends FormRequest
             'purchase_order' => 'required',
             'purchase_condition' => 'nullable|string',
             'observation' => 'nullable|string',
+            'quote_supplier' => 'nullable|string',
         ];
     }
 
@@ -36,6 +37,7 @@ class StoreOrderPurchaseRequest extends FormRequest
             'purchase_order.required' => 'El :attribute es obligatorio.',
             'purchase_condition.string' => 'El :attribute debe contener caracteres válidos.',
             'observation.string' => 'La :attribute debe contener caracteres válidos.',
+            'quote_supplier.string' => 'La :attribute debe contener caracteres válidos.',
         ];
     }
 
@@ -44,7 +46,8 @@ class StoreOrderPurchaseRequest extends FormRequest
         return [
             'purchase_order' => 'código de la orden',
             'purchase_condition' => 'código',
-            'observation' => 'fecha',
+            'observation' => 'observación',
+            'quote_supplier' => 'cotización de proveedor',
         ];
     }
 }

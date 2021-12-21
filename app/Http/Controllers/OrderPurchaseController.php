@@ -143,6 +143,7 @@ class OrderPurchaseController extends Controller
         try {
             $orderPurchase = OrderPurchase::create([
                 'code' => $request->get('purchase_order'),
+                'quote_supplier' => $request->get('quote_supplier'),
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
@@ -218,6 +219,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
             $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
             $orderPurchase->observation = $request->get('observation');
+            $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');
             $orderPurchase->total = (float) $request->get('total_send');
             $orderPurchase->save();
@@ -498,6 +500,7 @@ class OrderPurchaseController extends Controller
         try {
             $orderPurchase = OrderPurchase::create([
                 'code' => $request->get('purchase_order'),
+                'quote_supplier' => $request->get('quote_supplier'),
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
@@ -719,6 +722,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
             $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
             $orderPurchase->observation = $request->get('observation');
+            $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');
             $orderPurchase->total = (float) $request->get('total_send');
             $orderPurchase->save();

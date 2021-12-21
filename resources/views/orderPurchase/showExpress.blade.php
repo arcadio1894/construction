@@ -92,9 +92,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="observation">Observación </label>
-                                    <textarea readonly name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">
-                                        {{ $order->observation }}
-                                    </textarea>
+                                    <textarea readonly name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">{{ $order->observation }}</textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="quote_supplier">Cotización de proveedeor : </label>
+                                    <input type="text" id="quote_supplier" name="quote_supplier" class="form-control" value="{{ $order->quote_supplier }}" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">

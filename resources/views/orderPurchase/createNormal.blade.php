@@ -93,6 +93,10 @@
                                     <label for="observation">Observación </label>
                                     <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="quote_supplier">Cotización de proveedeor </label>
+                                    <input type="text" id="quote_supplier" name="quote_supplier" class="form-control">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">

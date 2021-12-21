@@ -36,7 +36,7 @@
 @section('page-title')
     <h5 class="card-title">Listado de Ordenes de compras normales</h5>
     @can('create_orderPurchaseNormal')
-    <a href="{{ route('order.purchase.normal.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden express </a>
+    <a href="{{ route('order.purchase.normal.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden normal </a>
     @endcan
 @endsection
 

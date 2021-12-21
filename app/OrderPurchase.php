@@ -19,7 +19,8 @@ class OrderPurchase extends Model
         'igv',
         'total',
         'observation',
-        'type'
+        'type',
+        'quote_supplier'
     ];
 
     public function supplier()
