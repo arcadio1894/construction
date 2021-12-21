@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class OrderPurchaseController extends Controller
 {
@@ -758,6 +759,24 @@ class OrderPurchaseController extends Controller
         }
         return response()->json(['message' => 'Orden compra normal modificada con éxito.'], 200);
 
+    }
+
+    public function printOrderPurchase($id)
+    {
+        $purchase_order = null;
+        $purchase_order = OrderPurchase::with('approved_user')
+            ->with(['details' => function ($query) {
+                $query->with(['material']);
+            }])
+            ->where('id', $id)->first();
+
+        $view = view('exports.entryPurchase', compact('purchase_order'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
+
+        return $pdf->stream($name);
     }
 
 }

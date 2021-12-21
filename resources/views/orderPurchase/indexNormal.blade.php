@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseExpress')
+@section('openOrderPurchaseNormal')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseExpress')
+@section('activeOrderPurchaseNormal')
     active
 @endsection
 
-@section('activeListOrderPurchaseExpress')
+@section('activeListOrderPurchaseNormal')
     active
 @endsection
 
 @section('title')
-    Ordenes de compra express
+    Ordenes de compra normales
 @endsection
 
 @section('styles-plugins')

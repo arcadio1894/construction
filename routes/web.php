@@ -495,6 +495,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_entryPurchase');
         Route::get('/get/all/orders/entries', 'EntryController@getAllOrders');
         Route::get('/get/order/complete/{code}', 'EntryController@getOrderPurchaseComplete');
+        Route::get('imprimir/orden/compra/{id}', 'OrderPurchaseController@printOrderPurchase')
+            ->middleware('permission:create_entryPurchase');
         Route::post('entry/purchase/order/store', 'EntryController@storeEntryPurchaseOrder')->name('entry.purchase.order.store')
             ->middleware('permission:create_entryPurchase');
         Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
