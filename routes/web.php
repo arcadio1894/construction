@@ -759,6 +759,7 @@ Route::middleware('auth')->group(function (){
         // REPORT
         Route::get('report/amount/items', 'ReportController@amountInWarehouse');
         Route::get('report/excel/amount/stock', 'ReportController@excelAmountStock')->name('report.excel.amount');
+        Route::get('report/excel/bd/materials', 'ReportController@excelBDMaterials')->name('report.excel.materials');
 
     });
 });

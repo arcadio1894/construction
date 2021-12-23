@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DetailEntry;
 use App\Entry;
 use App\Exports\AmountReport;
+use App\Exports\DatabaseMaterialsExport;
 use App\Item;
 use App\Material;
 use Illuminate\Http\Request;
@@ -77,5 +78,51 @@ class ReportController extends Controller
         //dump($materials_array);
 
         return Excel::download(new AmountReport($materials_array), 'reporte_Stock_Monto_En_Almacen.xlsx');
+    }
+
+    public function excelBDMaterials()
+    {
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
+
+        $materials_array = [];
+
+        foreach ( $materials as $material )
+        {
+            $priority = '';
+            if ( $material->stock_current > $material->stock_max ){
+                $priority = 'Completo';
+            } else if ( $material->stock_current = $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current = $material->stock_min ){
+                $priority = 'Por agotarse';
+            } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
+                $priority = 'Agotado';
+            }
+            array_push($materials_array, [
+                'code' => $material->code,
+                'material' => $material->full_description,
+                'measure' => $material->measure,
+                'unit' => ($material->unitMeasure == null) ? '':$material->unitMeasure->name,
+                'stock_max' => $material->stock_max,
+                'stock_min' => $material->stock_min,
+                'stock_current' => $material->stock_current,
+                'priority'=> $priority,
+                'price'=> $material->unit_price,
+                'category'=> ($material->category == null) ? '': $material->category->name,
+                'subcategory'=> ($material->subcategory == null) ? '': $material->subcategory->name,
+                'type'=> ($material->materialType == null) ? '': $material->materialType->name,
+                'subtype'=> ($material->subType == null) ? '': $material->subType->name,
+                'brand'=> ($material->brand == null) ? '': $material->brand->name,
+                'exampler'=> ($material->exampler == null) ? '': $material->exampler->name,
+                'quality'=> ($material->quality == null) ? '': $material->quality->name,
+                'warrant'=> ($material->warrant == null) ? '':$material->warrant->name,
+                'scrap'=> ($material->typeScrap == null) ? '':$material->typeScrap->name,
+            ]);
+        }
+        //dump($materials_array);
+
+        return Excel::download(new DatabaseMaterialsExport($materials_array), 'reporte_base_materiales.xlsx');
     }
 }
