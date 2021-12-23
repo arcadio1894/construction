@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8">
-    <title>Orden de compra</title>
     <style>
         .clearfix:after {
             content: "";
@@ -56,10 +54,10 @@
         #project span {
             color: #5D6975;
             text-align: left;
-            width: 80px;
+            width: 90px;
             margin-right: 10px;
-            display: inline-block;
-            font-size: 0.8em;
+            display: inline-flex;
+            font-size: 1em;
         }
 
         #company2 {
@@ -76,23 +74,34 @@
             white-space: nowrap;
         }
 
-        table {
+        #table {
             width: 100%;
             border-collapse: collapse;
             border-spacing: 0;
             margin-bottom: 5px;
         }
 
-        table tr:nth-child(2n-1) td {
+        #sumary {
+            width: 100%;
+            border-collapse: collapse;
+            border-spacing: 0;
+            margin-bottom: 5px;
+        }
+
+        #table tr:nth-child(2n-1) td {
             background: #F5F5F5;
         }
 
-        table th,
-        table td {
+        #sumary tr:nth-child(2n-1) td {
+            background: #F5F5F5;
+        }
+
+        #table th,
+        #table td {
             text-align: center;
         }
 
-        table th {
+        #table th {
             padding: 5px 10px;
             color: #ffffff;
             border-bottom: 1px solid #C1CED9;
@@ -102,24 +111,29 @@
             font-size: 1.2em;
         }
 
-        table .desc {
+        #table .desc {
             text-align: left;
         }
 
-        table td {
+        #table td {
             padding: 5px;
             text-align: center;
         }
 
-        table td.desc {
+        #table td.desc {
             vertical-align: top;
         }
 
-        table td.unit,
-        table td.qty,
-        table td.total {
+        #table td.unit,
+        #table td.qty,
+        #table td.total {
             font-size: 1em;
             text-align: right;
+        }
+
+        #cuadro td {
+            border: 1px solid black;
+            padding: 2px;
         }
 
         #sumary td {
@@ -149,6 +163,8 @@
             page-break-after: always;
         }
     </style>
+    <meta charset="utf-8">
+    <title>Orden de compra</title>
 </head>
 <body>
 <header class="clearfix">
@@ -166,21 +182,47 @@
     <h1>ORDEN DE COMPRA: {{ $purchase_order->id }}</h1>
 
     <div id="company2" class="clearfix">
-        <div>EMITIDO A:</div>
-        <div>{{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->business_name : 'No tiene proveedor' }}</div>
-        <div>{{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->ruc : 'No tiene ruc' }}</div>
-        <div>{{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->address : 'No tiene localización' }}</div>
-        <div>{{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->phone : 'No tiene telefono' }}</div>
-        <div>{{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->email : 'No tiene email' }}</div>
-        <div>{{ ($purchase_order->quote_supplier !== null) ? $purchase_order->quote_supplier : 'No tiene cotización' }}</div>
+        <table id="cuadro">
+            <tr>
+                <td>CODIGO #:</td>
+                <td>{{ $purchase_order->code }}</td>
+            </tr>
+            <tr>
+                <td>FECHA:</td>
+                <td>{{ date( "d/m/Y", strtotime( $purchase_order->date_order )) }}</td>
+            </tr>
+            <tr>
+                <td>APROBADO POR:</td>
+                <td>{{ ( $purchase_order->approved_user !== null ) ? $purchase_order->approved_user->name:'No tiene aprobador' }}</td>
+            </tr>
+            <tr>
+                <td>CONDICIÓN PAGO:</td>
+                <td>{{ ($purchase_order->payment_condition !== null) ? $purchase_order->payment_condition:'No tiene condición' }}</td>
+            </tr>
+            <tr>
+                <td>MONEDA:</td>
+                <td>{{ ($purchase_order->currency_order) === 'USD' ? 'DÓLARES':'SOLES' }}</td>
+            </tr>
+        </table>
     </div>
 
     <div id="project">
-        <div><span>ORDEN #</span>: {{ $purchase_order->code }}</div>
-        <div><span>FECHA</span>: {{ date( "d/m/Y", strtotime( $purchase_order->date_order )) }}</div>
-        <div><span>APROBADO POR</span>: {{ ( $purchase_order->approved_user !== null ) ? $purchase_order->approved_user->name:'No tiene aprobador' }}</div>
-        <div><span>CONDICIÓN PAGO</span>: {{ ($purchase_order->payment_condition !== null) ? $purchase_order->payment_condition:'No tiene condición' }} </div>
-        <div><span>MONEDA</span>: {{ ($purchase_order->currency_order) === 'USD' ? 'DÓLARES':'SOLES' }} </div>
+        <div><span>RAZON SOCIAL</span>: SERMEIND FABRICACIONES INDUSTRIALES S.A.C</div>
+        <div><span>RUC</span>: 20540001384</div>
+        <div><span>DOMICILIO</span>: A.H. RAMIRO PRIALÉ MZ. 17 LTE. 01. LA ESPERANZA - TRUJILLO</div>
+        <div><span>TELÉFONO</span>: (+51) 998396337</div>
+        <div><span>CORREO</span>: KPAREDES@SERMEIND.COM</div>
+
+    </div>
+    <br><br><br><br><br><br><br><br>
+    <div id="project">
+        <div><strong><span>EMITIDO A</span></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
+        <div><span>RAZON SOCIAL</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->business_name : 'No tiene proveedor' }}</div>
+        <div><span>RUC</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->RUC : 'No tiene ruc' }}</div>
+        <div><span>DOMICILIO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->address : 'No tiene localización' }} </div>
+        <div><span>TELÉFONO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->phone : 'No tiene telefono' }} </div>
+        <div><span>CORREO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->email : 'No tiene email' }} </div>
+        <div><span>COTIZACIÓN</span>: {{ ($purchase_order->quote_supplier !== null) ? $purchase_order->quote_supplier : 'No tiene cotización' }} </div>
 
     </div>
 
@@ -190,7 +232,7 @@
 
 <main>
 
-    <table>
+    <table id="table">
         <thead>
         <tr>
             <th class="desc">DESCRIPCIÓN</th>

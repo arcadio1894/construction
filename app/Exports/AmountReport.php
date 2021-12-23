@@ -1,0 +1,22 @@
+<?php
+
+namespace App\Exports;
+
+use Illuminate\Contracts\View\View;
+use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\FromView;
+
+class AmountReport implements FromView
+{
+    public $materials;
+
+    public function __construct(array $materials)
+    {
+        $this->materials = $materials;
+    }
+
+    public function view(): View
+    {
+        return view('exports.excelAmount', ['materials'=>$this->materials]);
+    }
+}

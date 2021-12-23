@@ -123,6 +123,11 @@ class Material extends Model
         return $this->hasMany('App\DefaultItem');
     }
 
+    public function items()
+    {
+        return $this->hasMany('App\Item');
+    }
+
     public function detailEntries()
     {
         return $this->hasMany('App\DetailEntry');

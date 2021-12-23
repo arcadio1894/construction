@@ -1090,6 +1090,7 @@
                     <a href="#" class="card-link">Another link</a>
                 </div>--}}
             </div>
+            @yield('content-report')
         </section>
         <!-- /.content -->
     </div>

@@ -755,6 +755,11 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_invoice');
         Route::post('invoice/update', 'InvoiceController@updateInvoice')->name('invoice.update')
             ->middleware('permission:update_invoice');
+
+        // REPORT
+        Route::get('report/amount/items', 'ReportController@amountInWarehouse');
+        Route::get('report/excel/amount/stock', 'ReportController@excelAmountStock')->name('report.excel.amount');
+
     });
 });
 
