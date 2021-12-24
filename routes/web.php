@@ -760,6 +760,8 @@ Route::middleware('auth')->group(function (){
         Route::get('report/amount/items', 'ReportController@amountInWarehouse');
         Route::get('report/excel/amount/stock', 'ReportController@excelAmountStock')->name('report.excel.amount');
         Route::get('report/excel/bd/materials', 'ReportController@excelBDMaterials')->name('report.excel.materials');
+        Route::get('report/chart/quote/raised', 'ReportController@chartQuotesDollarsSoles')->name('report.chart.quote.raised');
+        Route::get('report/chart/quote/view/{date_start}/{date_end}', 'ReportController@chartQuotesDollarsSolesView')->name('report.chart.quote.raised.view');
 
     });
 });
