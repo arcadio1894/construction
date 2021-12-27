@@ -238,7 +238,7 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <select name="location" class="form-control location select2" data-location style="width: 100%;">
+                                            <select name="location" class="form-control form-control-sm location select2" data-location style="width: 100%;">
                                                 <option></option>
                                             </select>
                                         </div>

@@ -154,7 +154,7 @@
 @endsection
 
 @section('content-report')
-    <div class="row">
+   {{-- <div class="row">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header border-0">
@@ -299,6 +299,49 @@
         </div>
     </div>
 
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Egresos VS Ingresos en Dólares</h3>
+                        <a href="#" id="report_expenses_income_dollars">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg">820</span>
+                            <span>Visitors Over Time</span>
+                        </p>
+                        <p class="ml-auto d-flex flex-column text-right">
+                    <span class="text-success">
+                      <i class="fas fa-arrow-up"></i> 12.5%
+                    </span>
+                            <span class="text-muted">Since last week</span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="visitors-chart" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                  <span class="mr-2">
+                    <i class="fas fa-square text-primary"></i> This Week
+                  </span>
+
+                        <span>
+                    <i class="fas fa-square text-gray"></i> Last Week
+                  </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+
     <div id="modalViewReportDollars" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-dialog-scrollable modal-lg">
             <div class="modal-content">
@@ -435,13 +478,12 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" id="btn-saveGroupItems" class="btn btn-outline-primary">Agregar</button>
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
                 </div>
 
             </div>
         </div>
-    </div>
+    </div>--}}
 @endsection
 
 @section('scripts')

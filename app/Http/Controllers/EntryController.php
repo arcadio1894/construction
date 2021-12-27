@@ -805,34 +805,41 @@ class EntryController extends Controller
                     //dd($detail_entry->material->materialType);
                     if ( isset($detail_entry->material->typeScrap) )
                     {
-                        Item::create([
-                            'detail_entry_id' => $detail_entry->id,
-                            'material_id' => $detail_entry->material_id,
-                            'code' => $this->generateRandomString(20),
-                            'length' => $detail_entry->material->typeScrap->length,
-                            'width' => $detail_entry->material->typeScrap->width,
-                            'weight' => 0,
-                            'price' => $items[$i]->price,
-                            'percentage' => 1,
-                            'typescrap_id' => $detail_entry->material->typeScrap->id,
-                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
-                            'state' => 'good',
-                            'state_item' => 'entered'
-                        ]);
+                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        {
+                            Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $this->generateRandomString(20),
+                                'length' => $detail_entry->material->typeScrap->length,
+                                'width' => $detail_entry->material->typeScrap->width,
+                                'weight' => 0,
+                                'price' => $items[$i]->price,
+                                'percentage' => 1,
+                                'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                                'state' => 'good',
+                                'state_item' => 'entered'
+                            ]);
+                        }
+
                     } else {
-                        Item::create([
-                            'detail_entry_id' => $detail_entry->id,
-                            'material_id' => $detail_entry->material_id,
-                            'code' => $this->generateRandomString(20),
-                            'length' => 0,
-                            'width' => 0,
-                            'weight' => 0,
-                            'price' => $items[$i]->price,
-                            'percentage' => 1,
-                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
-                            'state' => 'good',
-                            'state_item' => 'entered'
-                        ]);
+                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        {
+                            Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $this->generateRandomString(20),
+                                'length' => 0,
+                                'width' => 0,
+                                'weight' => 0,
+                                'price' => $items[$i]->price,
+                                'percentage' => 1,
+                                'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
+                                'state' => 'good',
+                                'state_item' => 'entered'
+                            ]);
+                        }
                     }
                 } else {
                     $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
@@ -848,34 +855,40 @@ class EntryController extends Controller
                     //dd($detail_entry->material->materialType);
                     if ( isset($detail_entry->material->typeScrap) )
                     {
-                        Item::create([
-                            'detail_entry_id' => $detail_entry->id,
-                            'material_id' => $detail_entry->material_id,
-                            'code' => $this->generateRandomString(20),
-                            'length' => $detail_entry->material->typeScrap->length,
-                            'width' => $detail_entry->material->typeScrap->width,
-                            'weight' => 0,
-                            'price' => $price,
-                            'percentage' => 1,
-                            'typescrap_id' => $detail_entry->material->typeScrap->id,
-                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
-                            'state' => 'good',
-                            'state_item' => 'entered'
-                        ]);
+                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        {
+                            Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $this->generateRandomString(20),
+                                'length' => $detail_entry->material->typeScrap->length,
+                                'width' => $detail_entry->material->typeScrap->width,
+                                'weight' => 0,
+                                'price' => $price,
+                                'percentage' => 1,
+                                'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
+                                'state' => 'good',
+                                'state_item' => 'entered'
+                            ]);
+                        }
                     } else {
-                        Item::create([
-                            'detail_entry_id' => $detail_entry->id,
-                            'material_id' => $detail_entry->material_id,
-                            'code' => $this->generateRandomString(20),
-                            'length' => 0,
-                            'width' => 0,
-                            'weight' => 0,
-                            'price' => $price,
-                            'percentage' => 1,
-                            'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
-                            'state' => 'good',
-                            'state_item' => 'entered'
-                        ]);
+                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        {
+                            Item::create([
+                                'detail_entry_id' => $detail_entry->id,
+                                'material_id' => $detail_entry->material_id,
+                                'code' => $this->generateRandomString(20),
+                                'length' => 0,
+                                'width' => 0,
+                                'weight' => 0,
+                                'price' => $price,
+                                'percentage' => 1,
+                                'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
+                                'state' => 'good',
+                                'state_item' => 'entered'
+                            ]);
+                        }
                     }
                 }
 
@@ -904,15 +917,24 @@ class EntryController extends Controller
     {
         $order = Entry::where('purchase_order', $order)
             ->first();
-        $details = DetailEntry::where('entry_id', $order->id)->get();
-        foreach ($details as $detail)
+        if ( isset($order) )
         {
-            if ($detail->isComplete == false)
+            $details = DetailEntry::where('entry_id', $order->id)->get();
+            if (isset($details))
             {
-                return 0;
+                foreach ($details as $detail)
+                {
+                    if ($detail->isComplete == false)
+                    {
+                        return 0;
+                    }
+                }
+                return 1;
             }
+            return 2;
         }
-        return 1;
+        return 2;
+
     }
 
 

@@ -11,6 +11,9 @@ $(function () {
 
     var $salesChart = $('#sales-chart');
     var $salesChart2 = $('#sales-chart2');
+    var $expensesChart = $('#expenses-income');
+    var $expensesChart2 = $('#expenses-income2');
+    var $expensesChart3 = $('#expenses-income3');
 
     $.get( "/dashboard/report/chart/quote/raised", function( data ) {
         console.log(data);
@@ -135,4 +138,181 @@ $(function () {
         $('#percentage_dollars').html(data.percentage_dollars + '%');
         $('#percentage_soles').html(data.percentage_soles + '%');
     });
+
+    /*$.get( "#", function( data ) {
+        console.log(data);
+
+        var exp_inc_chart  = new Chart($expensesChart, {
+            type   : 'bar',
+            data   : {
+                labels  : data.monthsNames,
+                datasets: [
+                    {
+                        backgroundColor: '#007bff',
+                        borderColor    : '#007bff',
+                        data           : data.$dollars
+                    },
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips           : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                hover              : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                legend             : {
+                    display: false
+                },
+                scales             : {
+                    yAxes: [{
+                        // display: false,
+                        gridLines: {
+                            display      : true,
+                            lineWidth    : '4px',
+                            color        : 'rgba(0, 0, 0, .2)',
+                            zeroLineColor: 'transparent'
+                        },
+                        ticks    : $.extend({
+                            beginAtZero: true,
+
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                if (value >= 1000) {
+                                    value /= 1000;
+                                    value += 'k';
+                                }
+                                return '$ ' + value;
+                            }
+                        }, ticksStyle)
+                    }],
+                    xAxes: [{
+                        display  : true,
+                        gridLines: {
+                            display: false
+                        },
+                        ticks    : ticksStyle
+                    }]
+                }
+            }
+        });
+        var exp_inc_chart2 = new Chart($expensesChart2, {
+            type   : 'bar',
+            data   : {
+                labels  : data.monthsNames,
+                datasets: [
+                    {
+                        backgroundColor: '#ced4da',
+                        borderColor    : '#ced4da',
+                        data           : data.soles
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips           : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                hover              : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                legend             : {
+                    display: false
+                },
+                scales             : {
+                    yAxes: [{
+                        // display: false,
+                        gridLines: {
+                            display      : true,
+                            lineWidth    : '4px',
+                            color        : 'rgba(0, 0, 0, .2)',
+                            zeroLineColor: 'transparent'
+                        },
+                        ticks    : $.extend({
+                            beginAtZero: true,
+
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                if (value >= 1000) {
+                                    value /= 1000;
+                                    value += 'k'
+                                }
+                                return 'S/. ' + value
+                            }
+                        }, ticksStyle)
+                    }],
+                    xAxes: [{
+                        display  : true,
+                        gridLines: {
+                            display: false
+                        },
+                        ticks    : ticksStyle
+                    }]
+                }
+            }
+        });
+        var exp_inc_chart3 = new Chart($expensesChart3, {
+            type   : 'bar',
+            data   : {
+                labels  : data.monthsNames,
+                datasets: [
+                    {
+                        backgroundColor: '#ced4da',
+                        borderColor    : '#ced4da',
+                        data           : data.soles
+                    }
+                ]
+            },
+            options: {
+                maintainAspectRatio: false,
+                tooltips           : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                hover              : {
+                    mode     : mode,
+                    intersect: intersect
+                },
+                legend             : {
+                    display: false
+                },
+                scales             : {
+                    yAxes: [{
+                        // display: false,
+                        gridLines: {
+                            display      : true,
+                            lineWidth    : '4px',
+                            color        : 'rgba(0, 0, 0, .2)',
+                            zeroLineColor: 'transparent'
+                        },
+                        ticks    : $.extend({
+                            beginAtZero: true,
+
+                            // Include a dollar sign in the ticks
+                            callback: function (value, index, values) {
+                                if (value >= 1000) {
+                                    value /= 1000;
+                                    value += 'k'
+                                }
+                                return 'S/. ' + value
+                            }
+                        }, ticksStyle)
+                    }],
+                    xAxes: [{
+                        display  : true,
+                        gridLines: {
+                            display: false
+                        },
+                        ticks    : ticksStyle
+                    }]
+                }
+            }
+        });
+
+    });*/
 });

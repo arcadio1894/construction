@@ -350,4 +350,142 @@ class ReportController extends Controller
         ]);
 
     }
+
+    public function chartExpensesIncomeDollarsSoles()
+    {
+        $meses = array("ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC");
+
+        $current_date = CarbonImmutable::now('America/Lima');
+        $current_month = $current_date->format('m');
+        $current_year = $current_date->format('Y');
+        //dump($current_date);
+        //dump($current_month);
+        //dump($current_year);
+        $arrayMonths = [];
+        $arrayYears = [];
+        $arrayMonthsNames = [];
+        for ( $i = 0; $i<=6; $i++ )
+        {
+            if ( (int)$current_month - $i <= 0 )
+            {
+                $mes = (int)$current_month - $i + 12;
+                array_push($arrayMonths, (int)$mes);
+                array_push($arrayYears, $current_year - 1);
+                array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
+
+            } else {
+                array_push($arrayYears, $current_year);
+                array_push($arrayMonths, (int)$current_month - $i);
+                array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
+            }
+        }
+        //dump($arrayMonths);
+        //dump($arrayMonthsNames);
+        $total_dollars = 0;
+        $total_soles = 0;
+
+        $total_quantity = 0;
+        $dollars_quantity = 0;
+        $soles_quantity = 0;
+
+        $amounts_dollars = [];
+        $amounts_soles = [];
+
+        // Ingresos
+        for ( $i=0; $i<count($arrayMonths); $i++ )
+        {
+            $quotes = Quote::whereNotIn('state', ['expired', 'canceled'])
+                ->where('raise_status', 1)
+                ->whereMonth('date_quote', $arrayMonths[$i])
+                ->whereYear('date_quote', $arrayYears[$i])
+                ->get();
+
+            $total_quantity += $quotes->count();
+
+            foreach ( $quotes as $quote )
+            {
+                if ($quote->currency_invoice === 'PEN')
+                {
+                    //dump((float) $quote->subtotal_rent);
+                    $total_soles += (float) $quote->subtotal_rent;
+                    $soles_quantity += 1;
+                } else {
+                    //dump((float) $quote->subtotal_rent);
+                    $total_dollars += (float) $quote->subtotal_rent;
+                    $dollars_quantity += 1;
+                }
+            }
+
+            array_push($amounts_dollars, $total_dollars);
+            array_push($amounts_soles, $total_soles);
+
+            $total_dollars = 0;
+            $total_soles = 0;
+        }
+
+        // Egresos
+        $expense_soles = 0;
+        $expense_soles_quantity = 0;
+        $expense_dollars = 0;
+        $expense_dollars_quantity = 0;
+
+        $amounts_dollars = [];
+        $amounts_soles = [];
+
+        for ( $i=0; $i<count($arrayMonths); $i++ )
+        {
+            $entries = Entry::with('details')
+                ->whereMonth('date_entry', $arrayMonths[$i])
+                ->whereYear('date_entry', $arrayYears[$i])
+                ->get();
+
+            foreach ( $entries as $entry )
+            {
+                if ($entry->currency_invoice === 'PEN')
+                {
+                    //dump((float) $quote->subtotal_rent);
+                    $expense_soles += (float) $quote->subtotal_rent;
+                    $expense_soles_quantity += 1;
+                } else {
+                    //dump((float) $quote->subtotal_rent);
+                    $total_dollars += (float) $quote->subtotal_rent;
+                    $dollars_quantity += 1;
+                }
+            }
+
+            array_push($amounts_dollars, $total_dollars);
+            array_push($amounts_soles, $total_soles);
+
+            $total_dollars = 0;
+            $total_soles = 0;
+        }
+        //dump($amounts_dollars);
+        //dump($amounts_soles);
+        $months = array_reverse($arrayMonths);
+        $monthsNames = array_reverse($arrayMonthsNames);
+        $dollars = array_reverse($amounts_dollars);
+        $soles = array_reverse($amounts_soles);
+        //dump($months);
+        //dump($monthsNames);
+        //dump($dollars);
+        //dump($soles);
+
+        $percentage_dollars = round((($dollars_quantity/$total_quantity)*100), 0);
+        $percentage_soles = round((($soles_quantity/$total_quantity)*100), 0);
+
+        $sum_dollars = array_sum($dollars);
+        $sum_soles = array_sum($soles);
+
+        return response()->json([
+            'months' => $months,
+            'monthsNames' => $monthsNames,
+            'income_dollars' => $dollars,
+            'income_soles' => $soles,
+            'percentage_dollars' => $percentage_dollars,
+            'percentage_soles' => $percentage_soles,
+            'sum_dollars' => $sum_dollars,
+            'sum_soles' => $sum_soles
+        ]);
+
+    }
 }

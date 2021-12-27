@@ -82,8 +82,10 @@ $(document).ready(function () {
                         var text = '';
                         if (data == 1) {
                             text = text + 'Completa';
-                        } else {
+                        } else if (data == 0) {
                             text = text + 'Incompleta';
+                        } else if (data == 2) {
+                            text = text + 'No hay datos';
                         }
                         $(currentCell).text(text);
                     });
@@ -94,26 +96,42 @@ $(document).ready(function () {
                 title: 'Acciones',
                 wrap: true,
                 sortable:false,
-                "render": function (item)
+                "render": function (item, type, full, meta)
                 {
-                    var text = '';
-                    if ( $.inArray('list_orderPurchaseNormal', $permissions) !== -1 ) {
-                        if (item.type === 'e')
-                        {
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/express/'+item.id+
-                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
-                        } else {
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/normal/'+item.id+
-                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
+
+                    var currentCell = $("#dynamic-table").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
+                    $.ajax({
+                        url: '/dashboard/get/order/complete/'+item.code
+                    }).done(function (data) {
+                        var text = '';
+                        if ( $.inArray('list_orderPurchaseNormal', $permissions) !== -1 ) {
+                            if (item.type === 'e')
+                            {
+                                text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/express/'+item.id+
+                                    '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
+                            } else {
+                                text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/normal/'+item.id+
+                                    '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
+                            }
                         }
-                    }
+                        if (data == 1) {
+                            text = text + '';
 
-                    if ( $.inArray('create_entryPurchase', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
-                            '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
-                    }
+                        } else if ( data == 0 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                        } else if (data == 2) {
+                            text = text + '';
+                        }
+                        $(currentCell).html(text);
+                    });
+                    return null;
 
-                    return text;
+
+                    /*if ( $.inArray('create_entryPurchase', $permissions) !== -1 ) {
+                        }
+*/
+                    //return text;
                 }
             },
 
