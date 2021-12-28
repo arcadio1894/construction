@@ -762,6 +762,10 @@ Route::middleware('auth')->group(function (){
         Route::get('report/excel/bd/materials', 'ReportController@excelBDMaterials')->name('report.excel.materials');
         Route::get('report/chart/quote/raised', 'ReportController@chartQuotesDollarsSoles')->name('report.chart.quote.raised');
         Route::get('report/chart/quote/view/{date_start}/{date_end}', 'ReportController@chartQuotesDollarsSolesView')->name('report.chart.quote.raised.view');
+        Route::get('report/chart/expense/income', 'ReportController@chartExpensesIncomeDollarsSoles')->name('report.chart.income.expense');
+        Route::get('report/chart/income/expense/view/{date_start}/{date_end}', 'ReportController@chartExpensesIncomeDollarsSolesView')->name('report.chart.income.expense.view');
+        Route::get('report/chart/utilities', 'ReportController@chartUtilitiesDollarsSoles')->name('report.chart.utilities');
+        Route::get('report/chart/utilities/view/{date_start}/{date_end}', 'ReportController@chartUtilitiesDollarsSolesView')->name('report.chart.utilities.view');
 
     });
 });

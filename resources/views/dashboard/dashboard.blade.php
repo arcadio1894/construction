@@ -154,7 +154,7 @@
 @endsection
 
 @section('content-report')
-   {{-- <div class="row">
+    <div class="row">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header border-0">
@@ -311,30 +311,203 @@
                 <div class="card-body">
                     <div class="d-flex">
                         <p class="d-flex flex-column">
-                            <span class="text-bold text-lg">820</span>
-                            <span>Visitors Over Time</span>
+                            <span class="text-bold text-lg"><i id="arrow_balance_general_dollars" class="fas fa-arrow-up"></i><span id="balance_general_dollars">0.00</span></span>
+                            <span>Balance general</span>
                         </p>
-                        <p class="ml-auto d-flex flex-column text-right">
-                    <span class="text-success">
-                      <i class="fas fa-arrow-up"></i> 12.5%
-                    </span>
-                            <span class="text-muted">Since last week</span>
+                        {{--<p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
+                            </span>
+                            <span class="text-muted">Balance general</span>
+                        </p>--}}
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="expenses-income" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Ingresos
+                        </span>
+
+                        <span>
+                            <i class="fas fa-square text-gray"></i> Egresos
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Egresos VS Ingresos en Soles</h3>
+                        <a href="#" id="report_expenses_income_soles">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg"><i id="arrow_balance_general_soles" class="fas fa-arrow-up"></i><span id="balance_general_soles">0.00</span></span>
+                            <span>Balance general</span>
+                        </p>
+                        {{--<p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
+                            </span>
+                            <span class="text-muted">Balance general</span>
+                        </p>--}}
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="expenses-income2" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Ingresos
+                        </span>
+
+                        <span>
+                            <i class="fas fa-square text-gray"></i> Egresos
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Egresos VS Ingresos en General</h3>
+                        <a href="#" id="report_expenses_income_mix">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg"><i id="arrow_balance_general_mix" class="fas fa-arrow-up"></i><span id="balance_general_mix">0.00</span></span>
+                            <span>Balance general</span>
+                        </p>
+                        {{--<p class="ml-auto d-flex flex-column text-right">
+                            <span class="text-success">
+                                <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
+                            </span>
+                            <span class="text-muted">Balance general</span>
+                        </p>--}}
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="expenses-income3" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Ingresos
+                        </span>
+
+                        <span>
+                            <i class="fas fa-square text-gray"></i> Egresos
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Utilidades en Dólares</h3>
+                        <a href="#" id="report_utilities_dollars">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg"><i id="arrow_utilities_dollars" class="fas fa-arrow-up"></i><span id="utilities_dollars">0.00</span></span>
+                            <span>Balance general</span>
                         </p>
                     </div>
                     <!-- /.d-flex -->
 
                     <div class="position-relative mb-4">
-                        <canvas id="visitors-chart" height="200"></canvas>
+                        <canvas id="utilities_d" height="200"></canvas>
                     </div>
 
                     <div class="d-flex flex-row justify-content-end">
-                  <span class="mr-2">
-                    <i class="fas fa-square text-primary"></i> This Week
-                  </span>
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Utilidades
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Utilidades en Soles</h3>
+                        <a href="#" id="report_utilities_soles">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg"><i id="arrow_utilities_soles" class="fas fa-arrow-up"></i><span id="utilities_soles">0.00</span></span>
+                            <span>Balance general</span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
 
-                        <span>
-                    <i class="fas fa-square text-gray"></i> Last Week
-                  </span>
+                    <div class="position-relative mb-4">
+                        <canvas id="utilities_s" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-gray"></i> Utilidades
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <!-- /.card -->
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-header border-0">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="card-title">Utilidades en General</h3>
+                        <a href="#" id="report_utilities_mix">Ver reporte detallado</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="d-flex">
+                        <p class="d-flex flex-column">
+                            <span class="text-bold text-lg"><i id="arrow_utilities_mix" class="fas fa-arrow-up"></i><span id="utilities_mix">0.00</span></span>
+                            <span>Balance general</span>
+                        </p>
+                    </div>
+                    <!-- /.d-flex -->
+
+                    <div class="position-relative mb-4">
+                        <canvas id="utilities_m" height="200"></canvas>
+                    </div>
+
+                    <div class="d-flex flex-row justify-content-end">
+                        <span class="mr-2">
+                            <i class="fas fa-square text-primary"></i> Utilidades
+                        </span>
                     </div>
                 </div>
             </div>
@@ -380,7 +553,7 @@
                                 <div class="card-body">
                                     <div class="d-flex">
                                         <p class="d-flex flex-column">
-                                            <span class="text-bold text-lg" id="total_dollars_view_d">S/. 0.00</span>
+                                            <span class="text-bold text-lg" id="total_dollars_view_d">$. 0.00</span>
                                             <span>Total de cotizaciones</span>
                                         </p>
                                         <p class="ml-auto d-flex flex-column text-right">
@@ -407,7 +580,6 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
-                    <button type="submit" id="btn-saveGroupItems" class="btn btn-outline-primary">Agregar</button>
                 </div>
 
             </div>
@@ -483,7 +655,428 @@
 
             </div>
         </div>
-    </div>--}}
+    </div>
+
+    <div id="modalViewReportIncomeExpenseDollars" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Ingresos VS Egresos en dólares</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startIncomeExpenseDollars" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endIncomeExpenseDollars" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportIncomeExpenseDollars" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Ingresos VS Egresos en Dólares</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_balance_general_view_dollars" class="fas fa-arrow-up"></i><span id="balance_general_view_dollars">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                        {{--<p class="ml-auto d-flex flex-column text-right">
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
+                                            </span>
+                                            <span class="text-muted">Balance general</span>
+                                        </p>--}}
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="expenses-income-view-dollars" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-primary"></i> Ingresos
+                                        </span>
+
+                                        <span>
+                                            <i class="fas fa-square text-gray"></i> Egresos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalViewReportIncomeExpenseSoles" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Ingresos VS Egresos en soles</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startIncomeExpenseSoles" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endIncomeExpenseSoles" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportIncomeExpenseSoles" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Ingresos VS Egresos en Soles</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_balance_general_view_soles" class="fas fa-arrow-up"></i><span id="balance_general_view_soles">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                        {{--<p class="ml-auto d-flex flex-column text-right">
+                                            <span class="text-success">
+                                                <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
+                                            </span>
+                                            <span class="text-muted">Balance general</span>
+                                        </p>--}}
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="expenses-income-view-soles" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-primary"></i> Ingresos
+                                        </span>
+
+                                        <span>
+                                            <i class="fas fa-square text-gray"></i> Egresos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalViewReportIncomeExpenseMix" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver reporte detallado en general</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startIncomeExpenseMix" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endIncomeExpenseMix" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportIncomeExpenseMix" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Ingresos VS Egresos en general</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_balance_general_view_mix" class="fas fa-arrow-up"></i><span id="balance_general_view_mix">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="expenses-income-view-mix" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-primary"></i> Ingresos
+                                        </span>
+
+                                        <span>
+                                            <i class="fas fa-square text-gray"></i> Egresos
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalViewReportUtilitiesDollars" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Utilidades en dólares</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startUtilitiesDollars" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endUtilitiesDollars" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportUtilitiesDollars" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Utilidades en Dólares</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_utilities_view_dollars" class="fas fa-arrow-up"></i><span id="utilities_view_dollars">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="utilities-view-dollars" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-primary"></i> Utilidades
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalViewReportUtilitiesSoles" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Utilidades en soles</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startUtilitiesSoles" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endUtilitiesSoles" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportUtilitiesSoles" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Utilidades en Soles</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_utilities_view_soles" class="fas fa-arrow-up"></i><span id="utilities_view_soles">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="utilities-view-soles" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-gray"></i> Utilidades
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalViewReportUtilitiesMix" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-scrollable modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Utilidades en General</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong> Seleccione un rango de fechas: </strong>
+                        </div>
+                        <div class="col-md-12" id="sandbox-container">
+                            <div class="input-daterange input-group" id="datepicker">
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="startUtilitiesMix" name="start">
+                                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                <input type="text" class="form-control form-control-sm date-range-filter" id="endUtilitiesMix" name="end">
+                            </div>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-4 offset-4">
+                            <button type="button" id="btnViewReportUtilitiesMix" class="btn btn-outline-success btn-block">Ver grafico</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-lg-10 offset-1">
+                            <div class="card">
+                                <div class="card-header border-0">
+                                    <div class="d-flex justify-content-between">
+                                        <h3 class="card-title">Utilidades en General</h3>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <div class="d-flex">
+                                        <p class="d-flex flex-column">
+                                            <span class="text-bold text-lg"><i id="arrow_utilities_view_mix" class="fas fa-arrow-up"></i><span id="utilities_view_mix">0.00</span></span>
+                                            <span>Balance general</span>
+                                        </p>
+                                    </div>
+                                    <!-- /.d-flex -->
+
+                                    <div class="position-relative mb-4">
+                                        <canvas id="utilities-view-mix" height="200"></canvas>
+                                    </div>
+
+                                    <div class="d-flex flex-row justify-content-end">
+                                        <span class="mr-2">
+                                            <i class="fas fa-square text-primary"></i> Utilidades
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @section('scripts')
