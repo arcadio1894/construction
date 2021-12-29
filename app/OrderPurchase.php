@@ -20,7 +20,8 @@ class OrderPurchase extends Model
         'total',
         'observation',
         'type',
-        'quote_supplier'
+        'quote_supplier',
+        'regularize'
     ];
 
     public function supplier()

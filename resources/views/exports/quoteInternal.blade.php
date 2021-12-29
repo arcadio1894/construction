@@ -208,7 +208,7 @@
         <br>
         <h2>EQUIPO: {{ $equipment->description }}</h2>
         <div id="notices">
-            <div class="notice">DETALLES: {{ $equipment->detail }}</div>
+            <div class="notice">DETALLES: {!! nl2br($equipment->detail) !!}</div>
             <div class="notice">CANTIDAD: {{ $equipment->quantity }}</div>
         </div>
         <br>

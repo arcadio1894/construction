@@ -330,7 +330,7 @@ $(document).ready(function () {
         } );
     } );*/
 
-    /*$(document).on('click', '[data-column]', function (e) {
+    $(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
 
         // Get the column API object
@@ -338,7 +338,7 @@ $(document).ready(function () {
 
         // Toggle the visibility
         column.visible( ! column.visible() );
-    } );*/
+    } );
     
     $(".select2").select2({
         width : 'resolve',

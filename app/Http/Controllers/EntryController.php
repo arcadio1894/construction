@@ -209,9 +209,9 @@ class EntryController extends Controller
                                 ]);
                             }
                         } else {
-                            $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                            $price = ($detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
                             $materialS = Material::find($detail_entry->material_id);
-                            if ( $materialS->price < $items[$i]->price )
+                            if ( $materialS->unit_price < $items[$i]->price )
                             {
                                 $materialS->unit_price = $items[$i]->price;
                                 $materialS->save();
@@ -855,9 +855,9 @@ class EntryController extends Controller
                         }
                     }
                 } else {
-                    $price = ($detail_entry->material->price > (float)$items[$i]->price) ? $detail_entry->material->price : $items[$i]->price;
+                    $price = ($detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
                     $materialS = Material::find($detail_entry->material_id);
-                    if ( $materialS->price < $items[$i]->price )
+                    if ( $materialS->unit_price < $price )
                     {
                         $materialS->unit_price = $items[$i]->price;
                         $materialS->save();

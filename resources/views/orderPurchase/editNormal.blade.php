@@ -126,6 +126,10 @@
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
                                     <input id="btn-currency" {{ ($order->currency_order === 'PEN') ? 'checked':''}} type="checkbox" name="currency_order" data-bootstrap-switch data-off-color="primary" data-on-text="SOLES" data-off-text="DOLARES" data-on-color="success">
                                 </div>
+                                <div class="form-group">
+                                    <label for="btn-regularize"> Regularización <span class="right badge badge-danger">(*)</span></label> <br>
+                                    <input id="btn-regularize" {{ ($order->regularize === 'r') ? 'checked':''}} type="checkbox" name="regularize_order" data-bootstrap-switch data-off-color="primary" data-on-text="SI" data-off-text="NO" data-on-color="success">
+                                </div>
                             </div>
                         </div>
 

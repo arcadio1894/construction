@@ -217,7 +217,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
             $orderPurchase->approved_by = ($request->has('approved_by')) ? $request->get('approved_by') : null;
             $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
-            $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
+            $orderPurchase->currency_order = ($request->get('state') === 'true') ? 'PEN': 'USD';
             $orderPurchase->observation = $request->get('observation');
             $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');
@@ -512,7 +512,9 @@ class OrderPurchaseController extends Controller
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
-                'type' => 'n'
+                'type' => 'n',
+                'regularize' => ($request->has('regularize_order')) ? 'r':'nr',
+
             ]);
 
             $items = json_decode($request->get('items'));
@@ -720,7 +722,8 @@ class OrderPurchaseController extends Controller
             $orderPurchase->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
             $orderPurchase->approved_by = ($request->has('approved_by')) ? $request->get('approved_by') : null;
             $orderPurchase->payment_condition = ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '';
-            $orderPurchase->currency_order = ($request->get('state') === true) ? 'PEN': 'USD';
+            $orderPurchase->currency_order = ($request->get('state') === 'true') ? 'PEN': 'USD';
+            $orderPurchase->regularize = ($request->get('regularize') === 'true') ? 'r': 'nr';
             $orderPurchase->observation = $request->get('observation');
             $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');

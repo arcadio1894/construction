@@ -701,7 +701,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/update/detail/order/purchase/express/{idDetail}', 'OrderPurchaseController@updateDetail')
             ->middleware('permission:update_orderPurchaseExpress');
         Route::get('ver/orden/compra/express/{id}', 'OrderPurchaseController@showOrderPurchaseExpress')
-            ->middleware('permission:create_orderPurchaseExpress');
+            ->middleware('permission:list_orderPurchaseExpress');
         Route::post('destroy/order/purchase/express/{id}', 'OrderPurchaseController@destroyOrderPurchaseExpress')
             ->middleware('permission:update_orderPurchaseExpress');
 
@@ -725,7 +725,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/update/detail/order/purchase/normal/{idDetail}', 'OrderPurchaseController@updateNormalDetail')
             ->middleware('permission:update_orderPurchaseNormal');
         Route::get('ver/orden/compra/normal/{id}', 'OrderPurchaseController@showOrderPurchaseNormal')
-            ->middleware('permission:create_orderPurchaseNormal');
+            ->middleware('permission:list_orderPurchaseNormal');
         Route::post('destroy/order/purchase/normal/{id}', 'OrderPurchaseController@destroyOrderPurchaseNormal')
             ->middleware('permission:destroy_orderPurchaseNormal');
 
