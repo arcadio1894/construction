@@ -134,4 +134,11 @@ class Material extends Model
     }
 
     protected $dates = ['deleted_at'];
+
+    public function toArray()
+    {
+        $array = parent::toArray();
+        $array['full_description'] = $this->full_description;
+        return $array;
+    }
 }

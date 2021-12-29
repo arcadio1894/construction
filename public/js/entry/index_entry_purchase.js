@@ -4,6 +4,7 @@ let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
 
+/*
 function format ( d ) {
     var mensaje = "";
     var detalles = d.details;
@@ -21,6 +22,7 @@ function format ( d ) {
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
 }
+*/
 
 $(document).ready(function () {
     $('#sandbox-container .input-daterange').datepicker({
@@ -39,12 +41,6 @@ $(document).ready(function () {
         },
         bAutoWidth: false,
         "aoColumns": [
-            {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },
             { data: 'referral_guide' },
             { data: 'purchase_order' },
             { data: 'invoice' },
@@ -84,7 +80,10 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
+                    return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                    //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
                 }
             },
             { data: 'total' },
@@ -95,6 +94,9 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
+                    text = text + ' <button data-detail="'+item.id+'" '+
+                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i></button>';
+
                     if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
                     }
@@ -250,7 +252,7 @@ $(document).ready(function () {
     // Array to track the ids of the details displayed rows
     var detailRows = [];
 
-    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var idx = $.inArray( tr.attr('id'), detailRows );
@@ -272,15 +274,15 @@ $(document).ready(function () {
             }
         }
     } );
-
+*/
     // On each draw, loop over the `detailRows` array and show any child rows
-    table.on( 'draw', function () {
+    /*table.on( 'draw', function () {
         $.each( detailRows, function ( i, id ) {
             $('#'+id+' td.details-control').trigger( 'click' );
         } );
-    } );
+    } );*/
 
-    $(document).on('click', '[data-column]', function (e) {
+    /*$(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
 
         // Get the column API object
@@ -288,7 +290,7 @@ $(document).ready(function () {
 
         // Toggle the visibility
         column.visible( ! column.visible() );
-    } );
+    } );*/
 
     $modalAddItems = $('#modalAddItems');
 
@@ -309,7 +311,7 @@ $(document).ready(function () {
         function( settings, data, dataIndex ) {
             var min  = $('#start').val();
             var max  = $('#end').val();
-            var createdAt = data[6]; // Our date column in the table
+            var createdAt = data[5]; // Our date column in the table
             var startDate   = moment(min, "DD/MM/YYYY");
             var endDate     = moment(max, "DD/MM/YYYY");
             var diffDate = moment(createdAt, "DD/MM/YYYY");
@@ -402,23 +404,28 @@ function cancelEntry() {
 }
 
 function showImage() {
-    var path = $(this).attr('src');
+    var path = $(this).data('src');
     $('#image-document').attr('src', path);
     $modalImage.modal('show');
 }
 
 function showItems() {
     $('#table-items').html('');
-    var detail_id = $(this).data('detail');
+    $('#table-details').html('');
+    var entry_id = $(this).data('detail');
     $.ajax({
-        url: "/dashboard/get/json/items/"+detail_id,
+        url: "/dashboard/get/json/items/"+entry_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            //
-            for (var i=0; i<json.length; i++)
+            for (var i=0; i<json.details.length; i++)
             {
-                renderTemplateItemDetail(json[i].id, json[i].material, json[i].code, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].location, json[i].state);
+                renderTemplateItemDetail(json.details[i].code, json.details[i].material, json.details[i].ordered_quantity, json.details[i].unit_price);
+                //$materials.push(json[i].material);
+            }
+            for (var j=0; j<json.items.length; j++)
+            {
+                renderTemplateItemItems(json.items[j].id, json.items[j].material, json.items[j].code, json.items[j].length, json.items[j].width, json.items[j].weight, json.items[j].price, json.items[j].location, json.items[j].state);
                 //$materials.push(json[i].material);
             }
 
@@ -427,7 +434,7 @@ function showItems() {
     $modalItems.modal('show');
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, weight, price, location, state) {
+function renderTemplateItemItems(id, material, code, length, width, weight, price, location, state) {
     var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
         (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
             'Indefinido';
@@ -442,6 +449,15 @@ function renderTemplateItemDetail(id, material, code, length, width, weight, pri
     clone.querySelector("[data-location]").innerHTML = location;
     clone.querySelector("[data-state]").innerHTML = status;
     $('#table-items').append(clone);
+}
+
+function renderTemplateItemDetail(code, material, quantity, price) {
+    var clone = activateTemplate('#template-detail');
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-price]").innerHTML = price;
+    $('#table-details').append(clone);
 }
 
 function addItems() {

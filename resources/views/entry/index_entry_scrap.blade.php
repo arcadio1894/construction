@@ -65,7 +65,6 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th></th>
                 <th>Código</th>
                 <th>Tipo de entrada</th>
                 <th>Fecha</th>
@@ -82,11 +81,33 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Listado de items</h4>
+                    <h4 class="modal-title">Listado de detalles e Items</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <div class="modal-body table-responsive">
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-details">
+
+                        </tbody>
+                        <template id="template-detail">
+                            <tr>
+                                <td data-code></td>
+                                <td data-material></td>
+                                <td data-quantity></td>
+                                <td data-price></td>
+                            </tr>
+                        </template>
+                    </table>
+                    <hr>
                     <table class="table table-head-fixed text-nowrap table-hover">
                         <thead>
                         <tr>
@@ -118,6 +139,7 @@
                             </tr>
                         </template>
                     </table>
+
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>

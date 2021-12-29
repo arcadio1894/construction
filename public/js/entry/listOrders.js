@@ -121,7 +121,8 @@ $(document).ready(function () {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
                                 '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
                         } else if (data == 2) {
-                            text = text + '';
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
                         }
                         $(currentCell).html(text);
                     });

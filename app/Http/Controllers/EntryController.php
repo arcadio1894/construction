@@ -466,7 +466,12 @@ class EntryController extends Controller
 
     public function getJsonEntriesPurchase()
     {
-        $entries = Entry::with('supplier')->with(['details' => function ($query) {
+        $entries = Entry::with('supplier')
+            ->where('entry_type', 'Por compra')
+            ->where('finance', false)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        /*$entries = Entry::with('supplier')->with(['details' => function ($query) {
                 $query->with('material')->with(['items' => function ($query) {
                     $query->where('state_item', 'entered')
                         ->with('typescrap')
@@ -477,7 +482,8 @@ class EntryController extends Controller
             }])
             ->where('entry_type', 'Por compra')
             ->where('finance', false)
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();*/
 
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
@@ -485,13 +491,18 @@ class EntryController extends Controller
 
     public function getJsonEntriesScrap()
     {
-        $entries = Entry::with(['details' => function ($query) {
+        $entries = Entry::where('entry_type', 'Retacería')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        /*$entries = Entry::with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered');
             }]);
         }])
             ->where('entry_type', 'Retacería')
-            ->get();
+            ->orderBy('created_at', 'desc')
+            ->get();*/
 
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
@@ -510,6 +521,7 @@ class EntryController extends Controller
         }])
             ->where('entry_type', 'Por compra')
             ->where('finance', false)
+            ->orderBy('created_at', 'desc')
             ->get();
 
         //dd(datatables($entries)->toJson());
@@ -695,6 +707,7 @@ class EntryController extends Controller
     public function getAllOrders()
     {
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
     }

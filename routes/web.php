@@ -513,7 +513,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/entries/purchase', 'EntryController@getJsonEntriesPurchase');
         Route::get('/get/entries/purchase', 'EntryController@getEntriesPurchase');
         Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap');
-        Route::get('/get/json/items/{detail_id}', 'ItemController@getJsonItemsDetail');
+        Route::get('/get/json/items/{entry_id}', 'ItemController@getJsonItemsEntry');
 
         Route::get('entrada/compra/editar/{entry}', 'EntryController@editEntryPurchase')->name('entry.purchase.edit')
             ->middleware('permission:update_entryPurchase');

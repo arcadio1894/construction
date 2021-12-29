@@ -235,21 +235,21 @@
     <table id="table">
         <thead>
         <tr>
-            <th class="desc">DESCRIPCIÓN</th>
-            <th>UNIDAD </th>
-            <th>PRECIO UNIT. </th>
-            <th>CANT.</th>
-            <th>TOTAL</th>
+            <th class="desc" style="width: 300px">DESCRIPCIÓN</th>
+            <th style="width: 60px">UNIDAD </th>
+            <th style="width: 60px">PRECIO UNIT. </th>
+            <th style="width: 60px">CANT.</th>
+            <th style="width: 80px">TOTAL</th>
         </tr>
         </thead>
         <tbody>
         @foreach( $purchase_order->details as $detail )
         <tr>
             <td class="desc">{{ $detail->material->full_description }}</td>
-            <td class="desc">{{ $detail->material->unitMeasure->name }}</td>
-            <td class="unit"> {{ $purchase_order->currency_order }} {{ number_format($detail->price, 2) }}</td>
-            <td class="qty">{{ $detail->quantity }}</td>
-            <td class="qty">{{ $purchase_order->currency_order }} {{ number_format($detail->price*$detail->quantity, 2) }}</td>
+            <td class="qty" style="text-align: center">{{ $detail->material->unitMeasure->name }}</td>
+            <td class="qty" style="text-align: center"> {{ $purchase_order->currency_order }} {{ number_format($detail->price, 2) }}</td>
+            <td class="qty" style="text-align: center">{{ $detail->quantity }}</td>
+            <td class="qty" style="text-align: center">{{ $purchase_order->currency_order }} {{ number_format($detail->price*$detail->quantity, 2) }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -260,7 +260,7 @@
         <tr>
             <td class="desc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td class="desc">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-            <td class="unit">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td class="qty">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <td class="qty">SUBTOTAL</td>
             <td class="total">{{ $purchase_order->currency_order }} {{ number_format((float)($purchase_order->total-$purchase_order->igv), 2) }}</td>
         </tr>

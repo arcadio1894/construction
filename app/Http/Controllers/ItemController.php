@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Entry;
 use App\Item;
 use Illuminate\Http\Request;
 
@@ -72,30 +73,47 @@ class ItemController extends Controller
         return $array;
     }
 
-    public function getJsonItemsDetail($detail)
+    public function getJsonItemsEntry($entry)
     {
-        $array = [];
-        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
-            ->where('detail_entry_id', $detail)
-            ->get();
-        foreach ( $items as $key => $item )
-        {
-            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
-            array_push($array,
+        $arrayItems = [];
+        $arrayDetails = [];
+
+        $entry = Entry::find($entry);
+        foreach ($entry->details as $detail) {
+
+            array_push($arrayDetails,
                 [
-                    'id'=> $key+1,
-                    'material' => $item->material->full_description,
-                    'code' => $item->code,
-                    'length' => $item->length,
-                    'width' => $item->width,
-                    'weight' => $item->weight,
-                    'price' => $item->material->unit_price,
-                    'location' => $l,
-                    'state' => $item->state,
+                    'id'=> $detail->id,
+                    'material' => $detail->material->full_description,
+                    'code' => $detail->material->code,
+                    'ordered_quantity' => $detail->ordered_quantity,
+                    'unit_price' => $detail->unit_price
                 ]);
+
+            $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
+                ->where('detail_entry_id', $detail->id)
+                ->get();
+            foreach ( $items as $key => $item )
+            {
+                $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+                array_push($arrayItems,
+                    [
+                        'id'=> $key+1,
+                        'material' => $item->material->full_description,
+                        'code' => $item->code,
+                        'length' => $item->length,
+                        'width' => $item->width,
+                        'weight' => $item->weight,
+                        'price' => $item->material->unit_price,
+                        'location' => $l,
+                        'state' => $item->state,
+                    ]);
+            }
         }
+
         //dd($array);
-        return json_encode($array);
+        return response()->json(['details' => $arrayDetails, 'items' => $arrayItems], 200);
+
     }
 
     public function getJsonItemsOutput($id_material)

@@ -1,3 +1,4 @@
+/*
 function format ( d ) {
     var subcategory = (d.subcategory===null) ? 'Ninguno':d.subcategory.name;
     var type = (d.material_type===null) ? 'Ninguno':d.material_type.name;
@@ -21,6 +22,7 @@ function format ( d ) {
         'Modelo: '+exampler+'<br>'+
         'Retacería: '+typescrap+'<br>';
 }
+*/
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
@@ -32,12 +34,6 @@ $(document).ready(function () {
         },
         bAutoWidth: false,
         "aoColumns": [
-            {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },
             { data: 'code' },
             { data: 'full_description' },
             { data: 'measure' },
@@ -52,7 +48,10 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
+                    return ' <button data-src="'+document.location.origin+ '/images/material/'+item.image+'" data-image="'+item.id+'" '+
+                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                    //return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
                 }
             },
             { data: 'category.name' },
@@ -157,7 +156,7 @@ $(document).ready(function () {
         "columnDefs": [
             {
                 "visible": false,
-                "targets": [ 3, 5, 6, 13, 14, 15, 16, 17, 18, 19 ]
+                "targets": [ 2, 4, 5, 12, 13, 14, 15, 16, 17, 18 ]
             }],
 
             select: {
@@ -299,9 +298,9 @@ $(document).ready(function () {
 
         } );
     // Array to track the ids of the details displayed rows
-    var detailRows = [];
+    //var detailRows = [];
 
-    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var idx = $.inArray( tr.attr('id'), detailRows );
@@ -323,15 +322,15 @@ $(document).ready(function () {
             }
         }
     } );
-
+*/
     // On each draw, loop over the `detailRows` array and show any child rows
-    table.on( 'draw', function () {
+    /*table.on( 'draw', function () {
         $.each( detailRows, function ( i, id ) {
             $('#'+id+' td.details-control').trigger( 'click' );
         } );
-    } );
+    } );*/
 
-    $(document).on('click', '[data-column]', function (e) {
+    /*$(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
 
         // Get the column API object
@@ -339,7 +338,7 @@ $(document).ready(function () {
 
         // Toggle the visibility
         column.visible( ! column.visible() );
-    } );
+    } );*/
     
     $(".select2").select2({
         width : 'resolve',
@@ -347,16 +346,21 @@ $(document).ready(function () {
         allowClear: true
     });
 
+    $modalImage = $('#modalImage');
+
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroyMaterial);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
+    $(document).on('click', '[data-image]', showImage);
 
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+
+let $modalImage;
 
 function openModalDelete() {
     var material_id = $(this).data('delete');
@@ -429,4 +433,10 @@ function destroyMaterial() {
 
         },
     });
+}
+
+function showImage() {
+    var path = $(this).data('src');
+    $('#image-document').attr('src', path);
+    $modalImage.modal('show');
 }

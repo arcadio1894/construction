@@ -154,14 +154,15 @@
 @endsection
 
 @section('content-report')
+{{--
     <div class="row">
         <div class="col-md-6">
-            <div class="card">
+            <div class="card card-info">
                 <div class="card-header border-0">
                     <h3 class="card-title">Valor de existencias en almacén</h3>
                     <div class="card-tools">
                         <a href="{{ route('report.excel.amount') }}" class="btn btn-sm btn-tool" data-toggle="tooltip" data-placement="top" title="Descargar excel">
-                            <i class="fas fa-download text-success"></i>
+                            <i class="fas fa-download text-danger"></i> <span class="text-danger text-bold">Descargar</span>
                         </a>
                     </div>
                 </div>
@@ -228,7 +229,7 @@
     </div>
     <div class="row">
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-warning">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Cotizaciones elevadas en dólares</h3>
@@ -263,7 +264,7 @@
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-warning">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Cotizaciones elevadas en soles</h3>
@@ -301,7 +302,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Egresos VS Ingresos en Dólares</h3>
@@ -314,12 +315,14 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_dollars" class="fas fa-arrow-up"></i><span id="balance_general_dollars">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        {{--<p class="ml-auto d-flex flex-column text-right">
+                        --}}
+{{--<p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}
+                        </p>--}}{{--
+
                     </div>
                     <!-- /.d-flex -->
 
@@ -341,7 +344,7 @@
             <!-- /.card -->
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Egresos VS Ingresos en Soles</h3>
@@ -354,12 +357,14 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_soles" class="fas fa-arrow-up"></i><span id="balance_general_soles">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        {{--<p class="ml-auto d-flex flex-column text-right">
+                        --}}
+{{--<p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}
+                        </p>--}}{{--
+
                     </div>
                     <!-- /.d-flex -->
 
@@ -381,7 +386,7 @@
             <!-- /.card -->
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-primary">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Egresos VS Ingresos en General</h3>
@@ -394,12 +399,14 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_mix" class="fas fa-arrow-up"></i><span id="balance_general_mix">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        {{--<p class="ml-auto d-flex flex-column text-right">
+                        --}}
+{{--<p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}
+                        </p>--}}{{--
+
                     </div>
                     <!-- /.d-flex -->
 
@@ -424,7 +431,7 @@
 
     <div class="row">
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-success">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Utilidades en Dólares</h3>
@@ -454,7 +461,7 @@
             <!-- /.card -->
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-success">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Utilidades en Soles</h3>
@@ -484,7 +491,7 @@
             <!-- /.card -->
         </div>
         <div class="col-lg-6">
-            <div class="card">
+            <div class="card card-success">
                 <div class="card-header border-0">
                     <div class="d-flex justify-content-between">
                         <h3 class="card-title">Utilidades en General</h3>
@@ -698,12 +705,14 @@
                                             <span class="text-bold text-lg"><i id="arrow_balance_general_view_dollars" class="fas fa-arrow-up"></i><span id="balance_general_view_dollars">0.00</span></span>
                                             <span>Balance general</span>
                                         </p>
-                                        {{--<p class="ml-auto d-flex flex-column text-right">
+                                        --}}
+{{--<p class="ml-auto d-flex flex-column text-right">
                                             <span class="text-success">
                                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                                             </span>
                                             <span class="text-muted">Balance general</span>
-                                        </p>--}}
+                                        </p>--}}{{--
+
                                     </div>
                                     <!-- /.d-flex -->
 
@@ -774,12 +783,14 @@
                                             <span class="text-bold text-lg"><i id="arrow_balance_general_view_soles" class="fas fa-arrow-up"></i><span id="balance_general_view_soles">0.00</span></span>
                                             <span>Balance general</span>
                                         </p>
-                                        {{--<p class="ml-auto d-flex flex-column text-right">
+                                        --}}
+{{--<p class="ml-auto d-flex flex-column text-right">
                                             <span class="text-success">
                                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                                             </span>
                                             <span class="text-muted">Balance general</span>
-                                        </p>--}}
+                                        </p>--}}{{--
+
                                     </div>
                                     <!-- /.d-flex -->
 
@@ -1076,6 +1087,7 @@
             </div>
         </div>
     </div>
+--}}
 
 @endsection
 
