@@ -257,7 +257,7 @@ class QuoteController extends Controller
 
                 foreach ( $equipment->consumables as $equipment_consumable )
                 {
-                    if ( $equipment_consumable->price !== $equipment_material->material->unit_price )
+                    if ( $equipment_consumable->price !== $equipment_consumable->material->unit_price )
                     {
                         $equipment_consumable->price = $equipment_consumable->material->unit_price;
                         $equipment_consumable->total = $equipment_consumable->material->unit_price * $equipment_consumable->quantity;
