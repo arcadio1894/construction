@@ -11,7 +11,8 @@ class Output extends Model
         'request_date',
         'requesting_user',
         'responsible_user',
-        'state'
+        'state',
+        'indicator'
     ];
 
     public function details()

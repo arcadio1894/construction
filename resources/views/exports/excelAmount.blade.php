@@ -98,6 +98,13 @@
             </tr>
         @endif
     @endfor
+    <tr>
+        <td width="700px" style="background-color: #FFC000; color: red; font-size: 14px; font-weight: bold; text-align: right">TOTALES</td>
+        <td width="150px" style="background-color: #FFC000; color: red; font-size: 14px; font-weight: bold; text-align: right">{{ $total_quantity_dollars }}</td>
+        <td width="150px" style="background-color: #FFC000; color: red; font-size: 14px; font-weight: bold; text-align: right">{{ $total_quantity_soles }}</td>
+        <td width="150px" style="background-color: #FFC000; color: red; font-size: 14px; font-weight: bold; text-align: right">USD {{ $total_amount_dollars }}</td>
+        <td width="150px" style="background-color: #FFC000; color: red; font-size: 14px; font-weight: bold; text-align: right">PEN {{ $total_amount_soles }}</td>
+    </tr>
     </tbody>
 </table>
 </body>

@@ -44,7 +44,9 @@ class ReportController extends Controller
 
     public function excelAmountStock()
     {
-        $materials = Material::where('stock_current', '>', 0)->get();
+        $materials = Material::where('stock_current', '>', 0)
+            ->where('description', 'not like', '%EDESCE%')
+            ->get();
         $materials_array = [];
         $amount_dollars = 0;
         $amount_soles = 0;
@@ -78,14 +80,29 @@ class ReportController extends Controller
             $quantity_dollars = 0;
             $quantity_soles = 0;
         }
+
+        $total_amount_dollars = 0;
+        $total_amount_soles = 0;
+        $total_quantity_dollars = 0;
+        $total_quantity_soles = 0;
+
+        for ( $i=0; $i<count($materials_array); $i++ )
+        {
+            $total_quantity_dollars += (float) $materials_array[$i]['stock_dollars'];
+            $total_quantity_soles += (float) $materials_array[$i]['stock_soles'];
+            $total_amount_dollars += (float) $materials_array[$i]['amount_dollars'];
+            $total_amount_soles += (float) $materials_array[$i]['amount_soles'];
+        }
         //dump($materials_array);
 
-        return Excel::download(new AmountReport($materials_array), 'reporte_Stock_Monto_En_Almacen.xlsx');
+        return Excel::download(new AmountReport($materials_array, $total_amount_dollars,$total_amount_soles,$total_quantity_dollars, $total_quantity_soles), 'reporte_Stock_Monto_En_Almacen.xlsx');
     }
 
     public function excelBDMaterials()
     {
-        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('description', 'not like', '%EDESCE%')
+            ->get();
 
         $materials_array = [];
 

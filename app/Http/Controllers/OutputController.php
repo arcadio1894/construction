@@ -285,6 +285,7 @@ class OutputController extends Controller
                 'requesting_user' => $requesting_user->id,
                 'responsible_user' => $responsible_user->id,
                 'state' => 'created',
+                'indicator' => $request->get('indicator'),
             ]);
 
             $items = json_decode($request->get('items'));

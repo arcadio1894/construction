@@ -81,6 +81,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
+                                    <input type="hidden" name="indicator" value="or">
                                     <label for="execution_order">Orden de ejecución <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="execution_order" name="execution_order" class="form-control">
                                 </div>
