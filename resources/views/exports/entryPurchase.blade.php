@@ -182,26 +182,26 @@
     <h1>ORDEN DE COMPRA: {{ $purchase_order->id }}</h1>
 
     <div id="company2" class="clearfix">
-        <table id="cuadro">
+        <table id="cuadro" width="150">
             <tr>
                 <td>CODIGO #:</td>
-                <td>{{ $purchase_order->code }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ $purchase_order->code }}</td>
             </tr>
             <tr>
                 <td>FECHA:</td>
-                <td>{{ date( "d/m/Y", strtotime( $purchase_order->date_order )) }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ date( "d/m/Y", strtotime( $purchase_order->date_order )) }}</td>
             </tr>
             <tr>
                 <td>APROBADO POR:</td>
-                <td>{{ ( $purchase_order->approved_user !== null ) ? $purchase_order->approved_user->name:'No tiene aprobador' }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ ( $purchase_order->approved_user !== null ) ? $purchase_order->approved_user->name:'No tiene aprobador' }}</td>
             </tr>
             <tr>
                 <td>CONDICIÓN PAGO:</td>
-                <td>{{ ($purchase_order->payment_condition !== null) ? $purchase_order->payment_condition:'No tiene condición' }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ ($purchase_order->payment_condition !== null) ? $purchase_order->payment_condition:'No tiene condición' }}</td>
             </tr>
             <tr>
                 <td>MONEDA:</td>
-                <td>{{ ($purchase_order->currency_order) === 'USD' ? 'DÓLARES':'SOLES' }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ ($purchase_order->currency_order) === 'USD' ? 'DÓLARES':'SOLES' }}</td>
             </tr>
         </table>
     </div>
