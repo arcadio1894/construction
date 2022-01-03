@@ -1042,7 +1042,31 @@
                             </ul>
                         </li>
                     @endcan
+                    {{--@canany('list_report')
+                        <li class="nav-header">REPORTES</li>
+                    @endcanany
+                    @can('list_report')
+                        <li class="nav-item has-treeview @yield('openReport')">
+                            <a href="#" class="nav-link @yield('activeReport')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    REPORTE COTIZACIÓN
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('quote_report')
+                                    <li class="nav-item">
+                                        <a href="{{route('report.quote.index')}}" class="nav-link @yield('activeReportQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Cotizaciones</p>
+                                        </a>
+                                    </li>
+                                @endcan
 
+                            </ul>
+                        </li>
+                    @endcan--}}
                 </ul>
             </nav>
             <!-- /.sidebar-menu -->

@@ -12,6 +12,7 @@ use App\Quote;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportController extends Controller
@@ -1105,4 +1106,11 @@ class ReportController extends Controller
 
     }
 
+    public function quotesReport()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('report.reportQuote', compact( 'permissions'));
+    }
 }

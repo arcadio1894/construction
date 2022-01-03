@@ -496,7 +496,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/all/orders/entries', 'EntryController@getAllOrders');
         Route::get('/get/order/complete/{code}', 'EntryController@getOrderPurchaseComplete');
         Route::get('imprimir/orden/compra/{id}', 'OrderPurchaseController@printOrderPurchase')
-            ->middleware('permission:create_entryPurchase');
+            ->middleware('permission:list_orderPurchaseNormal');
         Route::post('entry/purchase/order/store', 'EntryController@storeEntryPurchaseOrder')->name('entry.purchase.order.store')
             ->middleware('permission:create_entryPurchase');
         Route::get('crear/entrada/retacería', 'EntryController@createEntryScrap')->name('entry.scrap.create')
@@ -767,6 +767,15 @@ Route::middleware('auth')->group(function (){
         Route::get('report/chart/utilities', 'ReportController@chartUtilitiesDollarsSoles')->name('report.chart.utilities');
         Route::get('report/chart/utilities/view/{date_start}/{date_end}', 'ReportController@chartUtilitiesDollarsSolesView')->name('report.chart.utilities.view');
 
+        Route::get('reporte/cotizaciones', 'ReportController@quotesReport')
+            ->name('report.quote.index')
+            ->middleware('permission:quote_report');
+        Route::get('reporte/cotizacion/individual/{id}', 'ReportController@quoteIndividualReport')
+            ->name('report.quote.individual')
+            ->middleware('permission:quoteIndividual_report');
+        Route::get('reporte/cotizaciones/resumen', 'ReportController@quoteSummaryReport')
+            ->name('report.quote.summary')
+            ->middleware('permission:quoteTotal_report');
     });
 });
 
