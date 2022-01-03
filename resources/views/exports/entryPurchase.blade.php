@@ -209,7 +209,7 @@
     <div id="project">
         <div><span>RAZON SOCIAL</span>: SERMEIND FABRICACIONES INDUSTRIALES S.A.C</div>
         <div><span>RUC</span>: 20540001384</div>
-        <div><span>DOMICILIO</span>: A.H. RAMIRO PRIALÉ MZ. 17 LTE. 01. LA ESPERANZA - TRUJILLO</div>
+        <div><span>DOMICILIO</span>: A.H. RAMIRO PRIALÉ MZ. 17 LTE. 01. LA ESPERANZA <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - TRUJILLO</div>
         <div><span>TELÉFONO</span>: (+51) 998396337</div>
         <div><span>CORREO</span>: KPAREDES@SERMEIND.COM</div>
 
@@ -219,7 +219,8 @@
         <div><strong><span>EMITIDO A</span></strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>
         <div><span>RAZON SOCIAL</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->business_name : 'No tiene proveedor' }}</div>
         <div><span>RUC</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->RUC : 'No tiene ruc' }}</div>
-        <div><span>DOMICILIO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->address : 'No tiene localización' }} </div>
+        <div><span>DOMICILIO</span>: {{ ($purchase_order->supplier !== null) ? substr(substr($purchase_order->supplier->address, 0,80), 0, strrpos( substr($purchase_order->supplier->address, 0,80), ' ')): 'No tiene localización' }}
+            <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ ($purchase_order->supplier !== null) ? substr($purchase_order->supplier->address, strrpos( substr($purchase_order->supplier->address, 0,80), ' '),strlen($purchase_order->supplier->address)): '' }} </div>
         <div><span>TELÉFONO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->phone : 'No tiene telefono' }} </div>
         <div><span>CORREO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->email : 'No tiene email' }} </div>
         <div><span>COTIZACIÓN</span>: {{ ($purchase_order->quote_supplier !== null) ? $purchase_order->quote_supplier : 'No tiene cotización' }} </div>
