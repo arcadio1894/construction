@@ -167,13 +167,18 @@ class ReportController extends Controller
                 $mes = (int)$current_month - $i + 12;
                 array_push($arrayMonths, (int)$mes);
                 array_push($arrayYears, $current_year - 1);
-                array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
+                //array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
 
             } else {
                 array_push($arrayYears, $current_year);
                 array_push($arrayMonths, (int)$current_month - $i);
-                array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
+                //array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
             }
+        }
+
+        for ( $j = 0; $j < count($arrayMonths); $j++ )
+        {
+            array_push($arrayMonthsNames, $meses[(int)$arrayMonths[$j] - 1].' '.(int)$arrayYears[$j]);
         }
         //dump($arrayMonths);
         //dump($arrayMonthsNames);
@@ -389,13 +394,17 @@ class ReportController extends Controller
                 $mes = (int)$current_month - $i + 12;
                 array_push($arrayMonths, (int)$mes);
                 array_push($arrayYears, $current_year - 1);
-                array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
+                //array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
 
             } else {
                 array_push($arrayYears, $current_year);
                 array_push($arrayMonths, (int)$current_month - $i);
-                array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
+                //array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
             }
+        }
+        for ( $j = 0; $j < count($arrayMonths); $j++ )
+        {
+            array_push($arrayMonthsNames, $meses[(int)$arrayMonths[$j] - 1].' '.(int)$arrayYears[$j]);
         }
         //dump($arrayMonths);
         //dump($arrayMonthsNames);
@@ -739,13 +748,17 @@ class ReportController extends Controller
                 $mes = (int)$current_month - $i + 12;
                 array_push($arrayMonths, (int)$mes);
                 array_push($arrayYears, $current_year - 1);
-                array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
+                //array_push($arrayMonthsNames, $meses[((int)$mes) - 1] . ' ' . $current_year - 1);
 
             } else {
                 array_push($arrayYears, $current_year);
                 array_push($arrayMonths, (int)$current_month - $i);
-                array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
+                //array_push($arrayMonthsNames, $meses[((int)$current_month - $i) - 1] . ' ' . $current_year);
             }
+        }
+        for ( $j = 0; $j < count($arrayMonths); $j++ )
+        {
+            array_push($arrayMonthsNames, $meses[(int)$arrayMonths[$j] - 1].' '.(int)$arrayYears[$j]);
         }
         //dump($arrayMonths);
         //dump($arrayMonthsNames);

@@ -154,7 +154,6 @@
 @endsection
 
 @section('content-report')
-{{--
     <div class="row">
         <div class="col-md-6">
             <div class="card card-info">
@@ -315,13 +314,12 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_dollars" class="fas fa-arrow-up"></i><span id="balance_general_dollars">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        --}}
-{{--<p class="ml-auto d-flex flex-column text-right">
+                        <p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}{{--
+                        </p>
 
                     </div>
                     <!-- /.d-flex -->
@@ -357,13 +355,12 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_soles" class="fas fa-arrow-up"></i><span id="balance_general_soles">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        --}}
-{{--<p class="ml-auto d-flex flex-column text-right">
+                        <p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}{{--
+                        </p>
 
                     </div>
                     <!-- /.d-flex -->
@@ -399,13 +396,12 @@
                             <span class="text-bold text-lg"><i id="arrow_balance_general_mix" class="fas fa-arrow-up"></i><span id="balance_general_mix">0.00</span></span>
                             <span>Balance general</span>
                         </p>
-                        --}}
-{{--<p class="ml-auto d-flex flex-column text-right">
+                        <p class="ml-auto d-flex flex-column text-right">
                             <span class="text-success">
                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                             </span>
                             <span class="text-muted">Balance general</span>
-                        </p>--}}{{--
+                        </p>
 
                     </div>
                     <!-- /.d-flex -->
@@ -705,13 +701,12 @@
                                             <span class="text-bold text-lg"><i id="arrow_balance_general_view_dollars" class="fas fa-arrow-up"></i><span id="balance_general_view_dollars">0.00</span></span>
                                             <span>Balance general</span>
                                         </p>
-                                        --}}
-{{--<p class="ml-auto d-flex flex-column text-right">
+                                        <p class="ml-auto d-flex flex-column text-right">
                                             <span class="text-success">
                                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                                             </span>
                                             <span class="text-muted">Balance general</span>
-                                        </p>--}}{{--
+                                        </p>
 
                                     </div>
                                     <!-- /.d-flex -->
@@ -783,13 +778,12 @@
                                             <span class="text-bold text-lg"><i id="arrow_balance_general_view_soles" class="fas fa-arrow-up"></i><span id="balance_general_view_soles">0.00</span></span>
                                             <span>Balance general</span>
                                         </p>
-                                        --}}
-{{--<p class="ml-auto d-flex flex-column text-right">
+                                        <p class="ml-auto d-flex flex-column text-right">
                                             <span class="text-success">
                                                 <i class="fas fa-arrow-up"></i> <span id="balance_general_dollars">0.00</span>
                                             </span>
                                             <span class="text-muted">Balance general</span>
-                                        </p>--}}{{--
+                                        </p>
 
                                     </div>
                                     <!-- /.d-flex -->
@@ -1087,7 +1081,6 @@
             </div>
         </div>
     </div>
---}}
 
 @endsection
 
