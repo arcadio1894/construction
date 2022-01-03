@@ -1126,4 +1126,13 @@ class ReportController extends Controller
 
         return view('report.reportQuote', compact( 'permissions'));
     }
+
+    public function quoteSummaryReport()
+    {
+        $quotes = Quote::with(['customer'])
+            ->where('state_active','open')
+            ->where('state','confirmed')
+            ->where('raise_status',1)
+            ->get();
+    }
 }
