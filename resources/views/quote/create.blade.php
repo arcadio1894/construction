@@ -120,6 +120,12 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-md-4">
+                                <label for="contact_id">Contacto </label>
+                                <select id="contact_id" name="contact_id" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                </select>
+                            </div>
                             @endhasanyrole
                         </div>
 
@@ -1623,6 +1629,9 @@
             //Initialize Select2 Elements
             $('#customer_id').select2({
                 placeholder: "Selecione cliente",
+            });
+            $('#contact_id').select2({
+                placeholder: "Selecione contacto",
             });
 
             $('.unitMeasure').select2({

@@ -113,6 +113,10 @@
                                 <label for="customer_id">Cliente <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente'}}" readonly>
                             </div>
+                            <div class="col-md-4">
+                                <label for="customer_id">Contacto <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto'}}" readonly>
+                            </div>
                         </div>
 
                     </div>

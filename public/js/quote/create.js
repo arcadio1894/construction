@@ -388,12 +388,36 @@ $(document).ready(function () {
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
+
+    $selectCustomer = $('#customer_id');
+    $selectContact = $('#contact_id');
+
+    $selectCustomer.change(function () {
+        $selectContact.empty();
+        var customer =  $selectCustomer.val();
+        $.get( "/dashboard/get/contact/"+customer, function( data ) {
+            $selectContact.append($("<option>", {
+                value: '',
+                text: 'Seleccione contacto'
+            }));
+            for ( var i=0; i<data.length; i++ )
+            {
+                $selectContact.append($("<option>", {
+                    value: data[i].id,
+                    text: data[i].contact
+                }));
+            }
+        });
+
+    });
 });
 
 var $formCreate;
 var $modalAddMaterial;
 var $material;
 var $renderMaterial;
+var $selectCustomer;
+var $selectContact;
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {

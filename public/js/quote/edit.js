@@ -14,6 +14,8 @@ $(document).ready(function () {
     console.log($total);
     $permissions = JSON.parse($('#permissions').val());
 
+    getContacts();
+
     $.ajax({
         url: "/dashboard/get/quote/materials/",
         type: 'GET',
@@ -369,12 +371,70 @@ $(document).ready(function () {
     $subtotal = parseFloat($('#quote_subtotal_utility').val());
     $subtotal2 = parseFloat($('#quote_subtotal_letter').val());
     $subtotal3 = parseFloat($('#quote_subtotal_rent').val());*/
+
+    var customerQuote = $('#customer_quote_id');
+    var contactQuote = $('#contact_quote_id');
+
+    $selectCustomer = $('#customer_id');
+    $selectContact = $('#contact_id');
+
+    $selectCustomer.change(function () {
+        $selectContact.empty();
+        var customer =  $selectCustomer.val();
+        $.get( "/dashboard/get/contact/"+customer, function( data ) {
+            $selectContact.append($("<option>", {
+                value: '',
+                text: 'Seleccione contacto'
+            }));
+            var contact_quote_id = $('#contact_quote_id').val();
+            for ( var i=0; i<data.length; i++ )
+            {
+                if (data[i].id === parseInt(contact_quote_id)) {
+                    var newOption = new Option(data[i].contact, data[i].id, false, true);
+                    // Append it to the select
+                    $selectContact.append(newOption).trigger('change');
+
+                } else {
+                    var newOption2 = new Option(data[i].contact, data[i].id, false, false);
+                    // Append it to the select
+                    $selectContact.append(newOption2);
+                }
+            }
+        });
+
+    });
 });
 
 var $formCreate;
 var $modalAddMaterial;
 var $material;
 var $renderMaterial;
+var $selectCustomer;
+var $selectContact;
+
+function getContacts() {
+    var customer =  $('#customer_quote_id').val();
+    $.get( "/dashboard/get/contact/"+customer, function( data ) {
+        $selectContact.append($("<option>", {
+            value: '',
+            text: ''
+        }));
+        for ( var i=0; i<data.length; i++ )
+        {
+            if (data[i].id === parseInt($('#contact_quote_id').val())) {
+                var newOption = new Option(data[i].contact, data[i].id, false, true);
+                // Append it to the select
+                $selectContact.append(newOption).trigger('change');
+
+            } else {
+                var newOption2 = new Option(data[i].contact, data[i].id, false, false);
+                // Append it to the select
+                $selectContact.append(newOption2);
+            }
+
+        }
+    });
+}
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {

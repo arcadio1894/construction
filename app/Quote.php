@@ -30,7 +30,8 @@ class Quote extends Model
         'currency_venta',
         'total_soles',
         'order_execution',
-        'state_active'
+        'state_active',
+        'contact_id'
     ];
 
     public function getSubtotalUtilityAttribute()
@@ -103,6 +104,11 @@ class Quote extends Model
     public function customer()
     {
         return $this->belongsTo('App\Customer');
+    }
+
+    public function contact()
+    {
+        return $this->belongsTo('App\ContactName', 'contact_id');
     }
 
     public function equipments()

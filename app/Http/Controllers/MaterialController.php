@@ -225,7 +225,7 @@ class MaterialController extends Controller
     public function getAllMaterials()
     {
         $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
-            ->where('description', 'not like', '%EDESCE%')
+            //->where('description', 'not like', '%EDESCE%')
             ->get();
             //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
 

@@ -673,6 +673,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/quotes/closed', 'QuoteController@getAllQuotesClosed');
         Route::post('/finish/quote/{quote}', 'QuoteController@closeQuote')
             ->middleware('permission:destroy_quote');
+        Route::get('/get/contact/{customer}', 'QuoteController@getContactsByCustomer');
 
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')
@@ -776,6 +777,17 @@ Route::middleware('auth')->group(function (){
         Route::get('reporte/cotizaciones/resumen', 'ReportController@quoteSummaryReport')
             ->name('report.quote.summary')
             ->middleware('permission:quoteTotal_report');
+
+        // SERVICIOS y ORDENES DE SERVICIOS
+        Route::get('/ordenes/servicio', 'OrderServiceController@indexOrderServices')
+            ->name('order.service.index')
+            ->middleware('permission:list_orderService');
+        Route::get('ordenes/servicio/crear', 'OrderServiceController@createOrderServices')
+            ->name('order.service.create')
+            ->middleware('permission:create_orderService');
+        Route::get('servicios/', 'OrderServiceController@indexServices')
+            ->name('service.index')
+            ->middleware('permission:list_service');
     });
 });
 

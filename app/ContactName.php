@@ -23,5 +23,10 @@ class ContactName extends Model
 
     }
 
+    public function quotes()
+    {
+        return $this->hasMany('App\Quote', 'contact_id');
+    }
+
     protected $dates = ['deleted_at'];
 }

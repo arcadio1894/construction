@@ -1010,6 +1010,39 @@
                         </li>
                     @endcan
 
+                    {{--@canany('enable_orderService')
+                        <li class="nav-header">ORDENES DE SERVICIO</li>
+                    @endcanany
+                    @can('watch_orderService')
+                        <li class="nav-item has-treeview @yield('openOrderService')">
+                            <a href="#" class="nav-link @yield('activeOrderService')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Ordenes de servicio
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_orderService')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar ordenes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_orderService')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.service.create') }}" class="nav-link @yield('activeCreateOrderService')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear orden</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan--}}
+
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany
@@ -1042,6 +1075,35 @@
                             </ul>
                         </li>
                     @endcan
+                    {{--@can('show_service')
+                        <li class="nav-item has-treeview @yield('openService')">
+                            <a href="#" class="nav-link @yield('activeService')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Servicios
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_service')
+                                    <li class="nav-item">
+                                        <a href="{{route('service.index')}}" class="nav-link @yield('activeListService')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar servicios</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('list_orderService')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar órdenes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan--}}
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

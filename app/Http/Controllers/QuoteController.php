@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ContactName;
 use App\Customer;
 use App\Equipment;
 use App\EquipmentConsumable;
@@ -67,6 +68,7 @@ class QuoteController extends Controller
                 'way_to_pay' => ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '',
                 'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
                 'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
+                'contact_id' => ($request->has('contact_id')) ? $request->get('contact_id') : null,
                 'state' => 'created',
                 'utility' => ($request->has('utility')) ? $request->get('utility'): 0,
                 'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
@@ -236,6 +238,7 @@ class QuoteController extends Controller
 
         $quote3 = Quote::where('id', $id)
             ->with('customer')
+            ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
@@ -331,6 +334,7 @@ class QuoteController extends Controller
 
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
@@ -355,6 +359,7 @@ class QuoteController extends Controller
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
+            $quote->contact_id = ($request->has('contact_id')) ? $request->get('contact_id') : null;
             $quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
             $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
             $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
@@ -944,6 +949,7 @@ class QuoteController extends Controller
 
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
@@ -1221,6 +1227,19 @@ class QuoteController extends Controller
 
         return response()->json(['message' => 'Cotización renovada con éxito. Redireccionando ...', 'url'=>route('quote.edit', $renew_quote->id)], 200);
 
+    }
+
+    public function getContactsByCustomer($customer_id)
+    {
+        $contacts = ContactName::where('customer_id', $customer_id)->get();
+        $array = [];
+        foreach ( $contacts as $contact )
+        {
+            array_push($array, ['id'=> $contact->id, 'contact' => $contact->name]);
+        }
+
+        //dd($array);
+        return $array;
     }
 
 }

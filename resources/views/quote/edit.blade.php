@@ -68,7 +68,8 @@
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">Datos generales</h3>
-
+                        <input type="hidden" id="customer_quote_id" value="{{ $quote->customer_id }}">
+                        <input type="hidden" id="contact_quote_id" value="{{ $quote->contact_id }}">
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i></button>
@@ -120,6 +121,12 @@
                                     @foreach( $customers as $customer )
                                         <option value="{{ $customer->id }}" {{ ($customer->id == $quote->customer_id) ? 'selected':'' }}>{{ $customer->business_name }}</option>
                                     @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="contact_id">Contacto </label>
+                                <select id="contact_id" name="contact_id" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
                                 </select>
                             </div>
                             @endhasanyrole
@@ -2470,6 +2477,9 @@
 
             $('#customer_id').select2({
                 placeholder: "Selecione cliente",
+            });
+            $('#contact_id').select2({
+                placeholder: "Selecione contacto",
             });
 
             $('.unitMeasure').select2({

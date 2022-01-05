@@ -168,6 +168,7 @@
     <div id="company2" class="clearfix">
         <div>CLIENTE</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
+        <div>{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto' }}</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
     </div>
@@ -273,6 +274,7 @@
     <div id="company2" class="clearfix">
         <div>CLIENTE</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
+        <div>{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto' }}</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
         <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
     </div>
@@ -287,8 +289,8 @@
 
 </header>
 <div id="notices">
-    <div>CARACTERISTICAS DE {{ $quote->code }}:</div>
-    <br>
+    {{--<div>CARACTERISTICAS DE {{ $quote->code }}:</div>--}}
+    {{--<br>--}}
     @foreach( $quote->equipments as $equipment )
         <div class="notice"><strong>{{ $equipment->description }}</strong> </div>
         <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
