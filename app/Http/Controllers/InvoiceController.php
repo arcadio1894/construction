@@ -195,10 +195,12 @@ class InvoiceController extends Controller
 
     public function getJsonInvoices()
     {
-        $entries = Entry::with('supplier')->with(['details' => function ($query) {
+        $entries = Entry::with('supplier')
+            ->with(['details' => function ($query) {
                 $query->with('material');
             }])
             ->where('entry_type', 'Por compra')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         //dd(datatables($entries)->toJson());
@@ -228,6 +230,7 @@ class InvoiceController extends Controller
             }]);
         }])
             ->where('entry_type', 'Por compra')
+            ->orderBy('created_at', 'desc')
             ->get();
 
         //dd(datatables($entries)->toJson());

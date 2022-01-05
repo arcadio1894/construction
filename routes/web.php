@@ -788,6 +788,9 @@ Route::middleware('auth')->group(function (){
         Route::get('servicios/', 'OrderServiceController@indexServices')
             ->name('service.index')
             ->middleware('permission:list_service');
+        Route::post('order/service/store/', 'OrderServiceController@storeOrderServices')
+            ->name('order.service.store')
+            ->middleware('permission:create_orderService');
     });
 });
 

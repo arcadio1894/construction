@@ -31,6 +31,19 @@ $(document).ready(function () {
         }
     });
 
+    $('#btn-currency').on('switchChange.bootstrapSwitch', function (event, state) {
+
+        if (this.checked) // if changed state is "CHECKED"
+        {
+            console.log($(this));
+            $('.moneda').html('USD');
+
+        } else {
+            console.log($(this));
+            $('.moneda').html('PEN');
+        }
+    });
+
     $('.typeahead').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
@@ -53,7 +66,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-delete]', deleteItem);
 
     $formCreate = $("#formCreate");
-    $formCreate.on('submit', storeInvoice);
+    $('#btn-submit').on('click', storeInvoice);
+    //$formCreate.on('submit', storeInvoice);
 
 });
 
@@ -207,9 +221,9 @@ function updateSummaryInvoice() {
         taxes = subtotal*0.18;
     }
 
-    $('#subtotal').html('$/. '+ subtotal.toFixed(2));
-    $('#taxes').html('$/. '+taxes.toFixed(2));
-    $('#total').html('$/. '+total.toFixed(2));
+    $('#subtotal').html(subtotal.toFixed(2));
+    $('#taxes').html(taxes.toFixed(2));
+    $('#total').html(total.toFixed(2));
 }
 
 function addItems() {
@@ -349,9 +363,10 @@ function activateTemplate(id) {
 function storeInvoice() {
     event.preventDefault();
     // Obtener la URL
+    $("#btn-submit").attr("disabled", true);
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
-    var form = new FormData(this);
+    var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
     $.ajax({
         url: createUrl,
@@ -380,10 +395,32 @@ function storeInvoice() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -404,7 +441,7 @@ function storeInvoice() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
