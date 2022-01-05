@@ -77,9 +77,9 @@ let $formCreate;
 
 function addItem() {
 
-    if( $('#material_search').val().trim() === '' )
+    if( $('#service').val().trim() === '' )
     {
-        toastr.error('Debe elegir un material', 'Error',
+        toastr.error('Ingrese la descripción del servicio', 'Error',
             {
                 "closeButton": true,
                 "debug": false,
@@ -123,53 +123,49 @@ function addItem() {
         return;
     }
 
-    let material_name = $('#material_search').val();
-    let material_quantity = $('#quantity').val();
-
-    let material = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
-    console.log(material);
-    let id = material.id;
-    let code = material.code;
-    let description = material_name;
-    let quantity = material_quantity;
-    let price = parseFloat(material.price);
-
-    let flag = false;
-
-    $('[data-id]').each(function(e){
-        if( $(this).val() == id ) {
-            toastr.error('Ya esta agregado este material.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            flag = true;
-            return false;
-        }
-    });
-
-    if ( !flag )
+    if( $('#price').val().trim() === '' || $('#price').val()<0 )
     {
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
-        $('#material_search').val('');
-        $('#quantity').val(0);
-        renderTemplateMaterial(id, code, description, quantity, price);
-        updateSummaryInvoice();
+        toastr.error('Debe ingresar un precio', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
     }
 
+    let service = $('#service').val();
+    let service_unit = $('#unit').select2('data')[0].text;
+    let service_quantity = $('#quantity').val();
+    let service_price = $('#price').val();
+
+    $items.push({'price': service_price, 'quantity':service_quantity ,'service': service, 'unit': service_unit });
+
+    $('#service').val('');
+    $('#unit').val(null).trigger('change');
+    $('#quantity').val('');
+    $('#price').val('');
+
+    renderTemplateService(service, service_unit, service_quantity, service_price);
+
+    updateSummaryInvoice();
+
+}
+
+function mayus(e) {
+    e.value = e.value.toUpperCase();
 }
 
 function updateSummaryInvoice() {
@@ -205,25 +201,25 @@ function calculateTotal2(e) {
 }
 
 function deleteItem() {
-    var materialId = $(this).data('delete');
-    console.log(materialId);
-    $items = $items.filter(material => material.id_material != materialId);
+    var service = $(this).data('delete');
+    console.log(service);
+    $items = $items.filter(item => item.service != service);
     $(this).parent().parent().remove();
 
     updateSummaryInvoice();
 }
 
-function renderTemplateMaterial(id, code, description, quantity, price) {
-    var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-id]").setAttribute('value', id);
-    clone.querySelector("[data-code]").setAttribute('value', code);
-    clone.querySelector("[data-description]").setAttribute('value', description);
-    clone.querySelector("[data-quantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2) );
-    clone.querySelector("[data-quantity]").setAttribute('max', quantity);
-    clone.querySelector("[data-price]").setAttribute('value', (parseFloat(price)).toFixed(2) );
-    clone.querySelector("[data-total]").setAttribute('value', (parseFloat(price)*parseFloat(quantity)).toFixed(2) );
-    clone.querySelector("[data-delete]").setAttribute('data-delete', id);
-    $('#body-materials').append(clone);
+function renderTemplateService(service, service_unit, service_quantity, service_price) {
+    var clone = activateTemplate('#service-selected');
+
+    clone.querySelector("[data-service]").setAttribute('value', service);
+    clone.querySelector("[data-unit]").setAttribute('value', service_unit);
+    clone.querySelector("[data-quantity]").setAttribute('value', (parseFloat(service_quantity)).toFixed(2) );
+    clone.querySelector("[data-quantity]").setAttribute('max', service_quantity);
+    clone.querySelector("[data-price]").setAttribute('value', (parseFloat(service_price)).toFixed(2) );
+    clone.querySelector("[data-total]").setAttribute('value', (parseFloat(service_price)*parseFloat(service_quantity)).toFixed(2) );
+    clone.querySelector("[data-delete]").setAttribute('data-delete', service);
+    $('#body-services').append(clone);
 }
 
 function activateTemplate(id) {
@@ -266,6 +262,31 @@ function storeOrderPurchase() {
     for (let i = 0; i < arrayId.length; i++) {
         itemsArray.push({'id':arrayId[i], 'code':arrayCode[i], 'description':arrayDescription[i], 'quantity': arrayQuantity[i], 'price': arrayPrice[i]});
     }*/
+
+    if ( $items.length === 0 )
+    {
+        toastr.error('Ingrese detalles a guardar', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+
 
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\OrderService;
 use App\Supplier;
+use App\UnitMeasure;
 use App\User;
 use Illuminate\Http\Request;
 
@@ -19,11 +20,13 @@ class OrderServiceController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
+        $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
+
         $maxId = OrderService::max('id')+1;
         $length = 5;
         $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-        return view('orderService.createOrderService', compact('users', 'codeOrder', 'suppliers'));
+        return view('orderService.createOrderService', compact('users', 'codeOrder', 'suppliers', 'unitMeasures'));
 
     }
 

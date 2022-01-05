@@ -153,18 +153,22 @@
                     </div>
                     <div class="card-body ">
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-5">
                                 <div class="form-group">
-                                    <label for="material_search">Ingresar servicio <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="service" onkeyup="mayus(this);" class="form-control">
+                                    <label for="service">Ingresar servicio <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="service" {{--onkeyup="mayus(this);"--}} class="form-control">
 
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
                                     <label for="unit">Unidad <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="unit" onkeyup="mayus(this);" class="form-control">
-
+                                    <select id="unit" name="unit" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $unitMeasures as $unitMeasure )
+                                            <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->description }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -181,9 +185,9 @@
                                     ">
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <label for="btn-add"> &nbsp; </label>
-                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary"><i class="fas fa-arrow-circle-right"></i></button>
                             </div>
 
                         </div>
@@ -352,8 +356,8 @@
                 placeholder: "Selecione cliente",
             });
 
-            $('.unitMeasure').select2({
-                placeholder: "Seleccione unidad",
+            $('#unit').select2({
+                placeholder: "Seleccione ...",
             });
 
         })
