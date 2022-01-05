@@ -205,7 +205,7 @@
             <td class="desc">{{ $equipment->description }}</td>
             <td class="unit"> {{ $quote->currency_invoice }} {{ number_format(($equipment->total*$quote->currency_venta)/$equipment->quantity, 2) }}</td>
             <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="qty">USD {{ $equipment->total }}</td>
+            <td class="qty">{{ $quote->currency_invoice }} {{ number_format($equipment->total*$quote->currency_venta, 2) }}</td>
         </tr>
         @endforeach
         </tbody>
