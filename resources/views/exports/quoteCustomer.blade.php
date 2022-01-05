@@ -203,9 +203,9 @@
         @foreach( $quote->equipments as $equipment )
         <tr>
             <td class="desc">{{ $equipment->description }}</td>
-            <td class="unit"> {{ $quote->currency_invoice }} {{ number_format(($equipment->total*$quote->currency_venta)/$equipment->quantity, 2) }}</td>
+            <td class="unit"> {{ $quote->currency_invoice }} {{ number_format(($equipment->total*( ($quote->currency_venta === null) ? 1: (float)$quote->currency_venta))/$equipment->quantity, 2) }}</td>
             <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="qty">{{ $quote->currency_invoice }} {{ number_format($equipment->total*$quote->currency_venta, 2) }}</td>
+            <td class="qty">{{ $quote->currency_invoice }} {{ number_format($equipment->total*( ($quote->currency_venta === null) ? 1: (float)$quote->currency_venta), 2) }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -243,7 +243,7 @@
         <div>TÉRMINOS Y CONDICIONES:</div>
         <div class="notice">FORMA DE PAGO: {{ $quote->way_to_pay }}</div>
         <div class="notice">TIEMPO DE ENTREGA: {{ $quote->delivery_time }}</div>
-        <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currecy_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
+        <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
 
     </div>
     <br><br>
