@@ -1152,7 +1152,7 @@ class QuoteController extends Controller
 
                 foreach ( $equipment->consumables as $consumable )
                 {
-                    $material = Material::find($consumable->id);
+                    $material = Material::find($consumable->material_id);
 
                     $renew_equipmentConsumable = EquipmentConsumable::create([
                         'equipment_id' => $renew_equipment->id,
