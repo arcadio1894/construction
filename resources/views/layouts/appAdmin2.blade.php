@@ -1010,7 +1010,7 @@
                         </li>
                     @endcan
 
-                    {{--@canany('enable_orderService')
+                    @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>
                     @endcanany
                     @can('watch_orderService')
@@ -1041,7 +1041,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
 
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
@@ -1075,7 +1075,7 @@
                             </ul>
                         </li>
                     @endcan
-                    {{--@can('show_service')
+                    @can('show_service')
                         <li class="nav-item has-treeview @yield('openService')">
                             <a href="#" class="nav-link @yield('activeService')">
                                 <i class="nav-icon fas fa-credit-card"></i>
@@ -1103,7 +1103,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

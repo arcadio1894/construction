@@ -29,11 +29,12 @@ $(document).ready(function () {
     $(document).on('input', '[data-price]', function() {
         var price = parseFloat($(this).val());
         var quantity = parseFloat($(this).parent().parent().prev().children().children().val());
-        var description = $(this).parent().parent().prev().prev().children().children().children().val();
-        var id = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+        var unit = $(this).parent().parent().prev().prev().children().children().children().val();
+        var service = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
-        $items = $items.filter(material => material.id_material != id);
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items = $items.filter(item => item.service != service);
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+
         updateSummaryInvoice();
 
     });
@@ -41,11 +42,11 @@ $(document).ready(function () {
     $(document).on('input', '[data-quantity]', function() {
         var quantity = parseFloat($(this).val());
         var price = parseFloat($(this).parent().parent().next().children().children().val());
-        var description = $(this).parent().parent().prev().children().children().children().val();
-        var id = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+        var unit = $(this).parent().parent().prev().children().children().children().val();
+        var service = $(this).parent().parent().prev().prev().children().children().children().val();
 
-        $items = $items.filter(material => material.id_material != id);
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items = $items.filter(item => item.service != service);
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
         updateSummaryInvoice();
     });
 });

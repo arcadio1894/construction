@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseNormal')
+@section('openOrderService')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseNormal')
+@section('activeOrderService')
     active
 @endsection
 
-@section('activeListOrderPurchaseNormal')
+@section('activeListOrderService')
     active
 @endsection
 
 @section('title')
-    Orden de compra normal
+    Orden de servicio
 @endsection
 
 @section('styles-plugins')
@@ -37,11 +37,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Editar orden de compra normal</h1>
+    <h1 class="page-title">Editar orden de servicio</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Orden de compra normal</h5>
+    <h5 class="card-title">Orden de servicio</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -50,14 +50,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.normal.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.service.index')}}"><i class="fa fa-key"></i> Ordenes de servicio</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.normal.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.service.update') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -75,8 +75,8 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <input type="hidden" name="order_id" value="{{ $order->id }}">
-                                    <label for="purchase_order">Orden de Compra</label>
-                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $order->code }}" readonly>
+                                    <label for="service_order">Orden de Compra</label>
+                                    <input type="text" id="service_order" name="service_order" class="form-control" value="{{ $order->code }}" readonly>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_order">Fecha de Orden</label>
@@ -85,9 +85,9 @@
                                     </div>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
-                                    <label for="date_arrival">Fecha de Llegada</label>
+                                    <label for="date_delivery">Fecha de Entrega</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival" value="{{ \Carbon\Carbon::parse($order->date_arrival)->format('d/m/Y')}}">
+                                        <input type="text" class="form-control date-range-filter" id="date_delivery" name="date_delivery" value="{{ \Carbon\Carbon::parse($order->date_delivery)->format('d/m/Y')}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -119,8 +119,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="purchase_condition">Forma de pago </label>
-                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control" value="{{ $order->payment_condition }}">
+                                    <label for="service_condition">Forma de pago </label>
+                                    <input type="text" id="service_condition" name="service_condition" class="form-control" value="{{ $order->payment_condition }}">
                                 </div>
                                 <div class="form-group">
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
@@ -144,7 +144,7 @@
             <div class="col-md-12">
                 <div class="card card-warning">
                     <div class="card-header">
-                        <h3 class="card-title">Detalles de compra</h3>
+                        <h3 class="card-title">Detalles de orden</h3>
 
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -152,13 +152,24 @@
                             </button>
                         </div>
                     </div>
-                    <div class="card-body " id="element_loader">
+                    <div class="card-body " >
                         <div class="row">
-                            <div class="col-md-8">
+                            <div class="col-md-5">
                                 <div class="form-group">
-                                    <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+                                    <label for="service">Ingresar servicio <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="service" {{--onkeyup="mayus(this);"--}} class="form-control">
 
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="unit">Unidad <span class="right badge badge-danger">(*)</span></label>
+                                    <select id="unit" name="unit" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $unitMeasures as $unitMeasure )
+                                            <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->description }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-2">
@@ -168,8 +179,16 @@
                                 </div>
                             </div>
                             <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
+                                </div>
+                            </div>
+                            <div class="col-md-1">
                                 <label for="btn-add"> &nbsp; </label>
-                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary"><i class="fas fa-arrow-circle-right"></i></button>
                             </div>
 
                         </div>
@@ -177,19 +196,14 @@
                         <hr>
 
                         <div class="row">
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <strong>ID</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <strong>Código</strong>
-                                </div>
-                            </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <strong>Material</strong>
+                                    <strong>Servicio</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <strong>Unidad</strong>
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -213,36 +227,30 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="body-materials">
+                        <div id="body-services">
+
                             @foreach( $details as $detail )
                             <div class="row">
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id value="{{ $detail->material->id }}" readonly>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-1">
-                                    <div class="form-group">
-                                        <div class="form-group">
-                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-code value="{{ $detail->material->code }}" readonly>
-                                        </div>
-                                    </div>
-                                </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
                                         <div class="form-group">
-                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description value="{{ $detail->material->full_description }}" readonly>
+                                            <input type="text" {{--onkeyup="mayus(this);"--}} class="form-control form-control-sm" data-service value="{{ $detail->service }}" readonly>
                                         </div>
                                     </div>
                                 </div>
-
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-unit value="{{ $detail->unit }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="col-md-1">
                                     <div class="form-group">
                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" value="{{ $detail->quantity }}" data-quantity="{{$detail->id}}" step="0.01" >
                                     </div>
                                 </div>
+
                                 <div class="col-md-2">
                                     <div class="form-group">
                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" data-price="{{$detail->id}}" value="{{ $detail->price }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
@@ -250,15 +258,13 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ $detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        " readonly>
+                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ number_format($detail->quantity*$detail->price,2, '.', '') }}" pattern="^\d+(?:\.\d{1,2})?$" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-1">
                                     <div class="btn-group">
                                         <button type="button" data-edit="{{ $detail->id }}" class="btn btn-outline-success btn-sm"><i class="fas fa-save"></i> </button> &nbsp;
-                                        <button type="button" data-delete="{{ $detail->id }}" data-material="{{ $detail->material->id }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        <button type="button" data-delete="{{ $detail->id }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                     </div>
 
                                 </div>
@@ -308,26 +314,19 @@
         </div>
     </form>
 
-    <template id="materials-selected">
+    <template id="service-selected">
         <div class="row">
-            <div class="col-md-1">
-                <div class="form-group">
-                    <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-code readonly>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description readonly>
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-service readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <div class="form-group">
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-unit readonly>
                     </div>
                 </div>
             </div>
@@ -350,9 +349,7 @@
                 </div>
             </div>
             <div class="col-md-1">
-                <div class="btn-group">
-                    <button type="button" data-delete="" data-material="" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                </div>
+                <button type="button" data-delete class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
             </div>
         </div>
     </template>
@@ -401,12 +398,12 @@
                 placeholder: "Selecione cliente",
             });
 
-            $('.unitMeasure').select2({
-                placeholder: "Seleccione unidad",
+            $('#unit').select2({
+                placeholder: "Seleccione ...",
             });
 
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/editNormal.js') }}"></script>
+    <script src="{{ asset('js/orderService/editOrderService.js') }}"></script>
 @endsection

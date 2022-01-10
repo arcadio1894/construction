@@ -74,8 +74,8 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="purchase_order">Orden de Servicio</label>
-                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $codeOrder }}" readonly>
+                                    <label for="service_order">Orden de Servicio</label>
+                                    <input type="text" id="service_order" name="service_order" class="form-control" value="{{ $codeOrder }}" readonly>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_order">Fecha de Orden</label>
@@ -84,7 +84,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
-                                    <label for="date_arrival">Fecha de Entrega</label>
+                                    <label for="date_delivery">Fecha de Entrega</label>
                                     <div class="input-daterange" id="datepicker">
                                         <input type="text" class="form-control date-range-filter" id="date_delivery" name="date_delivery">
                                     </div>
@@ -118,8 +118,8 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="purchase_condition">Forma de pago </label>
-                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control">
+                                    <label for="service_condition">Forma de pago </label>
+                                    <input type="text" id="service_condition" name="service_condition" class="form-control">
                                 </div>
                                 <div class="form-group">
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>

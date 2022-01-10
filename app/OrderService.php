@@ -23,7 +23,10 @@ class OrderService extends Model
         'regularize',
         'image_invoice',
         'image_observation',
-        'deferred_invoice'
+        'deferred_invoice',
+        'date_invoice',
+        'referral_guide',
+        'invoice'
     ];
 
     public function supplier()
@@ -38,6 +41,6 @@ class OrderService extends Model
 
     public function details()
     {
-        return $this->hasMany('App\OrderPurchaseDetail');
+        return $this->hasMany('App\OrderServiceDetail');
     }
 }

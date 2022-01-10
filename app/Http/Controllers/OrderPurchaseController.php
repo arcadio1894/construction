@@ -402,11 +402,6 @@ class OrderPurchaseController extends Controller
                 return response()->json(['message' => 'No se puede eliminar el detalle porque ya hay un ingreso.'], 422);
             } else {
                 $material_order->delete();
-                $igv = $detail->igv;
-                $total = $detail->quantity*$detail->price;
-                $orderExpress->igv = $orderExpress->igv - $igv;
-                $orderExpress->total = $orderExpress->total - $total;
-                $orderExpress->save();
                 $detail->delete();
             }
             DB::commit();
@@ -693,11 +688,6 @@ class OrderPurchaseController extends Controller
                 return response()->json(['message' => 'No se puede eliminar el detalle porque ya hay un ingreso.'], 422);
             } else {
                 $material_order->delete();
-                $igv = $detail->igv;
-                $total = $detail->quantity*$detail->price;
-                $orderExpress->igv = $orderExpress->igv - $igv;
-                $orderExpress->total = $orderExpress->total - $total;
-                $orderExpress->save();
                 $detail->delete();
             }
             DB::commit();

@@ -791,6 +791,28 @@ Route::middleware('auth')->group(function (){
         Route::post('order/service/store/', 'OrderServiceController@storeOrderServices')
             ->name('order.service.store')
             ->middleware('permission:create_orderService');
+        Route::get('/all/order/services', 'OrderServiceController@getAllOrderService')
+            ->middleware('permission:list_orderService');
+        Route::post('destroy/order/service/{id}', 'OrderServiceController@destroyOrderService')
+            ->middleware('permission:delete_orderService');
+        Route::get('ver/orden/servicio/{id}', 'OrderServiceController@showOrderService')
+            ->middleware('permission:list_orderService');
+        Route::get('imprimir/orden/servicio/{id}', 'OrderServiceController@printOrderService')
+            ->middleware('permission:list_orderService');
+        Route::get('editar/orden/service/{id}', 'OrderServiceController@editOrderService')
+            ->middleware('permission:update_orderService');
+        Route::post('order/service/update', 'OrderServiceController@updateOrderService')
+            ->name('order.service.update')
+            ->middleware('permission:update_orderService');
+        Route::post('/update/detail/order/service/{idDetail}', 'OrderServiceController@updateDetail')
+            ->middleware('permission:update_orderService');
+        Route::post('/destroy/detail/order/service/{idDetail}', 'OrderServiceController@destroyDetail')
+            ->middleware('permission:delete_orderService');
+        Route::get('ingresar/orden/servicio/{id}', 'OrderServiceController@regularizeOrderService')
+            ->middleware('permission:regularize_orderService');
+        Route::post('order/service/regularize', 'OrderServiceController@regularizePostOrderService')
+            ->name('order.service.regularize')
+            ->middleware('permission:regularize_orderService');
     });
 });
 

@@ -9,6 +9,7 @@ class OrderServiceDetail extends Model
     public $fillable = [
         'order_service_id',
         'service',
+        'unit',
         'quantity',
         'price',
         'igv'
