@@ -222,7 +222,7 @@
                             <label for="stock_current">Stock Actual <span class="right badge badge-danger">(*)</span></label>
                             <input type="number" id="stock_current" name="stock_current" class="form-control" placeholder="0.00" min="0" value="{{ $material->stock_current }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                    ">
+                                    " readonly>
                         </div>
 
                         <div class="form-group row">

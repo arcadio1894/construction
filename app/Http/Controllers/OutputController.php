@@ -58,8 +58,21 @@ class OutputController extends Controller
                 array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
+            foreach ( $equipment->consumables as $consumable )
+            {
+                if (isset( $consumable->material->subcategory ))
+                {
+                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) === 'MIXTO' )
+                    {
+                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                }
+
+            }
 
         }
+
 
         $new_arr = array();
         foreach($materials_quantity as $item) {
@@ -80,7 +93,18 @@ class OutputController extends Controller
         {
             foreach ( $equipment->consumables as $consumable )
             {
-                array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                if (isset( $consumable->material->subcategory ))
+                {
+                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                    {
+                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                } else {
+                    array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                }
+
 
             }
 
@@ -125,7 +149,19 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+
+            }
+            foreach ( $equipment->consumables as $consumable )
+            {
+                if (isset( $consumable->material->subcategory ))
+                {
+                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) === 'MIXTO' )
+                    {
+                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                }
 
             }
 
@@ -184,7 +220,37 @@ class OutputController extends Controller
             {
                 foreach ( $equipment->consumables as $key => $consumable )
                 {
-                    array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity));
+                    if (isset( $consumable->material->subcategory ))
+                    {
+                        if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                        {
+                            array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                        }
+                    } else {
+                        array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                }
+
+            }
+
+            foreach ( $quote->equipments as $equipment )
+            {
+                foreach ( $equipment->consumables as $consumable )
+                {
+                    if (isset( $consumable->material->subcategory ))
+                    {
+                        if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                        {
+                            array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                        }
+                    } else {
+                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+
 
                 }
 

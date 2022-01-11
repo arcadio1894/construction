@@ -65,6 +65,15 @@ class Material extends Model
             $description = $description.$this->description;
         }
 
+        if (isset( $this->subcategory ))
+        {
+            if($this->category_id == 2 && trim($this->subcategory->name) == 'MIXTO' )
+            {
+                $subcategory = '';
+            }
+        }
+
+
         return $description . $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
     }
 

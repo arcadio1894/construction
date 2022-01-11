@@ -242,6 +242,7 @@ function generateNameProduct() {
 
     $('#name').val('');
     //alert($('#subcategory option:selected').text());
+    let category = ($('#category option:selected').text() === 'Ninguna' || $('#subcategory option:selected').text() === '') ? '': ' '+$('#category option:selected').text();
     let subcategory = ($('#subcategory option:selected').text() === 'Ninguna' || $('#subcategory option:selected').text() === '') ? '': ' '+$('#subcategory option:selected').text()+' ';
     //console.log($('#subcategory option:selected').text());
     let type = ($('#type option:selected').text() === 'Ninguno' || $('#type option:selected').text()==='') ? '': $('#type option:selected').text()+' ';
@@ -254,9 +255,14 @@ function generateNameProduct() {
     //console.log($('#quality option:selected').text());
     let measure = $('#measure').val();
     //console.log(measure);
-
-    let name = $('#description').val() + subcategory + type + subtype + warrant + quality + ' '+measure;
-    $('#name').val(name);
+    if (category.trim() === 'CONSUMIBLES' && subcategory.trim() === 'MIXTO')
+    {
+        let name = $('#description').val() + type + subtype + warrant + quality + ' '+measure;
+        $('#name').val(name);
+    } else {
+        let name = $('#description').val() + subcategory + type + subtype + warrant + quality + ' '+measure;
+        $('#name').val(name);
+    }
 
 }
 

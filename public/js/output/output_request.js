@@ -103,7 +103,8 @@ $(document).ready(function () {
     $(document).on('change', '[data-selected]', selectItem);
 
     $formCreate = $("#formCreate");
-    $formCreate.on('submit', storeOutputRequest);
+    //$formCreate.on('submit', storeOutputRequest);
+    $('#btn-submit').on('click', storeOutputRequest);
 
 });
 
@@ -281,10 +282,11 @@ function activateTemplate(id) {
 
 function storeOutputRequest() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
-    var form = new FormData(this);
+    var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
     $.ajax({
         url: createUrl,
@@ -313,6 +315,7 @@ function storeOutputRequest() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.href = data.url;
             }, 2000 )
         },
@@ -359,7 +362,7 @@ function storeOutputRequest() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
