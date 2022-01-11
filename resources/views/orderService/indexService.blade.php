@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderService')
+@section('openService')
     menu-open
 @endsection
 
-@section('activeOrderService')
+@section('activeService')
     active
 @endsection
 
-@section('activeListOrderService')
+@section('activeListService')
     active
 @endsection
 
 @section('title')
-    Ordenes de servicios
+    Servicios
 @endsection
 
 @section('styles-plugins')
@@ -34,10 +34,10 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de Ordenes de Servicios</h5>
-    @can('create_orderPurchaseNormal')
+    <h5 class="card-title">Listado de Servicios</h5>
+    {{--@can('create_orderPurchaseNormal')
     <a href="{{ route('order.service.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden de servicio </a>
-    @endcan
+    @endcan--}}
 @endsection
 
 @section('page-breadcrumb')
@@ -90,5 +90,5 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('js/orderService/indexOrderService.js') }}"></script>
+    <script src="{{ asset('js/orderService/indexService.js') }}"></script>
 @endsection

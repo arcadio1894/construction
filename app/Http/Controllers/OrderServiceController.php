@@ -26,6 +26,15 @@ class OrderServiceController extends Controller
 
     }
 
+    public function listOrderServices()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderService.listOrderService', compact('permissions'));
+
+    }
+
     public function createOrderServices()
     {
         $suppliers = Supplier::all();
@@ -328,6 +337,7 @@ class OrderServiceController extends Controller
             $orderService->date_invoice = ($request->has('date_invoice')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')) : Carbon::now();
             $orderService->referral_guide = $request->get('referral_guide');
             $orderService->invoice = $request->get('invoice');
+            $orderService->regularize = 'r';
             $orderService->save();
 
             if (!$request->file('image')) {
@@ -375,5 +385,22 @@ class OrderServiceController extends Controller
         }
         return response()->json(['message' => 'Orden de servicio modificada con éxito.'], 200);
 
+    }
+
+    public function indexServices()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderService.indexService', compact('permissions'));
+
+    }
+
+    public function getAllOrderRegularizeService()
+    {
+        $orders = OrderService::with(['supplier', 'approved_user'])
+            ->where('regularize', 'r')
+            ->get();
+        return datatables($orders)->toJson();
     }
 }

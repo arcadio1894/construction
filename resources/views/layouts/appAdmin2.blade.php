@@ -1095,7 +1095,7 @@
                                 @endcan
                                 @can('list_orderService')
                                     <li class="nav-item">
-                                        <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                        <a href="{{ route('list.order.service.index') }}" class="nav-link @yield('activeListOrderService2')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar órdenes</p>
                                         </a>

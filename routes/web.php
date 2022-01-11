@@ -782,6 +782,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/ordenes/servicio', 'OrderServiceController@indexOrderServices')
             ->name('order.service.index')
             ->middleware('permission:list_orderService');
+        Route::get('/listar/ordenes/servicio', 'OrderServiceController@listOrderServices')
+            ->name('list.order.service.index')
+            ->middleware('permission:list_orderService');
         Route::get('ordenes/servicio/crear', 'OrderServiceController@createOrderServices')
             ->name('order.service.create')
             ->middleware('permission:create_orderService');
@@ -793,6 +796,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_orderService');
         Route::get('/all/order/services', 'OrderServiceController@getAllOrderService')
             ->middleware('permission:list_orderService');
+        Route::get('/all/order/services/regularize', 'OrderServiceController@getAllOrderRegularizeService')
+            ->middleware('permission:list_service');
         Route::post('destroy/order/service/{id}', 'OrderServiceController@destroyOrderService')
             ->middleware('permission:delete_orderService');
         Route::get('ver/orden/servicio/{id}', 'OrderServiceController@showOrderService')

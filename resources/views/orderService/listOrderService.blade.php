@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderService')
+@section('openService')
     menu-open
 @endsection
 
-@section('activeOrderService')
+@section('activeService')
     active
 @endsection
 
-@section('activeListOrderService')
+@section('activeListOrderService2')
     active
 @endsection
 
@@ -35,9 +35,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Ordenes de Servicios</h5>
-    @can('create_orderPurchaseNormal')
+    {{--@can('create_orderPurchaseNormal')
     <a href="{{ route('order.service.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden de servicio </a>
-    @endcan
+    @endcan--}}
 @endsection
 
 @section('page-breadcrumb')
