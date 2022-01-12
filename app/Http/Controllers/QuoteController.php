@@ -1156,7 +1156,7 @@ class QuoteController extends Controller
 
                     $renew_equipmentConsumable = EquipmentConsumable::create([
                         'equipment_id' => $renew_equipment->id,
-                        'material_id' => $consumable->id,
+                        'material_id' => $material->id,
                         'quantity' => (float) $consumable->quantity,
                         'price' => (float) $material->unit_price,
                         'total' => (float) $consumable->quantity*$material->unit_price,
