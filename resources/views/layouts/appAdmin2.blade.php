@@ -1060,7 +1060,7 @@
                                     <li class="nav-item">
                                         <a href="{{route('invoice.index')}}" class="nav-link @yield('activeListInvoice')">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Listar compras</p>
+                                            <p>Listar compras/Servicios</p>
                                         </a>
                                     </li>
                                 @endcan
@@ -1068,7 +1068,7 @@
                                     <li class="nav-item">
                                         <a href="{{ route('invoice.create') }}" class="nav-link @yield('activeCreateInvoice')">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Crear compra</p>
+                                            <p>Crear compra/Servicios</p>
                                         </a>
                                     </li>
                                 @endcan

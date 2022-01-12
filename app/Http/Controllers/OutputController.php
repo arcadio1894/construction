@@ -149,7 +149,7 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
             foreach ( $equipment->consumables as $consumable )
@@ -158,7 +158,7 @@ class OutputController extends Controller
                 {
                     if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) === 'MIXTO' )
                     {
-                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                        array_push($materials, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                     }
                 }

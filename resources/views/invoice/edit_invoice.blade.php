@@ -13,7 +13,7 @@
 @endsection
 
 @section('title')
-    Factura por Compras
+    Factura por Compras-Servicios
 @endsection
 
 @section('styles-plugins')
@@ -46,11 +46,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Facturas por compra</h1>
+    <h1 class="page-title">Facturas por compra/Servicios</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar factura por compra</h5>
+    <h5 class="card-title">Modificar factura por compra/Servicio</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -59,7 +59,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('invoice.index') }}"><i class="fa fa-archive"></i> Facturas por compra</a>
+            <a href="{{ route('invoice.index') }}"><i class="fa fa-archive"></i> Facturas por compra/Servicios</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar factura</li>
     </ol>
@@ -90,7 +90,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="purchase_order">Orden de Compra</label>
+                                    <label for="purchase_order">Orden de Compra/Servicio</label>
                                     <input type="text" id="purchase_order" name="purchase_order" value="{{ $entry->purchase_order }}" class="form-control">
                                 </div>
                                 <div class="form-group">
@@ -116,8 +116,13 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="entry_type">Tipo de Ingreso <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
+                                    <label for="type_order">Tipo de Orden <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="hidden" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
+                                    <select id="type_order" name="type_order" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        <option value="purchase">Por compra</option>
+                                        <option value="service">Por servicio</option>
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="image">Imagen </label>
@@ -432,6 +437,9 @@
         });
         $('#supplier').select2({
             placeholder: "Seleccione un proveedor",
+        });
+        $('#type_order').select2({
+            placeholder: "Seleccione un tipo",
         })
     </script>
     <script src="{{ asset('js/invoice/edit_invoice.js') }}"></script>

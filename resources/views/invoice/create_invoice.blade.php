@@ -13,7 +13,7 @@
 @endsection
 
 @section('title')
-    Factura por Compras
+    Factura por Compras-Servicios
 @endsection
 
 @section('styles-plugins')
@@ -46,11 +46,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Facturas por compra</h1>
+    <h1 class="page-title">Facturas por compra/servicio</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nueva factura por compra</h5>
+    <h5 class="card-title">Crear nueva factura por compra/servicio</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -59,7 +59,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('invoice.index') }}"><i class="fa fa-archive"></i> Facturas por compra</a>
+            <a href="{{ route('invoice.index') }}"><i class="fa fa-archive"></i> Facturas por compra/servicio</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nueva factura</li>
     </ol>
@@ -89,7 +89,7 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="purchase_order">Orden de Compra</label>
+                                    <label for="purchase_order">Orden de Compra/servicio</label>
                                     <input type="text" id="purchase_order" name="purchase_order" class="form-control">
                                 </div>
                                 <div class="form-group">
@@ -115,9 +115,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="entry_type">Tipo de Ingreso <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
+                                    <label for="type_order">Tipo de Orden <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="hidden" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
+                                    <select id="type_order" name="type_order" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        <option value="purchase">Por compra</option>
+                                        <option value="service">Por servicio</option>
+                                    </select>
                                 </div>
+
                                 <div class="form-group">
                                     <label for="image">Imagen </label>
                                     <input type="file" id="image" name="image" class="form-control">
@@ -136,7 +142,7 @@
             <div class="col-md-12">
                 <div class="card card-warning">
                     <div class="card-header">
-                        <h3 class="card-title">Materiales</h3>
+                        <h3 class="card-title">Materiales/Servicios</h3>
 
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -148,7 +154,7 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="material_search">Ingresar material <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="material_search">Ingresar material/Servicio <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
 
                                 </div>
@@ -191,7 +197,7 @@
                             <div class="col-md-12">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="card-title">Materiales</h3>
+                                        <h3 class="card-title">Materiales/Servicios</h3>
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0" style="height: 300px;">
@@ -467,6 +473,9 @@
         $('#material_unit').select2({
             placeholder: "Seleccione unidad",
         });
+        $('#type_order').select2({
+            placeholder: "Seleccione un tipo",
+        })
     </script>
     <script src="{{ asset('js/invoice/invoice.js') }}"></script>
 
