@@ -255,7 +255,7 @@ function generateNameProduct() {
     //console.log($('#quality option:selected').text());
     let measure = $('#measure').val();
     //console.log(measure);
-    if (category.trim() === 'CONSUMIBLES' && subcategory.trim() === 'MIXTO')
+    if (category.trim() === 'CONSUMIBLES' && (subcategory.trim() === 'MIXTO' || subcategory.trim() === 'NORMAL'))
     {
         let name = $('#description').val() + type + subtype + warrant + quality + ' '+measure;
         $('#name').val(name);
