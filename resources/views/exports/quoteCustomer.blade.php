@@ -106,6 +106,10 @@
             text-align: left;
         }
 
+        table .total {
+            text-align: right;
+        }
+
         table td {
             padding: 5px;
             text-align: center;
@@ -203,9 +207,9 @@
         @foreach( $quote->equipments as $equipment )
         <tr>
             <td class="desc">{{ $equipment->description }}</td>
-            <td class="unit"> {{ $quote->currency_invoice }} {{ number_format(($equipment->total*( ($quote->currency_venta === null) ? 1: (float)$quote->currency_venta))/$equipment->quantity, 2) }}</td>
+            <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)$equipment->subtotal_rent / $equipment->quantity), 0) }}</td>
             <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="qty">{{ $quote->currency_invoice }} {{ number_format($equipment->total*( ($quote->currency_venta === null) ? 1: (float)$quote->currency_venta), 2) }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ number_format( $equipment->subtotal_rent, 0) }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -216,8 +220,8 @@
         <tr>
             <td class=""></td>
             <td class=""></td>
-            <td class="qty">SUBTOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice === 'USD') ? number_format((float)$quote->total, 0, '.', '') : number_format((float)$quote->total_soles, 0, '.', '') }}</td>
+            <td class="qty">TOTAL</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}.00</td>
         </tr>
         {{--<tr>
             <td class="desc"></td>

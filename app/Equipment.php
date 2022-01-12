@@ -9,6 +9,8 @@ class Equipment extends Model
 {
     protected $table = 'equipments';
 
+    protected $appends = ['subtotal_rent'];
+
     protected $fillable = [
         'quote_id',
         'description',
@@ -16,6 +18,24 @@ class Equipment extends Model
         'quantity',
         'total'
     ];
+
+    public function getSubtotalRentAttribute()
+    {
+        if ( $this->quote->total_soles != 0 )
+        {
+            $total_soles = $this->total * $this->quote->currency_venta;
+            $subtotal1 = $total_soles * (($this->quote->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+            return $subtotal3;
+        } else {
+            $subtotal1 = $this->total * (($this->quote->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+            return $subtotal3;
+        }
+
+    }
 
     public function quote()
     {
