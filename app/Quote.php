@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    protected $appends = ['subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit'];
+    protected $appends = ['subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_rent_pdf', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit'];
 
     protected $fillable = [
         'code',
@@ -89,6 +89,22 @@ class Quote extends Model
             $subtotal2 = $subtotal1 * (($this->letter/100)+1);
             $subtotal3 = $subtotal2 * (($this->rent/100)+1);
             return number_format($subtotal3, 0);
+        }
+
+    }
+    public function getSubtotalRentPdfAttribute()
+    {
+        if ( $this->total_soles != 0 )
+        {
+            $subtotal1 = $this->total_soles * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+            return $subtotal3;
+        } else {
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+            return $subtotal3;
         }
 
     }
