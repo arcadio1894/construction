@@ -705,7 +705,7 @@
                                 </div>
                                 <div class="card card-lightblue collapsed-card">
                                     <div class="card-header">
-                                        <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
+                                        <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
 
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -729,7 +729,7 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @can('showPrices_quote')
+
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -738,7 +738,7 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @endcan
+
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -747,77 +747,41 @@
                                         </div>
                                         <hr>
                                         <div data-bodyTorno>
-                                            @can('showPrices_quote')
-                                                @foreach( $equipment->turnstiles as $turnstile )
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription >
-                                                            </div>
-                                                        </div>
 
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" step="0.01" data-tornoQuantity pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->quantity }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" step="0.01" data-tornoPrice pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->price }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-tornoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->total }}" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-1">
-                                                            <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                            @foreach( $equipment->turnstiles as $turnstile )
+                                                <div class="row">
+                                                    <div class="col-md-5">
+                                                        <div class="form-group">
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription >
                                                         </div>
                                                     </div>
-                                                @endforeach
-                                            @else
-                                                @foreach( $equipment->turnstiles as $turnstile )
-                                                    <div class="row">
-                                                        <div class="col-md-5">
-                                                            <div class="form-group">
-                                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $turnstile->description }}" data-tornoDescription>
-                                                            </div>
-                                                        </div>
 
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoQuantity pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->quantity }}">
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" data-tornoPrice pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->price }}" style="display: none" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-2">
-                                                            <div class="form-group">
-                                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-tornoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                                " value="{{ $turnstile->total }}" style="display: none" readonly>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-1">
-                                                            <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" step="0.01" data-tornoQuantity pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->quantity }}">
                                                         </div>
                                                     </div>
-                                                @endforeach
-                                            @endcan
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" step="0.01" data-tornoPrice pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->price }}">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <div class="form-group">
+                                                            <input type="number" class="form-control form-control-sm" placeholder="0.00" data-tornoTotal min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                            " value="{{ $turnstile->total }}" readonly>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-1">
+                                                        <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                    </div>
+                                                </div>
+                                            @endforeach
 
                                         </div>
                                     </div>
@@ -1753,7 +1717,7 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " @cannot('showPrices_quote') readonly @endcannot>
+                            " >
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -2170,7 +2134,7 @@
                                 </div>
                                 <div class="card card-lightblue collapsed-card">
                                     <div class="card-header">
-                                        <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
+                                        <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
 
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -2194,16 +2158,16 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @can('showPrices_quote')
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
-                                                        <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
-                                                    </div>
                                                 </div>
-                                            @endcan
+                                            </div>
+
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>

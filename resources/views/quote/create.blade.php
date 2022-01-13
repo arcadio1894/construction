@@ -526,7 +526,7 @@
                                 </div>
                                 <div class="card card-lightblue collapsed-card">
                                     <div class="card-header">
-                                        <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
+                                        <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
 
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -550,7 +550,6 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @can('showPrices_quote')
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -559,7 +558,6 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @endcan
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -946,7 +944,7 @@
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" onkeyup="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " @cannot('showPrices_quote') readonly @endcannot  >
+                            " >
                     </div>
                 </div>
                 <div class="col-md-2">
@@ -1322,7 +1320,7 @@
                                 </div>
                                 <div class="card card-lightblue collapsed-card">
                                     <div class="card-header">
-                                        <h3 class="card-title">SERVICIO DE TORNO <span class="right badge badge-danger">(Opcional)</span></h3>
+                                        <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
 
                                         <div class="card-tools">
                                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -1346,7 +1344,7 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @can('showPrices_quote')
+
                                             <div class="col-md-2">
                                                 <div class="form-group">
                                                     <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
@@ -1355,7 +1353,6 @@
                                                 ">
                                                 </div>
                                             </div>
-                                            @endcan
                                             <div class="col-md-2">
                                                 <label for="btn-add"> &nbsp; </label>
                                                 <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>

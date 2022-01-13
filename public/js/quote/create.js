@@ -1342,142 +1342,84 @@ function addDia() {
 }
 
 function addTorno() {
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        var precio = $(this).parent().prev().children().children().next().val();
-        var cantidad = $(this).parent().prev().prev().children().children().next().val();
-        var descripcion = $(this).parent().prev().prev().prev().children().children().next().val();
 
-        if ( descripcion === '' )
-        {
-            toastr.error('Escriba una descripción adecuada.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-        if ( cantidad === '' || parseFloat(cantidad) === 0 )
-        {
-            toastr.error('Agregue una cantidad válida.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-        if ( precio === '' || parseFloat(precio) === 0 )
-        {
-            toastr.error('Agregue un precio válido.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
+    var precio = $(this).parent().prev().children().children().next().val();
+    var cantidad = $(this).parent().prev().prev().children().children().next().val();
+    var descripcion = $(this).parent().prev().prev().prev().children().children().next().val();
 
-        $(this).parent().prev().prev().prev().children().children().next().val('');
-        $(this).parent().prev().prev().children().children().next().val(0);
-        $(this).parent().prev().children().children().next().val(0);
-        //console.log(descripcion);
-        var render = $(this).parent().parent().next().next();
-        renderTemplateTorno(render, descripcion, cantidad, precio);
-    } else {
-        var precio2 = 0;
-        var cantidad2 = $(this).parent().prev().children().children().next().val();
-        var descripcion2 = $(this).parent().prev().prev().children().children().next().val();
-        console.log($(this).parent().prev().children().children().next());
-        console.log($(this).parent().prev().prev().children().children().next());
-        if ( descripcion2 === '' )
-        {
-            toastr.error('Escriba una descripción adecuada.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-        if ( cantidad2 === '' || parseInt(cantidad2) === 0 )
-        {
-            toastr.error('Agregue una cantidad válida.', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        $(this).parent().prev().children().children().next().val(0);
-        $(this).parent().prev().prev().children().children().next().val('');
-
-        //console.log(descripcion);
-        var render2 = $(this).parent().parent().next().next();
-        renderTemplateTorno(render2, descripcion2, cantidad2, precio2);
+    if ( descripcion === '' )
+    {
+        toastr.error('Escriba una descripción adecuada.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
     }
+    if ( cantidad === '' || parseFloat(cantidad) === 0 )
+    {
+        toastr.error('Agregue una cantidad válida.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+    if ( precio === '' || parseFloat(precio) === 0 )
+    {
+        toastr.error('Agregue un precio válido.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    $(this).parent().prev().prev().prev().children().children().next().val('');
+    $(this).parent().prev().prev().children().children().next().val(0);
+    $(this).parent().prev().children().children().next().val(0);
+    //console.log(descripcion);
+    var render = $(this).parent().parent().next().next();
+    renderTemplateTorno(render, descripcion, cantidad, precio);
 
 }
 
@@ -2624,20 +2566,11 @@ function renderTemplateTorno(render, description, quantity, unitPrice) {
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
     var clone = activateTemplate('#template-torno');
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-        clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
-        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
-    } else {
-        clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-        clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
-        clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
-        clone.querySelector("[data-tornoPrice]").setAttribute("style","display:none;");
-        clone.querySelector("[data-tornoTotal]").setAttribute("style","display:none;");
 
-    }
+    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+    clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+    clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
+    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
 
     render.append(clone);
 }
