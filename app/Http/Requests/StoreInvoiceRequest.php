@@ -27,6 +27,7 @@ class StoreInvoiceRequest extends FormRequest
             'purchase_order' => 'nullable|string|min:5|max:255',
             'invoice' => 'required|string|min:5|max:255',
             'entry_type' => 'required',
+            'type_order' => 'required',
             'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
@@ -46,6 +47,7 @@ class StoreInvoiceRequest extends FormRequest
             'invoice.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'entry_type.required' => 'La :attribute es obligatorio.',
+            'type_order.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
             'image.image' => 'Los :attribute son obligatorio.',
@@ -60,6 +62,7 @@ class StoreInvoiceRequest extends FormRequest
             'purchase_order' => 'orden de compra',
             'invoice' => 'factura',
             'entry_type' => 'tipo de entrada',
+            'type_order' => 'tipo de orden',
             'supplier_id' => 'proveedor',
             'items' => 'items',
             'deferred_invoice' => 'opción diferido'

@@ -116,12 +116,12 @@
 
                                 <div class="form-group">
                                     <label for="type_order">Tipo de Orden <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
-                                    {{--<select id="type_order" name="type_order" class="form-control select2" style="width: 100%;">
+                                    <input type="hidden" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
+                                    <select id="type_order" name="type_order" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         <option value="purchase">Por compra</option>
                                         <option value="service">Por servicio</option>
-                                    </select>--}}
+                                    </select>
                                 </div>
 
                                 <div class="form-group">

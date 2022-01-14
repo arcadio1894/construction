@@ -72,6 +72,7 @@ class InvoiceController extends Controller
                 'deferred_invoice' => ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off',
                 'supplier_id' => $request->get('supplier_id'),
                 'entry_type' => $request->get('entry_type'),
+                'type_order' => $request->get('type_order'),
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
                 'finance' => true,
                 'currency_invoice' => ($request->has('currency_invoice')) ? 'USD':'PEN',
@@ -189,7 +190,7 @@ class InvoiceController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Factura por compra guardada con éxito.'], 200);
+        return response()->json(['message' => 'Factura por compra/servicio guardada con éxito.'], 200);
 
     }
 
@@ -251,9 +252,10 @@ class InvoiceController extends Controller
             $entry = Entry::find($request->get('entry_id'));
             $entry->purchase_order = $request->get('purchase_order');
             $entry->invoice = $request->get('invoice');
-            $entry->deferred_invoice = ($request->has('deferred_invoice')) ? $request->get('deferred_invoice'):'off';
+            $entry->deferred_invoice = ($request->get('deferred_invoice') === 'true') ? 'on': 'off';
             $entry->supplier_id = $request->get('supplier_id');
             $entry->date_entry = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
+            $entry->type_order = $request->get('type_order');
             $entry->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -275,7 +277,7 @@ class InvoiceController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Factura por compra modificada con éxito.'], 200);
+        return response()->json(['message' => 'Factura por compra/servicio modificada con éxito.'], 200);
 
     }
 

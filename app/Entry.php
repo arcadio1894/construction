@@ -26,6 +26,7 @@ class Entry extends Model
         'observation',
         'image',
         'imageOb',
+        'type_order',
     ];
 
     public function getSubTotalAttribute()

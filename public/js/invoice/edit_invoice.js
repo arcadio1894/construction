@@ -19,6 +19,9 @@ function updateInvoice() {
     event.preventDefault();
     // Obtener la URL
     var createUrl = $formEdit.data('url');
+    var state = $('#btn-grouped').bootstrapSwitch('state');
+    var form = new FormData($('#formEdit')[0]);
+    form.append('deferred_invoice', state);
     /*var items = JSON.stringify($items);
     var form = new FormData(this);
     form.append('items', items);*/
