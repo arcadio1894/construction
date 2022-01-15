@@ -8,6 +8,7 @@ use App\Http\Requests\StoreInvoiceRequest;
 use App\Http\Requests\UpdateInvoiceRequest;
 use App\Item;
 use App\Material;
+use App\OrderService;
 use App\Supplier;
 use App\UnitMeasure;
 use Carbon\Carbon;
@@ -203,9 +204,22 @@ class InvoiceController extends Controller
             ->where('entry_type', 'Por compra')
             ->orderBy('created_at', 'desc')
             ->get();
-
+        $orderServices = OrderService::with('supplier')
+            ->with(['details'])
+            ->where('regularize', 'r')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $array = [];
+        foreach ( $entries as $entry )
+        {
+            array_push($array, $entry);
+        }
+        foreach ( $orderServices as $orderService )
+        {
+            array_push($array, $orderService);
+        }
         //dd(datatables($entries)->toJson());
-        return datatables($entries)->toJson();
+        return datatables($array)->toJson();
     }
 
     public function getInvoiceById( $id )
@@ -216,6 +230,21 @@ class InvoiceController extends Controller
             ->where('id', $id)
             ->get();
         return json_encode($entry);
+
+    }
+
+    public function getServiceById( $id )
+    {
+        /*$entry = Entry::with('supplier')->with(['details' => function ($query) {
+            $query->with('material');
+        }])
+            ->where('id', $id)
+            ->get();*/
+
+        $service = OrderService::with('supplier')->with('details')
+            ->where('id', $id)
+            ->get();
+        return json_encode($service);
 
     }
 

@@ -4,6 +4,7 @@ let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
 
+/*
 function format ( d ) {
     var mensaje = "";
     var detalles = d.details;
@@ -17,6 +18,7 @@ function format ( d ) {
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje ;
 }
+*/
 
 $(document).ready(function () {
     $('#sandbox-container .input-daterange').datepicker({
@@ -27,7 +29,7 @@ $(document).ready(function () {
         autoclose: true
     });
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions);
+    //console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/invoices/purchase",
@@ -35,12 +37,6 @@ $(document).ready(function () {
         },
         bAutoWidth: false,
         "aoColumns": [
-            {
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },
             { data: null,
                 title: 'Fecha de Factura',
                 wrap: true,
@@ -49,9 +45,42 @@ $(document).ready(function () {
                     return '<p> '+ moment(item.date_entry).format('DD/MM/YYYY') +'</p>'
                 }
             },
-            { data: 'purchase_order' },
+            { data: null,
+                title: 'OC/OS',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code == null )
+                        return '<p> '+ item.purchase_order +'</p>';
+                    else
+                        return '<p> '+ item.code +'</p>'
+                }
+            },
             { data: 'invoice' },
-            { data: 'entry_type' },
+            { data: null,
+                title: 'Tipo de Orden',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code == null )
+                    {
+                        if ( item.type_order == null )
+                        {
+                            return '<p> Por compra </p>';
+                        } else {
+                            if ( item.type_order == 'purchase' )
+                                return '<p> Por compra </p>';
+                            else
+                                return '<p> Por servicio </p>';
+                        }
+
+                    }
+                    else{
+                        return '<p> Por servicio </p>';
+                    }
+
+                }
+            },
             { data: null,
                 title: 'Proveedor',
                 wrap: true,
@@ -74,15 +103,65 @@ $(document).ready(function () {
                         return '<span class="badge bg-warning">SI</span>';
                 }
             },
-            { data: 'sub_total' },
-            { data: 'taxes' },
-            { data: 'total' },
+            { data: null,
+                title: 'Subtotal',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code == null )
+                    {
+                        return item.sub_total;
+                    } else {
+                        return parseFloat(item.total) - parseFloat(item.igv);
+                    }
+
+                }
+            },
+            { data: null,
+                title: 'Impuestos',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code == null )
+                    {
+                        return item.taxes;
+                    } else {
+                        return item.igv;
+                    }
+
+                }
+            },
+            { data: null,
+                title: 'Total',
+                wrap: true,
+                "render": function (item)
+                {
+                    //console.log(item.code);
+                    if ( item.code == null )
+                    {
+                        return item.total;
+                    } else {
+                        return item.total;
+                    }
+
+                }
+            },
             { data: null,
                 title: 'Imagen',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
+                    if (item.code == null){
+                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                    } else {
+                        return ' <button data-src="'+document.location.origin+ '/images/orderServices/'+item.image_invoice+'" data-image="'+item.id+'" '+
+                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                    }
+
+                    //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
                 }
             },
             { data: null,
@@ -92,20 +171,28 @@ $(document).ready(function () {
                 {
                     var text = '';
                     console.log(item.material_name);
-                    if( !item.finance ) {
-                        if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
-                        }
-                        text = text + '<button type="button" data-details="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-eye"></i> </button>';
+                    if ( item.code == null ) {
+                        if (!item.finance) {
+                            if ($.inArray('update_entryPurchase', $permissions) !== -1) {
+                                text = text + '<a href="' + document.location.origin + '/dashboard/entrada/compra/editar/' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
+                            }
+                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
-                    } else {
-                        if ( $.inArray('update_invoice', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/factura/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  ';
+                        } else {
+                            if ($.inArray('update_invoice', $permissions) !== -1) {
+                                text = text + '<a href="' + document.location.origin + '/dashboard/factura/compra/editar/' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
+                            }
+                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
+
                         }
-                        text = text + '<button type="button" data-details="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-eye"></i> </button>';
+                    } else {
+                        if ( $.inArray('update_orderService', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
+                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar servicio"><i class="fa fa-pen"></i></a> ';
+                        }
+                        text = text + '<button type="button" data-details="' + item.id + '" data-code="1" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
                     }
-
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -255,7 +342,7 @@ $(document).ready(function () {
     // Array to track the ids of the details displayed rows
     var detailRows = [];
 
-    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var idx = $.inArray( tr.attr('id'), detailRows );
@@ -277,13 +364,13 @@ $(document).ready(function () {
             }
         }
     } );
-
+*/
     // On each draw, loop over the `detailRows` array and show any child rows
-    table.on( 'draw', function () {
+    /*table.on( 'draw', function () {
         $.each( detailRows, function ( i, id ) {
             $('#'+id+' td.details-control').trigger( 'click' );
         } );
-    } );
+    } );*/
 
     $(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
@@ -343,6 +430,11 @@ $(document).ready(function () {
     $('.date-range-filter').change( function() {
         table.draw();
     } );
+
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
+
 });
 
 let $modalItems;
@@ -360,7 +452,7 @@ let $longitud = 20;
 var $permissions;
 
 function showImage() {
-    var path = $(this).attr('src');
+    var path = $(this).data('src');
     $('#image-document').attr('src', path);
     $modalImage.modal('show');
 }
@@ -369,24 +461,48 @@ function showDetails() {
     $('#body-materials').html('');
     $('#body-summary').html('');
     var entry_id = $(this).data('details');
-    $.ajax({
-        url: "/dashboard/get/invoice/by/id/"+entry_id,
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            //
-            console.log(json[0].details);
-            for (var i=0; i< json[0].details.length; i++)
-            {
-                //console.log(json[0].details[i].material_description);
-                renderTemplateItemDetail(json[0].details[i].material_description, json[0].details[i].ordered_quantity, json[0].details[i].unit, json[0].details[i].unit_price, json[0].details[i].sub_total, json[0].details[i].taxes, json[0].details[i].total);
-                //$materials.push(json[i].material);
-            }
-            renderTemplateSummary(json[0].sub_total, json[0].taxes, json[0].total);
+    var code = $(this).data('code');
+    if ( code == 0 )
+    {
+        $.ajax({
+            url: "/dashboard/get/invoice/by/id/"+entry_id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (json) {
+                //
+                console.log(json[0].details);
+                for (var i=0; i< json[0].details.length; i++)
+                {
+                    //console.log(json[0].details[i].material_description);
+                    renderTemplateItemDetail(json[0].details[i].material_description, json[0].details[i].ordered_quantity, json[0].details[i].unit, json[0].details[i].unit_price, json[0].details[i].sub_total, json[0].details[i].taxes, json[0].details[i].total);
+                    //$materials.push(json[i].material);
+                }
+                renderTemplateSummary(json[0].sub_total, json[0].taxes, json[0].total);
 
-        }
-    });
-    $modalItems.modal('show');
+            }
+        });
+        $modalItems.modal('show');
+    } else {
+        $.ajax({
+            url: "/dashboard/get/service/by/id/"+entry_id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (json) {
+                //
+                console.log(json[0].details);
+                for (var i=0; i< json[0].details.length; i++)
+                {
+                    //console.log(json[0].details[i].material_description);
+                    renderTemplateItemDetail(json[0].details[i].service, json[0].details[i].quantity, json[0].details[i].unit, json[0].details[i].price, (json[0].details[i].price*json[0].details[i].quantity)-json[0].details[i].igv, json[0].details[i].igv, json[0].details[i].price*json[0].details[i].quantity);
+                    //$materials.push(json[i].material);
+                }
+                renderTemplateSummary(json[0].total-json[0].igv, json[0].igv, json[0].total);
+
+            }
+        });
+        $modalItems.modal('show');
+    }
+
 }
 
 function renderTemplateItemDetail(material, quantity, unit, price, subtotal, taxes, total) {

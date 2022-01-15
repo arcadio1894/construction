@@ -1085,14 +1085,14 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                @can('list_service')
+                                {{--@can('list_service')
                                     <li class="nav-item">
                                         <a href="{{route('service.index')}}" class="nav-link @yield('activeListService')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar servicios</p>
                                         </a>
                                     </li>
-                                @endcan
+                                @endcan--}}
                                 @can('list_orderService')
                                     <li class="nav-item">
                                         <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">

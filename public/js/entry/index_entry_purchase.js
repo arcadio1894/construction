@@ -342,6 +342,10 @@ $(document).ready(function () {
     $('.date-range-filter').change( function() {
         table.draw();
     } );
+
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
 });
 
 let $modalItems;

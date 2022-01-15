@@ -86,7 +86,6 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th></th>
                 <th>Fecha de factura</th>
                 <th>Orden de compra</th>
                 <th>Factura</th>

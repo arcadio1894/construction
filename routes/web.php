@@ -751,6 +751,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/invoices/purchase', 'InvoiceController@getJsonInvoices');
         Route::get('/get/invoices/purchase', 'InvoiceController@getInvoices');
         Route::get('/get/invoice/by/id/{id}', 'InvoiceController@getInvoiceById');
+        Route::get('/get/service/by/id/{id}', 'InvoiceController@getServiceById');
 
         Route::get('factura/compra/editar/{entry}', 'InvoiceController@editInvoice')->name('invoice.edit')
             ->middleware('permission:update_invoice');
