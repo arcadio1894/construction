@@ -1089,8 +1089,8 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
 
-    <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
+    {{--<script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('js/report/reportAmount.js') }}"></script>
     <script src="{{ asset('js/report/viewReport.js') }}"></script>
-    <script src="{{ asset('js/report/charts.js') }}"></script>
+    <script src="{{ asset('js/report/charts.js') }}"></script>--}}
 @endsection

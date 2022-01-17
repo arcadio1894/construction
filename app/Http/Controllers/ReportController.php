@@ -6,8 +6,11 @@ use App\DetailEntry;
 use App\Entry;
 use App\Exports\AmountReport;
 use App\Exports\DatabaseMaterialsExport;
+use App\Exports\QuoteSummaryExport;
 use App\Item;
 use App\Material;
+use App\Output;
+use App\OutputDetail;
 use App\Quote;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
@@ -1134,5 +1137,70 @@ class ReportController extends Controller
             ->where('state','confirmed')
             ->where('raise_status',1)
             ->get();
+
+        $array = [];
+
+        foreach ( $quotes as $quote )
+        {
+            $codigo = $quote->code;
+            $descripcion = $quote->description;
+            $monto_materiales = 0;
+            $monto_consumibles = 0;
+            $monto_servicios_varios = 0;
+            $monto_servicios_adicionales = 0;
+            $monto_dias_trabajo = 0;
+            $subtotal = round((float)$quote->total/1.18, 2);
+            $utilidad = $quote->utility;
+            $renta = $quote->rent;
+            $letra = $quote->letter;
+            $pago_cliente = round((float)$quote->subtotal_rent/1.18, 2);
+            $adicionales = 0;
+            $costo_real = $subtotal + $adicionales;
+            $diferencia_neta = $pago_cliente - $costo_real;
+
+            foreach( $quote->equipments as $equipment )
+            {
+                foreach ( $equipment->materials as $material  )
+                {
+                    $monto_materiales += ($material->price * $material->quantity)/1.18;
+                }
+
+                foreach ( $equipment->consumables as $consumable  )
+                {
+                    $monto_consumibles += ($consumable->price * $consumable->quantity)/1.18;
+                }
+
+                foreach ( $equipment->workforces as $workforce  )
+                {
+                    $monto_servicios_varios += ($workforce->price * $workforce->quantity)/1.18;
+                }
+
+                foreach ( $equipment->turnstiles as $turnstile  )
+                {
+                    $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity)/1.18;
+                }
+
+                foreach ( $equipment->workdays as $workday  )
+                {
+                    $monto_dias_trabajo += ($workday->total)/1.18;
+                }
+            }
+
+            $total_output = 0;
+            $outputs = Output::with('details')
+                ->where('execution_order', $quote->order_execution)
+                ->get();
+            foreach ( $outputs as $output )
+            {
+                foreach ( $output->details as $detail )
+                {
+                    //$item = Item::with()
+                }
+            }
+
+        }
+
+        return Excel::download(new QuoteSummaryExport($quotes), 'reporte_cotizaciones_resumido.xlsx');
+
     }
 }

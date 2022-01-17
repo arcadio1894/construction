@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openQuote')
+@section('openReport')
     menu-open
 @endsection
 
-@section('activeQuote')
+@section('activeReport')
     active
 @endsection
 
-@section('activeListQuote')
+@section('activeReportQuote')
     active
 @endsection
 

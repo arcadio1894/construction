@@ -50,10 +50,18 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.code == null )
-                        return '<p> '+ item.purchase_order +'</p>';
-                    else
-                        return '<p> '+ item.code +'</p>'
+                    if ( item.code == null ){
+                        if ( item.purchase_order == null ) {
+                            return '<p>Sin Orden</p>';
+                        } else {
+                            return '<p> '+ item.purchase_order +'</p>';
+                        }
+
+                    }
+                    else {
+                        return '<p> '+ item.code +'</p>';
+                    }
+
                 }
             },
             { data: 'invoice' },
