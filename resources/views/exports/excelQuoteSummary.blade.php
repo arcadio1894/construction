@@ -74,10 +74,10 @@
             <th width="80px" style="background-color: #7A8DC5; font-size: 14px">Código</th>
             <th width="600px" style="background-color: #7A8DC5; font-size: 14px">Descripción</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Monto Materiales</th>
-            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Monto Consumibles</th>
-            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Monto Servicios Varios</th>
-            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Monto Servicios Adicionales</th>
-            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Monto Días de Trabajo</th>
+            <th width="200px" style="background-color: #7A8DC5; font-size: 14px">Monto Consumibles</th>
+            <th width="200px" style="background-color: #7A8DC5; font-size: 14px">Monto Servicios Varios</th>
+            <th width="250px" style="background-color: #7A8DC5; font-size: 14px">Monto Servicios Adicionales</th>
+            <th width="200px" style="background-color: #7A8DC5; font-size: 14px">Monto Días de Trabajo</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Subtotal</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Utilidad</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Renta</th>
@@ -89,78 +89,42 @@
         </tr>
     </thead>
     <tbody>
-    @for ( $i = 0; $i<count($materials); $i++ )
+    @for ( $i = 0; $i<count($quotes); $i++ )
         @if ( ($i+1) % 2 == 0)
         <tr>
-            <th width="80px">{{ $materials[$i]['code'] }}</th>
-            <th width="600px">{{ $materials[$i]['material'] }}</th>
-            <th width="150px">{{ $materials[$i]['measure'] }}</th>
-            <th width="150px">{{ $materials[$i]['unit'] }}</th>
-            <th width="150px">{{ $materials[$i]['stock_max'] }}</th>
-            <th width="150px">{{ $materials[$i]['stock_min'] }}</th>
-            @if( $materials[$i]['stock_current'] == 0 )
-                <th width="150px" style="color: red">{{ $materials[$i]['stock_current'] }}</th>
-            @else
-                <th width="150px">{{ $materials[$i]['stock_current'] }}</th>
-            @endif
-            @if( $materials[$i]['priority'] == 'Agotado' )
-                <th width="150px" style="color: red">{{ $materials[$i]['priority'] }}</th>
-            @endif
-            @if( $materials[$i]['priority'] == 'Por agotarse' )
-                <th width="150px" style="color: orange">{{ $materials[$i]['priority'] }}</th>
-            @endif
-            @if( $materials[$i]['priority'] == 'Aceptable' )
-                <th width="150px" style="color: blue">{{ $materials[$i]['priority'] }}</th>
-            @endif
-            @if( $materials[$i]['priority'] == 'Completo' )
-                <th width="150px" style="color: green">{{ $materials[$i]['priority'] }}</th>
-            @endif
-            <th width="150px">{{ $materials[$i]['price'] }}</th>
-            <th width="150px">{{ $materials[$i]['category'] }}</th>
-            <th width="150px">{{ $materials[$i]['subcategory'] }}</th>
-            <th width="150px">{{ $materials[$i]['type'] }}</th>
-            <th width="150px">{{ $materials[$i]['subtype'] }}</th>
-            <th width="150px">{{ $materials[$i]['brand'] }}</th>
-            <th width="150px">{{ $materials[$i]['exampler'] }}</th>
-            <th width="150px">{{ $materials[$i]['quality'] }}</th>
-            <th width="150px">{{ $materials[$i]['warrant'] }}</th>
-            <th width="150px">{{ $materials[$i]['scrap'] }}</th>
+            <th width="80px">{{ $quotes[$i]['codigo'] }}</th>
+            <th width="600px">{{ $quotes[$i]['descripcion'] }}</th>
+            <th width="150px">{{ $quotes[$i]['monto_materiales'] }}</th>
+            <th width="200px">{{ $quotes[$i]['monto_consumibles'] }}</th>
+            <th width="200px">{{ $quotes[$i]['monto_servicios_varios'] }}</th>
+            <th width="250px">{{ $quotes[$i]['monto_servicios_adicionales'] }}</th>
+            <th width="200px">{{ $quotes[$i]['monto_dias_trabajo'] }}</th>
+            <th width="150px">{{ $quotes[$i]['subtotal'] }}</th>
+            <th width="150px">{{ $quotes[$i]['utilidad'] }}</th>
+            <th width="150px">{{ $quotes[$i]['renta'] }}</th>
+            <th width="150px">{{ $quotes[$i]['letra'] }}</th>
+            <th width="150px">{{ $quotes[$i]['pago_cliente'] }}</th>
+            <th width="150px">{{ $quotes[$i]['adicionales'] }}</th>
+            <th width="150px">{{ $quotes[$i]['costo_real'] }}</th>
+            <th width="150px">{{ $quotes[$i]['diferencia_neta'] }}</th>
         </tr>
         @else
             <tr>
-                <th width="80px" style="background-color: #D0E4F7">{{ $materials[$i]['code'] }}</th>
-                <th width="600px" style="background-color: #D0E4F7">{{ $materials[$i]['material'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['measure'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['unit'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['stock_max'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['stock_min'] }}</th>
-                @if( $materials[$i]['stock_current'] == 0 )
-                    <th width="150px" style="background-color: #D0E4F7; color: red">{{ $materials[$i]['stock_current'] }}</th>
-                @else
-                    <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['stock_current'] }}</th>
-                @endif
-                @if( $materials[$i]['priority'] == 'Agotado' )
-                    <th width="150px" style="background-color: #D0E4F7;color: red">{{ $materials[$i]['priority'] }}</th>
-                @endif
-                @if( $materials[$i]['priority'] == 'Por agotarse' )
-                    <th width="150px" style="background-color: #D0E4F7;color: orange">{{ $materials[$i]['priority'] }}</th>
-                @endif
-                @if( $materials[$i]['priority'] == 'Aceptable' )
-                    <th width="150px" style="background-color: #D0E4F7;color: blue">{{ $materials[$i]['priority'] }}</th>
-                @endif
-                @if( $materials[$i]['priority'] == 'Completo' )
-                    <th width="150px" style="background-color: #D0E4F7;color: green">{{ $materials[$i]['priority'] }}</th>
-                @endif
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['price'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['category'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['subcategory'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['type'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['subtype'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['brand'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['exampler'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['quality'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['warrant'] }}</th>
-                <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['scrap'] }}</th>
+                <th width="80px">{{ $quotes[$i]['codigo'] }}</th>
+                <th width="600px">{{ $quotes[$i]['descripcion'] }}</th>
+                <th width="150px">{{ $quotes[$i]['monto_materiales'] }}</th>
+                <th width="200px">{{ $quotes[$i]['monto_consumibles'] }}</th>
+                <th width="200px">{{ $quotes[$i]['monto_servicios_varios'] }}</th>
+                <th width="250px">{{ $quotes[$i]['monto_servicios_adicionales'] }}</th>
+                <th width="200px">{{ $quotes[$i]['monto_dias_trabajo'] }}</th>
+                <th width="150px">{{ $quotes[$i]['subtotal'] }}</th>
+                <th width="150px">{{ $quotes[$i]['utilidad'] }}</th>
+                <th width="150px">{{ $quotes[$i]['renta'] }}</th>
+                <th width="150px">{{ $quotes[$i]['letra'] }}</th>
+                <th width="150px">{{ $quotes[$i]['pago_cliente'] }}</th>
+                <th width="150px">{{ $quotes[$i]['adicionales'] }}</th>
+                <th width="150px">{{ $quotes[$i]['costo_real'] }}</th>
+                <th width="150px">{{ $quotes[$i]['diferencia_neta'] }}</th>
             </tr>
         @endif
     @endfor

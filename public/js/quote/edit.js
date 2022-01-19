@@ -1112,12 +1112,13 @@ function saveEquipment() {
                     text: 'CONFIRMAR',
                     action: function (e) {
                         var modifiedEquipment = [];
-                        var equipmentId = parseInt(button2.attr('data-saveequipment'));
-                        var idEquipment = button2.attr('data-idequipment');
+                        var equipmentId = parseInt(button2.attr('data-saveequipment')); // pos in array js
+                        var idEquipment = button2.attr('data-idequipment'); // id del equipo en BD
                         var idQuote = button2.attr('data-quote');
                         var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                        console.log(equipmentDeleted);
                         $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
-
+                        console.log($equipments);
                         // TODO: Capturar los materiales y recorrerlos y agregar al anterior
                         // TODO: En data-delete (material) debe estar el equipo tambien
                         console.log($total);
@@ -1325,10 +1326,10 @@ function saveEquipment() {
                         calculateLetter2($('#letter').val());
                         calculateRent2($('#taxes').val());
                         console.log($total);
-                        button2.attr('data-saveEquipment', $equipments.length);
-                        button2.next().attr('data-deleteEquipment', $equipments.length);
-                        $equipments.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-                        modifiedEquipment.push({'id':$equipments.length, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        button2.attr('data-saveEquipment', equipmentDeleted.id);
+                        button2.next().attr('data-deleteEquipment', equipmentDeleted.id);
+                        $equipments.push({'id':equipmentDeleted.id, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        modifiedEquipment.push({'id':equipmentDeleted.id, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         //console.log(modifiedEquipment);
                         $items = [];
                         console.log($total);

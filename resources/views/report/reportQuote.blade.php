@@ -36,7 +36,7 @@
 @section('page-title')
     <h5 class="card-title">Listado de cotizaciones</h5>
     @can('create_quote')
-    <a href="#" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-file-excel font-20"></i> Descargar Excel Resumido </a>
+    <a href="{{ route('report.quote.summary') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-file-excel font-20"></i> Descargar Excel Resumido </a>
     @endcan
 @endsection
 

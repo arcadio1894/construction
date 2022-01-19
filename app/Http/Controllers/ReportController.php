@@ -17,6 +17,7 @@ use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class ReportController extends Controller
 {
@@ -1143,7 +1144,7 @@ class ReportController extends Controller
         foreach ( $quotes as $quote )
         {
             $codigo = $quote->code;
-            $descripcion = $quote->description;
+            $descripcion = $quote->description_quote;
             $monto_materiales = 0;
             $monto_consumibles = 0;
             $monto_servicios_varios = 0;
@@ -1153,10 +1154,7 @@ class ReportController extends Controller
             $utilidad = $quote->utility;
             $renta = $quote->rent;
             $letra = $quote->letter;
-            $pago_cliente = round((float)$quote->subtotal_rent/1.18, 2);
-            $adicionales = 0;
-            $costo_real = $subtotal + $adicionales;
-            $diferencia_neta = $pago_cliente - $costo_real;
+            $pago_cliente = round((float)$quote->subtotal_rent_pdf/1.18, 2);
 
             foreach( $quote->equipments as $equipment )
             {
@@ -1186,21 +1184,188 @@ class ReportController extends Controller
                 }
             }
 
-            $total_output = 0;
+            $adicionales = 0;
             $outputs = Output::with('details')
                 ->where('execution_order', $quote->order_execution)
+                ->where('indicator', 'ore')
                 ->get();
             foreach ( $outputs as $output )
             {
                 foreach ( $output->details as $detail )
                 {
-                    //$item = Item::with()
+                    $item = Item::where('id',$detail->item_id)->first();
+                    $adicionales += ($item->price/1.18);
                 }
             }
 
+            $costo_real = round($subtotal + $adicionales, 2);
+            $diferencia_neta = round($pago_cliente - $costo_real, 2);
+
+            array_push(
+                $array,
+                [
+                    'codigo' => $codigo,
+                    'descripcion' => $descripcion,
+                    'monto_materiales' => round($monto_materiales,2),
+                    'monto_consumibles' => round($monto_consumibles,2,2),
+                    'monto_servicios_varios' => round($monto_servicios_varios,2),
+                    'monto_servicios_adicionales' => round($monto_servicios_adicionales,2),
+                    'monto_dias_trabajo' => round($monto_dias_trabajo,2),
+                    'subtotal' => $subtotal,
+                    'utilidad' => $utilidad,
+                    'renta' => $renta,
+                    'letra' => $letra,
+                    'pago_cliente' => $pago_cliente,
+                    'adicionales' => $adicionales,
+                    'costo_real' => $costo_real,
+                    'diferencia_neta' => $diferencia_neta
+                ]
+            );
+
         }
 
-        return Excel::download(new QuoteSummaryExport($quotes), 'reporte_cotizaciones_resumido.xlsx');
+        return Excel::download(new QuoteSummaryExport($array), 'reporte_cotizaciones_resumido.xlsx');
 
+    }
+
+    public function quoteIndividualReport( $id )
+    {
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+            }])->first();
+
+        $array = [];
+
+        $codigo = $quote->code;
+        $descripcion = $quote->description_quote;
+        $materiales = [];
+        $consumables = [];
+        $servicios_varios = [];
+        $servicios_adicionales = [];
+        $dias_trabajo = [];
+        $monto_materiales = 0;
+        $monto_consumibles = 0;
+        $monto_servicios_varios = 0;
+        $monto_servicios_adicionales = 0;
+        $monto_dias_trabajo = 0;
+        $utilidad = $quote->utility;
+        $renta = $quote->rent;
+        $letra = $quote->letter;
+        foreach( $quote->equipments as $equipment )
+        {
+            foreach ( $equipment->materials as $material  )
+            {
+                array_push($materiales,[
+                    'codigo' => $material->material->code,
+                    'nombre_total' => $material->material->full_description,
+                    'cantidad' => $material->quantity,
+                    'monto' => round(($material->price * $material->quantity)/1.18, 2)
+                ]);
+                $monto_materiales += ($material->price * $material->quantity)/1.18;
+
+            }
+
+            foreach ( $equipment->consumables as $consumable  )
+            {
+                array_push($consumables,[
+                    'nombre_total' => $consumable->material->full_description,
+                    'cantidad' => $consumable->quantity,
+                    'monto' => round(($consumable->price * $consumable->quantity)/1.18, 2)
+                ]);
+                $monto_consumibles += ($consumable->price * $consumable->quantity)/1.18;
+
+            }
+
+            foreach ( $equipment->workforces as $workforce  )
+            {
+                array_push($servicios_varios,[
+                    'nombre_total' => $workforce->description,
+                    'cantidad' => $workforce->quantity,
+                    'monto' => round(($workforce->price * $workforce->quantity)/1.18, 2)
+                ]);
+                $monto_servicios_varios += ($workforce->price * $workforce->quantity)/1.18;
+
+            }
+
+            foreach ( $equipment->turnstiles as $turnstile  )
+            {
+                array_push($servicios_adicionales,[
+                    'nombre_total' => $turnstile->description,
+                    'cantidad' => $turnstile->quantity,
+                    'monto' => round(($turnstile->price * $turnstile->quantity)/1.18, 2)
+                ]);
+                $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity)/1.18;
+
+            }
+
+            foreach ( $equipment->workdays as $workday  )
+            {
+                array_push($dias_trabajo,[
+                    'nombre_total' => $workday->description,
+                    'cantidad' => $workday->quantityPerson,
+                    'monto' => round(($workday->total)/1.18, 2)
+                ]);
+                $monto_dias_trabajo += ($workday->total)/1.18;
+            }
+        }
+
+        $adicionales = 0;
+        $materiales_adicionales = [];
+        $outputs = Output::with('details')
+            ->where('execution_order', $quote->order_execution)
+            ->where('indicator', 'ore')
+            ->get();
+        foreach ($outputs as $output) {
+            foreach ($output->details as $detail) {
+                $item = Item::where('id', $detail->item_id)->first();
+                array_push($materiales_adicionales,[
+                    'nombre_total' => $item->material->full_description,
+                    'cantidad' => $item->percentage,
+                    'monto' => $item->price
+                ]);
+                $adicionales += ($item->price / 1.18);
+            }
+        }
+        $subtotal = round((float)$quote->total / 1.18, 2);
+        $costo_real = round($subtotal + $adicionales, 2);
+        $pago_cliente = round((float)$quote->subtotal_rent_pdf / 1.18, 2);
+        $diferencia_neta = round($pago_cliente - $costo_real, 2);
+
+        array_push(
+            $array,
+            [
+                'codigo' => $codigo,
+                'descripcion' => $descripcion,
+                'materiales' => $materiales,
+                'consumables' => $consumables,
+                'servicios_varios' => $servicios_varios,
+                'servicios_adicionales' => $servicios_adicionales,
+                'dias_trabajo' => $dias_trabajo,
+                'monto_adicional' => $adicionales,
+                'adicionales' => $materiales_adicionales,
+                'monto_materiales' => round($monto_materiales,2),
+                'monto_consumibles' => round($monto_consumibles,2,2),
+                'monto_servicios_varios' => round($monto_servicios_varios,2),
+                'monto_servicios_adicionales' => round($monto_servicios_adicionales,2),
+                'monto_dias_trabajo' => round($monto_dias_trabajo,2),
+                'subtotal' => $subtotal,
+                'utilidad' => $utilidad,
+                'renta' => $renta,
+                'letra' => $letra,
+                'pago_cliente' => $pago_cliente,
+                'costo_real' => $costo_real,
+                'diferencia_neta' => $diferencia_neta
+            ]
+        );
+        //dd($array[0]['materiales']);
+        $view = view('exports.quoteReport', compact('array', 'quote'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Reporte_cotizacion_' . $quote->code . '.pdf';
+
+        return $pdf->stream($name);
     }
 }
