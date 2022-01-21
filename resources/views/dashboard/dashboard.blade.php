@@ -154,7 +154,7 @@
 @endsection
 
 @section('content-report')
-    {{--<div class="row">
+    <div class="row">
         <div class="col-md-6">
             <div class="card card-info">
                 <div class="card-header border-0">
@@ -226,7 +226,7 @@
             <!-- /.info-box -->
         </div>
     </div>
-    <div class="row">
+    {{--<div class="row">
         <div class="col-lg-6">
             <div class="card card-warning">
                 <div class="card-header border-0">
@@ -1080,8 +1080,7 @@
 
             </div>
         </div>
-    </div>
---}}
+    </div>--}}
 @endsection
 
 @section('scripts')
@@ -1089,8 +1088,8 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
 
-    {{--<script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('js/report/reportAmount.js') }}"></script>
     <script src="{{ asset('js/report/viewReport.js') }}"></script>
-    <script src="{{ asset('js/report/charts.js') }}"></script>--}}
+    <script src="{{ asset('js/report/charts.js') }}"></script>
 @endsection

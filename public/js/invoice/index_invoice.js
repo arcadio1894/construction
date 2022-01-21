@@ -407,7 +407,7 @@ $(document).ready(function () {
         function( settings, data, dataIndex ) {
             var min  = $('#start').val();
             var max  = $('#end').val();
-            var createdAt = data[1]; // Our date column in the table
+            var createdAt = data[0]; // Our date column in the table
             var startDate   = moment(min, "DD/MM/YYYY");
             var endDate     = moment(max, "DD/MM/YYYY");
             var diffDate = moment(createdAt, "DD/MM/YYYY");

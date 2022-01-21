@@ -106,7 +106,7 @@ $(document).ready(function () {
                     var text = '';
                     if ( item.state === 'confirmed' && item.raise_status === 1 ) {
                         if ($.inArray('quoteIndividual_report', $permissions) !== -1) {
-                            text = text + '<a href="' + document.location.origin + '/dashboard/reporte/cotizacion/individual/' + item.id +
+                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/reporte/cotizacion/individual/' + item.id +
                                 '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Reporte individual"><i class="fas fa-file-pdf"></i></a> ';
                         }
                     }
