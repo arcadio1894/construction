@@ -23,7 +23,33 @@ class ReportController extends Controller
 {
     public function amountInWarehouse()
     {
-        $items = Item::whereNotIn('state_item', ['exited'])
+        $materials = Material::where('stock_current', '>', 0)
+            ->where('description', 'not like', '%EDESCE%')
+            ->get();
+        $amount_dollars = 0;
+        $amount_soles = 0;
+        $quantity_items = 0;
+        foreach ( $materials as $material )
+        {
+            $items = Item::where('material_id', $material->id)
+                ->whereNotIn('state_item', ['exited'])->get();
+            //dd($items);
+            foreach ( $items as $item )
+            {
+                $detail_entry = DetailEntry::with('entry')->find($item->detail_entry_id);
+                //dump($detail_entry);
+                $currency = $detail_entry->entry->currency_invoice;
+
+                if ( $currency === 'USD' )
+                {
+                    $amount_dollars = $amount_dollars + (float)$item->price;
+                } else {
+                    $amount_soles = $amount_soles + (float)$item->price;
+                }
+                $quantity_items = $quantity_items + (float)$item->percentage;
+            }
+        }
+        /*$items = Item::whereNotIn('state_item', ['exited'])
             ->whereNotIn('material_id', [1040,1041])->get();
         $amount_dollars = 0;
         $amount_soles = 0;
@@ -42,7 +68,7 @@ class ReportController extends Controller
                 $amount_soles = $amount_soles + (float)$item->price;
             }
             $quantity_items = $quantity_items + (float)$item->percentage;
-        }
+        }*/
 
         return response()->json(['amount_dollars' => $amount_dollars, 'amount_soles' => $amount_soles, 'quantity_items' => $quantity_items]);
 
