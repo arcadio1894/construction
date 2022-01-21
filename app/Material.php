@@ -73,8 +73,11 @@ class Material extends Model
             }
         }
 
+        $nombre_v1 = $description . $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
 
-        return $description . $subcategory . $type . $subtype . $warrant . $quality . " {$this->measure}";
+        $nombre_correcto = preg_replace(array('/\s{2,}/', '/[\t\n]/'), ' ', $nombre_v1);
+
+        return $nombre_correcto;
     }
 
     public function unitMeasure()

@@ -1405,7 +1405,7 @@
                                     @can('showPrices_quote')
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="price">Precio por hora <span class="right badge badge-danger">(*)</span></label>
+                                                <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">

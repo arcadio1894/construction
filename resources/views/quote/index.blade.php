@@ -68,6 +68,7 @@
                 <th>Tiempo Entrega</th>
                 <th>Cliente</th>
                 <th>Total</th>
+                <th>Total Sin IGV</th>
                 <th>Moneda</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
