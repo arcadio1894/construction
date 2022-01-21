@@ -23,7 +23,8 @@ class ReportController extends Controller
 {
     public function amountInWarehouse()
     {
-        $items = Item::whereNotIn('state_item', ['exited'])->get();
+        $items = Item::whereNotIn('state_item', ['exited'])
+            ->whereNotIn('material_id', [1040,1041])->get();
         $amount_dollars = 0;
         $amount_soles = 0;
         $quantity_items = 0;

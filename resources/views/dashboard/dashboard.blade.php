@@ -154,6 +154,7 @@
 @endsection
 
 @section('content-report')
+    @hasanyrole('logistic|admin|almacen')
     <div class="row">
         <div class="col-md-6">
             <div class="card card-info">
@@ -226,6 +227,7 @@
             <!-- /.info-box -->
         </div>
     </div>
+    @endhasanyrole
     {{--<div class="row">
         <div class="col-lg-6">
             <div class="card card-warning">
