@@ -1150,37 +1150,37 @@ class ReportController extends Controller
             $monto_servicios_varios = 0;
             $monto_servicios_adicionales = 0;
             $monto_dias_trabajo = 0;
-            $subtotal = round((float)$quote->total/1.18, 2);
+            $subtotal = round((float)$quote->total, 2);
             $utilidad = $quote->utility;
             $renta = $quote->rent;
             $letra = $quote->letter;
-            $pago_cliente = round((float)$quote->subtotal_rent_pdf/1.18, 2);
+            $pago_cliente = round((float)$quote->subtotal_rent_pdf, 2);
 
             foreach( $quote->equipments as $equipment )
             {
                 foreach ( $equipment->materials as $material  )
                 {
-                    $monto_materiales += ($material->price * $material->quantity)/1.18;
+                    $monto_materiales += ($material->price * $material->quantity);
                 }
 
                 foreach ( $equipment->consumables as $consumable  )
                 {
-                    $monto_consumibles += ($consumable->price * $consumable->quantity)/1.18;
+                    $monto_consumibles += ($consumable->price * $consumable->quantity);
                 }
 
                 foreach ( $equipment->workforces as $workforce  )
                 {
-                    $monto_servicios_varios += ($workforce->price * $workforce->quantity)/1.18;
+                    $monto_servicios_varios += ($workforce->price * $workforce->quantity);
                 }
 
                 foreach ( $equipment->turnstiles as $turnstile  )
                 {
-                    $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity)/1.18;
+                    $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
                 }
 
                 foreach ( $equipment->workdays as $workday  )
                 {
-                    $monto_dias_trabajo += ($workday->total)/1.18;
+                    $monto_dias_trabajo += ($workday->total);
                 }
             }
 
@@ -1194,7 +1194,7 @@ class ReportController extends Controller
                 foreach ( $output->details as $detail )
                 {
                     $item = Item::where('id',$detail->item_id)->first();
-                    $adicionales += ($item->price/1.18);
+                    $adicionales += ($item->price);
                 }
             }
 
@@ -1261,9 +1261,9 @@ class ReportController extends Controller
                     'codigo' => $material->material->code,
                     'nombre_total' => $material->material->full_description,
                     'cantidad' => $material->quantity,
-                    'monto' => round(($material->price * $material->quantity)/1.18, 2)
+                    'monto' => round(($material->price * $material->quantity), 2)
                 ]);
-                $monto_materiales += ($material->price * $material->quantity)/1.18;
+                $monto_materiales += ($material->price * $material->quantity);
 
             }
 
@@ -1272,9 +1272,9 @@ class ReportController extends Controller
                 array_push($consumables,[
                     'nombre_total' => $consumable->material->full_description,
                     'cantidad' => $consumable->quantity,
-                    'monto' => round(($consumable->price * $consumable->quantity)/1.18, 2)
+                    'monto' => round(($consumable->price * $consumable->quantity), 2)
                 ]);
-                $monto_consumibles += ($consumable->price * $consumable->quantity)/1.18;
+                $monto_consumibles += ($consumable->price * $consumable->quantity);
 
             }
 
@@ -1283,9 +1283,9 @@ class ReportController extends Controller
                 array_push($servicios_varios,[
                     'nombre_total' => $workforce->description,
                     'cantidad' => $workforce->quantity,
-                    'monto' => round(($workforce->price * $workforce->quantity)/1.18, 2)
+                    'monto' => round(($workforce->price * $workforce->quantity), 2)
                 ]);
-                $monto_servicios_varios += ($workforce->price * $workforce->quantity)/1.18;
+                $monto_servicios_varios += ($workforce->price * $workforce->quantity);
 
             }
 
@@ -1294,9 +1294,9 @@ class ReportController extends Controller
                 array_push($servicios_adicionales,[
                     'nombre_total' => $turnstile->description,
                     'cantidad' => $turnstile->quantity,
-                    'monto' => round(($turnstile->price * $turnstile->quantity)/1.18, 2)
+                    'monto' => round(($turnstile->price * $turnstile->quantity), 2)
                 ]);
-                $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity)/1.18;
+                $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
 
             }
 
@@ -1305,9 +1305,9 @@ class ReportController extends Controller
                 array_push($dias_trabajo,[
                     'nombre_total' => $workday->description,
                     'cantidad' => $workday->quantityPerson,
-                    'monto' => round(($workday->total)/1.18, 2)
+                    'monto' => round(($workday->total), 2)
                 ]);
-                $monto_dias_trabajo += ($workday->total)/1.18;
+                $monto_dias_trabajo += ($workday->total);
             }
         }
 
@@ -1325,12 +1325,12 @@ class ReportController extends Controller
                     'cantidad' => $item->percentage,
                     'monto' => $item->price
                 ]);
-                $adicionales += ($item->price / 1.18);
+                $adicionales += $item->price;
             }
         }
-        $subtotal = round((float)$quote->total / 1.18, 2);
+        $subtotal = round((float)$quote->total, 2);
         $costo_real = round($subtotal + $adicionales, 2);
-        $pago_cliente = round((float)$quote->subtotal_rent_pdf / 1.18, 2);
+        $pago_cliente = round((float)$quote->subtotal_rent_pdf, 2);
         $diferencia_neta = round($pago_cliente - $costo_real, 2);
 
         array_push(

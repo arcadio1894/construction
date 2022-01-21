@@ -106,6 +106,8 @@ $(document).ready(function () {
     $('#btn-add').on('click', addItems);
     $modalAddItems = $('#modalAddItems');
 
+    $('#btn-add-scrap').on('click', addItemsScrap);
+
     $('#btn-saveItems').on('click', saveTableItems);
 
     $(document).on('click', '[data-delete]', deleteItem);
@@ -150,6 +152,7 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 function saveTableItems() {
+    event.preventDefault();
     console.log($itemsSelected);
 
     for ( var i=0; i<$itemsSelected.length; i++ )
@@ -171,7 +174,7 @@ function saveTableItems() {
 }
 
 function selectItem() {
-
+    event.preventDefault();
     if (this.checked) {
         let itemId = $(this).data('selected');
         const result = $itemsComplete.find( item => item.id === itemId );
@@ -188,6 +191,7 @@ function selectItem() {
         }
         console.log($itemsSelected);
     }
+    $modalAddItems.scrollTop( 0 );
 }
 
 function addItems() {
@@ -245,6 +249,109 @@ function addItems() {
 
     const result = $materialsComplete.find( material => material.material === material_name );
 
+    $.ajax({
+        url: "/dashboard/get/items/output/"+result.id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            for (var i=0; i<json.length; i++)
+            {
+                //$users.push(json[i].name);
+                $itemsComplete.push(json[i]);
+                renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+            }
+
+        }
+    });
+
+    console.log($itemsComplete);
+
+    $modalAddItems.modal('show');
+
+    /*$items.push({
+        "productId" : sku,
+        "qty" : qty,
+        "price" : price
+    });*/
+}
+
+function addItemsScrap() {
+    if( $('#material_search').val().trim() === '' )
+    {
+        toastr.error('Debe elegir un material', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    } else {
+        let result2 = $materialsComplete.find( material => material.material === $('#material_search').val().trim() );
+        if ( !result2  ){
+            toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        } else {
+            if ( result2.typescrap == "" || result2.typescrap == null ){
+                toastr.error('El material no tiene retazos.', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }
+    }
+
+    let material_name = $('#material_search').val();
+    $modalAddItems.find('[id=material_selected]').val(material_name);
+    $modalAddItems.find('[id=material_selected]').prop('disabled', true);
+
+    $('#body-items').html('');
+
+    const result = $materialsComplete.find( material => material.material === material_name );
+    console.log(result);
     $.ajax({
         url: "/dashboard/get/items/output/"+result.id,
         type: 'GET',

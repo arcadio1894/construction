@@ -329,25 +329,25 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">SUBTOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ $quote->total }}</td>
+            <td class="total">USD {{ $quote->total }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">UTILIDAD {{ $quote->utility }}%</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_utility }}</td>
+            <td class="total">USD {{ $quote->subtotal_utility }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">LETRA {{ $quote->letter }}%</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_letter }}</td>
+            <td class="total">USD {{ $quote->subtotal_letter }}</td>
         </tr>
         <tr>
             <td class="desc"></td>
             <td class="unit"></td>
             <td class="qty">RENTA {{ $quote->rent }}%</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ $quote->subtotal_rent }}.00</td>
+            <td class="total">USD {{ $quote->subtotal_rent }}.00</td>
         </tr>
         </tbody>
     </table>
