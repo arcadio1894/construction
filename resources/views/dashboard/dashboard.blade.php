@@ -166,7 +166,7 @@
                         </a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="element_loader">
                     <div class="d-flex justify-content-between align-items-center border-bottom mb-3">
                         <p class="text-success text-xl">
                             <i class="fas fa-dollar-sign"></i>
@@ -1089,6 +1089,7 @@
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
 
     <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('js/report/reportAmount.js') }}"></script>
