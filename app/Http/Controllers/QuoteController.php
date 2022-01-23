@@ -14,9 +14,12 @@ use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\Material;
 use App\MaterialTaken;
+use App\Notification;
+use App\NotificationUser;
 use App\Quote;
 use App\QuoteUser;
 use App\UnitMeasure;
+use App\User;
 use App\Workforce;
 use Barryvdh\DomPDF\Facade as PDF;
 use Carbon\Carbon;
@@ -199,6 +202,34 @@ class QuoteController extends Controller
             $quote->total = $totalQuote;
 
             $quote->save();
+
+            // Crear notificacion
+            $notification = Notification::create([
+                'content' => 'Nueva cotización creada por '.Auth::user()->name,
+                'reason_for_creation' => 'create_quote',
+                'user_id' => Auth::user()->id,
+                'url_go' => route('quote.edit', $quote->id)
+            ]);
+
+            // Roles adecuados para recibir esta notificación admin, logistica
+            $users = User::role(['admin' , 'logistic'])->get();
+            foreach ( $users as $user )
+            {
+                if ( $user->id != Auth::user()->id )
+                {
+                    foreach ( $user->roles as $role )
+                    {
+                        NotificationUser::create([
+                            'notification_id' => $notification->id,
+                            'role_id' => $role->id,
+                            'user_id' => $user->id,
+                            'read' => false,
+                            'date_read' => null,
+                            'date_delete' => null
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {

@@ -819,6 +819,11 @@ Route::middleware('auth')->group(function (){
         Route::post('order/service/regularize', 'OrderServiceController@regularizePostOrderService')
             ->name('order.service.regularize')
             ->middleware('permission:regularize_orderService');
+
+        // NOTIFICATIONS
+        Route::get('/get/notifications', 'NotificationController@getNotifications');
+        Route::post('/read/notification/{id_notification}', 'NotificationController@readNotification');
+
     });
 });
 

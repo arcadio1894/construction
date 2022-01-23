@@ -22,6 +22,11 @@
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('admin/dist/css/adminlte.min.css') }}">
 
+    <style>
+        .dropdown-item.active, .dropdown-item:active{
+            background-color: #ffffff !important;
+        }
+    </style>
     @yield('styles')
 
     <!-- Google Font: Source Sans Pro -->
@@ -92,22 +97,52 @@
                 </div>
             </li>--}}
             <!-- Notifications Dropdown Menu -->
-            {{--<li class="nav-item dropdown">
+            <li class="nav-item dropdown">
                 <a class="nav-link" data-toggle="dropdown" href="#">
                     <i class="far fa-bell"></i>
-                    <span class="badge badge-warning navbar-badge">15</span>
+                    <span class="badge badge-danger navbar-badge" id="total_notifications"></span>
                 </a>
                 <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-                    <span class="dropdown-header">15 Notifications</span>
+                    <span class="dropdown-header" id="quantity_notifications"></span>
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item">
-                        <i class="fas fa-envelope mr-2"></i> 4 new messages
-                        <span class="float-right text-muted text-sm">3 mins</span>
-                    </a>
+                    <div id="body-notifications">
+
+                    </div>
+                    <template id="notification-unread">
+                        <div class="dropdown-item" >
+                            <p class="text-sm">
+                                <i class="fas fa-envelope mr-2 text-danger"></i>
+                                <span data-message="message" class="text-danger">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
+                                <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
+                            </p>
+                            <a href="#" style="margin-top: 20px" data-read data-content >
+                                <span class="float-left text-sm">Marcar como leído</span>
+                            </a>
+                            <a href="#" style="margin-top: 20px" data-go>
+                                <span class="float-right text-sm">Ir</span>
+                            </a>
+                        </div>
+                    </template>
+                    <template id="notification-read">
+                        <div class="dropdown-item">
+                            <p class="text-sm" style="margin-bottom: 10px">
+                                <i class="fas fa-envelope mr-2"></i>
+                                <span data-message="message">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
+                                <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
+                            </p>
+                            {{--<a href="#" style="margin-top: 20px" data-read>
+                                <span class="float-left text-sm">Marcar como leído</span>
+                            </a>--}}
+                            <a href="#" style="margin-top: 20px" data-go>
+                                <span class="float-right text-sm">Ir</span>
+                            </a>
+                        </div>
+                    </template>
+
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">See All Notifications</a>
+                    <a href="#" class="dropdown-item dropdown-footer">Marcar todos como leídos</a>
                 </div>
-            </li>--}}
+            </li>
             <li class="nav-item dropdown user-menu">
                 <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">
                     <img src="{{asset('images/users/'.Auth::user()->image)}}" class="user-image img-circle elevation-2" alt="User Image">
