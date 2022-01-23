@@ -73,4 +73,30 @@ class NotificationController extends Controller
 
 
     }
+
+    public function readAllNotifications()
+    {
+        DB::beginTransaction();
+        try {
+            $notificationUsers = NotificationUser::where('user_id', Auth::user()->id)
+                ->where('read', 0)
+                ->get();
+            foreach ( $notificationUsers as $notificationUser )
+            {
+                $notificationUser->read = 1;
+                $notificationUser->date_read = Carbon::now();
+                $notificationUser->date_delete = Carbon::now()->addDays(2);
+                $notificationUser->save();
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Notificaciones leídas. Se quitará del listado en 2 días'], 200);
+
+
+    }
 }

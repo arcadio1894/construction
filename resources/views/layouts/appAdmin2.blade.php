@@ -140,7 +140,7 @@
                     </template>
 
                     <div class="dropdown-divider"></div>
-                    <a href="#" class="dropdown-item dropdown-footer">Marcar todos como leídos</a>
+                    <a href="#" class="dropdown-item dropdown-footer" id="read-all">Marcar todos como leídos</a>
                 </div>
             </li>
             <li class="nav-item dropdown user-menu">

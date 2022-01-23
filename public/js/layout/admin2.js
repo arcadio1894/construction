@@ -34,19 +34,67 @@ $(document).ready(function () {
             if ( quantity_notifications_unread > 0 )
             {
                 $('#total_notifications').show();
+                $('#read-all').show();
                 $('#total_notifications').html(quantity_notifications_unread);
                 $('#quantity_notifications').html(quantity_notifications_unread + ' notificación(es)');
             } else {
                 $('#total_notifications').hide();
+                $('#read-all').hide();
                 $('#quantity_notifications').html(quantity_notifications_unread + ' notificación(es)');
+
             }
 
         }
     });
 
     $(document).on('click', '[data-read]', readNotification);
+    $('#read-all').on('click', readAllNotification);
 
 });
+
+function readAllNotification() {
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de marcar como leído todas las notificaciones?',
+        content: '',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/leer/todas/notificaciones',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            //console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Proceso cancelado.");
+                },
+            },
+        }
+    });
+}
 
 function readNotification() {
     var id_notification_user = $(this).attr('data-read');

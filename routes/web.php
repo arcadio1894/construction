@@ -823,6 +823,7 @@ Route::middleware('auth')->group(function (){
         // NOTIFICATIONS
         Route::get('/get/notifications', 'NotificationController@getNotifications');
         Route::post('/read/notification/{id_notification}', 'NotificationController@readNotification');
+        Route::post('/leer/todas/notificaciones', 'NotificationController@readAllNotifications');
 
     });
 });
