@@ -25,8 +25,15 @@ $(document).ready(function () {
                     //console.log(data.notifications[i].read);
                     quantity_notifications_unread = quantity_notifications_unread + 1;
                     renderTemplateNotificationUnread( data.notifications[i] )
-                } else {
-                    renderTemplateNotificationRead( data.notifications[i] )
+                }
+
+            }
+            for( var j = 0; j<data.notifications.length; j++ )
+            {
+                //console.log(data.notifications[i]);
+                if ( data.notifications[j].read == 1 )
+                {
+                    renderTemplateNotificationRead( data.notifications[j] )
                 }
 
             }

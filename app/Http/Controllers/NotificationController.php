@@ -25,7 +25,9 @@ class NotificationController extends Controller
             {
                 $query->where("date_delete",null)
                     ->orWhere("date_delete", '>', Carbon::now());
-            })->get();
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
         //dd($notificationUsers);
 
         $notifications = [];
