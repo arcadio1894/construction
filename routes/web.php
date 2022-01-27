@@ -825,6 +825,12 @@ Route::middleware('auth')->group(function (){
         Route::post('/read/notification/{id_notification}', 'NotificationController@readNotification');
         Route::post('/leer/todas/notificaciones', 'NotificationController@readAllNotifications');
 
+        // CREDITS
+        Route::get('/control/creditos', 'SupplierCreditController@indexCredits')
+            ->name('index.credit.supplier');
+        Route::get('/get/only/invoices/purchase', 'SupplierCreditController@getOnlyInvoicesPurchase');
+        Route::get('/get/only/credits/supplier', 'SupplierCreditController@getOnlyCreditsSupplier');
+
     });
 });
 

@@ -44,6 +44,7 @@ $(document).ready(function () {
                 $('#read-all').show();
                 $('#total_notifications').html(quantity_notifications_unread);
                 $('#quantity_notifications').html(quantity_notifications_unread + ' notificación(es)');
+                //$("#showNotifications").click();
             } else {
                 $('#total_notifications').hide();
                 $('#read-all').hide();

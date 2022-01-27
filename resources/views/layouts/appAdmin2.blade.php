@@ -98,7 +98,7 @@
             </li>--}}
             <!-- Notifications Dropdown Menu -->
             <li class="nav-item dropdown">
-                <a class="nav-link" data-toggle="dropdown" href="#">
+                <a class="nav-link" data-toggle="dropdown" href="#" id="showNotifications">
                     <i class="far fa-bell"></i>
                     <span class="badge badge-danger navbar-badge" id="total_notifications"></span>
                 </a>
@@ -1139,6 +1139,24 @@
                             </ul>
                         </li>
                     @endcan
+                    {{--<li class="nav-header">CRÉDITOS</li>
+                    <li class="nav-item has-treeview @yield('openCredit')">
+                        <a href="#" class="nav-link @yield('activeCreditSupplier')">
+                            <i class="nav-icon fas fa-credit-card"></i>
+                            <p>
+                                CRÉDITOS PROVEEDOR
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{route('index.credit.supplier')}}" class="nav-link @yield('activeListCreditSupplier')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar créditos</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>--}}
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

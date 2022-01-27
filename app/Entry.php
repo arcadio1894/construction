@@ -71,5 +71,10 @@ class Entry extends Model
         return $this->belongsTo('App\Supplier');
     }
 
+    public function credit()
+    {
+        return $this->hasOne('App\SupplierCredit');
+    }
+
     protected $dates = ['deleted_at', 'date_entry'];
 }
