@@ -59,12 +59,8 @@ $(document).ready(function () {
 
             for (var i=0; i<json.length; i++)
             {
-                for ( var j=0; j<$materials_order.length; j++ )
-                {
-                    $materials.push(json[i].material);
-                    $materialsComplete.push(json[i]);
-                }
-
+                $materials.push(json[i].material);
+                $materialsComplete.push(json[i]);
             }
             $("#element_loader").LoadingOverlay("hide", true);
         }
