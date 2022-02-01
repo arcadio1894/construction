@@ -4,24 +4,15 @@ let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
 
-/*
-function format ( d ) {
-    var mensaje = "";
-    var detalles = d.details;
-    console.log(detalles);
-    for ( var i=0; i<detalles.length; i++ )
-    {
-        var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
-        mensaje = mensaje +
-            'Material: '+d.details[i].material_description+'<br>';
-    }
-    return 'DETALLES DE ENTRADA'+'<br>'+
-        mensaje ;
-}
-*/
-
 $(document).ready(function () {
     $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
+    $('#sandbox-container2 .input-daterange').datepicker({
         todayBtn: "linked",
         clearBtn: true,
         language: "es",
@@ -461,7 +452,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if (item.code == null){
-                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image_invoice+'" data-image="'+item.id+'" '+
                             ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
 
                     }
@@ -477,7 +468,8 @@ $(document).ready(function () {
                 {
                     var text = '';
 
-                    text = '<button type="button" data-add="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar a créditos"><i class="fa fa-plus"></i> </button>';
+                    text = text + '<button type="button" data-edit="' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i> </button> ';
+                    text = text + '<button type="button" data-pay="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crédito pagado"><i class="fa fa-dollar-sign"></i> </button>';
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -624,38 +616,6 @@ $(document).ready(function () {
         },
 
     } );
-    // Array to track the ids of the details displayed rows
-    var detailRows = [];
-
-    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
-        var idx = $.inArray( tr.attr('id'), detailRows );
-
-        if ( row.child.isShown() ) {
-            tr.removeClass( 'details' );
-            row.child.hide();
-
-            // Remove from the 'open' array
-            detailRows.splice( idx, 1 );
-        }
-        else {
-            tr.addClass( 'details' );
-            row.child( format( row.data() ) ).show();
-
-            // Add to the 'open' array
-            if ( idx === -1 ) {
-                detailRows.push( tr.attr('id') );
-            }
-        }
-    } );
-*/
-    // On each draw, loop over the `detailRows` array and show any child rows
-    /*table.on( 'draw', function () {
-        $.each( detailRows, function ( i, id ) {
-            $('#'+id+' td.details-control').trigger( 'click' );
-        } );
-    } );*/
 
     $(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
@@ -681,26 +641,58 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-add]', addCredit);
 
+    $(document).on('click', '[data-edit]', editCredit);
+
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
-            var min  = $('#start').val();
-            var max  = $('#end').val();
-            var createdAt = data[0]; // Our date column in the table
-            var startDate   = moment(min, "DD/MM/YYYY");
-            var endDate     = moment(max, "DD/MM/YYYY");
-            var diffDate = moment(createdAt, "DD/MM/YYYY");
-
-            if ( (min === "" || max === "") ||  (diffDate.isBetween(startDate, endDate, null, '[]')) )
+            if ( settings.nTable.id === 'dynamic-table' )
             {
-                console.log("Es true" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
-                console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate + " " );
-                return true;
-            }
-            console.log("Es false" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
-            console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate);
+                var min  = $('#start').val();
+                console.log(min);
+                var max  = $('#end').val();
+                console.log(max);
+                var createdAt = data[0]; // Our date column in the table
+                var startDate   = moment(min, "DD/MM/YYYY");
+                var endDate     = moment(max, "DD/MM/YYYY");
+                var diffDate = moment(createdAt, "DD/MM/YYYY");
 
-            return false;
+                if ( (min === "" || max === "") ||  (diffDate.isBetween(startDate, endDate, null, '[]')) )
+                {
+                    //console.log("Es true" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+                    //console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate + " " );
+                    return true;
+                }
+                //console.log("Es false" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+                //console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate);
+
+                return false;
+
+            } else {
+                if ( settings.nTable.id === 'dynamic-table2' )
+                {
+                    var min2  = $('#start2').val();
+                    console.log(min2);
+                    var max2  = $('#end2').val();
+                    console.log(max2);
+                    var createdAt2 = data[5]; // Our date column in the table
+                    var startDate2   = moment(min2, "DD/MM/YYYY");
+                    var endDate2     = moment(max2, "DD/MM/YYYY");
+                    var diffDate2 = moment(createdAt2, "DD/MM/YYYY");
+
+                    if ( (min2 === "" || max2 === "") ||  (diffDate2.isBetween(startDate2, endDate2, null, '[]')) )
+                    {
+                        console.log("Es true" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
+                        console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2 + " " );
+                        return true;
+                    }
+                    console.log("Es false" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
+                    console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2);
+
+                    return false;
+                }
+
+            }
 
             /*return !!((min === "" || max === "")
                 ||

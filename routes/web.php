@@ -830,6 +830,7 @@ Route::middleware('auth')->group(function (){
             ->name('index.credit.supplier');
         Route::get('/get/only/invoices/purchase', 'SupplierCreditController@getOnlyInvoicesPurchase');
         Route::get('/get/only/credits/supplier', 'SupplierCreditController@getOnlyCreditsSupplier');
+        Route::post('/add/invoice/credit/{idEntry}', 'SupplierCreditController@addInvoiceToCredit');
 
     });
 });

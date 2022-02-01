@@ -500,11 +500,52 @@
     @can('showPrices_quote')
     <div class="row">
         <!-- accepted payments column -->
-        <div class="col-6">
-
+        <div class="col-sm-7">
+            <div class="card card-lightblue collapsed-card" >
+                <div class="card-header  border-transparent" >
+                    <h3 class="card-title">Equipos de cotización</h3>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th >Equipo</th>
+                                <th >Cantidad</th>
+                                <th >Precio S/Igv</th>
+                                <th >Total S/Igv</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-summary">
+                            @foreach( $quote->equipments as $equipment )
+                                <tr>
+                                    <td data-nEquipment>{{ $equipment->description }}</td>
+                                    <td data-qEquipment>{{ $equipment->quantity }}</td>
+                                    <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
+                                    <td data-tEquipment>{{ round($equipment->total/1.18, 2) }}</td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                            <template id="template-summary">
+                                <tr>
+                                    <td data-nEquipment></td>
+                                    <td data-qEquipment></td>
+                                    <td data-pEquipment></td>
+                                    <td data-tEquipment></td>
+                                </tr>
+                            </template>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+            </div>
         </div>
         <!-- /.col -->
-        <div class="col-6">
+        <div class="col-5">
             <p class="lead">Resumen de Cotización</p>
 
             <div class="table-responsive">

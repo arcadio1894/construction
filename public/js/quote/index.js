@@ -131,11 +131,13 @@ $(document).ready(function () {
                     }
 
                     if ( item.state === 'created' ) {
-                        if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
                             text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                        }
+                        if ( $.inArray('update_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
                         }

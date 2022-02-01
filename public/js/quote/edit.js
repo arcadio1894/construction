@@ -13,7 +13,9 @@ var $permissions;
 $(document).ready(function () {
     console.log($total);
     $permissions = JSON.parse($('#permissions').val());
-
+    $("#element_loader").LoadingOverlay("show", {
+        background  : "rgba(61, 215, 239, 0.4)"
+    });
     getContacts();
 
     $.ajax({
@@ -28,7 +30,9 @@ $(document).ready(function () {
 
         },
         complete: function (data) {
+
             fillEquipments();
+
         }
     });
 
@@ -459,6 +463,8 @@ var substringMatcher = function(strs) {
 };
 
 function fillEquipments() {
+    //$('#body-summary').html('');
+
     $('[data-confirm]').each(function(){
         if($(this).data('confirm')!=='')
         {
@@ -664,15 +670,20 @@ function fillEquipments() {
             button.next().attr('data-saveEquipment', $equipments.length);
             button.next().next().attr('data-deleteEquipment', $equipments.length);
             $equipments.push({'id':$equipments.length, 'quote': quote_id, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias': diasArray});
-
+            //renderTemplateSummary(description, quantity, totalEquipment);
             $items = [];
         }
 
     });
+    //renderTemplateSummary($equipments);
+    $("#element_loader").LoadingOverlay("hide", true);
 }
 
 function deleteEquipment() {
-    if($(this).data('idequipment')==='') {
+    //if($(this).attr('data-idequipment')==='') {
+    var attr = $(this).attr('data-idequipment');
+    console.log(attr);
+    if (typeof attr === typeof undefined || attr === false) {
         var button = $(this);
         $.confirm({
             icon: 'fas fa-frown',
@@ -704,7 +715,7 @@ function deleteEquipment() {
                         calculateMargen2($('#utility').val());
                         calculateLetter2($('#letter').val());
                         calculateRent2($('#taxes').val());
-
+                        renderTemplateSummary($equipments);
                         $.alert("Equipo eliminado!");
 
                     },
@@ -780,7 +791,7 @@ function deleteEquipment() {
                                     renderTemplateEquipment();
                                     $equipmentStatus = false;
                                 }
-
+                                renderTemplateSummary($equipments);
                                 $.alert(data.message);
 
                             },
@@ -1076,7 +1087,7 @@ function saveEquipment() {
                         calculateMargen2($('#utility').val());
                         calculateLetter2($('#letter').val());
                         calculateRent2($('#taxes').val());
-
+                        renderTemplateSummary($equipments);
                         button.attr('data-saveEquipment', $equipments.length);
                         button.next().attr('data-deleteEquipment', $equipments.length);
                         $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
@@ -1350,6 +1361,7 @@ function saveEquipment() {
                                 button2.attr('data-idEquipment', equipment.id);
                                 button2.next().attr('data-quote', quote.id);
                                 button2.next().attr('data-idEquipment', equipment.id);
+
                                 $.alert(data.message);
 
                             },
@@ -1403,6 +1415,7 @@ function saveEquipment() {
                         var card = button2.parent().parent().parent();
                         card.removeClass('card-gray-dark');
                         card.addClass('card-success');
+                        renderTemplateSummary($equipments);
                         console.log($total);
                     },
                 },
@@ -2320,7 +2333,7 @@ function confirmEquipment() {
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
                     $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-
+                    renderTemplateSummary($equipments);
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -3278,6 +3291,24 @@ function renderTemplateEquipment() {
     $('.unitMeasure').select2({
         placeholder: "Seleccione unidad",
     });
+}
+
+function renderTemplateSummary(equipments) {
+
+    $('#body-summary').html('');
+    for (let i = 0; i < equipments.length; i++) {
+        //console.log(equipments[i]);
+        var clone = activateTemplate('#template-summary');
+        var price = ((parseFloat(equipments[i].total)/parseFloat(equipments[i].quantity))/1.18).toFixed(2);
+        var totalE = (parseFloat(equipments[i].total)/1.18).toFixed(2);
+        clone.querySelector("[data-nEquipment]").innerHTML = equipments[i].description;
+        clone.querySelector("[data-qEquipment]").innerHTML = equipments[i].quantity;
+        clone.querySelector("[data-pEquipment]").innerHTML = price;
+        clone.querySelector("[data-tEquipment]").innerHTML = totalE;
+
+        $('#body-summary').append(clone);
+    }
+
 }
 
 function activateTemplate(id) {
