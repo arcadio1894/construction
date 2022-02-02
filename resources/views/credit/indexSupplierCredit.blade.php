@@ -83,7 +83,7 @@
         <br><br>
     </div>
     <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="dynamic-table">
+        <table class="table table-bordered table-hover table-sm" id="dynamic-table">
             <thead>
             <tr>
                 <th>Fecha de factura</th>
@@ -110,17 +110,17 @@
             <strong> Seleccione un rango de fechas: </strong>
         </div>
         <div class="col-md-6" id="sandbox-container2">
-            <div class="input-daterange input-group" id="datepicker">
-                <input type="text" class="form-control form-control-sm date-range-filter" id="start2" name="start">
+            <div class="input-daterange input-group" id="datepicker2">
+                <input type="text" class="form-control form-control-sm date-range-filter2" id="start2" name="start">
                 <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
-                <input type="text" class="form-control form-control-sm date-range-filter" id="end2" name="end">
+                <input type="text" class="form-control form-control-sm date-range-filter2" id="end2" name="end">
             </div>
         </div>
 
         <br><br>
     </div>
     <div class="table-responsive">
-        <table class="table table-bordered table-hover" id="dynamic-table2">
+        <table class="table table-bordered table-hover table-sm" id="dynamic-table2">
             <thead>
             <tr>
                 <th>Proveedor</th>
@@ -163,6 +163,98 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         <button type="submit" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEdit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Información del crédito</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formEdit" data-url="{{ route('material.destroy') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="credit_id" name="credit_id">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="supplier"> Proveedor <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="supplier" name="supplier" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="invoice"> Factura <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="invoice" name="invoice" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="purchase_order"> # O. C. <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="purchase_order" name="purchase_order" class="form-control" readonly />
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="total_soles"> Importe S/.  <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="total_soles" name="total_soles" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="total_dollars"> Importe $ <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="total_dollars" name="total_dollars" class="form-control" />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" id="date_issue">
+                                    <label for="date_issue">Fecha Emisión <span class="right badge badge-danger">(*)</span></label>
+                                    <div class="input-date" id="date_picker_issue">
+                                        <input type="text" class="form-control date_picker_issue" id="date_issue" name="date_issue">
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="payment_deadline"> Plazo Pago <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="payment_deadline" name="payment_deadline" class="form-control" required />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group" id="date_expiration">
+                                    <label for="date_expiration_2">Fecha Vence <span class="right badge badge-danger">(*)</span></label>
+                                    <div class="input-date" id="date_picker_expiration">
+                                        <input type="text" class="form-control date_picker_expiration" id="date_expiration_2" name="date_expiration">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="state"> Estado <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="state" name="state" class="form-control" required />
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <label for="days_to_expiration"> Días Vence <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="days_to_expiration" name="days_to_expiration" class="form-control" required />
+                            </div>
+                            <div class="col-md-3">
+                                <label for="state_credit"> Estado Crédito <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="state_credit" name="state_credit" class="form-control" required />
+
+                            </div>
+                            <div class="col-md-6">
+                                <label for="observation"> Observación <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name="observation" class="form-control" id="observation" rows="2"></textarea>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Guardar cambios</button>
                     </div>
                 </form>
             </div>
@@ -282,4 +374,24 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/credit/index_creditSupplier.js') }}"></script>
+    <script>
+        $('#date_issue .date_picker_issue').datepicker({
+            todayBtn: "linked",
+            clearBtn: true,
+            language: "es",
+            multidate: false,
+            autoclose: true,
+            todayHighlight: true,
+            defaultViewDate: moment().format('L')
+        });
+        $('#date_expiration .date_picker_expiration').datepicker({
+            todayBtn: "linked",
+            clearBtn: true,
+            language: "es",
+            multidate: false,
+            autoclose: true,
+            todayHighlight: true,
+            defaultViewDate: moment().format('L')
+        });
+    </script>
 @endsection

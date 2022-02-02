@@ -32,7 +32,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'currency_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
-            'image' => 'image',
+            'image' => 'mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
             'date_invoice' => 'required'
         ];
     }

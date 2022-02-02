@@ -89,6 +89,14 @@ class SupplierCreditController extends Controller
 
     }
 
+    public function getCreditById( $credit_id )
+    {
+        $credit = SupplierCredit::with('supplier')
+            ->with('entry')->find($credit_id);
+
+        return response()->json(['credit' => $credit], 200);
+    }
+
     public function create()
     {
         //

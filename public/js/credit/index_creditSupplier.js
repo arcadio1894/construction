@@ -633,6 +633,8 @@ $(document).ready(function () {
 
     $modalItems = $('#modalItems');
 
+    $modalEdit = $('#modalEdit');
+
     $modalImage = $('#modalImage');
 
     $(document).on('click', '[data-details]', showDetails);
@@ -646,12 +648,13 @@ $(document).ready(function () {
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
+            //console.log(settings.nTable.id);
             if ( settings.nTable.id === 'dynamic-table' )
             {
                 var min  = $('#start').val();
-                console.log(min);
+                //console.log(min);
                 var max  = $('#end').val();
-                console.log(max);
+                //console.log(max);
                 var createdAt = data[0]; // Our date column in the table
                 var startDate   = moment(min, "DD/MM/YYYY");
                 var endDate     = moment(max, "DD/MM/YYYY");
@@ -672,9 +675,9 @@ $(document).ready(function () {
                 if ( settings.nTable.id === 'dynamic-table2' )
                 {
                     var min2  = $('#start2').val();
-                    console.log(min2);
+                    //console.log(min2);
                     var max2  = $('#end2').val();
-                    console.log(max2);
+                    //console.log(max2);
                     var createdAt2 = data[5]; // Our date column in the table
                     var startDate2   = moment(min2, "DD/MM/YYYY");
                     var endDate2     = moment(max2, "DD/MM/YYYY");
@@ -682,12 +685,12 @@ $(document).ready(function () {
 
                     if ( (min2 === "" || max2 === "") ||  (diffDate2.isBetween(startDate2, endDate2, null, '[]')) )
                     {
-                        console.log("Es true" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
-                        console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2 + " " );
+                        //console.log("Es true" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
+                        //console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2 + " " );
                         return true;
                     }
-                    console.log("Es false" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
-                    console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2);
+                    //console.log("Es false" + (diffDate2.isBetween(startDate2, endDate2, null, '[]')) );
+                    //console.log(min2 + " " + max2 + " " + createdAt2 + " " + startDate2 + " " + endDate2 + " " + diffDate2);
 
                     return false;
                 }
@@ -710,6 +713,10 @@ $(document).ready(function () {
         table.draw();
     } );
 
+    $('.date-range-filter2').change( function() {
+        table2.draw();
+    } );
+
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
@@ -719,6 +726,8 @@ $(document).ready(function () {
 let $modalItems;
 
 let $modalImage;
+
+let $modalEdit;
 
 let $formCreate;
 
@@ -773,6 +782,21 @@ function addCredit() {
             },
         }
     });
+}
+
+function editCredit() {
+    var credit_id = $(this).data('edit');
+    $.ajax({
+        url: "/dashboard/get/credit/by/id/"+credit_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //
+            console.log(json);
+
+        }
+    });
+    $modalEdit.modal('show');
 }
 
 function showImage() {
