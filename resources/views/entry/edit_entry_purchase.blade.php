@@ -128,7 +128,11 @@
                                 <div class="form-group">
                                     <label for="image">Imagen </label>
                                     <input type="file" id="image" name="image" class="form-control">
-                                    <img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    @if ( substr($entry->image,-3) == 'pdf' )
+                                        <a href="{{ asset('images/entries/'.$entry->image) }}" class="btn btn-outline-success float-right">Ver PDF</a>
+                                    @else
+                                        <img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    @endif
                                 </div>
                             </div>
                         </div>

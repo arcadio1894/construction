@@ -32,7 +32,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'currency_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
-            'image' => 'mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
+            'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
             'date_invoice' => 'required'
         ];
     }
@@ -53,7 +53,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'entry_type.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
-            'image.image' => 'Los :attribute son obligatorio.',
+            'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }
@@ -68,7 +68,8 @@ class StoreEntryPurchaseRequest extends FormRequest
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
             'items' => 'items',
-            'deferred_invoice' => 'opción diferido'
+            'deferred_invoice' => 'opción diferido',
+            'image' => 'imagen/PDF'
         ];
     }
 }
