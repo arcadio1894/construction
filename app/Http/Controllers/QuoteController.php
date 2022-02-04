@@ -657,6 +657,9 @@ class QuoteController extends Controller
     public function getAllQuotes()
     {
         $quotes = Quote::with('customer')
+            ->with(['users' => function ($query) {
+                $query->with(['user']);
+            }])
             ->where('raise_status', 0)
             ->whereNotIn('state', ['canceled', 'expired'])
             ->where('state_active', 'open')
@@ -965,6 +968,9 @@ class QuoteController extends Controller
     public function getAllQuotesConfirmed()
     {
         $quotes = Quote::with(['customer'])
+            ->with(['users' => function ($query) {
+                $query->with(['user']);
+            }])
             ->where('state_active','open')
             ->where('state','confirmed')
             ->orderBy('created_at', 'desc')
@@ -1063,6 +1069,9 @@ class QuoteController extends Controller
     public function getAllQuotesDeleted()
     {
         $quotes = Quote::with(['customer'])
+            ->with(['users' => function ($query) {
+                $query->with(['user']);
+            }])
             ->whereIn('state',['canceled', 'expired'])
             ->orderBy('created_at', 'desc')
             ->get();
@@ -1072,6 +1081,9 @@ class QuoteController extends Controller
     public function getAllQuotesClosed()
     {
         $quotes = Quote::with(['customer'])
+            ->with(['users' => function ($query) {
+                $query->with(['user']);
+            }])
             ->whereIn('state_active',['close'])
             ->orderBy('created_at', 'desc')
             ->get();

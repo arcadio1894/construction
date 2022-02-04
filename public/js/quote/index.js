@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions);
+    //console.log($permissions);
     $('#dynamic-table').DataTable( {
         serverSide: true,
         ajax: {
@@ -108,6 +108,14 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>'
+                }
+            },
+            { data: null,
+                title: 'Creador',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ item.users[0].user.name +'</p>'
                 }
             },
             { data: null,

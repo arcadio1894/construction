@@ -22,6 +22,7 @@ class OrderExecutionController extends Controller
         $quotes = Quote::with('customer')
             ->where('raise_status', 1)
             ->whereNotIn('state', ['canceled', 'expired'])
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();
     }

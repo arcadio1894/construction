@@ -94,6 +94,7 @@
                 <th>Moneda</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>
+                <th>Creador</th>
                 <th></th>
             </tr>
             </thead>

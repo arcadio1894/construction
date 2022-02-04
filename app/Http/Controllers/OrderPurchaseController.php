@@ -440,6 +440,7 @@ class OrderPurchaseController extends Controller
     {
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('type', 'e')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
     }
@@ -550,6 +551,7 @@ class OrderPurchaseController extends Controller
     {
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('type', 'n')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
     }

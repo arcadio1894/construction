@@ -226,6 +226,7 @@ class OrderServiceController extends Controller
     {
         $orders = OrderService::with(['supplier', 'approved_user'])
             ->where('regularize', 'nr')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
     }
@@ -400,6 +401,7 @@ class OrderServiceController extends Controller
     {
         $orders = OrderService::with(['supplier', 'approved_user'])
             ->where('regularize', 'r')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
     }

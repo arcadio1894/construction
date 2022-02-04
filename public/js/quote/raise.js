@@ -98,6 +98,14 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Creador',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ item.users[0].user.name +'</p>'
+                }
+            },
+            { data: null,
                 title: '',
                 wrap: true,
                 sortable:false,
