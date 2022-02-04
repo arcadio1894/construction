@@ -833,6 +833,27 @@ Route::middleware('auth')->group(function (){
         Route::post('/add/invoice/credit/{idEntry}', 'SupplierCreditController@addInvoiceToCredit');
         Route::get('/get/credit/by/id/{creditId}', 'SupplierCreditController@getCreditById');
 
+        // PAYMENT DEADLINES
+        Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')
+            ->middleware('permission:list_paymentDeadline');
+        Route::get('plazos/pagos', 'PaymentDeadlineController@index')
+            ->name('paymentDeadline.index')
+            ->middleware('permission:list_paymentDeadline');
+        Route::get('crear/plazo/pago', 'PaymentDeadlineController@create')
+            ->name('paymentDeadline.create')
+            ->middleware('permission:create_paymentDeadline');
+        Route::post('paymentDeadline/store', 'PaymentDeadlineController@store')
+            ->name('paymentDeadline.store')
+            ->middleware('permission:create_paymentDeadline');
+        Route::get('/editar/plazo/pago/{id}', 'PaymentDeadlineController@edit')
+            ->name('paymentDeadline.edit')
+            ->middleware('permission:update_paymentDeadline');
+        Route::post('paymentDeadline/update', 'PaymentDeadlineController@update')
+            ->name('paymentDeadline.update')
+            ->middleware('permission:update_paymentDeadline');
+        Route::post('paymentDeadline/destroy', 'PaymentDeadlineController@destroy')
+            ->name('paymentDeadline.destroy')
+            ->middleware('permission:destroy_paymentDeadline');
     });
 });
 

@@ -660,6 +660,7 @@ class QuoteController extends Controller
             ->where('raise_status', 0)
             ->whereNotIn('state', ['canceled', 'expired'])
             ->where('state_active', 'open')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();
     }
@@ -966,6 +967,7 @@ class QuoteController extends Controller
         $quotes = Quote::with(['customer'])
             ->where('state_active','open')
             ->where('state','confirmed')
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();
     }
@@ -1062,6 +1064,7 @@ class QuoteController extends Controller
     {
         $quotes = Quote::with(['customer'])
             ->whereIn('state',['canceled', 'expired'])
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();
     }
@@ -1070,6 +1073,7 @@ class QuoteController extends Controller
     {
         $quotes = Quote::with(['customer'])
             ->whereIn('state_active',['close'])
+            ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();
     }

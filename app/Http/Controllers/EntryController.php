@@ -201,10 +201,10 @@ class EntryController extends Controller
                                     'detail_entry_id' => $detail_entry->id,
                                     'material_id' => $detail_entry->material_id,
                                     'code' => $items[$i]->item,
-                                    'length' => $detail_entry->material->typeScrap->length,
-                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'length' => (float)$detail_entry->material->typeScrap->length,
+                                    'width' => (float)$detail_entry->material->typeScrap->width,
                                     'weight' => 0,
-                                    'price' => $items[$i]->price,
+                                    'price' => (float)$items[$i]->price,
                                     'percentage' => 1,
                                     'typescrap_id' => $detail_entry->material->typeScrap->id,
                                     'location_id' => $items[$i]->id_location,
@@ -219,7 +219,7 @@ class EntryController extends Controller
                                     'length' => 0,
                                     'width' => 0,
                                     'weight' => 0,
-                                    'price' => $items[$i]->price,
+                                    'price' => (float)$items[$i]->price,
                                     'percentage' => 1,
                                     'location_id' => $items[$i]->id_location,
                                     'state' => $items[$i]->state,
@@ -227,14 +227,14 @@ class EntryController extends Controller
                                 ]);
                             }
                         } else {
-                            $price = ($detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
+                            $price = ((float)$detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
                             $materialS = Material::find($detail_entry->material_id);
-                            if ( $materialS->unit_price < $items[$i]->price )
+                            if ( (float)$materialS->unit_price < (float)$items[$i]->price )
                             {
-                                $materialS->unit_price = $items[$i]->price;
+                                $materialS->unit_price = (float)$items[$i]->price;
                                 $materialS->save();
 
-                                $detail_entry->unit_price = $materialS->unit_price;
+                                $detail_entry->unit_price = (float)$materialS->unit_price;
                                 $detail_entry->save();
                             }
                             //dd($detail_entry->material->materialType);
@@ -244,10 +244,10 @@ class EntryController extends Controller
                                     'detail_entry_id' => $detail_entry->id,
                                     'material_id' => $detail_entry->material_id,
                                     'code' => $items[$i]->item,
-                                    'length' => $detail_entry->material->typeScrap->length,
-                                    'width' => $detail_entry->material->typeScrap->width,
+                                    'length' => (float)$detail_entry->material->typeScrap->length,
+                                    'width' => (float)$detail_entry->material->typeScrap->width,
                                     'weight' => 0,
-                                    'price' => $price,
+                                    'price' => (float)$price,
                                     'percentage' => 1,
                                     'typescrap_id' => $detail_entry->material->typeScrap->id,
                                     'location_id' => $items[$i]->id_location,
@@ -262,7 +262,7 @@ class EntryController extends Controller
                                     'length' => 0,
                                     'width' => 0,
                                     'weight' => 0,
-                                    'price' => $price,
+                                    'price' => (float)$price,
                                     'percentage' => 1,
                                     'location_id' => $items[$i]->id_location,
                                     'state' => $items[$i]->state,
@@ -836,6 +836,8 @@ class EntryController extends Controller
 
             $items = json_decode($request->get('items'));
 
+            //dd($items);
+
             for ( $i=0; $i<sizeof($items); $i++ )
             {
                 $detail_entry = DetailEntry::create([
@@ -860,7 +862,7 @@ class EntryController extends Controller
                         $materialS->unit_price = $price1;
                         $materialS->save();
 
-                        $detail_entry->unit_price = $items[$i]->price;
+                        $detail_entry->unit_price = (float)$items[$i]->price;
                         $detail_entry->save();
                     }
                     //dd($detail_entry->material->materialType);
@@ -872,10 +874,10 @@ class EntryController extends Controller
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => $detail_entry->material->typeScrap->length,
-                                'width' => $detail_entry->material->typeScrap->width,
+                                'length' => (float)$detail_entry->material->typeScrap->length,
+                                'width' => (float)$detail_entry->material->typeScrap->width,
                                 'weight' => 0,
-                                'price' => $items[$i]->price,
+                                'price' => (float)$items[$i]->price,
                                 'percentage' => 1,
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
                                 'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
@@ -894,7 +896,7 @@ class EntryController extends Controller
                                 'length' => 0,
                                 'width' => 0,
                                 'weight' => 0,
-                                'price' => $items[$i]->price,
+                                'price' => (float)$items[$i]->price,
                                 'percentage' => 1,
                                 'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
                                 'state' => 'good',
@@ -903,14 +905,17 @@ class EntryController extends Controller
                         }
                     }
                 } else {
-                    $price = ($detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
+                    $price = ((float)$detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
+                    //dump($detail_entry->material->unit_price);
+                    //dump((float)$items[$i]->price);
+                    //dd($price);
                     $materialS = Material::find($detail_entry->material_id);
-                    if ( $materialS->unit_price < $price )
+                    if ( (float)$materialS->unit_price < (float)$price )
                     {
-                        $materialS->unit_price = $items[$i]->price;
+                        $materialS->unit_price = (float)$items[$i]->price;
                         $materialS->save();
 
-                        $detail_entry->unit_price = $materialS->unit_price;
+                        $detail_entry->unit_price = (float)$materialS->unit_price;
                         $detail_entry->save();
                     }
                     //dd($detail_entry->material->materialType);
@@ -922,10 +927,10 @@ class EntryController extends Controller
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => $detail_entry->material->typeScrap->length,
-                                'width' => $detail_entry->material->typeScrap->width,
+                                'length' => (float)$detail_entry->material->typeScrap->length,
+                                'width' => (float)$detail_entry->material->typeScrap->width,
                                 'weight' => 0,
-                                'price' => $price,
+                                'price' => (float)$price,
                                 'percentage' => 1,
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
                                 'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
@@ -943,7 +948,7 @@ class EntryController extends Controller
                                 'length' => 0,
                                 'width' => 0,
                                 'weight' => 0,
-                                'price' => $price,
+                                'price' => (float)$price,
                                 'percentage' => 1,
                                 'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
                                 'state' => 'good',
