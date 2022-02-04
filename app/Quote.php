@@ -132,4 +132,9 @@ class Quote extends Model
         return $this->hasMany('App\Equipment');
     }
 
+    public function users()
+    {
+        return $this->hasMany('App\QuoteUser');
+    }
+
 }

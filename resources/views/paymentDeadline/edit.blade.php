@@ -1,27 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openConfig')
+@section('openPaymentDeadline')
     menu-open
 @endsection
 
-@section('activeConfig')
+@section('activePaymentDeadline')
     active
 @endsection
 
-@section('openQuality')
-    menu-open
-@endsection
-
-@section('activeQuality')
-
-@endsection
-
-@section('activeListQuality')
+@section('activeListPaymentDeadline')
     active
 @endsection
 
 @section('title')
-    Calidades
+    Plazos de pago
 @endsection
 
 @section('styles-plugins')
@@ -42,11 +34,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Calidades</h1>
+    <h1 class="page-title">Plazos de pago</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Editar calidad {{$quality->name}}</h5>
+    <h5 class="card-title">Editar plazo de pago {{$paymentDeadline->description}}</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -55,35 +47,35 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('quality.index') }}"><i class="fa fa-archive"></i> Calidades</a>
+            <a href="{{ route('quality.index') }}"><i class="fa fa-archive"></i> Plazo de pago</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formEdit" class="form-horizontal" data-url="{{ route('quality.update') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('paymentDeadline.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" class="form-control" name="quality_id" value="{{$quality->id}}">
+        <input type="hidden" class="form-control" name="paymentDeadline_id" value="{{$paymentDeadline->id}}">
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Calidad <span class="right badge badge-danger">(*)</span></label>
+                <label for="inputEmail3" class="col-12 col-form-label">Plazo de pago <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" onkeyup="mayus(this);" name="name" placeholder="Ejm: Calidad" value="{{$quality->name}}">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="description" value="{{$paymentDeadline->description}}">
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Cantidad de días <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" onkeyup="mayus(this);" name="description" placeholder="Ejm: Descripción" value="{{$quality->description}}">
+                    <input type="number" class="form-control" onkeyup="mayus(this);" step="1" min="0" name="days" value="{{$paymentDeadline->days}}">
                 </div>
             </div>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-outline-success">Guardar Cambios</button>
+            <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar Cambios</button>
             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
         </div>
         <!-- /.card-footer -->
@@ -101,5 +93,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/quality/edit.js') }}"></script>
+    <script src="{{ asset('js/paymentDeadline/edit.js') }}"></script>
 @endsection

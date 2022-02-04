@@ -13,7 +13,7 @@ class DeletePaymentDeadlineRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,22 @@ class DeletePaymentDeadlineRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'paymentDeadline_id' => 'required|exists:payment_deadlines,id',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'paymentDeadline_id.required' => 'El :attribute es obligatorio.',
+            'paymentDeadline_id.exists' => 'El :attribute no existe en la base de datos.'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'paymentDeadline_id' => 'id del plazo de pago'
         ];
     }
 }

@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeQuality);
+    $('#btn-submit').on('click', storePaymentDeadline);
+    //$formCreate.on('submit', storePaymentDeadline);
 
 });
 
@@ -10,14 +11,17 @@ function mayus(e) {
     e.value = e.value.toUpperCase();
 }
 
-function storeQuality() {
+function storePaymentDeadline() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var createUrl = $formCreate.data('url');
+    var formulario = $('#formCreate')[0];
+    var form = new FormData(formulario);
     $.ajax({
         url: createUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -41,10 +45,32 @@ function storeQuality() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
-            }, 3000 )
+            }, 2000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -57,7 +83,7 @@ function storeQuality() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "3000",
+                        "timeOut": "2000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",
@@ -65,6 +91,7 @@ function storeQuality() {
                         "hideMethod": "fadeOut"
                     });
             }
+            $("#btn-submit").attr("disabled", false);
 
 
         },

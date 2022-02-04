@@ -17,7 +17,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('update_paymentDeadline', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/plazo/pago/'+item.id+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/plazo/pago/'+item.id+
                             '" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a> ';
                     }
                     if ( $.inArray('destroy_paymentDeadline', $permissions) !== -1 ) {
@@ -171,7 +171,8 @@ $(document).ready(function () {
     } );
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyPaymentDeadline);
+    $('#btn-submit').on('click', destroyPaymentDeadline);
+    //$formDelete.on('submit', destroyPaymentDeadline);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 });
@@ -192,12 +193,15 @@ function openModalDelete() {
 
 function destroyPaymentDeadline() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');
+    var formulario = $('#formDelete')[0];
+    var form = new FormData(formulario);
     $.ajax({
         url: deleteUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -222,10 +226,32 @@ function destroyPaymentDeadline() {
                 });
             $modalDelete.modal('hide');
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
-            }, 3000 )
+            }, 2000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -238,7 +264,7 @@ function destroyPaymentDeadline() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "3000",
+                        "timeOut": "2000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",
@@ -246,6 +272,7 @@ function destroyPaymentDeadline() {
                         "hideMethod": "fadeOut"
                     });
             }
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

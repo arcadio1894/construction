@@ -381,7 +381,7 @@
                     </li>
                     @endcan
 
-                    {{--@can('enable_paymentDeadline')
+                    @can('enable_paymentDeadline')
                         <li class="nav-header">PLAZOS DE PAGO</li>
                         <li class="nav-item has-treeview @yield('openPaymentDeadline')">
                             <a href="#" class="nav-link @yield('activePaymentDeadline')">
@@ -410,7 +410,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
 
                     @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
                     <li class="nav-header">MATERIALES</li>

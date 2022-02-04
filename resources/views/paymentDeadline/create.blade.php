@@ -74,7 +74,7 @@
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-outline-success">Guardar</button>
+            <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar</button>
             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
         </div>
         <!-- /.card-footer -->

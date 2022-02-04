@@ -32,9 +32,9 @@ class StorePaymentDeadlineRequest extends FormRequest
     public function messages()
     {
         return [
-            'description.required' => 'El :attribute es obligatoria.',
-            'description.string' => 'El :attribute debe contener caracteres válidos.',
-            'description.max' => 'El :attribute debe contener máximo 255 caracteres.',
+            'description.required' => 'La :attribute es obligatoria.',
+            'description.string' => 'La :attribute debe contener caracteres válidos.',
+            'description.max' => 'La :attribute debe contener máximo 255 caracteres.',
 
             'days.required' => 'La :attribute es obligatorio.',
             'days.numeric' => 'La :attribute debe ser un número.',
@@ -46,7 +46,7 @@ class StorePaymentDeadlineRequest extends FormRequest
     {
         return [
             'description' => 'descripción',
-            'days' => 'cantidad de dáis',
+            'days' => 'cantidad de días',
         ];
     }
 }
