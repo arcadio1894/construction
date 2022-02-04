@@ -381,6 +381,37 @@
                     </li>
                     @endcan
 
+                    {{--@can('enable_paymentDeadline')
+                        <li class="nav-header">PLAZOS DE PAGO</li>
+                        <li class="nav-item has-treeview @yield('openPaymentDeadline')">
+                            <a href="#" class="nav-link @yield('activePaymentDeadline')">
+                                <i class="nav-icon fas fa-handshake"></i>
+                                <p>
+                                    Plazo de pago
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_paymentDeadline')
+                                    <li class="nav-item">
+                                        <a href="{{route('paymentDeadline.index')}}" class="nav-link @yield('activeListPaymentDeadline')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar plazos</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_paymentDeadline')
+                                    <li class="nav-item">
+                                        <a href="{{ route('paymentDeadline.create') }}" class="nav-link @yield('activeCreatePaymentDeadline')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear plazos</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan--}}
+
                     @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
                     <li class="nav-header">MATERIALES</li>
                     <li class="nav-item has-treeview @yield('openConfig')">

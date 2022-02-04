@@ -207,7 +207,7 @@ function addItems() {
 
     $('#body-items').html('');
 
-    const result = $materialsComplete.find( material => material.material === material_name );
+    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
 
     $.ajax({
         url: "/dashboard/get/items/output/"+result.id,

@@ -213,7 +213,7 @@ function addItems() {
             });
         return;
     } else {
-        let result2 = $materialsComplete.find( material => material.material === $('#material_search').val().trim() );
+        let result2 = $materialsComplete.find( material => material.material.trim() === $('#material_search').val().trim() );
         if ( !result2  ){
             toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
                 {
@@ -243,7 +243,7 @@ function addItems() {
 
     $('#body-items').html('');
 
-    const result = $materialsComplete.find( material => material.material === material_name );
+    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
 
     $.ajax({
         url: "/dashboard/get/items/output/"+result.id,
@@ -294,7 +294,7 @@ function addItemsScrap() {
             });
         return;
     } else {
-        let result2 = $materialsComplete.find( material => material.material === $('#material_search').val().trim() );
+        let result2 = $materialsComplete.find( material => material.material.trim() === $('#material_search').val().trim() );
         if ( !result2  ){
             toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
                 {
@@ -346,7 +346,7 @@ function addItemsScrap() {
 
     $('#body-items').html('');
 
-    const result = $materialsComplete.find( material => material.material === material_name );
+    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
     console.log(result);
     $.ajax({
         url: "/dashboard/get/items/output/"+result.id,

@@ -13,7 +13,7 @@ class StorePaymentDeadlineRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,29 @@ class StorePaymentDeadlineRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'description' => 'required|string|max:255',
+            'days' => 'required|numeric|min:0',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'description.required' => 'El :attribute es obligatoria.',
+            'description.string' => 'El :attribute debe contener caracteres válidos.',
+            'description.max' => 'El :attribute debe contener máximo 255 caracteres.',
+
+            'days.required' => 'La :attribute es obligatorio.',
+            'days.numeric' => 'La :attribute debe ser un número.',
+            'days.min' => 'La :attribute no puede ser menor a 0.',
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'description' => 'descripción',
+            'days' => 'cantidad de dáis',
         ];
     }
 }
