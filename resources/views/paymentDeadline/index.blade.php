@@ -61,6 +61,8 @@
             <tr>
                 <th>Descripción</th>
                 <th>Cantidad de días</th>
+                <th>Usado en</th>
+                <th>Indica crédito</th>
                 <th>Acciones</th>
             </tr>
             </thead>

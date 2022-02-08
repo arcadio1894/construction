@@ -16,6 +16,7 @@ use App\Material;
 use App\MaterialTaken;
 use App\Notification;
 use App\NotificationUser;
+use App\PaymentDeadline;
 use App\Quote;
 use App\QuoteUser;
 use App\UnitMeasure;
@@ -52,8 +53,8 @@ class QuoteController extends Controller
         $maxId = Quote::max('id')+1;
         $length = 5;
         $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
-
-        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions'));
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines'));
     }
 
     public function store(StoreQuoteRequest $request)
@@ -72,6 +73,7 @@ class QuoteController extends Controller
                 'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
                 'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
                 'contact_id' => ($request->has('contact_id')) ? $request->get('contact_id') : null,
+                'payment_deadline_id' => ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null,
                 'state' => 'created',
                 'utility' => ($request->has('utility')) ? $request->get('utility'): 0,
                 'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
@@ -250,11 +252,13 @@ class QuoteController extends Controller
 
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         //dump($quote);
-        return view('quote.show', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
+        return view('quote.show', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines'));
     }
 
     public function edit($id)
@@ -266,9 +270,10 @@ class QuoteController extends Controller
         $defaultConsumable = '(*)';
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
-
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $quote3 = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
@@ -302,6 +307,7 @@ class QuoteController extends Controller
 
             $quote2 = Quote::where('id', $id)
                 ->with('customer')
+                ->with('deadline')
                 ->with(['equipments' => function ($query) {
                     $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
                 }])->first();
@@ -344,12 +350,13 @@ class QuoteController extends Controller
 
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
 
         //dump($quote);
-        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
+        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines'));
 
     }
 
@@ -362,16 +369,17 @@ class QuoteController extends Controller
         $defaultConsumable = '(*)';
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
-
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
 
         //dump($quote);
-        return view('quote.adjust', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions'));
+        return view('quote.adjust', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines'));
 
     }
 
@@ -388,6 +396,7 @@ class QuoteController extends Controller
             $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now();
             $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5);
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
+            $quote->payment_deadline_id = ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null;
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
             $quote->contact_id = ($request->has('contact_id')) ? $request->get('contact_id') : null;
@@ -657,6 +666,7 @@ class QuoteController extends Controller
     public function getAllQuotes()
     {
         $quotes = Quote::with('customer')
+            ->with('deadline')
             ->with(['users' => function ($query) {
                 $query->with(['user']);
             }])
@@ -672,6 +682,7 @@ class QuoteController extends Controller
     {
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
@@ -689,6 +700,7 @@ class QuoteController extends Controller
     {
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
@@ -968,6 +980,7 @@ class QuoteController extends Controller
     public function getAllQuotesConfirmed()
     {
         $quotes = Quote::with(['customer'])
+            ->with('deadline')
             ->with(['users' => function ($query) {
                 $query->with(['user']);
             }])
@@ -985,15 +998,16 @@ class QuoteController extends Controller
         $defaultConsumable = '(*)';
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
-
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with('contact')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
         //dump($quote);
-        return view('quote.quoteInSoles', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces'));
+        return view('quote.quoteInSoles', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines'));
     }
 
     public function saveQuoteInSoles( Quote $quote )
@@ -1069,6 +1083,7 @@ class QuoteController extends Controller
     public function getAllQuotesDeleted()
     {
         $quotes = Quote::with(['customer'])
+            ->with('deadline')
             ->with(['users' => function ($query) {
                 $query->with(['user']);
             }])
@@ -1081,6 +1096,7 @@ class QuoteController extends Controller
     public function getAllQuotesClosed()
     {
         $quotes = Quote::with(['customer'])
+            ->with('deadline')
             ->with(['users' => function ($query) {
                 $query->with(['user']);
             }])
@@ -1128,6 +1144,7 @@ class QuoteController extends Controller
     {
         $quote = Quote::where('id', $id)
             ->with('customer')
+            ->with('deadline')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();

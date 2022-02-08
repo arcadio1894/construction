@@ -11,6 +11,38 @@ $(document).ready(function () {
             { data: 'description' },
             { data: 'days' },
             { data: null,
+                title: 'Usado en',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.type != null )
+                    {
+                        if (item.type == 'purchases')
+                            return '<p> COMPRAS/SERVICIOS </p>';
+                        else
+                            return '<p> COTIZACIONES </p>';
+                    }
+                    else
+                        return '<p> No hay datos </p>'
+                }
+            },
+            { data: null,
+                title: 'Indica crédito',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.credit != null )
+                    {
+                        if (item.credit == 1)
+                            return '<p> SI </p>';
+                        else
+                            return '<p> NO </p>';
+                    }
+                    else
+                        return '<p> No hay datos </p>'
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 wrap: true,
                 "render": function (item)
@@ -26,7 +58,8 @@ $(document).ready(function () {
                     }
                     return text;
 
-                } },
+                }
+            },
 
         ],
         "aaSorting": [],

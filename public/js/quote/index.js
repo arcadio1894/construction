@@ -2,7 +2,6 @@ $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
     $('#dynamic-table').DataTable( {
-        serverSide: true,
         ajax: {
             url: "/dashboard/all/quotes",
             dataSrc: 'data'
@@ -28,7 +27,17 @@ $(document).ready(function () {
                     return '<p> '+ moment(item.date_validate).format('DD-MM-YYYY') +'</p>'
                 }
             },
-            { data: 'way_to_pay' },
+            { data: null,
+                title: 'Forma de pago',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.deadline !== null )
+                        return '<p> '+ item.deadline.description +'</p>';
+                    else
+                        return '<p>'+ item.way_to_pay +' </p>'
+                }
+            },
             { data: 'delivery_time' },
             { data: null,
                 title: 'Cliente',
@@ -36,7 +45,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( item.customer !== null )
-                        return '<p> '+ item.customer.business_name +'</p>';
+                        return item.customer.business_name;
                     else
                         return '<p> Sin cliente </p>'
                 }

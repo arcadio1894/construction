@@ -26,6 +26,8 @@ class StorePaymentDeadlineRequest extends FormRequest
         return [
             'description' => 'required|string|max:255',
             'days' => 'required|numeric|min:0',
+            'type' => 'required',
+            'credit' => 'required',
         ];
     }
 
@@ -39,6 +41,10 @@ class StorePaymentDeadlineRequest extends FormRequest
             'days.required' => 'La :attribute es obligatorio.',
             'days.numeric' => 'La :attribute debe ser un número.',
             'days.min' => 'La :attribute no puede ser menor a 0.',
+
+            'type.required' => 'El :attribute es obligatorio.',
+
+            'credit.required' => 'El :attribute es obligatorio.',
         ];
     }
 
@@ -47,6 +53,8 @@ class StorePaymentDeadlineRequest extends FormRequest
         return [
             'description' => 'descripción',
             'days' => 'cantidad de días',
+            'type' => 'tipo',
+            'credit' => 'crédito',
         ];
     }
 }

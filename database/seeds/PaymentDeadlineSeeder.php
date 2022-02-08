@@ -33,28 +33,82 @@ class PaymentDeadlineSeeder extends Seeder
 
         // PaymentDeadlines por defecto
         PaymentDeadline::create([
-            'description' => 'AL CONTADO',
-            'days' => 0
+            'description' => 'AL CONTADO EN EFECTIVO',
+            'days' => 0,
+            'type' => 'purchases',
+            'credit' => false
         ]);
 
-        PaymentDeadline::create([
-            'description' => 'FACTURA A 15 DIAS',
-            'days' => 15
-        ]);
-
-        PaymentDeadline::create([
-            'description' => 'FACTURA A 30 DIAS',
-            'days' => 30
-        ]);
-
-        PaymentDeadline::create([
-            'description' => 'FACTURA A 45 DIAS',
-            'days' => 45
-        ]);
         PaymentDeadline::create([
             'description' => 'TRANSFERENCIA BANCARIA',
-            'days' => 0
+            'days' => 0,
+            'type' => 'purchases',
+            'credit' => false
         ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTURA 7 DIAS',
+            'days' => 7,
+            'type' => 'purchases',
+            'credit' => true
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTURA 15 DIAS',
+            'days' => 15,
+            'type' => 'purchases',
+            'credit' => true
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTURA 30 DIAS',
+            'days' => 30,
+            'type' => 'purchases',
+            'credit' => true
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTURA 45 DIAS',
+            'days' => 45,
+            'type' => 'purchases',
+            'credit' => true
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'LETRA 30 DIAS',
+            'days' => 30,
+            'type' => 'purchases',
+            'credit' => true
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'AL CONTADO',
+            'days' => 0,
+            'type' => 'quotes',
+            'credit' => false
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTORING A 45 DÍAS',
+            'days' => 45,
+            'type' => 'quotes',
+            'credit' => false
+        ]);
+
+        PaymentDeadline::create([
+            'description' => 'FACTURA A 30 DÍAS',
+            'days' => 30,
+            'type' => 'quotes',
+            'credit' => false
+        ]);
+
+        PaymentDeadline::create([
+            'description' => '50% DE ADELANTO 25% AL AVANCE - 25% (FACTORING A 45 DÍAS)',
+            'days' => 45,
+            'type' => 'quotes',
+            'credit' => false
+        ]);
+
 
         $role = Role::findByName('admin');
 

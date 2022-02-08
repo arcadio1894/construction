@@ -59,16 +59,39 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Plazo de pago <span class="right badge badge-danger">(*)</span></label>
+                <label for="inputEmail3" class="col-12 col-form-label">Plazo de pago: <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" onkeyup="mayus(this);" name="description">
                 </div>
             </div>
 
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Cantidad de días <span class="right badge badge-danger">(*)</span></label>
+                <label for="inputEmail3" class="col-12 col-form-label">Cantidad de días: <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
                      <input type="number" step="1" min="0" class="form-control" onkeyup="mayus(this);" name="days">
+                </div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-6">
+                <label for="type" class="col-12 col-form-label">Usado en: <span class="right badge badge-danger">(*)</span></label>
+                <div class="col-sm-10">
+                    <select id="type" name="type" class="form-control form-control-sm select2" style="width: 100%;">
+                        <option></option>
+                        <option value="purchases">COMPRAS / SERVICIOS</option>
+                        <option value="quotes">COTIZACIONES</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <label for="credit" class="col-12 col-form-label">Crédito: <span class="right badge badge-danger">(*)</span></label>
+                <div class="col-sm-10">
+                    <select id="credit" name="credit" class="form-control form-control-sm select2" style="width: 100%;">
+                        <option></option>
+                        <option value="1">SI</option>
+                        <option value="0">NO</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -92,5 +115,17 @@
 @endsection
 
 @section('scripts')
+    <script>
+        $(function () {
+            $('#type').select2({
+                placeholder: "Selecione una opción",
+            });
+
+            $('#credit').select2({
+                placeholder: "Seleccione una opción",
+            });
+        })
+    </script>
+
     <script src="{{ asset('js/paymentDeadline/create.js') }}"></script>
 @endsection

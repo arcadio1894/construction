@@ -36,6 +36,8 @@ class PaymentDeadlineController extends Controller
             $paymentDeadline = PaymentDeadline::create([
                 'description' => $request->get('description'),
                 'days' => $request->get('days'),
+                'type' => ($request->has('type')) ? $request->get('type') : null,
+                'credit' => ($request->has('credit')) ? $request->get('credit') : null,
             ]);
 
             DB::commit();
@@ -65,6 +67,8 @@ class PaymentDeadlineController extends Controller
 
             $paymentDeadline->description = $request->get('description');
             $paymentDeadline->days = $request->get('days');
+            $paymentDeadline->type = ($request->has('type')) ? $request->get('type') : null;
+            $paymentDeadline->credit = ($request->has('credit')) ? $request->get('credit') : null;
             $paymentDeadline->save();
 
             DB::commit();
@@ -102,7 +106,7 @@ class PaymentDeadlineController extends Controller
 
     public function getPaymentDeadlines()
     {
-        $paymentDeadlines = PaymentDeadline::select('id', 'description', 'days')->get();
+        $paymentDeadlines = PaymentDeadline::select('id', 'description', 'days', 'type', 'credit')->get();
         return datatables($paymentDeadlines)->toJson();
     }
 }

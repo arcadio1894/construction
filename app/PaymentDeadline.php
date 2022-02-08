@@ -8,8 +8,13 @@ class PaymentDeadline extends Model
 {
     protected $fillable = [
         'description',
-        'days'
+        'days',
+        'type',
+        'credit'
     ];
 
-
+    public function quotes()
+    {
+        return $this->hasMany('App\Quote');
+    }
 }

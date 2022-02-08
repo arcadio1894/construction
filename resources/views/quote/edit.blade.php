@@ -106,12 +106,19 @@
                             @hasanyrole('logistic|admin')
                             <div class="col-md-4">
                                 <label for="description">Forma de pago </label>
-                                <input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ $quote->way_to_pay }}">
+                                {{--<input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ $quote->way_to_pay }}">--}}
+                                <select id="paymentQuote" name="payment_deadline" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $paymentDeadlines as $paymentDeadline )
+                                        <option value="{{ $paymentDeadline->id }}" {{ ($paymentDeadline->id == $quote->payment_deadline_id) ? 'selected':'' }} >{{ $paymentDeadline->description }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             @endhasanyrole
                             <div class="col-md-4">
-                                <label for="description">Tiempo de entrega </label>
+                                <label for="paymentQuote">Tiempo de entrega </label>
                                 <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}">
+
                             </div>
                             @hasanyrole('logistic|admin')
                             <div class="col-md-4">
@@ -2487,6 +2494,10 @@
             });
             $('#contact_id').select2({
                 placeholder: "Selecione contacto",
+            });
+
+            $('#paymentQuote').select2({
+                placeholder: "Selecione forma de pago",
             });
 
             $('.unitMeasure').select2({

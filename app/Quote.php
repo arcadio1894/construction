@@ -31,7 +31,8 @@ class Quote extends Model
         'total_soles',
         'order_execution',
         'state_active',
-        'contact_id'
+        'contact_id',
+        'payment_deadline_id'
     ];
 
     public function getSubtotalUtilityAttribute()
@@ -135,6 +136,11 @@ class Quote extends Model
     public function users()
     {
         return $this->hasMany('App\QuoteUser');
+    }
+
+    public function deadline()
+    {
+        return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
 
 }

@@ -28,9 +28,9 @@ class StoreQuoteRequest extends FormRequest
             'code_description' => 'nullable|string',
             'way_to_pay' => 'nullable|string',
             'delivery_time' => 'nullable|string',
-            'utility' => 'nullable|numeric|between:0,99.99',
-            'letter' => 'nullable|numeric|between:0,99.99',
-            'taxes' => 'nullable|numeric|between:0,99.99'
+            'utility' => 'nullable|numeric|min:0',
+            'letter' => 'nullable|numeric|min:0',
+            'taxes' => 'nullable|numeric|min:0'
         ];
     }
 
@@ -43,11 +43,11 @@ class StoreQuoteRequest extends FormRequest
             'delivery_time.string' => 'El :attribute debe contener caracteres válidos.',
             'customer_id.exists' => 'El :attribute no existe en la base de datos.',
             'utility.numeric' => 'La :attribute debe ser un valor numérico.',
-            'utility.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
+            'utility.min' => 'La :attribute no puede ser negativa.',
             'letter.numeric' => 'La :attribute debe ser un valor numérico.',
-            'letter.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
+            'letter.min' => 'La :attribute no puede ser negativa.',
             'taxes.numeric' => 'La :attribute debe ser un valor numérico.',
-            'taxes.between' => 'La :attribute debe estar en el rango 0 a 99.99.',
+            'taxes.min' => 'La :attribute no puede ser negativa.',
         ];
     }
 
