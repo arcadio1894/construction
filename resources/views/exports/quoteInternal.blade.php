@@ -201,7 +201,7 @@
     </div>
     <br>
     <div id="notices">
-        <div class="notice">FORMA DE PAGO: {{ $quote->way_to_pay }}</div>
+        <div class="notice">FORMA DE PAGO: {{ $quote->deadline->description }}</div>
         <div class="notice">TIEMPO DE ENTREGA: {{ $quote->delivery_time }}</div>
         <div class="notice">ESTADO: {{ $quote->state }}</div>
     </div>
