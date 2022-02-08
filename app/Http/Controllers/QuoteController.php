@@ -93,8 +93,8 @@ class QuoteController extends Controller
             {
                 $equipment = Equipment::create([
                     'quote_id' => $quote->id,
-                    'description' => $equipments[$i]->description,
-                    'detail' => $equipments[$i]->detail,
+                    'description' =>($equipments[$i]->description == "" || $equipments[$i]->description == null) ? '':$equipments[$i]->description,
+                    'detail' => ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail,
                     'quantity' => $equipments[$i]->quantity
                 ]);
 
@@ -419,8 +419,8 @@ class QuoteController extends Controller
                 {
                     $equipment = Equipment::create([
                         'quote_id' => $quote->id,
-                        'description' => $equipments[$i]->description,
-                        'detail' => $equipments[$i]->detail,
+                        'description' => ($equipments[$i]->description == "" || $equipments[$i]->description == null) ? '':$equipments[$i]->description,
+                        'detail' => ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail,
                         'quantity' => $equipments[$i]->quantity
                     ]);
 
@@ -819,8 +819,8 @@ class QuoteController extends Controller
                 //dump($equip['quantity']);
                 $equipment = Equipment::create([
                     'quote_id' => $quote->id,
-                    'description' => $equip['description'],
-                    'detail' => $equip['detail'],
+                    'description' => ($equip['description'] == "" || $equip['description'] == null) ? '':$equip['description'],
+                    'detail' => ($equip['detail'] == "" || $equip['detail'] == null) ? '':$equip['detail'],
                     'quantity' => $equip['quantity']
                 ]);
 
