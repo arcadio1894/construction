@@ -185,7 +185,8 @@ class OrderServiceController extends Controller
                 {
                     $orderServiceDetail = OrderServiceDetail::create([
                         'order_service_id' => $orderService->id,
-                        'material_id' => $items[$i]->service,
+                        'service' => $items[$i]->service,
+                        'unit' => $items[$i]->unit,
                         'quantity' => (float) $items[$i]->quantity,
                         'price' => (float) $items[$i]->price,
                     ]);

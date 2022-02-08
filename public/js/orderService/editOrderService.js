@@ -403,7 +403,7 @@ function deleteItem() {
 
                                 setTimeout( function () {
                                     location.reload();
-                                }, 2000 )
+                                }, 1000 )
 
                             },
                             error: function (data) {
