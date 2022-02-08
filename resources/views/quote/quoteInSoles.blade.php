@@ -97,7 +97,7 @@
                     <div class="form-group row">
                         <div class="col-md-4">
                             <label for="description">Forma de pago <span class="right badge badge-danger">(*)</span></label>
-                            <input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ $quote->deadline->description }}" readonly>
+                            <input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ ($quote->deadline !== null) ? $quote->deadline->description : 'No tiene forma de pago' }} " readonly>
                         </div>
                         <div class="col-md-4">
                             <label for="description">Tiempo de entrega <span class="right badge badge-danger">(*)</span></label>
