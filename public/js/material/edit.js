@@ -1,7 +1,8 @@
 $(document).ready(function () {
 
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updateMaterial);
+    //$formEdit.on('submit', updateMaterial);
+    $('#btn-submit').on('click', updateMaterial);
 
     getExampler();
     getSubcategory();
@@ -340,12 +341,14 @@ function getExampler() {
 
 function updateMaterial() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var editUrl = $formEdit.data('url');
+    var form = new FormData($('#formEdit')[0]);
     $.ajax({
         url: editUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -369,6 +372,7 @@ function updateMaterial() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -394,7 +398,7 @@ function updateMaterial() {
                     });
             }
 
-
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

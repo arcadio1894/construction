@@ -140,6 +140,7 @@ class MaterialController extends Controller
 
     public function update(UpdateMaterialRequest $request)
     {
+        //dd($request->get('typescrap'));
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -198,6 +199,24 @@ class MaterialController extends Controller
                 }
             } else {
                 Specification::where('material_id', $material->id)->delete();
+            }
+
+            if ($material->wasChanged('typescrap_id') )
+            {
+                if ( $request->get('typescrap') != null )
+                {
+                    $typeScrap = Typescrap::find($request->get('typescrap'));
+                    $items = Item::where('material_id', $material->id)
+                        ->whereIn('state_item', ['entered', 'exited'])
+                        ->get();
+                    foreach ( $items as $item )
+                    {
+                        $item->length = (float)$typeScrap->length;
+                        $item->width = (float)$typeScrap->width;
+                        $item->typescrap_id = $typeScrap->id;
+                        $item->save();
+                    }
+                }
             }
 
             DB::commit();

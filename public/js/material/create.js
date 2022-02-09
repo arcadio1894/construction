@@ -1,6 +1,7 @@
 $(document).ready(function () {
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeMaterial);
+    //$formCreate.on('submit', storeMaterial);
+    $('#btn-submit').on('click', storeMaterial);
     
     $('#btn-add').on('click', showTemplateSpecification);
 
@@ -251,12 +252,14 @@ function deleteSpecification() {
 
 function storeMaterial() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var createUrl = $formCreate.data('url');
+    var form = new FormData($('#formCreate')[0]);
     $.ajax({
         url: createUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -280,6 +283,7 @@ function storeMaterial() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -304,7 +308,7 @@ function storeMaterial() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
