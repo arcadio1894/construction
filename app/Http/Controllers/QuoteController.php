@@ -849,7 +849,7 @@ class QuoteController extends Controller
                     //dump($material['material']['stock_current']);
                     $equipmentMaterial = EquipmentMaterial::create([
                         'equipment_id' => $equipment->id,
-                        'material_id' => $material['material']['id'],
+                        'material_id' => (int)$material['material']['id'],
                         'quantity' => (float) $material['quantity'],
                         'price' => (float) $material['material']['unit_price'],
                         'length' => (float) ($material['length'] == '') ? 0: $material['length'],
@@ -866,11 +866,11 @@ class QuoteController extends Controller
                 foreach ( $consumables as $consumable )
                 {
                     //dump($consumable['id']);
-                    $material = Material::find($consumable['id']);
+                    $material = Material::find((int)$consumable['id']);
                     //dump($material);
                     $equipmentConsumable = EquipmentConsumable::create([
                         'equipment_id' => $equipment->id,
-                        'material_id' => $consumable['id'],
+                        'material_id' => (int)$consumable['id'],
                         'quantity' => (float) $consumable['quantity'],
                         'price' => (float) $consumable['price'],
                         'total' => (float) $consumable['quantity']*(float) $consumable['price'],

@@ -120,7 +120,7 @@
                                 <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}">
 
                             </div>
-                            @hasanyrole('logistic|admin')
+                            {{--@hasanyrole('logistic|admin')--}}
                             <div class="col-md-4">
                                 <label for="customer_id">Cliente </label>
                                 <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
@@ -136,7 +136,7 @@
                                     <option></option>
                                 </select>
                             </div>
-                            @endhasanyrole
+                            {{--@endhasanyrole--}}
                         </div>
 
                     </div>
@@ -464,7 +464,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" oninput="calculateTotal(this);" data-consumableQuantity  onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="{{ $consumable->quantity }}">
                                                     </div>
@@ -506,7 +506,7 @@
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-consumableQuantity oninput="calculateTotal(this);" onblur="
                                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                     " value="{{ $consumable->quantity }}">
                                                     </div>

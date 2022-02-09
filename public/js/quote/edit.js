@@ -341,6 +341,11 @@ $(document).ready(function () {
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
+    $(document).on('input', '[data-consumableQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
     $(document).on('input', '[data-tornoQuantity]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
@@ -1181,7 +1186,7 @@ function saveEquipment() {
                         var materialsArray = [];
 
                         for (let i = 0; i < materialsDescription.length; i++) {
-                            var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                            var materialSelected = $materials.find( mat=>mat.full_description.trim() === materialsDescription[i].trim() );
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -1343,7 +1348,7 @@ function saveEquipment() {
                         modifiedEquipment.push({'id':equipmentDeleted.id, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                         //console.log(modifiedEquipment);
                         $items = [];
-                        console.log($total);
+                        console.log(modifiedEquipment);
                         var equipos = JSON.stringify(modifiedEquipment);
                         $.ajax({
                             url: '/dashboard/update/equipment/'+idEquipment+'/quote/'+idQuote,

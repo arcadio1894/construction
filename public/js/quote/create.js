@@ -333,6 +333,11 @@ $(document).ready(function () {
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
+    $(document).on('input', '[data-consumableQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
     $(document).on('input', '[data-manoPrice]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');

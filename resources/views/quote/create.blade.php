@@ -116,7 +116,7 @@
                                 <label for="description">Tiempo de entrega </label>
                                 <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm">
                             </div>
-                            @hasanyrole('logistic|admin')
+                            {{--@hasanyrole('logistic|admin')--}}
                             <div class="col-md-4">
                                 <label for="customer_id">Cliente </label>
                                 <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
@@ -132,7 +132,7 @@
                                     <option></option>
                                 </select>
                             </div>
-                            @endhasanyrole
+                            {{--@endhasanyrole--}}
                         </div>
 
                     </div>
