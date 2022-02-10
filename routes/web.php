@@ -633,6 +633,9 @@ Route::middleware('auth')->group(function (){
         Route::post('/confirm/quote/{quote}', 'QuoteController@confirm')
             ->name('quote.confirm')
             ->middleware('permission:confirm_quote');
+        Route::post('/send/quote/{quote}', 'QuoteController@send')
+            ->name('quote.send')
+            ->middleware('permission:confirm_quote');
         Route::post('/raise/quote/{quote}/code/{code}', 'QuoteController@raiseQuote')
             ->name('quote.raise.quote')
             ->middleware('permission:confirm_quote');

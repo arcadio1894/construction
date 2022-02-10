@@ -554,6 +554,12 @@ class QuoteController extends Controller
         $quote->save();
     }
 
+    public function send(Quote $quote)
+    {
+        $quote->send_state = true;
+        $quote->save();
+    }
+
     public function selectMaterials(Request $request)
     {
         /*$page = $request->get('page');

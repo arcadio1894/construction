@@ -94,7 +94,13 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( item.state === 'created' ) {
-                        return '<span class="badge bg-primary">Creada</span>';
+                        //return '<span class="badge bg-primary">Creada</span>';
+                        if ( item.send_state == 1 || item.send_state == true )
+                        {
+                            return '<span class="badge bg-warning">Enviado</span>';
+                        } else {
+                            return '<span class="badge bg-primary">Creada</span>';
+                        }
                     }
 
                     if (item.state === 'confirmed' && item.raise_status === 0){
@@ -108,6 +114,8 @@ $(document).ready(function () {
                     if (item.state === 'canceled'){
                         return '<span class="badge bg-danger">Cancelada</span>';
                     }
+
+
 
                 }
             },
@@ -153,6 +161,12 @@ $(document).ready(function () {
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
                             text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                            if ( item.send_state == 0 || item.send_state == false )
+                            {
+                                text = text + ' <button data-send="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fas fa-file-import"></i></button>';
+                            }
+
                         }
                         if ( $.inArray('update_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/editar/cotizacion/'+item.id+
@@ -352,6 +366,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-confirm]', confirmQuote);
 
+    $(document).on('click', '[data-send]', sendQuote);
+
     $(document).on('click', '[data-renew]', renewQuote);
 });
 
@@ -479,6 +495,52 @@ function confirmQuote() {
                         success: function (data) {
                             console.log(data);
                             $.alert("Cotización confirmada con éxito.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+
+}
+
+function sendQuote() {
+    var quote_id = $(this).data('send');
+    var description = $(this).data('name');
+
+    $.confirm({
+        icon: 'fas fa-paper-plane',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de enviar esta cotización? ',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/send/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización enviada con éxito.");
                             setTimeout( function () {
                                 location.reload();
                             }, 2000 )

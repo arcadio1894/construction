@@ -82,7 +82,13 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( item.state === 'created' ) {
-                        return '<span class="badge bg-primary">Creada</span>';
+                        //return '<span class="badge bg-primary">Creada</span>';
+                        if ( item.send_state == 1 || item.send_state == true )
+                        {
+                            return '<span class="badge bg-warning">Enviado</span>';
+                        } else {
+                            return '<span class="badge bg-primary">Creada</span>';
+                        }
                     }
 
                     if (item.state === 'confirmed' && item.raise_status === 0){
