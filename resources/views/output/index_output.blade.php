@@ -69,6 +69,7 @@
             <tr>
                 <th>N°</th>
                 <th>Orden de ejecución</th>
+                <th>Descripción</th>
                 <th>Fecha de solicitud</th>
                 <th>Usuario solicitante</th>
                 <th>Usuario responsable</th>

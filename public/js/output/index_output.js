@@ -43,6 +43,20 @@ $(document).ready(function () {
             },
             { data: 'execution_order' },
             { data: null,
+                title: 'Descripción',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.quote != null )
+                    {
+                        return '<p>'+ item.quote.description_quote +'</p>';
+                    } else {
+                        return '<p> No hay datos </p>';
+                    }
+
+                }
+            },
+            { data: null,
                 title: 'Fecha de solicitud',
                 wrap: true,
                 "render": function (item)

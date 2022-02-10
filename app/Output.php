@@ -29,4 +29,9 @@ class Output extends Model
     {
         return $this->belongsTo('App\User', 'responsible_user');
     }
+
+    public function quote()
+    {
+        return $this->belongsTo('App\Quote', 'execution_order', 'order_execution');
+    }
 }

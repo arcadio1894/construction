@@ -143,4 +143,9 @@ class Quote extends Model
         return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
 
+    public function outputs()
+    {
+        return $this->hasMany('App\Output', 'execution_order', 'order_execution');
+    }
+
 }
