@@ -88,7 +88,7 @@
                                 <label for="description">Código de cotización </label>
                                 <input type="text" id="codeQuote" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm" value="{{ $quote->code }}" readonly>
                             </div>
-                            @hasanyrole('logistic|admin')
+                            @hasanyrole('logistic|admin|principal')
                             <div class="col-md-4" id="sandbox-container">
                                 <label for="date_quote">Fecha de cotización </label>
                                 <div class="input-daterange" id="datepicker">
@@ -103,7 +103,7 @@
                             </div>
                             @endhasanyrole
 
-                            @hasanyrole('logistic|admin')
+                            @hasanyrole('logistic|admin|principal')
                             <div class="col-md-4">
                                 <label for="description">Forma de pago </label>
                                 {{--<input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ $quote->way_to_pay }}">--}}

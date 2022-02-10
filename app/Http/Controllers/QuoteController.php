@@ -207,14 +207,14 @@ class QuoteController extends Controller
 
             // Crear notificacion
             $notification = Notification::create([
-                'content' => 'Nueva cotización creada por '.Auth::user()->name,
+                'content' => $quote->code.' creada por '.Auth::user()->name,
                 'reason_for_creation' => 'create_quote',
                 'user_id' => Auth::user()->id,
                 'url_go' => route('quote.edit', $quote->id)
             ]);
 
             // Roles adecuados para recibir esta notificación admin, logistica
-            $users = User::role(['admin' , 'logistic'])->get();
+            $users = User::role(['admin', 'principal' , 'logistic'])->get();
             foreach ( $users as $user )
             {
                 if ( $user->id != Auth::user()->id )
@@ -720,7 +720,7 @@ class QuoteController extends Controller
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
             ->where('user_id', $user->id)->first();
-        if ( !$quote_user && !$user->hasRole(['admin', 'logistic']) ) {
+        if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
             return response()->json(['message' => 'No puede eliminar un equipo que no es de su propiedad'], 422);
         }
 
@@ -770,7 +770,7 @@ class QuoteController extends Controller
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
             ->where('user_id', $user->id)->first();
-        if ( !$quote_user && !$user->hasRole(['admin', 'logistic']) ) {
+        if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
             return response()->json(['message' => 'No puede editar un equipo que no es de su propiedad'], 422);
         }
 
