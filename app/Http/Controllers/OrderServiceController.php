@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreOrderServiceRequest;
 use App\OrderService;
 use App\OrderServiceDetail;
+use App\PaymentDeadline;
 use App\Supplier;
 use App\UnitMeasure;
 use App\User;
@@ -46,7 +47,9 @@ class OrderServiceController extends Controller
         $length = 5;
         $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-        return view('orderService.createOrderService', compact('users', 'codeOrder', 'suppliers', 'unitMeasures'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderService.createOrderService', compact('users', 'codeOrder', 'suppliers', 'unitMeasures', 'payment_deadlines'));
 
     }
 
@@ -89,6 +92,7 @@ class OrderServiceController extends Controller
             $orderService = OrderService::create([
                 'code' => $request->get('service_order'),
                 'quote_supplier' => $request->get('quote_supplier'),
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'date_delivery' => ($request->has('date_delivery')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
@@ -137,7 +141,7 @@ class OrderServiceController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $order = OrderService::with(['supplier', 'approved_user'])->find($id);
+        $order = OrderService::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderServiceDetail::where('order_service_id', $order->id)->get();
 
         return view('orderService.showOrderService', compact('order', 'details', 'suppliers', 'users'));
@@ -153,7 +157,9 @@ class OrderServiceController extends Controller
         $order = OrderService::with(['supplier', 'approved_user'])->find($id);
         $details = OrderServiceDetail::where('order_service_id', $order->id)->get();
 
-        return view('orderService.editOrderService', compact('order', 'details', 'suppliers', 'users', 'unitMeasures'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderService.editOrderService', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines'));
 
     }
 
@@ -165,6 +171,7 @@ class OrderServiceController extends Controller
         try {
             $orderService = OrderService::find($request->get('order_id'));
             $orderService->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
+            $orderService->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderService->date_delivery = ($request->has('date_delivery')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : Carbon::now();
             $orderService->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
             $orderService->approved_by = ($request->has('approved_by')) ? $request->get('approved_by') : null;
@@ -236,6 +243,7 @@ class OrderServiceController extends Controller
     {
         $service_order = null;
         $service_order = OrderService::with('approved_user')
+            ->with('deadline')
             ->with('details')
             ->where('id', $id)->first();
 
@@ -322,7 +330,7 @@ class OrderServiceController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $order = OrderService::with(['supplier', 'approved_user'])->find($id);
+        $order = OrderService::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderServiceDetail::where('order_service_id', $order->id)->get();
 
         return view('orderService.regularizeOrderService', compact('order', 'details', 'suppliers', 'users'));

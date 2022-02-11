@@ -17,4 +17,14 @@ class PaymentDeadline extends Model
     {
         return $this->hasMany('App\Quote');
     }
+
+    public function orderPurchases()
+    {
+        return $this->hasMany('App\OrderPurchase');
+    }
+
+    public function orderServices()
+    {
+        return $this->hasMany('App\OrderService');
+    }
 }

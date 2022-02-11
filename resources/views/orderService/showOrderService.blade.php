@@ -111,7 +111,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="purchase_condition">Forma de pago </label>
-                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control" value="{{ $order->payment_condition }}" readonly>
+                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control" value="{{ ($order->deadline != null) ? $order->deadline->description:'No tiene plazo' }}" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="btn-currency"> Moneda </label> <br>

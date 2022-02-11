@@ -197,7 +197,7 @@
             </tr>
             <tr>
                 <td>CONDICIÓN PAGO:</td>
-                <td style="max-width:20px;overflow-wrap: break-word;">{{ ($purchase_order->payment_condition !== null) ? $purchase_order->payment_condition:'No tiene condición' }}</td>
+                <td style="max-width:20px;overflow-wrap: break-word;">{{ ($purchase_order->deadline !== null) ? $purchase_order->deadline->description:'No tiene condición' }}</td>
             </tr>
             <tr>
                 <td>MONEDA:</td>

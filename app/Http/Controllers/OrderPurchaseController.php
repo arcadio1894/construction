@@ -7,6 +7,7 @@ use App\MaterialOrder;
 use App\MaterialTaken;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
+use App\PaymentDeadline;
 use App\Quote;
 use App\Supplier;
 use App\User;
@@ -102,7 +103,9 @@ class OrderPurchaseController extends Controller
         }*/
         //dump($array_materials);
 
-        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'array_materials'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'array_materials', 'payment_deadlines'));
     }
 
     public function storeOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
@@ -145,6 +148,7 @@ class OrderPurchaseController extends Controller
                 'code' => $request->get('purchase_order'),
                 'quote_supplier' => $request->get('quote_supplier'),
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
                 'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
@@ -197,7 +201,7 @@ class OrderPurchaseController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
+        $order = OrderPurchase::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
@@ -212,6 +216,7 @@ class OrderPurchaseController extends Controller
         DB::beginTransaction();
         try {
             $orderPurchase = OrderPurchase::find($request->get('order_id'));
+            $orderPurchase->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderPurchase->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
             $orderPurchase->date_arrival = ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now();
             $orderPurchase->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
@@ -323,11 +328,13 @@ class OrderPurchaseController extends Controller
             }
         }
 
-        $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
+        $order = OrderPurchase::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
-        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'array_materials'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'array_materials', 'payment_deadlines'));
     }
 
     public function updateDetail(Request $request, $detail_id)
@@ -454,7 +461,9 @@ class OrderPurchaseController extends Controller
         $length = 5;
         $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-        return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines'));
 
     }
 
@@ -497,6 +506,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase = OrderPurchase::create([
                 'code' => $request->get('purchase_order'),
                 'quote_supplier' => $request->get('quote_supplier'),
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
@@ -570,7 +580,7 @@ class OrderPurchaseController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
+        $order = OrderPurchase::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
@@ -609,7 +619,9 @@ class OrderPurchaseController extends Controller
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
-        return view('orderPurchase.editNormal', compact('order', 'details', 'suppliers', 'users'));
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderPurchase.editNormal', compact('order', 'details', 'suppliers', 'users', 'payment_deadlines'));
     }
 
     public function updateNormalDetail(Request $request, $detail_id)
@@ -709,6 +721,7 @@ class OrderPurchaseController extends Controller
         DB::beginTransaction();
         try {
             $orderPurchase = OrderPurchase::find($request->get('order_id'));
+            $orderPurchase->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderPurchase->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
             $orderPurchase->date_arrival = ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now();
             $orderPurchase->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
@@ -764,6 +777,7 @@ class OrderPurchaseController extends Controller
     {
         $purchase_order = null;
         $purchase_order = OrderPurchase::with('approved_user')
+            ->with('deadline')
             ->with(['details' => function ($query) {
                 $query->with(['material']);
             }])

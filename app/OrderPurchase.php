@@ -21,7 +21,8 @@ class OrderPurchase extends Model
         'observation',
         'type',
         'quote_supplier',
-        'regularize'
+        'regularize',
+        'payment_deadline_id'
     ];
 
     public function supplier()
@@ -37,5 +38,10 @@ class OrderPurchase extends Model
     public function details()
     {
         return $this->hasMany('App\OrderPurchaseDetail');
+    }
+
+    public function deadline()
+    {
+        return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
 }

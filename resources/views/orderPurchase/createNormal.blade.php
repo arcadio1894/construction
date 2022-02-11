@@ -118,8 +118,14 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="purchase_condition">Forma de pago </label>
-                                    <input type="text" id="purchase_condition" name="purchase_condition" class="form-control">
+                                    <label for="payment_deadline">Forma de pago </label>
+                                    {{--<input type="text" id="purchase_condition" name="purchase_condition" class="form-control">--}}
+                                    <select id="payment_deadline" name="payment_deadline_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $payment_deadlines as $payment_deadline )
+                                            <option value="{{ $payment_deadline->id }}">{{ $payment_deadline->description }}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
@@ -347,6 +353,9 @@
             });
             $('#customer_id').select2({
                 placeholder: "Selecione cliente",
+            });
+            $('#payment_deadline').select2({
+                placeholder: "Selecione plazo",
             });
 
             $('.unitMeasure').select2({

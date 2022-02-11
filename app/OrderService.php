@@ -26,7 +26,8 @@ class OrderService extends Model
         'deferred_invoice',
         'date_invoice',
         'referral_guide',
-        'invoice'
+        'invoice',
+        'payment_deadline_id'
     ];
 
     public function supplier()
@@ -42,5 +43,10 @@ class OrderService extends Model
     public function details()
     {
         return $this->hasMany('App\OrderServiceDetail');
+    }
+
+    public function deadline()
+    {
+        return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
 }
