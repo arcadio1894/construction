@@ -638,7 +638,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:confirm_quote');
         Route::post('/raise/quote/{quote}/code/{code}', 'QuoteController@raiseQuote')
             ->name('quote.raise.quote')
-            ->middleware('permission:confirm_quote');
+            ->middleware('permission:showRaised_quote');
         Route::post('/destroy/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@destroyEquipmentOfQuote')
             ->name('quote.destroy.equipment')
             ->middleware('permission:update_quote');
