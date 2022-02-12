@@ -10,6 +10,7 @@ use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
 use App\Quote;
 use App\Supplier;
+use App\SupplierCredit;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -186,6 +187,23 @@ class OrderPurchaseController extends Controller
                     'quantity_entered' => 0
                 ]);
             }
+
+            /*if ( isset($orderPurchase->deadline) )
+            {
+                if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
+                {
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderPurchase->supplier->id,
+                        'entry_id' => $entry->id,
+                        'invoice' => $entry->invoice,
+                        'image_invoice' => $entry->image,
+                        'purchase_order' => $entry->purchase_order,
+                        'total_soles' => ($entry->currency_invoice == 'PEN') ? $entry->total:null,
+                        'total_dollars' => ($entry->currency_invoice == 'USD') ? $entry->total:null,
+                        'date_issue' => $entry->date_entry,
+                    ]);
+                }
+            }*/
 
             DB::commit();
         } catch ( \Throwable $e ) {

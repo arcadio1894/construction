@@ -786,13 +786,15 @@
                                         </a>
                                     </li>
                                 @endcan
-                                @can('confirm_quote')
+                                @canany('confirm_quote', 'showRaised_quote')
                                     <li class="nav-item">
                                         <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Elevar cotización</p>
                                         </a>
                                     </li>
+                                @endcanany
+                                @canany('confirm_quote')
                                     <li class="nav-item">
                                         <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
                                             <i class="far fa-circle nav-icon"></i>
@@ -805,7 +807,7 @@
                                                 <p>Finalizadas</p>
                                             </a>
                                         </li>
-                                @endcan
+                                @endcanany
                             </ul>
                         </li>
                     @endcan
