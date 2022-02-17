@@ -5,13 +5,13 @@ let $locationsComplete=[];
 let $items=[];
 
 $(document).ready(function () {
-    $('#sandbox-container .input-daterange').datepicker({
+    /*$('#sandbox-container .input-daterange').datepicker({
         todayBtn: "linked",
         clearBtn: true,
         language: "es",
         multidate: false,
         autoclose: true
-    });
+    });*/
     $('#sandbox-container2 .input-daterange').datepicker({
         todayBtn: "linked",
         clearBtn: true,
@@ -21,7 +21,7 @@ $(document).ready(function () {
     });
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
-    var table = $('#dynamic-table').DataTable( {
+    /*var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/only/invoices/purchase",
             dataSrc: 'data'
@@ -137,7 +137,7 @@ $(document).ready(function () {
 
                     text = '<button type="button" data-add="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar a créditos"><i class="fa fa-plus"></i> </button>';
 
-                    return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
+                    return text; /!*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' *!/
                 }
             },
 
@@ -281,7 +281,7 @@ $(document).ready(function () {
             }
         },
 
-    } );
+    } );*/
 
     var table2 = $('#dynamic-table2').DataTable( {
         ajax: {
@@ -301,22 +301,28 @@ $(document).ready(function () {
                         return '<p> Sin proveedor </p>'
                 }
             },
-            { data: 'invoice' },
             { data: null,
-                title: '# O.C.',
+                title: 'Factura',
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.code == null ){
-                        if ( item.purchase_order == null ) {
-                            return '<p>Sin Orden</p>';
-                        } else {
-                            return '<p> '+ item.purchase_order +'</p>';
-                        }
-
+                    if ( item.invoice != null ) {
+                        return '<p>'+ item.invoice +'</p>';
+                    } else {
+                        return '<p> Aún no tiene factura</p>';
                     }
-                    else {
-                        return '<p> '+ item.code +'</p>';
+
+                }
+            },
+            { data: null,
+                title: '# O.C/O.S',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.purchase == null ) {
+                        return '<p>'+ item.service.code +'</p>';
+                    } else {
+                        return '<p> '+ item.purchase.code +'</p>';
                     }
 
                 }
@@ -354,7 +360,13 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.date_issue).format('DD/MM/YYYY') +'</p>'
+                    if ( item.date_issue != null )
+                    {
+                        return '<p> '+ moment(item.date_issue).format('DD/MM/YYYY') +'</p>';
+                    } else {
+                        return '<p> Aún no tiene factura</p>'
+                    }
+
                 }
             },
             { data: null,
@@ -362,7 +374,13 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.date_expiration).format('DD/MM/YYYY') +'</p>'
+                    if ( item.date_expiration != null )
+                    {
+                        return '<p> '+ moment(item.date_expiration).format('DD/MM/YYYY') +'</p>';
+                    } else {
+                        return '<p> Aún no tiene factura</p>';
+                    }
+
                 }
             },
             { data: null,
@@ -370,25 +388,13 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.payment_deadline == null ){
+                    if ( item.deadline == null ){
                         return '';
                     }
                     else {
-                        return '<p> '+ item.payment_deadline +'</p>';
+                        return '<p> '+ item.deadline.days +'</p>';
                     }
 
-                }
-            },
-            { data: null,
-                title: 'Estado',
-                wrap: true,
-                "render": function (item)
-                {
-                    //return item.state;
-                    if ( item.state !== null )
-                        return '<p> '+ item.state +'</p>';
-                    else
-                        return ''
                 }
             },
             { data: null,
@@ -424,7 +430,10 @@ $(document).ready(function () {
                 {
                     if ( item.state_credit != null )
                     {
-                        return item.state_credit;
+                        return (item.state_credit === 'outstanding') ? 'Pendiente' :
+                            (item.state_credit === 'by_expire') ? 'Por expirar' :
+                                (item.state_credit === 'expired') ? 'Expirado' :
+                                    'Pagado';
                     } else {
                         return '';
                     }
@@ -791,9 +800,44 @@ function editCredit() {
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            //
-            console.log(json);
+            var credit = json.credit;
+            console.log(credit);
+            //console.log(json[0].supplier);
+            var estado = (credit.state_credit === 'outstanding') ? 'Pendiente' :
+                (credit.state_credit === 'by_expire') ? 'Por expirar' :
+                    (credit.state_credit === 'expired') ? 'Expirado' :
+                    'Pagado';
+            $modalEdit.find('[id=supplier]').val(credit.supplier.business_name);
+            $modalEdit.find('[id=invoice]').val(credit.invoice);
+            $modalEdit.find('[id=code_order]').val(credit.code_order);
+            $modalEdit.find('[id=total_soles]').val(credit.total_soles);
+            $modalEdit.find('[id=total_dollars]').val(credit.total_dollars);
+            $modalEdit.find('[id=total_dollars]').val(credit.total_dollars);
+            $modalEdit.find('[id=date_issue]').datepicker('setDate', moment(credit.date_issue).format('DD/MM/YYYY'));
+            $modalEdit.find('[id=payment_deadline]').val(credit.deadline.description);
+            $modalEdit.find('[id=date_expiration_2]').datepicker('setDate', moment(credit.date_expiration).format('DD/MM/YYYY'));
+            $modalEdit.find('[id=state_credit]').val(estado);
+            $modalEdit.find('[id=days_to_expiration]').val(credit.days_to_expiration);
+            $modalEdit.find('[id=observation]').val(credit.observation);
 
+            $('#date_picker_issue .date_picker_issue').datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                language: "es",
+                multidate: false,
+                autoclose: true,
+                todayHighlight: true,
+                defaultViewDate: moment().format('L')
+            });
+            $('#date_expiration .date_picker_expiration').datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                language: "es",
+                multidate: false,
+                autoclose: true,
+                todayHighlight: true,
+                defaultViewDate: moment().format('L')
+            });
         }
     });
     $modalEdit.modal('show');

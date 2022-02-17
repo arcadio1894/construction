@@ -9,7 +9,9 @@ use App\Http\Requests\UpdateInvoiceRequest;
 use App\Item;
 use App\Material;
 use App\OrderService;
+use App\PaymentDeadline;
 use App\Supplier;
+use App\SupplierCredit;
 use App\UnitMeasure;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -185,6 +187,39 @@ class InvoiceController extends Controller
                     }
                 }
             }*/
+
+            /* SI ( En el campo factura y en (Orden Compra/Servicio) ) AND Diferente a 000
+                Entonces
+                SI ( Existe en la tabla creditos ) ENTONCES
+                actualiza la factura en la tabla de creditos
+            */
+            if ( $entry->invoice != '' || $entry->invoice != null )
+            {
+                if ( $entry->purchase_order != '' || $entry->purchase_order != null )
+                {
+                    $credit = SupplierCredit::with('deadline')
+                        ->where('code_order', $entry->purchase_order)
+                        ->where('state_credit', 'outstanding')->first();
+
+                    if ( isset($credit) )
+                    {
+                        //$credit->delete();
+                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $fecha_issue = Carbon::parse($entry->date_entry);
+                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                        $credit->supplier_id = $entry->date_entry;
+                        $credit->invoice = $entry->invoice;
+                        $credit->image_invoice = $entry->image;
+                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->date_issue = $entry->date_entry;
+                        $credit->days_to_expiration = $fecha_expiration;
+                        $credit->code_order = $entry->purchase_order;
+                        $credit->save();
+
+                    }
+                }
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {

@@ -7,6 +7,7 @@ use App\OrderService;
 use App\OrderServiceDetail;
 use App\PaymentDeadline;
 use App\Supplier;
+use App\SupplierCredit;
 use App\UnitMeasure;
 use App\User;
 use Illuminate\Http\Request;
@@ -127,6 +128,33 @@ class OrderServiceController extends Controller
 
             }
 
+            // Si el plazo indica credito, se crea el credito
+            if ( isset($orderService->deadline) )
+            {
+                if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
+                {
+                    $deadline = PaymentDeadline::find($orderService->deadline->id);
+                    //$fecha_issue = Carbon::parse($orderService->date_order);
+                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderService->supplier->id,
+                        'total_soles' => ($orderService->currency_order == 'PEN') ? $orderService->total:null,
+                        'total_dollars' => ($orderService->currency_order == 'USD') ? $orderService->total:null,
+                        //'date_issue' => $orderService->date_order,
+                        'order_purchase_id' => null,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => $orderService->id,
+                        //'date_expiration' => $fecha_expiration,
+                        //'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderService->code,
+                        'payment_deadline_id' => $orderService->payment_deadline_id
+                    ]);
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -206,6 +234,26 @@ class OrderServiceController extends Controller
                 }
 
             }
+            // Si la orden de servicio se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $deadline = PaymentDeadline::find($credit->deadline->id);
+                //$fecha_issue = Carbon::parse($orderService->date_order);
+                //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                $credit->supplier_id = $orderService->supplier->id;
+                $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
+                $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
+                //$credit->date_issue = $orderService->date_order;
+                $credit->code_order = $orderService->code;
+                //$credit->date_expiration = $fecha_expiration;
+                //$credit->days_to_expiration = $dias_to_expire;
+                $credit->payment_deadline_id = $orderService->payment_deadline_id;
+                $credit->save();
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -224,6 +272,15 @@ class OrderServiceController extends Controller
         {
             $detail->delete();
         }
+
+        // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
+        $credit = SupplierCredit::where('order_service_id', $orderService->id)
+            ->where('state_credit', 'outstanding')->first();
+        if ( isset($credit) )
+        {
+            $credit->delete();
+        }
+
         $orderService->delete();
 
         return response()->json(['message' => 'Orden de servicio eliminada con éxito.'], 200);
@@ -292,6 +349,15 @@ class OrderServiceController extends Controller
 
                 $orderService->save();
 
+                // Si la orden de compra express se modifica, el credito tambien se modificara
+                $credit = SupplierCredit::where('order_service_id', $orderService->id)
+                    ->where('state_credit', 'outstanding')->first();
+                if ( isset($credit) )
+                {
+                    $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
+                    $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
+                    $credit->save();
+                }
             }
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -312,6 +378,16 @@ class OrderServiceController extends Controller
             $orderService->igv = $orderService->igv - $detail->igv;
             $orderService->total = $orderService->total - ($detail->quantity*$detail->price);
             $orderService->save();
+
+            // Si la orden de compra express se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
+                $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
+                $credit->save();
+            }
 
             $detail->delete();
 
@@ -387,6 +463,27 @@ class OrderServiceController extends Controller
                 $orderService->save();
             }
 
+            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $deadline = PaymentDeadline::find($credit->deadline->id);
+                $fecha_issue = Carbon::parse($orderService->date_invoice);
+                $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                $credit->supplier_id = $orderService->supplier->id;
+                $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
+                $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
+                $credit->date_issue = $orderService->date_invoice;
+                $credit->code_order = $orderService->code;
+                $credit->date_expiration = $fecha_expiration;
+                $credit->days_to_expiration = $dias_to_expire;
+                $credit->payment_deadline_id = $orderService->payment_deadline_id;
+                $credit->invoice = $orderService->invoice;
+                $credit->image_invoice = $orderService->image_invoice ;
+                $credit->save();
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {

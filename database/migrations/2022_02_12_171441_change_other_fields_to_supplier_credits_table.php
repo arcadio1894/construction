@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class ChangeFieldsToSupplierCreditsTable extends Migration
+class ChangeOtherFieldsToSupplierCreditsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,23 +14,13 @@ class ChangeFieldsToSupplierCreditsTable extends Migration
     public function up()
     {
         Schema::table('supplier_credits', function (Blueprint $table) {
-            $table->dropForeign(['entry_id']);
-            $table->dropColumn('entry_id');
-            $table->unsignedBigInteger('order_purchase_id')->nullable();
-            $table->foreign('order_purchase_id')
-                ->references('id')
-                ->on('order_purchases')
-                ->onDelete('SET NULL');
-            $table->dropColumn('state');
-            $table->dropColumn('state_credit');
-            /*$table->enum('state_credit', ['outstanding', 'expired', 'by_expire', 'paid_out']);
+            $table->enum('state_credit', ['outstanding', 'expired', 'by_expire', 'paid_out']);
             $table->unsignedBigInteger('order_service_id')->nullable();
             $table->foreign('order_service_id')
                 ->references('id')
                 ->on('order_services')
-                ->onDelete('SET NULL');*/
-            $table->dropColumn('purchase_order');
-            /*$table->string('code_order')->nullable();*/
+                ->onDelete('SET NULL');
+            $table->string('code_order')->nullable();
         });
     }
 

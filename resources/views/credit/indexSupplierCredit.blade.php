@@ -67,7 +67,7 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-    <h3>Listado de facturas</h3>
+    {{--<h3>Listado de facturas</h3>
     <div class="row">
         <div class="col-md-3">
             <strong> Seleccione un rango de fechas: </strong>
@@ -103,7 +103,7 @@
         </table>
     </div>
     <br>
-    <hr>
+    <hr>--}}
     <h3>Listado de créditos</h3>
     <div class="row">
         <div class="col-md-3">
@@ -131,7 +131,6 @@
                 <th>Fecha Emisión</th>
                 <th>Fecha Vencimiento</th>
                 <th>Plazo de pago</th>
-                <th>Estado</th>
                 <th>Días para vencer</th>
                 <th>Observación</th>
                 <th>Estado de crédito</th>
@@ -190,8 +189,8 @@
                                 <input type="text" id="invoice" name="invoice" class="form-control" readonly />
                             </div>
                             <div class="col-md-4">
-                                <label for="purchase_order"> # O. C. <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="purchase_order" name="purchase_order" class="form-control" readonly />
+                                <label for="code_order"> # O.C / O.S <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="code_order" name="code_order" class="form-control" readonly />
                             </div>
 
                         </div>
@@ -205,7 +204,7 @@
                                 <input type="text" id="total_dollars" name="total_dollars" class="form-control" />
                             </div>
                             <div class="col-md-4">
-                                <div class="form-group" id="date_issue">
+                                <div class="form-group">
                                     <label for="date_issue">Fecha Emisión <span class="right badge badge-danger">(*)</span></label>
                                     <div class="input-date" id="date_picker_issue">
                                         <input type="text" class="form-control date_picker_issue" id="date_issue" name="date_issue">
@@ -228,8 +227,8 @@
                                 </div>
                             </div>
                             <div class="col-md-4">
-                                <label for="state"> Estado <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="state" name="state" class="form-control" required />
+                                <label for="state_credit"> Estado del credito <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="state_credit" name="state_credit" class="form-control" required />
                             </div>
 
                         </div>
@@ -238,11 +237,6 @@
                             <div class="col-md-3">
                                 <label for="days_to_expiration"> Días Vence <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="days_to_expiration" name="days_to_expiration" class="form-control" required />
-                            </div>
-                            <div class="col-md-3">
-                                <label for="state_credit"> Estado Crédito <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="state_credit" name="state_credit" class="form-control" required />
-
                             </div>
                             <div class="col-md-6">
                                 <label for="observation"> Observación <span class="right badge badge-danger">(*)</span></label>
@@ -375,7 +369,7 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/credit/index_creditSupplier.js') }}"></script>
     <script>
-        $('#date_issue .date_picker_issue').datepicker({
+        $('#date_picker_issue .date_picker_issue').datepicker({
             todayBtn: "linked",
             clearBtn: true,
             language: "es",

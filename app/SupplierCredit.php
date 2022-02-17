@@ -8,20 +8,20 @@ class SupplierCredit extends Model
 {
     protected $fillable = [
         'supplier_id',
-        'entry_id',
         'invoice',
         'image_invoice',
-        'purchase_order',
         'total_soles',
         'total_dollars',
         'date_issue',
         'date_expiration',
-        'payment_deadline',
-        'state',
         'days_to_expiration',
         'observation',
+        'observation_extra',
+        'order_purchase_id',
         'state_credit',
-        'observation_extra'
+        'order_service_id',
+        'code_order',
+        'payment_deadline_id'
     ];
 
     public function supplier()
@@ -29,8 +29,18 @@ class SupplierCredit extends Model
         return $this->belongsTo('App\Supplier');
     }
 
-    public function entry()
+    public function purchase()
     {
-        return $this->belongsTo('App\Entry');
+        return $this->belongsTo('App\OrderPurchase', 'order_purchase_id');
+    }
+
+    public function service()
+    {
+        return $this->belongsTo('App\OrderService', 'order_service_id');
+    }
+
+    public function deadline()
+    {
+        return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id','id');
     }
 }

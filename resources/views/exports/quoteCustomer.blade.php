@@ -158,7 +158,7 @@
     <div id="logo">
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
         <div id="company3" class="clearfix">
-            <div>RUC 20580001384</div>
+            <div>RUC 20540001384</div>
             <div>A.H. Ramiro Prialé Mz. 17 Lte. 1</div>
             <div>La Esperanza, Trujillo, Perú</div>
             <div>Sitio Web: www.sermeind.com.pe</div>
@@ -264,7 +264,7 @@
     <div id="logo">
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
         <div id="company3" class="clearfix">
-            <div>RUC 20580001384</div>
+            <div>RUC 20540001384</div>
             <div>A.H. Ramiro Prialé Mz. 17 Lte. 1</div>
             <div>La Esperanza, Trujillo, Perú</div>
             <div>Sitio Web: www.sermeind.com.pe</div>

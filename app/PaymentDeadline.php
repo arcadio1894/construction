@@ -27,4 +27,9 @@ class PaymentDeadline extends Model
     {
         return $this->hasMany('App\OrderService');
     }
+
+    public function credits()
+    {
+        return $this->hasMany('App\SupplierCredit');
+    }
 }

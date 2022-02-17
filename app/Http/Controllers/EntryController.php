@@ -10,7 +10,9 @@ use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
 use App\OrderPurchase;
+use App\PaymentDeadline;
 use App\Supplier;
+use App\SupplierCredit;
 use App\Typescrap;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -276,6 +278,43 @@ class EntryController extends Controller
                 }
             }
 
+
+            /* SI ( En el campo factura y en (Orden Compra/Servicio) ) AND Diferente a 000
+                Entonces
+                SI ( Existe en la tabla creditos ) ENTONCES
+                actualiza la factura en la tabla de creditos
+            */
+            if ( $entry->invoice != '' || $entry->invoice != null )
+            {
+                if ( $entry->purchase_order != '' || $entry->purchase_order != null )
+                {
+                    $credit = SupplierCredit::with('deadline')
+                        ->where('code_order', $entry->purchase_order)
+                        ->where('state_credit', 'outstanding')->first();
+
+                    if ( isset($credit) )
+                    {
+                        //$credit->delete();
+                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $fecha_issue = Carbon::parse($entry->date_entry);
+                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                        // TODO: Poner dias
+                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                        $credit->supplier_id = $entry->date_entry;
+                        $credit->invoice = $entry->invoice;
+                        $credit->image_invoice = $entry->image;
+                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->date_issue = $entry->date_entry;
+                        $credit->date_expiration = $fecha_expiration;
+                        $credit->days_to_expiration = $dias_to_expire;
+                        $credit->code_order = $entry->purchase_order;
+                        $credit->save();
+
+                    }
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -447,6 +486,42 @@ class EntryController extends Controller
                 //$entry->save();
             }
 
+            /* SI ( En el campo factura y en (Orden Compra/Servicio) ) AND Diferente a 000
+                Entonces
+                SI ( Existe en la tabla creditos ) ENTONCES
+                actualiza la factura en la tabla de creditos
+            */
+            if ( $entry->invoice != '' || $entry->invoice != null )
+            {
+                if ( $entry->purchase_order != '' || $entry->purchase_order != null )
+                {
+                    $credit = SupplierCredit::with('deadline')
+                        ->where('code_order', $entry->purchase_order)
+                        ->where('state_credit', 'outstanding')->first();
+
+                    if ( isset($credit) )
+                    {
+                        //$credit->delete();
+                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $fecha_issue = Carbon::parse($entry->date_entry);
+                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                        // TODO:poner dias
+                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                        $credit->supplier_id = $entry->date_entry;
+                        $credit->invoice = $entry->invoice;
+                        $credit->image_invoice = $entry->image;
+                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->date_issue = $entry->date_entry;
+                        $credit->date_expiration = $fecha_expiration;
+                        $credit->days_to_expiration = $dias_to_expire;
+                        $credit->code_order = $entry->purchase_order;
+                        $credit->save();
+
+                    }
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -456,6 +531,7 @@ class EntryController extends Controller
 
     }
 
+    // No se borró la orden de compra
     public function destroyEntryPurchase(Entry $entry)
     {
         DB::beginTransaction();
@@ -840,6 +916,7 @@ class EntryController extends Controller
 
             for ( $i=0; $i<sizeof($items); $i++ )
             {
+                //dd($items[$i]->id);
                 $detail_entry = DetailEntry::create([
                     'entry_id' => $entry->id,
                     'material_id' => $items[$i]->id,
@@ -939,6 +1016,7 @@ class EntryController extends Controller
                             ]);
                         }
                     } else {
+                        //dd($detail_entry->material->typeScrap);
                         for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
                         {
                             Item::create([
@@ -958,6 +1036,46 @@ class EntryController extends Controller
                     }
                 }
 
+            }
+
+
+            /* SI ( En el campo factura y en (Orden Compra/Servicio) ) AND Diferente a 000
+                Entonces
+                SI ( Existe en la tabla creditos ) ENTONCES
+                actualiza la factura en la tabla de creditos
+            */
+            //dd($entry->invoice);
+            if ( $entry->invoice != '' || $entry->invoice != null )
+            {
+                //dd($entry->purchase_order);
+                if ( $entry->purchase_order != '' || $entry->purchase_order != null )
+                {
+                    $credit = SupplierCredit::with('deadline')
+                        ->where('code_order', $entry->purchase_order)
+                        ->where('state_credit', 'outstanding')->first();
+                    //dd($credit);
+                    if ( isset($credit) )
+                    {
+                        //$credit->delete();
+                        //dump($credit->deadline->id);
+                        //dd($credit->deadline);
+                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $fecha_issue = Carbon::parse($entry->date_entry);
+                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                        $credit->supplier_id = $entry->supplier_id;
+                        $credit->invoice = $entry->invoice;
+                        $credit->image_invoice = $entry->image;
+                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->date_issue = $entry->date_entry;
+                        $credit->days_to_expiration = $dias_to_expire;
+                        $credit->date_expiration = $fecha_expiration;
+                        $credit->code_order = $entry->purchase_order;
+                        $credit->save();
+
+                    }
+                }
             }
 
             DB::commit();
@@ -1002,7 +1120,5 @@ class EntryController extends Controller
         return 2;
 
     }
-
-
 
 }

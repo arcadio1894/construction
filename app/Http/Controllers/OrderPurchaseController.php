@@ -188,22 +188,32 @@ class OrderPurchaseController extends Controller
                 ]);
             }
 
-            /*if ( isset($orderPurchase->deadline) )
+            // Si el plazo indica credito, se crea el credito
+            if ( isset($orderPurchase->deadline) )
             {
                 if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
                 {
+                    $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
+                    //$fecha_issue = Carbon::parse($orderPurchase->date_order);
+                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
                     $credit = SupplierCredit::create([
                         'supplier_id' => $orderPurchase->supplier->id,
-                        'entry_id' => $entry->id,
-                        'invoice' => $entry->invoice,
-                        'image_invoice' => $entry->image,
-                        'purchase_order' => $entry->purchase_order,
-                        'total_soles' => ($entry->currency_invoice == 'PEN') ? $entry->total:null,
-                        'total_dollars' => ($entry->currency_invoice == 'USD') ? $entry->total:null,
-                        'date_issue' => $entry->date_entry,
+                        'total_soles' => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null,
+                        'total_dollars' => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null,
+                        //'date_issue' => $orderPurchase->date_order,
+                        'order_purchase_id' => $orderPurchase->id,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => null,
+                        //'date_expiration' => $fecha_expiration,
+                        //'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderPurchase->code,
+                        'payment_deadline_id' => $orderPurchase->payment_deadline_id
                     ]);
                 }
-            }*/
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -274,6 +284,28 @@ class OrderPurchaseController extends Controller
                     ]);
                 }
 
+            }
+
+            // Si la orden de compra express se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $deadline = PaymentDeadline::find($credit->deadline->id);
+                //$fecha_issue = Carbon::parse($orderPurchase->date_order);
+                //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                // TODO: Poner dias
+                //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                $credit->supplier_id = $orderPurchase->supplier->id;
+                $credit->total_soles = ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null;
+                $credit->total_dollars = ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null;
+                //$credit->date_issue = $orderPurchase->date_order;
+                //$credit->date_expiration = $fecha_expiration;
+                //$credit->days_to_expiration = $dias_to_expire;
+                $credit->code_order = $orderPurchase->code;
+                $credit->payment_deadline_id = $orderPurchase->payment_deadline_id;
+                $credit->save();
             }
 
             DB::commit();
@@ -397,6 +429,16 @@ class OrderPurchaseController extends Controller
                     $orderExpress->total = round(($orderExpress->total + $total),2);
 
                     $orderExpress->save();
+
+                    // Si la orden de compra express se modifica, el credito tambien se modificara
+                    $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                        ->where('state_credit', 'outstanding')->first();
+                    if ( isset($credit) )
+                    {
+                        $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                        $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                        $credit->save();
+                    }
                 }
 
             }
@@ -419,6 +461,16 @@ class OrderPurchaseController extends Controller
             $orderExpress->igv = $orderExpress->igv - $detail->igv;
             $orderExpress->total = $orderExpress->total - ($detail->quantity*$detail->price);
             $orderExpress->save();
+
+            // Si la orden de compra express se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                $credit->save();
+            }
 
             $material_order = MaterialOrder::where('material_id', $idMaterial)
                 ->where('order_purchase_detail_id', $detail->id)->first();
@@ -455,6 +507,15 @@ class OrderPurchaseController extends Controller
             $detail->delete();
 
         }
+
+        // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
+        $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+            ->where('state_credit', 'outstanding')->first();
+        if ( isset($credit) )
+        {
+            $credit->delete();
+        }
+
         $orderPurchase->delete();
 
         return response()->json(['message' => 'Orden express eliminada con éxito.'], 200);
@@ -566,6 +627,33 @@ class OrderPurchaseController extends Controller
                 ]);
             }
 
+            // Si el plazo indica credito, se crea el credito
+            if ( isset($orderPurchase->deadline) )
+            {
+                if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
+                {
+                    $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
+                    //$fecha_issue = Carbon::parse($orderPurchase->date_order);
+                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderPurchase->supplier->id,
+                        'total_soles' => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null,
+                        'total_dollars' => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null,
+                        //'date_issue' => $orderPurchase->date_order,
+                        'order_purchase_id' => $orderPurchase->id,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => null,
+                        //'date_expiration' => $fecha_expiration,
+                        //'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderPurchase->code,
+                        'payment_deadline_id' => $orderPurchase->payment_deadline_id
+                    ]);
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -622,6 +710,15 @@ class OrderPurchaseController extends Controller
             $detail->delete();
 
         }
+
+        // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
+        $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+            ->where('state_credit', 'outstanding')->first();
+        if ( isset($credit) )
+        {
+            $credit->delete();
+        }
+
         $orderPurchase->delete();
 
         return response()->json(['message' => 'Orden normal eliminada con éxito.'], 200);
@@ -690,6 +787,16 @@ class OrderPurchaseController extends Controller
                     $orderExpress->total = round(($orderExpress->total + $total),2);
 
                     $orderExpress->save();
+
+                    // Si la orden de compra express se modifica, el credito tambien se modificara
+                    $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                        ->where('state_credit', 'outstanding')->first();
+                    if ( isset($credit) )
+                    {
+                        $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                        $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                        $credit->save();
+                    }
                 }
 
             }
@@ -712,6 +819,16 @@ class OrderPurchaseController extends Controller
             $orderExpress->igv = $orderExpress->igv - $detail->igv;
             $orderExpress->total = $orderExpress->total - ($detail->quantity*$detail->price);
             $orderExpress->save();
+
+            // Si la orden de compra express se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                $credit->save();
+            }
 
             $material_order = MaterialOrder::where('material_id', $idMaterial)
                 ->where('order_purchase_detail_id', $detail->id)->first();
@@ -780,6 +897,28 @@ class OrderPurchaseController extends Controller
                     ]);
                 }
 
+            }
+
+            // Si la orden de compra express se modifica, el credito tambien se modificara
+            $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+                ->where('state_credit', 'outstanding')->first();
+            if ( isset($credit) )
+            {
+                $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
+                //$fecha_issue = Carbon::parse($orderPurchase->date_order);
+                //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                // TODO: Poner dias
+                //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                $credit->supplier_id = $orderPurchase->supplier->id;
+                $credit->total_soles = ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null;
+                $credit->total_dollars = ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null;
+                //$credit->date_issue = $orderPurchase->date_order;
+                //$credit->date_expiration = $fecha_expiration;
+                //$credit->days_to_expiration = $dias_to_expire;
+                $credit->code_order = $orderPurchase->code;
+                $credit->payment_deadline_id = $orderPurchase->payment_deadline_id;
+                $credit->save();
             }
 
             DB::commit();

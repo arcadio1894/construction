@@ -39,7 +39,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Aprovado por',
+                title: 'Aprobado por',
                 wrap: true,
                 "render": function (item)
                 {
@@ -85,7 +85,7 @@ $(document).ready(function () {
                         } else if (data == 0) {
                             text = text + 'Incompleta';
                         } else if (data == 2) {
-                            text = text + 'No hay datos';
+                            text = text + 'Por ingresar';
                         }
                         $(currentCell).text(text);
                     });

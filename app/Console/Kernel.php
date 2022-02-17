@@ -17,6 +17,16 @@ class Kernel extends ConsoleKernel
     ];
 
     /**
+     * Get the timezone that should be used by default for scheduled events.
+     *
+     * @return \DateTimeZone|string|null
+     */
+    protected function scheduleTimezone()
+    {
+        return 'America/Lima';
+    }
+
+    /**
      * Define the application's command schedule.
      *
      * @param  \Illuminate\Console\Scheduling\Schedule  $schedule
@@ -24,7 +34,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Solo de prueba, cambiar a ->daily()
+        $schedule->command('credits:update')->daily();
     }
 
     /**

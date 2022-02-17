@@ -33,32 +33,38 @@ class SupplierCreditController extends Controller
     public function getOnlyCreditsSupplier()
     {
         $credits = SupplierCredit::with('supplier')
-            ->with('entry')
+            ->with('purchase')
+            ->with('service')
+            ->with('deadline')
             ->orderBy('created_at', 'desc')
             ->get();
         foreach( $credits as $credit )
         {
             if ( isset($credit->date_expiration) )
             {
-                $currentDate= Carbon::now();
-                $date_expire = Carbon::parse($credit->date_expiration);
+                $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
+                $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
+                $credit->days_to_expiration = (int)$dias_to_expire;
+                $credit->save();
 
-                $difference = $date_expire->diffInDays($currentDate);
-                $credit->days_to_expiration = $difference;
-
-                if ( $date_expire < $currentDate)
+                if ( (int)$dias_to_expire < 4 && (int)$dias_to_expire > 0 )
                 {
-                    $credit->state = 'expired';
-                } else {
-                    $credit->state = 'by_expire';
+                    $credit->state_credit = 'by_expire';
+                    $credit->save();
                 }
 
-                $credit->save();
+                if ( $dias_to_expire == 0 )
+                {
+                    $credit->state_credit = 'expired';
+                    $credit->save();
+                }
             }
 
         }
         $credits = SupplierCredit::with('supplier')
-            ->with('entry')
+            ->with('purchase')
+            ->with('service')
+            ->with('deadline')
             ->orderBy('created_at', 'desc')
             ->get();
         return datatables($credits)->toJson();
@@ -92,7 +98,10 @@ class SupplierCreditController extends Controller
     public function getCreditById( $credit_id )
     {
         $credit = SupplierCredit::with('supplier')
-            ->with('entry')->find($credit_id);
+            ->with('purchase')
+            ->with('service')
+            ->with('deadline')
+            ->find($credit_id);
 
         return response()->json(['credit' => $credit], 200);
     }
