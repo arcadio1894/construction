@@ -835,6 +835,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/only/credits/supplier', 'SupplierCreditController@getOnlyCreditsSupplier');
         Route::post('/add/invoice/credit/{idEntry}', 'SupplierCreditController@addInvoiceToCredit');
         Route::get('/get/credit/by/id/{creditId}', 'SupplierCreditController@getCreditById');
+        Route::post('credit/control/update', 'SupplierCreditController@update')
+            ->name('credit.control.update');
+        Route::post('credit/control/paid', 'SupplierCreditController@paid')
+            ->name('credit.control.paid');
+        Route::post('/cancel/pay/credit/{idCredit}', 'SupplierCreditController@cancelPayCredit');
 
         // PAYMENT DEADLINES
         Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')

@@ -136,6 +136,7 @@
                 <th>Estado de crédito</th>
                 <th>Observación 2</th>
                 <th>Imagen</th>
+                <th>Fecha Pago</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -143,6 +144,104 @@
 
             </tbody>
         </table>
+    </div>
+
+    <div id="modalPay" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Información del crédito</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formPay" data-url="{{ route('credit.control.paid') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="credit_id" name="credit_id">
+                        <input type="hidden" id="days_deadline" name="days_deadline">
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="supplier"> Proveedor <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="supplier" name="supplier" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="invoice"> Factura <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="invoice" name="invoice" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="code_order"> # O.C / O.S <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="code_order" name="code_order" class="form-control form-control-sm" readonly />
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="total_soles"> Importe S/.  <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="total_soles" name="total_soles" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="total_dollars"> Importe $ <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="total_dollars" name="total_dollars" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date_issue">Fecha Emisión <span class="right badge badge-danger">(*)</span></label>
+
+                                    <input type="text" class="form-control form-control-sm" id="date_issue" name="date_issue" readonly>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="payment_deadline"> Plazo Pago <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="payment_deadline" name="payment_deadline" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-4">
+                                <label for="date_expiration_2">Fecha Vence <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" class="form-control form-control-sm" id="date_expiration_2" name="date_expiration" readonly>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="state_credit"> Estado del credito <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="state_credit" name="state_credit" class="form-control form-control-sm" readonly />
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="days_to_expiration"> Días Vence <span class="right badge badge-danger">(*)</span></label>
+                                <input type="text" id="days_to_expiration" name="days_to_expiration" class="form-control form-control-sm" readonly />
+                            </div>
+                            <div class="col-md-8">
+                                <label for="observation"> Observación <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name="observation" class="form-control form-control-sm" id="observation" rows="2" readonly></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="date_paid">Fecha Pago <span class="right badge badge-danger">(*)</span></label>
+                                    <div class="input-date" id="date_picker_paid">
+                                        <input type="text" class="form-control date_picker_paid" id="date_paid" name="date_paid">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <label for="observation2"> Observación de pago <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name="observation2" class="form-control" id="observation2" rows="2"></textarea>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-pay" class="btn btn-success">Guardar pago</button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 
     <div id="modalDelete" class="modal fade" tabindex="-1">
@@ -175,10 +274,11 @@
                     <h4 class="modal-title">Información del crédito</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formEdit" data-url="{{ route('material.destroy') }}">
+                <form id="formEdit" data-url="{{ route('credit.control.update') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="credit_id" name="credit_id">
+                        <input type="hidden" id="days_deadline" name="days_deadline">
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label for="supplier"> Proveedor <span class="right badge badge-danger">(*)</span></label>
@@ -197,11 +297,11 @@
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label for="total_soles"> Importe S/.  <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="total_soles" name="total_soles" class="form-control" />
+                                <input type="text" id="total_soles" name="total_soles" class="form-control" readonly />
                             </div>
                             <div class="col-md-4">
                                 <label for="total_dollars"> Importe $ <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="total_dollars" name="total_dollars" class="form-control" />
+                                <input type="text" id="total_dollars" name="total_dollars" class="form-control" readonly />
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
@@ -216,7 +316,7 @@
                         <div class="form-group row">
                             <div class="col-md-4">
                                 <label for="payment_deadline"> Plazo Pago <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="payment_deadline" name="payment_deadline" class="form-control" required />
+                                <input type="text" id="payment_deadline" name="payment_deadline" class="form-control" readonly />
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group" id="date_expiration">
@@ -228,7 +328,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="state_credit"> Estado del credito <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="state_credit" name="state_credit" class="form-control" required />
+                                <input type="text" id="state_credit" name="state_credit" class="form-control" readonly />
                             </div>
 
                         </div>
@@ -236,7 +336,7 @@
                         <div class="form-group row">
                             <div class="col-md-3">
                                 <label for="days_to_expiration"> Días Vence <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="days_to_expiration" name="days_to_expiration" class="form-control" required />
+                                <input type="text" id="days_to_expiration" name="days_to_expiration" class="form-control" readonly />
                             </div>
                             <div class="col-md-6">
                                 <label for="observation"> Observación <span class="right badge badge-danger">(*)</span></label>
@@ -248,7 +348,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-success">Guardar cambios</button>
+                        <button type="button" id="btn-submit" class="btn btn-success">Guardar cambios</button>
                     </div>
                 </form>
             </div>
@@ -379,6 +479,15 @@
             defaultViewDate: moment().format('L')
         });
         $('#date_expiration .date_picker_expiration').datepicker({
+            todayBtn: "linked",
+            clearBtn: true,
+            language: "es",
+            multidate: false,
+            autoclose: true,
+            todayHighlight: true,
+            defaultViewDate: moment().format('L')
+        });
+        $('#date_picker_paid .date_picker_paid').datepicker({
             todayBtn: "linked",
             clearBtn: true,
             language: "es",

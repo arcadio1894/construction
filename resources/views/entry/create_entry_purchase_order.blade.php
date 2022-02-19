@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="supplier_id">Proveedor </label>
-                                    <input type="text" id="supplier_id" name="supplier_id" value="{{ $orderPurchase->supplier->business_name }}" class="form-control" readonly>
+                                    <input type="text" id="supplier_id" name="supplier_id" value="{{ ($orderPurchase->supplier == null) ? 'Falta proveedor': $orderPurchase->supplier->business_name }}" class="form-control" readonly>
                                 </div>
                             </div>
                             <div class="col-md-6">

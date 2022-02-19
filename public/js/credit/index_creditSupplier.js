@@ -430,10 +430,10 @@ $(document).ready(function () {
                 {
                     if ( item.state_credit != null )
                     {
-                        return (item.state_credit === 'outstanding') ? 'Pendiente' :
-                            (item.state_credit === 'by_expire') ? 'Por expirar' :
-                                (item.state_credit === 'expired') ? 'Expirado' :
-                                    'Pagado';
+                        return (item.state_credit === 'outstanding') ? '<span class="badge bg-info">Pendiente</span>' :
+                            (item.state_credit === 'by_expire') ? '<span class="badge bg-warning">Por expirar</span>' :
+                                (item.state_credit === 'expired') ? '<span class="badge bg-danger">Expirado</span>' :
+                                    '<span class="badge bg-success">Pagado</span>';
                     } else {
                         return '';
                     }
@@ -470,6 +470,20 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Fecha Pago',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.date_paid != null )
+                    {
+                        return '<p> '+ moment(item.date_paid).format('DD/MM/YYYY') +'</p>';
+                    } else {
+                        return '<p> No tiene</p>';
+                    }
+
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 sortable:false,
                 wrap: true,
@@ -477,8 +491,14 @@ $(document).ready(function () {
                 {
                     var text = '';
 
-                    text = text + '<button type="button" data-edit="' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i> </button> ';
-                    text = text + '<button type="button" data-pay="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crédito pagado"><i class="fa fa-dollar-sign"></i> </button>';
+                    if ( item.state_credit != 'paid_out' )
+                    {
+                        text = text + '<button type="button" data-edit="' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i> </button> ';
+                        text = text + '<button type="button" data-pay="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crédito pagado"><i class="fa fa-dollar-sign"></i> </button>';
+                    } else {
+                        text = text + '<button type="button" data-nopay="' + item.id + '" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular pago"><i class="fas fa-strikethrough"></i> </button>';
+
+                    }
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -644,7 +664,19 @@ $(document).ready(function () {
 
     $modalEdit = $('#modalEdit');
 
+    $modalPay = $('#modalPay');
+
     $modalImage = $('#modalImage');
+
+    $formEdit = $('#formEdit');
+
+    $formPay = $('#formPay');
+
+    $("#btn-submit").on('click', updateCredit);
+
+    $("#btn-pay").on('click', paidCredit);
+
+    $(document).on('change', '[id=date_issue]', modifyDateIsuue);
 
     $(document).on('click', '[data-details]', showDetails);
 
@@ -653,6 +685,10 @@ $(document).ready(function () {
     $(document).on('click', '[data-add]', addCredit);
 
     $(document).on('click', '[data-edit]', editCredit);
+
+    $(document).on('click', '[data-pay]', payCredit);
+
+    $(document).on('click', '[data-nopay]', cancelPayCredit);
 
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
@@ -738,7 +774,11 @@ let $modalImage;
 
 let $modalEdit;
 
-let $formCreate;
+let $modalPay;
+
+let $formEdit;
+
+let $formPay;
 
 let $modalAddItems;
 
@@ -747,6 +787,312 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function cancelPayCredit() {
+    var id_credit = $(this).attr('data-nopay');
+    $.confirm({
+        icon: 'fas fa-window-close',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de cancelar el pago de este crédito?',
+        content: 'Se actualizará la página.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/cancel/pay/credit/'+id_credit,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            //console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Proceso cancelado.");
+                },
+            },
+        }
+    });
+}
+
+function paidCredit() {
+    event.preventDefault();
+    $("#btn-pay").attr("disabled", true);
+    // Obtener la URL
+    var paidUrl = $formPay.data('url');
+    var formulario = $('#formPay')[0];
+    var form = new FormData(formulario);
+    $.ajax({
+        url: paidUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-pay").attr("disabled", false);
+                $modalPay.modal('hide');
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $("#btn-pay").attr("disabled", false);
+
+        },
+    });
+}
+
+function payCredit() {
+    var credit_id = $(this).data('pay');
+    $.ajax({
+        url: "/dashboard/get/credit/by/id/"+credit_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            var credit = json.credit;
+            console.log(credit);
+            //console.log(json[0].supplier);
+            var estado = (credit.state_credit === 'outstanding') ? 'Pendiente' :
+                (credit.state_credit === 'by_expire') ? 'Por expirar' :
+                    (credit.state_credit === 'expired') ? 'Expirado' :
+                        'Pagado';
+            $modalPay.find('[id=credit_id]').val(credit.id);
+            $modalPay.find('[id=days_deadline]').val(credit.deadline.days);
+            $modalPay.find('[id=supplier]').val(credit.supplier.business_name);
+            $modalPay.find('[id=invoice]').val(credit.invoice);
+            $modalPay.find('[id=code_order]').val(credit.code_order);
+            $modalPay.find('[id=total_soles]').val(credit.total_soles);
+            $modalPay.find('[id=total_dollars]').val(credit.total_dollars);
+            $modalPay.find('[id=total_dollars]').val(credit.total_dollars);
+            $modalPay.find('[id=date_issue]').val(moment(credit.date_issue).format('DD/MM/YYYY'));
+            $modalPay.find('[id=payment_deadline]').val(credit.deadline.description);
+            $modalPay.find('[id=date_expiration_2]').val(moment(credit.date_expiration).format('DD/MM/YYYY'));
+            $modalPay.find('[id=state_credit]').val(estado);
+            $modalPay.find('[id=days_to_expiration]').val(credit.days_to_expiration);
+            $modalPay.find('[id=observation]').val(credit.observation);
+
+            $modalPay.find('[id=date_paid]').datepicker('setDate', moment(credit.date_paid).format('DD/MM/YYYY'));
+            $modalPay.find('[id=observation2]').val(credit.observation_extra);
+
+            $('#date_picker_paid .date_picker_paid').datepicker({
+                todayBtn: "linked",
+                clearBtn: true,
+                language: "es",
+                multidate: false,
+                autoclose: true,
+                todayHighlight: true,
+                defaultViewDate: moment().format('L')
+            });
+        }
+    });
+    $modalPay.modal('show');
+}
+
+function modifyDateIsuue() {
+    console.log($(this).val());
+    // TODO: Obtener la fecha nueva de emision,
+    var deadline_days = parseInt($('#days_deadline').val());
+    console.log(deadline_days);
+    var date_isuue = moment($(this).val().split(' ')[0].split("/").reverse().join("-"));
+    console.log(date_isuue);
+    // TODO: Obtener la fecha nueva de expiracion moment("12/25/1995", "MM-DD-YYYY");
+    var date_expiration = moment(date_isuue).add(deadline_days, 'd');
+
+    console.log(date_expiration.format('DD/MM/YYYY'));
+    // TODO: Modificar los dias restantes teniendo
+    // TODO: en cuenta la fecha actual y de expiracion
+    var missing_days = date_expiration.diff(moment(), 'days');
+    console.log(missing_days);
+    $modalEdit.find('[id=days_to_expiration]').val(missing_days);
+
+    $modalEdit.find('[id=date_issue]').val(date_isuue.format('DD/MM/YYYY'));
+    $modalEdit.find('[id=date_expiration_2]').val(date_expiration.format('DD/MM/YYYY'));
+    $('#date_picker_issue .date_picker_issue').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true,
+        todayHighlight: true,
+        defaultViewDate: moment().format('L')
+    });
+    $('#date_expiration .date_picker_expiration').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true,
+        todayHighlight: true,
+        defaultViewDate: moment().format('L')
+    });
+    //console.log(date_isuue);
+
+}
+
+function updateCredit() {
+    event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
+    // Obtener la URL
+    var editUrl = $formEdit.data('url');
+    var formulario = $('#formEdit')[0];
+    var form = new FormData(formulario);
+    $.ajax({
+        url: editUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
+                $modalEdit.modal('hide');
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $("#btn-submit").attr("disabled", false);
+
+        },
+    });
+}
 
 function addCredit() {
     var id_entry = $(this).attr('data-add');
@@ -807,6 +1153,8 @@ function editCredit() {
                 (credit.state_credit === 'by_expire') ? 'Por expirar' :
                     (credit.state_credit === 'expired') ? 'Expirado' :
                     'Pagado';
+            $modalEdit.find('[id=credit_id]').val(credit.id);
+            $modalEdit.find('[id=days_deadline]').val(credit.deadline.days);
             $modalEdit.find('[id=supplier]').val(credit.supplier.business_name);
             $modalEdit.find('[id=invoice]').val(credit.invoice);
             $modalEdit.find('[id=code_order]').val(credit.code_order);

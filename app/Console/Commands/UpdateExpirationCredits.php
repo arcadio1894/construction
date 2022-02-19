@@ -72,7 +72,7 @@ class UpdateExpirationCredits extends Command
 
         foreach ( $credits as $credit )
         {
-            if ( isset($credit->date_issue) )
+            if ( isset($credit->date_issue) && $credit->state_credit != 'paid_out' )
             {
                 $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
                 $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
