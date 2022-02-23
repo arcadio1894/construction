@@ -26,6 +26,18 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-price2]', function() {
+        var price = parseFloat($(this).parent().parent().prev().children().children().val());
+        var quantity = parseFloat($(this).parent().parent().prev().prev().children().children().val());
+        var description = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+        var id = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+
+        $items = $items.filter(material => material.id_material != id);
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        updateSummaryInvoice();
+
+    });
+
     $(document).on('input', '[data-price]', function() {
         var price = parseFloat($(this).val());
         var quantity = parseFloat($(this).parent().parent().prev().children().children().val());
@@ -140,15 +152,28 @@ function updateSummaryInvoice() {
 function calculateTotal(e) {
     var cantidad = e.value;
     var precio = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
-    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
-
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    updateSummaryInvoice();
 }
 
 function calculateTotal2(e) {
     var precio = e.value;
     var cantidad = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
-    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(precio)/1.18).toFixed(2);
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    updateSummaryInvoice();
+}
 
+function calculateTotal3(e) {
+    var precioSI = e.value;
+    var precioCI = (parseFloat(precioSI)*1.18).toFixed(2);
+    console.log(precioSI);
+    console.log(precioCI);
+    var cantidad = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+    console.log(cantidad);
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precioCI)).toFixed(2);
+    e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value = precioCI;
+    updateSummaryInvoice();
 }
 
 function deleteItem() {
@@ -168,6 +193,7 @@ function renderTemplateMaterial(id, code, description, quantity, price) {
     clone.querySelector("[data-quantity]").setAttribute('value', quantity);
     clone.querySelector("[data-quantity]").setAttribute('max', quantity);
     clone.querySelector("[data-price]").setAttribute('value', price);
+    clone.querySelector("[data-price2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2) );
     clone.querySelector("[data-total]").setAttribute('value', (parseFloat(price)*parseFloat(quantity)).toFixed(2) );
     clone.querySelector("[data-delete]").setAttribute('data-delete', id);
     $('#body-materials').append(clone);

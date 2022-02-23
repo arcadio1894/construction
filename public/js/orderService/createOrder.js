@@ -26,6 +26,19 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-price2]', function() {
+        var price2 = parseFloat($(this).val());
+        var price = parseFloat($(this).parent().parent().prev().children().children().val());
+        var quantity = parseFloat($(this).parent().parent().prev().prev().children().children().val());
+        var unit = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+        var service = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+
+        $items = $items.filter(item => item.service != service);
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+        updateSummaryInvoice();
+
+    });
+
     $(document).on('input', '[data-price]', function() {
         var price = parseFloat($(this).val());
         var quantity = parseFloat($(this).parent().parent().prev().children().children().val());
@@ -190,15 +203,28 @@ function updateSummaryInvoice() {
 function calculateTotal(e) {
     var cantidad = e.value;
     var precio = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
-    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
-
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    updateSummaryInvoice();
 }
 
 function calculateTotal2(e) {
     var precio = e.value;
     var cantidad = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
-    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(precio)/1.18).toFixed(2);
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    updateSummaryInvoice();
+}
 
+function calculateTotal3(e) {
+    var precioSI = e.value;
+    var precioCI = (parseFloat(precioSI)*1.18).toFixed(2);
+    console.log(precioSI);
+    console.log(precioCI);
+    var cantidad = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+    console.log(cantidad);
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precioCI)).toFixed(2);
+    e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value = precioCI;
+    updateSummaryInvoice();
 }
 
 function deleteItem() {
@@ -218,6 +244,7 @@ function renderTemplateService(service, service_unit, service_quantity, service_
     clone.querySelector("[data-quantity]").setAttribute('value', (parseFloat(service_quantity)).toFixed(2) );
     clone.querySelector("[data-quantity]").setAttribute('max', service_quantity);
     clone.querySelector("[data-price]").setAttribute('value', (parseFloat(service_price)).toFixed(2) );
+    clone.querySelector("[data-price2]").setAttribute('value', (parseFloat(service_price)/1.18).toFixed(2) );
     clone.querySelector("[data-total]").setAttribute('value', (parseFloat(service_price)*parseFloat(service_quantity)).toFixed(2) );
     clone.querySelector("[data-delete]").setAttribute('data-delete', service);
     $('#body-services').append(clone);

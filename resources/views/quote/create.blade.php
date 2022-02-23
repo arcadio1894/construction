@@ -225,12 +225,12 @@
                                 </div>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <strong>Material</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-1">
                                         <div class="form-group">
                                             <strong>Unidad</strong>
                                         </div>
@@ -252,12 +252,22 @@
                                     </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <strong>Precio</strong>
+                                            <strong>Precio S/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <strong>Total</strong>
+                                            <strong>Precio C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total C/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-1">
@@ -339,14 +349,24 @@
                                                 <strong>Cantidad</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <div class="form-group">
-                                                <strong>Precio</strong>
+                                                <strong>Precio S/IGV</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <div class="form-group">
-                                                <strong>Total</strong>
+                                                <strong>Precio C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total C/IGV</strong>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
@@ -372,19 +392,34 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" oninput="calculateTotalC(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <input type="number" value="{{ $consumable->unit_price/1.18 }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-1">
                                             <div class="form-group">
                                                 <input type="number" value="{{ $consumable->unit_price }}" class="form-control form-control-sm" data-consumablePrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal2 value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
                                             <div class="form-group">
                                                 <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -440,7 +475,7 @@
                                     @can('showPrices_quote')
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -472,7 +507,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <strong>Precio</strong>
+                                            <strong>Precio C/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -558,7 +593,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                                    <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
                                                     <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -616,7 +651,7 @@
                                     @can('showPrices_quote')
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="price">Precio C/IGV por día <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -647,7 +682,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <strong>Precio por día</strong>
+                                            <strong>Precio C/IGV por día</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -750,14 +785,14 @@
 
         <template id="materials-selected">
             <div class="row">
-                <div class="col-md-4">
+                <div class="col-md-3">
                     <div class="form-group">
                         <div class="form-group">
                             <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription readonly>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
                     <div class="form-group">
                         <div class="form-group">
                             <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialUnit readonly>
@@ -787,7 +822,21 @@
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialPrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                             " readonly>
                     </div>
@@ -822,19 +871,33 @@
                 </div>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotal(this);" data-consumableQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotalC(this);" data-consumableQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                             ">
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumablePrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumablePrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                             " readonly>
                     </div>
                 </div>
-                <div class="col-md-2">
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumableTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
                     <div class="form-group">
                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumableTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -1039,12 +1102,12 @@
                                 </div>
                                 <hr>
                                 <div class="row">
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <strong>Material</strong>
                                         </div>
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-1">
                                         <div class="form-group">
                                             <strong>Unidad</strong>
                                         </div>
@@ -1066,12 +1129,22 @@
                                     </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <strong>Precio</strong>
+                                            <strong>Precio S/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-1">
                                         <div class="form-group">
-                                            <strong>Total</strong>
+                                            <strong>Precio C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total C/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-1">
@@ -1134,14 +1207,24 @@
                                                 <strong>Cantidad</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <div class="form-group">
-                                                <strong>Precio</strong>
+                                                <strong>Precio S/IGV</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-2">
+                                        <div class="col-md-1">
                                             <div class="form-group">
-                                                <strong>Total</strong>
+                                                <strong>Precio C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total C/IGV</strong>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
@@ -1167,19 +1250,33 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    <input type="number" class="form-control form-control-sm" oninput="calculateTotalC(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" value="{{ round($consumable->unit_price/1.18,2) }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
                                                 <div class="form-group">
                                                     <input type="number" value="{{ $consumable->unit_price }}" class="form-control form-control-sm" data-consumablePrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal2 value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
                                                 <div class="form-group">
                                                     <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -1235,7 +1332,7 @@
                                     @can('showPrices_quote')
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                            <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -1267,7 +1364,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <strong>Precio</strong>
+                                            <strong>Precio C/IGV</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -1353,7 +1450,7 @@
 
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                                    <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
                                                     <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -1411,7 +1508,7 @@
                                     @can('showPrices_quote')
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <label for="price">Precio por día <span class="right badge badge-danger">(*)</span></label>
+                                                <label for="price">Precio C/IGV por día <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 ">
@@ -1442,7 +1539,7 @@
                                     </div>
                                     <div class="col-md-2">
                                         <div class="form-group">
-                                            <strong>Precio por día</strong>
+                                            <strong>Precio C/IGV por día</strong>
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -1510,7 +1607,7 @@
                         </div>
                         @can('showPrices_quote')
                         <div class="col-md-3" id="price_material">
-                            <label class="col-sm-12 control-label" for="material_price"> Precio </label>
+                            <label class="col-sm-12 control-label" for="material_price"> Precio C/IGV </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_price" name="material_price" class="form-control" readonly />

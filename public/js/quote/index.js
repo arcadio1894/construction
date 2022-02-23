@@ -51,19 +51,6 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Total',
-                wrap: true,
-                "render": function (item)
-                {
-                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return item.subtotal_rent;
-                    } else {
-                        return '';
-                    }
-
-                }
-            },
-            { data: null,
                 title: 'Total Sin IGV',
                 wrap: true,
                 "render": function (item)
@@ -76,6 +63,20 @@ $(document).ready(function () {
 
                 }
             },
+            { data: null,
+                title: 'Total Con IGV',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                        return item.subtotal_rent;
+                    } else {
+                        return '';
+                    }
+
+                }
+            },
+
             { data: null,
                 title: 'Moneda',
                 wrap: true,

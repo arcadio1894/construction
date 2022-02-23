@@ -202,14 +202,19 @@
                                     <strong>Cantidad</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <div class="form-group">
-                                    <strong>Precio</strong>
+                                    <strong>Precio C/Igv</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <strong>Precio S/Igv</strong>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <strong>Total</strong>
+                                    <strong>Total C/Igv</strong>
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -290,12 +295,17 @@
 
             <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" data-quantity step="0.01" >
+                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" min="0" data-quantity step="0.01" >
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" data-price step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal2(this);" placeholder="0.00" min="0" data-price step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal3(this);" placeholder="0.00" min="0" data-price2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
                 </div>
             </div>
             <div class="col-md-2">

@@ -39,7 +39,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Aprovado por',
+                title: 'Aprobado por',
                 wrap: true,
                 "render": function (item)
                 {

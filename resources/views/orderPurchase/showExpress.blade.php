@@ -102,12 +102,12 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="supplier">Proveedor </label>
-                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ $order->supplier->business_name }}" readonly>
+                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ ($order->supplier == null) ? 'Falta proveedor':$order->supplier->business_name }}" readonly>
 
                                 </div>
                                 <div class="form-group">
                                     <label for="approved_by">Aprobado por: </label>
-                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ $order->approved_user->name }}" readonly>
+                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ ($order->approved_user == null) ? 'Falta aprobador':$order->approved_user->name }}" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="purchase_condition">Forma de pago </label>
@@ -161,14 +161,19 @@
                                     <strong>Cantidad</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <div class="form-group">
-                                    <strong>Precio</strong>
+                                    <strong>Precio C/Igv</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <strong>Precio S/Igv</strong>
                                 </div>
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <strong>Total</strong>
+                                    <strong>Total C/Igv</strong>
                                 </div>
                             </div>
 
@@ -203,9 +208,14 @@
                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal(this);" placeholder="0.00" min="0" value="{{ $detail->quantity }}" data-quantity="{{$detail->id}}" step="0.01" readonly>
                                     </div>
                                 </div>
-                                <div class="col-md-2">
+                                <div class="col-md-1">
                                     <div class="form-group">
                                         <input type="number" class="form-control form-control-sm" onkeyup="calculateTotal2(this);" placeholder="0.00" min="0" data-price="{{$detail->id}}" value="{{ $detail->price }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotal3(this);" placeholder="0.00" min="0" data-price2 step="0.01" value="{{ round((float)($detail->price)/1.18, 2) }}" pattern="^\d+(?:\.\d{1,2})?$" readonly>
                                     </div>
                                 </div>
                                 <div class="col-md-2">

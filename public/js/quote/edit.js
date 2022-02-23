@@ -2472,6 +2472,16 @@ function calculateTotalHour(e) {
 
 }
 
+function calculateTotalC(e) {
+    var cantidad = e.value;
+    var precio = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
+    // CON IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    // SIN IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = ((parseFloat(cantidad)*parseFloat(precio))/1.18).toFixed(2);
+
+}
+
 function calculateTotalPrice(e) {
     var cantidad = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
     var hour = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
@@ -3176,6 +3186,8 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
         clone.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
+        clone.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
+        clone.querySelector("[data-materialTotal2]").setAttribute( 'value', (parseFloat(total)/1.18).toFixed(2));
         clone.querySelector("[data-delete]").setAttribute('data-delete', code);
         render.append(clone);
     } else {
@@ -3189,6 +3201,10 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-materialTotal]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
+        clone2.querySelector("[data-materialTotal2]").setAttribute( 'value', ((parseFloat(quantity)*parseFloat(price))/1.18).toFixed(2));
+        clone2.querySelector("[data-materialPrice2]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-materialTotal2]").setAttribute("style","display:none;");
         clone2.querySelector("[data-delete]").setAttribute('data-delete', code);
         render.append(clone2);
     }
@@ -3206,6 +3222,8 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
         clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-consumablePrice2]").setAttribute('value', ( (parseFloat(consumable.unit_price))/1.18 ).toFixed(2));
+        clone.querySelector("[data-consumableTotal2]").setAttribute( 'value', ( (parseFloat(consumable.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
         clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
         render.append(clone);
     } else {
@@ -3218,6 +3236,10 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone2.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
         clone2.querySelector("[data-consumablePrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-consumableTotal]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-consumablePrice2]").setAttribute('value', ( (parseFloat(consumable.unit_price))/1.18 ).toFixed(2));
+        clone2.querySelector("[data-consumableTotal2]").setAttribute( 'value', ( (parseFloat(consumable.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
+        clone2.querySelector("[data-consumablePrice2]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-consumableTotal2]").setAttribute("style","display:none;");
         clone2.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
         render.append(clone2);
     }

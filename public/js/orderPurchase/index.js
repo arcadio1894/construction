@@ -38,7 +38,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Aprovado por',
+                title: 'Aprobado por',
                 wrap: true,
                 "render": function (item)
                 {
@@ -77,7 +77,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('list_orderPurchaseExpress', $permissions) !== -1 ) {
-                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/orden/compra/'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-print"></i> </a>  ';
+                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/orden/compra/'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-print"></i> </a>  ';
                     }
                     if ( $.inArray('list_orderPurchaseExpress', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/orden/compra/express/'+item.id+

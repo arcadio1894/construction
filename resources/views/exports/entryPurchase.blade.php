@@ -105,7 +105,7 @@
             padding: 5px 10px;
             color: #ffffff;
             border-bottom: 1px solid #C1CED9;
-            white-space: nowrap;
+            white-space: pre-line;
             font-weight: bold;
             background-color: #7A8DC5;
             font-size: 1.2em;
@@ -236,11 +236,16 @@
     <table id="table">
         <thead>
         <tr>
-            <th class="desc" style="width: 300px">DESCRIPCIÓN</th>
-            <th style="width: 60px">UNIDAD </th>
-            <th style="width: 60px">PRECIO UNIT. </th>
-            <th style="width: 60px">CANT.</th>
-            <th style="width: 80px">TOTAL</th>
+            <th class="desc" style="width: 200px">DESCRIPCIÓN</th>
+            <th style="width: 40px">UND </th>
+            <th style="width: 40px">CANT.</th>
+
+            <th style="width: 40px">PRECIO S/Igv </th>
+            <th style="width: 40px">SUB TOTAL S/Igv </th>
+            {{--<th style="width: 40px">PRECIO C/Igv </th>--}}
+            <th style="width: 40px">IGV </th>
+            <th style="width: 40px">SUB TOTAL C/Igv </th>
+
         </tr>
         </thead>
         <tbody>
@@ -248,9 +253,17 @@
         <tr>
             <td class="desc">{{ $detail->material->full_description }}</td>
             <td class="qty" style="text-align: center">{{ $detail->material->unitMeasure->name }}</td>
-            <td class="qty" style="text-align: center"> {{ $purchase_order->currency_order }} {{ number_format($detail->price, 2) }}</td>
             <td class="qty" style="text-align: center">{{ $detail->quantity }}</td>
-            <td class="qty" style="text-align: center">{{ $purchase_order->currency_order }} {{ number_format($detail->price*$detail->quantity, 2) }}</td>
+            {{--Precio sin IGV--}}
+            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format($detail->price/1.18, 2) }}</td>
+            {{--SUBTOTAL S/Igv--}}
+            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format(($detail->price/1.18)*$detail->quantity, 2) }}</td>
+            {{--PRECIO UNIT. C/Igv--}}
+            {{--<td class="qty" style="text-align: center">--}}{{-- $purchase_order->currency_order --}}{{-- {{ number_format($detail->price, 2) }}</td>
+            --}}{{--IGV--}}
+            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format((($detail->price/1.18)*$detail->quantity)*(0.18), 2) }}</td>
+            {{--SUBTOTAL C/Igv--}}
+            <td class="qty" style="text-align: center">{{-- $purchase_order->currency_order --}} {{ number_format($detail->price*$detail->quantity, 2) }}</td>
         </tr>
         @endforeach
         </tbody>

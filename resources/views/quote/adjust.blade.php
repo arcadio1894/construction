@@ -178,8 +178,10 @@
                                                 <th>Material</th>
                                                 <th>Unidad</th>
                                                 <th>Cantidad</th>
-                                                <th>Precio</th>
-                                                <th>Importe</th>
+                                                <th>Precio S/IGV</th>
+                                                <th>Precio C/IGV</th>
+                                                <th>Importe S/IGV</th>
+                                                <th>Importe C/IGV</th>
                                             </tr>
                                             </thead>
                                             <tbody data-bodyMaterials>
@@ -189,7 +191,9 @@
                                                     <td data-description>{{ $material->material->full_description }}</td>
                                                     <td data-unit>{{ $material->material->unitMeasure->name }}</td>
                                                     <td data-quantity>{{ $material->percentage }}</td>
+                                                    <td @cannot('showPrices_quote')style="display: none" @endcannot data-price2>{{ round($material->price/1.18,2) }}</td>
                                                     <td @cannot('showPrices_quote')style="display: none" @endcannot data-price>{{ $material->price }}</td>
+                                                    <td @cannot('showPrices_quote')style="display: none" @endcannot data-total2>{{ round($material->total/1.18,2) }}</td>
                                                     <td @cannot('showPrices_quote')style="display: none" @endcannot data-total>{{ $material->total }}</td>
                                                 </tr>
                                             @endforeach
@@ -227,14 +231,24 @@
                                                     <strong>Cantidad</strong>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Precio</strong>
+                                                    <strong>Precio S/IGV</strong>
                                                 </div>
                                             </div>
-                                            <div class="col-md-2">
+                                            <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Total</strong>
+                                                    <strong>Precio C/IGV</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <strong>Total S/IGV</strong>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <strong>Total C/IGV</strong>
                                                 </div>
                                             </div>
                                         </div>
@@ -259,18 +273,32 @@
                                                 " value="{{ $consumable->quantity }}" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ round($consumable->price/1.18,2) }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $consumable->price }}" readonly>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-2">
+                                                <div class="col-md-1">
                                                     <div class="form-group">
                                                         <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumableTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $consumable->price }}" readonly>
+                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ round($consumable->total/1.18,2) }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-consumableTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote')style="display: none" @endcannot value="{{ $consumable->total }}" readonly>
                                                     </div>
                                                 </div>
                                             </div>
@@ -309,7 +337,7 @@
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <strong>Precio</strong>
+                                                    <strong>Precio C/IGV</strong>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
@@ -380,7 +408,7 @@
                                                     </div>
                                                     <div class="col-md-2">
                                                         <div class="form-group">
-                                                            <strong>Precio</strong>
+                                                            <strong>Precio C/IGV</strong>
                                                         </div>
                                                     </div>
                                                     <div class="col-md-2">
@@ -449,7 +477,7 @@
                                         </div>
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <strong>Precio por día</strong>
+                                                <strong>Precio C/IGV por día</strong>
                                             </div>
                                         </div>
                                         <div class="col-md-3">
