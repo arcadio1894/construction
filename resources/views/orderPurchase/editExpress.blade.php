@@ -222,6 +222,11 @@
                             </div>
                             <div class="col-md-1">
                                 <div class="form-group">
+                                    <strong>Cantidad</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
                                     <strong>Precio C/Igv</strong>
                                 </div>
                             </div>
@@ -230,7 +235,7 @@
                                     <strong>Precio S/Igv</strong>
                                 </div>
                             </div>
-                            <div class="col-md-1">
+                            <div class="col-md-2">
                                 <div class="form-group">
                                     <strong>Total C/Igv</strong>
                                 </div>
