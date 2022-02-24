@@ -34,7 +34,13 @@ class Entry extends Model
         $subtotal = 0;
         foreach ( $this->details as $detail )
         {
-            $subtotal += ($detail->entered_quantity * $detail->unit_price)/1.18;
+            if ( $detail->total_detail != null )
+            {
+                $subtotal += ($detail->total_detail)/1.18;
+            } else {
+                $subtotal += ($detail->entered_quantity * $detail->unit_price)/1.18;
+            }
+
         }
         //$number = ($this->entered_quantity * $this->unit_price)/1.18;
         return number_format($subtotal, 2, '.', '');
@@ -45,7 +51,13 @@ class Entry extends Model
         $taxes = 0;
         foreach ( $this->details as $detail )
         {
-            $taxes += (($detail->entered_quantity * $detail->unit_price)/1.18)*0.18;
+            if ( $detail->total_detail != null )
+            {
+                $taxes += (($detail->total_detail)/1.18)*0.18;
+            } else {
+                $taxes += (($detail->entered_quantity * $detail->unit_price)/1.18)*0.18;
+            }
+
         }
 
         return number_format($taxes, 2,'.', '');
@@ -56,7 +68,13 @@ class Entry extends Model
         $total = 0;
         foreach ( $this->details as $detail )
         {
-            $total += $detail->entered_quantity * $detail->unit_price;
+            if ( $detail->total_detail != null )
+            {
+                $total += $detail->total_detail;
+            } else {
+                $total += $detail->entered_quantity * $detail->unit_price;
+            }
+
         }
         return number_format($total, 2, '.', '');
     }

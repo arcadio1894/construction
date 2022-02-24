@@ -179,13 +179,14 @@ class EntryController extends Controller
                     'entered_quantity' => $count,
                 ]);
                 //dd($id_material .' '. $count);
+                $total_detail = 0;
                 for ( $i=0; $i<sizeof($items); $i++ )
                 {
                     if( $detail_entry->material_id == $items[$i]->id_material )
                     {
                         if ( $entry->currency_invoice === 'PEN' )
                         {
-                            $precio1 = (float)$items[$i]->price / (float) $entry->currency_compra;
+                            $precio1 = round((float)$items[$i]->price,2) / (float) $entry->currency_compra;
                             $price1 = ($detail_entry->material->price > $precio1) ? $detail_entry->material->price : $precio1;
                             $materialS = Material::find($detail_entry->material_id);
                             if ( $materialS->price < $price1 )
@@ -193,7 +194,7 @@ class EntryController extends Controller
                                 $materialS->unit_price = $price1;
                                 $materialS->save();
 
-                                $detail_entry->unit_price = $items[$i]->price;
+                                $detail_entry->unit_price = round((float)$items[$i]->price,2);
                                 $detail_entry->save();
                             }
                             //dd($detail_entry->material->materialType);
@@ -206,13 +207,14 @@ class EntryController extends Controller
                                     'length' => (float)$detail_entry->material->typeScrap->length,
                                     'width' => (float)$detail_entry->material->typeScrap->width,
                                     'weight' => 0,
-                                    'price' => (float)$items[$i]->price,
+                                    'price' => round((float)$items[$i]->price,2),
                                     'percentage' => 1,
                                     'typescrap_id' => $detail_entry->material->typeScrap->id,
                                     'location_id' => $items[$i]->id_location,
                                     'state' => $items[$i]->state,
                                     'state_item' => 'entered'
                                 ]);
+                                $total_detail = $total_detail + (float)$items[$i]->price;
                             } else {
                                 $item = Item::create([
                                     'detail_entry_id' => $detail_entry->id,
@@ -221,19 +223,20 @@ class EntryController extends Controller
                                     'length' => 0,
                                     'width' => 0,
                                     'weight' => 0,
-                                    'price' => (float)$items[$i]->price,
+                                    'price' => round((float)$items[$i]->price,2),
                                     'percentage' => 1,
                                     'location_id' => $items[$i]->id_location,
                                     'state' => $items[$i]->state,
                                     'state_item' => 'entered'
                                 ]);
+                                $total_detail = $total_detail + (float)$items[$i]->price;
                             }
                         } else {
-                            $price = ((float)$detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
+                            $price = ((float)$detail_entry->material->unit_price > round((float)$items[$i]->price,2)) ? $detail_entry->material->unit_price : round((float)$items[$i]->price,2);
                             $materialS = Material::find($detail_entry->material_id);
-                            if ( (float)$materialS->unit_price < (float)$items[$i]->price )
+                            if ( (float)$materialS->unit_price < round((float)$items[$i]->price,2) )
                             {
-                                $materialS->unit_price = (float)$items[$i]->price;
+                                $materialS->unit_price = round((float)$items[$i]->price,2);
                                 $materialS->save();
 
                                 $detail_entry->unit_price = (float)$materialS->unit_price;
@@ -256,6 +259,7 @@ class EntryController extends Controller
                                     'state' => $items[$i]->state,
                                     'state_item' => 'entered'
                                 ]);
+                                $total_detail = $total_detail + (float)$items[$i]->price;
                             } else {
                                 $item = Item::create([
                                     'detail_entry_id' => $detail_entry->id,
@@ -270,12 +274,15 @@ class EntryController extends Controller
                                     'state' => $items[$i]->state,
                                     'state_item' => 'entered'
                                 ]);
+                                $total_detail = $total_detail + (float)$items[$i]->price;
                             }
                         }
 
 
                     }
                 }
+                $detail_entry->total_detail = round($total_detail,2);
+                $detail_entry->save();
             }
 
 

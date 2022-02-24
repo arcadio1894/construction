@@ -16,7 +16,8 @@ class DetailEntry extends Model
         'isComplete',
         'unit_price',
         'material_name',
-        'material_unit'
+        'material_unit',
+        'total_detail'
     ];
 
     public function getMaterialDescriptionAttribute()
@@ -31,19 +32,37 @@ class DetailEntry extends Model
 
     public function getSubTotalAttribute()
     {
-        $number = ($this->entered_quantity * $this->unit_price)/1.18;
+        if ( $this->total_detail != null )
+        {
+            $number = ($this->total_detail)/1.18;
+        } else {
+            $number = ($this->entered_quantity * $this->unit_price)/1.18;
+        }
+
         return number_format($number, 2);
     }
 
     public function getTaxesAttribute()
     {
-        $number = (($this->entered_quantity * $this->unit_price)/1.18)*0.18;
+        if ( $this->total_detail != null )
+        {
+            $number = (($this->total_detail)/1.18)*0.18;
+        } else {
+            $number = (($this->entered_quantity * $this->unit_price)/1.18)*0.18;
+        }
+
         return number_format($number, 2);
     }
 
     public function getTotalAttribute()
     {
-        $number = $this->entered_quantity * $this->unit_price;
+        if ( $this->total_detail != null )
+        {
+            $number = $this->total_detail;
+        } else {
+            $number = $this->entered_quantity * $this->unit_price;
+        }
+
         return number_format($number, 2);
     }
 

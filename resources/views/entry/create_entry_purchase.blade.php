@@ -179,7 +179,7 @@
                             </div>
                             <div class="col-md-2">
                                 <div class="form-group">
-                                    <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="price">Precio Total C/IGV <span class="right badge badge-danger">(*)</span></label>
                                     <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
@@ -314,7 +314,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="col-sm-12 control-label" for="price_selected"> Precio </label>
+                            <label class="col-sm-12 control-label" for="price_selected"> Precio Total C/IGV </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="price_selected" name="price_selected" class="form-control" />
@@ -405,7 +405,7 @@
                             </div>
                         </div>
                         <div class="col-md-3">
-                            <label class="col-sm-12 control-label" for="price_GroupSelected"> Precio </label>
+                            <label class="col-sm-12 control-label" for="price_GroupSelected"> Precio Total C/IGV </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="price_GroupSelected" name="price_GroupSelected" class="form-control" />
