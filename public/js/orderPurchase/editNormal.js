@@ -58,7 +58,7 @@ $(document).ready(function () {
     });
 
     $(document).on('input', '[data-price2]', function() {
-        if ( $(this).attr('data-price') !== ''  )
+        if ( $(this).attr('data-price2') !== ''  )
         {
             var price2 = parseFloat($(this).parent().parent().prev().children().children().val());
             var quantity2 = parseFloat($(this).parent().parent().prev().prev().children().children().val());
@@ -66,7 +66,7 @@ $(document).ready(function () {
             var id2 = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
 
             $items = $items.filter(material => material.id_material != id2);
-            $items.push({'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2 });
+            $items.push({'detail_id':$(this).attr('data-price2'),'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2 });
 
             $(this).parent().parent().next().next().children().children().removeClass( "btn-outline-success" );
             $(this).parent().parent().next().next().children().children().addClass( "btn-outline-warning" );
@@ -79,7 +79,7 @@ $(document).ready(function () {
             var id = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
 
             $items = $items.filter(material => material.id_material != id);
-            $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+            $items.push({'detail_id':'','price': price, 'quantity':quantity ,'material': description, 'id_material': id });
             updateSummaryInvoice();
         }
 
