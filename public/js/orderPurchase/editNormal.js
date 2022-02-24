@@ -350,10 +350,10 @@ function calculateTotal3(e) {
 
 function editItem() {
     var detail_id = $(this).attr('data-edit');
-    var price = parseFloat($(this).parent().parent().prev().prev().children().children().val());
-    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
-    var description = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
-    var id = $(this).parent().parent().prev().prev().prev().prev().prev().prev().children().children().children().val();
+    var price = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
+    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().prev().children().children().val());
+    var description = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+    var id = $(this).parent().parent().prev().prev().prev().prev().prev().prev().prev().children().children().children().val();
     var modifiedItem = [];
     modifiedItem.push({'detail_id':detail_id, 'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
     console.log(modifiedItem);

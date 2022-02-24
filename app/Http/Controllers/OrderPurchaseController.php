@@ -38,11 +38,16 @@ class OrderPurchaseController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $maxId = OrderPurchase::max('id')+1;
+        // TODO: Maxcode con trashed
+        $maxCode = OrderPurchase::max('id');
+        $maxId = $maxCode + 1;
+        //$maxCode = OrderPurchase::max('code');
+        //$maxId = (int)substr($maxCode,3) + 1;
         $length = 5;
+
         $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-
+        //dd($codeOrder);
         $materials = [];
         $materials_quantity = [];
 
@@ -53,6 +58,7 @@ class OrderPurchaseController extends Controller
                 foreach ( $equipment->materials as $material )
                 {
                     array_push($materials, $material->material_id);
+                    //$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
                     array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
                 }
@@ -78,6 +84,7 @@ class OrderPurchaseController extends Controller
         {
             if ( $item['material_complete']->stock_current < $item['quantity'] )
             {
+                //$stringQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', 39).'" data-toggle="tooltip" data-placement="top" title="4">COT-00039</a> <a class="btn btn-primary btn-xs" href="'.route('quote.show', 27).'" data-toggle="tooltip" data-placement="top" title="9" target="_blank">COT-00027</a>';
                 $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
                 $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request');
                 $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
@@ -85,12 +92,16 @@ class OrderPurchaseController extends Controller
                 if ( !isset($material_missing) )
                 {
                     $missing_real = $missing - $materials_taken;
+                    //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
                     array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+
                 } else {
                     if ( $missing > $amount )
                     {
                         $missing_real = $missing - $amount - $materials_taken;
+                        //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
                         array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+
                     }
                 }
 
@@ -98,15 +109,40 @@ class OrderPurchaseController extends Controller
         }
 
         //dump($materials_quantity);
-        /*foreach ( $array_materials as $material )
-        {
-            dump($material['material_id']);
-        }*/
         //dump($array_materials);
+
+        $arrayMaterialsFinal = [];
+
+        foreach ( $array_materials as $material )
+        {
+            $stringQuote = '';
+            foreach ( $quotesRaised as $quote )
+            {
+                $quantity = 0;
+                foreach ($quote->equipments as $equipment)
+                {
+
+                    foreach ($equipment->materials as $material2) {
+                        //dump($material2->material_id == $material['material_id']);
+                        if ( $material2->material_id == $material['material_id'] )
+                        {
+                            $quantity += $material2->quantity*$equipment->quantity;
+                        }
+                    }
+                }
+                if ( $quantity > 0 )
+                {
+                    $stringQuote = $stringQuote.'<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.$quantity.'">'.$quote->code.'</a> ';
+                }
+            }
+            //dump($stringQuote);
+            array_push($arrayMaterialsFinal, array('material_id'=>$material['material_id'], 'material'=>$material['material'], 'material_complete'=>$material['material_complete'], 'quantity'=> $material['quantity'], 'missing_amount'=> $material['missing_amount'], 'quotes'=>$stringQuote));
+        }
+        //dump($arrayMaterialsFinal);
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
-        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'array_materials', 'payment_deadlines'));
+        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'arrayMaterialsFinal', 'payment_deadlines'));
     }
 
     public function storeOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
@@ -378,13 +414,41 @@ class OrderPurchaseController extends Controller
             }
         }
 
+        $arrayMaterialsFinal = [];
+
+        foreach ( $array_materials as $material )
+        {
+            $stringQuote = '';
+            foreach ( $quotesRaised as $quote )
+            {
+                $quantity = 0;
+                foreach ($quote->equipments as $equipment)
+                {
+
+                    foreach ($equipment->materials as $material2) {
+                        //dump($material2->material_id == $material['material_id']);
+                        if ( $material2->material_id == $material['material_id'] )
+                        {
+                            $quantity += $material2->quantity*$equipment->quantity;
+                        }
+                    }
+                }
+                if ( $quantity > 0 )
+                {
+                    $stringQuote = $stringQuote.'<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.$quantity.'">'.$quote->code.'</a> ';
+                }
+            }
+            //dump($stringQuote);
+            array_push($arrayMaterialsFinal, array('material_id'=>$material['material_id'], 'material'=>$material['material'], 'material_complete'=>$material['material_complete'], 'quantity'=> $material['quantity'], 'missing_amount'=> $material['missing_amount'], 'quotes'=>$stringQuote));
+        }
+
         $order = OrderPurchase::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
-        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'array_materials', 'payment_deadlines'));
+        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'arrayMaterialsFinal', 'payment_deadlines'));
     }
 
     public function updateDetail(Request $request, $detail_id)
@@ -536,7 +600,11 @@ class OrderPurchaseController extends Controller
         $suppliers = Supplier::all();
         $users = User::all();
 
-        $maxId = OrderPurchase::max('id')+1;
+        // TODO: WITH TRASHED
+        $maxCode = OrderPurchase::max('id');
+        $maxId = $maxCode + 1;
+        //$maxCode = OrderPurchase::max('code');
+        //$maxId = (int)substr($maxCode,3) + 1;
         $length = 5;
         $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 

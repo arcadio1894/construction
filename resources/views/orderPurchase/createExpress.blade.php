@@ -163,17 +163,19 @@
                                     <th>ID</th>
                                     <th>Codigo</th>
                                     <th>Material</th>
+                                    <th>Cotizaciones</th>
                                     <th>Cantidad</th>
                                     <th>Precio</th>
                                     <th>Seleccionar</th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                @foreach ( $array_materials as $material )
+                                @foreach ( $arrayMaterialsFinal as $material )
                                     <tr>
                                         <td>{{ $material['material_id'] }}</td>
                                         <td>{{ $material['material_complete']->code }}</td>
                                         <td>{{ $material['material'] }}</td>
+                                        <td>{!! nl2br($material['quotes']) !!}</td>
                                         <td>{{ number_format((float)$material['missing_amount'], 2)  }}</td>
                                         <td>{{ $material['material_complete']->unit_price }}</td>
                                         <td>
@@ -368,6 +370,9 @@
 @section('scripts')
     <script>
         $(function () {
+            $('body').tooltip({
+                selector: '[data-toggle="tooltip"]'
+            });
             //Initialize Select2 Elements
             $('#date_order').attr("value", moment().format('DD/MM/YYYY'));
             $('#date_arrival').attr("value", moment().format('DD/MM/YYYY'));
