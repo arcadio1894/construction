@@ -39,7 +39,7 @@ class OrderPurchaseController extends Controller
         $users = User::all();
 
         // TODO: Maxcode con trashed
-        $maxCode = OrderPurchase::max('id');
+        $maxCode = OrderPurchase::withTrashed()->max('id');
         $maxId = $maxCode + 1;
         //$maxCode = OrderPurchase::max('code');
         //$maxId = (int)substr($maxCode,3) + 1;
@@ -601,7 +601,7 @@ class OrderPurchaseController extends Controller
         $users = User::all();
 
         // TODO: WITH TRASHED
-        $maxCode = OrderPurchase::max('id');
+        $maxCode = OrderPurchase::withTrashed()->max('id');
         $maxId = $maxCode + 1;
         //$maxCode = OrderPurchase::max('code');
         //$maxId = (int)substr($maxCode,3) + 1;

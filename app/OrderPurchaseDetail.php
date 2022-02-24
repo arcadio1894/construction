@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderPurchaseDetail extends Model
 {
+    use SoftDeletes;
+
     public $fillable = [
         'order_purchase_id',
         'material_id',
@@ -13,6 +16,8 @@ class OrderPurchaseDetail extends Model
         'price',
         'igv'
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function order_purchase()
     {

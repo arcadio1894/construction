@@ -44,7 +44,7 @@ class OrderServiceController extends Controller
 
         $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
 
-        $maxId = OrderService::max('id')+1;
+        $maxId = OrderService::withTrashed()->max('id')+1;
         $length = 5;
         $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 

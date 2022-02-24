@@ -3,9 +3,12 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class OrderService extends Model
 {
+    use SoftDeletes;
+
     public $fillable = [
         'code',
         'supplier_id',
@@ -29,6 +32,8 @@ class OrderService extends Model
         'invoice',
         'payment_deadline_id'
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function supplier()
     {
