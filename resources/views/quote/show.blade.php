@@ -165,20 +165,21 @@
                         </div>
                         <div class="card-body">
                             <div class="row">
-                                <table class="table table-head-fixed text-nowrap">
-                                    <thead>
-                                    <tr>
-                                        <th>Codigo</th>
-                                        <th>Material</th>
-                                        <th>Unidad</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio S/IGV</th>
-                                        <th>Precio C/IGV</th>
-                                        <th>Importe S/IGV</th>
-                                        <th>Importe C/IGV</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody data-bodyMaterials>
+                                <div class="table-responsive">
+                                    <table class="table table-head-fixed text-nowrap">
+                                        <thead>
+                                        <tr>
+                                            <th>Codigo</th>
+                                            <th>Material</th>
+                                            <th>Unidad</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio S/IGV</th>
+                                            <th>Precio C/IGV</th>
+                                            <th>Importe S/IGV</th>
+                                            <th>Importe C/IGV</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody data-bodyMaterials>
                                         @foreach( $equipment->materials as $material )
                                             <tr>
                                                 <td data-code>{{ $material->material->code }}</td>
@@ -191,9 +192,11 @@
                                                 <td @cannot('showPrices_quote')style="display: none" @endcannot data-total>{{ $material->total }}</td>
                                             </tr>
                                         @endforeach
-                                    </tbody>
+                                        </tbody>
 
-                                </table>
+                                    </table>
+                                </div>
+
                             </div>
                         </div>
                     </div>
