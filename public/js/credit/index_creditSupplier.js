@@ -435,7 +435,7 @@ $(document).ready(function () {
                                 (item.state_credit === 'expired') ? '<span class="badge bg-danger">Expirado</span>' :
                                     '<span class="badge bg-success">Pagado</span>';
                     } else {
-                        return '';
+                        return 'No tiene';
                     }
 
                 }
@@ -456,14 +456,28 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Imagen',
+                title: 'Imagen Factura',
                 wrap: true,
                 "render": function (item)
                 {
                     if (item.code == null){
-                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image_invoice+'" data-image="'+item.id+'" '+
-                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+                        if ( item.image_invoice != null )
+                        {
+                            var id = item.image_invoice;
+                            var string = id.substr(id.length - 3);
+                            if( string == 'pdf' )
+                            {
+                                return ' <a target="_blank" href="'+document.location.origin+ '/images/entries/'+item.image_invoice+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
+                            } else {
+                                return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image_invoice+'" data-image="'+item.id+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                            }
+                        } else {
+                            return 'No tiene';
+                        }
                     }
 
                     //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
@@ -484,6 +498,35 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Imagen Pago',
+                wrap: true,
+                "render": function (item)
+                {
+                    if (item.code == null){
+                        if ( item.image_paid != null )
+                        {
+                            var id = item.image_paid;
+                            var string = id.substr(id.length - 3);
+                            if( string == 'pdf' )
+                            {
+                                return ' <a target="_blank" href="'+document.location.origin+ '/images/credits/'+item.image_paid+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
+
+                            } else {
+                                return ' <button data-src="'+document.location.origin+ '/images/credits/'+item.image_paid+'" data-image="'+item.id+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                            }
+                        } else {
+                            return '';
+                        }
+
+                    }
+
+                    //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 sortable:false,
                 wrap: true,
@@ -493,11 +536,16 @@ $(document).ready(function () {
 
                     if ( item.state_credit != 'paid_out' )
                     {
-                        text = text + '<button type="button" data-edit="' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i> </button> ';
-                        text = text + '<button type="button" data-pay="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crédito pagado"><i class="fa fa-dollar-sign"></i> </button>';
+                        if ( $.inArray('edit_credit', $permissions) !== -1 ) {
+                            text = text + '<button type="button" data-edit="' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i> </button> ';
+                        }
+                        if ( $.inArray('pay_credit', $permissions) !== -1 ) {
+                            text = text + '<button type="button" data-pay="' + item.id + '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crédito pagado"><i class="fa fa-dollar-sign"></i> </button>';
+                        }
                     } else {
-                        text = text + '<button type="button" data-nopay="' + item.id + '" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular pago"><i class="fas fa-strikethrough"></i> </button>';
-
+                        if ( $.inArray('nopay_credit', $permissions) !== -1 ) {
+                            text = text + '<button type="button" data-nopay="' + item.id + '" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular pago"><i class="fas fa-strikethrough"></i> </button>';
+                        }
                     }
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */

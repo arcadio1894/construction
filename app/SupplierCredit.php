@@ -21,7 +21,9 @@ class SupplierCredit extends Model
         'state_credit',
         'order_service_id',
         'code_order',
-        'payment_deadline_id'
+        'payment_deadline_id',
+        'image_credit',
+        'date_paid'
     ];
 
     public function supplier()

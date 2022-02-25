@@ -135,8 +135,9 @@
                 <th>Observación</th>
                 <th>Estado de crédito</th>
                 <th>Observación 2</th>
-                <th>Imagen</th>
+                <th>Imagen Factura</th>
                 <th>Fecha Pago</th>
+                <th>Imagen Pago</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -230,7 +231,7 @@
                             </div>
                             <div class="col-md-4">
                                 <label for="image">Imagen/PDF Comprobante </label>
-                                <input type="file" id="image" name="image" class="form-control">
+                                <input type="file" id="image_paid" name="image_paid" class="form-control">
                             </div>
                             <div class="col-md-4">
                                 <label for="observation2"> Observación de pago <span class="right badge badge-danger">(*)</span></label>

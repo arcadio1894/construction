@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Credit;
 use App\Entry;
 use App\SupplierCredit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class SupplierCreditController extends Controller
 {
@@ -194,6 +194,32 @@ class SupplierCreditController extends Controller
                 $credit->observation_extra = $request->get('observation2');
                 $credit->date_paid = Carbon::createFromFormat('d/m/Y', $request->get('date_paid'), 'America/Lima' );
                 $credit->state_credit = 'paid_out';
+
+                if (!$request->file('image_paid')) {
+                    $credit->image_paid = 'no_image.png';
+                    $credit->save();
+                } else {
+                    $path = public_path().'/images/credits/';
+                    $image = $request->file('image_paid');
+                    $extension = $request->file('image_paid')->getClientOriginalExtension();
+                    //$filename = $entry->id . '.' . $extension;
+                    if ( $extension != 'pdf' )
+                    {
+                        $filename = $credit->id . '.jpg';
+                        $img = Image::make($image);
+                        $img->orientate();
+                        $img->save($path.$filename, 80, 'jpg');
+                        //$request->file('image')->move($path, $filename);
+                        $credit->image_paid = $filename;
+                        $credit->save();
+                    } else {
+                        $filename = 'pdf'.$credit->id . '.' .$extension;
+                        $request->file('image_paid')->move($path, $filename);
+                        $credit->image_paid = $filename;
+                        $credit->save();
+                    }
+
+                }
                 $credit->save();
 
             } else {
@@ -241,6 +267,14 @@ class SupplierCreditController extends Controller
                 if ( $dias_to_expire > 4 )
                 {
                     $credit->state_credit = 'outstanding';
+                    $credit->save();
+                }
+
+                if ( $credit->image_paid != 'no_image.png' || $credit->image_paid != null )
+                {
+                    $path = public_path().'/images/credits/'.$credit->image_paid;
+                    unlink($path);
+                    $credit->image_paid = null;
                     $credit->save();
                 }
 
