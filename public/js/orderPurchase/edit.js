@@ -181,9 +181,9 @@ function fillItems() {
 
 function addItem() {
 
-    let id = $(this).parent().prev().prev().prev().prev().prev().html();
-    let code = $(this).parent().prev().prev().prev().prev().html();
-    let description = $(this).parent().prev().prev().prev().html();
+    let id = $(this).parent().prev().prev().prev().prev().prev().prev().html();
+    let code = $(this).parent().prev().prev().prev().prev().prev().html();
+    let description = $(this).parent().prev().prev().prev().prev().html();
     let quantity = $(this).parent().prev().prev().html();
     let price = $(this).parent().prev().html();
 

@@ -228,7 +228,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-4">
+                                <label for="image">Imagen/PDF Comprobante </label>
+                                <input type="file" id="image" name="image" class="form-control">
+                            </div>
+                            <div class="col-md-4">
                                 <label for="observation2"> Observación de pago <span class="right badge badge-danger">(*)</span></label>
                                 <textarea name="observation2" class="form-control" id="observation2" rows="2"></textarea>
                             </div>
