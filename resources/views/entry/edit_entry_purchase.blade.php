@@ -190,7 +190,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="form-group">
-                                <label for="price">Precio <span class="right badge badge-danger">(*)</span></label>
+                                <label for="price">Precio Total C/IGV <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="price" class="form-control">
                             </div>
                         </div>
