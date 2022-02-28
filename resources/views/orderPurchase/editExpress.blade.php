@@ -1,10 +1,10 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseExpress')
+@section('openOrderPurchaseGeneral')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseExpress')
+@section('activeOrderPurchaseGeneral')
     active
 @endsection
 
@@ -52,7 +52,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.express.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.purchase.general.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
@@ -346,7 +346,7 @@
         </div>
         <div class="row">
             <div class="col-12">
-                <a class="btn btn-outline-secondary" href="#">Regresar</a>
+                <a class="btn btn-outline-secondary" href="{{ route('order.purchase.general.index') }}">Regresar</a>
                 <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar datos generales y nuevos detalles</button>
             </div>
         </div>

@@ -1,10 +1,10 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseNormal')
+@section('openOrderPurchaseGeneral')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseNormal')
+@section('activeOrderPurchaseGeneral')
     active
 @endsection
 
@@ -50,7 +50,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.normal.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.purchase.general.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Visualizar</li>
     </ol>

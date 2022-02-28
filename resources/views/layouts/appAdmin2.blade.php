@@ -1019,7 +1019,44 @@
                     @canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
                     <li class="nav-header">ORDENES DE COMPRA</li>
                     @endcanany
-                    @can('list_orderPurchaseExpress')
+                    @canany('list_orderPurchaseNormal','list_orderPurchaseExpress')
+                        <li class="nav-item has-treeview @yield('openOrderPurchaseGeneral')">
+                            <a href="#" class="nav-link @yield('activeOrderPurchaseGeneral')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Órdenes de compra
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.general.index')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar ordenes</p>
+                                        </a>
+                                    </li>
+                                @endcanany
+                                @can('create_orderPurchaseExpress')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear Express</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                    @can('create_orderPurchaseNormal')
+                                        <li class="nav-item">
+                                            <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
+                                                <i class="far fa-circle nav-icon"></i>
+                                                <p>Crear Normal</p>
+                                            </a>
+                                        </li>
+                                    @endcan
+                            </ul>
+                        </li>
+                    @endcanany
+                    {{--@can('list_orderPurchaseExpress')
                     <li class="nav-item has-treeview @yield('openOrderPurchaseExpress')">
                         <a href="#" class="nav-link @yield('activeOrderPurchaseExpress')">
                             <i class="nav-icon fas fa-credit-card"></i>
@@ -1047,8 +1084,8 @@
                             @endcan
                         </ul>
                     </li>
-                    @endcan
-                    @can('list_orderPurchaseNormal')
+                    @endcan--}}
+                    {{--@can('list_orderPurchaseNormal')
                         <li class="nav-item has-treeview @yield('openOrderPurchaseNormal')">
                             <a href="#" class="nav-link @yield('activeOrderPurchaseNormal')">
                                 <i class="nav-icon fas fa-credit-card"></i>
@@ -1076,7 +1113,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan
+                    @endcan--}}
 
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>

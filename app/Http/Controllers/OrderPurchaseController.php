@@ -20,6 +20,15 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class OrderPurchaseController extends Controller
 {
+    public function indexOrderPurchaseExpressAndNormal()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderPurchase.indexGeneral', compact('permissions'));
+    }
+
     public function indexOrderPurchaseExpress()
     {
         //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
@@ -590,6 +599,13 @@ class OrderPurchaseController extends Controller
     {
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('type', 'e')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($orders)->toJson();
+    }
+    public function getAllOrderGeneral()
+    {
+        $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();

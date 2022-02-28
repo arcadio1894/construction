@@ -685,6 +685,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/order/execution', 'OrderExecutionController@getAllOrderExecution');
 
         // ORDER PURCHASE
+        Route::get('ordenes/compra/general', 'OrderPurchaseController@indexOrderPurchaseExpressAndNormal')
+            ->name('order.purchase.general.index')
+            ->middleware('permission:list_orderPurchaseExpress');
         Route::get('ordenes/compra/express', 'OrderPurchaseController@indexOrderPurchaseExpress')
             ->name('order.purchase.express.index')
             ->middleware('permission:list_orderPurchaseExpress');
@@ -695,6 +698,7 @@ Route::middleware('auth')->group(function (){
             ->name('order.purchase.express.store')
             ->middleware('permission:create_orderPurchaseExpress');
         Route::get('/all/order/express', 'OrderPurchaseController@getAllOrderExpress');
+        Route::get('/all/order/general', 'OrderPurchaseController@getAllOrderGeneral');
         Route::get('editar/orden/compra/express/{id}', 'OrderPurchaseController@editOrderPurchaseExpress')
             ->middleware('permission:update_orderPurchaseExpress');
         Route::post('update/order/purchase', 'OrderPurchaseController@updateOrderPurchaseExpress')
