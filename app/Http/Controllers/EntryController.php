@@ -9,7 +9,9 @@ use App\Http\Requests\StoreEntryPurchaseRequest;
 use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
+use App\MaterialOrder;
 use App\OrderPurchase;
+use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
 use App\Supplier;
 use App\SupplierCredit;
@@ -931,6 +933,15 @@ class EntryController extends Controller
                     'entered_quantity' => $items[$i]->entered,
                     'isComplete' => ($items[$i]->quantity == $items[$i]->entered) ? true:false,
                 ]);
+
+                $orderPurchasesDetail = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)
+                    ->where('material_id', $items[$i]->id)
+                    ->first();
+                $materialOrder = MaterialOrder::where('order_purchase_detail_id',$orderPurchasesDetail->id)
+                    ->where('material_id',$orderPurchasesDetail->material_id)->first();
+
+                $materialOrder->quantity_entered = $items[$i]->entered;
+                $materialOrder->save();
 
                 $material = Material::find($detail_entry->material_id);
                 $material->stock_current = $material->stock_current + $detail_entry->entered_quantity;

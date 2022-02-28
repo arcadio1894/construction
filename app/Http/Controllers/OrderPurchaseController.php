@@ -86,7 +86,7 @@ class OrderPurchaseController extends Controller
             {
                 //$stringQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', 39).'" data-toggle="tooltip" data-placement="top" title="4">COT-00039</a> <a class="btn btn-primary btn-xs" href="'.route('quote.show', 27).'" data-toggle="tooltip" data-placement="top" title="9" target="_blank">COT-00027</a>';
                 $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
-                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request');
+                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
                 $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
                 $missing = (float)$item['quantity'] - (float)$item['material_complete']->stock_current;
                 if ( !isset($material_missing) )
