@@ -159,7 +159,23 @@ function saveTableItems() {
         $('#locationGroup').val('');
         $('#locationGroup').typeahead('destroy');
 
-        updateSummaryInvoice();
+        var totalAdd = parseFloat(total);
+        var taxesAdd = parseFloat(taxes);
+        var subtotalAdd = parseFloat(subtotal);
+
+        var subtotalActual = parseFloat($('#subtotal').html());
+        var taxesActual = parseFloat($('#taxes').html());
+        var totalActual = parseFloat($('#total').html());
+
+        var subtotalNuevo = subtotalActual + subtotalAdd ;
+        var taxesNuevo = taxesActual + taxesAdd ;
+        var totalNuevo = totalActual + totalAdd ;
+
+        $('#subtotal').html(subtotalNuevo.toFixed(2));
+        $('#taxes').html(taxesNuevo.toFixed(2));
+        $('#total').html(totalNuevo.toFixed(2));
+
+        //updateSummaryInvoice();
         $modalAddGroupItems.modal('hide');
 
     } else {
@@ -212,7 +228,23 @@ function saveTableItems() {
         $('#locationGroup').val(' ');
         $('#locationGroup').typeahead('destroy');
 
-        updateSummaryInvoice();
+        var totalAdd2 = parseFloat(total2);
+        var taxesAdd2 = parseFloat(taxes2);
+        var subtotalAdd2 = parseFloat(subtotal2);
+
+        var subtotalActual2 = parseFloat($('#subtotal').html());
+        var taxesActual2 = parseFloat($('#taxes').html());
+        var totalActual2 = parseFloat($('#total').html());
+
+        var subtotalNuevo2 = subtotalActual2 + subtotalAdd2 ;
+        var taxesNuevo2 = taxesActual2 + taxesAdd2 ;
+        var totalNuevo2 = totalActual2 + totalAdd2 ;
+
+        $('#subtotal').html(subtotalNuevo2.toFixed(2));
+        $('#taxes').html(taxesNuevo2.toFixed(2));
+        $('#total').html(totalNuevo2.toFixed(2));
+
+        //updateSummaryInvoice();
         $modalAddItems.modal('hide');
     }
 
@@ -361,10 +393,30 @@ function rand_code($caracteres, $longitud){
 
 function deleteItem() {
     //console.log($(this).parent().parent().parent());
+    var totalDelete = parseFloat($(this).parent().prev().html());
+    var taxesDelete = parseFloat($(this).parent().prev().prev().html());
+    var subtotalDelete = parseFloat($(this).parent().prev().prev().prev().html());
+
+    var subtotalActual = parseFloat($('#subtotal').html());
+    var taxesActual = parseFloat($('#taxes').html());
+    var totalActual = parseFloat($('#total').html());
+
+    var subtotal_Restar = subtotalDelete;
+    var taxes_Restar = taxesDelete;
+    var total_Restar = totalDelete;
+
+    var subtotalNuevo = subtotalActual - subtotal_Restar ;
+    var taxesNuevo = taxesActual - taxes_Restar ;
+    var totalNuevo = totalActual - total_Restar ;
+
+    $('#subtotal').html(subtotalNuevo.toFixed(2));
+    $('#taxes').html(taxesNuevo.toFixed(2));
+    $('#total').html(totalNuevo.toFixed(2));
+
     $(this).parent().parent().remove();
     var materialId = $(this).data('delete');
     $items = $items.filter(material => material.id_material !== materialId);
-    updateSummaryInvoice();
+    //updateSummaryInvoice();
 }
 
 function renderTemplateMaterial(id, code, description, quantity, unit, price, subtotal, taxes, total) {
