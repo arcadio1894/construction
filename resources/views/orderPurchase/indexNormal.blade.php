@@ -1,10 +1,10 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseNormal')
+@section('openOrderPurchaseGeneral')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseNormal')
+@section('activeOrderPurchaseGeneral')
     active
 @endsection
 

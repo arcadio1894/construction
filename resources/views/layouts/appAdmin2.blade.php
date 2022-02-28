@@ -1033,13 +1033,29 @@
                                     <li class="nav-item">
                                         <a href="{{route('order.purchase.general.index')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Listar ordenes</p>
+                                            <p>Listar ordenes general</p>
                                         </a>
                                     </li>
                                 @endcanany
+                                @can('list_orderPurchaseExpress')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.express.index')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar express</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('list_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.normal.index')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar normal</p>
+                                        </a>
+                                    </li>
+                                @endcan
                                 @can('create_orderPurchaseExpress')
                                     <li class="nav-item">
-                                        <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
+                                        <a href="{{ route('order.purchase.express.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Crear Express</p>
                                         </a>
