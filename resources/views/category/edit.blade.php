@@ -103,5 +103,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/category/edit.js') }}"></script>
+    <script src="{{ asset('js/Category/edit.js') }}"></script>
 @endsection

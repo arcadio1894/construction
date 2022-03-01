@@ -349,6 +349,7 @@ function calculateTotal3(e) {
 }
 
 function editItem() {
+    var button = $(this);
     var detail_id = $(this).attr('data-edit');
     var price = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
     var quantity = parseFloat($(this).parent().parent().prev().prev().prev().prev().children().children().val());
@@ -377,13 +378,13 @@ function editItem() {
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         success: function (data) {
                             console.log(data);
-                            $(this).removeClass('btn-outline-warning');
-                            $(this).addClass( "btn-outline-success" );
+                            button.removeClass('btn-outline-warning');
+                            button.addClass( "btn-outline-success" );
                             updateSummaryInvoice();
 
                             $.alert(data.message);
                             setTimeout( function () {
-                                location.reload();
+                                //location.reload();
                             }, 2000 )
 
                         },

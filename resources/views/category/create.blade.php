@@ -102,5 +102,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/category/create.js') }}"></script>
+    <script src="{{ asset('js/Category/create.js') }}"></script>
 @endsection

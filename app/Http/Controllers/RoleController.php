@@ -53,6 +53,7 @@ class RoleController extends Controller
         'orderService' => 'ORDENES DE SERVICIO',
         'service' => 'SERVICIOS',
         'paymentDeadline' => 'PLAZOS DE PAGO',
+        'credit' => 'CRÉDITOS',
     ];
 
     public function index()
