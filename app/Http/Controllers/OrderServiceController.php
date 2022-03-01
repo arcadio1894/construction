@@ -90,8 +90,12 @@ class OrderServiceController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxId = OrderService::withTrashed()->max('id')+1;
+            $length = 5;
+            $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
             $orderService = OrderService::create([
-                'code' => $request->get('service_order'),
+                'code' => $codeOrder,
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -160,7 +164,7 @@ class OrderServiceController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Orden de servicio guardada con éxito.'], 200);
+        return response()->json(['message' => 'Orden de servicio '.$codeOrder.' guardada con éxito.'], 200);
 
     }
 
