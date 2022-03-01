@@ -64,8 +64,12 @@ class QuoteController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxId = Quote::max('id')+1;
+            $length = 5;
+            $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
             $quote = Quote::create([
-                'code' => $request->get('code_quote'),
+                'code' => $codeQuote,
                 'description_quote' => $request->get('code_description'),
                 'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
                 'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5),
@@ -238,7 +242,7 @@ class QuoteController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Cotización guardada con éxito.'], 200);
+        return response()->json(['message' => 'Cotización '.$codeQuote.' guardada con éxito.'], 200);
 
     }
 

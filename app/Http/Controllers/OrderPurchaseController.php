@@ -190,8 +190,13 @@ class OrderPurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxCode = OrderPurchase::withTrashed()->max('id');
+            $maxId = $maxCode + 1;
+            $length = 5;
+            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
             $orderPurchase = OrderPurchase::create([
-                'code' => $request->get('purchase_order'),
+                'code' => $codeOrder,
                 'quote_supplier' => $request->get('quote_supplier'),
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
@@ -265,7 +270,7 @@ class OrderPurchaseController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Orden compra express guardada con éxito.'], 200);
+        return response()->json(['message' => 'Su orden express con el código '.$codeOrder.' se guardó con éxito.'], 200);
 
     }
 
@@ -666,8 +671,13 @@ class OrderPurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+            $maxCode = OrderPurchase::withTrashed()->max('id');
+            $maxId = $maxCode + 1;
+            $length = 5;
+            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
             $orderPurchase = OrderPurchase::create([
-                'code' => $request->get('purchase_order'),
+                'code' => $codeOrder,
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -743,7 +753,7 @@ class OrderPurchaseController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Orden compra normal guardada con éxito.'], 200);
+        return response()->json(['message' => 'Su orden normal con el código '.$codeOrder.' se guardó con éxito.'], 200);
 
     }
 
