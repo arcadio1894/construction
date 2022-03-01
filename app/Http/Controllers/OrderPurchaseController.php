@@ -1034,7 +1034,10 @@ class OrderPurchaseController extends Controller
             }])
             ->where('id', $id)->first();
 
-        $view = view('exports.entryPurchase', compact('purchase_order'));
+        $length = 5;
+        $codeOrder = ''.str_pad($id,$length,"0", STR_PAD_LEFT);
+
+        $view = view('exports.entryPurchase', compact('purchase_order','codeOrder'));
 
         $pdf = PDF::loadHTML($view);
 

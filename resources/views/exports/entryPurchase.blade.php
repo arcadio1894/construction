@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <h1>ORDEN DE COMPRA: {{ $purchase_order->id }}</h1>
+    <h1>ORDEN DE COMPRA: {{ $codeOrder }}</h1>
 
     <div id="company2" class="clearfix">
         <table id="cuadro" width="150">

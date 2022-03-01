@@ -179,7 +179,7 @@
         </div>
     </div>
 
-    <h1>ORDEN DE SERVICIO: {{ $service_order->code }}</h1>
+    <h1>ORDEN DE SERVICIO: {{ $codeOrder }}</h1>
 
     <div id="company2" class="clearfix">
         <table id="cuadro" width="150">
