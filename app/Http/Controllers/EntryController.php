@@ -199,7 +199,7 @@ class EntryController extends Controller
                                 $detail_entry->unit_price = round((float)$items[$i]->price,2);
                                 $detail_entry->save();
                             } else {
-                                $detail_entry->unit_price = (float)$materialS->unit_price;
+                                $detail_entry->unit_price = round((float)$items[$i]->price,2);
                                 $detail_entry->save();
                             }
                             //dd($detail_entry->material->materialType);
@@ -247,7 +247,7 @@ class EntryController extends Controller
                                 $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                                 $detail_entry->save();
                             } else {
-                                $detail_entry->unit_price = (float)$materialS->unit_price;
+                                $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                                 $detail_entry->save();
                             }
                             //dd($detail_entry->material->materialType);
@@ -974,10 +974,10 @@ class EntryController extends Controller
                         $materialS->unit_price = $price1;
                         $materialS->save();
 
-                        $detail_entry->unit_price = (float)$items[$i]->price;
+                        $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                         $detail_entry->save();
                     } else {
-                        $detail_entry->unit_price = (float)$materialS->unit_price;
+                        $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                         $detail_entry->save();
                     }
                     //dd($detail_entry->material->materialType);
@@ -1027,13 +1027,13 @@ class EntryController extends Controller
                     $materialS = Material::find($detail_entry->material_id);
                     if ( (float)$materialS->unit_price < (float)$price )
                     {
-                        $materialS->unit_price = (float)$items[$i]->price;
+                        $materialS->unit_price = (float)$price;
                         $materialS->save();
 
-                        $detail_entry->unit_price = (float)$items[$i]->price;
+                        $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                         $detail_entry->save();
                     } else {
-                        $detail_entry->unit_price = (float)$materialS->unit_price;
+                        $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                         $detail_entry->save();
                     }
                     //dd($detail_entry->material->materialType);
