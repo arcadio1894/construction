@@ -88,10 +88,14 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/editar/orden/service/'+item.id+
                             '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
                     }
-                    if ( $.inArray('regularize_orderService', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
-                            '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ingresar servicio"><i class="fa fa-share"></i></a> ';
+                    if (item.regularize == 'nr')
+                    {
+                        if ( $.inArray('regularize_orderService', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ingresar servicio"><i class="fa fa-share"></i></a> ';
+                        }
                     }
+
                     if ( $.inArray('delete_orderService', $permissions) !== -1 ) {
                         text = text + ' <button data-delete="'+item.id+'" data-name="'+item.code+'" '+
                             ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';

@@ -294,7 +294,7 @@ class OrderServiceController extends Controller
     public function getAllOrderService()
     {
         $orders = OrderService::with(['supplier', 'approved_user'])
-            ->where('regularize', 'nr')
+            /*->where('regularize', 'nr')*/
             ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
