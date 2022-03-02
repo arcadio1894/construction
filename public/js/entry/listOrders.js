@@ -2,7 +2,6 @@ $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     console.log($permissions);
     $('#dynamic-table').DataTable( {
-        serverSide: true,
         ajax: {
             url: "/dashboard/get/all/orders/entries",
             dataSrc: 'data'
