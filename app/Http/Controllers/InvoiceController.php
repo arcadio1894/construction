@@ -105,7 +105,7 @@ class InvoiceController extends Controller
                     'material_name' => $items[$i]->material,
                     'ordered_quantity' => $items[$i]->quantity,
                     'entered_quantity' => $items[$i]->quantity,
-                    'unit_price' => $items[$i]->price,
+                    'unit_price' => (float) round((float)$items[$i]->price,2),
                     'material_unit' => $items[$i]->unit,
                 ]);
             }

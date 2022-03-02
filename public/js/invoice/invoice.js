@@ -299,15 +299,16 @@ function addItems() {
     let material_name = $('#material_search').val();
     let material_unit = $( "#material_unit option:selected" ).text();
     let material_quantity = parseFloat($('#quantity').val()).toFixed(2);
+    // TODO: Este precio ahora es total
     let material_price = parseFloat($('#price').val()).toFixed(2);
 
-    var subtotal =((material_quantity*material_price)/1.18).toFixed(2);
-    var taxes = (subtotal*0.18).toFixed(2);
-    var total = (material_quantity*material_price).toFixed(2);
+    var subtotal = parseFloat(material_price/1.18).toFixed(2);
+    var taxes = parseFloat(subtotal*0.18).toFixed(2);
+    var total = parseFloat(material_price).toFixed(2);
 
-    $items.push({ 'id': $items.length+1, 'price': material_price, 'material': material_name, 'quantity': material_quantity, 'unit': material_unit, 'subtotal': subtotal, 'taxes': taxes, 'total':total});
+    $items.push({ 'id': $items.length+1, 'price': parseFloat(parseFloat(material_price)/parseFloat(material_quantity)).toFixed(4), 'material': material_name, 'quantity': material_quantity, 'unit': material_unit, 'subtotal': subtotal, 'taxes': taxes, 'total':total});
 
-    renderTemplateMaterial($items.length, material_name, material_quantity, material_unit, material_price, subtotal, taxes, total);
+    renderTemplateMaterial($items.length, material_name, material_quantity, material_unit, parseFloat(material_price/material_quantity).toFixed(2), subtotal, taxes, total);
 
     $('#material_search').val('');
     $('#quantity').val('');
