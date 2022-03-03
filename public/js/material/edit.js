@@ -79,7 +79,7 @@ $(document).ready(function () {
         let option = $selectSubCategory.find(':selected');
 
         console.log(subcategory[0].id);
-        if(subcategory[0].text === 'INOX') {
+        if(subcategory[0].text === 'INOX' || subcategory[0].text === 'FENE') {
             $selectType.empty();
             var subcategoria =  subcategory[0].id;
             $.get( "/dashboard/get/types/"+subcategoria, function( data ) {
