@@ -894,6 +894,46 @@ class OrderPurchaseController extends Controller
                             $credit->save();
                         }
                     }
+                } else {
+                    $total_last = $detail->price*$detail->quantity;
+                    //600
+                    $igv_last = $detail->igv;
+                    //91.53
+
+                    $quantity = (float) $items[$i]->quantity;
+                    //4
+                    $price = (float) $items[$i]->price;
+                    //200
+
+                    $total = round($quantity*$price, 2);
+                    //800
+                    $subtotal = round($total / 1.18, 2);
+                    //677.97
+                    $igv = $total - $subtotal;
+                    //122.03
+                    $detail->quantity = round($quantity, 2);
+                    $detail->price = round($price, 2);
+                    $detail->igv = round($igv,2);
+                    $detail->save();
+
+                    $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
+                    $orderExpress->total = round(($orderExpress->total - $total_last),2);
+                    $orderExpress->save();
+
+                    $orderExpress->igv = round(($orderExpress->igv + $igv),2);
+                    $orderExpress->total = round(($orderExpress->total + $total),2);
+
+                    $orderExpress->save();
+
+                    // Si la orden de compra express se modifica, el credito tambien se modificara
+                    $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                        ->where('state_credit', 'outstanding')->first();
+                    if ( isset($credit) )
+                    {
+                        $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                        $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                        $credit->save();
+                    }
                 }
 
             }
