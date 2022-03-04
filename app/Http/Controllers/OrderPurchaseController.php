@@ -977,6 +977,8 @@ class OrderPurchaseController extends Controller
                     $material_order->delete();
                     $detail->delete();
                 }
+            } else {
+                $detail->delete();
             }
 
             DB::commit();
