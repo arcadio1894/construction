@@ -846,50 +846,53 @@ class OrderPurchaseController extends Controller
             {
                 $material_order = MaterialOrder::where('material_id', $items[$i]->id_material)
                     ->where('order_purchase_detail_id', $detail->id)->first();
-                if ( $material_order->quantity_entered > 0 ) {
-                    return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
-                } else {
-                    $total_last = $detail->price*$detail->quantity;
-                    //600
-                    $igv_last = $detail->igv;
-                    //91.53
+                if ( isset($material_order) )
+                {
+                    if ( $material_order->quantity_entered > 0 ) {
+                        return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+                    } else {
+                        $total_last = $detail->price*$detail->quantity;
+                        //600
+                        $igv_last = $detail->igv;
+                        //91.53
 
-                    $quantity = (float) $items[$i]->quantity;
-                    //4
-                    $price = (float) $items[$i]->price;
-                    //200
+                        $quantity = (float) $items[$i]->quantity;
+                        //4
+                        $price = (float) $items[$i]->price;
+                        //200
 
-                    $total = round($quantity*$price, 2);
-                    //800
-                    $subtotal = round($total / 1.18, 2);
-                    //677.97
-                    $igv = $total - $subtotal;
-                    //122.03
-                    $detail->quantity = round($quantity, 2);
-                    $detail->price = round($price, 2);
-                    $detail->igv = round($igv,2);
-                    $detail->save();
+                        $total = round($quantity*$price, 2);
+                        //800
+                        $subtotal = round($total / 1.18, 2);
+                        //677.97
+                        $igv = $total - $subtotal;
+                        //122.03
+                        $detail->quantity = round($quantity, 2);
+                        $detail->price = round($price, 2);
+                        $detail->igv = round($igv,2);
+                        $detail->save();
 
-                    $material_order->quantity_request =  round($quantity, 2);
-                    $material_order->save();
+                        $material_order->quantity_request =  round($quantity, 2);
+                        $material_order->save();
 
-                    $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
-                    $orderExpress->total = round(($orderExpress->total - $total_last),2);
-                    $orderExpress->save();
+                        $orderExpress->igv = round(($orderExpress->igv - $igv_last),2);
+                        $orderExpress->total = round(($orderExpress->total - $total_last),2);
+                        $orderExpress->save();
 
-                    $orderExpress->igv = round(($orderExpress->igv + $igv),2);
-                    $orderExpress->total = round(($orderExpress->total + $total),2);
+                        $orderExpress->igv = round(($orderExpress->igv + $igv),2);
+                        $orderExpress->total = round(($orderExpress->total + $total),2);
 
-                    $orderExpress->save();
+                        $orderExpress->save();
 
-                    // Si la orden de compra express se modifica, el credito tambien se modificara
-                    $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
-                        ->where('state_credit', 'outstanding')->first();
-                    if ( isset($credit) )
-                    {
-                        $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
-                        $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
-                        $credit->save();
+                        // Si la orden de compra express se modifica, el credito tambien se modificara
+                        $credit = SupplierCredit::where('order_purchase_id', $orderExpress->id)
+                            ->where('state_credit', 'outstanding')->first();
+                        if ( isset($credit) )
+                        {
+                            $credit->total_soles = ($orderExpress->currency_order == 'PEN') ? $orderExpress->total:null;
+                            $credit->total_dollars = ($orderExpress->currency_order == 'USD') ? $orderExpress->total:null;
+                            $credit->save();
+                        }
                     }
                 }
 
