@@ -130,7 +130,7 @@ class Quote extends Model
 
     public function equipments()
     {
-        return $this->hasMany('App\Equipment')->orderBy('id', 'asc')->orderBy('description','asc');
+        return $this->hasMany('App\Equipment')->orderBy('description','asc');
     }
 
     public function users()
