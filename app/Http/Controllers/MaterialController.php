@@ -68,8 +68,8 @@ class MaterialController extends Controller
                 'exampler_id' => $request->get('exampler'),
                 'warrant_id' => $request->get('warrant'),
                 'quality_id' => $request->get('quality'),
-                'typescrap_id' => $request->get('typescrap')
-
+                'typescrap_id' => $request->get('typescrap'),
+                'enable_status' => true
             ]);
 
             $length = 5;
@@ -244,7 +244,7 @@ class MaterialController extends Controller
     public function getAllMaterials()
     {
         $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
-            //->where('description', 'not like', '%EDESCE%')
+            ->where('enable_status', 1)
             ->get();
             //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
 
@@ -256,7 +256,8 @@ class MaterialController extends Controller
 
     public function getJsonMaterials()
     {
-        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('enable_status', 1)->get();
 
         $array = [];
         foreach ( $materials as $material )
@@ -271,7 +272,8 @@ class MaterialController extends Controller
     public function getJsonMaterialsQuote()
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
-            ->whereNotIn('category_id', [2])->get();
+            ->whereNotIn('category_id', [2])
+            ->where('enable_status', 1)->get();
 
         $array = [];
         foreach ( $materials as $material )
@@ -287,6 +289,7 @@ class MaterialController extends Controller
     {
         $materials = Material::with('subcategory', 'materialType', 'subtype', 'warrant', 'quality')
             ->whereNotNull('typescrap_id')
+            ->where('enable_status', 1)
             ->get();
         $array = [];
         foreach ( $materials as $material )
@@ -331,5 +334,61 @@ class MaterialController extends Controller
         //dd(datatables($items)->toJson());
         return datatables($items)->toJson();
 
+    }
+
+    public function disableMaterial(Request $request)
+    {
+
+        DB::beginTransaction();
+        try {
+            $material = Material::find($request->get('material_id'));
+            $material->enable_status = 0;
+            $material->save();
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Material inhabilitado con éxito.'], 200);
+
+    }
+
+    public function enableMaterial(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $material = Material::find($request->get('material_id'));
+            $material->enable_status = 1;
+            $material->save();
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Material habilitado con éxito.'], 200);
+
+    }
+
+    public function getAllMaterialsDisable()
+    {
+        $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
+            ->where('enable_status', 0)
+            ->get();
+        //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
+
+
+        //dd($materials);
+        //dd(datatables($materials)->toJson());
+        return datatables($materials)->toJson();
+    }
+
+    public function indexEnable()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('material.enable', compact('permissions'));
     }
 }

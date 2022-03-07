@@ -753,6 +753,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('enable_material')
+                                    <li class="nav-item">
+                                        <a href="{{ route('material.index.enable') }}" class="nav-link @yield('activeEnableMaterial')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Habilitar materiales</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

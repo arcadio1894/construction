@@ -408,6 +408,14 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_material');
         Route::get('view/material/items/{id}', 'MaterialController@getItems')->name('material.getItems');
         Route::get('view/material/all/items/{id}', 'MaterialController@getItemsMaterial')->name('material.getItemsMaterial');
+        Route::post('material/enable', 'MaterialController@enableMaterial')->name('material.enable')
+            ->middleware('permission:enable_material');
+        Route::post('material/disable', 'MaterialController@disableMaterial')->name('material.disable')
+            ->middleware('permission:enable_material');
+        Route::get('habilitar/materiales', 'MaterialController@indexEnable')->name('material.index.enable')
+            ->middleware('permission:enable_material');
+        Route::get('/disabled/materials', 'MaterialController@getAllMaterialsDisable')->name('disabled.materials')
+            ->middleware('permission:enable_material');
 
         //AREAS
         Route::get('areas', 'AreaController@index')->name('area.index')

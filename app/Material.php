@@ -30,7 +30,8 @@ class Material extends Model
         'exampler_id',
         'warrant_id',
         'quality_id',
-        'typescrap_id'
+        'typescrap_id',
+        'enable_status'
     ];
 
     public function setNameProductAttribute($value)

@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeListMaterial')
+@section('activeEnableMaterial')
     active
 @endsection
 
@@ -180,19 +180,19 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar inhabilitación</h4>
+                    <h4 class="modal-title">Confirmar habilitación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('material.disable') }}">
+                <form id="formDelete" data-url="{{ route('material.enable') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="material_id" name="material_id">
-                        <p>¿Está seguro de inhabilitar este material? Ya no se mostrará en los listados</p>
+                        <p>¿Está seguro de habilitar este material? Ahora se mostrará en los listados</p>
                         <p id="descriptionDelete"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Inhabilitar</button>
+                        <button type="submit" class="btn btn-success">Habilitar</button>
                     </div>
                 </form>
             </div>
@@ -229,5 +229,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/material/index.js') }}"></script>
+    <script src="{{ asset('js/material/enable.js') }}"></script>
 @endsection
