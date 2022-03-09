@@ -119,7 +119,7 @@
                                     <input type="text" id="entry_type" value="Por compra" name="entry_type" class="form-control" readonly>
                                 </div>
                                 <div class="form-group">
-                                    <label for="image">Imagen Factura </label>
+                                    <label for="image">Imagen/PDF Factura </label>
                                     <input type="file" id="image" name="image" class="form-control">
                                 </div>
                                 <div class="form-group">
@@ -137,7 +137,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="imageOb">Imagen Observación</label>
+                                    <label for="imageOb">Imagen/PDF Observación</label>
                                     <input type="file" id="imageOb" name="imageOb" class="form-control">
                                 </div>
                             </div>

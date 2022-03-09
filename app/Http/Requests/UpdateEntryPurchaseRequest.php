@@ -32,6 +32,7 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'entry_type' => 'required',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
+            'imageOb' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
         ];
     }
 
@@ -52,6 +53,7 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'entry_type.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
+            'imageOb.mimetypes' => 'La :attribute no tiene el formato requerido.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }
@@ -66,7 +68,8 @@ class UpdateEntryPurchaseRequest extends FormRequest
             'entry_type' => 'tipo de entrada',
             'supplier_id' => 'proveedor',
             'deferred_invoice' => 'opción diferida',
-            'image' => 'imagen/PDF'
+            'image' => 'imagen/PDF factura',
+            'imageOb' => 'imagen/PDF observacion'
         ];
     }
 }

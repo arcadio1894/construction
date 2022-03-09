@@ -913,13 +913,29 @@ class EntryController extends Controller
             } else {
                 $path = public_path().'/images/entries/';
                 $image = $request->file('image');
-                $filename = $entry->id . '.jpg';
+                $extension = $request->file('image')->getClientOriginalExtension();
+                if ( $extension != 'pdf' )
+                {
+                    $filename = $entry->id . '.jpg';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'jpg');
+                    //$request->file('image')->move($path, $filename);
+                    $entry->imageOb = $filename;
+                    $entry->save();
+                } else {
+                    $filename = 'pdf'.$entry->id . '.' .$extension;
+                    $request->file('image')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                }
+                /*$filename = $entry->id . '.jpg';
                 $img = Image::make($image);
                 $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
                 $entry->image = $filename;
-                $entry->save();
+                $entry->save();*/
             }
 
             if (!$request->file('imageOb')) {
@@ -928,12 +944,28 @@ class EntryController extends Controller
             } else {
                 $path = public_path().'/images/entries/observations/';
                 $image = $request->file('imageOb');
-                $filename = $entry->id . '.jpg';
+                $extension = $image->getClientOriginalExtension();
+                if ( $extension != 'pdf' )
+                {
+                    $filename = $entry->id . '.jpg';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'jpg');
+                    //$request->file('image')->move($path, $filename);
+                    $entry->imageOb = $filename;
+                    $entry->save();
+                } else {
+                    $filename = 'pdf'.$entry->id . '.' .$extension;
+                    $request->file('imageOb')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                }
+                /*$filename = $entry->id . '.jpg';
                 $img = Image::make($image);
                 $img->orientate();
                 $img->save($path.$filename, 80, 'jpg');
                 $entry->imageOb = $filename;
-                $entry->save();
+                $entry->save();*/
             }
 
             $items = json_decode($request->get('items'));
