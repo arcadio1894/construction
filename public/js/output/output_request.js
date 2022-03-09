@@ -175,6 +175,7 @@ function selectItem() {
         }
         console.log($itemsSelected);
     }
+    $modalAddItems.scrollTop( 0 );
 }
 
 function addItems() {
