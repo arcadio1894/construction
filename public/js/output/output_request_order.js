@@ -384,7 +384,9 @@ function storeOutputRequest() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.href = data.url;
+                if ( $.inArray('list_request', $permissions) !== -1 ) {
+                    location.href = data.url;
+                }
             }, 2000 )
         },
         error: function (data) {

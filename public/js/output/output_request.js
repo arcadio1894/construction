@@ -5,7 +5,10 @@ let $materialsComplete=[];
 let $items=[];
 let $itemsComplete=[];
 let $itemsSelected=[];
+var $permissions;
+
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
     $('input[name="request_date"]').daterangepicker({
         singleDatePicker: true,
         showDropdowns: true,
@@ -317,7 +320,9 @@ function storeOutputRequest() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.href = data.url;
+                if ( $.inArray('list_request', $permissions) !== -1 ) {
+                    location.href = data.url;
+                }
             }, 2000 )
         },
         error: function (data) {

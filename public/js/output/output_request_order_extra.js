@@ -6,7 +6,10 @@ let $items=[];
 let $itemsComplete=[];
 let $itemsSelected=[];
 let $materials_order=[];
+var $permissions;
+
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
     $materials_order = JSON.parse($('#materials').val());
     $("#element_loader").LoadingOverlay("show", {
         background  : "rgba(236, 91, 23, 0.5)"
@@ -455,7 +458,9 @@ function storeOutputRequest() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.href = data.url;
+                if ( $.inArray('list_request', $permissions) !== -1 ) {
+                    location.href = data.url;
+                }
             }, 2000 )
         },
         error: function (data) {
