@@ -5,9 +5,10 @@ function format ( d ) {
         '|FIL:'+d.location.level.name+
         '|COL:'+d.location.container.name+
         '|POS:'+d.location.position.name;
+    var typescarp = (d.typescrap == null) ? 'No tiene': d.typescrap.name;
     return 'Estado: '+d.state+'<br>'+
         'Estado de Item: '+d.state_item+'<br>'+
-        'Tipo de Material: '+d.typescrap.name+'<br>'+
+        'Tipo de Material: '+typescarp+'<br>'+
         'Ubicación: '+location+'<br>';
 }
 
