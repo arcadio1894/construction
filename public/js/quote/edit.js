@@ -3334,13 +3334,23 @@ function renderTemplateEquipment() {
 function renderTemplateSummary(equipments) {
 
     $('#body-summary').html('');
-    for (let i = 0; i < equipments.length; i++) {
+    var equipos = equipments.sort(function (a, b) {
+        if (a.id > b.id) {
+            return 1;
+        }
+        if (a.id < b.id) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+    for (let i = 0; i < equipos.length; i++) {
         //console.log(equipments[i]);
         var clone = activateTemplate('#template-summary');
-        var price = ((parseFloat(equipments[i].total)/parseFloat(equipments[i].quantity))/1.18).toFixed(2);
-        var totalE = (parseFloat(equipments[i].total)/1.18).toFixed(2);
-        clone.querySelector("[data-nEquipment]").innerHTML = equipments[i].description;
-        clone.querySelector("[data-qEquipment]").innerHTML = equipments[i].quantity;
+        var price = ((parseFloat(equipos[i].total)/parseFloat(equipos[i].quantity))/1.18).toFixed(2);
+        var totalE = (parseFloat(equipos[i].total)/1.18).toFixed(2);
+        clone.querySelector("[data-nEquipment]").innerHTML = equipos[i].description;
+        clone.querySelector("[data-qEquipment]").innerHTML = equipos[i].quantity;
         clone.querySelector("[data-pEquipment]").innerHTML = price;
         clone.querySelector("[data-tEquipment]").innerHTML = totalE;
 
