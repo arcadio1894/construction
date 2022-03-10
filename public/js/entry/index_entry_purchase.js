@@ -82,7 +82,7 @@ $(document).ready(function () {
                 {
                     var id = item.image;
                     var string = id.substr(id.length - 3);
-                    if( string == 'pdf' )
+                    if( string.toUpperCase() == 'PDF')
                     {
                         return ' <a target="_blank" href="'+document.location.origin+ '/images/entries/'+item.image+'" '+
                             ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';

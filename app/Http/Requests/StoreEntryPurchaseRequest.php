@@ -32,7 +32,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'currency_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
-            'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
+            //'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
             'date_invoice' => 'required'
         ];
     }
@@ -53,7 +53,7 @@ class StoreEntryPurchaseRequest extends FormRequest
             'entry_type.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
-            'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
+            //'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }
