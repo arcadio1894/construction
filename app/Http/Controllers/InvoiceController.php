@@ -98,7 +98,7 @@ class InvoiceController extends Controller
                     $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'JPG');
+                    $img->save(file_get_contents($path.$filename), 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->image = $filename;
                     $entry->save();
