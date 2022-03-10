@@ -17,6 +17,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class InvoiceController extends Controller
 {
@@ -89,11 +90,38 @@ class InvoiceController extends Controller
                 $entry->save();
             } else {
                 $path = public_path().'/images/entries/';
+                $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $entry->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                } else {
+                    $filename = 'pdf'.$entry->id . '.' .$extension;
+                    $request->file('image')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                }
+                /*$path = public_path().'/images/entries/';
+                $image = $request->file('image');
+                $filename = $entry->id . '.JPG';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'JPG');
+                //$request->file('image')->move($path, $filename);
+                $entry->image = $filename;
+                $entry->save();*/
+                /*$extension = $request->file('image')->getClientOriginalExtension();
                 $filename = $entry->id . '.' . $extension;
                 $request->file('image')->move($path, $filename);
                 $entry->image = $filename;
-                $entry->save();
+                $entry->save();*/
             }
 
             $items = json_decode($request->get('items'));

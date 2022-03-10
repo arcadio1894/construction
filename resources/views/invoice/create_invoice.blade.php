@@ -125,7 +125,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="image">Imagen </label>
+                                    <label for="image">Imagen/PDF Factura </label>
                                     <input type="file" id="image" name="image" class="form-control">
                                 </div>
                                 <div class="col-md-4">

@@ -31,7 +31,7 @@ class StoreInvoiceRequest extends FormRequest
             'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
             'items' => 'required',
-            'image' => 'image',
+            //'image' => 'image',
             'date_invoice' => 'required'
         ];
     }
@@ -50,7 +50,7 @@ class StoreInvoiceRequest extends FormRequest
             'type_order.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
             'items.required' => 'Los :attribute son obligatorio.',
-            'image.image' => 'Los :attribute son obligatorio.',
+            //'image.image' => 'Los :attribute son obligatorio.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }
