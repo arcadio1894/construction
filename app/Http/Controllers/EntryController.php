@@ -50,7 +50,7 @@ class EntryController extends Controller
         return view('entry.create_entry_scrap');
     }
 
-    public function storeEntryPurchase(Request $request)
+    public function storeEntryPurchase(StoreEntryPurchaseRequest $request)
     {
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
