@@ -148,7 +148,7 @@ class EntryController extends Controller
                 } else {
                     $filename = 'pdf'.$entry->id . '.' .$extension;
                     $request->file('imageOb')->move($path, $filename);
-                    $entry->image = $filename;
+                    $entry->imageOb = $filename;
                     $entry->save();
                 }
 
@@ -921,7 +921,7 @@ class EntryController extends Controller
                     $img->orientate();
                     $img->save($path.$filename, 80, 'jpg');
                     //$request->file('image')->move($path, $filename);
-                    $entry->imageOb = $filename;
+                    $entry->image = $filename;
                     $entry->save();
                 } else {
                     $filename = 'pdf'.$entry->id . '.' .$extension;
@@ -957,7 +957,7 @@ class EntryController extends Controller
                 } else {
                     $filename = 'pdf'.$entry->id . '.' .$extension;
                     $request->file('imageOb')->move($path, $filename);
-                    $entry->image = $filename;
+                    $entry->imageOb = $filename;
                     $entry->save();
                 }
                 /*$filename = $entry->id . '.jpg';
