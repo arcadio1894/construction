@@ -113,10 +113,10 @@ class EntryController extends Controller
                 //$filename = $entry->id . '.' . $extension;
                 if ( strtoupper($extension) != "PDF" )
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->image = $filename;
                     $entry->save();
@@ -138,10 +138,10 @@ class EntryController extends Controller
                 $extension = $image->getClientOriginalExtension();
                 if ( strtoupper($extension) != "PDF" )
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->imageOb = $filename;
                     $entry->save();
@@ -443,12 +443,12 @@ class EntryController extends Controller
                 $path = public_path().'/images/entries/';
                 $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
-                if ( $extension != 'pdf' )
+                if (strtoupper($extension) != "PDF" )
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->imageOb = $filename;
                     $entry->save();
@@ -477,12 +477,12 @@ class EntryController extends Controller
                 $path = public_path().'/images/entries/observations/';
                 $image = $request->file('imageOb');
                 $extension = $image->getClientOriginalExtension();
-                if ( $extension != 'pdf' )
+                if ( strtoupper($extension) != "PDF" )
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->imageOb = $filename;
                     $entry->save();
@@ -884,7 +884,7 @@ class EntryController extends Controller
 
     public function storeEntryPurchaseOrder(StoreEntryPurchaseOrderRequest $request)
     {
-        //$extension = $request->file('file')->getClientOriginalExtension();
+        //$extension = $request->file('image')->getClientOriginalExtension();
         //dd($extension);
 
         //dd($request->get('deferred_invoice'));
@@ -920,10 +920,10 @@ class EntryController extends Controller
                 //dd(  );
                 if ( strtoupper($extension) != "PDF")
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->image = $filename;
                     $entry->save();
@@ -951,10 +951,10 @@ class EntryController extends Controller
                 $extension = $image->getClientOriginalExtension();
                 if ( strtoupper($extension) != "PDF" )
                 {
-                    $filename = $entry->id . '.jpg';
+                    $filename = $entry->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
-                    $img->save($path.$filename, 80, 'jpg');
+                    $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
                     $entry->imageOb = $filename;
                     $entry->save();
