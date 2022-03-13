@@ -607,7 +607,39 @@
                                         </div>
                                         <hr>
                                         <div data-bodyTorno>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <input type="text" value="SERVICIO DE CORTE Y DOBLEZ" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
+                                                        <input type="hidden" data-tornoId>
+                                                    </div>
+                                                </div>
 
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal(this);" data-tornoQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" data-tornoTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " readonly >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -1464,7 +1496,39 @@
                                         </div>
                                         <hr>
                                         <div data-bodyTorno>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    <div class="form-group">
+                                                        <input type="text" value="SERVICIO DE CORTE Y DOBLEZ" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
+                                                        <input type="hidden" data-tornoId>
+                                                    </div>
+                                                </div>
 
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal(this);" data-tornoQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        ">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" data-tornoTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " readonly >
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
