@@ -577,11 +577,15 @@ class OrderPurchaseController extends Controller
         {
             $material_order = MaterialOrder::where('material_id', $detail->material_id)
                 ->where('order_purchase_detail_id', $detail->id)->first();
-            if ( $material_order->quantity_entered > 0 ) {
-                return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
-            } else {
-                $material_order->delete();
+            if ( isset($material_order) )
+            {
+                if ( $material_order->quantity_entered > 0 ) {
+                    return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+                } else {
+                    $material_order->delete();
+                }
             }
+
             $detail->delete();
 
         }
@@ -796,11 +800,15 @@ class OrderPurchaseController extends Controller
         {
             $material_order = MaterialOrder::where('material_id', $detail->material_id)
                 ->where('order_purchase_detail_id', $detail->id)->first();
-            if ( $material_order->quantity_entered > 0 ) {
-                return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
-            } else {
-                $material_order->delete();
+            if ( isset($material_order) )
+            {
+                if ( $material_order->quantity_entered > 0 ) {
+                    return response()->json(['message' => 'No se puede modificar el detalle porque ya hay un ingreso.'], 422);
+                } else {
+                    $material_order->delete();
+                }
             }
+
             $detail->delete();
 
         }
