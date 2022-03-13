@@ -2164,7 +2164,7 @@ function addTableMaterials() {
 
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
         //console.log($renderMaterial);
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh);
+        renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');
@@ -2268,7 +2268,7 @@ function addTableMaterials() {
         var witdh2 = $('#material_width_entered').val();
         console.log($renderMaterial);
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity2, 'material_price':0, 'material_length':length2, 'material_width':witdh2});
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2);
+        renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');
@@ -2517,13 +2517,19 @@ function storeQuote() {
     });
 }
 
-function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width) {
+function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {
     var card = render.parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#materials-selected');
-        clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+        if ( material.stock_current == 0 )
+        {
+            clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+            clone.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+        } else {
+            clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+        }
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         clone.querySelector("[data-materialLargo]").setAttribute('value', length);
         clone.querySelector("[data-materialAncho]").setAttribute('value', width);
@@ -2536,7 +2542,14 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         render.append(clone);
     } else {
         var clone2 = activateTemplate('#materials-selected');
-        clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+        if ( material.stock_current == 0 )
+        {
+            clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+            clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+        } else {
+            clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+        }
+        //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
         clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
         clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
@@ -2563,7 +2576,14 @@ function renderTemplateConsumable(render, consumable, quantity) {
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
-        clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        //console.log(consumable.stock_current );
+        if ( consumable.stock_current == 0 )
+        {
+            clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+        } else {
+            clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        }
         clone.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
         clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
@@ -2575,6 +2595,14 @@ function renderTemplateConsumable(render, consumable, quantity) {
         render.append(clone);
     } else {
         var clone2 = activateTemplate('#template-consumable');
+        //console.log(consumable.stock_current );
+        if ( consumable.stock_current == 0 )
+        {
+            clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+        } else {
+            clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        }
         clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
