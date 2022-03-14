@@ -691,6 +691,10 @@ Route::middleware('auth')->group(function (){
             ->name('order.execution.index')
             ->middleware('permission:list_orderExecution');
         Route::get('/all/order/execution', 'OrderExecutionController@getAllOrderExecution');
+        Route::get('ordenes/ejecución/finalizadas', 'OrderExecutionController@indexOrderExecutionFinished')
+            ->name('order.execution.finish')
+            ->middleware('permission:list_orderExecution');
+        Route::get('/all/order/execution/finish', 'OrderExecutionController@getAllOrderExecutionFinished');
 
         // ORDER PURCHASE
         Route::get('ordenes/compra/general', 'OrderPurchaseController@indexOrderPurchaseExpressAndNormal')

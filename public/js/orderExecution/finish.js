@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log($permissions);
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/order/execution",
+            url: "/dashboard/all/order/execution/finish",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -105,23 +105,36 @@ $(document).ready(function () {
                 }
             },*/
             { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    if (item.state_active === 'close'){
+                        return '<span class="badge bg-danger">Finalizada</span>';
+                    }
+
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 wrap: true,
                 sortable:false,
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('createOutput_orderExecution', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/orden/'+item.id+
-                            '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida"><i class="fas fa-sign-out-alt"></i></a> ';
+                    if (item.state_active === 'open'){
+                        if ( $.inArray('createOutput_orderExecution', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/orden/'+item.id+
+                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida"><i class="fas fa-sign-out-alt"></i></a> ';
+                        }
+                        if ( $.inArray('createOutputExtra_orderExecution', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/extra/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida extra"><i class="fas fa-external-link-alt"></i></a> ';
+                        }
                     }
-                    if ( $.inArray('createOutputExtra_orderExecution', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/crear/solicitud/extra/'+item.id+
-                            '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear salida extra"><i class="fas fa-external-link-alt"></i></a> ';
-                    }
-                    if ( $.inArray('finish_quote', $permissions) !== -1 ) {
-                        text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
-                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                    if ( $.inArray('show_quote', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
+                            '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles de la cotización"><i class="fa fa-eye"></i></a> ';
                     }
 
                     return text;
@@ -283,7 +296,6 @@ $(document).ready(function () {
     $(document).on('click', '[data-raise2]', raise2Quote);
 
     $(document).on('click', '[data-renew]', renewQuote);*/
-    $(document).on('click', '[data-finish]', finishQuote);
 });
 
 var $formDelete;
@@ -569,49 +581,3 @@ function destroySubCategory() {
         },
     });
 }*/
-
-function finishQuote() {
-    var quote_id = $(this).data('finish');
-    var description = $(this).data('name');
-
-    $.confirm({
-        icon: 'fas fa-smile',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de finalizar esta cotización?',
-        content: description,
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: '/dashboard/finish/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                location.href = data.url;
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Anulación cancelada.");
-                },
-            },
-        },
-    });
-
-}
