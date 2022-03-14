@@ -643,10 +643,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:confirm_quote');
         Route::post('/send/quote/{quote}', 'QuoteController@send')
             ->name('quote.send')
-            ->middleware('permission:confirm_quote');
+            ->middleware('permission:send_quote');
         Route::post('/raise/quote/{quote}/code/{code}', 'QuoteController@raiseQuote')
             ->name('quote.raise.quote')
-            ->middleware('permission:showRaised_quote');
+            ->middleware('permission:raise_quote');
         Route::post('/destroy/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@destroyEquipmentOfQuote')
             ->name('quote.destroy.equipment')
             ->middleware('permission:update_quote');
@@ -654,12 +654,12 @@ Route::middleware('auth')->group(function (){
             ->name('quote.update.equipment')
             ->middleware('permission:update_quote');
         Route::get('imprimir/cliente/{quote}', 'QuoteController@printQuoteToCustomer')
-            ->middleware('permission:list_quote');
+            ->middleware('permission:printCustomer_quote');
         Route::get('imprimir/interno/{quote}', 'QuoteController@printQuoteToInternal')
-            ->middleware('permission:list_quote');
+            ->middleware('permission:printInternal_quote');
         Route::get('elevar/cotizacion', 'QuoteController@raise')
             ->name('quote.raise')
-            ->middleware('permission:create_quote');
+            ->middleware('permission:showRaised_quote');
         Route::get('/all/quotes/confirmed', 'QuoteController@getAllQuotesConfirmed');
         Route::get('cotizar/soles/cotizacion/{quote}', 'QuoteController@quoteInSoles')
             ->name('quote.in.soles')
@@ -668,10 +668,10 @@ Route::middleware('auth')->group(function (){
             ->name('quote.in.soles')
             ->middleware('permission:confirm_quote');
         Route::get('ajustar/cotizacion/{quote}', 'QuoteController@adjust')
-            ->middleware('permission:confirm_quote');
+            ->middleware('permission:adjust_quote');
         Route::post('adjust/quote', 'QuoteController@adjustQuote')
             ->name('quote.adjust')
-            ->middleware('permission:confirm_quote');
+            ->middleware('permission:adjust_quote');
         Route::get('/all/quotes/deleted', 'QuoteController@getAllQuotesDeleted');
         Route::get('cotizaciones/anuladas', 'QuoteController@deleted')
             ->name('quote.deleted')
@@ -680,10 +680,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_quote');
         Route::get('cotizaciones/finalizadas', 'QuoteController@closed')
             ->name('quote.closed')
-            ->middleware('permission:destroy_quote');
+            ->middleware('permission:finish_quote');
         Route::get('/all/quotes/closed', 'QuoteController@getAllQuotesClosed');
         Route::post('/finish/quote/{quote}', 'QuoteController@closeQuote')
-            ->middleware('permission:destroy_quote');
+            ->middleware('permission:finish_quote');
         Route::get('/get/contact/{customer}', 'QuoteController@getContactsByCustomer');
 
         // ORDER EXECUTION

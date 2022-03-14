@@ -143,14 +143,16 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('list_quote', $permissions) !== -1 ) {
+                    if ( $.inArray('show_quote', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
                     if ( item.state === 'confirmed' ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                        }
+                        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
                         }
@@ -158,14 +160,20 @@ $(document).ready(function () {
 
                     if ( item.state === 'created' ) {
                         if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
-                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
-                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                            if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                            }
+                            if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
+                                    '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                            }
                             if ( item.send_state == 0 || item.send_state == false )
                             {
-                                text = text + ' <button data-send="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                    ' class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fas fa-file-import"></i></button>';
+                                if ( $.inArray('send_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-send="' + item.id + '" data-name="' + item.description_quote + '" ' +
+                                        ' class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Enviar"><i class="fas fa-file-import"></i></button>';
+                                }
                             }
 
                         }
@@ -190,7 +198,7 @@ $(document).ready(function () {
                         }
                         if ( item.state === 'confirmed' && item.raise_status == 0 )
                         {
-                            if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                            if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
                                 text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
                                     '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
                             }
@@ -205,7 +213,7 @@ $(document).ready(function () {
 
                     }
 
-                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                    if ( $.inArray('renew_quote', $permissions) !== -1 ) {
                         text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
                             ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
                     }

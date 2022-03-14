@@ -802,20 +802,22 @@
                                         </a>
                                     </li>
                                 @endcan
-                                @canany('confirm_quote')
+                                @can('destroy_quote')
                                     <li class="nav-item">
                                         <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Anuladas</p>
                                         </a>
                                     </li>
-                                        <li class="nav-item">
-                                            <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Finalizadas</p>
-                                            </a>
-                                        </li>
-                                @endcanany
+                                @endcan
+                                @can('finish_quote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Finalizadas</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

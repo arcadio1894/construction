@@ -128,26 +128,30 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('list_quote', $permissions) !== -1 ) {
+                    if ( $.inArray('show_quote', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
                     if ( item.state === 'confirmed' ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/cliente/'+item.id+
+                        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                        }
+                        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
                         }
                     }
 
                     if ( item.state === 'confirmed' && item.raise_status === 0 ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
                         }
-                        text = text + ' <button data-raise="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
-                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
+                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-raise="' + item.id + '" data-code="' + item.code_customer + '" data-name="' + item.description_quote + '" ' +
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
+                        }
                         if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
@@ -156,18 +160,18 @@ $(document).ready(function () {
                     }
 
                     if ( item.state === 'confirmed' && item.raise_status === 1 ) {
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
                         }
-                        if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
                         }
 
                     }
 
-                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                    if ( $.inArray('renew_quote', $permissions) !== -1 ) {
                         text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
                             ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
                     }
