@@ -33,20 +33,71 @@ $(document).ready(function () {
         },
         bAutoWidth: false,
         "aoColumns": [
-            /*{
-                "class":          "details-control",
-                "orderable":      false,
-                "data":           null,
-                "defaultContent": ""
-            },*/
-            { data: 'id' },
-            { data: 'entry_type' },
+
             { data: null,
-                title: 'Fecha',
+                title: 'Código',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>'
+                    return item.details[0].material.code;
+                }
+            },
+            { data: null,
+                title: 'Material',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.details[0].material.full_description;
+                }
+            },
+            { data: null,
+                title: 'Fecha Ingreso',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>';
+                }
+            },
+            { data: null,
+                title: 'Largo',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.details[0].items[0].length;
+                }
+            },
+            { data: null,
+                title: 'Ancho',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.details[0].items[0].weight;
+                }
+            },
+            { data: null,
+                title: 'Porcentaje',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.details[0].items[0].percentage;
+                }
+            },
+            { data: null,
+                title: 'Precio',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.details[0].items[0].price;
+                }
+            },
+            { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    return ( item.details[0].items[0].state_item === 'entered' ) ? '<span class="badge bg-success">Ingresado</span>' :
+                        ( item.details[0].items[0].state_item === 'scraped' ) ? '<span class="badge bg-warning">Retazo</span>' :
+                            ( item.details[0].items[0].state_item === 'reserved' ) ? '<span class="badge bg-info">Reservado</span>' : '<span class="badge bg-danger">Salido</span>';
                 }
             },
             { data: null,

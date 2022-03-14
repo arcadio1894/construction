@@ -66,8 +66,13 @@
             <thead>
             <tr>
                 <th>Código</th>
-                <th>Tipo de entrada</th>
-                <th>Fecha</th>
+                <th>Material</th>
+                <th>Fecha Ingreso</th>
+                <th>Largo</th>
+                <th>Ancho</th>
+                <th>Porcentaje</th>
+                <th>Precio</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
             </thead>

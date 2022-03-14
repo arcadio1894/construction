@@ -630,18 +630,18 @@ class EntryController extends Controller
 
     public function getJsonEntriesScrap()
     {
-        $entries = Entry::where('entry_type', 'Retacería')
+        /*$entries = Entry::where('entry_type', 'Retacería')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get();*/
 
-        /*$entries = Entry::with(['details' => function ($query) {
+        $entries = Entry::with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
-                $query->where('state_item', 'entered');
+                //$query->where('state_item', 'scraped');
             }]);
         }])
             ->where('entry_type', 'Retacería')
             ->orderBy('created_at', 'desc')
-            ->get();*/
+            ->get();
 
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
