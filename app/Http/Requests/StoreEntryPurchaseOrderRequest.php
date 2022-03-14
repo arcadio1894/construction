@@ -30,8 +30,8 @@ class StoreEntryPurchaseOrderRequest extends FormRequest
             'deferred_invoice' => 'nullable',
             'currency_invoice' => 'nullable',
             'items' => 'required',
-            'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
-            'imageOb' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
+            //'image' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
+            //'imageOb' => 'nullable|mimetypes:image/jpeg,image/jpg,image/png,application/pdf',
             'date_invoice' => 'required'
         ];
     }
@@ -50,9 +50,9 @@ class StoreEntryPurchaseOrderRequest extends FormRequest
             'invoice.min' => 'La :attribute debe contener mínimo 5 caracteres.',
             'invoice.max' => 'La :attribute debe contener máximo 255 caracteres.',
             'items.required' => 'Los :attribute son obligatorio.',
-            'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
+            //'image.mimetypes' => 'La :attribute no tiene el formato requerido.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
-            'imageOb.mimetypes' => 'La :attribute no tiene el formato requerido.',
+            //'imageOb.mimetypes' => 'La :attribute no tiene el formato requerido.',
         ];
     }
 

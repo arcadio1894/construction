@@ -76,22 +76,27 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Imagen/PDF',
+                title: 'Imagen / PDF',
                 wrap: true,
                 "render": function (item)
                 {
                     var id = item.image;
-                    var string = id.substr(id.length - 3);
-                    if( string.toUpperCase() == 'PDF')
-                    {
-                        return ' <a target="_blank" href="'+document.location.origin+ '/images/entries/'+item.image+'" '+
-                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
+                    if ( id != null ){
+                        var string = id.substr(id.length - 3);
+                        if( string.toUpperCase() == 'PDF')
+                        {
+                            return ' <a target="_blank" href="'+document.location.origin+ '/images/entries/'+item.image+'" '+
+                                ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
+                        } else {
+                            return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                                ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                        }
                     } else {
-                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
-                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
-
+                        return 'No tiene';
                     }
+
 
                     //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'
                 }

@@ -30,7 +30,7 @@ class UpdateInvoiceRequest extends FormRequest
             'type_order' => 'required',
             'deferred_invoice' => 'nullable',
             'supplier_id' => 'nullable|exists:suppliers,id',
-            'image' => 'image',
+            //'image' => 'image',
             'date_invoice' => 'required'
         ];
     }
@@ -48,7 +48,7 @@ class UpdateInvoiceRequest extends FormRequest
             'entry_type.required' => 'La :attribute es obligatorio.',
             'type_order.required' => 'La :attribute es obligatorio.',
             'supplier_id.exists' => 'El :attribute no existe en la base de datos.',
-            'image.image' => 'Los :attribute son obligatorio.',
+            //'image.image' => 'Los :attribute son obligatorio.',
             'date_invoice.required' => 'La :attribute es obligatoria.',
         ];
     }

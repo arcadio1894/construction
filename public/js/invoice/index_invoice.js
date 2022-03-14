@@ -155,18 +155,52 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Imagen',
+                title: 'Imagen / PDF',
                 wrap: true,
                 "render": function (item)
                 {
                     if (item.code == null){
-                        return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
-                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+                        var id = item.image;
+                        if ( id != null ){
+                            var string = id.substr(id.length - 3);
+                            if( string.toUpperCase() == 'PDF')
+                            {
+                                return ' <a target="_blank" href="'+document.location.origin+ '/images/entries/'+item.image+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
+                            } else {
+                                return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                            }
+                        } else {
+                            return 'No tiene';
+                        }
+
+                        /*return ' <button data-src="'+document.location.origin+ '/images/entries/'+item.image+'" data-image="'+item.id+'" '+
+                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+*/
                     } else {
-                        return ' <button data-src="'+document.location.origin+ '/images/orderServices/'+item.image_invoice+'" data-image="'+item.id+'" '+
-                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+                        var id2 = item.image;
+                        if ( id2 != null ) {
+                            var string2 = id2.substr(id2.length - 3);
+                            if( string2.toUpperCase() == 'PDF')
+                            {
+                                return ' <a target="_blank" href="'+document.location.origin+ '/images/orderServices/'+item.image+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
+                            } else {
+                                return ' <button data-src="'+document.location.origin+ '/images/orderServices/'+item.image_invoice+'" data-image="'+item.id+'" '+
+                                    ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+
+                            }
+                        } else {
+                            return 'No tiene';
+                        }
+
+                        /*return ' <button data-src="'+document.location.origin+ '/images/orderServices/'+item.image_invoice+'" data-image="'+item.id+'" '+
+                            ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
+*/
                     }
 
                     //return '<img data-image src="'+document.location.origin+ '/images/entries/'+item.image+'" width="50px" height="50px">'

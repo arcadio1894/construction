@@ -135,6 +135,7 @@ class InvoiceController extends Controller
                     'entered_quantity' => $items[$i]->quantity,
                     'unit_price' => (float) round((float)$items[$i]->price,2),
                     'material_unit' => $items[$i]->unit,
+                    'total_detail' => (float) $items[$i]->total
                 ]);
             }
 
@@ -358,11 +359,29 @@ class InvoiceController extends Controller
                 }
             } else {
                 $path = public_path().'/images/entries/';
+                $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $entry->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                } else {
+                    $filename = 'pdf'.$entry->id . '.' .$extension;
+                    $request->file('image')->move($path, $filename);
+                    $entry->image = $filename;
+                    $entry->save();
+                }
+                /*$extension = $request->file('image')->getClientOriginalExtension();
                 $filename = $entry->id . '.' . $extension;
                 $request->file('image')->move($path, $filename);
                 $entry->image = $filename;
-                $entry->save();
+                $entry->save();*/
             }
             DB::commit();
         } catch ( \Throwable $e ) {

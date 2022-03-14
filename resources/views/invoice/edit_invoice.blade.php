@@ -125,9 +125,14 @@
                                     </select>
                                 </div>
                                 <div class="form-group">
-                                    <label for="image">Imagen </label>
+                                    <label for="image">Imagen/PDF Factura </label>
                                     <input type="file" id="image" name="image" class="form-control">
-                                    <img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    @if ( strtoupper(substr($entry->image,-3)) == 'PDF' )
+                                        <a target="_blank" href="{{ asset('images/entries/'.$entry->image) }}" class="btn btn-outline-success float-right">Ver PDF</a>
+                                    @else
+                                        <img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    @endif
+                                    {{--<img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">--}}
                                 </div>
                             </div>
                         </div>

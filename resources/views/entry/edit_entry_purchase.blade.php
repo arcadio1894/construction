@@ -126,7 +126,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="image">Imagen </label>
+                                    <label for="image">Imagen/PDF Factura </label>
                                     <input type="file" id="image" name="image" class="form-control">
                                     @if ( substr($entry->image,-3) == 'pdf' )
                                         <a href="{{ asset('images/entries/'.$entry->image) }}" class="btn btn-outline-success float-right">Ver PDF</a>
