@@ -1,7 +1,18 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions);
-    $('#dynamic-table').DataTable( {
+    //console.log($permissions);
+    $('#dynamic-table')
+        .on( 'init.dt', function() {
+            //show nothing
+            //console.log('no access to: ' + $('.dataTables_scroll') );
+            setTimeout(function(){
+                //show element
+                //console.log('access to: ' + $('.dataTables_scroll') );
+                $(document).find('.state_order').select2({
+                    placeholder: "Seleccione",
+                });
+            }, 0);
+        }).DataTable( {
         ajax: {
             url: "/dashboard/all/order/general",
             dataSrc: 'data'
@@ -79,6 +90,43 @@ $(document).ready(function () {
                     } else {
                         return '<span class="badge bg-primary">Orden Normal</span>';
                     }
+
+                }
+            },
+            { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    var select = '';
+                    if ( item.status_order === 'stand_by' )
+                    {
+                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="stand_by" selected>Pendiente</option>' +
+                            '       <option value="send">Enviado</option>' +
+                            '       <option value="pick_up">Recogido</option>' +
+                            '</select>';
+                    }
+                    if ( item.status_order === 'send' )
+                    {
+                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="stand_by" >Pendiente</option>' +
+                            '       <option value="send" selected>Enviado</option>' +
+                            '       <option value="pick_up">Recogido</option>' +
+                            '</select>';
+                    }
+                    if ( item.status_order === 'pick_up' )
+                    {
+                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="stand_by" >Pendiente</option>' +
+                            '       <option value="send">Enviado</option>' +
+                            '       <option value="pick_up" selected>Recogido</option>' +
+                            '</select>';
+                    }
+                    return select;
 
                 }
             },
@@ -250,12 +298,15 @@ $(document).ready(function () {
         }
 
     } );
+    //$containerEl.find('[data-widget="select2"]').select2();
 
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
 
     $(document).on('click', '[data-delete]', cancelOrden);
+
+    $(document).on('select2:select', '.state_order', changeStatusOrder);
 
 });
 
@@ -308,4 +359,84 @@ function cancelOrden() {
         },
     });
 
+}
+
+function changeStatusOrder() {
+    event.preventDefault();
+    var order_id = $(this).attr('data-id');
+    var status = $(this).val();
+    //console.log(order_id);
+    //console.log(status);
+    $.ajax({
+        url: '/dashboard/order_purchase/change/status/'+order_id+'/'+status,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+        },
+    });
 }

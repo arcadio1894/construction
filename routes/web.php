@@ -749,6 +749,9 @@ Route::middleware('auth')->group(function (){
         Route::post('destroy/order/purchase/normal/{id}', 'OrderPurchaseController@destroyOrderPurchaseNormal')
             ->middleware('permission:destroy_orderPurchaseNormal');
 
+        Route::post('order_purchase/change/status/{order_id}/{status}', 'OrderPurchaseController@changeStatusOrderPurchase')
+            ->middleware('permission:update_orderPurchaseNormal');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

@@ -67,6 +67,7 @@
                 <th>Aprobado por</th>
                 <th>Moneda</th>
                 <th>Total</th>
+                <th>Estado</th>
                 <th></th>
             </tr>
             </thead>

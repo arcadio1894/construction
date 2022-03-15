@@ -210,7 +210,8 @@ class OrderPurchaseController extends Controller
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
-                'type' => 'e'
+                'type' => 'e',
+                'status_order' => 'stand_by'
             ]);
 
             $items = json_decode($request->get('items'));
@@ -697,7 +698,7 @@ class OrderPurchaseController extends Controller
                 'total' => $request->get('total_send'),
                 'type' => 'n',
                 'regularize' => ($request->has('regularize_order')) ? 'r':'nr',
-
+                'status_order' => 'stand_by'
             ]);
 
             $items = json_decode($request->get('items'));
@@ -1100,6 +1101,24 @@ class OrderPurchaseController extends Controller
         $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
 
         return $pdf->stream($name);
+    }
+
+    public function changeStatusOrderPurchase($order_id, $status)
+    {
+        DB::beginTransaction();
+        try {
+
+            $orderPurchase = OrderPurchase::find($order_id);
+            $orderPurchase->status_order = $status;
+            $orderPurchase->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Estado modificado.'], 200);
+
     }
 
 }

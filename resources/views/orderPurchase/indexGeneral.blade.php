@@ -72,6 +72,7 @@
                 <th>Moneda</th>
                 <th>Total</th>
                 <th>Tipo</th>
+                <th>Estado</th>
                 <th></th>
             </tr>
             </thead>
