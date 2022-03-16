@@ -190,8 +190,8 @@
                             <div class="col-md-4">
                                 <label for="btn-add"> Seleccione: </label><br>
                                 <button type="button" id="btn-add" class="btn btn-outline-primary">Agregar Completo <i class="fas fa-arrow-circle-right"></i></button>
-                                {{--<button type="button" id="btn-add-scrap" class="btn btn-outline-primary">Agregar Retazo <i class="fas fa-arrow-circle-right"></i></button>
-                            --}}</div>
+                                <button type="button" id="btn-add-scrap" class="btn btn-outline-primary">Agregar Retazo <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
                         </div>
                         <hr>
 
@@ -211,6 +211,7 @@
                                                     <th>Ubicación</th>
                                                     <th>Estado</th>
                                                     <th>Precio</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
@@ -221,6 +222,9 @@
                                                         <td data-location>11-7-2014</td>
                                                         <td data-state>11-7-2014</td>
                                                         <td data-price>11-7-2014</td>
+                                                        <td>
+                                                            <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                        </td>
                                                     </tr>
                                                 </template>
 
@@ -254,15 +258,30 @@
                     <h4 class="modal-title">Seleccionar items</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <div class="modal-body">
+                <div class="modal-body" >
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <label class="col-sm-12 control-label" for="material_selected"> Material </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected" name="material_selected" class="form-control" />
                             </div>
                         </div>
+                        <div class="col-md-2">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> Cantidad </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_quantity" name="material_selected_quantity" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> &nbsp;&nbsp;&nbsp; </label>
+
+                            <div class="col-sm-12">
+                                <button type="button" id="btn-request-quantity" class="btn btn-outline-primary">Pedir <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+                        </div>
+
                     </div>
                     <hr>
                     <div class="row">
@@ -271,7 +290,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive p-0" style="height: 300px;">
+                    <div id="body-items-load" class="table-responsive p-0" style="height: 300px;">
                         <table class="card-body table table-head-fixed text-nowrap">
                             <thead>
                             <tr>

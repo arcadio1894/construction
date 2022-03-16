@@ -146,4 +146,68 @@ class ItemController extends Controller
         //dd($array);
         return json_encode($array);
     }
+
+    public function getJsonItemsOutputComplete($id_material)
+    {
+        $array = [];
+        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
+            //->where('material_id', $id_material)->whereIn('state_item',['entered', 'scraped'])
+            ->where('material_id', $id_material)->whereIn('state_item',['entered'])
+            ->get();
+        foreach ( $items as $item )
+        {
+            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+            array_push($array,
+                [
+                    'id'=> $item->id,
+                    'location' => $l,
+                    'location_id' => $item->location->id,
+                    'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
+                    'material' => $item->material->full_description,
+                    'material_id' => $item->material->id,
+                    'price' => $item->material->unit_price,
+                    'state' => $item->state,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'weight' => $item->weight,
+                    'detailEntry' => $item->detailEntry->id,
+                    'percentage' => $item->percentage,
+                ]);
+        }
+        //dd($array);
+        return json_encode($array);
+    }
+
+    public function getJsonItemsOutputScraped($id_material)
+    {
+        $array = [];
+        $items = Item::with(['location', 'typescrap', 'material', 'detailEntry'])
+            //->where('material_id', $id_material)->whereIn('state_item',['entered', 'scraped'])
+            ->where('material_id', $id_material)->whereIn('state_item',['scraped'])
+            ->get();
+        foreach ( $items as $item )
+        {
+            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+            array_push($array,
+                [
+                    'id'=> $item->id,
+                    'location' => $l,
+                    'location_id' => $item->location->id,
+                    'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
+                    'material' => $item->material->full_description,
+                    'material_id' => $item->material->id,
+                    'price' => $item->material->unit_price,
+                    'state' => $item->state,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'weight' => $item->weight,
+                    'detailEntry' => $item->detailEntry->id,
+                    'percentage' => $item->percentage,
+                ]);
+        }
+        //dd($array);
+        return json_encode($array);
+    }
 }

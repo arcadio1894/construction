@@ -555,6 +555,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_request');
         Route::get('/get/users', 'UserController@getUsers2');
         Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput');
+        Route::get('/get/items/output/complete/{id_material}', 'ItemController@getJsonItemsOutputComplete');
+        Route::get('/get/items/output/scraped/{id_material}', 'ItemController@getJsonItemsOutputScraped');
         Route::post('output_request/store', 'OutputController@storeOutputRequest')
             ->name('output.request.store')
             ->middleware('permission:create_request');

@@ -329,10 +329,10 @@ function rand_code($caracteres, $longitud){
 }
 
 function deleteItem() {
-    //console.log($(this).parent().parent().parent());
-    $(this).parent().parent().remove();
     var materialId = $(this).data('delete');
     $items = $items.filter(material => material.id !== materialId);
+    //console.log($(this).parent().parent().parent());
+    $(this).parent().parent().remove();
     updateSummaryInvoice();
 }
 
