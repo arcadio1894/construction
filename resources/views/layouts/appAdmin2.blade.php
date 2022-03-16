@@ -952,6 +952,25 @@
                     </li>
                     @endcan
 
+                    <li class="nav-header">MATERIAL EN ORD. EJEC.</li>
+                    <li class="nav-item has-treeview @yield('openExecutionsAlmacen')">
+                        <a href="#" class="nav-link @yield('activeExecutionsAlmacen')">
+                            <i class="nav-icon fas fa-hammer"></i>
+                            <p>
+                                Órdenes de ejecución
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="{{ route('order.execution.almacen') }}" class="nav-link @yield('activeListExecutionsAlmacen')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar Ordenes</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
                     @can('list_orderExecution')
                         <li class="nav-header">ORDENES EJECUCIÓN</li>
                         <li class="nav-item has-treeview @yield('openOrderExecutions')">

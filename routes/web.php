@@ -698,6 +698,13 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_orderExecution');
         Route::get('/all/order/execution/finish', 'OrderExecutionController@getAllOrderExecutionFinished');
 
+        // Ordenes de ejecucion para almacen
+        Route::get('/materiales/ordenes/ejecución', 'OrderExecutionController@indexExecutionAlmacen')
+            ->name('order.execution.almacen');
+            //->middleware('permission:list_orderExecution');
+        Route::get('/get/json/materials/quote/almacen/{quote_id}', 'OrderExecutionController@getJsonMaterialsQuoteForAlmacen');
+
+
         // ORDER PURCHASE
         Route::get('ordenes/compra/general', 'OrderPurchaseController@indexOrderPurchaseExpressAndNormal')
             ->name('order.purchase.general.index')
