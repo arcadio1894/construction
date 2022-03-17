@@ -703,6 +703,7 @@ Route::middleware('auth')->group(function (){
             ->name('order.execution.almacen');
             //->middleware('permission:list_orderExecution');
         Route::get('/get/json/materials/quote/almacen/{quote_id}', 'OrderExecutionController@getJsonMaterialsQuoteForAlmacen');
+        Route::get('/get/json/materials/order/execution/almacen/{code_execution}', 'OrderExecutionController@getJsonMaterialsByQuoteExecutionForAlmacen');
 
 
         // ORDER PURCHASE

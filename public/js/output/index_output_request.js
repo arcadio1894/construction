@@ -82,11 +82,13 @@ $(document).ready(function () {
                 {
                     if (item.state === 'attended' || item.state === 'confirmed')
                     {
-                        return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        return '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
                     }
-                    return '<button data-toggle="tooltip" data-placement="top" title="Ver materiales" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  '+
+                    return '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  '+
                         '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                         '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
                 }
@@ -305,6 +307,10 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-itemDelete]', deletePartialOutput);
 
+    $(document).on('click', '[data-materials]', showMaterialsInQuote);
+
+    $modalItemsMaterials = $('#modalItemsMaterials');
+
     $('body').tooltip({
         selector: '[data-toggle]'
     });
@@ -331,6 +337,59 @@ let $modalAddItems;
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+let $modalItemsMaterials;
+
+function showMaterialsInQuote() {
+    $modalItemsMaterials.find('[id=code_quote]').html('');
+    $('#table-items-quote').html('');
+    $('#table-consumables-quote').html('');
+    var code_execution = $(this).data('materials');
+    $.ajax({
+        url: "/dashboard/get/json/materials/order/execution/almacen/"+code_execution,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //
+            for (var i=0; i<json.arrayMaterials.length; i++)
+            {
+                renderTemplateMaterialQuote(json.arrayMaterials[i].id, json.arrayMaterials[i].code, json.arrayMaterials[i].material, json.arrayMaterials[i].length, json.arrayMaterials[i].width, json.arrayMaterials[i].percentage, json.arrayMaterials[i].quantity);
+                //$materials.push(json[i].material);
+            }
+
+            for (var j=0; j<json.arrayConsumables.length; j++)
+            {
+                renderTemplateConsumableQuote(json.arrayConsumables[j].id, json.arrayConsumables[j].code, json.arrayConsumables[j].material, json.arrayConsumables[j].quantity);
+                //$materials.push(json[i].material);
+            }
+            $modalItemsMaterials.find('[id=code_quote]').html(json.quote.code);
+        }
+    });
+
+    $modalItemsMaterials.modal('show');
+}
+
+function renderTemplateMaterialQuote(id, code, material, length, width, percentage, quantity) {
+    var clone = activateTemplate('#template-item-quote');
+
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+
+    $('#table-items-quote').append(clone);
+}
+
+function renderTemplateConsumableQuote(id, code, material, cantidad) {
+    var clone = activateTemplate('#template-consumable-quote');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = cantidad;
+    $('#table-consumables-quote').append(clone);
+}
 
 function showModalDeleteTotal() {
     var output_id = $(this).data('deletetotal');

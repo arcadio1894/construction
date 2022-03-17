@@ -121,4 +121,67 @@ class OrderExecutionController extends Controller
 
         return json_encode(['arrayMaterials'=>$arrayMaterials, 'arrayConsumables'=>$arrayConsumables]);
     }
+
+    public function getJsonMaterialsByQuoteExecutionForAlmacen( $code_execution )
+    {
+        $arrayMaterials = [];
+        $arrayConsumables = [];
+        $consumables_quantity = [];
+        $quote = Quote::where('order_execution', $code_execution)
+            ->where('state_active', 'open')->first();
+        //TODO: Obtencion de los materiales de la cotizacion
+        $equipments = Equipment::where('quote_id', $quote->id)->get();
+        if ( isset($equipments) )
+        {
+            foreach ( $equipments as $equipment) {
+                $materials = EquipmentMaterial::with('material')
+                    ->where('equipment_id', $equipment->id)
+                    ->get();
+                foreach ( $materials as $key => $material )
+                {
+                    array_push($arrayMaterials,
+                        [
+                            'id'=> $key+1,
+                            'code' => $material->material->code,
+                            'material' => $material->material->full_description,
+                            'length' => $material->length,
+                            'width' => $material->width,
+                            'percentage' => $material->percentage,
+                            'quantity' => $equipment->quantity
+                        ]);
+                }
+            }
+
+            foreach ( $equipments as $equipment) {
+                $consumables = EquipmentConsumable::with('material')
+                    ->where('equipment_id', $equipment->id)
+                    ->get();
+                foreach ( $consumables as $key => $consumable )
+                {
+                    array_push($consumables_quantity,
+                        [
+                            'id'=> $key+1,
+                            'material_id' => $consumable->material->id,
+                            'code' => $consumable->material->code,
+                            'material' => $consumable->material->full_description,
+                            'quantity' => $consumable->quantity*$equipment->quantity,
+                        ]);
+                }
+            }
+
+            $new_arr2 = array();
+            foreach($consumables_quantity as $item) {
+                if(isset($new_arr2[$item['material_id']])) {
+                    $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                    continue;
+                }
+
+                $new_arr2[$item['material_id']] = $item;
+            }
+
+            $arrayConsumables = array_values($new_arr2);
+        }
+
+        return json_encode(['quote'=>$quote,'arrayMaterials'=>$arrayMaterials, 'arrayConsumables'=>$arrayConsumables]);
+    }
 }
