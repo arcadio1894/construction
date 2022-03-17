@@ -534,6 +534,12 @@ Route::middleware('auth')->group(function (){
         Route::post('/add/materials/entry/{id_entry}', 'EntryController@addDetailOfEntry')
             ->middleware('permission:destroy_entryPurchase');
 
+        // Crear retazos en almacen
+        Route::get('/crear/retazos/materiales', 'EntryController@indexScrapsMaterials')
+            ->name('entry.create.scrap')
+            ->middleware('permission:create_entryScrap');
+
+
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
             ->name('output.request.index')

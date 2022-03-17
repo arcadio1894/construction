@@ -947,6 +947,12 @@
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('entry.create.scrap') }}" class="nav-link @yield('activeCreateScrap')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear retazos</p>
+                                </a>
+                            </li>
                             @endcan
                         </ul>
                     </li>
