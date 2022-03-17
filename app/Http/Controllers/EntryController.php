@@ -489,7 +489,7 @@ class EntryController extends Controller
                 } else {
                     $filename = 'pdf'.$entry->id . '.' .$extension;
                     $request->file('imageOb')->move($path, $filename);
-                    $entry->image = $filename;
+                    $entry->imageOb = $filename;
                     $entry->save();
                 }
                 //$filename = $entry->id . '.jpg';
