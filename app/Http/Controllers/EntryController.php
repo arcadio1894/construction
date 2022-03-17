@@ -315,7 +315,7 @@ class EntryController extends Controller
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         // TODO: Poner dias
                         $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
-                        $credit->supplier_id = $entry->date_entry;
+                        $credit->supplier_id = $entry->supplier_id;
                         $credit->invoice = $entry->invoice;
                         $credit->image_invoice = $entry->image;
                         $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
@@ -522,7 +522,7 @@ class EntryController extends Controller
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         // TODO:poner dias
                         $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
-                        $credit->supplier_id = $entry->date_entry;
+                        $credit->supplier_id = $entry->supplier_id;
                         $credit->invoice = $entry->invoice;
                         $credit->image_invoice = $entry->image;
                         $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
