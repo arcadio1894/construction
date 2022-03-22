@@ -98,9 +98,10 @@ class EntryScrapsController extends Controller
                 //TODO: Vamos a crear un item y luego modificamos el itemSelected
                 //TODO: Nuevo Item
                 $new_code = $this->generateRandomString(25);
+                $areaComplete = round($typescrapSelected->length*$typescrapSelected->width,2);
                 $areaOriginal = round($length * $width, 2);
                 $areaScrap = round($length_new * $width_new, 2);
-                $percentage_new = round($areaScrap/$areaOriginal, 2);
+                $percentage_new = round($areaScrap/$areaComplete, 2);
                 $price_new = round($price * $percentage_new, 2);
 
                 $areaOld = 0;
@@ -112,8 +113,8 @@ class EntryScrapsController extends Controller
                 if ( $blockAncho == 1 )
                 {
                     $areaOld = round(($itemSelected->length - $length_new) * ($itemSelected->width), 2);
-                    $percentage_old = round($areaOld/$areaOriginal, 2);
-                    $price_old = round($price * $percentage_new, 2);
+                    $percentage_old = round($areaOld/$areaComplete, 2);
+                    $price_old = round($price * $percentage_old, 2);
 
                     $length_old = round($itemSelected->length - $length_new, 2);
                     $width_old = round($itemSelected->width, 2);
@@ -122,8 +123,8 @@ class EntryScrapsController extends Controller
                 if ( $blockLargo == 1 )
                 {
                     $areaOld = round(($itemSelected->length) * ($itemSelected->width - $width_new), 2);
-                    $percentage_old = round($areaOld/$areaOriginal, 2);
-                    $price_old = round($price * $percentage_new, 2);
+                    $percentage_old = round($areaOld/$areaComplete, 2);
+                    $price_old = round($price * $percentage_old, 2);
 
                     $length_old = round($itemSelected->length, 2);
                     $width_old = round($itemSelected->width - $width_new, 2);
