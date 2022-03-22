@@ -535,10 +535,16 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_entryPurchase');
 
         // Crear retazos en almacen
-        Route::get('/crear/retazos/materiales', 'EntryController@indexScrapsMaterials')
+        Route::get('/crear/retazos/materiales', 'EntryScrapsController@indexScrapsMaterials')
             ->name('entry.create.scrap')
             ->middleware('permission:create_entryScrap');
-
+        Route::get('/get/json/index/materials/scrap', 'EntryScrapsController@getJsonIndexMaterialsScraps');
+        Route::get('/ver/items/material/{material_id}', 'EntryScrapsController@showItemsByMaterial')
+            ->middleware('permission:create_entryScrap');
+        Route::get('/get/json/index/items/material/{material_id}', 'EntryScrapsController@getJsonIndexItemsMaterial');
+        Route::post('scrap/store', 'EntryScrapsController@storeScrap')
+            ->name('scrap.store')
+            ->middleware('permission:create_entryScrap');
 
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
