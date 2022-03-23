@@ -161,7 +161,27 @@ function saveTableItems() {
         if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
         {
             $items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
-            renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
+            renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
+        } else {
+            toastr.error('Este item ya fue ingresado. Elija otro', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
         }
     }
 
@@ -272,6 +292,9 @@ function addItems() {
     });
 
     console.log($itemsComplete);
+
+    $('#material_selected_quantity').val('');
+    $modalAddItems.find('[id=show_btn_request_quantity]').show();
 
     $modalAddItems.modal('show');
 
@@ -436,7 +459,8 @@ function addItemsScrap() {
     $modalAddItems.find('[id=material_selected]').val(material_name);
     $modalAddItems.find('[id=material_selected]').prop('disabled', true);
     $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', true);
-
+    $modalAddItems.find('[id=show_btn_request_quantity]').hide();
+    $('#material_selected_quantity').val('');
     $('#body-items').html('');
 
     $("#body-items-load").LoadingOverlay("show", {
@@ -488,13 +512,14 @@ function deleteItem() {
     $(this).parent().parent().remove();
 }
 
-function renderTemplateMaterial(material, item, location, state, price, id) {
+function renderTemplateMaterial(material, item, location, state, price, id, length, width) {
     var clone = activateTemplate('#materials-selected');
     clone.querySelector("[data-description]").innerHTML = material;
     clone.querySelector("[data-item]").innerHTML = item;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = state;
     clone.querySelector("[data-price]").innerHTML = price;
+    clone.querySelector("[data-state]").innerHTML = state;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
     clone.querySelector("[data-delete]").setAttribute('data-delete', id);
     $('#body-materials').append(clone);
 }

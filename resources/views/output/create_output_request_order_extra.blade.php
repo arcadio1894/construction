@@ -208,9 +208,10 @@
                                                 <tr>
                                                     <th>Material</th>
                                                     <th>Item</th>
-                                                    <th>Ubicación</th>
-                                                    <th>Estado</th>
                                                     <th>Precio</th>
+                                                    <th>Estado</th>
+                                                    <th>Largo</th>
+                                                    <th>Ancho</th>
                                                     <th>Acciones</th>
                                                 </tr>
                                             </thead>
@@ -219,9 +220,10 @@
                                                     <tr>
                                                         <td data-description>John Doe</td>
                                                         <td data-item>John Doe</td>
-                                                        <td data-location>11-7-2014</td>
-                                                        <td data-state>11-7-2014</td>
                                                         <td data-price>11-7-2014</td>
+                                                        <td data-state>11-7-2014</td>
+                                                        <td data-length>11-7-2014</td>
+                                                        <td data-width>11-7-2014</td>
                                                         <td>
                                                             <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                                         </td>
@@ -274,7 +276,7 @@
                                 <input type="text" id="material_selected_quantity" name="material_selected_quantity" class="form-control" />
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" id="show_btn_request_quantity">
                             <label class="col-sm-12 control-label" for="material_selected_quantity"> &nbsp;&nbsp;&nbsp; </label>
 
                             <div class="col-sm-12">
