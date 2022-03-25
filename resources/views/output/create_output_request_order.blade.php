@@ -234,8 +234,10 @@
                                 </div>
                             </div>--}}
                             <div class="col-md-4">
-                                <label for="btn-add"> &nbsp; </label>
-                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button></div>
+                                <label for="btn-add"> Seleccione: </label><br>
+                                <button type="button" id="btn-add" class="btn btn-outline-primary">Agregar Completo <i class="fas fa-arrow-circle-right"></i></button>
+                                <button type="button" id="btn-add-scrap" class="btn btn-outline-primary">Agregar Retazo <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
                         </div>
                         <hr>
 
@@ -252,9 +254,11 @@
                                                 <tr>
                                                     <th>Material</th>
                                                     <th>Item</th>
-                                                    <th>Ubicación</th>
-                                                    <th>Estado</th>
                                                     <th>Precio</th>
+                                                    <th>Estado</th>
+                                                    <th>Largo</th>
+                                                    <th>Ancho</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
@@ -262,9 +266,13 @@
                                                     <tr>
                                                         <td data-description>John Doe</td>
                                                         <td data-item>John Doe</td>
-                                                        <td data-location>11-7-2014</td>
-                                                        <td data-state>11-7-2014</td>
                                                         <td data-price>11-7-2014</td>
+                                                        <td data-state>11-7-2014</td>
+                                                        <td data-length>11-7-2014</td>
+                                                        <td data-width>11-7-2014</td>
+                                                        <td>
+                                                            <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                        </td>
                                                     </tr>
                                                 </template>
 
@@ -300,11 +308,25 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <label class="col-sm-12 control-label" for="material_selected"> Material </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected" name="material_selected" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> Cantidad </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_quantity" name="material_selected_quantity" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2" id="show_btn_request_quantity">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> &nbsp;&nbsp;&nbsp; </label>
+
+                            <div class="col-sm-12">
+                                <button type="button" id="btn-request-quantity" class="btn btn-outline-primary">Pedir <i class="fas fa-arrow-circle-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -324,6 +346,7 @@
                                 <th>Ubicación</th>
                                 <th>Largo</th>
                                 <th>Ancho</th>
+                                <th>Peso</th>
                                 <th>Precio</th>
                                 <th>Selección</th>
                             </tr>
@@ -339,6 +362,7 @@
                                     <td data-location>John Doe</td>
                                     <td data-length>11-7-2014</td>
                                     <td data-width>11-7-2014</td>
+                                    <td data-weight>11-7-2014</td>
                                     <td data-price>11-7-2014</td>
                                     <td>
                                         <div class="icheck-success d-inline">

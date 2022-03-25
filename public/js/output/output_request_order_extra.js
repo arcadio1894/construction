@@ -514,28 +514,52 @@ function deleteItem() {
 
 function renderTemplateMaterial(material, item, location, state, price, id, length, width) {
     var clone = activateTemplate('#materials-selected');
-    clone.querySelector("[data-description]").innerHTML = material;
-    clone.querySelector("[data-item]").innerHTML = item;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-state]").innerHTML = state;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-delete]").setAttribute('data-delete', id);
-    $('#body-materials').append(clone);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-description]").innerHTML = material;
+        clone.querySelector("[data-item]").innerHTML = item;
+        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-state]").innerHTML = state;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-delete]").setAttribute('data-delete', id);
+        $('#body-materials').append(clone);
+    } else {
+        clone.querySelector("[data-description]").innerHTML = material;
+        clone.querySelector("[data-item]").innerHTML = item;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-state]").innerHTML = state;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-delete]").setAttribute('data-delete', id);
+        $('#body-materials').append(clone);
+    }
 }
 
 function renderTemplateItem(i, code, location, length, width, weight, price, id) {
     var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-id]").innerHTML = i;
-    clone.querySelector("[data-serie]").innerHTML = code;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-selected]").setAttribute('data-selected', id);
-    clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
-    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-id]").innerHTML = i;
+        clone.querySelector("[data-serie]").innerHTML = code;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-weight]").innerHTML = weight;
+        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-selected]").setAttribute('data-selected', id);
+        clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
+        clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+    } else {
+        clone.querySelector("[data-id]").innerHTML = i;
+        clone.querySelector("[data-serie]").innerHTML = code;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-weight]").innerHTML = weight;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-selected]").setAttribute('data-selected', id);
+        clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
+        clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+    }
     $('#body-items').append(clone);
 }
 
