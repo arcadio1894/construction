@@ -46,9 +46,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de items</h5>
-    {{--@can('create_entryScrap')
-    <a href="{{ route('entry.scrap.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo ingreso </a>
-    @endcan--}}
+    @can('create_entryScrap')
+    <button id="btn-newscrap" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo retazo </button>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -211,6 +211,135 @@
                     <button type="button" id="btn-submit" class="btn btn-success">Guardar retazos</button>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                 </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalCreateNewScrap" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Nuevo retazo</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <form id="formNewScrap" data-url="{{ route('store.new.scrap') }}">
+                    @csrf
+                    <div class="modal-body table-responsive">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                    <strong>Importante!</strong> Ingrese las medidas correctas. Este item se agregará al stock de los materiales.
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-md-9" id="name_material_nuevo">
+                                <input type="hidden" id="material_id_nuevo" name="material_id_nuevo">
+                                <label class="col-sm-12 control-label" for="material_nuevo"> Material </label>
+
+                                <div class="col-sm-12">
+                                    <input type="text" id="material_nuevo" name="material_nuevo" class="form-control form-control-sm" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-3" id="price_material">
+                                <label class="col-sm-12 control-label" for="price_nuevo"> Precio en BD </label>
+
+                                <div class="col-sm-12">
+                                    <input type="text" id="price_nuevo" name="price_nuevo" class="form-control form-control-sm" readonly />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row form-group">
+                            <input type="hidden" id="typescrap_nuevo" name="typescrap_nuevo">
+                            <div class="col-md-4" id="code_item">
+                                <label class="col-sm-12 control-label" for="code_nuevo"> Código </label>
+
+                                <div class="col-sm-12">
+                                    <input type="text" id="code_nuevo" name="code_nuevo" class="form-control form-control-sm" readonly />
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="length_item_nuevo">
+                                <label class="col-sm-12 control-label" for="length_nuevo"> Largo Total (mm) </label>
+
+                                <div class="col-sm-12">
+                                    {{--<input type="text" id="length" name="length" class="form-control" readonly />--}}
+                                    <div class="input-group">
+                                        <input type="text" id="length_nuevo" name="length_nuevo" class="form-control form-control-sm" readonly >
+                                        {{--<div class="input-group-append" id="show-block-length">
+                                            <button data-toggle="tooltip" data-placement="top" title="Desbloqueado" class="btn btn-success btn-sm" type="button" id="btb-block-length"><i class="fa fa-lock-open"></i></button>
+                                        </div>--}}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="width_item_nuevo">
+                                <label class="col-sm-12 control-label" for="width_nuevo"> Ancho Total (mm) </label>
+
+                                <div class="col-sm-12">
+                                    {{--<input type="text" id="width" name="width" class="form-control" readonly />--}}
+                                    <div class="input-group">
+                                        <input type="text" id="width_nuevo" name="width_nuevo" class="form-control form-control-sm" readonly >
+                                        {{--<div class="input-group-append" id="show-block-width">
+                                            <button data-toggle="tooltip" data-placement="top" title="Desbloqueado" class="btn btn-success btn-sm" type="button" id="btb-block-width"><i class="fa fa-lock-open"></i></button>
+                                        </div>--}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12" >
+                                <label class="col-sm-12 control-label"> Ingrese las nuevas longitudes </label>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3" id="length_new_item_nuevo">
+                                <label class="col-sm-12 control-label" for="length_new_nuevo"> Largo (mm) </label>
+
+                                <div class="col-sm-12">
+                                    <input type="number" id="length_new_nuevo" min="0" name="length_new_nuevo" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+                            <div class="col-md-3" id="width_new_item_nuevo">
+                                <label class="col-sm-12 control-label" for="width_new_nuevo"> Ancho (mm) </label>
+
+                                <div class="col-sm-12">
+                                    <input type="number" id="width_new_nuevo" min="0" name="width_new_nuevo" class="form-control form-control-sm" />
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="col-sm-12 control-label"> Ubicación</label>
+
+                                <div class="col-sm-12">
+                                    <select name="location_nuevo" class="form-control form-control-sm location select2" data-location style="width: 100%;">
+                                        <option></option>
+
+                                    </select>
+                                </div>
+
+                            </div>
+                            <div class="col-md-3">
+                                <label class="col-sm-12 control-label"> Estado </label>
+
+                                <div class="col-sm-12">
+                                    <select name="state_nuevo" class="form-control form-control-sm state select2" data-state style="width: 100%;">
+                                        <option value="good" selected> Buen estado </option>
+                                        <option value="bad"> Mal estado </option>
+                                    </select>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" id="btn-submit-new" class="btn btn-success">Guardar retazo</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                    </div>
                 </form>
             </div>
         </div>

@@ -323,4 +323,143 @@ class EntryScrapsController extends Controller
         }
         return $randomString;
     }
+
+    public function getJsonDataMaterial( $material_id )
+    {
+        $material = Material::with('typeScrap')
+            ->find($material_id);
+        return json_encode($material);
+    }
+
+    public function storeNewScrap( Request $request )
+    {
+        //dd($request);
+        $material_id = (int)$request->get('material_id_nuevo');
+        $material = $request->get('material_nuevo');
+        $price = (float)$request->get('price_nuevo');
+        $typescrap = (int)$request->get('typescrap_nuevo');
+        $code = $request->get('code_nuevo');
+        $length = (float)$request->get('length_nuevo'); // Medida original
+        $width = (float)$request->get('width_nuevo');// Medida original
+        $length_new = ($request->get('length_new_nuevo') == null) ? 0:(float)$request->get('length_new_nuevo');
+        $width_new = ($request->get('width_new_nuevo') == null) ? 0:(float)$request->get('width_new_nuevo');
+        $location = ($request->get('location_nuevo') == null) ? 1:$request->get('location_nuevo');
+        $state = $request->get('state_nuevo');
+
+        // TODO: CHECKAR CUADNO SACAN UNA PARTE DE TODO EL LARGO O ANCHO PORQUE QUEDA CERO
+        DB::beginTransaction();
+        try {
+
+            if ( $typescrap == 1 || $typescrap == 2 )
+            {
+                if ( $length_new == 0 || $width_new == 0 )
+                {
+                    return response()->json(['message' => 'Ingrese el largo o ancho mayor a cero'], 422);
+                }
+            }
+
+            if ( $typescrap == 3 )
+            {
+                if ( $length_new == 0 )
+                {
+                    return response()->json(['message' => 'Ingrese el largo mayor a cero'], 422);
+                }
+            }
+
+            if ( $typescrap == 1 || $typescrap == 2 )
+            {
+                $materialSelected = Material::find($material_id);
+                $typescrapSelected = Typescrap::find($typescrap);
+
+                //TODO: Vamos a crear un item y luego modificamos el itemSelected
+                //TODO: Nuevo Item
+                $new_code = $code;
+                $areaComplete = round($typescrapSelected->length*$typescrapSelected->width,2);
+                $areaScrap = round($length_new * $width_new, 2);
+                $percentage_new = round($areaScrap/$areaComplete, 2);
+                $price_new = round($price * $percentage_new, 2);
+
+                // TODO: Sumamos el stock
+                $materialSelected->stock_current = $materialSelected->stock_current + $percentage_new;
+                $materialSelected->save();
+
+                // TODO: Creamos la entrada y el item
+                $entry = Entry::create([
+                    'entry_type' => "Retacería",
+                    'date_entry' => Carbon::now(),
+                    'finance' => false
+                ]);
+                $detail_entry = DetailEntry::create([
+                    'entry_id' => $entry->id,
+                    'material_id' => $material_id,
+                ]);
+
+                $itemNuevo = Item::create([
+                    'detail_entry_id' => $detail_entry->id,
+                    'material_id' => $materialSelected->id,
+                    'code' => $new_code,
+                    'length' => $length_new,
+                    'width' => $width_new,
+                    'weight' => 0,
+                    'price' => $price_new,
+                    'percentage' => $percentage_new,
+                    'typescrap_id' => $typescrapSelected->id,
+                    'location_id' => $location,
+                    'state' => $state,
+                    'state_item' => 'scraped',
+                ]);
+
+            }
+
+            if ( $typescrap == 3 )
+            {
+                $materialSelected = Material::find($material_id);
+                $typescrapSelected = Typescrap::find($typescrap);
+
+                //TODO: Nuevo Item
+                $new_code = $code;
+                $areaScrap = round($length_new, 2);
+                $percentage_new = round($areaScrap/$typescrapSelected->length, 2);
+                $price_new = round($price * $percentage_new, 2);
+
+                // TODO: Sumamos el stock
+                $materialSelected->stock_current = $materialSelected->stock_current + $percentage_new;
+                $materialSelected->save();
+
+                // TODO: Creamos la entrada y el item
+                $entry = Entry::create([
+                    'entry_type' => "Retacería",
+                    'date_entry' => Carbon::now(),
+                    'finance' => false
+                ]);
+                $detail_entry = DetailEntry::create([
+                    'entry_id' => $entry->id,
+                    'material_id' => $material_id,
+                ]);
+
+                $itemNuevo = Item::create([
+                    'detail_entry_id' => $detail_entry->id,
+                    'material_id' => $materialSelected->id,
+                    'code' => $new_code,
+                    'length' => $length_new,
+                    'width' => 0,
+                    'weight' => 0,
+                    'price' => $price_new,
+                    'percentage' => $percentage_new,
+                    'typescrap_id' => $typescrapSelected->id,
+                    'location_id' => $location,
+                    'state' => $state,
+                    'state_item' => 'scraped',
+                ]);
+
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Retazo guardado con éxito.'], 200);
+
+    }
 }

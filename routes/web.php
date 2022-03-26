@@ -545,6 +545,10 @@ Route::middleware('auth')->group(function (){
         Route::post('scrap/store', 'EntryScrapsController@storeScrap')
             ->name('scrap.store')
             ->middleware('permission:create_entryScrap');
+        Route::post('store/new/scrap', 'EntryScrapsController@storeNewScrap')
+            ->name('store.new.scrap')
+            ->middleware('permission:create_entryScrap');
+        Route::get('/get/data/material/scrap/{material_id}', 'EntryScrapsController@getJsonDataMaterial');
 
         // OUTPUT
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')

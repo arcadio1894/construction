@@ -346,6 +346,11 @@ $(document).ready(function () {
     $btnBlockLength.on('click', blockLength);
     $btnBlockWidth.on('click', blockWidth);
 
+    $modalCreateNewScrap = $('#modalCreateNewScrap');
+    $formNewScrap = $('#formNewScrap');
+    $('#btn-newscrap').on('click', showModalNewScrap);
+    $('#btn-submit-new').on('click', saveNewScrap);
+
 });
 
 var $btnBlockLength;
@@ -355,11 +360,225 @@ let $blobkWidth = 0;
 
 let $formScrap;
 
+let $formNewScrap;
+
 let $modalCreateScrap;
+
+let $modalCreateNewScrap;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function saveNewScrap() {
+    $("#btn-submit-new").attr("disabled", true);
+
+    var typescrap_nuevo = $('#typescrap_nuevo');
+
+    if ( typescrap_nuevo == 1 || typescrap_nuevo == 2 )
+    {
+        if( $('#length_new_nuevo').val().trim() === '' || $('#length_new_nuevo').val()<0 )
+        {
+            toastr.error('Debe ingresar una longitud', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $("#btn-submit-new").attr("disabled", true);
+            return;
+        }
+
+        if( $('#width_new_nuevo').val().trim() === '' || $('#width_new_nuevo').val()<0 )
+        {
+            toastr.error('Debe ingresar un ancho', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $("#btn-submit-new").attr("disabled", true);
+            return;
+        }
+    }
+
+    if ( typescrap_nuevo == 3 )
+    {
+        if( $('#length_new_nuevo').val().trim() === '' || $('#length_new_nuevo').val()<0 )
+        {
+            toastr.error('Debe ingresar una longitud', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $("#btn-submit-new").attr("disabled", true);
+            return;
+        }
+    }
+
+    var createUrl = $formNewScrap.data('url');
+    var formulario = $('#formNewScrap')[0];
+    var form = new FormData(formulario);
+
+    $.ajax({
+        url: createUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-submit-new").attr("disabled", false);
+                //location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+            $("#btn-submit-new").attr("disabled", false);
+        },
+    });
+}
+
+function showModalNewScrap() {
+    var material_id = $('#material_id').val();
+    //console.log(material_id);
+    $.ajax({
+        url: "/dashboard/get/data/material/scrap/"+material_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //console.log(json); type_scrap
+            $modalCreateNewScrap.find('[id=material_id_nuevo]').val(json.id);
+            $modalCreateNewScrap.find('[id=material_nuevo]').val(json.full_description);
+            $modalCreateNewScrap.find('[id=price_nuevo]').val(json.unit_price);
+            $modalCreateNewScrap.find('[id=typescrap_nuevo]').val(json.type_scrap.id);
+            $modalCreateNewScrap.find('[id=code_nuevo]').val(rand_code($caracteres, $longitud));
+            $modalCreateNewScrap.find('[id=length_nuevo]').val(json.type_scrap.length);
+            $modalCreateNewScrap.find('[id=width_nuevo]').val(json.type_scrap.width);
+
+            if ( json.type_scrap.id == 1 || json.type_scrap.id == 2 )
+            {
+                $('#length_item_nuevo').show();
+                $('#width_item_nuevo').show();
+                $('#length_new_item_nuevo').show();
+                $('#width_new_item_nuevo').show();
+            }
+
+            if ( json.type_scrap.id == 3 )
+            {
+                $('#length_item_nuevo').show();
+                $('#width_item_nuevo').hide();
+                $('#length_new_item_nuevo').show();
+                $('#width_new_item_nuevo').hide();
+            }
+
+            $('#length_new_nuevo').removeAttr('readonly');
+            $('#width_new_nuevo').removeAttr('readonly');
+            $('#length_new_nuevo').val('');
+            $('#width_new_nuevo').val('');
+
+            $modalCreateNewScrap.modal('show');
+
+        }
+    });
+}
 
 function blockLength() {
     $blobkLength = 1;
