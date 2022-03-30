@@ -907,6 +907,17 @@ Route::middleware('auth')->group(function (){
         Route::post('paymentDeadline/destroy', 'PaymentDeadlineController@destroy')
             ->name('paymentDeadline.destroy')
             ->middleware('permission:destroy_paymentDeadline');
+
+        // FOLLOW MATERIALS
+        Route::get('/get/follow/material/{material_id}', 'FollowMaterialController@getFollowMaterial');
+        Route::get('/follow/material/{material_id}', 'FollowMaterialController@followMaterial');
+        Route::get('/unfollow/material/{material_id}', 'FollowMaterialController@unfollowMaterial');
+        Route::get('/seguimiento/materiales', 'FollowMaterialController@index')
+            ->name('follow.index')
+            ->middleware('permission:list_followMaterials');
+        Route::get('/get/json/follow/material', 'FollowMaterialController@getJsonFollowMaterials');
+        Route::post('/dejar/seguir/{follow_id}', 'FollowMaterialController@unFollowMaterialUser');
+
     });
 });
 
