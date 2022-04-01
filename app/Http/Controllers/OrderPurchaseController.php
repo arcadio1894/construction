@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\FollowMaterial;
 use App\Http\Requests\StoreOrderPurchaseRequest;
 use App\MaterialOrder;
 use App\MaterialTaken;
+use App\Notification;
+use App\NotificationUser;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
@@ -224,6 +227,50 @@ class OrderPurchaseController extends Controller
                     'quantity' => (float) $items[$i]->quantity,
                     'price' => (float) $items[$i]->price,
                 ]);
+
+                // TODO: Revisamos si hay un material en seguimiento y creamos
+                // TODO: la notificacion y cambiamos el estado
+                $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                    ->get();
+                if ( isset($follows) )
+                {
+                    // TODO: Creamos notificacion y cambiamos el estado
+                    // Crear notificacion
+                    $notification = Notification::create([
+                        'content' => 'El material ' . $orderPurchaseDetail->material->full_description . ' ha sido pedido.',
+                        'reason_for_creation' => 'follow_material',
+                        'user_id' => Auth::user()->id,
+                        'url_go' => route('follow.index')
+                    ]);
+
+                    // Roles adecuados para recibir esta notificación admin, logistica
+                    $users = User::role(['admin', 'operator'])->get();
+                    foreach ( $users as $user )
+                    {
+                        $followUsers = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                            ->where('user_id', $user->id)
+                            ->get();
+                        if ( isset($followUsers) )
+                        {
+                            foreach ( $user->roles as $role )
+                            {
+                                NotificationUser::create([
+                                    'notification_id' => $notification->id,
+                                    'role_id' => $role->id,
+                                    'user_id' => $user->id,
+                                    'read' => false,
+                                    'date_read' => null,
+                                    'date_delete' => null
+                                ]);
+                            }
+                        }
+                    }
+                    foreach ( $follows as $follow )
+                    {
+                        $follow->state = 'in_order';
+                        $follow->save();
+                    }
+                }
 
                 $total = $orderPurchaseDetail->quantity*$orderPurchaseDetail->price;
                 $subtotal = $total / 1.18;
@@ -711,6 +758,50 @@ class OrderPurchaseController extends Controller
                     'quantity' => (float) $items[$i]->quantity,
                     'price' => (float) $items[$i]->price,
                 ]);
+
+                // TODO: Revisamos si hay un material en seguimiento y creamos
+                // TODO: la notificacion y cambiamos el estado
+                $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                    ->get();
+                if ( isset($follows) )
+                {
+                    // TODO: Creamos notificacion y cambiamos el estado
+                    // Crear notificacion
+                    $notification = Notification::create([
+                        'content' => 'El material ' . $orderPurchaseDetail->material->full_description . ' ha sido pedido.',
+                        'reason_for_creation' => 'follow_material',
+                        'user_id' => Auth::user()->id,
+                        'url_go' => route('follow.index')
+                    ]);
+
+                    // Roles adecuados para recibir esta notificación admin, logistica
+                    $users = User::role(['admin', 'operator'])->get();
+                    foreach ( $users as $user )
+                    {
+                        $followUsers = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                            ->where('user_id', $user->id)
+                            ->get();
+                        if ( isset($followUsers) )
+                        {
+                            foreach ( $user->roles as $role )
+                            {
+                                NotificationUser::create([
+                                    'notification_id' => $notification->id,
+                                    'role_id' => $role->id,
+                                    'user_id' => $user->id,
+                                    'read' => false,
+                                    'date_read' => null,
+                                    'date_delete' => null
+                                ]);
+                            }
+                        }
+                    }
+                    foreach ( $follows as $follow )
+                    {
+                        $follow->state = 'in_order';
+                        $follow->save();
+                    }
+                }
 
                 $total = $orderPurchaseDetail->quantity*$orderPurchaseDetail->price;
                 $subtotal = $total / 1.18;

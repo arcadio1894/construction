@@ -4,18 +4,22 @@ namespace App\Http\Controllers;
 
 use App\DetailEntry;
 use App\Entry;
+use App\FollowMaterial;
 use App\Http\Requests\StoreEntryPurchaseOrderRequest;
 use App\Http\Requests\StoreEntryPurchaseRequest;
 use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
 use App\MaterialOrder;
+use App\Notification;
+use App\NotificationUser;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
 use App\Supplier;
 use App\SupplierCredit;
 use App\Typescrap;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -180,6 +184,51 @@ class EntryController extends Controller
                     'ordered_quantity' => $count,
                     'entered_quantity' => $count,
                 ]);
+
+                // TODO: Revisamos si hay un material en seguimiento y creamos
+                // TODO: la notificacion y cambiamos el estado
+                $follows = FollowMaterial::where('material_id', $id_material)
+                    ->get();
+                if ( isset($follows) )
+                {
+                    // TODO: Creamos notificacion y cambiamos el estado
+                    // Crear notificacion
+                    $notification = Notification::create([
+                        'content' => 'El material ' . $detail_entry->material->full_description . ' ha sido ingresado.',
+                        'reason_for_creation' => 'follow_material',
+                        'user_id' => Auth::user()->id,
+                        'url_go' => route('follow.index')
+                    ]);
+
+                    // Roles adecuados para recibir esta notificación admin, logistica
+                    $users = User::role(['admin', 'operator'])->get();
+                    foreach ( $users as $user )
+                    {
+                        $followUsers = FollowMaterial::where('material_id', $detail_entry->material_id)
+                            ->where('user_id', $user->id)
+                            ->get();
+                        if ( isset($followUsers) )
+                        {
+                            foreach ( $user->roles as $role )
+                            {
+                                NotificationUser::create([
+                                    'notification_id' => $notification->id,
+                                    'role_id' => $role->id,
+                                    'user_id' => $user->id,
+                                    'read' => false,
+                                    'date_read' => null,
+                                    'date_delete' => null
+                                ]);
+                            }
+                        }
+                    }
+                    foreach ( $follows as $follow )
+                    {
+                        $follow->state = 'in_warehouse';
+                        $follow->save();
+                    }
+                }
+
                 //dd($id_material .' '. $count);
                 $total_detail = 0;
                 for ( $i=0; $i<sizeof($items); $i++ )
@@ -986,6 +1035,50 @@ class EntryController extends Controller
                     'entered_quantity' => $items[$i]->entered,
                     'isComplete' => ($items[$i]->quantity == $items[$i]->entered) ? true:false,
                 ]);
+
+                // TODO: Revisamos si hay un material en seguimiento y creamos
+                // TODO: la notificacion y cambiamos el estado
+                $follows = FollowMaterial::where('material_id', $detail_entry->material->id)
+                    ->get();
+                if ( isset($follows) )
+                {
+                    // TODO: Creamos notificacion y cambiamos el estado
+                    // Crear notificacion
+                    $notification = Notification::create([
+                        'content' => 'El material ' . $detail_entry->material->full_description . ' ha sido ingresado.',
+                        'reason_for_creation' => 'follow_material',
+                        'user_id' => Auth::user()->id,
+                        'url_go' => route('follow.index')
+                    ]);
+
+                    // Roles adecuados para recibir esta notificación admin, logistica
+                    $users = User::role(['admin', 'operator'])->get();
+                    foreach ( $users as $user )
+                    {
+                        $followUsers = FollowMaterial::where('material_id', $detail_entry->material_id)
+                            ->where('user_id', $user->id)
+                            ->get();
+                        if ( isset($followUsers) )
+                        {
+                            foreach ( $user->roles as $role )
+                            {
+                                NotificationUser::create([
+                                    'notification_id' => $notification->id,
+                                    'role_id' => $role->id,
+                                    'user_id' => $user->id,
+                                    'read' => false,
+                                    'date_read' => null,
+                                    'date_delete' => null
+                                ]);
+                            }
+                        }
+                    }
+                    foreach ( $follows as $follow )
+                    {
+                        $follow->state = 'in_warehouse';
+                        $follow->save();
+                    }
+                }
 
                 $orderPurchasesDetail = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)
                     ->where('material_id', $items[$i]->id)

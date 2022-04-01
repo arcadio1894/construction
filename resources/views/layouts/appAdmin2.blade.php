@@ -1062,7 +1062,7 @@
                         <li class="nav-header">ALERTA MATERIALES</li>
                         <li class="nav-item has-treeview @yield('openFollow')">
                             <a href="#" class="nav-link @yield('activeFollow')">
-                                <i class="nav-icon fas fa-share"></i>
+                                <i class="nav-icon fas fa-exclamation-triangle"></i>
                                 <p>
                                     Seguimiento materiales
                                     <i class="right fas fa-angle-left"></i>
