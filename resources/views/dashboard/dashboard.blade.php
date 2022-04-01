@@ -154,7 +154,7 @@
 @endsection
 
 @section('content-report')
-    @hasanyrole('logistic|admin|almacen')
+    @hasanyrole('logistic|admin|almacen|principal')
     <div class="row">
         <div class="col-md-6">
             <div class="card card-info">
