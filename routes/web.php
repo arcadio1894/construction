@@ -918,6 +918,12 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/follow/material', 'FollowMaterialController@getJsonFollowMaterials');
         Route::post('/dejar/seguir/{follow_id}', 'FollowMaterialController@unFollowMaterialUser');
 
+        // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE COMPRA
+        Route::get('/regularizar/automaticamente/entrada/compra/{entry_id}', 'EntryController@regularizeAutoOrderEntryPurchase')
+            ->middleware('permission:create_orderPurchaseExpress');
+        Route::post('store/regularize/order/purchase', 'EntryController@regularizeEntryToOrderPurchase')
+            ->name('order.purchase.regularize.store')
+            ->middleware('permission:create_orderPurchaseExpress');
     });
 });
 

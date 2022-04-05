@@ -7,6 +7,7 @@ use App\Entry;
 use App\FollowMaterial;
 use App\Http\Requests\StoreEntryPurchaseOrderRequest;
 use App\Http\Requests\StoreEntryPurchaseRequest;
+use App\Http\Requests\StoreOrderPurchaseRequest;
 use App\Http\Requests\UpdateEntryPurchaseRequest;
 use App\Item;
 use App\Material;
@@ -1291,4 +1292,200 @@ class EntryController extends Controller
 
     }
 
+    public function regularizeAutoOrderEntryPurchase( $entry_id )
+    {
+        $entry = Entry::find($entry_id);
+        $details = DetailEntry::where('entry_id', $entry_id)->get();
+        //dd($entry);
+
+        $suppliers = Supplier::all();
+
+        $users = User::all();
+
+        // TODO: WITH TRASHED
+        $maxCode = OrderPurchase::withTrashed()->max('id');
+        $maxId = $maxCode + 1;
+        //$maxCode = OrderPurchase::max('code');
+        //$maxId = (int)substr($maxCode,3) + 1;
+        $length = 5;
+        $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        return view('orderPurchase.regularizeEntryPurchase', compact('entry', 'details', 'suppliers', 'users', 'codeOrder', 'payment_deadlines'));
+
+    }
+
+    public function regularizeEntryToOrderPurchase(StoreOrderPurchaseRequest $request)
+    {
+        //dd($request);
+        $validated = $request->validated();
+
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        //dump($request->get('date_invoice'));
+        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
+        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
+
+        //dump();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
+        DB::beginTransaction();
+        try {
+            $maxCode = OrderPurchase::withTrashed()->max('id');
+            $maxId = $maxCode + 1;
+            $length = 5;
+            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+            $orderPurchase = OrderPurchase::create([
+                'code' => $codeOrder,
+                'quote_supplier' => $request->get('quote_supplier'),
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
+                'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
+                'date_arrival' => ($request->has('date_arrival')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_arrival')) : Carbon::now(),
+                'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
+                'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
+                'payment_condition' => ($request->has('purchase_condition')) ? $request->get('purchase_condition') : '',
+                'currency_order' => ($request->get('state') === 'true') ? 'PEN': 'USD',
+                'currency_compra' => $tipoCambioSunat->compra,
+                'currency_venta' => $tipoCambioSunat->venta,
+                'observation' => $request->get('observation'),
+                'igv' => $request->get('taxes_send'),
+                'total' => $request->get('total_send'),
+                'type' => 'n',
+                'regularize' => ($request->get('regularize') === 'true') ? 'r': 'nr',
+                'status_order' => 'stand_by'
+            ]);
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $orderPurchaseDetail = OrderPurchaseDetail::create([
+                    'order_purchase_id' => $orderPurchase->id,
+                    'material_id' => $items[$i]->id_material,
+                    'quantity' => (float) $items[$i]->quantity,
+                    'price' => (float) $items[$i]->price,
+                    'total_detail' => (float) $items[$i]->total,
+                ]);
+
+                // TODO: Revisamos si hay un material en seguimiento y creamos
+                // TODO: la notificacion y cambiamos el estado
+                $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                    ->get();
+                if ( isset($follows) )
+                {
+                    // TODO: Creamos notificacion y cambiamos el estado
+                    // Crear notificacion
+                    $notification = Notification::create([
+                        'content' => 'El material ' . $orderPurchaseDetail->material->full_description . ' ha sido pedido.',
+                        'reason_for_creation' => 'follow_material',
+                        'user_id' => Auth::user()->id,
+                        'url_go' => route('follow.index')
+                    ]);
+
+                    // Roles adecuados para recibir esta notificación admin, logistica
+                    $users = User::role(['admin', 'operator'])->get();
+                    foreach ( $users as $user )
+                    {
+                        $followUsers = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
+                            ->where('user_id', $user->id)
+                            ->get();
+                        if ( isset($followUsers) )
+                        {
+                            foreach ( $user->roles as $role )
+                            {
+                                NotificationUser::create([
+                                    'notification_id' => $notification->id,
+                                    'role_id' => $role->id,
+                                    'user_id' => $user->id,
+                                    'read' => false,
+                                    'date_read' => null,
+                                    'date_delete' => null
+                                ]);
+                            }
+                        }
+                    }
+                    foreach ( $follows as $follow )
+                    {
+                        $follow->state = 'in_order';
+                        $follow->save();
+                    }
+                }
+
+                $total = $orderPurchaseDetail->total_detail;
+                $subtotal = $total / 1.18;
+                $igv = $total - $subtotal;
+                $orderPurchaseDetail->igv = $igv;
+                $orderPurchaseDetail->save();
+
+                MaterialOrder::create([
+                    'order_purchase_detail_id' => $orderPurchaseDetail->id,
+                    'material_id' => $orderPurchaseDetail->material_id,
+                    'quantity_request' => $orderPurchaseDetail->quantity,
+                    'quantity_entered' => $orderPurchaseDetail->quantity
+                ]);
+            }
+
+            // Si el plazo indica credito, se crea el credito
+            if ( isset($orderPurchase->deadline) )
+            {
+                if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
+                {
+                    $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
+                    //$fecha_issue = Carbon::parse($orderPurchase->date_order);
+                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderPurchase->supplier->id,
+                        'total_soles' => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null,
+                        'total_dollars' => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null,
+                        //'date_issue' => $orderPurchase->date_order,
+                        'order_purchase_id' => $orderPurchase->id,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => null,
+                        //'date_expiration' => $fecha_expiration,
+                        //'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderPurchase->code,
+                        'payment_deadline_id' => $orderPurchase->payment_deadline_id
+                    ]);
+                }
+            }
+
+            // TODO: Actualizamos la entrada
+            $entry = Entry::find($request->get('entry_id'));
+            $entry->purchase_order = $orderPurchase->code;
+            $entry->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Su orden de compra con el código '.$codeOrder.' se guardó con éxito.'], 200);
+
+    }
 }
