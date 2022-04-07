@@ -119,14 +119,14 @@ $(document).ready(function () {
                         text = text + ' <button data-delete="'+item.id+'" '+
                             ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                     }
-                    if ( $.inArray('regularizeOrder_entryPurchase', $permissions) !== -1 ) {
+                    /*if ( $.inArray('regularizeOrder_entryPurchase', $permissions) !== -1 ) {
                         if (item.purchase_order == '' || item.purchase_order == null)
                         {
                             text = text + ' <a href="'+document.location.origin+ '/dashboard/regularizar/automaticamente/entrada/compra/'+item.id+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Regularizar automaticamente"><i class="fas fa-share-square"></i></a>';
 
                         }
-                    }
+                    }*/
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
             },
