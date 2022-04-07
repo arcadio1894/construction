@@ -124,7 +124,7 @@
                                 <i class="fas fa-minus"></i></button>
                         </div>
                     </div>
-                    <div class="card-body">
+                    <div class="card-body" id="element_loader">
 
                         <div class="row">
                             <div class="col-md-8">
@@ -237,6 +237,17 @@
                             </div>
                         </div>
                     </div>
+                    {{--<br>
+                    <div class="row" id="show-btn-follow">
+                        <div class="col-md-4 offset-4" id="show_btn_follow_material">
+                            <button type="button" data-follow id="btn-follow" class="btn btn-block btn-outline-success">Dar seguimiento al material <i class="far fa-thumbs-up"></i></button>
+                        </div>
+                    </div>
+                    <div class="row" id="show-btn-unfollow">
+                        <div class="col-md-4 offset-4" id="show_btn_follow_material">
+                            <button type="button" data-unfollow id="btn-unfollow" class="btn btn-block btn-outline-danger">Dejar de seguir al material <i class="far fa-thumbs-down"></i></button>
+                        </div>
+                    </div>--}}
                     <hr>
                     <div class="row">
                         <div class="col-sm-12">
