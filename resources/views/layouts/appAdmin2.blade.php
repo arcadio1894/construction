@@ -996,12 +996,12 @@
                                         <p>Listar Ordenes</p>
                                     </a>
                                 </li>
-                                <li class="nav-item">
+                                {{--<li class="nav-item">
                                     <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Ordenes Finalizadas</p>
                                     </a>
-                                </li>
+                                </li>--}}
                             </ul>
                         </li>
                     @endcan
