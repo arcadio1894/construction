@@ -685,7 +685,7 @@ function storeOrderPurchase() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                //location.reload();
+                location.href = data.url;
             }, 2000 )
         },
         error: function (data) {

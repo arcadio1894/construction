@@ -1485,7 +1485,7 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Su orden de compra con el código '.$codeOrder.' se guardó con éxito.'], 200);
+        return response()->json(['message' => 'Su orden de compra con el código '.$codeOrder.' se guardó con éxito.', 'url'=>route('order.purchase.general.index')], 200);
 
     }
 }

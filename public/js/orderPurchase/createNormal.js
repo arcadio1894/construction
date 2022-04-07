@@ -52,6 +52,18 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-total]', function() {
+        var total = parseFloat($(this).val());
+        var price = parseFloat($(this).parent().parent().prev().prev().children().children().val());
+        var quantity = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
+        var description = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+        var id = $(this).parent().parent().prev().prev().prev().prev().prev().prev().children().children().children().val();
+
+        $items = $items.filter(material => material.id_material != id);
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': total });
+        updateSummaryInvoice();
+    });
+
     $(document).on('input', '[data-price2]', function() {
         var price = parseFloat($(this).parent().parent().prev().children().children().val());
         var quantity = parseFloat($(this).parent().parent().prev().prev().children().children().val());
@@ -59,7 +71,7 @@ $(document).ready(function () {
         var id = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
 
         $items = $items.filter(material => material.id_material != id);
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
         updateSummaryInvoice();
 
     });
@@ -71,7 +83,7 @@ $(document).ready(function () {
         var id = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
 
         $items = $items.filter(material => material.id_material != id);
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
         updateSummaryInvoice();
 
     });
@@ -83,7 +95,7 @@ $(document).ready(function () {
         var id = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
         $items = $items.filter(material => material.id_material != id);
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
         updateSummaryInvoice();
     });
 });
@@ -201,7 +213,7 @@ function addItem() {
 
     if ( !flag )
     {
-        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id });
+        $items.push({'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
         $('#material_search').val('');
         $('#quantity').val(0);
         renderTemplateMaterial(id, code, description, quantity, price);
@@ -217,8 +229,8 @@ function updateSummaryInvoice() {
 
     for ( var i=0; i<$items.length; i++ )
     {
-        subtotal += parseFloat( (parseFloat($items[i].price)*parseFloat($items[i].quantity))/1.18 );
-        total += parseFloat((parseFloat($items[i].price)*parseFloat($items[i].quantity)));
+        subtotal += (parseFloat($items[i].total))/1.18 ;
+        total += parseFloat($items[i].total);
         taxes = subtotal*0.18;
     }
 
