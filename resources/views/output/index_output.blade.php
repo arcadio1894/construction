@@ -189,8 +189,8 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
-                <div class="modal-body table-responsive">
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                <div class="modal-body table-responsive" style="height: 300px;">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -219,7 +219,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -256,8 +256,8 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
-                <div class="modal-body table-responsive">
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                <div class="modal-body table-responsive" style="height: 300px;">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -283,7 +283,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>

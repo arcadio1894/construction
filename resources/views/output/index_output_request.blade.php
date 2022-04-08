@@ -283,7 +283,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
