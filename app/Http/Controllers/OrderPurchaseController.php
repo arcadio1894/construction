@@ -94,7 +94,19 @@ class OrderPurchaseController extends Controller
 
         foreach ( $materials_quantity as $item )
         {
-            if ( $item['material_complete']->stock_current < $item['quantity'] )
+            $cantidadEnCotizaciones = $item['quantity'];
+            $stockReal = $item['material_complete']->stock_current;
+            $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+            $tengoReal = $stockReal + $amount;
+            $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
+            $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+            $balance = $faltaReal - $tengoReal;
+            if ( $balance > 0 )
+            {
+                array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $balance));
+            }
+
+            /*if ( $item['material_complete']->stock_current < $item['quantity'] )
             {
                 //$stringQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', 39).'" data-toggle="tooltip" data-placement="top" title="4">COT-00039</a> <a class="btn btn-primary btn-xs" href="'.route('quote.show', 27).'" data-toggle="tooltip" data-placement="top" title="9" target="_blank">COT-00027</a>';
                 $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
@@ -117,7 +129,7 @@ class OrderPurchaseController extends Controller
                     }
                 }
 
-            }
+            }*/
         }
 
         //dump($materials_quantity);
