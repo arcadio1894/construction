@@ -190,7 +190,7 @@ class EntryController extends Controller
                 // TODO: la notificacion y cambiamos el estado
                 $follows = FollowMaterial::where('material_id', $id_material)
                     ->get();
-                if ( isset($follows) )
+                if ( !$follows->isEmpty() )
                 {
                     // TODO: Creamos notificacion y cambiamos el estado
                     // Crear notificacion
@@ -208,7 +208,7 @@ class EntryController extends Controller
                         $followUsers = FollowMaterial::where('material_id', $detail_entry->material_id)
                             ->where('user_id', $user->id)
                             ->get();
-                        if ( isset($followUsers) )
+                        if ( !$followUsers->isEmpty() )
                         {
                             foreach ( $user->roles as $role )
                             {
@@ -1041,7 +1041,7 @@ class EntryController extends Controller
                 // TODO: la notificacion y cambiamos el estado
                 $follows = FollowMaterial::where('material_id', $detail_entry->material->id)
                     ->get();
-                if ( isset($follows) )
+                if ( !$follows->isEmpty() )
                 {
                     // TODO: Creamos notificacion y cambiamos el estado
                     // Crear notificacion
@@ -1059,7 +1059,7 @@ class EntryController extends Controller
                         $followUsers = FollowMaterial::where('material_id', $detail_entry->material_id)
                             ->where('user_id', $user->id)
                             ->get();
-                        if ( isset($followUsers) )
+                        if ( !$followUsers->isEmpty() )
                         {
                             foreach ( $user->roles as $role )
                             {
@@ -1394,7 +1394,7 @@ class EntryController extends Controller
                 // TODO: la notificacion y cambiamos el estado
                 $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
                     ->get();
-                if ( isset($follows) )
+                if ( !$follows->isEmpty() )
                 {
                     // TODO: Creamos notificacion y cambiamos el estado
                     // Crear notificacion
@@ -1412,7 +1412,7 @@ class EntryController extends Controller
                         $followUsers = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
                             ->where('user_id', $user->id)
                             ->get();
-                        if ( isset($followUsers) )
+                        if ( !$followUsers->isEmpty() )
                         {
                             foreach ( $user->roles as $role )
                             {

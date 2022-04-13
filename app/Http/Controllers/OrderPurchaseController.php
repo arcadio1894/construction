@@ -245,7 +245,7 @@ class OrderPurchaseController extends Controller
                 // TODO: la notificacion y cambiamos el estado
                 $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
                     ->get();
-                if ( isset($follows) )
+                if ( !$follows->isEmpty() )
                 {
                     // TODO: Creamos notificacion y cambiamos el estado
                     // Crear notificacion
@@ -842,7 +842,7 @@ class OrderPurchaseController extends Controller
                 // TODO: la notificacion y cambiamos el estado
                 $follows = FollowMaterial::where('material_id', $orderPurchaseDetail->material_id)
                     ->get();
-                if ( isset($follows) )
+                if ( !$follows->isEmpty() )
                 {
                     // TODO: Creamos notificacion y cambiamos el estado
                     // Crear notificacion
