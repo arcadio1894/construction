@@ -266,9 +266,9 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ $detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total="{{$detail->id}}" step="0.01" value="{{ ($detail->total_detail != null) ? $detail->total_detail:$detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        " readonly>
+                                        " >
                                     </div>
                                 </div>
 
@@ -302,15 +302,15 @@
                     <table class="table">
                         <tr>
                             <th style="width:50%">Subtotal: </th>
-                            <td ><span class="moneda">USD</span> <span id="subtotal">0.00</span> </td>
+                            <td class="input-group"><span class="moneda">{{ $order->currency_order }}</span> <input type="number" min="0" step="0.01" id="subtotal" data-subtotal class="form-control form-control-sm" value="{{ $order->total - $order->igv }}"> </td>
                         </tr>
                         <tr>
                             <th>Igv: </th>
-                            <td ><span class="moneda">USD</span> <span id="taxes">0.00</span> </td>
+                            <td class="input-group"><span class="moneda">{{ $order->currency_order }}</span> <input type="number" min="0" step="0.01" id="taxes" data-taxes class="form-control form-control-sm" value="{{ $order->igv }}"> </td>
                         </tr>
                         <tr>
                             <th>Total: </th>
-                            <td ><span class="moneda">USD</span> <span id="total">0.00</span> </td>
+                            <td class="input-group"><span class="moneda">{{ $order->currency_order }}</span> <input type="number" min="0" step="0.01" id="total" data-totalfinal class="form-control form-control-sm" value="{{ $order->total }}"> </td>
                         </tr>
                     </table>
                 </div>
@@ -320,7 +320,7 @@
         <div class="row">
             <div class="col-12">
                 <a class="btn btn-outline-secondary" href="{{ route('order.purchase.general.index') }}">Regresar</a>
-                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar datos generales y nuevos detalles</button>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar cambios y totales</button>
             </div>
         </div>
     </form>
@@ -368,7 +368,7 @@
                 <div class="form-group">
                     <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " >
                 </div>
             </div>
             <div class="col-md-1">

@@ -271,7 +271,7 @@
             <div class="col-6">
                 <p class="lead">Resumen de factura</p>
 
-                <div class="table-responsive">
+                {{--<div class="table-responsive">
                     <table class="table">
                         <tr>
                             <th style="width:50%">Subtotal: </th>
@@ -284,6 +284,22 @@
                         <tr>
                             <th>Total: </th>
                             <td ><span class="moneda">USD</span> <span id="total">0.00</span> </td>
+                        </tr>
+                    </table>
+                </div>--}}
+                <div class="table-responsive">
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Subtotal: </th>
+                            <td class="input-group"><span class="moneda">USD</span> <input type="number" min="0" step="0.01" id="subtotal" data-subtotal class="form-control form-control-sm"> </td>
+                        </tr>
+                        <tr>
+                            <th>Igv: </th>
+                            <td class="input-group"><span class="moneda">USD</span> <input type="number" min="0" step="0.01" id="taxes" data-taxes class="form-control form-control-sm"></td>
+                        </tr>
+                        <tr>
+                            <th>Total: </th>
+                            <td class="input-group"><span class="moneda">USD</span> <input type="number" min="0" step="0.01" id="total" data-totalfinal class="form-control form-control-sm"> </td>
                         </tr>
                     </table>
                 </div>
@@ -341,7 +357,7 @@
                 <div class="form-group">
                     <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " >
                 </div>
             </div>
             <div class="col-md-1">

@@ -234,9 +234,12 @@ function updateSummaryInvoice() {
         taxes = subtotal*0.18;
     }
 
-    $('#subtotal').html(subtotal.toFixed(2));
+    /*$('#subtotal').html(subtotal.toFixed(2));
     $('#taxes').html(taxes.toFixed(2));
-    $('#total').html(total.toFixed(2));
+    $('#total').html(total.toFixed(2));*/
+    $('#subtotal').val(subtotal.toFixed(2));
+    $('#taxes').val(taxes.toFixed(2));
+    $('#total').val(total.toFixed(2));
 
 }
 
@@ -300,9 +303,12 @@ function storeOrderPurchase() {
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
 
-    var subtotal_send = $('#subtotal').html();
+    /*var subtotal_send = $('#subtotal').html();
     var taxes_send = $('#taxes').html();
-    var total_send = $('#total').html();
+    var total_send = $('#total').html();*/
+    var subtotal_send = $('#subtotal').val();
+    var taxes_send = $('#taxes').val();
+    var total_send = $('#total').val();
 
     /*var arrayId = [];
     var arrayCode = [];

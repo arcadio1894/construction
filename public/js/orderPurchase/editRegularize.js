@@ -383,6 +383,7 @@ function calculateTotal3(e) {
 }
 
 function editItem() {
+    // TODO: Parece que falta tomar el total tambien... No olvides yo del futuro :v
     var button = $(this);
     var detail_id = $(this).attr('data-edit');
     var price = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
