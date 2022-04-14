@@ -8,12 +8,12 @@
     active
 @endsection
 
-@section('activeListOrderPurchaseExpress')
+@section('activeListOrderPurchaseNormal')
     active
 @endsection
 
 @section('title')
-    Orden de compra express
+    Orden de compra eliminada
 @endsection
 
 @section('styles-plugins')
@@ -37,11 +37,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Visualizar orden de compra express</h1>
+    <h1 class="page-title">Visualizar orden de compra eliminada</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Orden de compra express</h5>
+    <h5 class="card-title">Orden de compra eliminada</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -50,14 +50,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.general.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.purchase.delete')}}"><i class="fa fa-key"></i> Ordenes de compra eliminadas</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Visualizar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.express.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -353,5 +353,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/show.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/showNormal.js') }}"></script>
 @endsection

@@ -32,6 +32,15 @@ class OrderPurchaseController extends Controller
         return view('orderPurchase.indexGeneral', compact('permissions'));
     }
 
+    public function indexOrderPurchaseDelete()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderPurchase.deleteGeneral', compact('permissions'));
+    }
+
     public function indexOrderPurchaseExpress()
     {
         //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
@@ -745,6 +754,15 @@ class OrderPurchaseController extends Controller
         return datatables($orders)->toJson();
     }
 
+    public function getOrderDeleteGeneral()
+    {
+        $orders = OrderPurchase::onlyTrashed()
+            ->with(['supplier', 'approved_user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($orders)->toJson();
+    }
+
     public function createOrderPurchaseNormal()
     {
         $suppliers = Supplier::all();
@@ -960,6 +978,21 @@ class OrderPurchaseController extends Controller
             ->with(['material'])->get();
 
         return view('orderPurchase.showNormal', compact('order', 'details', 'suppliers', 'users'));
+
+    }
+
+    public function showOrderPurchaseDelete($id)
+    {
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $order = OrderPurchase::withTrashed()
+            ->with(['supplier', 'approved_user', 'deadline'])->find($id);
+        $details = OrderPurchaseDetail::withTrashed()
+            ->where('order_purchase_id', $order->id)
+            ->with(['material'])->get();
+
+        return view('orderPurchase.showDelete', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
@@ -1280,6 +1313,43 @@ class OrderPurchaseController extends Controller
         $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
 
         return $pdf->stream($name);
+    }
+
+    public function printOrderPurchaseDelete($id)
+    {
+        $purchase_order = null;
+        $purchase_order = OrderPurchase::withTrashed()
+            ->with('approved_user')
+            ->with('deadline')
+            ->with(['details' => function ($query) {
+                $query->withTrashed()->with(['material']);
+            }])
+            ->where('id', $id)->first();
+
+        $length = 5;
+        $codeOrder = ''.str_pad($id,$length,"0", STR_PAD_LEFT);
+
+        $view = view('exports.entryPurchase', compact('purchase_order','codeOrder'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
+
+        return $pdf->stream($name);
+    }
+
+    public function restoreOrderPurchaseDelete($id)
+    {
+        $orderPurchase = OrderPurchase::onlyTrashed()->find($id);
+
+        $details = OrderPurchaseDetail::onlyTrashed()
+            ->where('order_purchase_id', $id)->get();
+        foreach ( $details as $detail )
+        {
+            $detail->restore();
+        }
+
+        $orderPurchase->restore();
     }
 
     public function changeStatusOrderPurchase($order_id, $status)

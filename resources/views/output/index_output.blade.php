@@ -257,7 +257,7 @@
                 </div>
 
                 <div class="modal-body table-responsive" style="height: 300px;">
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -283,7 +283,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>

@@ -102,12 +102,12 @@
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <label for="supplier">Proveedor </label>
-                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ $order->supplier->business_name }}" readonly>
+                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ ($order->supplier == null) ? 'Falta proveedor':$order->supplier->business_name }}" readonly>
 
                                 </div>
                                 <div class="form-group">
                                     <label for="approved_by">Aprobado por: </label>
-                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ $order->approved_user->name }}" readonly>
+                                    <input type="text" id="approved_by" name="purchase_condition" class="form-control" value="{{ ($order->approved_user == null) ? 'Falta aprobador':$order->approved_user->name }}" readonly>
                                 </div>
                                 <div class="form-group">
                                     <label for="purchase_condition">Forma de pago </label>
@@ -220,7 +220,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ $detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" value="{{ ($detail->total_detail != null) ? $detail->total_detail : $detail->quantity*$detail->price }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                         " readonly>
                                     </div>

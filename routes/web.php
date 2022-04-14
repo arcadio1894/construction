@@ -778,6 +778,17 @@ Route::middleware('auth')->group(function (){
         Route::post('order_purchase/change/status/{order_id}/{status}', 'OrderPurchaseController@changeStatusOrderPurchase')
             ->middleware('permission:update_orderPurchaseNormal');
 
+        Route::get('ordenes/compra/eliminadas', 'OrderPurchaseController@indexOrderPurchaseDelete')
+            ->name('order.purchase.delete')
+            ->middleware('permission:destroy_orderPurchaseNormal');
+        Route::get('/all/order/delete', 'OrderPurchaseController@getOrderDeleteGeneral');
+        Route::get('ver/orden/compra/eliminada/{id}', 'OrderPurchaseController@showOrderPurchaseDelete')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('imprimir/orden/compra/eliminada/{id}', 'OrderPurchaseController@printOrderPurchaseDelete')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::post('/restore/order/purchase/delete/{id}', 'OrderPurchaseController@restoreOrderPurchaseDelete')
+            ->middleware('permission:destroy_orderPurchaseNormal');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

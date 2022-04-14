@@ -1127,14 +1127,22 @@
                                         </a>
                                     </li>
                                 @endcan
-                                    @can('create_orderPurchaseNormal')
-                                        <li class="nav-item">
-                                            <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
-                                                <i class="far fa-circle nav-icon"></i>
-                                                <p>Crear Normal</p>
-                                            </a>
-                                        </li>
-                                    @endcan
+                                @can('create_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear Normal</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @canany('destroy_orderPurchaseNormal','destroy_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.delete')}}" class="nav-link @yield('activeListOrderPurchaseDelete')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar eliminadas</p>
+                                        </a>
+                                    </li>
+                                @endcanany
                             </ul>
                         </li>
                     @endcanany
