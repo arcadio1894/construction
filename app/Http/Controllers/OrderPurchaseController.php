@@ -1347,9 +1347,17 @@ class OrderPurchaseController extends Controller
         foreach ( $details as $detail )
         {
             $detail->restore();
+
+            MaterialOrder::create([
+                'order_purchase_detail_id' => $detail->id,
+                'material_id' => $detail->material_id,
+                'quantity_request' => $detail->quantity,
+                'quantity_entered' => 0
+            ]);
         }
 
         $orderPurchase->restore();
+
     }
 
     public function changeStatusOrderPurchase($order_id, $status)
