@@ -442,14 +442,31 @@ class OrderServiceController extends Controller
                 $path = public_path().'/images/orderServices/';
                 $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
+
+                if ( strtoupper($extension) != "PDF")
+                {
+                    $filename = $orderService->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $orderService->image_invoice = $filename;
+                    $orderService->save();
+                } else {
+                    $filename = 'pdf'.$orderService->id . '.' .$extension;
+                    $request->file('image')->move($path, $filename);
+                    $orderService->image_invoice = $filename;
+                    $orderService->save();
+                }
+
                 //$filename = $entry->id . '.' . $extension;
-                $filename = $orderService->id . '.jpg';
-                $img = Image::make($image);
-                $img->orientate();
-                $img->save($path.$filename, 80, 'jpg');
+                //$filename = $orderService->id . '.jpg';
+                //$img = Image::make($image);
+                //$img->orientate();
+                //$img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
-                $orderService->image_invoice = $filename;
-                $orderService->save();
+                //$orderService->image_invoice = $filename;
+                //$orderService->save();
             }
 
             if (!$request->file('imageOb')) {
@@ -461,13 +478,30 @@ class OrderServiceController extends Controller
                 $path = public_path().'/images/orderServices/observations/';
                 $image = $request->file('imageOb');
                 $extension = $image->getClientOriginalExtension();
-                $filename = $orderService->id . '.jpg';
-                $img = Image::make($image);
-                $img->orientate();
-                $img->save($path.$filename, 80, 'jpg');
+
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $orderService->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $orderService->image_observation = $filename;
+                    $orderService->save();
+                } else {
+                    $filename = 'pdf'.$orderService->id . '.' .$extension;
+                    $request->file('imageOb')->move($path, $filename);
+                    $orderService->image_observation = $filename;
+                    $orderService->save();
+                }
+
+                //$filename = $orderService->id . '.jpg';
+                //$img = Image::make($image);
+                //$img->orientate();
+                //$img->save($path.$filename, 80, 'jpg');
                 //$request->file('image')->move($path, $filename);
-                $orderService->image_observation = $filename;
-                $orderService->save();
+                //$orderService->image_observation = $filename;
+                //$orderService->save();
             }
 
             $credit = SupplierCredit::where('order_service_id', $orderService->id)

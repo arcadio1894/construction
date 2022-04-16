@@ -943,6 +943,8 @@ class EntryController extends Controller
         DB::beginTransaction();
         try {
             $orderPurchase = OrderPurchase::find($request->get('purchase_order_id'));
+            $orderPurchase->status_order = 'pick_up';
+            $orderPurchase->save();
             //dump($tipoCambioSunat->compra);
             $entry = Entry::create([
                 'referral_guide' => $request->get('referral_guide'),

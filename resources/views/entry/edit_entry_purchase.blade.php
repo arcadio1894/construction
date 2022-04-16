@@ -147,7 +147,12 @@
                                 <div class="form-group">
                                     <label for="imageOb">Imagen Observación</label>
                                     <input type="file" id="imageOb" name="imageOb" class="form-control">
-                                    <img data-image src="{{ asset('images/entries/observations/'.$entry->imageOb) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    {{--<img data-image src="{{ asset('images/entries/observations/'.$entry->imageOb) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    --}}@if ( substr($entry->imageOb,-3) == 'pdf' )
+                                        <a href="{{ asset('images/entries/observations/'.$entry->imageOb) }}" class="btn btn-outline-success float-right">Ver PDF</a>
+                                    @else
+                                        <img data-image src="{{ asset('images/entries/observations/'.$entry->imageOb) }}" alt="{{$entry->invoice}}" width="100px" height="100px">
+                                    @endif
                                 </div>
                             </div>
                         </div>

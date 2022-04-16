@@ -115,10 +115,14 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label for="image">Imagen Factura </label>
+                                    <label for="image">Imagen/PDF Factura </label>
                                     <input type="file" id="image" name="image" class="form-control">
-                                    <img data-image src="{{ asset('images/orderServices/'.$order->image_invoice) }}" alt="{{$order->invoice}}" width="100px" height="100px">
-
+                                    {{--<img data-image src="{{ asset('images/orderServices/'.$order->image_invoice) }}" alt="{{$order->invoice}}" width="100px" height="100px">--}}
+                                    @if ( substr($order->image_invoice,-3) == 'pdf' )
+                                        <a href="{{ asset('images/orderServices/'.$order->image_invoice) }}" class="btn btn-outline-success float-right">Ver PDF</a>
+                                    @else
+                                        <img data-image src="{{ asset('images/orderServices/'.$order->image_invoice) }}" alt="{{$order->invoice}}" width="100px" height="100px">
+                                    @endif
                                 </div>
                                 <div class="form-group">
                                     <label for="currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
@@ -137,8 +141,12 @@
                                 <div class="form-group">
                                     <label for="imageOb">Imagen Observación</label>
                                     <input type="file" id="imageOb" name="imageOb" class="form-control">
-                                    <img data-image src="{{ asset('images/orderServices/observations/'.$order->image_observation) }}" alt="{{$order->invoice}}" width="100px" height="100px">
-
+                                    {{--<img data-image src="{{ asset('images/orderServices/observations/'.$order->image_observation) }}" alt="{{$order->invoice}}" width="100px" height="100px">
+                                    --}}@if ( substr($order->image_observation,-3) == 'pdf' )
+                                        <a href="{{ asset('images/orderServices/observations/'.$order->image_observation) }}" class="btn btn-outline-success float-right">Ver PDF</a>
+                                    @else
+                                        <img data-image src="{{ asset('images/orderServices/observations/'.$order->image_observation) }}" alt="{{$order->invoice}}" width="100px" height="100px">
+                                    @endif
                                 </div>
                             </div>
                         </div>
