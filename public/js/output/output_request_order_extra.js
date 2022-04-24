@@ -105,6 +105,11 @@ $(document).ready(function () {
     $('#btn-add').on('click', addItems);
     $modalAddItems = $('#modalAddItems');
 
+    // TODO: Agregamos los retazos personalizados
+    $modalAddItemsCustom = $('#modalAddItemsCustom');
+    $('#btn-add-custom').on('click', addItemsCustom);
+    $('#btn-saveItemsCustom').on('click', saveTableItemsCustom);
+
     $('#btn-request-quantity').on('click', requestItemsQuantity);
 
     $('#btn-add-scrap').on('click', addItemsScrap);
@@ -151,6 +156,8 @@ var substringMatcher = function(strs) {
 let $formCreate;
 
 let $modalAddItems;
+
+let $modalAddItemsCustom;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -718,6 +725,196 @@ function addItemsScrap() {
     });*/
 }
 
+// TODO: agregamos item custom
+function addItemsCustom() {
+    $('#show-btn-follow').hide();
+    $('#show-btn-unfollow').hide();
+
+    if( $('#material_search').val().trim() === '' )
+    {
+        toastr.error('Debe elegir un material', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    } else {
+        let result2 = $materialsComplete.find( material => material.material.trim() === $('#material_search').val().trim() );
+        if ( !result2  ){
+            toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        } else {
+            if ( result2.typescrap == "" || result2.typescrap == null ){
+                toastr.error('El material no permite retazos.', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }
+    }
+
+    let material_name = $('#material_search').val();
+    $modalAddItems.find('[id=material_selected]').val(material_name);
+    $modalAddItems.find('[id=material_selected]').prop('disabled', true);
+    $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', true);
+    $modalAddItems.find('[id=show_btn_request_quantity]').hide();
+    $('#material_selected_quantity').val('');
+    $('#body-items').html('');
+
+    $("#body-items-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+
+    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+    console.log(result);
+
+    $('#material_selected_custom').val(result.material);
+    if ( result.typescrap == 1 || result.typescrap == 2 )
+    {
+        $('#length_item_custom').show();
+        $('#width_item_custom').show();
+        $('#length_custom').val(result.full_typescrap.length);
+        $('#width_custom').val(result.full_typescrap.width);
+
+        $('#length_new_item_custom').show();
+        $('#length_new_item_custom').val(0);
+        $('#width_new_item_custom').show();
+        $('#width_new_item_custom').val(0);
+    }
+    if ( result.typescrap == 3 )
+    {
+        $('#length_item_custom').show();
+        $('#width_item_custom').hide();
+        $('#length_custom').val(result.full_typescrap.length);
+        $('#width_custom').val(result.full_typescrap.width);
+
+        $('#length_new_item_custom').show();
+        $('#length_new_item_custom').val(0);
+        $('#width_new_item_custom').hide();
+        $('#width_new_item_custom').val(0);
+    }
+
+    //$('#length_custom').val(result);
+
+    $('#show-btn-follow').hide();
+    $('#show-btn-unfollow').hide();
+    // TODO: Agregamos la logica de preguntar si lo esta siguiendo al material o no
+    $.ajax({
+        url: "/dashboard/get/follow/material/"+result.id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            if ( json != null )
+            {
+                // Si es diferente a null se mostrará el dejar de seguir
+                $('#show-btn-follow').hide();
+                $('#show-btn-unfollow').show();
+                $('#btn-unfollow').attr('data-unfollow', result.id);
+            } else {
+                // Se mostrara el seguir
+                $('#show-btn-follow').show();
+                $('#btn-follow').attr('data-follow', result.id);
+                $('#show-btn-unfollow').hide();
+            }
+        }
+    });
+
+    $modalAddItemsCustom.modal('show');
+}
+
+function saveTableItemsCustom() {
+    event.preventDefault();
+    const result = $materialsComplete.find( material => material.material.trim() === $('#material_selected_custom').val().trim() );
+    if ( result.typescrap == 1 || result.typescrap == 2 )
+    {
+        let largo = $('#length_new_custom').val();
+        console.log(largo);
+        let ancho = $('#width_new_custom').val();
+        console.log(ancho);
+        let areaPedida = parseFloat(largo) * parseFloat(ancho);
+        console.log(areaPedida);
+        let areaTotal = parseFloat(result.full_typescrap.length) * parseFloat(result.full_typescrap.width);
+        console.log(areaTotal);
+        let porcentaje = parseFloat(areaPedida/areaTotal).toFixed(2);
+        console.log(porcentaje);
+        let precio = result.price * porcentaje;
+        console.log(precio);
+
+        let code = rand_code($caracteres, 5);
+        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
+        renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
+
+    }
+    if ( result.typescrap == 3 )
+    {
+        let largo = $('#length_new_custom').val();
+        let areaPedida = parseFloat(largo);
+        let areaTotal = parseFloat(result.full_typescrap.length);
+        let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
+        let precio = result.price * porcentaje;
+        let code = rand_code($caracteres, 5);
+        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
+        renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
+
+    }
+
+    $('#material_selected_custom').val('');
+    $('#length_custom').val('');
+    $('#width_custom').val('');
+    $('#length_new_custom').val('');
+    $('#width_new_custom').val('');
+
+    $itemsSelected = [];
+
+    $modalAddItemsCustom.modal('hide');
+}
+
 function rand_code($caracteres, $longitud){
     var code = "";
     for (var x=0; x < $longitud; x++)
@@ -740,7 +937,7 @@ function renderTemplateMaterial(material, item, location, state, price, id, leng
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
-        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-price]").innerHTML = parseFloat(price).toFixed(2);
         clone.querySelector("[data-state]").innerHTML = state;
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
@@ -749,7 +946,7 @@ function renderTemplateMaterial(material, item, location, state, price, id, leng
     } else {
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
-        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-price]").innerHTML = '';
         clone.querySelector("[data-state]").innerHTML = state;
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;

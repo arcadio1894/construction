@@ -115,13 +115,14 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Acciones',
+                title: '',
                 wrap: true,
                 "render": function (item)
                 {
                     var text = '';
                     text = text + '<button data-typescrap="'+item.material.typescrap_id+'" data-idItem="'+item.id+'" data-widthItem="'+item.width+'" data-lengthItem="'+item.length+'" data-codeItem="'+item.code+'" data-priceBD="'+item.material.unit_price+'" data-materialId="'+item.material.id+'" data-material="'+item.material.full_description+'" data-toggle="tooltip" data-placement="top" title="Crear retazo" data-scrap="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fas fa-search-plus"></i> </button>';
-                        /*'<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';*/
+                    text = text + '<button data-typescrap="'+item.material.typescrap_id+'" data-idItem="'+item.id+'" data-widthItem="'+item.width+'" data-lengthItem="'+item.length+'" data-codeItem="'+item.code+'" data-priceBD="'+item.material.unit_price+'" data-materialId="'+item.material.id+'" data-material="'+item.material.full_description+'" data-toggle="tooltip" data-placement="top" title="Asignar item" data-assign="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fas fa-check-square"></i> </button>';
+                    /*'<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';*/
                     return text;
                 }
             },
@@ -338,6 +339,7 @@ $(document).ready(function () {
     $modalCreateScrap = $('#modalCreateScrap');
     $formScrap = $('#formScrap');
     $(document).on('click', '[data-scrap]', showModalCreateScrap);
+    $(document).on('click', '[data-assign]', assignScrapToOutput);
     $('#btn-submit').on('click', saveScrap);
 
     $btnBlockLength = $('#btb-block-length');
@@ -369,6 +371,55 @@ let $modalCreateNewScrap;
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function assignScrapToOutput() {
+    var item_id = $(this).data('iditem');
+    var detail_id = $('#detail_id').val();
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de asignar este item?',
+        content: 'Regrese a atender la solicitud ',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/assign/item/'+item_id+'/output/detail/'+detail_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Item asignado correctamente. Redireccionando...");
+                            setTimeout( function () {
+                                window.location.href = "/dashboard/solicitudes/salida";
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Asignación cancelada.");
+                },
+            },
+        }
+    });
+
+}
 
 function saveNewScrap() {
     $("#btn-submit-new").attr("disabled", true);

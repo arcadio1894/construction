@@ -72,7 +72,14 @@ $(document).ready(function () {
                         (item.state === 'attended') ? '<span class="badge bg-warning">Solicitud atendida</span>' :
                             (item.state === 'confirmed') ? '<span class="badge bg-secondary">Solicitud confirmada</span>' :
                                 'Indefinido';
-                    return '<p> '+status+' </p>'
+                    var custom = '';
+                    for (let value of item.details) {
+                        if ( value.item_id == null )
+                        {
+                            custom = custom + '<span class="badge bg-danger">Solicitud personalizada</span>';
+                        }
+                    }
+                    return '<p> '+status+' </p>' + '<p> '+custom+' </p>'
                 }
             },
             { data: null,
@@ -80,17 +87,34 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
+                    var text = '';
                     if (item.state === 'attended' || item.state === 'confirmed')
                     {
-                        return '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                    } else {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
+                            '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+
                     }
-                    return '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
-                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button>  <button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  '+
-                        '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
-                        '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                    var custom = false;
+                    for (let value of item.details) {
+                        if ( value.item_id == null )
+                        {
+                            custom = true;
+                        }
+                    }
+
+                    if ( (custom === false) && (item.state !== 'attended' && item.state !== 'confirmed') )
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
+                    }
+
+                    return text;
                 }
 
             },
@@ -308,6 +332,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-itemDelete]', deletePartialOutput);
 
     $(document).on('click', '[data-materials]', showMaterialsInQuote);
+    
+    $(document).on('click', '[data-itemCustom]', goToCreateItem);
 
     $modalItemsMaterials = $('#modalItemsMaterials');
 
@@ -339,6 +365,12 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 let $modalItemsMaterials;
+
+function goToCreateItem() {
+    let id_detail = $(this).data('itemcustom');
+    //console.log(id_detail);
+    window.location.href = "/dashboard/crear/item/personalizado/" + id_detail;
+}
 
 function showMaterialsInQuote() {
     $modalItemsMaterials.find('[id=code_quote]').html('');
@@ -432,7 +464,7 @@ function showItems() {
             //console.log(json.consumables.length);
             for (var i=0; i<json.array.length; i++)
             {
-                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state);
+                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state, json.array[i].detail_id);
                 //$materials.push(json[i].material);
             }
 
@@ -447,20 +479,36 @@ function showItems() {
     $modalItems.modal('show');
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, price, location, state) {
+function renderTemplateItemDetail(id, material, code, length, width, price, location, state, output_detail) {
     var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
         (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
-            'Indefinido';
+            'Personalizado';
     var clone = activateTemplate('#template-item');
-    clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-price]").innerHTML = price;
-    clone.querySelector("[data-location]").innerHTML = location;
-    clone.querySelector("[data-state]").innerHTML = status;
-    $('#table-items').append(clone);
+    if ( status !== 'Personalizado' )
+    {
+        clone.querySelector("[data-i]").innerHTML = id;
+        clone.querySelector("[data-material]").innerHTML = material;
+        clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-itemCustom]").setAttribute('style', 'display:none');
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = status;
+        $('#table-items').append(clone);
+    } else {
+        clone.querySelector("[data-i]").innerHTML = id;
+        clone.querySelector("[data-material]").innerHTML = material;
+        clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-itemCustom]").setAttribute('data-itemCustom', output_detail);
+        clone.querySelector("[data-length]").innerHTML = length;
+        clone.querySelector("[data-width]").innerHTML = width;
+        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-location]").innerHTML = location;
+        clone.querySelector("[data-state]").innerHTML = status;
+        $('#table-items').append(clone);
+    }
+
 }
 
 function renderTemplateConsumable(id, code, material, cantidad) {

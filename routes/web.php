@@ -566,9 +566,9 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/solicitud/orden/{id_quote}', 'OutputController@createOutputRequestOrder')
             ->name('output.request.order.create')
             ->middleware('permission:create_request');
-        Route::post('ouput/store', 'OutputController@storeOutput')
+        /*Route::post('ouput/store', 'OutputController@storeOutput')
             ->name('output.request.store')
-            ->middleware('permission:create_request');
+            ->middleware('permission:create_request');*/
         Route::get('/get/users', 'UserController@getUsers2');
         Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput');
         Route::get('/get/items/output/complete/{id_material}', 'ItemController@getJsonItemsOutputComplete');
@@ -589,6 +589,9 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:confirm_output');
         Route::post('/destroy/output/{id_output}/item/{id_item}', 'OutputController@destroyPartialOutputRequest')
             ->middleware('permission:confirm_output');
+        Route::get('/crear/item/personalizado/{id_detail}', 'OutputController@createItemCustom')
+            ->name('create.item.custom');
+        Route::post('/assign/item/{item_id}/output/detail/{detail_id}', 'OutputController@assignItemToOutputDetail');
 
         // TRANSFER
         Route::get('transferencias', 'TransferController@index')

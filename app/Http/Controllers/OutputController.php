@@ -175,6 +175,7 @@ class OutputController extends Controller
     public function getOutputRequest()
     {
         $outputs = Output::with('requestingUser')
+            ->with('details')
             ->with('responsibleUser')
             ->with('quote')
             ->orderBy('created_at', 'desc')
@@ -193,20 +194,39 @@ class OutputController extends Controller
             $item = Item::with(['location', 'material'])
                 ->find($outputDetail->item_id);
 
-            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
-            array_push($array,
-                [
-                    'id'=> $key+1,
-                    'material' => $item->material->full_description,
-                    'id_item' => $item->id,
-                    'code' => $item->code,
-                    'length' => $item->length,
-                    'width' => $item->width,
-                    'weight' => $item->weight,
-                    'price' => $item->material->unit_price,
-                    'location' => $l,
-                    'state' => $item->state,
-                ]);
+            if ( isset($item) )
+            {
+                $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
+                array_push($array,
+                    [
+                        'id'=> $key+1,
+                        'material' => $item->material->full_description,
+                        'id_item' => $item->id,
+                        'code' => $item->code,
+                        'length' => $item->length,
+                        'width' => $item->width,
+                        'weight' => $item->weight,
+                        'price' => $item->price,
+                        'location' => $l,
+                        'state' => $item->state,
+                        'detail_id' =>$outputDetail->id
+                    ]);
+            } else {
+                array_push($array,
+                    [
+                        'id'=> $key+1,
+                        'material' => $outputDetail->material->full_description,
+                        'id_item' => 'Personalizado',
+                        'code' => 'Personalizado',
+                        'length' => $outputDetail->length,
+                        'width' => $outputDetail->width,
+                        'weight' => null,
+                        'price' => $outputDetail->price,
+                        'location' => 'Personalizado',
+                        'state' => 'Personalizado',
+                        'detail_id' =>$outputDetail->id
+                    ]);
+            }
 
         }
 
@@ -359,20 +379,36 @@ class OutputController extends Controller
 
             foreach ( $items as $item )
             {
-                $item_selected = Item::find($item->item);
-                if ( $item_selected->state_item === 'reserved' )
-                {
-                    return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
-                } else {
-                    $item_selected->state_item = 'reserved';
-                    $item_selected->save();
-
+                $mystring = $item->item;
+                $findme   = '_';
+                $pos = strpos($mystring, $findme);
+                $custom = substr($mystring, 0, $pos);
+                if ( $custom == 'Personalizado' ) {
+                    // TODO: tenemos que guardar el largo y ancho
                     $detail_output = OutputDetail::create([
                         'output_id' => $output->id,
-                        'item_id' => $item->item,
+                        'item_id' => null,
+                        'length' => $item->length,
+                        'width' => $item->width,
+                        'price' => $item->price,
+                        'percentage' => $item->percentage,
+                        'material_id' => $item->material
                     ]);
-                }
+                } else {
+                    $item_selected = Item::find($item->item);
+                    if ( $item_selected->state_item === 'reserved' )
+                    {
+                        return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                    } else {
+                        $item_selected->state_item = 'reserved';
+                        $item_selected->save();
 
+                        $detail_output = OutputDetail::create([
+                            'output_id' => $output->id,
+                            'item_id' => $item->item,
+                        ]);
+                    }
+                }
 
             }
             DB::commit();
@@ -539,6 +575,34 @@ class OutputController extends Controller
         }
 
         return response()->json(['message' => 'Eliminación del item con éxito.'], 200);
+
+    }
+
+    public function createItemCustom( $id_detail )
+    {
+        $outputDetail = OutputDetail::find($id_detail);
+        $material = Material::find($outputDetail->material_id);
+        //dd($outputDetail);
+        return view('output/create_item_custom', compact('outputDetail', 'material'));
+    }
+
+    public function assignItemToOutputDetail($id_item, $id_detail)
+    {
+        $outputDetail = OutputDetail::find($id_detail);
+        $item = Item::find($id_item);
+
+        DB::beginTransaction();
+        try {
+            $outputDetail->item_id = $item->id;
+            $outputDetail->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Item asignado.'], 200);
 
     }
 

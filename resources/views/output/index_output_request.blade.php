@@ -124,7 +124,7 @@
                             <strong>Importante!</strong> Al hacer click en eliminar se eliminará en la base de datos.
                         </div>
                     </div>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
@@ -190,12 +190,13 @@
                 </div>
 
                 <div class="modal-body table-responsive" style="height: 300px;">
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>Material</th>
                             <th>Código</th>
+                            <th>Crear Item</th>
                             <th>Largo</th>
                             <th>Ancho</th>
                             <th>Precio</th>
@@ -211,6 +212,9 @@
                                 <td data-i></td>
                                 <td data-material></td>
                                 <td data-code></td>
+                                <td>
+                                    <button type="button" data-itemCustom class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Crear</button>
+                                </td>
                                 <td data-length></td>
                                 <td data-width><span class="badge bg-danger">55%</span></td>
                                 <td data-price></td>
@@ -219,7 +223,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -257,7 +261,7 @@
                 </div>
 
                 <div class="modal-body table-responsive" style="height: 300px;">
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
@@ -283,7 +287,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
