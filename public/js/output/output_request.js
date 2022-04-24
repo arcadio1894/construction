@@ -936,7 +936,7 @@ function renderTemplateMaterial(material, item, location, state, price, id, leng
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
-        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-price]").innerHTML = price;
         clone.querySelector("[data-state]").innerHTML = state;
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
@@ -945,7 +945,7 @@ function renderTemplateMaterial(material, item, location, state, price, id, leng
     } else {
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
-        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-price]").innerHTML = '';
         clone.querySelector("[data-state]").innerHTML = state;
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
@@ -963,7 +963,7 @@ function renderTemplateItem(i, code, location, length, width, weight, price, id)
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
         clone.querySelector("[data-weight]").innerHTML = weight;
-        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-price]").innerHTML = price;
         clone.querySelector("[data-selected]").setAttribute('data-selected', id);
         clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
         clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
@@ -974,7 +974,7 @@ function renderTemplateItem(i, code, location, length, width, weight, price, id)
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
         clone.querySelector("[data-weight]").innerHTML = weight;
-        clone.querySelector("[data-price]").innerHTML = price;
+        clone.querySelector("[data-price]").innerHTML = '';
         clone.querySelector("[data-selected]").setAttribute('data-selected', id);
         clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
         clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
