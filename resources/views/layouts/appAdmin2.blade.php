@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/fontawesome-free/css/all.min.css') }}">
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
-
+    <link rel="stylesheet" href="{{ asset('admin/plugins/pace-progress/themes/black/pace-theme-flat-top.css') }}">
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.css') }}">
@@ -32,7 +32,7 @@
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-<body class="hold-transition sidebar-mini">
+<body class="hold-transition sidebar-mini pace-primary">
 <div class="wrapper">
 
     <!-- Navbar -->
@@ -1419,6 +1419,7 @@
 </script>
 <!-- Bootstrap 4 -->
 <script src="{{ asset('admin/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+<script src="{{ asset('admin/plugins/pace-progress/pace.min.js') }}"></script>
 <!-- Toastr -->
 <script src="{{ asset('admin/plugins/toastr/toastr.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>

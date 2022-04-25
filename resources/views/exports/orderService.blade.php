@@ -44,7 +44,7 @@
             font-weight: normal;
             text-align: center;
             margin: 0 0 20px 0;
-            background: #7A8DC5;
+            background: #1c3c80;
         }
 
         #project {
@@ -107,7 +107,7 @@
             border-bottom: 1px solid #C1CED9;
             white-space: pre-line;
             font-weight: bold;
-            background-color: #7A8DC5;
+            background-color: #1c3c80;
             font-size: 1.2em;
         }
 
@@ -154,7 +154,7 @@
             border-top: 1px solid #C1CED9;
             padding: 8px 0;
             text-align: center;
-            background-color: #7A8DC5;
+            background-color: #1c3c80;
         }
         .center {
             text-align: center;
