@@ -191,8 +191,8 @@
                                 <label for="btn-add"> Seleccione: </label><br>
                                 <button type="button" id="btn-add" class="btn btn-outline-primary">Completo <i class="fas fa-arrow-circle-right"></i></button>
                                 <button type="button" id="btn-add-scrap" class="btn btn-outline-primary">Retazo <i class="fas fa-arrow-circle-right"></i></button>
-                                <button type="button" id="btn-add-custom" class="btn btn-outline-primary">Personaliz.<i class="fas fa-arrow-circle-right"></i></button>
-
+                                {{--<button type="button" id="btn-add-custom" class="btn btn-outline-primary">Personaliz.<i class="fas fa-arrow-circle-right"></i></button>
+--}}
                             </div>
                         </div>
                         <hr>

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('admin/dist/img/loder-logo.ico') }}">
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('admin/dist/img/icono_logo.ico') }}">
 
     <!-- CSS here -->
     <link rel="stylesheet" href="{{ asset('landing/css/bootstrap.min.css') }}">
@@ -33,7 +33,7 @@
         <div class="preloader-inner position-relative">
             <div class="preloader-circle"></div>
             <div class="preloader-img pere-text">
-                <img src="{{ asset('landing/img/logo/loder-logo.png') }}" alt="">
+                <img src="{{ asset('landing/img/logo/logo_dashboard.png') }}" alt="">
             </div>
         </div>
     </div>
@@ -71,9 +71,9 @@
                         <div class="col-xl-2 col-lg-2 col-md-2">
                             <div class="logo">
                                 <!-- logo-1 -->
-                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('admin/dist/img/logo2_footer.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="big-logo"><img src="{{ asset('admin/dist/img/logo_sermeind.png') }}" alt=""></a>
                                 <!-- logo-2 -->
-                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('admin/dist/img/loder-logo.png') }}" alt=""></a>
+                                <a href="{{ url('/') }}" class="small-logo"><img src="{{ asset('admin/dist/img/logo_dashboard.png') }}" alt=""></a>
                             </div>
                         </div>
                         <div class="col-xl-10 col-lg-10 col-md-10">
@@ -174,7 +174,7 @@
                         <div class="single-footer-caption mb-30">
                             <!-- logo -->
                             <div class="footer-logo">
-                                <a href="#"><img src="{{ asset('landing/img/logo/logo2_footer.png') }}" alt=""></a>
+                                <a href="#"><img src="{{ asset('landing/img/logo/logo_sermeind.png') }}" alt=""></a>
                             </div>
                             <div class="footer-tittle">
                                 <div class="footer-pera" style="text-align: justify;">
