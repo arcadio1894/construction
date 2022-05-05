@@ -218,13 +218,33 @@ $(document).ready(function () {
                             if ($.inArray('update_entryPurchase', $permissions) !== -1) {
                                 text = text + '<a href="' + document.location.origin + '/dashboard/entrada/compra/editar/' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
                             }
-                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
+                            if ( $.inArray('regularizeOrder_entryPurchase', $permissions) !== -1 ) {
+                                if (item.purchase_order == '' || item.purchase_order == null)
+                                {
+                                    text = text + ' <a href="'+document.location.origin+ '/dashboard/regularizar/automaticamente/entrada/compra/'+item.id+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Regularizar automaticamente compra"><i class="fas fa-share-square"></i></a>';
+                                }
+                            }
+                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
                         } else {
                             if ($.inArray('update_invoice', $permissions) !== -1) {
                                 text = text + '<a href="' + document.location.origin + '/dashboard/factura/compra/editar/' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
                             }
-                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
+                            if ( item.type_order == 'purchase' )
+                            {
+
+                            } else {
+                                if ( $.inArray('regularizeOrder_entryPurchase', $permissions) !== -1 ) {
+                                    if (item.purchase_order == '' || item.purchase_order == null)
+                                    {
+                                        text = text + ' <a href="'+document.location.origin+ '/dashboard/regularizar/automaticamente/entrada/servicio/'+item.id+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Regularizar automaticamente servicio"><i class="fas fa-share-square"></i></a>';
+                                    }
+                                }
+                            }
+
+                            text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
                         }
                     } else {
@@ -232,7 +252,7 @@ $(document).ready(function () {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar servicio"><i class="fa fa-pen"></i></a> ';
                         }
-                        text = text + '<button type="button" data-details="' + item.id + '" data-code="1" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
+                        text = text + '<button type="button" data-details="' + item.id + '" data-code="1" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
                     }
 

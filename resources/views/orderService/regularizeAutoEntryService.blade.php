@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOrderPurchaseGeneral')
+@section('openOrderService')
     menu-open
 @endsection
 
-@section('activeOrderPurchaseGeneral')
+@section('activeOrderService')
     active
 @endsection
 
-@section('activeListOrderPurchaseNormal')
+@section('activeCreateOrderService')
     active
 @endsection
 
 @section('title')
-    Orden de compra normal
+    Orden de servicio
 @endsection
 
 @section('styles-plugins')
@@ -37,11 +37,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Crear orden de compra</h1>
+    <h1 class="page-title">Regularización automática de servicio</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Orden de compra normal</h5>
+    <h5 class="card-title">Orden de servicio</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -50,14 +50,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{route('order.purchase.general.index')}}"><i class="fa fa-key"></i> Ordenes de compra</a>
+            <a href="{{route('order.service.index')}}"><i class="fa fa-key"></i> Ordenes de servicio</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Crear</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.purchase.regularize.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('order.service.regularize.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
             <div class="col-md-12">
@@ -74,20 +74,20 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
-                                    <label for="purchase_order">Orden de Compra</label>
                                     <input type="hidden" name="entry_id" value="{{ $entry->id }}">
-                                    <input type="text" id="purchase_order" name="purchase_order" class="form-control" value="{{ $codeOrder }}" readonly>
+                                    <label for="service_order">Orden de Servicio</label>
+                                    <input type="text" id="service_order" name="service_order" class="form-control" value="{{ $codeOrder }}" readonly>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_order">Fecha de Orden</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_order" name="date_order" >
+                                        <input type="text" class="form-control date-range-filter" id="date_order" name="date_order">
                                     </div>
                                 </div>
                                 <div class="form-group " id="sandbox-container">
-                                    <label for="date_arrival">Fecha de Llegada</label>
+                                    <label for="date_delivery">Fecha de Entrega</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival" >
+                                        <input type="text" class="form-control date-range-filter" id="date_delivery" name="date_delivery">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -105,7 +105,7 @@
                                     <select id="supplier" name="supplier_id" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $suppliers as $supplier )
-                                            <option value="{{ $supplier->id }}" {{ ($supplier->id === $entry->supplier_id) ? 'selected':'' }}>{{ $supplier->business_name }}</option>
+                                            <option value="{{ $supplier->id }}" {{ ($entry->supplier_id == $supplier->id) ? 'selected':'' }}>{{ $supplier->business_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -114,17 +114,17 @@
                                     <select id="approved_by" name="approved_by" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $users as $user )
-                                            <option value="{{ $user->id }}" >{{ $user->name }}</option>
+                                            <option value="{{ $user->id }}">{{ $user->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                                 <div class="form-group">
                                     <label for="payment_deadline">Forma de pago </label>
-                                    {{--<input type="text" id="purchase_condition" name="purchase_condition" class="form-control" value="{{ $order->payment_condition }}">--}}
+                                    {{--<input type="text" id="service_condition" name="service_condition" class="form-control">--}}
                                     <select id="payment_deadline" name="payment_deadline_id" class="form-control select2" style="width: 100%;">
                                         <option></option>
                                         @foreach( $payment_deadlines as $payment_deadline )
-                                            <option value="{{ $payment_deadline->id }}" >{{ $payment_deadline->description }}</option>
+                                            <option value="{{ $payment_deadline->id }}">{{ $payment_deadline->description }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -148,9 +148,9 @@
 
         <div class="row">
             <div class="col-md-12">
-                <div class="card card-warning">
+                <div class="card card-warning ">
                     <div class="card-header">
-                        <h3 class="card-title">Detalles de compra</h3>
+                        <h3 class="card-title">Detalles de orden de servicio</h3>
 
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
@@ -159,20 +159,16 @@
                         </div>
                     </div>
                     <div class="card-body " id="element_loader">
+
                         <div class="row">
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <strong>ID</strong>
-                                </div>
-                            </div>
-                            <div class="col-md-1">
-                                <div class="form-group">
-                                    <strong>Código</strong>
-                                </div>
-                            </div>
                             <div class="col-md-5">
                                 <div class="form-group">
-                                    <strong>Material</strong>
+                                    <strong>Servicio</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <strong>Unidad</strong>
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -196,55 +192,47 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="body-materials">
+                        <div id="body-services">
                             @foreach( $details as $detail )
-                                <div class="row">
-                                    <div class="col-md-1">
+                            <div class="row">
+                                <div class="col-md-5">
+                                    <div class="form-group">
                                         <div class="form-group">
-                                            <div class="form-group">
-                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id value="{{ $detail->material->id }}" readonly>
-                                            </div>
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-service value="{{ $detail->material_name }}" readonly>
                                         </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-code value="{{ $detail->material->code }}" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-5">
-                                        <div class="form-group">
-                                            <div class="form-group">
-                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description value="{{ $detail->material->full_description }}" readonly>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-1">
-                                        <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" min="0" value="{{ $detail->ordered_quantity }}" data-quantity="{{$detail->id}}" step="0.01" >
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" oninput="calculateTotal2(this);" placeholder="0.00" min="0" data-price="{{$detail->id}}" value="{{ $detail->unit_price }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-1">
-                                        <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" oninput="calculateTotal3(this);" placeholder="0.00" min="0" data-price2="{{$detail->id}}" step="0.01" value="{{ round((float)($detail->unit_price)/1.18, 2) }}" pattern="^\d+(?:\.\d{1,2})?$">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
-                                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total="{{$detail->id}}" step="0.01" value="{{ ($detail->total_detail== null) ? $detail->ordered_quantity*$detail->unit_price: $detail->total_detail }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        " >
-                                        </div>
-                                    </div>
-
                                 </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <div class="form-group">
+                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-unit value="{{ $detail->material_unit }}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" min="0" value="{{ $detail->ordered_quantity }}" data-quantity="{{$detail->id}}" step="0.01" >
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotal2(this);" placeholder="0.00" min="0" data-price="{{$detail->id}}" value="{{ $detail->unit_price }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotal3(this);" placeholder="0.00" min="0" data-price2="{{$detail->id}}" value="{{ round((float)($detail->unit_price)/1.18, 2) }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total="{{$detail->id}}" value="{{ ($detail->total_detail== null) ? $detail->ordered_quantity*$detail->unit_price: $detail->total_detail }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    " >
+                                    </div>
+                                </div>
+                            </div>
                             @endforeach
                         </div>
                     </div>
@@ -264,54 +252,45 @@
                 <p class="lead">Resumen de factura</p>
 
                 <div class="table-responsive">
-                    <div class="table-responsive">
-                        <table class="table">
-                            <tr>
-                                <th style="width:50%">Subtotal: </th>
-                                <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="subtotal" data-subtotal class="form-control form-control-sm" value="{{ $entry->subtotal}}"> </td>
-                            </tr>
-                            <tr>
-                                <th>Igv: </th>
-                                <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="taxes" data-taxes class="form-control form-control-sm" value="{{ $entry->taxes }}"> </td>
-                            </tr>
-                            <tr>
-                                <th>Total: </th>
-                                <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="total" data-totalfinal class="form-control form-control-sm" value="{{ $entry->total }}"> </td>
-                            </tr>
-                        </table>
-                    </div>
+                    <table class="table">
+                        <tr>
+                            <th style="width:50%">Subtotal: </th>
+                            <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="subtotal" data-subtotal class="form-control form-control-sm" value="{{ $entry->subtotal}}"> </td>
+                        </tr>
+                        <tr>
+                            <th>Igv: </th>
+                            <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="taxes" data-taxes class="form-control form-control-sm" value="{{ $entry->taxes }}"> </td>
+                        </tr>
+                        <tr>
+                            <th>Total: </th>
+                            <td class="input-group"><span class="moneda">{{ $entry->currency_invoice}}</span> <input type="number" min="0" step="0.01" id="total" data-totalfinal class="form-control form-control-sm" value="{{ $entry->total }}"> </td>
+                        </tr>
+                    </table>
                 </div>
             </div>
             <!-- /.col -->
         </div>
         <div class="row">
             <div class="col-12">
-                <a class="btn btn-outline-secondary" href="{{ route('order.purchase.general.index') }}">Regresar</a>
-                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar orden de compra</button>
+                <a class="btn btn-outline-secondary" href="{{ route('order.service.index') }}">Regresar</a>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar orden de servicio</button>
             </div>
         </div>
     </form>
 
-    <template id="materials-selected">
+    <template id="service-selected">
         <div class="row">
-            <div class="col-md-1">
-                <div class="form-group">
-                    <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id readonly>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-code readonly>
-                    </div>
-                </div>
-            </div>
             <div class="col-md-4">
                 <div class="form-group">
                     <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description readonly>
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-service readonly>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="form-group">
+                    <div class="form-group">
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-unit readonly>
                     </div>
                 </div>
             </div>
@@ -339,9 +318,7 @@
                 </div>
             </div>
             <div class="col-md-1">
-                <div class="btn-group">
-                    <button type="button" data-delete="" data-material="" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                </div>
+                <button type="button" data-delete class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
             </div>
         </div>
     </template>
@@ -365,7 +342,7 @@
         $(function () {
             //Initialize Select2 Elements
             $('#date_order').attr("value", moment().format('DD/MM/YYYY'));
-            $('#date_arrival').attr("value", moment().format('DD/MM/YYYY'));
+            $('#date_delivery').attr("value", moment().format('DD/MM/YYYY'));
 
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",
@@ -393,12 +370,12 @@
                 placeholder: "Selecione plazo",
             });
 
-            $('.unitMeasure').select2({
-                placeholder: "Seleccione unidad",
+            $('#unit').select2({
+                placeholder: "Seleccione ...",
             });
 
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/editRegularize.js') }}"></script>
+    <script src="{{ asset('js/orderService/regularizeAutoEntryService.js') }}"></script>
 @endsection

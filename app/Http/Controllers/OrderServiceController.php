@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\DetailEntry;
+use App\Entry;
 use App\Http\Requests\StoreOrderServiceRequest;
 use App\OrderService;
 use App\OrderServiceDetail;
@@ -103,13 +105,13 @@ class OrderServiceController extends Controller
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
                 'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
                 'payment_condition' => ($request->has('service_condition')) ? $request->get('service_condition') : '',
-                'currency_order' => ($request->has('currency_order')) ? 'PEN':'USD',
+                'currency_order' => ($request->get('state') === 'true') ? 'PEN': 'USD',
                 'currency_compra' => $tipoCambioSunat->compra,
                 'currency_venta' => $tipoCambioSunat->venta,
                 'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
-                'regularize' => ($request->has('regularize_order')) ? 'r':'nr',
+                'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
             ]);
 
             $items = json_decode($request->get('items'));
@@ -122,9 +124,10 @@ class OrderServiceController extends Controller
                     'unit' => $items[$i]->unit,
                     'quantity' => (float) $items[$i]->quantity,
                     'price' => (float) $items[$i]->price,
+                    'total_detail' => (float) $items[$i]->total,
                 ]);
 
-                $total = $orderServiceDetail->quantity*$orderServiceDetail->price;
+                $total = $orderServiceDetail->total_detail;
                 $subtotal = $total / 1.18;
                 $igv = $total - $subtotal;
                 $orderServiceDetail->igv = $igv;
@@ -551,5 +554,207 @@ class OrderServiceController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
         return datatables($orders)->toJson();
+    }
+
+    public function regularizeAutoOrderEntryService( $entry_id )
+    {
+        $entry = Entry::find($entry_id);
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
+
+        $maxId = OrderService::withTrashed()->max('id')+1;
+        $length = 5;
+        $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+        $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        $details = DetailEntry::where('entry_id', $entry_id)->get();
+        //dd($entry);
+
+        return view('orderService.regularizeAutoEntryService', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines'));
+    }
+
+    public function regularizeEntryToOrderService(Request $request)
+    {
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+
+        //dump($request->get('date_invoice'));
+        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
+        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
+
+        //dump();
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
+        DB::beginTransaction();
+        try {
+            $maxId = OrderService::withTrashed()->max('id')+1;
+            $length = 5;
+            $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+            $orderService = OrderService::create([
+                'code' => $codeOrder,
+                'quote_supplier' => $request->get('quote_supplier'),
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
+                'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
+                'date_delivery' => ($request->has('date_delivery')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : Carbon::now(),
+                'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
+                'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
+                'payment_condition' => ($request->has('service_condition')) ? $request->get('service_condition') : '',
+                'currency_order' => ($request->get('state') === 'true') ? 'PEN': 'USD',
+                'currency_compra' => $tipoCambioSunat->compra,
+                'currency_venta' => $tipoCambioSunat->venta,
+                'observation' => $request->get('observation'),
+                'igv' => $request->get('taxes_send'),
+                'total' => $request->get('total_send'),
+                'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
+            ]);
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                $orderServiceDetail = OrderServiceDetail::create([
+                    'order_service_id' => $orderService->id,
+                    'service' => $items[$i]->service,
+                    'unit' => $items[$i]->unit,
+                    'quantity' => (float) $items[$i]->quantity,
+                    'price' => (float) $items[$i]->price,
+                    'total_detail' => (float) $items[$i]->total,
+                ]);
+
+                $total = $orderServiceDetail->total_detail;
+                $subtotal = $total / 1.18;
+                $igv = $total - $subtotal;
+                $orderServiceDetail->igv = $igv;
+                $orderServiceDetail->save();
+
+            }
+
+            // TODO: Modificamos la orden de servicio
+            $entry = Entry::find($request->get('entry_id'));
+
+            $orderService->invoice = $entry->invoice;
+            $orderService->referral_guide = $entry->referral_guide;
+            $orderService->date_invoice = $entry->date_entry;
+            $orderService->save();
+
+            $entry->purchase_order = $orderService->code;
+            $entry->save();
+
+            // TODO: Tratamiento de imagenes
+            if ($entry->image != null)
+            {
+                $nombre = $entry->image;
+                $imagen = public_path().'/images/entries/'.$nombre;
+                $ruta = public_path().'/images/orderServices/';
+                $extension = substr($nombre, -3);
+                //$filename = $entry->id . '.' . $extension;
+                if (file_exists($imagen)) {
+                    if ( strtoupper($extension) != "PDF" )
+                    {
+                        $filename = $orderService->id . '.JPG';
+                        $img = Image::make($imagen);
+                        $img->orientate();
+                        $img->save($ruta.$filename, 80, 'JPG');
+                        //$request->file('image')->move($path, $filename);
+                        $orderService->image_invoice = $filename;
+                        $orderService->save();
+                    } else {
+                        $filename = 'pdf'.$orderService->id . '.' .$extension;
+                        $destino = $ruta.$filename;
+                        copy($imagen, $destino);
+                        //$request->file('image')->move($path, $filename);
+                        $orderService->image_invoice = $filename;
+                        $orderService->save();
+                    }
+                }
+            }
+
+            if ($entry->imageOb != null)
+            {
+                $nombre = $entry->imageOb;
+                $imagen = public_path().'/images/entries/observations/'.$nombre;
+                $ruta = public_path().'/images/orderServices/observations/';
+                $extension = substr($nombre, -3);
+                //$filename = $entry->id . '.' . $extension;
+                if (file_exists($imagen)) {
+                    if ( strtoupper($extension) != "PDF" )
+                    {
+                        $filename = $orderService->id . '.JPG';
+                        $img = Image::make($imagen);
+                        $img->orientate();
+                        $img->save($ruta.$filename, 80, 'JPG');
+                        //$request->file('image')->move($path, $filename);
+                        $orderService->image_observation = $filename;
+                        $orderService->save();
+                    } else {
+                        $filename = 'pdf'.$orderService->id . '.' .$extension;
+                        $destino = $ruta.$filename;
+                        copy($imagen, $destino);
+                        //$request->file('image')->move($path, $filename);
+                        $orderService->image_observation = $filename;
+                        $orderService->save();
+                    }
+                }
+            }
+
+
+            // Si el plazo indica credito, se crea el credito
+            if ( isset($orderService->deadline) )
+            {
+                if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
+                {
+                    $deadline = PaymentDeadline::find($orderService->deadline->id);
+                    //$fecha_issue = Carbon::parse($orderService->date_order);
+                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderService->supplier->id,
+                        'total_soles' => ($orderService->currency_order == 'PEN') ? $orderService->total:null,
+                        'total_dollars' => ($orderService->currency_order == 'USD') ? $orderService->total:null,
+                        //'date_issue' => $orderService->date_order,
+                        'order_purchase_id' => null,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => $orderService->id,
+                        //'date_expiration' => $fecha_expiration,
+                        //'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderService->code,
+                        'payment_deadline_id' => $orderService->payment_deadline_id
+                    ]);
+                }
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Orden de servicio '.$codeOrder.' guardada con éxito.', 'url' => route('invoice.index')], 200);
+
     }
 }

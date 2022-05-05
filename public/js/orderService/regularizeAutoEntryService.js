@@ -36,7 +36,7 @@ $(document).ready(function () {
 
     $('#btn-add').on('click', addItem);
 
-    $('#btn-submit').on('click', storeOrderPurchase);
+    $('#btn-submit').on('click', storeOrderService);
 
     $(document).on('click', '[data-delete]', deleteItem);
 
@@ -63,22 +63,22 @@ $(document).ready(function () {
             var total2 = parseFloat($(this).val());
             var price2 = parseFloat($(this).parent().parent().prev().prev().children().children().val());
             var quantity2 = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
-            var description2 = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
-            var id2 = $(this).parent().parent().prev().prev().prev().prev().prev().prev().children().children().children().val();
+            var unit2 = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+            var description2 = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id2);
-            $items.push({'detail_id':$(this).attr('data-total'),'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2, 'total': total2});
+            $items = $items.filter(material => material.service != description2);
+            $items.push({'detail_id':$(this).attr('data-total'),'price': price2, 'quantity':quantity2 ,'service': description2, 'unit': unit2, 'total': parseFloat(total2).toFixed(2)});
 
             updateSummaryInvoice();
         } else {
             var total = parseFloat($(this).val());
             var price = parseFloat($(this).parent().parent().prev().prev().children().children().val());
             var quantity = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
-            var description = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
-            var id = $(this).parent().parent().prev().prev().prev().prev().prev().prev().children().children().children().val();
+            var unit = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+            var description = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id);
-            $items.push({'detail_id':'','price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': total });
+            $items = $items.filter(material => material.service != description);
+            $items.push({'detail_id':'','price': price, 'quantity':quantity ,'service': description, 'unit': unit, 'total': parseFloat(total).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -90,21 +90,21 @@ $(document).ready(function () {
         {
             var price2 = parseFloat($(this).parent().parent().prev().children().children().val());
             var quantity2 = parseFloat($(this).parent().parent().prev().prev().children().children().val());
-            var description2 = $(this).parent().parent().prev().prev().prev().children().children().children().val();
-            var id2 = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+            var unit2 = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+            var service2 = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id2);
-            $items.push({'detail_id':$(this).attr('data-price2'),'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2, 'total': quantity2*price2});
+            $items = $items.filter(material => material.service != service2);
+            $items.push({'detail_id':$(this).attr('data-price2'),'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total': parseFloat(quantity2*price2).toFixed(2)});
 
             updateSummaryInvoice();
         } else {
             var price = parseFloat($(this).parent().parent().prev().children().children().val());
             var quantity = parseFloat($(this).parent().parent().prev().prev().children().children().val());
-            var description = $(this).parent().parent().prev().prev().prev().children().children().children().val();
-            var id = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+            var unit = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+            var service = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id);
-            $items.push({'detail_id':'','price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
+            $items = $items.filter(material => material.service != service);
+            $items.push({'detail_id':'','price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total': parseFloat(quantity*price).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -116,24 +116,21 @@ $(document).ready(function () {
         {
             var price2 = parseFloat($(this).val());
             var quantity2 = parseFloat($(this).parent().parent().prev().children().children().val());
-            var description2 = $(this).parent().parent().prev().prev().children().children().children().val();
-            var id2 = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+            var unit2 = $(this).parent().parent().prev().prev().children().children().children().val();
+            var service2 = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id2);
-            $items.push({'detail_id':$(this).attr('data-price'), 'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2, 'total': quantity2*price2 });
+            $items = $items.filter(material => material.service != service2);
+            $items.push({'detail_id':$(this).attr('data-price'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total': parseFloat(quantity2*price2).toFixed(2) });
 
-            /*$(this).parent().parent().next().next().next().children().children().removeClass( "btn-outline-success" );
-            $(this).parent().parent().next().next().next().children().children().addClass( "btn-outline-warning" );
-*/
             updateSummaryInvoice();
         } else {
             var price = parseFloat($(this).val());
             var quantity = parseFloat($(this).parent().parent().prev().children().children().val());
-            var description = $(this).parent().parent().prev().prev().children().children().children().val();
-            var id = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
+            var unit = $(this).parent().parent().prev().prev().children().children().children().val();
+            var service = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id);
-            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
+            $items = $items.filter(material => material.service != service);
+            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total': parseFloat(quantity*price).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -144,24 +141,21 @@ $(document).ready(function () {
         {
             var quantity2 = parseFloat($(this).val());
             var price2 = parseFloat($(this).parent().parent().next().children().children().val());
-            var description2 = $(this).parent().parent().prev().children().children().children().val();
-            var id2 = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+            var unit2 = $(this).parent().parent().prev().children().children().children().val();
+            var service2 = $(this).parent().parent().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id2);
-            $items.push({'detail_id':$(this).attr('data-quantity'), 'price': price2, 'quantity':quantity2 ,'material': description2, 'id_material': id2, 'total': quantity2*price2 });
+            $items = $items.filter(material => material.service != service2);
+            $items.push({'detail_id':$(this).attr('data-quantity'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total': parseFloat(quantity2*price2).toFixed(2) });
 
-            /*$(this).parent().parent().next().next().next().next().children().children().removeClass( "btn-outline-success" );
-            $(this).parent().parent().next().next().next().next().children().children().addClass( "btn-outline-warning" );
-*/
             updateSummaryInvoice();
         } else {
             var quantity = parseFloat($(this).val());
             var price = parseFloat($(this).parent().parent().next().children().children().val());
-            var description = $(this).parent().parent().prev().children().children().children().val();
-            var id = $(this).parent().parent().prev().prev().prev().children().children().children().val();
+            var unit = $(this).parent().parent().prev().children().children().children().val();
+            var service = $(this).parent().parent().prev().prev().children().children().children().val();
 
-            $items = $items.filter(material => material.id_material != id);
-            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'material': description, 'id_material': id, 'total': quantity*price });
+            $items = $items.filter(material => material.service != service);
+            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total': parseFloat(quantity*price).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -200,13 +194,13 @@ function fillItems() {
         background  : "rgba(236, 91, 23, 0.5)"
     });
 
-    var arrayIds = [];
-    $('[data-id]').each(function(e){
-        arrayIds.push($(this).val());
+    var arrayServices = [];
+    $('[data-service]').each(function(e){
+        arrayServices.push($(this).val());
     });
-    var arrayDescriptions = [];
-    $('[data-description]').each(function(e){
-        arrayDescriptions.push($(this).val());
+    var arrayUnits = [];
+    $('[data-unit]').each(function(e){
+        arrayUnits.push($(this).val());
     });
     var arrayQuantitys = [];
     $('[data-quantity]').each(function(e){
@@ -228,11 +222,11 @@ function fillItems() {
         arrayTotals.push($(this).val());
     });
 
-    for (let i = 0; i < arrayIds.length; i++) {
-        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'material': arrayDescriptions[i], 'id_material': arrayIds[i], 'total': arrayTotals[i] });
+    for (let i = 0; i < arrayTotals.length; i++) {
+        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'service': arrayServices[i], 'unit': arrayUnits[i], 'total': arrayTotals[i] });
     }
 
-    updateSummaryInvoice();
+    //updateSummaryInvoice();
 
     $("#element_loader").LoadingOverlay("hide", true);
 }
@@ -606,45 +600,17 @@ function activateTemplate(id) {
     return document.importNode(t.content, true);
 }
 
-function storeOrderPurchase() {
+function storeOrderService() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
 
-    var subtotal_send = $('#subtotal').html();
-    var taxes_send = $('#taxes').html();
-    var total_send = $('#total').html();
+    var subtotal_send = $('#subtotal').val();
+    var taxes_send = $('#taxes').val();
+    var total_send = $('#total').val();
 
     var state = $('#btn-currency').bootstrapSwitch('state');
     var regularize = $('#btn-regularize').bootstrapSwitch('state');
-    console.log(regularize);
-
-    /*var arrayId = [];
-    var arrayCode = [];
-    var arrayDescription = [];
-    var arrayQuantity = [];
-    var arrayPrice = [];
-
-    $('[data-id]').each(function(e){
-        arrayId.push($(this).val());
-    });
-    $('[data-code]').each(function(e){
-        arrayCode.push($(this).val());
-    });
-    $('[data-description]').each(function(e){
-        arrayDescription.push($(this).val());
-    });
-    $('[data-quantity]').each(function(e){
-        arrayQuantity.push($(this).val());
-    });
-    $('[data-price]').each(function(e){
-        arrayPrice.push($(this).val());
-    });
-
-    var itemsArray = [];
-    for (let i = 0; i < arrayId.length; i++) {
-        itemsArray.push({'id':arrayId[i], 'code':arrayCode[i], 'description':arrayDescription[i], 'quantity': arrayQuantity[i], 'price': arrayPrice[i]});
-    }*/
 
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);

@@ -938,6 +938,13 @@ Route::middleware('auth')->group(function (){
         Route::post('store/regularize/order/purchase', 'EntryController@regularizeEntryToOrderPurchase')
             ->name('order.purchase.regularize.store')
             ->middleware('permission:create_orderPurchaseExpress');
+
+        // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE servicio
+        Route::get('/regularizar/automaticamente/entrada/servicio/{entry_id}', 'OrderServiceController@regularizeAutoOrderEntryService')
+            ->middleware('permission:create_orderService');
+        Route::post('store/regularize/order/service', 'OrderServiceController@regularizeEntryToOrderService')
+            ->name('order.service.regularize.store')
+            ->middleware('permission:create_orderService');
     });
 });
 
