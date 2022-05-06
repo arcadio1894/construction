@@ -48,6 +48,37 @@ class OutputController extends Controller
 
         $quote = Quote::with('equipments')->find($id_quote);
 
+        $outputs = Output::where('execution_order', $quote->order_execution)
+            ->where('indicator', 'orn')
+            ->get();
+
+        $items_quantity = [];
+
+        foreach ( $outputs as $output )
+        {
+            $details = $output->details;
+            //dd($details);
+            foreach ( $details as $detail )
+            {
+                $item = Item::find($detail->item_id);
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
+
+            }
+
+        }
+
+        $new_arr3 = array();
+        foreach($items_quantity as $item) {
+            if(isset($new_arr3[$item['material_id']])) {
+                $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr3[$item['material_id']] = $item;
+        }
+
+        $items = array_values($new_arr3);
+
         $materials_quantity = [];
         $materials = [];
 
@@ -121,19 +152,21 @@ class OutputController extends Controller
         }
 
         $consumables = array_values($new_arr2);
-
+        /*dump($materials);
+        dump($items);*/
         /*foreach ( $materials as $key => $material )
         {
-            dump($key);
-            dump($material['quantity']);
-            dump($material['material_complete']->id);
+            dump($material['material_id']);
+            dump(array_search((int)$material['material_id'], array_column($items, 'material_id')));
+            dump('------------');
         }*/
 
         //dump($materials);
-        //dump($consumables);
+        //dump($items);
+        //dd();
         $users = User::all();
 
-        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote'));
+        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
@@ -167,9 +200,40 @@ class OutputController extends Controller
 
         }
 
+        $outputs = Output::where('execution_order', $quote->order_execution)
+            ->where('indicator', 'orn')
+            ->get();
+
+        $items_quantity = [];
+
+        foreach ( $outputs as $output )
+        {
+            $details = $output->details;
+            //dd($details);
+            foreach ( $details as $detail )
+            {
+                $item = Item::find($detail->item_id);
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
+
+            }
+
+        }
+
+        $new_arr3 = array();
+        foreach($items_quantity as $item) {
+            if(isset($new_arr3[$item['material_id']])) {
+                $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr3[$item['material_id']] = $item;
+        }
+
+        $items = array_values($new_arr3);
+
         $users = User::all();
 
-        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote'));
+        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote', 'items'));
     }
 
     public function getOutputRequest()

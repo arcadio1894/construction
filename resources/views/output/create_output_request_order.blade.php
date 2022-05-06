@@ -132,12 +132,14 @@
                                 <div class="card">
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap">
+                                        <table class="table table-head-fixed">
                                             <thead>
                                             <tr>
                                                 <th>N°</th>
                                                 <th>Material</th>
-                                                <th>Cantidad</th>
+                                                <th>Cantidad Total</th>
+                                                <th>Cantidad Solicitada</th>
+                                                <th>Cantidad Faltante</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -146,6 +148,8 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $material['material'] }}</td>
                                                     <td>{{ $material['quantity'] }}</td>
+                                                    <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) !== null ? $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: 0}}</td>
+                                                    <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) !== null ? $material['quantity'] - $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: ''}}</td>
                                                 </tr>
                                             @endforeach
                                             </tbody>
