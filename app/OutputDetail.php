@@ -23,7 +23,7 @@ class OutputDetail extends Model
 
     public function items()
     {
-        return $this->hasMany('App\Item');
+        return $this->belongsTo('App\Item', 'item_id', 'id');
     }
 
     public function material()

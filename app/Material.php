@@ -146,6 +146,11 @@ class Material extends Model
         return $this->hasMany('App\DetailEntry');
     }
 
+    public function detailOutputs()
+    {
+        return $this->hasMany('App\OutputDetail');
+    }
+
     protected $dates = ['deleted_at'];
 
     public function toArray()

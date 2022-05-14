@@ -124,12 +124,14 @@
                             <strong>Importante!</strong> Al hacer click en eliminar se eliminará en la base de datos.
                         </div>
                     </div>
-                    <table class="table table-head-fixed text-nowrap table-hover">
+                    <table class="table table-head-fixed table-hover">
                         <thead>
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>Material</th>
                             <th>Código</th>
+                            <th>Largo</th>
+                            <th>Ancho</th>
                             <th>Acción</th>
                         </tr>
                         </thead>
@@ -141,6 +143,8 @@
                                 <td data-i></td>
                                 <td data-material></td>
                                 <td data-code></td>
+                                <td data-length></td>
+                                <td data-width></td>
                                 <td >
                                     <button type="button" data-itemDelete data-output class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Quitar</button>
                                 </td>

@@ -40,4 +40,9 @@ class Item extends Model
     {
         return $this->belongsTo('App\Location');
     }
+
+    public function outputDetail()
+    {
+        return $this->hasMany('App\OutputDetail', 'item_id','id');
+    }
 }

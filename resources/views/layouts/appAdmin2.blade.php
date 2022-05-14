@@ -1033,6 +1033,14 @@
                                 </a>
                             </li>
                             @endcan
+                            @can('report_output')
+                                <li class="nav-item">
+                                    <a href="{{ route('report.materials.outputs') }}" class="nav-link @yield('activeReportMaterialOutput')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Materiales en salidas</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                     @endcan

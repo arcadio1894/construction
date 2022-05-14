@@ -945,6 +945,16 @@ Route::middleware('auth')->group(function (){
         Route::post('store/regularize/order/service', 'OrderServiceController@regularizeEntryToOrderService')
             ->name('order.service.regularize.store')
             ->middleware('permission:create_orderService');
+
+        // REPORTE DE MATERIALES Y SUS SALIDAS
+        Route::get('/reporte/material/salidas', 'OutputController@reportMaterialOutputs')
+            ->name('report.materials.outputs')
+            ->middleware('permission:report_output');
+        Route::get('/get/json/materials/in/output', 'OutputController@getJsonMaterialsInOutput')
+            ->middleware('permission:report_output');
+        Route::get('/get/json/outputs/of/material/{id_material}', 'OutputController@getJsonOutputsOfMaterial')
+            ->middleware('permission:report_output');
+
     });
 });
 

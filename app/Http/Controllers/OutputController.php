@@ -670,6 +670,77 @@ class OutputController extends Controller
 
     }
 
+    public function reportMaterialOutputs()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('output.reportMaterialOutputs', compact('permissions'));
+    }
+
+    public function getJsonMaterialsInOutput()
+    {
+        $outputDetails = OutputDetail::with('items')->get();
+        $materials = [];
+        foreach ($outputDetails as $outputDetail) {
+            array_push($materials, $outputDetail->items->material);
+        }
+        $result = array_values( array_unique($materials) );
+        return $result;
+    }
+
+    public function getJsonOutputsOfMaterial( $id_material )
+    {
+        $outputDetails = OutputDetail::with('items')->get();
+        $outputs = [];
+        foreach ($outputDetails as $outputDetail) {
+            if ( $outputDetail->items->material->id == $id_material )
+            {
+
+                $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
+                //dump($output);
+                $item_original = Item::find($outputDetail->items->id);
+                $after_item = Item::where('code', $item_original->code)
+                    ->where('id', '<>', $item_original->id)
+                    ->orderBy('created_at', 'asc')
+                    ->first();
+
+                if ( $after_item )
+                {
+                    $quantity = ($item_original->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item_original->percentage-(float)$after_item->percentage;
+                } else {
+                    $quantity = (float)$item_original->percentage;
+                }
+                array_push($outputs, [
+                    'output' => $output->id,
+                    'order_execution' => $output->execution_order,
+                    'description' => ($output->quote == null) ? 'Sin datos':$output->quote->description_quote,
+                    'date' => $output->request_date,
+                    'user_responsible' => ($output->responsibleUser == null) ? 'Sin responsable':$output->responsibleUser->name,
+                    'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
+                    'quantity' => $quantity
+                ]);
+            }
+
+        }
+
+        $new_arr2 = array();
+        foreach($outputs as $item) {
+            if(isset($new_arr2[$item['output']])) {
+                $new_arr2[ $item['output']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['output']] = $item;
+        }
+
+        $coutputs_final = array_values($new_arr2);
+        //dump($outputs);
+        //$result = array_values( array_unique($outputs) );
+
+        return $coutputs_final;
+    }
+
     public function show(Output $output)
     {
         //
