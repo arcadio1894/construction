@@ -1066,7 +1066,7 @@
                     </li>
                     @endcan
 
-                    {{--@can('enable_followMaterials')
+                    @can('enable_followMaterials')
                         <li class="nav-header">ALERTA MATERIALES</li>
                         <li class="nav-item has-treeview @yield('openFollow')">
                             <a href="#" class="nav-link @yield('activeFollow')">
@@ -1087,7 +1087,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
 
 
                     @canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')

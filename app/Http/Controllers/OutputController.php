@@ -49,7 +49,7 @@ class OutputController extends Controller
         $quote = Quote::with('equipments')->find($id_quote);
 
         $outputs = Output::where('execution_order', $quote->order_execution)
-            ->where('indicator', 'orn')
+            //->where('indicator', 'orn')
             ->get();
 
         $items_quantity = [];
@@ -61,7 +61,19 @@ class OutputController extends Controller
             foreach ( $details as $detail )
             {
                 $item = Item::find($detail->item_id);
-                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
+                // TODO:Logica para traer el verdadero quantity del item
+                $after_item = Item::where('code', $item->code)
+                    ->where('id', '<>', $item->id)
+                    ->orderBy('created_at', 'asc')
+                    ->first();
+
+                if ( $after_item )
+                {
+                    $quantity = ($item->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item->percentage-(float)$after_item->percentage;
+                } else {
+                    $quantity = (float)$item->percentage;
+                }
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $quantity));
 
             }
 
@@ -201,7 +213,7 @@ class OutputController extends Controller
         }
 
         $outputs = Output::where('execution_order', $quote->order_execution)
-            ->where('indicator', 'orn')
+            //->where('indicator', 'ore')
             ->get();
 
         $items_quantity = [];
@@ -213,7 +225,20 @@ class OutputController extends Controller
             foreach ( $details as $detail )
             {
                 $item = Item::find($detail->item_id);
-                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
+                // TODO:Logica para traer el verdadero quantity del item
+                $after_item = Item::where('code', $item->code)
+                    ->where('id', '<>', $item->id)
+                    ->orderBy('created_at', 'asc')
+                    ->first();
+
+                if ( $after_item )
+                {
+                    $quantity = ($item->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item->percentage-(float)$after_item->percentage;
+                } else {
+                    $quantity = (float)$item->percentage;
+                }
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $quantity));
+                //array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
 
             }
 
