@@ -698,7 +698,7 @@ Route::middleware('auth')->group(function (){
             ->name('quote.deleted')
             ->middleware('permission:destroy_quote');
         Route::post('/renew/quote/{quote}', 'QuoteController@renewQuote')
-            ->middleware('permission:destroy_quote');
+            ->middleware('permission:renew_quote');
         Route::get('cotizaciones/finalizadas', 'QuoteController@closed')
             ->name('quote.closed')
             ->middleware('permission:finish_quote');
