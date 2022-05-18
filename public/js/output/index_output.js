@@ -112,7 +112,7 @@ $(document).ready(function () {
                         }
                     }
 
-                    if ( (custom === false) && (item.state !== 'attended' && item.state !== 'confirmed') )
+                    if ( (custom === false) && (item.state == 'attended' && item.state !== 'confirmed') )
                     {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';
                     }
