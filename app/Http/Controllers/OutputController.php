@@ -708,9 +708,13 @@ class OutputController extends Controller
         $outputDetails = OutputDetail::with('items')->get();
         $materials = [];
         foreach ($outputDetails as $outputDetail) {
-            array_push($materials, $outputDetail->items->material);
+            $mate = Material::find($outputDetail->items->material_id);
+            array_push($materials, [
+                'id' => $mate->id,
+                'full_description' => $mate->full_description
+            ]);
         }
-        $result = array_values( array_unique($materials) );
+        $result = array_values( array_unique($materials, SORT_REGULAR) );
         return $result;
     }
 
