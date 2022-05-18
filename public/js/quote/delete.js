@@ -133,7 +133,7 @@ $(document).ready(function () {
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
 
-                    if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                    if ( $.inArray('renew_quote', $permissions) !== -1 ) {
                         text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
                             ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
                     }
