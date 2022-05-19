@@ -611,9 +611,9 @@ function storeOrderPurchase() {
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
 
-    var subtotal_send = $('#subtotal').html();
-    var taxes_send = $('#taxes').html();
-    var total_send = $('#total').html();
+    var subtotal_send = $('#subtotal').val();
+    var taxes_send = $('#taxes').val();
+    var total_send = $('#total').val();
 
     var state = $('#btn-currency').bootstrapSwitch('state');
     var regularize = $('#btn-regularize').bootstrapSwitch('state');

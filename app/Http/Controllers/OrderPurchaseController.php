@@ -1378,4 +1378,22 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function indexOrderPurchaseRegularize()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderPurchase.indexRegularize', compact('permissions'));
+    }
+
+    public function getAllOrderRegularize()
+    {
+        $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->where('regularize', 'r')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($orders)->toJson();
+    }
+
 }

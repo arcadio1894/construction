@@ -792,6 +792,12 @@ Route::middleware('auth')->group(function (){
         Route::post('/restore/order/purchase/delete/{id}', 'OrderPurchaseController@restoreOrderPurchaseDelete')
             ->middleware('permission:destroy_orderPurchaseNormal');
 
+        Route::get('ordenes/compra/regularizadas', 'OrderPurchaseController@indexOrderPurchaseRegularize')
+            ->name('order.purchase.list.regularize')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/all/order/purchase/regularize', 'OrderPurchaseController@getAllOrderRegularize');
+
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

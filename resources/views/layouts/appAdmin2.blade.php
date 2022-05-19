@@ -1143,6 +1143,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.list.regularize') }}" class="nav-link @yield('activeListOrderPurchaseRegularize')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar regularizadas</p>
+                                        </a>
+                                    </li>
+                                @endcanany
                                 @canany('destroy_orderPurchaseNormal','destroy_orderPurchaseNormal')
                                     <li class="nav-item">
                                         <a href="{{route('order.purchase.delete')}}" class="nav-link @yield('activeListOrderPurchaseDelete')">
