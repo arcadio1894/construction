@@ -888,6 +888,12 @@ Route::middleware('auth')->group(function (){
             ->name('order.service.regularize')
             ->middleware('permission:regularize_orderService');
 
+        Route::get('ordenes/servicio/regularizadas', 'OrderServiceController@indexOrderServiceRegularize')
+            ->name('order.service.list.regularize')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/all/order/service/regularize', 'OrderServiceController@getAllOrderRegularize');
+
+
         // NOTIFICATIONS
         Route::get('/get/notifications', 'NotificationController@getNotifications');
         Route::post('/read/notification/{id_notification}', 'NotificationController@readNotification');

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Item;
 use App\Material;
@@ -9,6 +10,7 @@ use App\MaterialTaken;
 use App\Output;
 use App\OutputDetail;
 use App\Quote;
+use App\Subcategory;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -73,7 +75,7 @@ class OutputController extends Controller
                 } else {
                     $quantity = (float)$item->percentage;
                 }
-                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $quantity));
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
 
             }
 
@@ -98,16 +100,18 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
             foreach ( $equipment->consumables as $consumable )
             {
-                if (isset( $consumable->material->subcategory ))
+                $subcategory = Subcategory::find($consumable->material->subcategory_id);
+                if (isset( $subcategory ))
                 {
-                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) === 'MIXTO' )
+                    $category = Category::find($consumable->material->category_id);
+                    if ( $category->id == 2 && trim($subcategory->name) === 'MIXTO' )
                     {
-                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                     }
                 }
@@ -136,15 +140,17 @@ class OutputController extends Controller
         {
             foreach ( $equipment->consumables as $consumable )
             {
-                if (isset( $consumable->material->subcategory ))
+                $subcategory = Subcategory::find($consumable->material->subcategory_id);
+                if (isset( $subcategory ))
                 {
-                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                    $category = Category::find($consumable->material->category_id);
+                    if ( $category->id == 2 && trim($subcategory->name) <> 'MIXTO' )
                     {
-                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                     }
                 } else {
-                    array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                    array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                 }
 
@@ -164,18 +170,6 @@ class OutputController extends Controller
         }
 
         $consumables = array_values($new_arr2);
-        /*dump($materials);
-        dump($items);*/
-        /*foreach ( $materials as $key => $material )
-        {
-            dump($material['material_id']);
-            dump(array_search((int)$material['material_id'], array_column($items, 'material_id')));
-            dump('------------');
-        }*/
-
-        //dump($materials);
-        //dump($items);
-        //dd();
         $users = User::all();
 
         return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items'));
@@ -194,16 +188,19 @@ class OutputController extends Controller
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
             foreach ( $equipment->consumables as $consumable )
             {
-                if (isset( $consumable->material->subcategory ))
+                $subcategory = Subcategory::find($consumable->material->subcategory_id);
+
+                if (isset( $subcategory ))
                 {
-                    if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) === 'MIXTO' )
+                    $category = Category::find($consumable->material->category_id);
+                    if ( $category->id == 2 && trim($subcategory->name) === 'MIXTO' )
                     {
-                        array_push($materials, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                        array_push($materials, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                     }
                 }
@@ -237,7 +234,7 @@ class OutputController extends Controller
                 } else {
                     $quantity = (float)$item->percentage;
                 }
-                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $quantity));
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
                 //array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
 
             }

@@ -1250,6 +1250,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('list_orderService')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.service.list.regularize') }}" class="nav-link @yield('activeListOrderServiceRegularize')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar regularizadas</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

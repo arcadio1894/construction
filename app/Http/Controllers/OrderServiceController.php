@@ -757,4 +757,22 @@ class OrderServiceController extends Controller
         return response()->json(['message' => 'Orden de servicio '.$codeOrder.' guardada con éxito.', 'url' => route('invoice.index')], 200);
 
     }
+
+    public function indexOrderServiceRegularize()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderService.indexRegularize', compact('permissions'));
+    }
+
+    public function getAllOrderRegularize()
+    {
+        $orders = OrderService::with(['supplier', 'approved_user'])
+            ->where('regularize', 'r')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($orders)->toJson();
+    }
 }
