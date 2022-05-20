@@ -50,13 +50,13 @@ class OutputController extends Controller
 
         $quote = Quote::with('equipments')->find($id_quote);
 
-        $outputs = Output::where('execution_order', $quote->order_execution)
+        /*$outputs = Output::where('execution_order', $quote->order_execution)
             //->where('indicator', 'orn')
-            ->get();
+            ->get();*/
 
         $items_quantity = [];
 
-        foreach ( $outputs as $output )
+        /*foreach ( $outputs as $output )
         {
             $details = $output->details;
             //dd($details);
@@ -79,9 +79,9 @@ class OutputController extends Controller
 
             }
 
-        }
+        }*/
 
-        $new_arr3 = array();
+        /*$new_arr3 = array();
         foreach($items_quantity as $item) {
             if(isset($new_arr3[$item['material_id']])) {
                 $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
@@ -89,9 +89,10 @@ class OutputController extends Controller
             }
 
             $new_arr3[$item['material_id']] = $item;
-        }
+        }*/
 
-        $items = array_values($new_arr3);
+        /*$items = array_values($new_arr3);*/
+        $items = [];
 
         $materials_quantity = [];
         $materials = [];
@@ -209,13 +210,13 @@ class OutputController extends Controller
 
         }
 
-        $outputs = Output::where('execution_order', $quote->order_execution)
+        /*$outputs = Output::where('execution_order', $quote->order_execution)
             //->where('indicator', 'ore')
             ->get();
 
-        $items_quantity = [];
+        $items_quantity = [];*/
 
-        foreach ( $outputs as $output )
+        /*foreach ( $outputs as $output )
         {
             $details = $output->details;
             //dd($details);
@@ -239,9 +240,9 @@ class OutputController extends Controller
 
             }
 
-        }
+        }*/
 
-        $new_arr3 = array();
+        /*$new_arr3 = array();
         foreach($items_quantity as $item) {
             if(isset($new_arr3[$item['material_id']])) {
                 $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
@@ -249,9 +250,10 @@ class OutputController extends Controller
             }
 
             $new_arr3[$item['material_id']] = $item;
-        }
+        }*/
 
-        $items = array_values($new_arr3);
+        /*$items = array_values($new_arr3);*/
+        $items = [];
 
         $users = User::all();
 
