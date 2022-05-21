@@ -967,6 +967,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/outputs/of/material/{id_material}', 'OutputController@getJsonOutputsOfMaterial')
             ->middleware('permission:report_output');
 
+        Route::get('/get/json/quantity/output/material/{id_quote}/{id_material}', 'OutputController@getQuantityMaterialOutputs')
+            ->middleware('permission:report_output');
     });
 });
 

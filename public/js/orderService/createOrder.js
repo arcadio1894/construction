@@ -34,7 +34,7 @@ $(document).ready(function () {
         var service = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
 
         $items = $items.filter(item => item.service != service);
-        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total': (price*quantity).toFixed(2) });
         updateSummaryInvoice();
 
     });
@@ -46,7 +46,7 @@ $(document).ready(function () {
         var service = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
         $items = $items.filter(item => item.service != service);
-        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total':(price*quantity).toFixed(2) });
 
         updateSummaryInvoice();
 
@@ -59,7 +59,7 @@ $(document).ready(function () {
         var service = $(this).parent().parent().prev().prev().children().children().children().val();
 
         $items = $items.filter(item => item.service != service);
-        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+        $items.push({'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total': (price*quantity).toFixed(2) });
         updateSummaryInvoice();
     });
 });
@@ -165,7 +165,7 @@ function addItem() {
     let service_quantity = $('#quantity').val();
     let service_price = $('#price').val();
 
-    $items.push({'price': service_price, 'quantity':service_quantity ,'service': service, 'unit': service_unit });
+    $items.push({'price': service_price, 'quantity':service_quantity ,'service': service, 'unit': service_unit, 'total':(service_price*service_quantity).toFixed(2) });
 
     $('#service').val('');
     $('#unit').val(null).trigger('change');

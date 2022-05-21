@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Category;
+use App\Equipment;
+use App\EquipmentConsumable;
+use App\EquipmentMaterial;
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Item;
 use App\Material;
@@ -183,13 +186,14 @@ class OutputController extends Controller
 
         $quote = Quote::with('equipments')->find($id_quote);
 
+        $materials_quantity = [];
         $materials = [];
 
         foreach ( $quote->equipments as $equipment )
         {
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
 
             }
             foreach ( $equipment->consumables as $consumable )
@@ -201,7 +205,7 @@ class OutputController extends Controller
                     $category = Category::find($consumable->material->category_id);
                     if ( $category->id == 2 && trim($subcategory->name) === 'MIXTO' )
                     {
-                        array_push($materials, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
 
                     }
                 }
@@ -209,6 +213,18 @@ class OutputController extends Controller
             }
 
         }
+
+        $new_arr = array();
+        foreach($materials_quantity as $item) {
+            if(isset($new_arr[$item['material_id']])) {
+                $new_arr[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr[$item['material_id']] = $item;
+        }
+
+        $materials = array_values($new_arr);
 
         /*$outputs = Output::where('execution_order', $quote->order_execution)
             //->where('indicator', 'ore')
@@ -767,6 +783,111 @@ class OutputController extends Controller
         //$result = array_values( array_unique($outputs) );
 
         return $coutputs_final;
+    }
+
+    public function getQuantityMaterialOutputs($quote_id, $material_id)
+    {
+        $quote = Quote::find($quote_id);
+        $equipments = Equipment::where('quote_id', $quote_id)->get();
+
+        $materials_quantity = [];
+        $materials = [];
+
+        foreach ( $equipments as $equipment )
+        {
+            $equipment_materials = EquipmentMaterial::where('equipment_id', $equipment->id)
+                ->where('material_id', $material_id)
+                ->get();
+            foreach ( $equipment_materials as $material )
+            {
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+
+            }
+            $equipment_consumables = EquipmentConsumable::where('equipment_id', $equipment->id)
+                ->where('material_id', $material_id)
+                ->get();
+            foreach ( $equipment_consumables as $consumable )
+            {
+                $subcategory = Subcategory::find($consumable->material->subcategory_id);
+
+                if (isset( $subcategory ))
+                {
+                    $category = Category::find($consumable->material->category_id);
+                    if ( $category->id == 2 && trim($subcategory->name) === 'MIXTO' )
+                    {
+                        array_push($materials_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                }
+
+            }
+
+        }
+
+        $new_arr = array();
+        foreach($materials_quantity as $item) {
+            if(isset($new_arr[$item['material_id']])) {
+                $new_arr[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr[$item['material_id']] = $item;
+        }
+
+        $materials = array_values($new_arr);
+
+        dump($quote);
+
+        $outputs = Output::where('execution_order', $quote->order_execution)
+            //->where('indicator', 'ore')
+            ->get();
+
+        dump($outputs);
+
+        $items_quantity = [];
+        $items = [];
+
+        foreach ( $outputs as $output )
+        {
+            $details = $output->details;
+            dump($details);
+            foreach ( $details as $detail )
+            {
+                $item = Item::find($detail->item_id);
+                // TODO:Logica para traer el verdadero quantity del item
+                $after_item = Item::where('code', $item->code)
+                    ->where('id', '<>', $item->id)
+                    ->orderBy('created_at', 'asc')
+                    ->first();
+
+                if ( $after_item )
+                {
+                    $quantity = ($item->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item->percentage-(float)$after_item->percentage;
+                } else {
+                    $quantity = (float)$item->percentage;
+                }
+                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
+                //array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
+
+            }
+
+        }
+
+        $new_arr3 = array();
+        foreach($items_quantity as $item) {
+            if(isset($new_arr3[$item['material_id']])) {
+                $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr3[$item['material_id']] = $item;
+        }
+
+        $items = array_values($new_arr3);
+
+        dump($materials);
+        dump($items);
+
     }
 
     public function show(Output $output)

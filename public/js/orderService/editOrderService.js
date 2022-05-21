@@ -41,7 +41,7 @@ $(document).ready(function () {
             var id2 = $(this).attr('data-price2');
 
             $items = $items.filter(item => item.detail_id != id2);
-            $items.push({'detail_id':$(this).attr('data-price2'), 'price': price_2, 'quantity':quantity2 ,'service': service2, 'unit': unit2 });
+            $items.push({'detail_id':$(this).attr('data-price2'), 'price': price_2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total':(price2*quantity2).toFixed(2) });
 
             $(this).parent().parent().next().next().next().children().children().removeClass( "btn-outline-success" );
             $(this).parent().parent().next().next().next().children().children().addClass( "btn-outline-warning" );
@@ -55,7 +55,7 @@ $(document).ready(function () {
             var service = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
 
             $items = $items.filter(item => item.service != service);
-            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total':(price*quantity).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -72,7 +72,7 @@ $(document).ready(function () {
             var id2 = $(this).attr('data-price');
 
             $items = $items.filter(item => item.detail_id != id2);
-            $items.push({'detail_id':$(this).attr('data-price'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2 });
+            $items.push({'detail_id':$(this).attr('data-price'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total':(price2*quantity2).toFixed(2) });
 
             $(this).parent().parent().next().next().next().children().children().removeClass( "btn-outline-success" );
             $(this).parent().parent().next().next().next().children().children().addClass( "btn-outline-warning" );
@@ -85,7 +85,7 @@ $(document).ready(function () {
             var service = $(this).parent().parent().prev().prev().prev().children().children().children().val();
 
             $items = $items.filter(item => item.service != service);
-            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total':(price*quantity).toFixed(2) });
 
             updateSummaryInvoice();
         }
@@ -102,7 +102,7 @@ $(document).ready(function () {
             var detail_id2 = $(this).attr('data-quantity');
 
             $items = $items.filter(item => item.detail_id != detail_id2);
-            $items.push({'detail_id':$(this).attr('data-quantity'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2 });
+            $items.push({'detail_id':$(this).attr('data-quantity'), 'price': price2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total':(price2*quantity2).toFixed(2) });
 
             $(this).parent().parent().next().next().next().next().children().children().removeClass( "btn-outline-success" );
             $(this).parent().parent().next().next().next().next().children().children().addClass( "btn-outline-warning" );
@@ -115,7 +115,7 @@ $(document).ready(function () {
             var service = $(this).parent().parent().prev().prev().children().children().children().val();
 
             $items = $items.filter(item => item.service != service);
-            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+            $items.push({'detail_id':'', 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total':(price*quantity).toFixed(2) });
             updateSummaryInvoice();
         }
 
@@ -172,7 +172,7 @@ function fillItems() {
     });
 
     for (let i = 0; i < arrayServices.length; i++) {
-        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'service': arrayServices[i], 'unit': arrayUnits[i] });
+        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'service': arrayServices[i], 'unit': arrayUnits[i], 'total':(arrayPrices[i]*arrayPrices[i]).toFixed(2) });
     }
 
     updateSummaryInvoice();
@@ -254,7 +254,7 @@ function addItem() {
     let service_quantity = $('#quantity').val();
     let service_price = $('#price').val();
 
-    $items.push({'detail_id':'','price': service_price, 'quantity':service_quantity ,'service': service, 'unit': service_unit });
+    $items.push({'detail_id':'','price': service_price, 'quantity':service_quantity ,'service': service, 'unit': service_unit, 'total': (service_price*service_quantity).toFixed(2) });
 
     $('#service').val('');
     $('#unit').val(null).trigger('change');
@@ -322,7 +322,7 @@ function editItem() {
 
     var modifiedItem = [];
 
-    modifiedItem.push({'detail_id':detail_id, 'price': price, 'quantity':quantity ,'service': service, 'unit': unit });
+    modifiedItem.push({'detail_id':detail_id, 'price': price, 'quantity':quantity ,'service': service, 'unit': unit, 'total':(price*quantity).toFixed(2) });
     console.log(modifiedItem);
     var valParam = JSON.stringify(modifiedItem);
     $.confirm({
