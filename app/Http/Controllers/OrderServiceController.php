@@ -667,58 +667,66 @@ class OrderServiceController extends Controller
             // TODO: Tratamiento de imagenes
             if ($entry->image != null)
             {
-                $nombre = $entry->image;
-                $imagen = public_path().'/images/entries/'.$nombre;
-                $ruta = public_path().'/images/orderServices/';
-                $extension = substr($nombre, -3);
-                //$filename = $entry->id . '.' . $extension;
-                if (file_exists($imagen)) {
-                    if ( strtoupper($extension) != "PDF" )
-                    {
-                        $filename = $orderService->id . '.JPG';
-                        $img = Image::make($imagen);
-                        $img->orientate();
-                        $img->save($ruta.$filename, 80, 'JPG');
-                        //$request->file('image')->move($path, $filename);
-                        $orderService->image_invoice = $filename;
-                        $orderService->save();
-                    } else {
-                        $filename = 'pdf'.$orderService->id . '.' .$extension;
-                        $destino = $ruta.$filename;
-                        copy($imagen, $destino);
-                        //$request->file('image')->move($path, $filename);
-                        $orderService->image_invoice = $filename;
-                        $orderService->save();
+                if ( $entry->image != 'no_image.png' )
+                {
+                    $nombre = $entry->image;
+                    $imagen = public_path().'/images/entries/'.$nombre;
+                    $ruta = public_path().'/images/orderServices/';
+                    $extension = substr($nombre, -3);
+                    //$filename = $entry->id . '.' . $extension;
+                    if (file_exists($imagen)) {
+                        if ( strtoupper($extension) != "PDF" )
+                        {
+                            $filename = $orderService->id . '.JPG';
+                            $img = Image::make($imagen);
+                            $img->orientate();
+                            $img->save($ruta.$filename, 80, 'JPG');
+                            //$request->file('image')->move($path, $filename);
+                            $orderService->image_invoice = $filename;
+                            $orderService->save();
+                        } else {
+                            $filename = 'pdf'.$orderService->id . '.' .$extension;
+                            $destino = $ruta.$filename;
+                            copy($imagen, $destino);
+                            //$request->file('image')->move($path, $filename);
+                            $orderService->image_invoice = $filename;
+                            $orderService->save();
+                        }
                     }
                 }
+
             }
 
             if ($entry->imageOb != null)
             {
-                $nombre = $entry->imageOb;
-                $imagen = public_path().'/images/entries/observations/'.$nombre;
-                $ruta = public_path().'/images/orderServices/observations/';
-                $extension = substr($nombre, -3);
-                //$filename = $entry->id . '.' . $extension;
-                if (file_exists($imagen)) {
-                    if ( strtoupper($extension) != "PDF" )
-                    {
-                        $filename = $orderService->id . '.JPG';
-                        $img = Image::make($imagen);
-                        $img->orientate();
-                        $img->save($ruta.$filename, 80, 'JPG');
-                        //$request->file('image')->move($path, $filename);
-                        $orderService->image_observation = $filename;
-                        $orderService->save();
-                    } else {
-                        $filename = 'pdf'.$orderService->id . '.' .$extension;
-                        $destino = $ruta.$filename;
-                        copy($imagen, $destino);
-                        //$request->file('image')->move($path, $filename);
-                        $orderService->image_observation = $filename;
-                        $orderService->save();
+                if ( $entry->imageOb != 'no_image.png' )
+                {
+                    $nombre = $entry->imageOb;
+                    $imagen = public_path().'/images/entries/observations/'.$nombre;
+                    $ruta = public_path().'/images/orderServices/observations/';
+                    $extension = substr($nombre, -3);
+                    //$filename = $entry->id . '.' . $extension;
+                    if (file_exists($imagen)) {
+                        if ( strtoupper($extension) != "PDF" )
+                        {
+                            $filename = $orderService->id . '.JPG';
+                            $img = Image::make($imagen);
+                            $img->orientate();
+                            $img->save($ruta.$filename, 80, 'JPG');
+                            //$request->file('image')->move($path, $filename);
+                            $orderService->image_observation = $filename;
+                            $orderService->save();
+                        } else {
+                            $filename = 'pdf'.$orderService->id . '.' .$extension;
+                            $destino = $ruta.$filename;
+                            copy($imagen, $destino);
+                            //$request->file('image')->move($path, $filename);
+                            $orderService->image_observation = $filename;
+                            $orderService->save();
+                        }
                     }
                 }
+
             }
 
 
