@@ -1358,10 +1358,10 @@ class EntryController extends Controller
             $maxCode = OrderPurchase::withTrashed()->max('id');
             $maxId = $maxCode + 1;
             $length = 5;
-            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $orderPurchase = OrderPurchase::create([
-                'code' => $codeOrder,
+                'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -1379,6 +1379,17 @@ class EntryController extends Controller
                 'regularize' => ($request->get('regularize') === 'true') ? 'r': 'nr',
                 'status_order' => 'pick_up'
             ]);
+
+            $codeOrder = '';
+            if ( $maxId < $orderPurchase->id ){
+                $codeOrder = 'OC-'.str_pad($orderPurchase->id,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            } else {
+                $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            }
 
             $items = json_decode($request->get('items'));
 

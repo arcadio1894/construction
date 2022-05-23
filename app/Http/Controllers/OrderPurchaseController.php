@@ -217,10 +217,10 @@ class OrderPurchaseController extends Controller
             $maxCode = OrderPurchase::withTrashed()->max('id');
             $maxId = $maxCode + 1;
             $length = 5;
-            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $orderPurchase = OrderPurchase::create([
-                'code' => $codeOrder,
+                'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
@@ -237,6 +237,17 @@ class OrderPurchaseController extends Controller
                 'type' => 'e',
                 'status_order' => 'stand_by'
             ]);
+
+            $codeOrder = '';
+            if ( $maxId < $orderPurchase->id ){
+                $codeOrder = 'OC-'.str_pad($orderPurchase->id,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            } else {
+                $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            }
 
             $items = json_decode($request->get('items'));
 
@@ -822,10 +833,10 @@ class OrderPurchaseController extends Controller
             $maxCode = OrderPurchase::withTrashed()->max('id');
             $maxId = $maxCode + 1;
             $length = 5;
-            $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $orderPurchase = OrderPurchase::create([
-                'code' => $codeOrder,
+                'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -843,6 +854,16 @@ class OrderPurchaseController extends Controller
                 'regularize' => ($request->has('regularize_order')) ? 'r':'nr',
                 'status_order' => 'stand_by'
             ]);
+            $codeOrder = '';
+            if ( $maxId < $orderPurchase->id ){
+                $codeOrder = 'OC-'.str_pad($orderPurchase->id,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            } else {
+                $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderPurchase->code = $codeOrder;
+                $orderPurchase->save();
+            }
 
             $items = json_decode($request->get('items'));
 

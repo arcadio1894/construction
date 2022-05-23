@@ -94,10 +94,10 @@ class OrderServiceController extends Controller
         try {
             $maxId = OrderService::withTrashed()->max('id')+1;
             $length = 5;
-            $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $orderService = OrderService::create([
-                'code' => $codeOrder,
+                'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -113,6 +113,17 @@ class OrderServiceController extends Controller
                 'total' => $request->get('total_send'),
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
             ]);
+
+            $codeOrder = '';
+            if ( $maxId < $orderService->id ){
+                $codeOrder = 'OS-'.str_pad($orderService->id,$length,"0", STR_PAD_LEFT);
+                $orderService->code = $codeOrder;
+                $orderService->save();
+            } else {
+                $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderService->code = $codeOrder;
+                $orderService->save();
+            }
 
             $items = json_decode($request->get('items'));
 
@@ -612,10 +623,10 @@ class OrderServiceController extends Controller
         try {
             $maxId = OrderService::withTrashed()->max('id')+1;
             $length = 5;
-            $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $orderService = OrderService::create([
-                'code' => $codeOrder,
+                'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
@@ -631,6 +642,16 @@ class OrderServiceController extends Controller
                 'total' => $request->get('total_send'),
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
             ]);
+
+            if ( $maxId < $orderService->id ){
+                $codeOrder = 'OS-'.str_pad($orderService->id,$length,"0", STR_PAD_LEFT);
+                $orderService->code = $codeOrder;
+                $orderService->save();
+            } else {
+                $codeOrder2 = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderService->code = $codeOrder2;
+                $orderService->save();
+            }
 
             $items = json_decode($request->get('items'));
 
