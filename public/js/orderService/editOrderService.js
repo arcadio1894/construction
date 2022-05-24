@@ -41,7 +41,7 @@ $(document).ready(function () {
             var id2 = $(this).attr('data-price2');
 
             $items = $items.filter(item => item.detail_id != id2);
-            $items.push({'detail_id':$(this).attr('data-price2'), 'price': price_2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total':(price2*quantity2).toFixed(2) });
+            $items.push({'detail_id':$(this).attr('data-price2'), 'price': price_2, 'quantity':quantity2 ,'service': service2, 'unit': unit2, 'total':(price_2*quantity2).toFixed(2) });
 
             $(this).parent().parent().next().next().next().children().children().removeClass( "btn-outline-success" );
             $(this).parent().parent().next().next().next().children().children().addClass( "btn-outline-warning" );
@@ -172,7 +172,7 @@ function fillItems() {
     });
 
     for (let i = 0; i < arrayServices.length; i++) {
-        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'service': arrayServices[i], 'unit': arrayUnits[i], 'total':(arrayPrices[i]*arrayPrices[i]).toFixed(2) });
+        $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'service': arrayServices[i], 'unit': arrayUnits[i], 'total':(arrayQuantitys[i]*arrayPrices[i]).toFixed(2) });
     }
 
     updateSummaryInvoice();
@@ -315,10 +315,10 @@ function calculateTotal3(e) {
 
 function editItem() {
     var detail_id = $(this).attr('data-edit');
-    var price = parseFloat($(this).parent().parent().prev().prev().children().children().val());
-    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
-    var unit = $(this).parent().parent().prev().prev().prev().prev().children().children().children().val();
-    var service = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+    var price = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
+    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().prev().children().children().val());
+    var unit = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
+    var service = $(this).parent().parent().prev().prev().prev().prev().prev().prev().children().children().children().val();
 
     var modifiedItem = [];
 

@@ -308,7 +308,7 @@ function editItem() {
     var detail_id = $(this).attr('data-edit');
     var total = parseFloat($(this).parent().parent().prev().children().children().val());
     var price = parseFloat($(this).parent().parent().prev().prev().prev().children().children().val());
-    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().children().prev().children().val());
+    var quantity = parseFloat($(this).parent().parent().prev().prev().prev().prev().children().children().val());
     var description = $(this).parent().parent().prev().prev().prev().prev().prev().children().children().children().val();
     var id = $(this).parent().parent().prev().prev().prev().prev().prev().prev().prev().children().children().children().val();
     var modifiedItem = [];
