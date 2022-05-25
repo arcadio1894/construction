@@ -893,6 +893,15 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_orderPurchaseNormal');
         Route::get('/all/order/service/regularize', 'OrderServiceController@getAllOrderRegularize');
 
+        Route::get('ordenes/servicio/anuladas', 'OrderServiceController@indexOrderServiceDeleted')
+            ->name('order.service.list.deleted')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/all/order/service/deleted', 'OrderServiceController@getAllOrderDeleted');
+        Route::get('ordenes/servicio/perdidas', 'OrderServiceController@indexOrderServiceLost')
+            ->name('order.service.list.lost')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/all/order/service/lost', 'OrderServiceController@getAllOrderLost');
+
 
         // NOTIFICATIONS
         Route::get('/get/notifications', 'NotificationController@getNotifications');

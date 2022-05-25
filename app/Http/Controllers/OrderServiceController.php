@@ -804,4 +804,45 @@ class OrderServiceController extends Controller
             ->get();
         return datatables($orders)->toJson();
     }
+
+    public function indexOrderServiceDeleted()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderService.indexDeleted', compact('permissions'));
+    }
+
+    public function getAllOrderDeleted()
+    {
+        $orders = OrderService::onlyTrashed()
+            ->with(['supplier', 'approved_user'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($orders)->toJson();
+    }
+
+    public function indexOrderServiceLost()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderService.indexLost', compact('permissions'));
+    }
+
+    public function getAllOrderLost()
+    {
+        $orders = OrderService::withTrashed()
+            ->get('id')->toArray();
+        $maxId = OrderService::withTrashed()
+            ->max('id');
+        for ( $i = 1; $i<=$maxId; $i++ )
+        {
+
+        }
+        dd($maxId);
+        //return datatables($orders)->toJson();
+    }
 }
