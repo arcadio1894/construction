@@ -228,9 +228,17 @@
             <tr>
                 <td class="desc">{{ $material->material->full_description }}</td>
                 <td class="unit">{{ $material->material->unitMeasure->name }}</td>
-                <td class="unit">USD {{ $material->price }}</td>
+                @can('showPrices_quote')
+                    <td class="unit">USD {{ $material->price }}</td>
+                @else
+                    <td class="unit"></td>
+                @endcan
                 <td class="qty">{{ $material->quantity }}</td>
-                <td class="qty">USD {{ $material->total }}</td>
+                @can('showPrices_quote')
+                    <td class="qty">USD {{ $material->total }}</td>
+                @else
+                    <td class="qty"></td>
+                @endcan
             </tr>
             @endforeach
             </tbody>
@@ -251,9 +259,17 @@
                 <tr>
                     <td class="desc">{{ $consumable->material->full_description }}</td>
                     <td class="unit">{{ $consumable->material->unitMeasure->name }}</td>
-                    <td class="unit">USD {{ $consumable->price }}</td>
+                    @can('showPrices_quote')
+                        <td class="unit">USD {{ $consumable->price }}</td>
+                    @else
+                        <td class="unit"></td>
+                    @endcan
                     <td class="qty">{{ $consumable->quantity }}</td>
-                    <td class="qty">USD {{ $consumable->total }}</td>
+                    @can('showPrices_quote')
+                        <td class="qty">USD {{ $consumable->total }}</td>
+                    @else
+                        <td class="qty"></td>
+                    @endcan
                 </tr>
             @endforeach
             </tbody>
@@ -262,7 +278,7 @@
         <table>
             <thead>
             <tr>
-                <th class="desc">MANO DE OBRA</th>
+                <th class="desc">SERVICIOS VARIOS</th>
                 <th>UNIDAD</th>
                 <th>PRECIO</th>
                 <th>CANT.</th>
@@ -274,9 +290,17 @@
                 <tr>
                     <td class="desc">{{ $workforce->description }}</td>
                     <td class="unit">{{ $workforce->unit }}</td>
-                    <td class="unit">USD {{ $workforce->price }}</td>
+                    @can('showPrices_quote')
+                        <td class="unit">USD {{ $workforce->price }}</td>
+                    @else
+                        <td class="unit"></td>
+                    @endcan
                     <td class="qty">{{ $workforce->quantity }}</td>
-                    <td class="qty">USD {{ $workforce->total }}</td>
+                    @can('showPrices_quote')
+                        <td class="qty">USD {{ $workforce->total }}</td>
+                    @else
+                        <td class="qty"></td>
+                    @endcan
                 </tr>
             @endforeach
             </tbody>
@@ -285,7 +309,7 @@
         <table>
             <thead>
             <tr>
-                <th class="desc">SERVICIOS DE TORNO</th>
+                <th class="desc">SERVICIOS ADICIONALES</th>
                 <th>PRECIO</th>
                 <th>CANT.</th>
                 <th>TOTAL</th>
@@ -295,15 +319,24 @@
             @foreach( $equipment->turnstiles as $turnstile )
                 <tr>
                     <td class="desc">{{ $turnstile->description }}</td>
+                    @can('showPrices_quote')
                     <td class="unit">USD {{ $turnstile->price }}</td>
+                    @else
+                        <td class="unit"></td>
+                    @endcan
                     <td class="qty">{{ $turnstile->quantity }}</td>
+                    @can('showPrices_quote')
                     <td class="qty">USD {{ $turnstile->total }}</td>
+                    @else
+                        <td class="qty"></td>
+                    @endcan
                 </tr>
             @endforeach
             </tbody>
         </table>
     @endforeach
     <br><br><br><br>
+    @can('showPrices_quote')
     <table id="sumary">
         <tbody>
         <tr>
@@ -332,7 +365,7 @@
         </tr>
         </tbody>
     </table>
-
+    @endcan
     <br><br>
     <div id="notices">
         <div class="center">Los equipos cotizados cumplen con los estándares de fabricación de equipos para plantas de alimentos (diseño
