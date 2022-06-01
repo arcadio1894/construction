@@ -263,15 +263,15 @@
                             <table class="table">
                                 <tr>
                                     <th style="width:50%">Subtotal: </th>
-                                    <td ><span class="moneda">PEN</span> <span id="subtotal">0.00</span> </td>
+                                    <td ><span class="moneda">{{ $orderPurchase->currency_order }}</span> <span id="subtotal">{{ $orderPurchase->total - $orderPurchase->igv }}</span> </td>
                                 </tr>
                                 <tr>
                                     <th>Igv: </th>
-                                    <td ><span class="moneda">PEN</span> <span id="taxes">0.00</span> </td>
+                                    <td ><span class="moneda">{{ $orderPurchase->currency_order }}</span> <span id="taxes">{{$orderPurchase->igv }}</span> </td>
                                 </tr>
                                 <tr>
                                     <th>Total: </th>
-                                    <td ><span class="moneda">PEN</span> <span id="total">0.00</span> </td>
+                                    <td ><span class="moneda">{{ $orderPurchase->currency_order }}</span> <span id="total">{{ $orderPurchase->total }}</span> </td>
                                 </tr>
                             </table>
                         </div>

@@ -119,9 +119,9 @@ function updateSummaryInvoice() {
         taxes = subtotal*0.18;
     }
 
-    $('#subtotal').html(subtotal.toFixed(2));
-    $('#taxes').html(taxes.toFixed(2));
-    $('#total').html(total.toFixed(2));
+    //$('#subtotal').html(subtotal.toFixed(2));
+    //$('#taxes').html(taxes.toFixed(2));
+    //$('#total').html(total.toFixed(2));
 
     var currency = $('#currency').val();
     if (currency === 'DOLARES')
