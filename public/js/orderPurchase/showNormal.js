@@ -145,7 +145,7 @@ function fillItems() {
         $items.push({'detail_id': arrayOrders[i], 'price': arrayPrices[i], 'quantity':arrayQuantitys[i] ,'material': arrayDescriptions[i], 'id_material': arrayIds[i] });
     }
 
-    updateSummaryInvoice();
+    //updateSummaryInvoice();
 
     $("#element_loader").LoadingOverlay("hide", true);
 }
