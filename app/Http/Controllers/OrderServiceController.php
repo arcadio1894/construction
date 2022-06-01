@@ -835,14 +835,29 @@ class OrderServiceController extends Controller
     public function getAllOrderLost()
     {
         $orders = OrderService::withTrashed()
-            ->get('id')->toArray();
-        $maxId = OrderService::withTrashed()
-            ->max('id');
-        for ( $i = 1; $i<=$maxId; $i++ )
+            ->pluck('code')->toArray();
+        //dump($orders);
+        $ids = [];
+        for ($i=0; $i< count($orders); $i++)
         {
-
+            $id = (int) substr( $orders[$i], 3 );
+            array_push($ids, $id);
         }
-        dd($maxId);
-        //return datatables($orders)->toJson();
+        //dump($ids);
+        $lost = [];
+        $iterator = 1;
+        for ( $j=0; $j< count($ids); ++$j )
+        {
+            while( $iterator < $ids[$j] )
+            {
+                $codeOrder = 'OS-'.str_pad($iterator,5,"0", STR_PAD_LEFT);
+                array_push($lost, ['code'=>$codeOrder]);
+                $iterator++;
+            }
+            $iterator++;
+        }
+        //dd($lost);
+
+        return datatables($lost)->toJson();
     }
 }

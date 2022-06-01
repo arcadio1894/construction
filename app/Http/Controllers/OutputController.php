@@ -836,13 +836,9 @@ class OutputController extends Controller
 
         $materials = array_values($new_arr);
 
-        dump($quote);
-
         $outputs = Output::where('execution_order', $quote->order_execution)
             //->where('indicator', 'ore')
             ->get();
-
-        dump($outputs);
 
         $items_quantity = [];
         $items = [];
@@ -850,7 +846,6 @@ class OutputController extends Controller
         foreach ( $outputs as $output )
         {
             $details = $output->details;
-            dump($details);
             foreach ( $details as $detail )
             {
                 $item = Item::find($detail->item_id);
@@ -866,7 +861,11 @@ class OutputController extends Controller
                 } else {
                     $quantity = (float)$item->percentage;
                 }
-                array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
+                if ( $item->material_id == $material_id )
+                {
+                    array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
+
+                }
                 //array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
 
             }
@@ -885,8 +884,16 @@ class OutputController extends Controller
 
         $items = array_values($new_arr3);
 
-        dump($materials);
-        dump($items);
+        return response()->json(
+            [   'material' => (float)$materials[0]['material'],
+                'quantity' => ($materials[0]['quantity'] == null) ? 0 : (float)$materials[0]['quantity'],
+                'request' => ( count($items) == 0) ? 0 : (float)$items[0]['quantity'],
+                'missing' => ( count($items) == 0) ? (float)$materials[0]['quantity'] : (float)$materials[0]['quantity'] - (float)$items[0]['quantity']
+            ]
+            , 200);
+
+        //dump($materials);
+        //dump($items);
 
     }
 

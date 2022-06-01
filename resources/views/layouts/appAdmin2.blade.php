@@ -1159,6 +1159,14 @@
                                         </a>
                                     </li>
                                 @endcanany
+                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.list.lost')}}" class="nav-link @yield('activeListOrderPurchaseLost')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ordenes perdidas</p>
+                                        </a>
+                                    </li>
+                                @endcanany
                             </ul>
                         </li>
                     @endcanany
@@ -1263,6 +1271,14 @@
                                         <a href="{{ route('order.service.list.deleted') }}" class="nav-link @yield('activeListOrderServiceDeleted')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar Anuladas</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('list_orderService')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.service.list.lost') }}" class="nav-link @yield('activeListOrderServiceLost')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ordenes Perdidas</p>
                                         </a>
                                     </li>
                                 @endcan

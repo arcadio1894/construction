@@ -1417,4 +1417,42 @@ class OrderPurchaseController extends Controller
         return datatables($orders)->toJson();
     }
 
+    public function indexOrderPurchaseLost()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('orderPurchase.indexLost', compact('permissions'));
+    }
+
+    public function getAllOrderPurchaseLost()
+    {
+        $orders = OrderPurchase::withTrashed()
+            ->pluck('code')->toArray();
+        //dump($orders);
+        $ids = [];
+        for ($i=0; $i< count($orders); $i++)
+        {
+            $id = (int) substr( $orders[$i], 3 );
+            array_push($ids, $id);
+        }
+        //dump($ids);
+        $lost = [];
+        $iterator = 1;
+        for ( $j=0; $j< count($ids); $j++ )
+        {
+            while( $iterator < $ids[$j] )
+            {
+                $codeOrder = 'OC-'.str_pad($iterator,5,"0", STR_PAD_LEFT);
+                array_push($lost, ['code'=>$codeOrder]);
+                $iterator++;
+            }
+            $iterator++;
+        }
+        //dd($lost);
+
+        return datatables($lost)->toJson();
+    }
+
 }

@@ -797,6 +797,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_orderPurchaseNormal');
         Route::get('/all/order/purchase/regularize', 'OrderPurchaseController@getAllOrderRegularize');
 
+        Route::get('ordenes/compra/perdidas', 'OrderPurchaseController@indexOrderPurchaseLost')
+            ->name('order.purchase.list.lost')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/all/order/purchase/lost', 'OrderPurchaseController@getAllOrderPurchaseLost');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

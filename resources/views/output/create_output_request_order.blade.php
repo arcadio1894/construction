@@ -40,6 +40,9 @@
             height: auto;
             min-height: 100%;
         }
+        #modal-dialog-custom {
+            height: 60% !important;
+        }
     </style>
 @endsection
 
@@ -138,8 +141,7 @@
                                                 <th>N°</th>
                                                 <th>Material</th>
                                                 <th>Cantidad Total</th>
-                                                <th>Cantidad Solicitada</th>
-                                                <th>Cantidad Faltante</th>
+                                                <th>Detalles</th>
                                             </tr>
                                             </thead>
                                             <tbody>
@@ -148,9 +150,10 @@
                                                     <td>{{ $key + 1 }}</td>
                                                     <td>{{ $material['material'] }}</td>
                                                     <td>{{ $material['quantity'] }}</td>
-                                                    <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) != null ? $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: 0}}</td>
-                                                    <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) != null ? $material['quantity'] - $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: ''}}</td>
-                                                </tr>
+                                                    <td>
+                                                        <button type="button" class="btn btn-success" data-show data-name="{{ $material['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $material['material_id'] }}"><i class="fas fa-search-plus"></i></button>
+                                                    </td>
+                                                    </tr>
                                             @endforeach
                                             </tbody>
                                         </table>
@@ -493,6 +496,70 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" id="btn-saveItemsCustom" class="btn btn-outline-primary">Agregar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalShowDetailsMaterial" class="modal fade" tabindex="-1">
+        <div id="modal-dialog-custom" class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cantidades pedidas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="col-sm-12 control-label" for="material_selected_custom"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_details" name="material_selected_details" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="quantity_material"> Cantidad total </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="quantity_material" name="quantity_material" class="form-control form-control-sm" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="request_material"> Cantidad Pedida </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="request_material" name="request_material" class="form-control form-control-sm" readonly >
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="missing_material"> Cantidad faltante </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="missing_material" name="missing_material" class="form-control form-control-sm" readonly >
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
                 </div>
 
             </div>

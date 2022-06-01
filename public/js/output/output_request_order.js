@@ -138,6 +138,9 @@ $(document).ready(function () {
     $('#btn-follow').on('click', followMaterial);
 
     $('#btn-unfollow').on('click', unfollowMaterial);
+
+    $(document).on('click', '[data-show]', showDetailsMaterial);
+    $modalShowDetailsMaterial = $('#modalShowDetailsMaterial');
 });
 
 // Initializing the typeahead
@@ -168,10 +171,78 @@ let $formCreate;
 let $modalAddItems;
 
 let $modalAddItemsCustom;
+let $modalShowDetailsMaterial;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function showDetailsMaterial() {
+    event.preventDefault();
+    var button = $(this);
+    button.attr("disabled", true);
+    var material_id = $(this).data('material');
+    var quote_id = $(this).data('quote');
+    var material_name = $(this).data('name');
+    $.ajax({
+        url: "/dashboard/get/json/quantity/output/material/"+quote_id+"/"+material_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            $('#material_selected_details').val(material_name);
+            $('#quantity_material').val(json.quantity);
+            $('#request_material').val(json.request);
+            $('#missing_material').val(json.missing);
+            button.attr("disabled", false);
+            $modalShowDetailsMaterial.modal('show');
+
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+        }
+    });
+}
 
 function followMaterial() {
     var material_id = $(this).data('follow');
