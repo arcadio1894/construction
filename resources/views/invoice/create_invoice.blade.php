@@ -101,6 +101,10 @@
                                         @endforeach
                                     </select>
                                 </div>
+                                <div class="form-group">
+                                    <label for="observation">Observación </label>
+                                    <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">

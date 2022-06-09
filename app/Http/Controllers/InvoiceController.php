@@ -81,7 +81,8 @@ class InvoiceController extends Controller
                 'finance' => true,
                 'currency_invoice' => ($request->has('currency_invoice')) ? 'USD':'PEN',
                 'currency_compra' => (float) $tipoCambioSunat->compra,
-                'currency_venta' => (float) $tipoCambioSunat->venta
+                'currency_venta' => (float) $tipoCambioSunat->venta,
+                'observation' => $request->get('observation'),
             ]);
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -349,6 +350,7 @@ class InvoiceController extends Controller
             $entry->supplier_id = $request->get('supplier_id');
             $entry->date_entry = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
             $entry->type_order = $request->get('type_order');
+            $entry->observation = $request->get('observation');
             $entry->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
