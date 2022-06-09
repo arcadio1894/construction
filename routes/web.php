@@ -957,6 +957,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/follow/material', 'FollowMaterialController@getJsonFollowMaterials');
         Route::post('/dejar/seguir/{follow_id}', 'FollowMaterialController@unFollowMaterialUser');
 
+        Route::get('/get/json/follow/output/material/{id}', 'FollowMaterialController@getJsonDetailFollowMaterial');
+
+
         // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE COMPRA
         Route::get('/regularizar/automaticamente/entrada/compra/{entry_id}', 'EntryController@regularizeAutoOrderEntryPurchase')
             ->middleware('permission:create_orderPurchaseExpress');
@@ -982,6 +985,26 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/get/json/quantity/output/material/{id_quote}/{id_material}', 'OutputController@getQuantityMaterialOutputs')
             ->middleware('permission:report_output');
+
+        // SOLICITUD DE COMPRA OPERACION -> LOGISITICA
+        Route::get('/solicitud/compra/operaciones', 'RequestPurchaseController@indexRequestPurchase')
+            ->name('request.purchase.operator')
+            ->middleware('permission:list_requestPurchaseOperator');
+        Route::get('/crear/solicitud/compra/operaciones', 'RequestPurchaseController@createRequestPurchase')
+            ->name('request.purchase.create.operator')
+            ->middleware('permission:create_requestPurchaseOperator');
+        Route::post('/store/request/purchase/operator', 'RequestPurchaseController@storeRequestPurchase')
+            ->name('request.purchase.store.operator')
+            ->middleware('permission:create_requestPurchaseOperator');
+        Route::get('/editar/solicitud/compra/operaciones/{id}', 'RequestPurchaseController@editRequestPurchase')
+            ->name('request.purchase.edit.operator')
+            ->middleware('permission:edit_requestPurchaseOperator');
+        Route::post('/update/request/purchase/operator/{id}', 'RequestPurchaseController@updateRequestPurchase')
+            ->name('request.purchase.update.operator')
+            ->middleware('permission:edit_requestPurchaseOperator');
+        Route::post('/delete/request/purchase/operator', 'RequestPurchaseController@destroyRequestPurchase')
+            ->name('request.purchase.delete.operator')
+            ->middleware('permission:delete_requestPurchaseOperator');
     });
 });
 

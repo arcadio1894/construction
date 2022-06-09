@@ -264,6 +264,9 @@ function storeOrderPurchase() {
     var taxes_send = $('#taxes').html();
     var total_send = $('#total').html();
 
+    var state = $('#btn-currency').bootstrapSwitch('state');
+    var regularize = $('#btn-regularize').bootstrapSwitch('state');
+
     /*var arrayId = [];
     var arrayCode = [];
     var arrayDescription = [];
@@ -323,6 +326,8 @@ function storeOrderPurchase() {
     form.append('subtotal_send', subtotal_send);
     form.append('taxes_send', taxes_send);
     form.append('total_send', total_send);
+    form.append('state', state);
+    form.append('regularize', regularize);
     $.ajax({
         url: createUrl,
         method: 'POST',

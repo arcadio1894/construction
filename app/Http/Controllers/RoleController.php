@@ -56,6 +56,7 @@ class RoleController extends Controller
         'credit' => 'CRÉDITOS',
         'orderExecutionAlmacen' => 'ORDENES EJECUCION PARA ALMACEN',
         'followMaterials' => 'SEGUIMIENTO DE MATERIALES',
+        'requestPurchaseOperator' => 'SOLICITUD DE COMPRA',
     ];
 
     public function index()

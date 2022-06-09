@@ -43,6 +43,45 @@
         #modal-dialog-custom {
             height: 60% !important;
         }
+        #change-color {
+            height: 60% !important;
+        }
+        .modal-header-success {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #5cb85c;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .modal-header-warning {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #f0ad4e;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .modal-header-danger {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #d9534f;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
     </style>
 @endsection
 
@@ -151,7 +190,9 @@
                                                     <td>{{ $material['material'] }}</td>
                                                     <td>{{ $material['quantity'] }}</td>
                                                     <td>
-                                                        <button type="button" class="btn btn-success" data-show data-name="{{ $material['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $material['material_id'] }}"><i class="fas fa-search-plus"></i></button>
+                                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Detalle de cantidades" class="btn btn-success" data-show data-name="{{ $material['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $material['material_id'] }}"><i class="fas fa-search-plus"></i></button>
+                                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Seguimiento de material" class="btn btn-primary" data-follow data-name="{{ $material['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $material['material_id'] }}"><i class="far fa-thumbs-up"></i></button>
+
                                                     </td>
                                                     </tr>
                                             @endforeach
@@ -274,10 +315,10 @@
                                                     <tr>
                                                         <td data-description>John Doe</td>
                                                         <td data-item>John Doe</td>
-                                                        <td data-price>11-7-2014</td>
-                                                        <td data-state>11-7-2014</td>
-                                                        <td data-length>11-7-2014</td>
-                                                        <td data-width>11-7-2014</td>
+                                                        <td data-price></td>
+                                                        <td data-state></td>
+                                                        <td data-length></td>
+                                                        <td data-width></td>
                                                         <td>
                                                             <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
                                                         </td>
@@ -379,10 +420,10 @@
                                     <td data-id>John Doe</td>
                                     <td data-serie>John Doe</td>
                                     <td data-location>John Doe</td>
-                                    <td data-length>11-7-2014</td>
-                                    <td data-width>11-7-2014</td>
-                                    <td data-weight>11-7-2014</td>
-                                    <td data-price>11-7-2014</td>
+                                    <td data-length></td>
+                                    <td data-width></td>
+                                    <td data-weight></td>
+                                    <td data-price></td>
                                     <td>
                                         <div class="icheck-success d-inline">
                                             <input type="checkbox" data-selected id="checkboxSuccess1">
@@ -565,6 +606,65 @@
             </div>
         </div>
     </div>
+
+    <div id="modalFollowDetailsMaterial" class="modal fade" tabindex="-1">
+        <div id="change-color" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="color-custom">
+                    <h4 class="modal-title">Estados del material</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="col-sm-12 control-label" for="material_selected_follow"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_follow" name="material_selected_follow" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Stock</th>
+                                        <th>Estado</th>
+                                        <th>Órdenes de compra</th>
+                                        <th>Fechas de llegada</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="body-follow">
+
+
+                                    </tbody>
+                                    <template id="template-follow">
+                                        <tr>
+                                            <td data-code></td>
+                                            <td data-stock></td>
+                                            <td data-state></td>
+                                            <td data-orders></td>
+                                            <td data-dates></td>
+                                        </tr>
+                                    </template>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -579,6 +679,9 @@
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
     <script>
         $(function () {
+            $('body').tooltip({
+                selector: '[data-toggle="tooltip"]'
+            });
             $('#responsible_user').select2({
                 placeholder: "Seleccione un usuario",
             });

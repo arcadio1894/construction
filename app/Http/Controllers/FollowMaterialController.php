@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\FollowMaterial;
+use App\Material;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use Illuminate\Http\Request;
@@ -109,6 +110,46 @@ class FollowMaterialController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Ahora ya no sigue al material.'], 200);
+
+    }
+
+    public function getJsonDetailFollowMaterial($id_material)
+    {
+        $material = Material::find($id_material);
+        $array_orders = [];
+        $array_dates = [];
+        $details = OrderPurchaseDetail::with('order_purchase')
+            ->where('material_id', $id_material)
+            ->get();
+
+        foreach ( $details as $detail )
+        {
+            array_push($array_orders, $detail->order_purchase->code);
+            array_push($array_dates, $detail->order_purchase->date_arrival);
+        }
+        $codes = array_values(array_unique($array_orders));
+        $dates = array_values(array_unique($array_dates));
+
+        $state = 'red';
+        if ($material->stock_current == 0 && count($details))
+        {
+            $state = 'yellow';
+        }
+
+        if ($material->stock_current > 0)
+        {
+            $state = 'green';
+        }
+        $array = [];
+        array_push($array, [
+            'code' => $material->code,
+            'material' => $material->full_description,
+            'stock' => $material->stock_current,
+            'state' => $state,
+            'dates' => $dates,
+            'orders' => $codes
+        ]);
+        return response()->json(['array' => $array], 200);
 
     }
 }

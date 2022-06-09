@@ -278,7 +278,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription value="{{ $material->material->full_description }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription value="{{ $material->material->full_description }}" {{ ($material->material->stock_current == 0) ? 'style=color:red':'' }} readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -349,7 +349,7 @@
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription value="{{ $material->material->full_description }}" readonly>
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-materialDescription value="{{ $material->material->full_description }}" {{ ($material->material->stock_current == 0) ? 'style=color:red':'' }} readonly>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -499,7 +499,7 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" data-consumableDescription readonly>
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" data-consumableDescription {{ ($consumable->material->stock_current == 0) ? 'style=color:red':'' }} readonly>
                                                         <input type="hidden" data-consumableId="{{ $consumable->material_id }}">
                                                     </div>
                                                 </div>
@@ -555,7 +555,7 @@
                                             <div class="row">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" data-consumableDescription readonly>
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->material->full_description }}" {{ ($consumable->material->stock_current == 0) ? 'style=color:red':'' }} data-consumableDescription readonly>
                                                         <input type="hidden" data-consumableId="{{ $consumable->material_id }}">
                                                     </div>
                                                 </div>
