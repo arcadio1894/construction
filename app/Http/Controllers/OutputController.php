@@ -100,8 +100,15 @@ class OutputController extends Controller
         $materials_quantity = [];
         $materials = [];
 
+        $turnstiles = [];
+
         foreach ( $quote->equipments as $equipment )
         {
+            foreach ( $equipment->turnstiles as $turnstile )
+            {
+                array_push($turnstiles, array('material'=>$turnstile->description, 'quantity'=> (float)$turnstile->quantity*(float)$equipment->quantity));
+
+            }
             foreach ( $equipment->materials as $material )
             {
                 array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
@@ -176,7 +183,7 @@ class OutputController extends Controller
         $consumables = array_values($new_arr2);
         $users = User::all();
 
-        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items'));
+        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items', 'turnstiles'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
@@ -189,8 +196,15 @@ class OutputController extends Controller
         $materials_quantity = [];
         $materials = [];
 
+        $turnstiles = [];
+
         foreach ( $quote->equipments as $equipment )
         {
+            foreach ( $equipment->turnstiles as $turnstile )
+            {
+                array_push($turnstiles, array('material'=>$turnstile->description, 'quantity'=> (float)$turnstile->quantity*(float)$equipment->quantity));
+
+            }
             foreach ( $equipment->materials as $material )
             {
                 array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
@@ -273,7 +287,7 @@ class OutputController extends Controller
 
         $users = User::all();
 
-        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote', 'items'));
+        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote', 'items', 'turnstiles'));
     }
 
     public function getOutputRequest()

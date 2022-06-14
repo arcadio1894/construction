@@ -256,6 +256,58 @@
                 <!-- /.card -->
             </div>
             <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Servicios Adicionales de la orden de ejecución</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <!-- /.card-header -->
+                                    <div class="card-body table-responsive p-0">
+                                        <table class="table table-head-fixed">
+                                            <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>Material</th>
+                                                <th>Cantidad Total</th>
+                                                {{--<th>Detalles</th>--}}
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ( $turnstiles as $key => $turnstile )
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $turnstile['material'] }}</td>
+                                                    <td>{{ $turnstile['quantity'] }}</td>
+                                                    {{--<td>
+                                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Detalle de cantidades" class="btn btn-success" data-show data-name="{{ $turnstile['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $turnstile['material_id'] }}"><i class="fas fa-search-plus"></i></button>
+                                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Seguimiento de material" class="btn btn-primary" data-follow data-name="{{ $turnstile['material'] }}" data-quote="{{ $quote->id }}" data-material="{{ $turnstile['material_id'] }}"><i class="far fa-thumbs-up"></i></button>
+
+                                                    </td>--}}
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+            <div class="col-md-12">
                 <div class="card card-warning">
                     <div class="card-header">
                         <h3 class="card-title">Materiales</h3>
