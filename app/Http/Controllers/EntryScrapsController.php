@@ -81,7 +81,8 @@ class EntryScrapsController extends Controller
                 }
             }
 
-            if ( $typescrap == 3 )
+            // TODO: Agregamos tubos pequeños
+            if ( $typescrap == 3 || $typescrap == 4 )
             {
                 if ( $length_new == 0 )
                 {
@@ -208,7 +209,8 @@ class EntryScrapsController extends Controller
                 }
             }
 
-            if ( $typescrap == 3 )
+            // TODO: Agregamos tubos pequeños
+            if ( $typescrap == 3 || $typescrap == 4 )
             {
                 $materialSelected = Material::find($material_id);
                 $itemSelected = Item::find($idItem);
@@ -358,7 +360,8 @@ class EntryScrapsController extends Controller
                 }
             }
 
-            if ( $typescrap == 3 )
+            // TODO: Agregamos tubos pequeños
+            if ( $typescrap == 3 || $typescrap == 4 )
             {
                 if ( $length_new == 0 )
                 {
@@ -411,7 +414,8 @@ class EntryScrapsController extends Controller
 
             }
 
-            if ( $typescrap == 3 )
+            // TODO: Agregamos tubos pequeños
+            if ( $typescrap == 3 || $typescrap == 4 )
             {
                 $materialSelected = Material::find($material_id);
                 $typescrapSelected = Typescrap::find($typescrap);

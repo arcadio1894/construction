@@ -426,7 +426,8 @@ function saveNewScrap() {
         }
     }
 
-    if ( typescrap_nuevo == 3 )
+    // TODO: Agregamos tubos pequeños
+    if ( typescrap_nuevo == 3 || typescrap_nuevo == 4 )
     {
         if( $('#length_new_nuevo').val().trim() === '' || $('#length_new_nuevo').val()<0 )
         {
@@ -561,7 +562,8 @@ function showModalNewScrap() {
                 $('#width_new_item_nuevo').show();
             }
 
-            if ( json.type_scrap.id == 3 )
+            // TODO: Agregamos tubos pequeños
+            if ( json.type_scrap.id == 3 || json.type_scrap.id == 4 )
             {
                 $('#length_item_nuevo').show();
                 $('#width_item_nuevo').hide();
@@ -719,7 +721,8 @@ function saveScrap() {
         }
     }
 
-    if ( typescrap == 3 )
+    // TODO: Agregamos tubos pequeños
+    if ( typescrap == 3 || typescrap == 4 )
     {
         if( $('#length_new').val().trim() === '' || $('#length_new').val()<0 )
         {
@@ -861,7 +864,8 @@ function showModalCreateScrap() {
         $('#show-block-length').show();
     }
 
-    if ( typescrap == 3 )
+    // TODO: Agregamos tubos pequeños
+    if ( typescrap == 3 || typescrap == 4 )
     {
         $('#length_item').show();
         $('#width_item').hide();

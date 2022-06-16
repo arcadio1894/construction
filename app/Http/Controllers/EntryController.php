@@ -439,7 +439,8 @@ class EntryController extends Controller
                 $item->percentage = $porcentaje;
                 $item->save();
             }
-            if( isset($material->typeScrap) && $material->typeScrap->id == 3 )
+            // TODO: Agregamos los tubos pequeños
+            if( isset($material->typeScrap) && ($material->typeScrap->id == 3 || $material->typeScrap->id == 4) )
             {
                 $porcentaje = ($item->length)/($material->typeScrap->length);
                 $item->percentage = $porcentaje;

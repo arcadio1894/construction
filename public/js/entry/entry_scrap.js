@@ -126,7 +126,8 @@ function saveTableItems() {
             return;
         }
     } else {
-        if ( result.typescrap === 3  )
+        // TODO: Agregamos tubos pequeños
+        if ( result.typescrap === 3 || result.typescrap === 4 )
         {
             if ( parseFloat(result.length) < parseFloat(length) )
             {
@@ -187,7 +188,8 @@ function saveTableItems() {
         newPrice = ((areaReal*priceTotal)/areaTotal).toFixed(2);
     }
 
-    if ( result.typescrap === 3  )
+    // TODO: Agregamos tubos pequeños
+    if ( result.typescrap === 3 || result.typescrap === 4 )
     {
         //console.log('Entre a 3');
         let priceTotal = parseFloat(result.price);
@@ -275,7 +277,8 @@ function addItems() {
         $('#weight').val(0);
         $('#weight').hide();
     } else {
-        if ( result.typescrap === 3  )
+        // TODO: Agregamos tubos pequeños
+        if ( result.typescrap === 3 || result.typescrap === 4 )
         {
             $('#length').show();
             $('#label-largo').show();
