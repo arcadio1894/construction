@@ -136,7 +136,7 @@ function saveTableItems() {
 
         for ( var j=0; j<quantity; j++ )
         {
-            const material = $materialsComplete.find( material => material.material === material_name );
+            const material = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
             const location = $locationsComplete.find( location => location.location === material_location );
             const code = rand_code($caracteres, $longitud);
             $items.push({ 'id': $items.length+1, 'price': parseFloat(parseFloat(material_price)/parseFloat(quantity)).toFixed(4), 'quantity':1 ,'material': material_name, 'id_material': material.id, 'item': code, 'location': location.location, 'id_location':location.id, 'state': state, 'state_description': state_description });
@@ -144,7 +144,7 @@ function saveTableItems() {
             //$items.push({ 'id': $items.length+1, 'price': material_price, 'quantity':1 ,'material': material_name, 'id_material': material.id, 'item': code, 'location': location.location, 'id_location':location.id, 'state': state, 'state_description': state_description });
             //renderTemplateMaterial($items.length, material_price, material_name, code,  location.location, state_description);
         }
-        const material = $materialsComplete.find( material => material.material === material_name );
+        const material = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
         console.log(material);
         var subtotal =parseFloat((material_price)/1.18).toFixed(2);
         var taxes = parseFloat(subtotal*0.18).toFixed(2);
@@ -211,7 +211,7 @@ function saveTableItems() {
 
         for ( var i=0; i<series_selected.length; i++ )
         {
-            const result = $materialsComplete.find( material => material.material === material_name );
+            const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
             $items.push({ 'id': $items.length+1, 'price': parseFloat(parseFloat(material_price)/parseFloat(material_quantity)).toFixed(4), 'quantity':1, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
 
             //$items.push({ 'id': $items.length+1, 'price': material_price, 'quantity':1, 'material': material_name, 'id_material': result.id, 'item': series_selected[i], 'location': locations_selected[i].location, 'id_location':locations_selected[i].id, 'state': states_selected[i].state, 'state_description': states_selected[i].description });
@@ -219,7 +219,7 @@ function saveTableItems() {
             $('.select2').select2();
         }
 
-        const material = $materialsComplete.find( material => material.material === material_name );
+        const material = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
         console.log(material);
         var subtotal2 =parseFloat((material_price)/1.18).toFixed(2);
         var taxes2 = parseFloat(subtotal2*0.18).toFixed(2);
