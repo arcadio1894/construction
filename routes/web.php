@@ -707,6 +707,15 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:finish_quote');
         Route::get('/get/contact/{customer}', 'QuoteController@getContactsByCustomer');
 
+        // TODO: Reemplazar cotizaciones
+        Route::get('reemplazar/materiales/cotizacion/{quote}', 'QuoteController@replacement')
+            ->name('quote.edit')
+            ->middleware('permission:replacement_quote');
+        Route::post('/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialReplacement')
+            ->middleware('permission:replacement_quote');
+        Route::post('/not/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialNotReplacement')
+            ->middleware('permission:replacement_quote');
+
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')
             ->name('order.execution.index')

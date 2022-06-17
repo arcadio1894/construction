@@ -295,6 +295,18 @@ $(document).ready(function () {
                     $('#material_quantity').val($material.stock_current);
                     $('#material_price').val($material.unit_price);
                     break;
+                case 4:
+                    $('#presentation').show();
+                    $("#fraction").prop("checked", true);
+                    $('#length_entered_material').show();
+                    $('#material_length').val($material.type_scrap.length);
+                    $('#width_material').hide();
+                    $('#length_material').show();
+                    $('#width_entered_material').hide();
+                    $('#quantity_entered_material').hide();
+                    $('#material_quantity').val($material.stock_current);
+                    $('#material_price').val($material.unit_price);
+                    break;
                 default:
                     $('#length_material').hide();
                     $('#width_material').hide();
@@ -3043,6 +3055,17 @@ function addMaterial() {
                 $('#material_price').val($material.unit_price);
                 break;
             case 3:
+                $('#presentation').show();
+                $("#fraction").prop("checked", true);
+                $('#length_entered_material').show();
+                $('#material_length').val($material.type_scrap.length);
+                $('#width_material').hide();
+                $('#width_entered_material').hide();
+                $('#quantity_entered_material').hide();
+                $('#material_quantity').val($material.stock_current);
+                $('#material_price').val($material.unit_price);
+                break;
+            case 4:
                 $('#presentation').show();
                 $("#fraction").prop("checked", true);
                 $('#length_entered_material').show();

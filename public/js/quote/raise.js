@@ -168,7 +168,11 @@ $(document).ready(function () {
                             text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
                         }
-
+                        // TODO: Boton para reemplazar materiales
+                        if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                        }
                     }
 
                     if ( $.inArray('renew_quote', $permissions) !== -1 ) {

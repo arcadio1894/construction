@@ -11,7 +11,12 @@ let $subtotal3=0;
 var $permissions;
 
 $(document).ready(function () {
+    console.log($total);
     $permissions = JSON.parse($('#permissions').val());
+    $("#element_loader").LoadingOverlay("show", {
+        background  : "rgba(61, 215, 239, 0.4)"
+    });
+    getContacts();
 
     $.ajax({
         url: "/dashboard/get/quote/materials/",
@@ -22,18 +27,12 @@ $(document).ready(function () {
             {
                 $materials.push(json[i]);
             }
-        }
-    });
 
-    $.ajax({
-        url: "/dashboard/get/quote/consumables/",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $consumables.push(json[i]);
-            }
+        },
+        complete: function (data) {
+
+            fillEquipments();
+
         }
     });
 
@@ -59,26 +58,18 @@ $(document).ready(function () {
             limit: 12,
             source: substringMatcher($materialsTypeahead)
         });
-    /*$('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            type: 'GET',
-            processResults(data) {
-                //console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
+
+    $.ajax({
+        url: "/dashboard/get/quote/consumables/",
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            for (var i=0; i<json.length; i++)
+            {
+                $consumables.push(json[i]);
             }
         }
-    });*/
+    });
 
     $modalAddMaterial = $('#modalAddMaterial');
 
@@ -100,7 +91,7 @@ $(document).ready(function () {
     
     $('#btnCalculate').on('click', calculatePercentage);
 
-    $formCreate = $('#formCreate');
+    $formCreate = $('#formEdit');
     $("#btn-submit").on("click", storeQuote);
     //$formCreate.on('submit', storeQuote);
 
@@ -141,29 +132,22 @@ $(document).ready(function () {
         ajax: {
             url: '/dashboard/select/materials',
             dataType: 'json',
-            delay: 250,
             type: 'GET',
-            data: function(params) {
+            processResults(data) {
+                //console.log(data);
                 return {
-                    term: params.term || '',
-                    page: params.page || 1
-                }
-            },
-            processResults: function (data) {
-                return {
-                    results: $.map(data.results, function (item) {
+                    results: $.map(data, function (item) {
                         //console.log(item.full_description);
                         return {
                             text: item.full_description,
                             id: item.id,
                         }
                     })
-                };
-            },
-            cache: true
+                }
+            }
         }
-    });*/
-
+    });
+*/
     $('.consumable_search').select2({
         placeholder: 'Selecciona un consumible',
         ajax: {
@@ -199,7 +183,12 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
 
-    //$("input[id='"+this.id+"']")   $('.materialTypeahead')
+    $(document).on('click', '[data-replacement]', replacementMaterial);
+
+    $(document).on('click', '[data-replacement2]', replacementMaterial2);
+
+    $(document).on('click', '[data-saveReplacement]', saveReplacement);
+
     $(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
         var select_material = $(this);
         console.log($(this).val());
@@ -312,18 +301,6 @@ $(document).ready(function () {
                     $('#material_quantity').val($material.stock_current);
                     $('#material_price').val($material.unit_price);
                     break;
-                case 4:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
                 default:
                     $('#length_material').hide();
                     $('#width_material').hide();
@@ -341,11 +318,6 @@ $(document).ready(function () {
     });
 
     $(document).on('input', '[data-manoQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-consumableQuantity]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
@@ -371,6 +343,11 @@ $(document).ready(function () {
         card.addClass('card-gray-dark');
     });
     $(document).on('input', '[data-precio]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-consumableQuantity]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
@@ -405,6 +382,13 @@ $(document).ready(function () {
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
+    /*$total = parseFloat($('#quote_total').val());
+    $subtotal = parseFloat($('#quote_subtotal_utility').val());
+    $subtotal2 = parseFloat($('#quote_subtotal_letter').val());
+    $subtotal3 = parseFloat($('#quote_subtotal_rent').val());*/
+
+    var customerQuote = $('#customer_quote_id');
+    var contactQuote = $('#contact_quote_id');
 
     $selectCustomer = $('#customer_id');
     $selectContact = $('#contact_id');
@@ -417,12 +401,19 @@ $(document).ready(function () {
                 value: '',
                 text: 'Seleccione contacto'
             }));
+            var contact_quote_id = $('#contact_quote_id').val();
             for ( var i=0; i<data.length; i++ )
             {
-                $selectContact.append($("<option>", {
-                    value: data[i].id,
-                    text: data[i].contact
-                }));
+                if (data[i].id === parseInt(contact_quote_id)) {
+                    var newOption = new Option(data[i].contact, data[i].id, false, true);
+                    // Append it to the select
+                    $selectContact.append(newOption).trigger('change');
+
+                } else {
+                    var newOption2 = new Option(data[i].contact, data[i].id, false, false);
+                    // Append it to the select
+                    $selectContact.append(newOption2);
+                }
             }
         });
 
@@ -435,6 +426,204 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+
+function replacementMaterial() {
+    event.preventDefault();
+    var equipmentMaterial = $(this).data('replacement');
+    var quote = $(this).data('quote');
+    var equipment = $(this).data('equipment');
+
+    $.confirm({
+        icon: 'fas fa-recycle',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Reemplazar material',
+        content: 'Debe confirmar para reemplazar este material',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/replacement/material/quote/'+quote+'/equipment/'+equipment+'/equipmentMaterial/'+equipmentMaterial,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                        },
+                    });
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Confirmación cancelada.");
+                },
+            },
+        },
+    });
+
+}
+
+function replacementMaterial2() {
+    event.preventDefault();
+    var equipmentMaterial = $(this).data('replacement');
+    var quote = $(this).data('quote');
+    var equipment = $(this).data('equipment');
+
+    $.confirm({
+        icon: 'fas fa-recycle',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Reemplazar material',
+        content: 'Debe confirmar para reemplazar este material',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/not/replacement/material/quote/'+quote+'/equipment/'+equipment+'/equipmentMaterial/'+equipmentMaterial,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                        },
+                    });
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Confirmación cancelada.");
+                },
+            },
+        },
+    });
+
+}
+
+function getContacts() {
+    var customer =  $('#customer_quote_id').val();
+    $.get( "/dashboard/get/contact/"+customer, function( data ) {
+        $selectContact.append($("<option>", {
+            value: '',
+            text: ''
+        }));
+        for ( var i=0; i<data.length; i++ )
+        {
+            if (data[i].id === parseInt($('#contact_quote_id').val())) {
+                var newOption = new Option(data[i].contact, data[i].id, false, true);
+                // Append it to the select
+                $selectContact.append(newOption).trigger('change');
+
+            } else {
+                var newOption2 = new Option(data[i].contact, data[i].id, false, false);
+                // Append it to the select
+                $selectContact.append(newOption2);
+            }
+
+        }
+    });
+}
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
@@ -458,311 +647,982 @@ var substringMatcher = function(strs) {
     };
 };
 
-function deleteEquipment() {
-    var button = $(this);
-    $.confirm({
-        icon: 'fas fa-frown',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'red',
-        title: 'Eliminar Equipo',
-        content: '¿Está seguro de eliminar este equipo?',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    var equipmentId = parseInt(button.data('deleteequipment'));
-                    console.log(equipmentId);
-                    var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
-                    console.log(equipmentDeleted);
+function fillEquipments() {
+    //$('#body-summary').html('');
 
-                    $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
-                    button.parent().parent().parent().parent().remove();
-                    if ( $equipments.length === 0 ) {
-                        renderTemplateEquipment();
-                        $equipmentStatus = false;
-                    }
+    $('[data-confirm]').each(function(){
+        if($(this).data('confirm')!=='')
+        {
+            var button = $(this);
+            var quantity = button.parent().parent().next().children().children().children().next().val();
+            var description = button.parent().parent().next().children().children().next().next().children().next().val();
+            var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+            var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
+            var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
+            var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
+            var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().children().next().children().next().next();
+            var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
 
-                    $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                    $('#subtotal').html('USD '+$total);
-                    calculateMargen2($('#utility').val());
-                    calculateLetter2($('#letter').val());
-                    calculateRent2($('#taxes').val());
+            var materialsDescription = [];
+            var materialsUnit = [];
+            var materialsLargo = [];
+            var materialsAncho = [];
+            var materialsQuantity = [];
+            var materialsPrice = [];
+            var materialsTotal = [];
 
-                    $.alert("Equipo eliminado!");
+            materials.each(function(e){
+                $(this).find('[data-materialDescription]').each(function(){
+                    materialsDescription.push($(this).val());
+                });
+                $(this).find('[data-materialUnit]').each(function(){
+                    materialsUnit.push($(this).val());
+                });
+                $(this).find('[data-materialLargo]').each(function(){
+                    materialsLargo.push($(this).val());
+                });
+                $(this).find('[data-materialAncho]').each(function(){
+                    materialsAncho.push($(this).val());
+                });
+                $(this).find('[data-materialQuantity]').each(function(){
+                    materialsQuantity.push($(this).val());
+                });
+                $(this).find('[data-materialPrice]').each(function(){
+                    materialsPrice.push($(this).val());
+                });
+                $(this).find('[data-materialTotal]').each(function(){
+                    materialsTotal.push($(this).val());
+                });
+            });
 
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Eliminación cancelada.");
-                },
-            },
-        },
+            var materialsArray = [];
+            for (let i = 0; i < materialsDescription.length; i++) {
+                var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+            }
+
+            var diasDescription = [];
+            var diasCantidad = [];
+            var diasHoras = [];
+            var diasPrecio = [];
+            var diasTotal = [];
+
+            dias.each(function(e){
+                $(this).find('[data-description]').each(function(){
+                    diasDescription.push($(this).val());
+                });
+                $(this).find('[data-cantidad]').each(function(){
+                    diasCantidad.push($(this).val());
+                });
+                $(this).find('[data-horas]').each(function(){
+                    diasHoras.push($(this).val());
+                });
+                $(this).find('[data-precio]').each(function(){
+                    diasPrecio.push($(this).val());
+                });
+                $(this).find('[data-total]').each(function(){
+                    diasTotal.push($(this).val());
+                });
+            });
+
+            var diasArray = [];
+
+            for (let i = 0; i < diasCantidad.length; i++) {
+                diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+            }
+
+            var consumablesDescription = [];
+            var consumablesIds = [];
+            var consumablesUnit = [];
+            var consumablesQuantity = [];
+            var consumablesPrice = [];
+            var consumablesTotal = [];
+
+            consumables.each(function(e){
+                $(this).find('[data-consumableDescription]').each(function(){
+                    consumablesDescription.push($(this).val());
+                });
+                $(this).find('[data-consumableId]').each(function(){
+                    consumablesIds.push($(this).attr('data-consumableid'));
+                });
+                $(this).find('[data-consumableUnit]').each(function(){
+                    consumablesUnit.push($(this).val());
+                });
+                $(this).find('[data-consumableQuantity]').each(function(){
+                    consumablesQuantity.push($(this).val());
+                });
+                $(this).find('[data-consumablePrice]').each(function(){
+                    consumablesPrice.push($(this).val());
+                });
+                $(this).find('[data-consumableTotal]').each(function(){
+                    consumablesTotal.push($(this).val());
+                });
+            });
+
+            var consumablesArray = [];
+
+            for (let i = 0; i < consumablesDescription.length; i++) {
+                consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
+            }
+
+            var manosDescription = [];
+            var manosIds = [];
+            var manosUnit = [];
+            var manosQuantity = [];
+            var manosPrice = [];
+            var manosTotal = [];
+
+            workforces.each(function(e){
+                $(this).find('[data-manoDescription]').each(function(){
+                    manosDescription.push($(this).val());
+                });
+                $(this).find('[data-manoId]').each(function(){
+                    manosIds.push($(this).val());
+                });
+                $(this).find('[data-manoUnit]').each(function(){
+                    manosUnit.push($(this).val());
+                });
+                $(this).find('[data-manoQuantity]').each(function(){
+                    manosQuantity.push($(this).val());
+                });
+                $(this).find('[data-manoPrice]').each(function(){
+                    manosPrice.push($(this).val());
+                });
+                $(this).find('[data-manoTotal]').each(function(){
+                    manosTotal.push($(this).val());
+                });
+            });
+
+            var manosArray = [];
+
+            for (let i = 0; i < manosDescription.length; i++) {
+                manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
+            }
+
+            var tornosDescription = [];
+            var tornosQuantity = [];
+            var tornosPrice = [];
+            var tornosTotal = [];
+
+            tornos.each(function(e){
+                $(this).find('[data-tornoDescription]').each(function(){
+                    tornosDescription.push($(this).val());
+                });
+                $(this).find('[data-tornoQuantity]').each(function(){
+                    tornosQuantity.push($(this).val());
+                });
+                $(this).find('[data-tornoPrice]').each(function(){
+                    tornosPrice.push($(this).val());
+                });
+                $(this).find('[data-tornoTotal]').each(function(){
+                    tornosTotal.push($(this).val());
+                });
+            });
+
+            var tornosArray = [];
+
+            for (let i = 0; i < tornosDescription.length; i++) {
+                tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
+            }
+
+            var totalEquipment = 0;
+            for (let i = 0; i < materialsTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
+            }
+
+            for (let i = 0; i < tornosTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
+            }
+
+            for (let i = 0; i < manosTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
+            }
+
+            for (let i = 0; i < consumablesTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+            }
+
+            for (let i = 0; i < diasTotal.length; i++) {
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+            }
+
+            totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+
+            $total = parseFloat($total) + parseFloat(totalEquipment);
+
+            var quote_id = $('#quote_id').val();
+
+            button.next().attr('data-saveEquipment', $equipments.length);
+            button.next().next().attr('data-deleteEquipment', $equipments.length);
+            $equipments.push({'id':$equipments.length, 'quote': quote_id, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias': diasArray});
+            //renderTemplateSummary(description, quantity, totalEquipment);
+            $items = [];
+        }
+
     });
+    //renderTemplateSummary($equipments);
+    $("#element_loader").LoadingOverlay("hide", true);
+}
 
+function deleteEquipment() {
+    //if($(this).attr('data-idequipment')==='') {
+    var attr = $(this).attr('data-idequipment');
+    console.log(attr);
+    if (typeof attr === typeof undefined || attr === false) {
+        var button = $(this);
+        $.confirm({
+            icon: 'fas fa-frown',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'red',
+            title: 'Eliminar Equipo',
+            content: '¿Está seguro de eliminar este equipo?',
+            buttons: {
+                confirm: {
+                    text: 'CONFIRMAR',
+                    action: function (e) {
+                        var equipmentId = parseInt(button.data('deleteequipment'));
+                        console.log(equipmentId);
+
+                        var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                        console.log(equipmentDeleted);
+
+                        $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
+                        button.parent().parent().parent().parent().remove();
+                        if ($equipments.length === 0) {
+                            renderTemplateEquipment();
+                            $equipmentStatus = false;
+                        }
+
+                        $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                        $('#subtotal').html('USD ' + $total);
+                        calculateMargen2($('#utility').val());
+                        calculateLetter2($('#letter').val());
+                        calculateRent2($('#taxes').val());
+                        if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                            renderTemplateSummary($equipments);
+                        }
+                        $.alert("Equipo eliminado!");
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Eliminación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        // TODO: Vamos a eliminar en la base de datos
+        var button2 = $(this);
+        $.confirm({
+            icon: 'fas fa-frown',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'red',
+            title: 'Eliminar Equipo',
+            content: 'Este equipo va a ser eliminado en la base de datos',
+            buttons: {
+                confirm: {
+                    text: 'CONFIRMAR',
+                    action: function (e) {
+                        var equipmentId = parseInt(button2.data('deleteequipment'));
+                        var idEquipment = button2.data('idequipment');
+                        var idQuote = button2.data('quote');
+                        console.log(equipmentId);
+
+                        var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                        console.log(equipmentDeleted);
+
+                        $.ajax({
+                            url: '/dashboard/destroy/equipment/'+idEquipment+'/quote/'+idQuote,
+                            method: 'POST',
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            processData:false,
+                            contentType:false,
+                            success: function (data) {
+                                console.log(data);
+                                /*toastr.success(data.message, 'Éxito',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });*/
+
+                                $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
+                                button2.parent().parent().parent().parent().remove();
+
+                                $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                                $('#subtotal').html('USD ' + $total);
+                                calculateMargen2($('#utility').val());
+                                calculateLetter2($('#letter').val());
+                                calculateRent2($('#taxes').val());
+
+                                if ($equipments.length === 0) {
+                                    renderTemplateEquipment();
+                                    $equipmentStatus = false;
+                                }
+                                if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                                    renderTemplateSummary($equipments);
+                                }
+                                $.alert(data.message);
+
+                            },
+                            error: function (data) {
+                                if( data.responseJSON.message && !data.responseJSON.errors )
+                                {
+                                    toastr.error(data.responseJSON.message, 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+                                for ( var property in data.responseJSON.errors ) {
+                                    toastr.error(data.responseJSON.errors[property], 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+
+
+                            },
+                        });
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Eliminación cancelada.");
+                    },
+                },
+            },
+        });
+    }
 }
 
 function saveEquipment() {
-    var button = $(this);
-    console.log(button);
-    $.confirm({
-        icon: 'fas fa-smile',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'orange',
-        title: 'Guardar cambios',
-        content: '¿Está seguro de guardar los cambios en este equipo?',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    var equipmentId = parseInt(button.data('saveequipment'));
-                    console.log(equipmentId);
-                    var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
-                    console.log(equipmentDeleted);
+    console.log($total);
+    if($(this).data('idequipment')==='')
+    {
+        var button = $(this);
+        $.confirm({
+            icon: 'fas fa-smile',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'orange',
+            title: 'Guardar cambios',
+            content: '¿Está seguro de guardar los cambios en este equipo?',
+            buttons: {
+                confirm: {
+                    text: 'CONFIRMAR',
+                    action: function (e) {
+                        var modifiedEquipment = [];
+                        var equipmentId = parseInt(button.data('saveequipment'));
+                        var idEquipment = button.attr('data-idequipment');
+                        var idQuote = button.attr('data-quote');
+                        console.log(equipmentId);
+                        var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                        console.log(equipmentDeleted);
 
-                    $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
-                    //button.parent().parent().parent().parent().remove();
-                    /*if ( $equipments.length === 0 ) {
-                        renderTemplateEquipment();
-                        $equipmentStatus = false;
-                    }*/
-                    // TODO: Capturar los materiales y recorrerlos y agregar al anterior
-                    // TODO: En data-delete (material) debe estar el equipo tambien
+                        $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
 
-                    $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                    $('#subtotal').html('USD '+$total);
-                    calculateMargen2($('#utility').val());
-                    calculateLetter2($('#letter').val());
-                    calculateRent2($('#taxes').val());
+                        // TODO: Capturar los materiales y recorrerlos y agregar al anterior
+                        // TODO: En data-delete (material) debe estar el equipo tambien
+                        $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
 
-                    //TODO: Otra vez guardamos el equipo
+                        //TODO: Otra vez guardamos el equipo
 
-                    var quantity = button.parent().parent().next().children().children().children().next().val();
-                    var description = button.parent().parent().next().children().children().next().next().children().next().val();
-                    var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
-                    var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
-                    var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
-                    var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
-                    var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
-                    var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
+                        var quantity = button.parent().parent().next().children().children().children().next().val();
+                        var description = button.parent().parent().next().children().children().next().next().children().next().val();
+                        var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                        var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
+                        var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
+                        var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
+                        var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+                        var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
 
-                    var materialsDescription = [];
-                    var materialsUnit = [];
-                    var materialsLargo = [];
-                    var materialsAncho = [];
-                    var materialsQuantity = [];
-                    var materialsPrice = [];
-                    var materialsTotal = [];
+                        var materialsDescription = [];
+                        var materialsUnit = [];
+                        var materialsLargo = [];
+                        var materialsAncho = [];
+                        var materialsQuantity = [];
+                        var materialsPrice = [];
+                        var materialsTotal = [];
 
-                    materials.each(function(e){
-                        $(this).find('[data-materialDescription]').each(function(){
-                            materialsDescription.push($(this).val());
+                        materials.each(function(e){
+                            $(this).find('[data-materialDescription]').each(function(){
+                                materialsDescription.push($(this).val());
+                            });
+                            $(this).find('[data-materialUnit]').each(function(){
+                                materialsUnit.push($(this).val());
+                            });
+                            $(this).find('[data-materialLargo]').each(function(){
+                                materialsLargo.push($(this).val());
+                            });
+                            $(this).find('[data-materialAncho]').each(function(){
+                                materialsAncho.push($(this).val());
+                            });
+                            $(this).find('[data-materialQuantity]').each(function(){
+                                materialsQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-materialPrice]').each(function(){
+                                materialsPrice.push($(this).val());
+                            });
+                            $(this).find('[data-materialTotal]').each(function(){
+                                materialsTotal.push($(this).val());
+                            });
                         });
-                        $(this).find('[data-materialUnit]').each(function(){
-                            materialsUnit.push($(this).val());
-                        });
-                        $(this).find('[data-materialLargo]').each(function(){
-                            materialsLargo.push($(this).val());
-                        });
-                        $(this).find('[data-materialAncho]').each(function(){
-                            materialsAncho.push($(this).val());
-                        });
-                        $(this).find('[data-materialQuantity]').each(function(){
-                            materialsQuantity.push($(this).val());
-                        });
-                        $(this).find('[data-materialPrice]').each(function(){
-                            materialsPrice.push($(this).val());
-                        });
-                        $(this).find('[data-materialTotal]').each(function(){
-                            materialsTotal.push($(this).val());
-                        });
-                    });
 
-                    var materialsArray = [];
+                        var materialsArray = [];
 
-                    for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
-                        materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
-                    }
+                        for (let i = 0; i < materialsDescription.length; i++) {
+                            var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                            materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                        }
 
-                    var diasDescription = [];
-                    var diasCantidad = [];
-                    var diasHoras = [];
-                    var diasPrecio = [];
-                    var diasTotal = [];
+                        var diasDescription = [];
+                        var diasCantidad = [];
+                        var diasHoras = [];
+                        var diasPrecio = [];
+                        var diasTotal = [];
 
-                    dias.each(function(e){
-                        $(this).find('[data-description]').each(function(){
-                            diasDescription.push($(this).val());
+                        dias.each(function(e){
+                            $(this).find('[data-description]').each(function(){
+                                diasDescription.push($(this).val());
+                            });
+                            $(this).find('[data-cantidad]').each(function(){
+                                diasCantidad.push($(this).val());
+                            });
+                            $(this).find('[data-horas]').each(function(){
+                                diasHoras.push($(this).val());
+                            });
+                            $(this).find('[data-precio]').each(function(){
+                                diasPrecio.push($(this).val());
+                            });
+                            $(this).find('[data-total]').each(function(){
+                                diasTotal.push($(this).val());
+                            });
                         });
-                        $(this).find('[data-cantidad]').each(function(){
-                            diasCantidad.push($(this).val());
+
+                        var diasArray = [];
+
+                        for (let i = 0; i < diasCantidad.length; i++) {
+                            diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                        }
+
+                        var consumablesDescription = [];
+                        var consumablesIds = [];
+                        var consumablesUnit = [];
+                        var consumablesQuantity = [];
+                        var consumablesPrice = [];
+                        var consumablesTotal = [];
+
+                        consumables.each(function(e){
+                            $(this).find('[data-consumableDescription]').each(function(){
+                                consumablesDescription.push($(this).val());
+                            });
+                            $(this).find('[data-consumableId]').each(function(){
+                                console.log($(this).attr('data-consumableid'));
+                                consumablesIds.push($(this).attr('data-consumableid'));
+                            });
+                            $(this).find('[data-consumableUnit]').each(function(){
+                                consumablesUnit.push($(this).val());
+                            });
+                            $(this).find('[data-consumableQuantity]').each(function(){
+                                consumablesQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-consumablePrice]').each(function(){
+                                consumablesPrice.push($(this).val());
+                            });
+                            $(this).find('[data-consumableTotal]').each(function(){
+                                consumablesTotal.push($(this).val());
+                            });
                         });
-                        $(this).find('[data-horas]').each(function(){
-                            diasHoras.push($(this).val());
+
+                        var consumablesArray = [];
+
+                        for (let i = 0; i < consumablesDescription.length; i++) {
+                            consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
+                        }
+
+                        var manosDescription = [];
+                        var manosIds = [];
+                        var manosUnit = [];
+                        var manosQuantity = [];
+                        var manosPrice = [];
+                        var manosTotal = [];
+
+                        workforces.each(function(e){
+                            $(this).find('[data-manoDescription]').each(function(){
+                                manosDescription.push($(this).val());
+                            });
+                            $(this).find('[data-manoId]').each(function(){
+                                manosIds.push($(this).val());
+                            });
+                            $(this).find('[data-manoUnit]').each(function(){
+                                manosUnit.push($(this).val());
+                            });
+                            $(this).find('[data-manoQuantity]').each(function(){
+                                manosQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-manoPrice]').each(function(){
+                                manosPrice.push($(this).val());
+                            });
+                            $(this).find('[data-manoTotal]').each(function(){
+                                manosTotal.push($(this).val());
+                            });
                         });
-                        $(this).find('[data-precio]').each(function(){
-                            diasPrecio.push($(this).val());
+
+                        var manosArray = [];
+
+                        for (let i = 0; i < manosDescription.length; i++) {
+                            manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
+                        }
+
+                        var tornosDescription = [];
+                        var tornosQuantity = [];
+                        var tornosPrice = [];
+                        var tornosTotal = [];
+
+                        tornos.each(function(e){
+                            $(this).find('[data-tornoDescription]').each(function(){
+                                tornosDescription.push($(this).val());
+                            });
+                            $(this).find('[data-tornoQuantity]').each(function(){
+                                tornosQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-tornoPrice]').each(function(){
+                                tornosPrice.push($(this).val());
+                            });
+                            $(this).find('[data-tornoTotal]').each(function(){
+                                tornosTotal.push($(this).val());
+                            });
                         });
-                        $(this).find('[data-total]').each(function(){
-                            diasTotal.push($(this).val());
-                        });
-                    });
 
-                    var diasArray = [];
+                        var tornosArray = [];
 
-                    for (let i = 0; i < diasCantidad.length; i++) {
-                        diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
-                    }
+                        for (let i = 0; i < tornosDescription.length; i++) {
+                            tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
+                        }
 
-                    var consumablesDescription = [];
-                    var consumablesIds = [];
-                    var consumablesUnit = [];
-                    var consumablesQuantity = [];
-                    var consumablesPrice = [];
-                    var consumablesTotal = [];
+                        var totalEquipment = 0;
+                        for (let i = 0; i < materialsTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
+                        }
+                        for (let i = 0; i < tornosTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
+                        }
+                        for (let i = 0; i < manosTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
+                        }
+                        for (let i = 0; i < consumablesTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+                        }
+                        for (let i = 0; i < diasTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                        }
 
-                    consumables.each(function(e){
-                        $(this).find('[data-consumableDescription]').each(function(){
-                            consumablesDescription.push($(this).val());
-                        });
-                        $(this).find('[data-consumableid]').each(function(){
-                            console.log($(this).attr('data-consumableid'));
-                            consumablesIds.push($(this).attr('data-consumableid'));
-                        });
-                        $(this).find('[data-consumableUnit]').each(function(){
-                            consumablesUnit.push($(this).val());
-                        });
-                        $(this).find('[data-consumableQuantity]').each(function(){
-                            consumablesQuantity.push($(this).val());
-                        });
-                        $(this).find('[data-consumablePrice]').each(function(){
-                            consumablesPrice.push($(this).val());
-                        });
-                        $(this).find('[data-consumableTotal]').each(function(){
-                            consumablesTotal.push($(this).val());
-                        });
-                    });
+                        totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
 
-                    var consumablesArray = [];
+                        $total = parseFloat($total) + parseFloat(totalEquipment);
 
-                    for (let i = 0; i < consumablesDescription.length; i++) {
-                        consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
-                    }
+                        $('#subtotal').html('USD '+$total);
 
-                    var manosDescription = [];
-                    var manosIds = [];
-                    var manosUnit = [];
-                    var manosQuantity = [];
-                    var manosPrice = [];
-                    var manosTotal = [];
+                        calculateMargen2($('#utility').val());
+                        calculateLetter2($('#letter').val());
+                        calculateRent2($('#taxes').val());
+                        if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                            renderTemplateSummary($equipments);
+                        }
+                        button.attr('data-saveEquipment', $equipments.length);
+                        button.next().attr('data-deleteEquipment', $equipments.length);
+                        $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        //console.log(modifiedEquipment);
+                        var card = button.parent().parent().parent();
+                        card.removeClass('card-gray-dark');
+                        card.addClass('card-success');
+                        $items = [];
+                        //$.alert("Equipo guardado!");
 
-                    workforces.each(function(e){
-                        $(this).find('[data-manoDescription]').each(function(){
-                            manosDescription.push($(this).val());
-                        });
-                        $(this).find('[data-manoId]').each(function(){
-                            manosIds.push($(this).val());
-                        });
-                        $(this).find('[data-manoUnit]').each(function(){
-                            manosUnit.push($(this).val());
-                        });
-                        $(this).find('[data-manoQuantity]').each(function(){
-                            manosQuantity.push($(this).val());
-                        });
-                        $(this).find('[data-manoPrice]').each(function(){
-                            manosPrice.push($(this).val());
-                        });
-                        $(this).find('[data-manoTotal]').each(function(){
-                            manosTotal.push($(this).val());
-                        });
-                    });
-
-                    var manosArray = [];
-
-                    for (let i = 0; i < manosDescription.length; i++) {
-                        manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
-                    }
-
-                    var tornosDescription = [];
-                    var tornosQuantity = [];
-                    var tornosPrice = [];
-                    var tornosTotal = [];
-
-                    tornos.each(function(e){
-                        $(this).find('[data-tornoDescription]').each(function(){
-                            tornosDescription.push($(this).val());
-                        });
-                        $(this).find('[data-tornoQuantity]').each(function(){
-                            tornosQuantity.push($(this).val());
-                        });
-                        $(this).find('[data-tornoPrice]').each(function(){
-                            tornosPrice.push($(this).val());
-                        });
-                        $(this).find('[data-tornoTotal]').each(function(){
-                            tornosTotal.push($(this).val());
-                        });
-                    });
-
-                    var tornosArray = [];
-
-                    for (let i = 0; i < tornosDescription.length; i++) {
-                        tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
-                    }
-
-                    var totalEquipment = 0;
-                    for (let i = 0; i < materialsTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
-                    }
-                    for (let i = 0; i < tornosTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
-                    }
-                    for (let i = 0; i < manosTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
-                    }
-                    for (let i = 0; i < consumablesTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
-                    }
-                    for (let i = 0; i < diasTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
-                    }
-                    totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
-
-                    $total = parseFloat($total) + parseFloat(totalEquipment);
-
-                    $('#subtotal').html('USD '+$total);
-
-                    calculateMargen2($('#utility').val());
-                    calculateLetter2($('#letter').val());
-                    calculateRent2($('#taxes').val());
-
-                    button.attr('data-saveEquipment', $equipments.length);
-                    button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-
-                    var card = button.parent().parent().parent();
-                    card.removeClass('card-gray-dark');
-                    card.addClass('card-success');
-
-                    $items = [];
-
-                    $.alert("Equipo guardado!");
-
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Modificaión cancelada.");
+                    },
                 },
             },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Modificación cancelada.");
+        });
+    } else {
+        var button2 = $(this);
+        $.confirm({
+            icon: 'fas fa-smile',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'orange',
+            title: 'Guardar cambios',
+            content: '¿Está seguro de guardar los cambios en este equipo?',
+            buttons: {
+                confirm: {
+                    text: 'CONFIRMAR',
+                    action: function (e) {
+                        var modifiedEquipment = [];
+                        var equipmentId = parseInt(button2.attr('data-saveequipment')); // pos in array js
+                        var idEquipment = button2.attr('data-idequipment'); // id del equipo en BD
+                        var idQuote = button2.attr('data-quote');
+                        var equipmentDeleted = $equipments.find(equipment => equipment.id === equipmentId);
+                        console.log(equipmentDeleted);
+                        $equipments = $equipments.filter(equipment => equipment.id !== equipmentId);
+                        console.log($equipments);
+                        // TODO: Capturar los materiales y recorrerlos y agregar al anterior
+                        // TODO: En data-delete (material) debe estar el equipo tambien
+                        console.log($total);
+                        $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                        console.log($total);
+                        //TODO: Otra vez guardamos el equipo
+
+                        var quantity = button2.parent().parent().next().children().children().children().next().val();
+                        var description = button2.parent().parent().next().children().children().next().next().children().next().val();
+                        var detail = button2.parent().parent().next().children().children().next().next().next().children().next().val();
+                        var materials = button2.parent().parent().next().children().next().children().next().children().next().next().next();
+                        var consumables = button2.parent().parent().next().children().next().next().children().next().children().next().next();
+                        var workforces = button2.parent().parent().next().children().next().next().next().children().next().children().next().next();
+                        var tornos = button2.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
+                        var dias = button2.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
+
+                        var materialsDescription = [];
+                        var materialsUnit = [];
+                        var materialsLargo = [];
+                        var materialsAncho = [];
+                        var materialsQuantity = [];
+                        var materialsPrice = [];
+                        var materialsTotal = [];
+
+                        materials.each(function(e){
+                            $(this).find('[data-materialDescription]').each(function(){
+                                materialsDescription.push($(this).val());
+                            });
+                            $(this).find('[data-materialUnit]').each(function(){
+                                materialsUnit.push($(this).val());
+                            });
+                            $(this).find('[data-materialLargo]').each(function(){
+                                materialsLargo.push($(this).val());
+                            });
+                            $(this).find('[data-materialAncho]').each(function(){
+                                materialsAncho.push($(this).val());
+                            });
+                            $(this).find('[data-materialQuantity]').each(function(){
+                                materialsQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-materialPrice]').each(function(){
+                                materialsPrice.push($(this).val());
+                            });
+                            $(this).find('[data-materialTotal]').each(function(){
+                                materialsTotal.push($(this).val());
+                            });
+                        });
+
+                        var materialsArray = [];
+
+                        for (let i = 0; i < materialsDescription.length; i++) {
+                            var materialSelected = $materials.find( mat=>mat.full_description.trim() === materialsDescription[i].trim() );
+                            materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
+                        }
+
+                        var diasDescription = [];
+                        var diasCantidad = [];
+                        var diasHoras = [];
+                        var diasPrecio = [];
+                        var diasTotal = [];
+
+                        dias.each(function(e){
+                            $(this).find('[data-description]').each(function(){
+                                diasDescription.push($(this).val());
+                            });
+                            $(this).find('[data-cantidad]').each(function(){
+                                diasCantidad.push($(this).val());
+                            });
+                            $(this).find('[data-horas]').each(function(){
+                                diasHoras.push($(this).val());
+                            });
+                            $(this).find('[data-precio]').each(function(){
+                                diasPrecio.push($(this).val());
+                            });
+                            $(this).find('[data-total]').each(function(){
+                                diasTotal.push($(this).val());
+                            });
+                        });
+
+                        var diasArray = [];
+
+                        for (let i = 0; i < diasCantidad.length; i++) {
+                            diasArray.push({'description':diasDescription[i], 'quantity':diasCantidad[i], 'hours':diasHoras[i], 'price':diasPrecio[i], 'total': diasTotal[i]});
+                        }
+
+                        var consumablesDescription = [];
+                        var consumablesIds = [];
+                        var consumablesUnit = [];
+                        var consumablesQuantity = [];
+                        var consumablesPrice = [];
+                        var consumablesTotal = [];
+
+                        consumables.each(function(e){
+                            $(this).find('[data-consumableDescription]').each(function(){
+                                consumablesDescription.push($(this).val());
+                            });
+                            $(this).find('[data-consumableId]').each(function(){
+                                consumablesIds.push($(this).attr('data-consumableid'));
+                            });
+                            $(this).find('[data-consumableUnit]').each(function(){
+                                consumablesUnit.push($(this).val());
+                            });
+                            $(this).find('[data-consumableQuantity]').each(function(){
+                                consumablesQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-consumablePrice]').each(function(){
+                                consumablesPrice.push($(this).val());
+                            });
+                            $(this).find('[data-consumableTotal]').each(function(){
+                                consumablesTotal.push($(this).val());
+                            });
+                        });
+
+                        var consumablesArray = [];
+
+                        for (let i = 0; i < consumablesDescription.length; i++) {
+                            consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
+                        }
+
+                        var manosDescription = [];
+                        var manosIds = [];
+                        var manosUnit = [];
+                        var manosQuantity = [];
+                        var manosPrice = [];
+                        var manosTotal = [];
+
+                        workforces.each(function(e){
+                            $(this).find('[data-manoDescription]').each(function(){
+                                manosDescription.push($(this).val());
+                            });
+                            $(this).find('[data-manoId]').each(function(){
+                                manosIds.push($(this).val());
+                            });
+                            $(this).find('[data-manoUnit]').each(function(){
+                                manosUnit.push($(this).val());
+                            });
+                            $(this).find('[data-manoQuantity]').each(function(){
+                                manosQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-manoPrice]').each(function(){
+                                manosPrice.push($(this).val());
+                            });
+                            $(this).find('[data-manoTotal]').each(function(){
+                                manosTotal.push($(this).val());
+                            });
+                        });
+
+                        var manosArray = [];
+
+                        for (let i = 0; i < manosDescription.length; i++) {
+                            manosArray.push({'id':manosIds[i], 'description':manosDescription[i], 'unit':manosUnit[i], 'quantity':manosQuantity[i], 'price':manosPrice[i], 'total': manosTotal[i]});
+                        }
+
+                        var tornosDescription = [];
+                        var tornosQuantity = [];
+                        var tornosPrice = [];
+                        var tornosTotal = [];
+
+                        tornos.each(function(e){
+                            $(this).find('[data-tornoDescription]').each(function(){
+                                tornosDescription.push($(this).val());
+                            });
+                            $(this).find('[data-tornoQuantity]').each(function(){
+                                tornosQuantity.push($(this).val());
+                            });
+                            $(this).find('[data-tornoPrice]').each(function(){
+                                tornosPrice.push($(this).val());
+                            });
+                            $(this).find('[data-tornoTotal]').each(function(){
+                                tornosTotal.push($(this).val());
+                            });
+                        });
+
+                        var tornosArray = [];
+
+                        for (let i = 0; i < tornosDescription.length; i++) {
+                            tornosArray.push({'description':tornosDescription[i], 'quantity':tornosQuantity[i], 'price':tornosPrice[i], 'total': tornosTotal[i]});
+                        }
+
+                        var totalEquipment = 0;
+                        for (let i = 0; i < materialsTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
+                        }
+                        for (let i = 0; i < tornosTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(tornosTotal[i]);
+                        }
+                        for (let i = 0; i < manosTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(manosTotal[i]);
+                        }
+                        for (let i = 0; i < consumablesTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+                        }
+                        for (let i = 0; i < diasTotal.length; i++) {
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                        }
+
+                        totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+                        console.log(totalEquipment);
+                        console.log($total);
+                        $total = parseFloat($total) + parseFloat(totalEquipment);
+                        console.log($total);
+                        $('#subtotal').html('USD '+ parseFloat($total).toFixed(2));
+                        console.log($total);
+                        calculateMargen2($('#utility').val());
+                        calculateLetter2($('#letter').val());
+                        calculateRent2($('#taxes').val());
+                        console.log($total);
+                        button2.attr('data-saveEquipment', equipmentDeleted.id);
+                        button2.next().attr('data-deleteEquipment', equipmentDeleted.id);
+                        $equipments.push({'id':equipmentDeleted.id, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        modifiedEquipment.push({'id':equipmentDeleted.id, 'quote':idQuote, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                        //console.log(modifiedEquipment);
+                        $items = [];
+                        console.log(modifiedEquipment);
+                        var equipos = JSON.stringify(modifiedEquipment);
+                        $.ajax({
+                            url: '/dashboard/update/equipment/'+idEquipment+'/quote/'+idQuote,
+                            method: 'POST',
+                            data: JSON.stringify({ equipment: modifiedEquipment }),
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            processData:false,
+                            contentType:'application/json; charset=utf-8',
+                            success: function (data) {
+                                console.log(data);
+                                var equipment = data.equipment;
+                                var quote = data.quote;
+                                button2.parent().prev().html('EQUIPO: '+description);
+                                button2.attr('data-quote', quote.id);
+                                button2.attr('data-idEquipment', equipment.id);
+                                button2.next().attr('data-quote', quote.id);
+                                button2.next().attr('data-idEquipment', equipment.id);
+
+                                $.alert(data.message);
+
+                            },
+                            error: function (data) {
+                                if( data.responseJSON.message && !data.responseJSON.errors )
+                                {
+                                    toastr.error(data.responseJSON.message, 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+                                for ( var property in data.responseJSON.errors ) {
+                                    toastr.error(data.responseJSON.errors[property], 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+
+
+                            },
+                        });
+                        //$.alert("Equipo guardado!");
+                        var card = button2.parent().parent().parent();
+                        card.removeClass('card-gray-dark');
+                        card.addClass('card-success');
+                        if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                            renderTemplateSummary($equipments);
+                        }
+
+                        console.log($total);
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Modificación cancelada.");
+                    },
                 },
             },
-        },
-    });
+        });
+    }
+
 
 }
 
@@ -888,9 +1748,11 @@ function addConsumable() {
         renderTemplateConsumable(render, consumable, cantidad);
     } else {
         var consumableID2 = $(this).parent().parent().find('[data-consumable]').val();
-        //console.log(material);
+        console.log(consumableID2);
         var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
+        console.log(inputQuantity2);
         var cantidad2 = inputQuantity2.val();
+        console.log(cantidad2);
         if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
         {
             toastr.error('Debe ingresar una cantidad', 'Error',
@@ -938,10 +1800,10 @@ function addConsumable() {
         }
 
         var render2 = $(this).parent().parent().next().next();
-
+        console.log(render2);
         var consumable2 = $consumables.find( mat=>mat.id === parseInt(consumableID2) );
         var consumables2 = $(this).parent().parent().next().next().children();
-
+        console.log(consumable2);
         consumables2.each(function(e){
             var id = $(this).children().children().children().next().val();
             if (parseInt(consumable2.id) === parseInt(id)) {
@@ -1006,7 +1868,7 @@ function addMano() {
                 });
             return;
         }
-        if ( unidadID === '' || parseInt(unidadID) === 0 )
+        if ( unidadID === '' || parseFloat(unidadID) === 0 )
         {
             toastr.error('Seleccione una unidad válida.', 'Error',
                 {
@@ -1109,7 +1971,7 @@ function addMano() {
                 });
             return;
         }
-        if ( unidadID2 === '' || parseInt(unidadID2) === 0 )
+        if ( unidadID2 === '' || parseFloat(unidadID2) === 0 )
         {
             toastr.error('Seleccione una unidad válida.', 'Error',
                 {
@@ -1437,7 +2299,6 @@ function addTorno() {
     //console.log(descripcion);
     var render = $(this).parent().parent().next().next();
     renderTemplateTorno(render, descripcion, cantidad, precio);
-
 }
 
 function confirmEquipment() {
@@ -1652,6 +2513,7 @@ function confirmEquipment() {
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }
+
                     totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
 
                     $total = parseFloat($total) + parseFloat(totalEquipment);
@@ -1664,12 +2526,13 @@ function confirmEquipment() {
 
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-
+                    $equipments.push({'id':$equipments.length, 'quote':'', 'quantity':quantity, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                        renderTemplateSummary($equipments);
+                    }
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
-
                     $items = [];
                     $.alert("Equipo confirmado!");
 
@@ -1704,12 +2567,10 @@ function calculateMargen(e) {
     $('#subtotal2').html('USD '+$subtotal);
     $('#subtotal3').html('USD '+$subtotal2);
     $('#total').html('USD '+$subtotal3);
-
 }
 
 function calculateLetter(e) {
     var letter = e.value;
-
     var margen = $('#utility').val() ;
     var rent = $('#taxes').val() ;
 
@@ -1718,12 +2579,10 @@ function calculateLetter(e) {
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
     $('#subtotal3').html('USD '+$subtotal2);
     $('#total').html('USD '+$subtotal3);
-
 }
 
 function calculateRent(e) {
     var rent = e.value;
-
     var margen = $('#utility').val();
     var letter = $('#letter').val() ;
 
@@ -1770,15 +2629,6 @@ function calculateRent2(rent) {
     $subtotal3 = ($subtotal2 * ((parseFloat(rent)/100)+1)).toFixed(0);
 
     $('#total').html('USD '+$subtotal3);
-}
-
-function calculateTotalC(e) {
-    var cantidad = e.value;
-    var precio = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
-    // CON IGV
-    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
-    // SIN IGV
-    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = ((parseFloat(cantidad)*parseFloat(precio))/1.18).toFixed(2);
 
 }
 
@@ -1813,6 +2663,16 @@ function calculateTotalHour(e) {
 
 }
 
+function calculateTotalC(e) {
+    var cantidad = e.value;
+    var precio = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
+    // CON IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    // SIN IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = ((parseFloat(cantidad)*parseFloat(precio))/1.18).toFixed(2);
+
+}
+
 function calculateTotalPrice(e) {
     var cantidad = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
     var hour = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
@@ -1825,7 +2685,6 @@ function calculateTotalPrice(e) {
 }
 
 function addEquipment() {
-
     //var result = document.querySelectorAll('[data-equip]');
     //console.log(result);
     /*for (var index in result){
@@ -1863,7 +2722,6 @@ function addEquipment() {
 
     renderTemplateEquipment();
     $('.materialTypeahead').typeahead('destroy');
-
     $('.materialTypeahead').typeahead({
             hint: true,
             highlight: true, /* Enable substring highlighting */
@@ -1873,28 +2731,6 @@ function addEquipment() {
             limit: 12,
             source: substringMatcher($materialsTypeahead)
         });
-
-    /*$('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            type: 'GET',
-            processResults(data) {
-                //console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
-            }
-        }
-    });
-*/
     /*for (var i=0; i<$materials.length; i++)
     {
         var newOption = new Option($materials[i].full_description, $materials[i].id, false, false);
@@ -1943,7 +2779,6 @@ function deleteItem() {
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
-
     $(this).parent().parent().remove();
     var itemId = $(this).data('delete');
     //$items = $items.filter(item => item.id !== itemId);
@@ -2324,7 +3159,7 @@ function addMaterial() {
 
     for (var i=0; i<$items.length; i++)
     {
-        var mat = $items.find( mat=>mat.material.id === $material.id );
+        var mat = $items.find( mat=>mat.material.id == $material.id );
         if (mat !== undefined)
         {
             toastr.error('Este material ya esta seleccionado', 'Error',
@@ -2432,9 +3267,9 @@ function addMaterial() {
 function storeQuote() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
-    if( $equipments.length === 0 )
+    /*if( $equipments.length === 0 )
     {
-        toastr.error('No se puede crear una cotización sin equipos.', 'Error',
+        toastr.error('No se puede agregar más equipos si no existen.', 'Error',
             {
                 "closeButton": true,
                 "debug": false,
@@ -2452,13 +3287,12 @@ function storeQuote() {
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             });
-        $("#btn-submit").attr("disabled", false);
         return;
-    }
+    }*/
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
-    var formulario = $('#formCreate')[0];
+    var formulario = $('#formEdit')[0];
     var form = new FormData(formulario);
     form.append('equipments', equipos);
     $.ajax({
@@ -2541,6 +3375,7 @@ function storeQuote() {
 }
 
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {
+    console.log(render);
     var card = render.parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
@@ -2553,14 +3388,15 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         } else {
             clone.querySelector("[data-materialDescription]").setAttribute('value', description);
         }
+        //clone.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         clone.querySelector("[data-materialLargo]").setAttribute('value', length);
         clone.querySelector("[data-materialAncho]").setAttribute('value', width);
         clone.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
         clone.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
-        clone.querySelector("[data-materialTotal2]").setAttribute( 'value', (parseFloat(total)/1.18).toFixed(2));
         clone.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
+        clone.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
+        clone.querySelector("[data-materialTotal2]").setAttribute( 'value', (parseFloat(total)/1.18).toFixed(2));
         clone.querySelector("[data-delete]").setAttribute('data-delete', code);
         render.append(clone);
     } else {
@@ -2578,16 +3414,13 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
         clone2.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
-        clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(price)).toFixed(2));
+        clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");
         clone2.querySelector("[data-materialTotal]").setAttribute("style","display:none;");
-
         clone2.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
         clone2.querySelector("[data-materialTotal2]").setAttribute( 'value', ((parseFloat(quantity)*parseFloat(price))/1.18).toFixed(2));
         clone2.querySelector("[data-materialPrice2]").setAttribute("style","display:none;");
         clone2.querySelector("[data-materialTotal2]").setAttribute("style","display:none;");
-
-
         clone2.querySelector("[data-delete]").setAttribute('data-delete', code);
         render.append(clone2);
     }
@@ -2599,7 +3432,7 @@ function renderTemplateConsumable(render, consumable, quantity) {
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
-        //console.log(consumable.stock_current );
+        //clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         if ( consumable.stock_current == 0 )
         {
             clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
@@ -2611,14 +3444,13 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
         clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
+        clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-consumablePrice2]").setAttribute('value', ( (parseFloat(consumable.unit_price))/1.18 ).toFixed(2));
         clone.querySelector("[data-consumableTotal2]").setAttribute( 'value', ( (parseFloat(consumable.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
-        clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
         clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
         render.append(clone);
     } else {
         var clone2 = activateTemplate('#template-consumable');
-        //console.log(consumable.stock_current );
         if ( consumable.stock_current == 0 )
         {
             clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
@@ -2626,7 +3458,7 @@ function renderTemplateConsumable(render, consumable, quantity) {
         } else {
             clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         }
-        clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+        //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
         clone2.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
@@ -2641,8 +3473,6 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone2.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
         render.append(clone2);
     }
-
-
 }
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {
@@ -2670,20 +3500,6 @@ function renderTemplateMano(render, description, unit, quantity, unitPrice) {
     render.append(clone);
 }
 
-function renderTemplateTorno(render, description, quantity, unitPrice) {
-    var card = render.parent().parent().parent().parent().parent().parent();
-    card.removeClass('card-success');
-    card.addClass('card-gray-dark');
-    var clone = activateTemplate('#template-torno');
-
-    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
-    clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-    clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
-    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
-
-    render.append(clone);
-}
-
 function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, quantityPerson2, total2) {
     var card = render.parent().parent().parent().parent();
     card.removeClass('card-success');
@@ -2695,6 +3511,7 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
         clone.querySelector("[data-horas]").setAttribute('value', (parseFloat(hoursPerPerson2)).toFixed(2));
         clone.querySelector("[data-precio]").setAttribute('value', (parseFloat(pricePerHour2)).toFixed(2));
         clone.querySelector("[data-total]").setAttribute( 'value', (parseFloat(total2)).toFixed(2));
+
     } else {
         clone.querySelector("[data-description]").setAttribute('value', description);
         clone.querySelector("[data-cantidad]").setAttribute('value', (parseFloat(quantityPerson2)).toFixed(2));
@@ -2709,6 +3526,20 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
     render.append(clone);
 }
 
+function renderTemplateTorno(render, description, quantity, unitPrice) {
+    var card = render.parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
+    var clone = activateTemplate('#template-torno');
+
+    clone.querySelector("[data-tornoDescription]").setAttribute('value', description);
+    clone.querySelector("[data-tornoQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+    clone.querySelector("[data-tornoPrice]").setAttribute('value', (parseFloat(unitPrice)).toFixed(2));
+    clone.querySelector("[data-tornoTotal]").setAttribute( 'value', (parseFloat(quantity)*parseFloat(unitPrice)).toFixed(2));
+
+    render.append(clone);
+}
+
 function renderTemplateEquipment() {
     var clone = activateTemplate('#template-equipment');
 
@@ -2717,6 +3548,34 @@ function renderTemplateEquipment() {
     $('.unitMeasure').select2({
         placeholder: "Seleccione unidad",
     });
+}
+
+function renderTemplateSummary(equipments) {
+
+    $('#body-summary').html('');
+    var equipos = equipments.sort(function (a, b) {
+        if (a.id > b.id) {
+            return 1;
+        }
+        if (a.id < b.id) {
+            return -1;
+        }
+        // a must be equal to b
+        return 0;
+    });
+    for (let i = 0; i < equipos.length; i++) {
+        //console.log(equipments[i]);
+        var clone = activateTemplate('#template-summary');
+        var price = ((parseFloat(equipos[i].total)/parseFloat(equipos[i].quantity))/1.18).toFixed(2);
+        var totalE = (parseFloat(equipos[i].total)/1.18).toFixed(2);
+        clone.querySelector("[data-nEquipment]").innerHTML = equipos[i].description;
+        clone.querySelector("[data-qEquipment]").innerHTML = equipos[i].quantity;
+        clone.querySelector("[data-pEquipment]").innerHTML = price;
+        clone.querySelector("[data-tEquipment]").innerHTML = totalE;
+
+        $('#body-summary').append(clone);
+    }
+
 }
 
 function activateTemplate(id) {

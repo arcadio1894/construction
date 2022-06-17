@@ -1316,4 +1316,58 @@ class QuoteController extends Controller
         return $array;
     }
 
+    // Reemplazar materiales en cotizaciones
+    public function replacement( $id )
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $unitMeasures = UnitMeasure::all();
+        $customers = Customer::all();
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        //dump($quote);
+        return view('quote.replacement', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines', 'permissions'));
+
+    }
+
+    public function saveEquipmentMaterialReplacement( $quote, $equipment, $equipmentMaterial )
+    {
+        DB::beginTransaction();
+        try {
+            $em = EquipmentMaterial::find($equipmentMaterial);
+            $em->replacement = true;
+            $em->save();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'El material ha sido quitado'], 200);
+    }
+
+    public function saveEquipmentMaterialNotReplacement( $quote, $equipment, $equipmentMaterial )
+    {
+        DB::beginTransaction();
+        try {
+            $em = EquipmentMaterial::find($equipmentMaterial);
+            $em->replacement = false;
+            $em->save();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'El reemplazo ha sido anulado'], 200);
+    }
 }

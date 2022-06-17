@@ -17,7 +17,8 @@ class EquipmentMaterial extends Model
         'percentage',
         'state',
         'total',
-        'availability'
+        'availability',
+        'replacement'
     ];
 
     public function equipment(){

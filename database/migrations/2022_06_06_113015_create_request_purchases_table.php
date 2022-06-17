@@ -15,7 +15,7 @@ class CreateRequestPurchasesTable extends Migration
     {
         Schema::create('request_purchases', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quote_id')->nullable()->constrained('quote');
+            $table->foreignId('quote_id')->nullable()->constrained('quotes');
             $table->enum('urgency', ['high', 'medium', 'low'])->nullable();
             $table->dateTime('date')->nullable();
             $table->softDeletes();
