@@ -50,14 +50,26 @@ $(document).ready(function () {
                         return '<p> Sin cliente </p>'
                 }
             },
-            {
-                data: null,
-                title: 'Total',
+            { data: null,
+                title: 'Total Sin IGV',
                 wrap: true,
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return item.subtotal_rent;
+                        return ((item.total_quote)/1.18).toFixed(0);
+                    } else {
+                        return '';
+                    }
+
+                }
+            },
+            { data: null,
+                title: 'Total Con IGV',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                        return ((item.total_quote)/1).toFixed(0);
                     } else {
                         return '';
                     }

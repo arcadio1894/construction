@@ -1558,9 +1558,10 @@
         </div>
 
         @can('showPrices_quote')
+            <p class="lead">Resumen de Cotización</p>
             <div class="row">
                 <!-- accepted payments column -->
-                <div class="col-sm-7">
+                <div class="col-sm-12">
                     <div class="card card-lightblue" >
                         <div class="card-header  border-transparent" >
                             <h3 class="card-title">Equipos de cotización</h3>
@@ -1578,6 +1579,9 @@
                                         <th >Equipo</th>
                                         <th >Cantidad</th>
                                         <th >Precio S/Igv</th>
+                                        <th >Utilidad</th>
+                                        <th >Precio S/Igv</th>
+                                        <th >Renta + Letra</th>
                                         <th >Total S/Igv</th>
                                     </tr>
                                     </thead>
@@ -1587,7 +1591,10 @@
                                             <td data-nEquipment>{{ $equipment->description }}</td>
                                             <td data-qEquipment>{{ $equipment->quantity }}</td>
                                             <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
-                                            <td data-tEquipment>{{ round($equipment->total/1.18, 2) }}</td>
+                                            <td data-uEquipment>{{ $equipment->utility }}</td>
+                                            <td data-uPEquipment>{{ round($equipment->subtotal_utility/1.18, 2) }}</td>
+                                            <td data-rlEquipment>{{ $equipment->rent + $equipment->letter }}</td>
+                                            <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>
@@ -1596,7 +1603,13 @@
                                             <td data-nEquipment></td>
                                             <td data-qEquipment></td>
                                             <td data-pEquipment></td>
+                                            <td data-uEquipment></td>
+                                            <td data-uPEquipment></td>
+                                            <td data-rlEquipment></td>
                                             <td data-tEquipment></td>
+                                            <td data-acEquipment>
+                                                <button type="button" class="btn btn-sm btn-outline-warning" data-acEdit="" data-acEquipment="" data-utility="" data-rent="" data-letter=""><i class="fas fa-edit"></i></button>
+                                            </td>
                                         </tr>
                                     </template>
                                 </table>
@@ -1605,6 +1618,13 @@
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="row">
+                <!-- accepted payments column -->
+                <div class="col-sm-7">
+
+                </div>
                 <!-- /.col -->
                 <div class="col-sm-5">
                     <p class="lead">Resumen de Cotización</p>
@@ -1612,8 +1632,8 @@
                     <div class="table-responsive">
                         <table class="table">
                             <tr>
-                                <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal"> USD {{ $quote->total }}</td>
+                                <th style="width:50%">Total S/IGV: </th>
+                                <td id="subtotal"> USD {{ round(($quote->total_equipments)/1.18, 2) }}</td>
                                 <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                                 <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                                 <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -1621,56 +1641,18 @@
 
                             </tr>
                             <tr>
-                                <th>Margen Utilidad: </th>
-                                <td>
-                                    <div class="input-group input-group-sm">
-                                        <input type="number" oninput="calculateMargen(this);" value="{{ $quote->utility }}" class="form-control form-control-sm" name="utility" id="utility" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                </td>
+                                <th style="width:50%">Total C/IGV: </th>
+                                <td id="total"> USD {{ round($quote->total_equipments, 2) }}</td>
                             </tr>
                             <tr>
-                                <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal2">USD {{ $quote->subtotal_utility_edit }}</td>
+                                <th style="width:50%">Total+Utilidad S/IGV: </th>
+                                <td id="subtotal_utility">USD {{ round(($quote->total_quote)/1.18, 2) }}</td>
                             </tr>
                             <tr>
-                                <th>Letra: </th>
-                                <td >
-                                    <div class="input-group input-group-sm">
-                                        <input type="number" oninput="calculateLetter(this);" class="form-control form-control-sm" name="letter" id="letter" placeholder="0.00" min="0" value="{{ $quote->letter }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                </td>
+                                <th style="width:50%">Total+Utilidad C/IGV: </th>
+                                <td id="total_utility">USD {{ round($quote->total_quote, 2) }}</td>
                             </tr>
-                            <tr>
-                                <th style="width:50%">Subtotal: </th>
-                                <td id="subtotal3">USD {{ $quote->subtotal_letter_edit }}</td>
-                            </tr>
-                            <tr>
-                                <th>Renta: </th>
-                                <td>
-                                    <div class="input-group input-group-sm">
-                                        <input type="number" oninput="calculateRent(this);" class="form-control form-control-sm" name="taxes" id="taxes" placeholder="0.00" min="0" value="{{ $quote->rent }}" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text">%</span>
-                                        </div>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Total: </th>
-                                <td id="total">USD {{ $quote->subtotal_rent_edit }}</td>
-                            </tr>
+
                         </table>
                     </div>
                 </div>

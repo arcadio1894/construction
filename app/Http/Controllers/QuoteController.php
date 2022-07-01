@@ -79,9 +79,9 @@ class QuoteController extends Controller
                 'contact_id' => ($request->has('contact_id')) ? $request->get('contact_id') : null,
                 'payment_deadline_id' => ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null,
                 'state' => 'created',
-                'utility' => ($request->has('utility')) ? $request->get('utility'): 0,
-                'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
-                'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
+                //'utility' => ($request->has('utility')) ? $request->get('utility'): 0,
+                //'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
+                //'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
             ]);
 
             QuoteUser::create([
@@ -99,7 +99,11 @@ class QuoteController extends Controller
                     'quote_id' => $quote->id,
                     'description' =>($equipments[$i]->description == "" || $equipments[$i]->description == null) ? '':$equipments[$i]->description,
                     'detail' => ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail,
-                    'quantity' => $equipments[$i]->quantity
+                    'quantity' => $equipments[$i]->quantity,
+                    'utility' => $equipments[$i]->utility,
+                    'rent' => $equipments[$i]->rent,
+                    'letter' => $equipments[$i]->letter,
+                    'total' => $equipments[$i]->total
                 ]);
 
                 $totalMaterial = 0;
@@ -198,9 +202,14 @@ class QuoteController extends Controller
                     $totalDias += $equipmentdias->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+                $totalEquipo = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
 
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+                $totalQuote += $totalEquipmentR;
+
+                $equipment->total = $totalEquipo;
 
                 $equipment->save();
             }
@@ -287,6 +296,16 @@ class QuoteController extends Controller
         {
             foreach( $quote3->equipments as $equipment )
             {
+                // TODO: Actualizamos los porcentages si no estan registrados
+                if ( $equipment->utility == 0 && $equipment->rent && $equipment->letter == 0 )
+                {
+                    $equipment->utility = $quote3->utility;
+                    $equipment->rent = $quote3->rent;
+                    $equipment->letter = $quote3->letter;
+                    $equipment->save();
+
+                }
+
                 // TODO: Actualizar los precios
                 foreach ( $equipment->materials as $equipment_material )
                 {
@@ -344,8 +363,14 @@ class QuoteController extends Controller
                 {
                     $new_total_workday = $new_total_workday + $equipment_workday->total;
                 }
-                $new_total_quote = $new_total_quote + (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
-                $equipment->total = ($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity;
+
+                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
+                $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+                $new_total_quote = $new_total_quote + $totalEquipmentR;
+                $equipment->total = $totalEquipo;
                 $equipment->save();
             }
             $quote2->total = $new_total_quote ;
@@ -404,9 +429,9 @@ class QuoteController extends Controller
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
             $quote->contact_id = ($request->has('contact_id')) ? $request->get('contact_id') : null;
-            $quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
-            $quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
-            $quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
+            //$quote->utility = ($request->has('utility')) ? $request->get('utility'): 0;
+            //$quote->letter = ($request->has('letter')) ? $request->get('letter'): 0;
+            //$quote->rent = ($request->has('taxes')) ? $request->get('taxes'): 0;
             $quote->currency_invoice = 'USD';
             $quote->currency_compra = null;
             $quote->currency_venta = null;
@@ -425,7 +450,11 @@ class QuoteController extends Controller
                         'quote_id' => $quote->id,
                         'description' => ($equipments[$i]->description == "" || $equipments[$i]->description == null) ? '':$equipments[$i]->description,
                         'detail' => ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail,
-                        'quantity' => $equipments[$i]->quantity
+                        'quantity' => $equipments[$i]->quantity,
+                        'utility' => $equipments[$i]->utility,
+                        'rent' => $equipments[$i]->rent,
+                        'letter' => $equipments[$i]->letter,
+                        'total' => $equipments[$i]->total
                     ]);
 
                     $totalMaterial = 0;
@@ -524,9 +553,18 @@ class QuoteController extends Controller
                         $totalDias += $equipmentdias->total;
                     }
 
-                    $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                    //$totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
 
-                    $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+                    //$equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+
+                    $totalEquipo = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                    $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                    $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                    $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+                    $totalQuote += $totalEquipmentR;
+
+                    $equipment->total = $totalEquipo;
 
                     $equipment->save();
                 }
@@ -755,7 +793,14 @@ class QuoteController extends Controller
                 $workday->delete();
             }
 
-            $quote->total -= $equipment_quote->total;
+            $totalDeleted = $equipment_quote->total;
+
+            $totalEquipmentU = $totalDeleted*(($equipment_quote->utility/100)+1);
+            $totalEquipmentL = $totalEquipmentU*(($equipment_quote->letter/100)+1);
+            $totalEquipmentR = $totalEquipmentL*(($equipment_quote->rent/100)+1);
+
+            $quote->total = $quote->total - $totalEquipmentR;
+
             $quote->currency_invoice = 'USD';
             $quote->currency_compra = null;
             $quote->currency_venta = null;
@@ -775,7 +820,6 @@ class QuoteController extends Controller
 
     public function updateEquipmentOfQuote(Request $request, $id_equipment, $id_quote)
     {
-        //dump($request);
         $user = Auth::user();
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
@@ -791,31 +835,35 @@ class QuoteController extends Controller
             $equipment_quote = Equipment::where('id', $id_equipment)
                 ->where('quote_id',$quote->id)->first();
 
-            $totalDeleted = 0;
+            //$totalDeleted = 0;
             foreach( $equipment_quote->materials as $material ) {
-                $totalDeleted = $totalDeleted + (float) $material->total;
+                //$totalDeleted = $totalDeleted + (float) $material->total;
                 $material->delete();
             }
             foreach( $equipment_quote->consumables as $consumable ) {
-                $totalDeleted = $totalDeleted + (float) $consumable->total;
+                //$totalDeleted = $totalDeleted + (float) $consumable->total;
                 $consumable->delete();
             }
             foreach( $equipment_quote->workforces as $workforce ) {
-                $totalDeleted = $totalDeleted + (float) $workforce->total;
+                //$totalDeleted = $totalDeleted + (float) $workforce->total;
                 $workforce->delete();
             }
             foreach( $equipment_quote->turnstiles as $turnstile ) {
-                $totalDeleted = $totalDeleted + (float) $turnstile->total;
+                //$totalDeleted = $totalDeleted + (float) $turnstile->total;
                 $turnstile->delete();
             }
             foreach( $equipment_quote->workdays as $workday ) {
-                $totalDeleted = $totalDeleted + (float) $workday->total;
+                //$totalDeleted = $totalDeleted + (float) $workday->total;
                 $workday->delete();
             }
 
-            $totalDeleted = $totalDeleted * (float) $equipment_quote->quantity;
+            $totalDeleted = $equipment_quote->total;
 
-            $quote->total = $quote->total - $totalDeleted;
+            $totalEquipmentU = $totalDeleted*(($equipment_quote->utility/100)+1);
+            $totalEquipmentL = $totalEquipmentU*(($equipment_quote->letter/100)+1);
+            $totalEquipmentR = $totalEquipmentL*(($equipment_quote->rent/100)+1);
+
+            $quote->total = $quote->total - $totalEquipmentR;
             $quote->save();
 
             $equipment_quote->delete();
@@ -826,12 +874,15 @@ class QuoteController extends Controller
 
             foreach ( $equipments as $equip )
             {
-                //dump($equip['quantity']);
                 $equipment = Equipment::create([
                     'quote_id' => $quote->id,
                     'description' => ($equip['description'] == "" || $equip['description'] == null) ? '':$equip['description'],
                     'detail' => ($equip['detail'] == "" || $equip['detail'] == null) ? '':$equip['detail'],
-                    'quantity' => $equip['quantity']
+                    'quantity' => $equip['quantity'],
+                    'utility' => $equip['utility'],
+                    'rent' => $equip['rent'],
+                    'letter' => $equip['letter'],
+                    'total' => $equip['total']
                 ]);
 
                 $totalMaterial = 0;
@@ -856,7 +907,6 @@ class QuoteController extends Controller
                 //dump($materials);
                 foreach ( $materials as $material )
                 {
-                    //dump($material['material']['stock_current']);
                     $equipmentMaterial = EquipmentMaterial::create([
                         'equipment_id' => $equipment->id,
                         'material_id' => (int)$material['material']['id'],
@@ -870,14 +920,13 @@ class QuoteController extends Controller
                         'total' => (float) $material['quantity']*(float) $material['material']['unit_price']
                     ]);
 
-                    $totalMaterial += $equipmentMaterial->total;
+                    //$totalMaterial += $equipmentMaterial->total;
                 }
 
                 foreach ( $consumables as $consumable )
                 {
-                    //dump($consumable['id']);
                     $material = Material::find((int)$consumable['id']);
-                    //dump($material);
+
                     $equipmentConsumable = EquipmentConsumable::create([
                         'equipment_id' => $equipment->id,
                         'material_id' => (int)$consumable['id'],
@@ -888,7 +937,7 @@ class QuoteController extends Controller
                         'availability' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Agotado':'Completo',
                     ]);
 
-                    $totalConsumable += $equipmentConsumable->total;
+                    //$totalConsumable += $equipmentConsumable->total;
                 }
 
                 foreach ( $workforces as $workforce )
@@ -902,7 +951,7 @@ class QuoteController extends Controller
                         'unit' => $workforce['unit'],
                     ]);
 
-                    $totalWorkforces += $equipmentWorkforce->total;
+                    //$totalWorkforces += $equipmentWorkforce->total;
                 }
 
                 foreach ( $tornos as $torno )
@@ -915,7 +964,7 @@ class QuoteController extends Controller
                         'total' => (float) $torno['price']*(float) $torno['quantity']
                     ]);
 
-                    $totalTornos += $equipmenttornos->total;
+                    //$totalTornos += $equipmenttornos->total;
                 }
 
                 foreach ( $dias as $dia )
@@ -929,26 +978,27 @@ class QuoteController extends Controller
                         'total' => (float) $dia['quantity']*(float) $dia['hours']*(float) $dia['price']
                     ]);
 
-                    $totalDias += $equipmentdias->total;
+                    //$totalDias += $equipmentdias->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;;
+                $totalEquipo2 = (float)$equip['total'];
+                $totalEquipmentU2 = $totalEquipo2*(($equip['utility']/100)+1);
+                $totalEquipmentL2 = $totalEquipmentU2*(($equip['letter']/100)+1);
+                $totalEquipmentR2 = $totalEquipmentL2*(($equip['rent']/100)+1);
 
-                $equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
+                $totalQuote = $totalQuote + $totalEquipmentR2;
+
+                $equipment->total = $totalEquipo2;
 
                 $equipment->save();
 
                 $equipmentSent = $equipment;
-
             }
-
-            $quote->total += $totalQuote;
-
+            $quote->total = $quote->total + $totalQuote;
             $quote->currency_invoice = 'USD';
             $quote->currency_compra = null;
             $quote->currency_venta = null;
             $quote->total_soles = 0;
-
             $quote->save();
 
             DB::commit();
@@ -1194,6 +1244,9 @@ class QuoteController extends Controller
                     'description' => $equipment->description,
                     'detail' => $equipment->detail,
                     'quantity' => $equipment->quantity,
+                    'utility' => $equipment->utility,
+                    'rent' => $equipment->rent,
+                    'letter' => $equipment->letter,
                 ]);
 
                 $totalMaterial = 0;
@@ -1370,4 +1423,71 @@ class QuoteController extends Controller
         }
         return response()->json(['message' => 'El reemplazo ha sido anulado'], 200);
     }
+
+    public function changePercentagesEquipment( Request $request , $id_equipment, $id_quote )
+    {
+        DB::beginTransaction();
+        try {
+            $equipment = Equipment::find($id_equipment);
+            $equipment->utility = $request->input('utility');
+            $equipment->rent = $request->input('rent');
+            $equipment->letter = $request->input('letter');
+            $equipment->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Porcentages actualizados'], 200);
+
+    }
+
+    public function adjustPercentagesEquipment( Request $request , $id_equipment, $id_quote )
+    {
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($id_quote);
+
+            $equipment_quote = Equipment::where('id', $id_equipment)
+                ->where('quote_id',$id_quote)->first();
+
+            $totalDeleted = $equipment_quote->total;
+
+            $totalEquipmentU = $totalDeleted*(($equipment_quote->utility/100)+1);
+            $totalEquipmentL = $totalEquipmentU*(($equipment_quote->letter/100)+1);
+            $totalEquipmentR = $totalEquipmentL*(($equipment_quote->rent/100)+1);
+
+            $quote->total = $quote->total - $totalEquipmentR;
+            $quote->save();
+
+            $utility = (float) $request->input('utility');
+            $rent = (float) $request->input('rent');
+            $letter = (float) $request->input('letter');
+
+            $totalNew = $equipment_quote->total;
+
+            $totalEquipmentUNew = $totalNew*(($utility/100)+1);
+            $totalEquipmentLNew = $totalEquipmentUNew*(($rent/100)+1);
+            $totalEquipmentRNew = $totalEquipmentLNew*(($letter/100)+1);
+
+            $quote->total = $quote->total + $totalEquipmentRNew;
+            $quote->save();
+
+            $equipment_quote->utility = $request->input('utility');
+            $equipment_quote->rent = $request->input('rent');
+            $equipment_quote->letter = $request->input('letter');
+            $equipment_quote->save();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Porcentages actualizados'], 200);
+
+    }
+
 }

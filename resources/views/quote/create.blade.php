@@ -177,6 +177,11 @@
                                 <input type="number" data-quantityequipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
+
+                                <input type="hidden" name="" data-utilityEquipment value="10">
+                                <input type="hidden" name="" data-rentEquipment value="5">
+                                <input type="hidden" name="" data-letterEquipment value="2">
+
                             </div>
                             <div class="col-md-9">
                                 <label for="description"> <span class="right badge badge-danger">Importante</span></label>
@@ -829,59 +834,20 @@
                 <div class="table-responsive">
                     <table class="table">
                         <tr>
-                            <th style="width:50%">Subtotal: </th>
+                            <th style="width:50%">Total S/IGV: </th>
                             <td id="subtotal">USD 0.00</td>
                         </tr>
                         <tr>
-                            <th>Margen Utilidad: </th>
-                            <td>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" oninput="calculateMargen(this);" class="form-control form-control-sm" name="utility" id="utility" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="width:50%">Subtotal: </th>
-                            <td id="subtotal2">USD 0.00</td>
-                        </tr>
-                        <tr>
-                            <th>Letra: </th>
-                            <td >
-                                <div class="input-group input-group-sm">
-                                    <input type="number" oninput="calculateLetter(this);" class="form-control form-control-sm" name="letter" id="letter" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th style="width:50%">Subtotal: </th>
-                            <td id="subtotal3">USD 0.00</td>
-                        </tr>
-                        <tr>
-                            <th>Renta: </th>
-                            <td>
-                                <div class="input-group input-group-sm">
-                                    <input type="number" oninput="calculateRent(this);" class="form-control form-control-sm" name="taxes" id="taxes" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Total: </th>
+                            <th>Total C/IGV: </th>
                             <td id="total">USD 0.00</td>
+                        </tr>
+                        <tr>
+                            <th style="width:50%">Total+Utilidad S/IGV: </th>
+                            <td id="subtotal_utility">USD 0.00</td>
+                        </tr>
+                        <tr>
+                            <th style="width:50%">Total+Utilidad C/IGV: </th>
+                            <td id="total_utility">USD 0.00</td>
                         </tr>
                     </table>
                 </div>
@@ -1165,6 +1131,10 @@
                                 <input type="number" data-quantityEquipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
+                                <input type="hidden" name="" data-utilityEquipment value="10">
+                                <input type="hidden" name="" data-rentEquipment value="5">
+                                <input type="hidden" name="" data-letterEquipment value="2">
+
                             </div>
                             <div class="col-md-9">
                                 <label for="description"> <span class="right badge badge-danger">Importante</span></label>

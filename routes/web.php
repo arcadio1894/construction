@@ -707,9 +707,15 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:finish_quote');
         Route::get('/get/contact/{customer}', 'QuoteController@getContactsByCustomer');
 
+        // TODO: Cambiar porcentages
+        Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')
+            ->middleware('permission:update_quote');
+
+        Route::post('/adjust/percentages/new/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@adjustPercentagesEquipment')
+            ->middleware('permission:update_quote');
+
         // TODO: Reemplazar cotizaciones
         Route::get('reemplazar/materiales/cotizacion/{quote}', 'QuoteController@replacement')
-            ->name('quote.edit')
             ->middleware('permission:replacement_quote');
         Route::post('/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialReplacement')
             ->middleware('permission:replacement_quote');

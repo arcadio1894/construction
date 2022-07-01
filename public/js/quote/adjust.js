@@ -19,12 +19,126 @@ $(document).ready(function () {
     $("#btn-submit").on("click", storeQuote);
     //$formCreate.on('submit', storeQuote);
 
+    // TODO: Nuevo boton para modificar los porcentages
+    $modalChangePercentages = $('#modalChangePercentages');
+    $(document).on('click', '[data-acEdit]', changePercentages);
+    $('#btn-changePercentage').on('click', savePercentages);
+
 });
 
 var $formCreate;
 var $modalAddMaterial;
 var $material;
 var $renderMaterial;
+var $modalChangePercentages;
+
+function savePercentages() {
+    var utility = $('#percentage_utility').val();
+    var rent = $('#percentage_rent').val();
+    var letter = $('#percentage_letter').val();
+
+    var quote = $('#quote_percentage').val();
+    var equipment = $('#equipment_percentage').val();
+
+    $.ajax({
+        url: '/dashboard/adjust/percentages/new/equipment/'+equipment+'/quote/'+quote,
+        method: 'POST',
+        data: JSON.stringify({ utility: utility, rent:rent, letter: letter}),
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            $modalChangePercentages.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
+
+
+}
+
+function changePercentages() {
+    var utility = $(this).data('utility');
+    var rent = $(this).data('rent');
+    var letter = $(this).data('letter');
+
+    var quote = $(this).data('acedit');
+    var equipment = $(this).data('acequipment');
+
+    $('#quote_percentage').val(quote);
+    $('#equipment_percentage').val(equipment);
+
+    $('#percentage_utility').val(utility);
+    $('#percentage_rent').val(rent);
+    $('#percentage_letter').val(letter);
+
+    $modalChangePercentages.modal('show');
+}
 
 function calculateMargen(e) {
     var margen = e.value;

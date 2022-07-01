@@ -90,7 +90,8 @@
                 <th>Forma Pago</th>
                 <th>Tiempo Entrega</th>
                 <th>Cliente</th>
-                <th>Total</th>
+                <th>Total S/IGV</th>
+                <th>Total C/IGV</th>
                 <th>Moneda</th>
                 <th>Estado</th>
                 <th>Fecha Creación</th>

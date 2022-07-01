@@ -56,7 +56,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return ((item.subtotal_rent_pdf)/1.18).toFixed(0);
+                        return ((item.total_quote)/1.18).toFixed(0);
                     } else {
                         return '';
                     }
@@ -69,7 +69,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-                        return item.subtotal_rent;
+                        return ((item.total_quote)/1).toFixed(0);
                     } else {
                         return '';
                     }

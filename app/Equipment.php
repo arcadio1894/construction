@@ -9,31 +9,84 @@ class Equipment extends Model
 {
     protected $table = 'equipments';
 
-    protected $appends = ['subtotal_rent'];
+    protected $appends = ['subtotal_rent', 'subtotal_utility', 'subtotal_percentage'];
 
     protected $fillable = [
         'quote_id',
         'description',
         'detail',
         'quantity',
-        'total'
+        'total',
+        'utility',
+        'letter',
+        'rent'
     ];
 
-    public function getSubtotalRentAttribute()
+    public function getSubtotalUtilityAttribute()
     {
         if ( $this->quote->total_soles != 0 )
         {
             $total_soles = $this->total * $this->quote->currency_venta;
-            $subtotal1 = $total_soles * (($this->quote->utility/100)+1);
-            $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
-            $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+            $subtotal1 = $total_soles * (($this->utility/100)+1);
+            return $subtotal1;
+        } else {
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            return $subtotal1;
+        }
+
+    }
+
+    public function getSubtotalPercentageAttribute()
+    {
+        if ( $this->quote->total_soles != 0 )
+        {
+            $total_soles = $this->total * $this->quote->currency_venta;
+            $subtotal1 = $total_soles * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
             return $subtotal3;
         } else {
-            $subtotal1 = $this->total * (($this->quote->utility/100)+1);
-            $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
-            $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+            $subtotal1 = $this->total * (($this->utility/100)+1);
+            $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+            $subtotal3 = $subtotal2 * (($this->rent/100)+1);
             return $subtotal3;
         }
+
+    }
+
+    public function getSubtotalRentAttribute()
+    {
+        if ( $this->utility == 0 && $this->letter == 0 && $this->rent == 0 )
+        {
+            if ( $this->quote->total_soles != 0 )
+            {
+                $total_soles = $this->total * $this->quote->currency_venta;
+                $subtotal1 = $total_soles * (($this->quote->utility/100)+1);
+                $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
+                $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+                return $subtotal3;
+            } else {
+                $subtotal1 = $this->total * (($this->quote->utility/100)+1);
+                $subtotal2 = $subtotal1 * (($this->quote->letter/100)+1);
+                $subtotal3 = $subtotal2 * (($this->quote->rent/100)+1);
+                return $subtotal3;
+            }
+        } else {
+            if ( $this->quote->total_soles != 0 )
+            {
+                $total_soles = $this->total * $this->quote->currency_venta;
+                $subtotal1 = $total_soles * (($this->utility/100)+1);
+                $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+                $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+                return $subtotal3;
+            } else {
+                $subtotal1 = $this->total * (($this->utility/100)+1);
+                $subtotal2 = $subtotal1 * (($this->letter/100)+1);
+                $subtotal3 = $subtotal2 * (($this->rent/100)+1);
+                return $subtotal3;
+            }
+        }
+
 
     }
 
