@@ -118,9 +118,9 @@ $(document).ready(function () {
                 {
                     if ( item.code == null )
                     {
-                        return item.sub_total;
+                        return item.currency_invoice+' '+ item.sub_total;
                     } else {
-                        return parseFloat(item.total) - parseFloat(item.igv);
+                        return item.currency_invoice+' '+ (parseFloat(item.total) - parseFloat(item.igv));
                     }
 
                 }
@@ -132,9 +132,9 @@ $(document).ready(function () {
                 {
                     if ( item.code == null )
                     {
-                        return item.taxes;
+                        return item.currency_invoice+' '+item.taxes;
                     } else {
-                        return item.igv;
+                        return item.currency_invoice+' '+item.igv;
                     }
 
                 }
@@ -147,9 +147,9 @@ $(document).ready(function () {
                     //console.log(item.code);
                     if ( item.code == null )
                     {
-                        return item.total;
+                        return item.currency_invoice+' '+item.total;
                     } else {
-                        return item.total;
+                        return item.currency_invoice+' '+item.total;
                     }
 
                 }
