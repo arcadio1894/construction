@@ -738,7 +738,7 @@ class OutputController extends Controller
         $materials = [];
         foreach ($outputDetails as $outputDetail) {
             $mate = Material::find($outputDetail->items->material_id);
-            if ( isset($mate) ) {
+            if ( $mate->id != null ) {
                 array_push($materials, [
                     'id' => $mate->id,
                     'full_description' => $mate->full_description
