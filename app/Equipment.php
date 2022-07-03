@@ -19,7 +19,8 @@ class Equipment extends Model
         'total',
         'utility',
         'letter',
-        'rent'
+        'rent',
+        'finished'
     ];
 
     public function getSubtotalUtilityAttribute()

@@ -722,6 +722,14 @@ Route::middleware('auth')->group(function (){
         Route::post('/not/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialNotReplacement')
             ->middleware('permission:replacement_quote');
 
+        // TODO: Finalizar equipos
+        Route::get('finalizar/equipos/cotizacion/{quote}', 'QuoteController@finishEquipmentsQuote')
+            ->middleware('permission:update_quote');
+        Route::post('/finish/equipment/{equipment}/quote/{quote}', 'QuoteController@saveFinishEquipmentsQuote')
+            ->middleware('permission:update_quote');
+        Route::post('/enable/equipment/{equipment}/quote/{quote}', 'QuoteController@saveEnableEquipmentsQuote')
+            ->middleware('permission:update_quote');
+
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')
             ->name('order.execution.index')

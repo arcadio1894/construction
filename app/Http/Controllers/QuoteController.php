@@ -1490,4 +1490,60 @@ class QuoteController extends Controller
 
     }
 
+    public function finishEquipmentsQuote( $id )
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $unitMeasures = UnitMeasure::all();
+        $customers = Customer::all();
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        //dump($quote);
+        return view('quote.finish_equipment', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines', 'permissions'));
+
+    }
+
+    public function saveFinishEquipmentsQuote($id_equipment, $id_quote)
+    {
+        DB::beginTransaction();
+        try {
+            $e = Equipment::find($id_equipment);
+            $e->finished = true;
+            $e->save();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'El equipo se ha finalizado con éxito'], 200);
+
+    }
+
+    public function saveEnableEquipmentsQuote($id_equipment, $id_quote)
+    {
+        DB::beginTransaction();
+        try {
+            $e = Equipment::find($id_equipment);
+            $e->finished = false;
+            $e->save();
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'El equipo se ha habilitado con éxito'], 200);
+
+    }
+
 }

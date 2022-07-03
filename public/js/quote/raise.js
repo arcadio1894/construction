@@ -185,6 +185,10 @@ $(document).ready(function () {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
                         }
+                        if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                        }
                     }
 
                     if ( $.inArray('renew_quote', $permissions) !== -1 ) {
