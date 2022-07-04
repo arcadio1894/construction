@@ -161,7 +161,7 @@ $(document).ready(function () {
                 console.log(json[i].full_description);
                 $('#material').append($("<option>", {
                     value: json[i].id,
-                    text: json[i].full_description
+                    text: json[i].code+' '+json[i].material
                 }));
             }
 

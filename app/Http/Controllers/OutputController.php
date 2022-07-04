@@ -734,7 +734,15 @@ class OutputController extends Controller
 
     public function getJsonMaterialsInOutput()
     {
-        $outputDetails = OutputDetail::with('items')->get();
+        $materials = Material::where('enable_status', 1)->get();
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code]);
+        }
+        return $array;
+        /*$outputDetails = OutputDetail::with('items')->get();
         $materials = [];
         foreach ($outputDetails as $outputDetail) {
             if ( $outputDetail->items != null ) {
@@ -748,7 +756,7 @@ class OutputController extends Controller
 
         }
         $result = array_values( array_unique($materials, SORT_REGULAR) );
-        return $result;
+        return $result;*/
     }
 
     public function getJsonOutputsOfMaterial( $id_material )
@@ -756,32 +764,37 @@ class OutputController extends Controller
         $outputDetails = OutputDetail::with('items')->get();
         $outputs = [];
         foreach ($outputDetails as $outputDetail) {
-            if ( $outputDetail->items->material->id == $id_material )
+            if ( $outputDetail->items != null )
             {
 
-                $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
-                //dump($output);
-                $item_original = Item::find($outputDetail->items->id);
-                $after_item = Item::where('code', $item_original->code)
-                    ->where('id', '<>', $item_original->id)
-                    ->orderBy('created_at', 'asc')
-                    ->first();
-
-                if ( $after_item )
+                if ( $outputDetail->items->material->id == $id_material )
                 {
-                    $quantity = ($item_original->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item_original->percentage-(float)$after_item->percentage;
-                } else {
-                    $quantity = (float)$item_original->percentage;
+
+                    $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
+                    //dump($output);
+                    $item_original = Item::find($outputDetail->items->id);
+                    $after_item = Item::where('code', $item_original->code)
+                        ->where('id', '<>', $item_original->id)
+                        ->orderBy('created_at', 'asc')
+                        ->first();
+
+                    if ( $after_item )
+                    {
+                        $quantity = ($item_original->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item_original->percentage-(float)$after_item->percentage;
+                    } else {
+                        $quantity = (float)$item_original->percentage;
+                    }
+                    array_push($outputs, [
+                        'output' => $output->id,
+                        'order_execution' => $output->execution_order,
+                        'description' => ($output->quote == null) ? 'Sin datos':$output->quote->description_quote,
+                        'date' => $output->request_date,
+                        'user_responsible' => ($output->responsibleUser == null) ? 'Sin responsable':$output->responsibleUser->name,
+                        'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
+                        'quantity' => $quantity
+                    ]);
                 }
-                array_push($outputs, [
-                    'output' => $output->id,
-                    'order_execution' => $output->execution_order,
-                    'description' => ($output->quote == null) ? 'Sin datos':$output->quote->description_quote,
-                    'date' => $output->request_date,
-                    'user_responsible' => ($output->responsibleUser == null) ? 'Sin responsable':$output->responsibleUser->name,
-                    'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
-                    'quantity' => $quantity
-                ]);
+
             }
 
         }
