@@ -739,7 +739,7 @@ class QuoteController extends Controller
 
         $pdf = PDF::loadHTML($view);
 
-        $name = $quote->code . '.pdf';
+        $name = $quote->code . ' '. $quote->description_quote . '.pdf';
 
         return $pdf->stream($name);
     }
