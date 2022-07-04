@@ -767,7 +767,7 @@ class OutputController extends Controller
             if ( $outputDetail->items != null )
             {
 
-                if ( $outputDetail->items->material->id == $id_material )
+                if ( $outputDetail->items->material_id == $id_material )
                 {
 
                     $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
