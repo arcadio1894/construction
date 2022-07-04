@@ -761,14 +761,17 @@ class OutputController extends Controller
 
     public function getJsonOutputsOfMaterial( $id_material )
     {
-        $outputDetails = OutputDetail::with('items')->get();
+        $outputDetails = OutputDetail::with(
+            ['items' => function ($query) use ($id_material) {
+                $query->where('material_id', '=', $id_material);
+            }])->get();
         $outputs = [];
         foreach ($outputDetails as $outputDetail) {
             if ( $outputDetail->items != null )
             {
 
-                if ( $outputDetail->items->material_id == $id_material )
-                {
+                /*if ( $outputDetail->items->material_id == $id_material )
+                {*/
 
                     $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
                     //dump($output);
@@ -793,7 +796,7 @@ class OutputController extends Controller
                         'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
                         'quantity' => $quantity
                     ]);
-                }
+                /*}*/
 
             }
 
