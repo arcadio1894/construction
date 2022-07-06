@@ -157,12 +157,12 @@ class OrderPurchaseController extends Controller
                 $quantity = 0;
                 foreach ($quote->equipments as $equipment)
                 {
-
-                    foreach ($equipment->materials as $material2) {
-                        //dump($material2->material_id == $material['material_id']);
-                        if ( $material2->material_id == $material['material_id'] )
-                        {
-                            $quantity += $material2->quantity*$equipment->quantity;
+                    if ( !$equipment->finished ) {
+                        foreach ($equipment->materials as $material2) {
+                            //dump($material2->material_id == $material['material_id']);
+                            if ($material2->material_id == $material['material_id']) {
+                                $quantity += $material2->quantity * $equipment->quantity;
+                            }
                         }
                     }
                 }
