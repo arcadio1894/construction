@@ -818,6 +818,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('list_quote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('quote.list.lost') }}" class="nav-link @yield('activeLostQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Perdidas</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

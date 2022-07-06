@@ -730,6 +730,13 @@ Route::middleware('auth')->group(function (){
         Route::post('/enable/equipment/{equipment}/quote/{quote}', 'QuoteController@saveEnableEquipmentsQuote')
             ->middleware('permission:update_quote');
 
+        // TODO: Cotizaciones perdidas
+        Route::get('cotizaciones/perdidas', 'QuoteController@indexQuoteLost')
+            ->name('quote.list.lost')
+            ->middleware('permission:list_quote');
+        Route::get('/all/quotes/lost', 'QuoteController@getAllQuoteLost');
+
+
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')
             ->name('order.execution.index')

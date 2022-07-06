@@ -64,12 +64,13 @@ class QuoteController extends Controller
 
         DB::beginTransaction();
         try {
-            $maxId = Quote::max('id')+1;
+            $maxCode = Quote::max('id');
+            $maxId = $maxCode + 1;
             $length = 5;
-            $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $quote = Quote::create([
-                'code' => $codeQuote,
+                'code' => '',
                 'description_quote' => $request->get('code_description'),
                 'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
                 'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5),
@@ -83,6 +84,17 @@ class QuoteController extends Controller
                 //'letter' => ($request->has('letter')) ? $request->get('letter'): 0,
                 //'rent' => ($request->has('taxes')) ? $request->get('taxes'): 0,
             ]);
+
+            $codeQuote = '';
+            if ( $maxId < $quote->id ){
+                $codeQuote = 'COT-'.str_pad($quote->id,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            } else {
+                $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            }
 
             QuoteUser::create([
                 'quote_id' => $quote->id,
@@ -1212,12 +1224,13 @@ class QuoteController extends Controller
 
         DB::beginTransaction();
         try {
-            $maxId = Quote::max('id')+1;
+            $maxCode = Quote::max('id');
+            $maxId = $maxCode + 1;
             $length = 5;
-            $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+            //$codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
             $renew_quote = Quote::create([
-                'code' => $codeQuote,
+                'code' => '',
                 'description_quote' => $quote->description_quote,
                 'date_quote' => Carbon::now(),
                 'date_validate' => Carbon::now()->addDays(5),
@@ -1229,6 +1242,17 @@ class QuoteController extends Controller
                 'letter' => $quote->letter,
                 'rent' => $quote->rent,
             ]);
+
+            $codeQuote = '';
+            if ( $maxId < $quote->id ){
+                $codeQuote = 'COT-'.str_pad($quote->id,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            } else {
+                $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            }
 
             QuoteUser::create([
                 'quote_id' => $renew_quote->id,
@@ -1546,4 +1570,40 @@ class QuoteController extends Controller
 
     }
 
+    public function getAllQuoteLost()
+    {
+        $quotes = Quote::pluck('code')->toArray();
+        //dump($orders);
+        $ids = [];
+        for ($i=0; $i< count($quotes); $i++)
+        {
+            $id = (int) substr( $quotes[$i], 4 );
+            array_push($ids, $id);
+        }
+        //dump($ids);
+        $lost = [];
+        $iterator = 1;
+        for ( $j=0; $j< count($ids); $j++ )
+        {
+            while( $iterator < $ids[$j] )
+            {
+                $codeQuote = 'COT-'.str_pad($iterator,5,"0", STR_PAD_LEFT);
+                array_push($lost, ['code'=>$codeQuote]);
+                $iterator++;
+            }
+            $iterator++;
+        }
+        //dd($lost);
+
+        return datatables($lost)->toJson();
+    }
+
+    public function indexQuoteLost()
+    {
+        //$orders = OrderPurchase::with(['supplier', 'approved_user'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('quote.indexLost', compact('permissions'));
+    }
 }
