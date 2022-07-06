@@ -3661,8 +3661,9 @@ function renderTemplateSummary(equipments) {
         clone.querySelector("[data-qEquipment]").innerHTML = equipos[i].quantity;
         clone.querySelector("[data-pEquipment]").innerHTML = parseFloat(price).toFixed(2);
         clone.querySelector("[data-uEquipment]").innerHTML = equipos[i].utility;
-        clone.querySelector("[data-uPEquipment]").innerHTML = parseFloat(subtotalUtility).toFixed(2);
+        //clone.querySelector("[data-uPEquipment]").innerHTML = parseFloat(subtotalUtility).toFixed(2);
         clone.querySelector("[data-rlEquipment]").innerHTML = (parseFloat(equipos[i].rent) + parseFloat(equipos[i].letter)).toFixed(2);
+        clone.querySelector("[data-uPEquipment]").innerHTML = (parseFloat(subtotalLetter)/parseFloat(equipos[i].quantity)).toFixed(2);
         clone.querySelector("[data-tEquipment]").innerHTML = parseFloat(subtotalLetter).toFixed(2);
 
         if ( equipos[i].quote == '' && equipos[i].equipment == '' )

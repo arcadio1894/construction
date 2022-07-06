@@ -545,12 +545,12 @@
                             <thead>
                             <tr>
                                 <th >Equipo</th>
-                                <th >Cantidad</th>
-                                <th >Precio S/Igv</th>
-                                <th >Utilidad</th>
-                                <th >Precio S/Igv</th>
-                                <th >Renta + Letra</th>
-                                <th >Total S/Igv</th>
+                                <th style="background-color: #92D050">Cantidad</th>
+                                <th style="background-color: #9BC2E6">Subtotal S/Igv</th>
+                                <th style="background-color: #9BC2E6">Utilidad</th>
+                                <th style="background-color: #9BC2E6">Letra+Renta</th>
+                                <th style="background-color: #9BC2E6">Precio Unit. S/Igv</th>
+                                <th style="background-color: #ED7D31">Total S/Igv</th>
                             </tr>
                             </thead>
                             <tbody id="body-summary">
@@ -560,8 +560,8 @@
                                     <td data-qEquipment>{{ $equipment->quantity }}</td>
                                     <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
                                     <td data-uEquipment>{{ $equipment->utility }}</td>
-                                    <td data-uPEquipment>{{ round($equipment->subtotal_utility/1.18, 2) }}</td>
                                     <td data-rlEquipment>{{ $equipment->rent + $equipment->letter }}</td>
+                                    <td data-uPEquipment>{{ round(($equipment->subtotal_percentage/1.18)/$equipment->quantity, 2) }}</td>
                                     <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
                                 </tr>
                             @endforeach
@@ -572,12 +572,9 @@
                                     <td data-qEquipment></td>
                                     <td data-pEquipment></td>
                                     <td data-uEquipment></td>
-                                    <td data-uPEquipment></td>
                                     <td data-rlEquipment></td>
+                                    <td data-uPEquipment></td>
                                     <td data-tEquipment></td>
-                                    <td data-acEquipment>
-                                        <button type="button" class="btn btn-sm btn-outline-warning" data-acEdit="" data-acEquipment="" data-utility="" data-rent="" data-letter=""><i class="fas fa-edit"></i></button>
-                                    </td>
                                 </tr>
                             </template>
                         </table>
