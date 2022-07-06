@@ -468,7 +468,7 @@ class OrderPurchaseController extends Controller
         {
             foreach ( $quote->equipments as $equipment )
             {
-                if ( !$equipment->finsihed )
+                if ( !$equipment->finished )
                 {
                     foreach ($equipment->materials as $material) {
                         array_push($materials, $material->material_id);
