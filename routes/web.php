@@ -724,11 +724,11 @@ Route::middleware('auth')->group(function (){
 
         // TODO: Finalizar equipos
         Route::get('finalizar/equipos/cotizacion/{quote}', 'QuoteController@finishEquipmentsQuote')
-            ->middleware('permission:update_quote');
+            ->middleware('permission:finishEquipment_quote');
         Route::post('/finish/equipment/{equipment}/quote/{quote}', 'QuoteController@saveFinishEquipmentsQuote')
-            ->middleware('permission:update_quote');
+            ->middleware('permission:finishEquipment_quote');
         Route::post('/enable/equipment/{equipment}/quote/{quote}', 'QuoteController@saveEnableEquipmentsQuote')
-            ->middleware('permission:update_quote');
+            ->middleware('permission:finishEquipment_quote');
 
         // TODO: Cotizaciones perdidas
         Route::get('cotizaciones/perdidas', 'QuoteController@indexQuoteLost')
