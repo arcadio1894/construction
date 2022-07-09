@@ -1244,8 +1244,8 @@ class QuoteController extends Controller
             ]);
 
             $codeQuote = '';
-            if ( $maxId < $quote->id ){
-                $codeQuote = 'COT-'.str_pad($quote->id,$length,"0", STR_PAD_LEFT);
+            if ( $maxId < $renew_quote->id ){
+                $codeQuote = 'COT-'.str_pad($renew_quote->id,$length,"0", STR_PAD_LEFT);
                 $renew_quote->code = $codeQuote;
                 $renew_quote->save();
             } else {
