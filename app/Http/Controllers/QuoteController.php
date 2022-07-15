@@ -1606,4 +1606,113 @@ class QuoteController extends Controller
 
         return view('quote.indexLost', compact('permissions'));
     }
+
+    public function saveMaterialsReplacementToEquipment(Request $request, $id_equipment, $id_quote)
+    {
+        DB::beginTransaction();
+        try {
+            $equipments = json_decode($request->get('equipments'));
+
+            for ( $i=0; $i<sizeof($equipments); $i++ )
+            {
+
+                $materials = $equipments[$i]->materials;
+
+                //$consumables = $equipments[$i]->consumables;
+
+                //$workforces = $equipments[$i]->workforces;
+
+                //$tornos = $equipments[$i]->tornos;
+
+                //$dias = $equipments[$i]->dias;
+
+                for ( $j=0; $j<sizeof($materials); $j++ )
+                {
+                    if ( $materials[$j]->replacement === 'replacement' )
+                    {
+                        $equipmentMaterial = EquipmentMaterial::create([
+                            'equipment_id' => $equipments[$i]->id,
+                            'material_id' => $materials[$j]->material->id,
+                            'quantity' => (float)$materials[$j]->quantity,
+                            'price' => (float)$materials[$j]->material->unit_price,
+                            'length' => (float)($materials[$j]->length == '') ? 0 : $materials[$j]->length,
+                            'width' => (float)($materials[$j]->width == '') ? 0 : $materials[$j]->width,
+                            'percentage' => (float)$materials[$j]->quantity,
+                            'state' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Falta comprar' : 'En compra',
+                            'availability' => ($materials[$j]->quantity > $materials[$j]->material->stock_current) ? 'Agotado' : 'Completo',
+                            'total' => (float)$materials[$j]->quantity * (float)$materials[$j]->material->unit_price,
+                            'original' => false
+                        ]);
+                    }
+
+                }
+
+                /*for ( $k=0; $k<sizeof($consumables); $k++ )
+                {
+                    $material = Material::find($consumables[$k]->id);
+
+                    $equipmentConsumable = EquipmentConsumable::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $consumables[$k]->id,
+                        'quantity' => (float) $consumables[$k]->quantity,
+                        'price' => (float) $consumables[$k]->price,
+                        'total' => (float) $consumables[$k]->total,
+                        'state' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    $totalConsumable += $equipmentConsumable->total;
+                }
+
+                for ( $w=0; $w<sizeof($workforces); $w++ )
+                {
+                    $equipmentWorkforce = EquipmentWorkforce::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $workforces[$w]->description,
+                        'price' => (float) $workforces[$w]->price,
+                        'quantity' => (float) $workforces[$w]->quantity,
+                        'total' => (float) $workforces[$w]->total,
+                        'unit' => $workforces[$w]->unit,
+                    ]);
+
+                    $totalWorkforces += $equipmentWorkforce->total;
+                }
+
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmenttornos = EquipmentTurnstile::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'price' => (float) $tornos[$r]->price,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'total' => (float) $tornos[$r]->total
+                    ]);
+
+                    $totalTornos += $equipmenttornos->total;
+                }
+
+                for ( $d=0; $d<sizeof($dias); $d++ )
+                {
+                    $equipmentdias = EquipmentWorkday::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $dias[$d]->description,
+                        'quantityPerson' => (float) $dias[$d]->quantity,
+                        'hoursPerPerson' => (float) $dias[$d]->hours,
+                        'pricePerHour' => (float) $dias[$d]->price,
+                        'total' => (float) $dias[$d]->total
+                    ]);
+
+                    $totalDias += $equipmentdias->total;
+                }*/
+
+            }
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'El material se ha guardado correctamente'], 200);
+
+    }
 }

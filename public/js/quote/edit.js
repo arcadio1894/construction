@@ -17,6 +17,7 @@ $(document).ready(function () {
     $("#element_loader").LoadingOverlay("show", {
         background  : "rgba(61, 215, 239, 0.4)"
     });
+    $selectContact = $('#contact_id');
     getContacts();
 
     $.ajax({
@@ -403,7 +404,7 @@ $(document).ready(function () {
     var contactQuote = $('#contact_quote_id');
 
     $selectCustomer = $('#customer_id');
-    $selectContact = $('#contact_id');
+
 
     $selectCustomer.change(function () {
         $selectContact.empty();

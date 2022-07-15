@@ -160,7 +160,7 @@
                         <h3 class="card-title">EQUIPO: {{$equipment->description}}</h3>
 
                         <div class="card-tools">
-                            <a class="btn btn-warning btn-sm" data-saveReplacement data-quote="{{ $quote->id }}" data-idEquipment="{{ $equipment->id }}" data-toggle="tooltip" title="Guardar cambios">
+                            <a class="btn btn-warning btn-sm" data-saveReplacement data-quote="{{ $quote->id }}" data-idEquipment="{{ $equipment->id }}">
                                 <i class="fas fa-check-square"></i> Guardar cambios
                             </a>
                             <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
@@ -265,6 +265,7 @@
                                     @can('showPrices_quote')
                                         @foreach( $equipment->materials as $material )
                                             <div class="row">
+                                                <input type="hidden" data-r value="">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="form-group">
@@ -329,17 +330,20 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
-                                                @if( $material->replacement == 0 )
-                                                    <button type="button" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-recycle"></i></button>
-                                                @else
-                                                    <button type="button" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm"><i class="fas fa-recycle"></i></button>
-                                                @endif
+                                                    @if( $material->replacement == 0 )
+                                                        <button type="button" onclick="replacementMaterial(this); return false;" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar material"><i class="fas fa-recycle"></i></button>
+                                                        <button type="button" onclick="replacementMaterial2(this); return false;" style="display:none;" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Anular reemplazo"><i class="fas fa-recycle"></i></button>
+                                                    @else
+                                                        <button type="button" onclick="replacementMaterial2(this); return false;" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Anular reemplazo"><i class="fas fa-recycle"></i></button>
+                                                        <button type="button" onclick="replacementMaterial(this); return false;" style="display:none;" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar material"><i class="fas fa-recycle"></i></button>
+                                                    @endif
                                                 </div>
                                             </div>
                                         @endforeach
                                     @else
                                         @foreach( $equipment->materials as $material )
                                             <div class="row">
+                                                <input type="hidden" data-r value="">
                                                 <div class="col-md-3">
                                                     <div class="form-group">
                                                         <div class="form-group">
@@ -404,10 +408,12 @@
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
-                                                    @if( $material->replacement == 1 )
-                                                        <button type="button" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-recycle"></i> </button>
+                                                    @if( $material->replacement == 0 )
+                                                        <button type="button" onclick="replacementMaterial(this); return false;" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar material"><i class="fas fa-recycle"></i></button>
+                                                        <button type="button" onclick="replacementMaterial2(this); return false;" style="display:none;" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Anular reemplazo"><i class="fas fa-recycle"></i></button>
                                                     @else
-                                                        <button type="button" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm"><i class="fas fa-recycle"></i></button>
+                                                        <button type="button" onclick="replacementMaterial2(this); return false;" data-replacement2="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Anular reemplazo"><i class="fas fa-recycle"></i></button>
+                                                        <button type="button" onclick="replacementMaterial(this); return false;" style="display:none;" data-replacement="{{ $material->id }}" data-quote="{{ $quote->id }}" data-equipment="{{ $equipment->id }}" class="btn btn-block btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar material"><i class="fas fa-recycle"></i></button>
                                                     @endif
                                                 </div>
                                             </div>
@@ -1659,6 +1665,7 @@
 
         <template id="materials-selected">
             <div class="row">
+                <input data-r type="hidden" value="">
                 <div class="col-md-3">
                     <div class="form-group">
                         <div class="form-group">
@@ -2703,7 +2710,9 @@
                     ['view', ['codeview', 'help']]
                 ]
             });
-
+            $('body').tooltip({
+                selector: '[data-toggle="tooltip"]'
+            });
             $('#customer_id').select2({
                 placeholder: "Selecione cliente",
             });

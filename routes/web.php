@@ -717,9 +717,11 @@ Route::middleware('auth')->group(function (){
         // TODO: Reemplazar cotizaciones
         Route::get('reemplazar/materiales/cotizacion/{quote}', 'QuoteController@replacement')
             ->middleware('permission:replacement_quote');
-        Route::post('/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialReplacement')
+        Route::get('/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialReplacement')
             ->middleware('permission:replacement_quote');
-        Route::post('/not/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialNotReplacement')
+        Route::get('/not/replacement/material/quote/{quote}/equipment/{equipment}/equipmentMaterial/{equipmentMaterial}', 'QuoteController@saveEquipmentMaterialNotReplacement')
+            ->middleware('permission:replacement_quote');
+        Route::post('/save/replacement/materials/{equipment}/quote/{quote}', 'QuoteController@saveMaterialsReplacementToEquipment')
             ->middleware('permission:replacement_quote');
 
         // TODO: Finalizar equipos
