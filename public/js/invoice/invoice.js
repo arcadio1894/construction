@@ -140,6 +140,7 @@ function saveTableItems() {
         renderTemplateMaterial(material.id, material.code, material.material, quantity, material.unit, material_price, subtotal, taxes, total);
 
         $('#material_search').val('');
+        $("#material_unit").val('').trigger('change');
         $('#quantity').val('');
         $('#price').val('');
         $('#material_GroupSelected').val('');
@@ -195,6 +196,7 @@ function saveTableItems() {
         $('#material_search').val('');
         $('#quantity').val('');
         $('#price').val('');
+        $("#material_unit").val('').trigger('change');
         $('#material_selected').val('');
         $('#quantity_selected').val('');
         $('#price_selected').val('');
@@ -312,7 +314,7 @@ function addItems() {
 
     $('#material_search').val('');
     $('#quantity').val('');
-    $('#material_unit').val('');
+    $("#material_unit").val('').trigger('change');
     $('#price').val('');
 
     updateSummaryInvoice();
@@ -365,6 +367,29 @@ function storeInvoice() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
+    if( $items.length == 0 )
+    {
+        toastr.error('No se puede crear una factura sin detalles.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
     var form = new FormData($('#formCreate')[0]);
