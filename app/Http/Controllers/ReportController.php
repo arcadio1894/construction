@@ -38,10 +38,11 @@ class ReportController extends Controller
             {
                 $detail_entry = DetailEntry::with('entry')->find($item->detail_entry_id);
                 //dump($detail_entry);
-                $currency = $detail_entry->entry->currency_invoice;
 
                 if ( isset($detail_entry) )
                 {
+                    $currency = $detail_entry->entry->currency_invoice;
+
                     if ( $currency === 'USD' )
                     {
                         $amount_dollars = $amount_dollars + (float)$item->price;
