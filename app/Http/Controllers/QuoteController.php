@@ -1285,20 +1285,24 @@ class QuoteController extends Controller
 
                 foreach ( $equipment->materials as $material )
                 {
-                    $renew_equipmentMaterial = EquipmentMaterial::create([
-                        'equipment_id' => $renew_equipment->id,
-                        'material_id' => $material->material->id,
-                        'quantity' => (float) $material->quantity,
-                        'price' => (float) $material->material->unit_price,
-                        'length' => (float) $material->length,
-                        'width' => (float) $material->width,
-                        'percentage' => (float) $material->percentage,
-                        'state' => ($material->quantity > $material->material->stock_current) ? 'Falta comprar':'En compra',
-                        'availability' => ($material->quantity > $material->material->stock_current) ? 'Agotado':'Completo',
-                        'total' => (float) $material->quantity*(float) $material->material->unit_price,
-                    ]);
+                    if ( $material->replacement == 0 && $material->original == 1 )
+                    {
+                        $renew_equipmentMaterial = EquipmentMaterial::create([
+                            'equipment_id' => $renew_equipment->id,
+                            'material_id' => $material->material->id,
+                            'quantity' => (float) $material->quantity,
+                            'price' => (float) $material->material->unit_price,
+                            'length' => (float) $material->length,
+                            'width' => (float) $material->width,
+                            'percentage' => (float) $material->percentage,
+                            'state' => ($material->quantity > $material->material->stock_current) ? 'Falta comprar':'En compra',
+                            'availability' => ($material->quantity > $material->material->stock_current) ? 'Agotado':'Completo',
+                            'total' => (float) $material->quantity*(float) $material->material->unit_price,
+                        ]);
 
-                    $totalMaterial += $renew_equipmentMaterial->total;
+                        $totalMaterial += $renew_equipmentMaterial->total;
+                    }
+
                 }
 
                 foreach ( $equipment->consumables as $consumable )

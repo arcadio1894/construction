@@ -225,21 +225,23 @@
             </thead>
             <tbody>
             @foreach( $equipment->materials as $material )
-            <tr>
-                <td class="desc">{{ $material->material->full_description }}</td>
-                <td class="unit">{{ $material->material->unitMeasure->name }}</td>
-                @can('showPrices_quote')
-                    <td class="unit">USD {{ $material->price }}</td>
-                @else
-                    <td class="unit"></td>
-                @endcan
-                <td class="qty">{{ $material->quantity }}</td>
-                @can('showPrices_quote')
-                    <td class="qty">USD {{ $material->total }}</td>
-                @else
-                    <td class="qty"></td>
-                @endcan
-            </tr>
+                @if ( $material->replacement == 0 )
+                <tr>
+                    <td class="desc">{{ $material->material->full_description }}</td>
+                    <td class="unit">{{ $material->material->unitMeasure->name }}</td>
+                    @can('showPrices_quote')
+                        <td class="unit">USD {{ $material->price }}</td>
+                    @else
+                        <td class="unit"></td>
+                    @endcan
+                    <td class="qty">{{ $material->quantity }}</td>
+                    @can('showPrices_quote')
+                        <td class="qty">USD {{ $material->total }}</td>
+                    @else
+                        <td class="qty"></td>
+                    @endcan
+                </tr>
+                @endif
             @endforeach
             </tbody>
         </table>

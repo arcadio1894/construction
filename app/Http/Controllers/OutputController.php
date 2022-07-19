@@ -111,7 +111,11 @@ class OutputController extends Controller
             }
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                if ( $material->replacement == 0 )
+                {
+                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+
+                }
 
             }
             foreach ( $equipment->consumables as $consumable )
@@ -207,7 +211,11 @@ class OutputController extends Controller
             }
             foreach ( $equipment->materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                if ( $material->replacement == 0 )
+                {
+                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+
+                }
 
             }
             foreach ( $equipment->consumables as $consumable )
@@ -834,7 +842,11 @@ class OutputController extends Controller
                 ->get();
             foreach ( $equipment_materials as $material )
             {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                if ( $material->replacement == 0 )
+                {
+                    array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+
+                }
 
             }
             $equipment_consumables = EquipmentConsumable::where('equipment_id', $equipment->id)

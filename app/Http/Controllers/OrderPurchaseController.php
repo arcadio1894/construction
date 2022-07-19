@@ -80,9 +80,13 @@ class OrderPurchaseController extends Controller
                 {
                     foreach ( $equipment->materials as $material )
                     {
-                        array_push($materials, $material->material_id);
-                        //$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
-                        array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                        // TODO: Reemplazo de materiales
+                        if ( $material->replacement == 0 )
+                        {
+                            array_push($materials, $material->material_id);
+                            //$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
+                            array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                        }
 
                     }
                 }
@@ -160,7 +164,7 @@ class OrderPurchaseController extends Controller
                     if ( !$equipment->finished ) {
                         foreach ($equipment->materials as $material2) {
                             //dump($material2->material_id == $material['material_id']);
-                            if ($material2->material_id == $material['material_id']) {
+                            if ($material2->material_id == $material['material_id'] && $material2->replacement == 0) {
                                 $quantity += $material2->quantity * $equipment->quantity;
                             }
                         }
@@ -471,8 +475,13 @@ class OrderPurchaseController extends Controller
                 if ( !$equipment->finished )
                 {
                     foreach ($equipment->materials as $material) {
-                        array_push($materials, $material->material_id);
-                        array_push($materials_quantity, array('material_id' => $material->material_id, 'material' => $material->material->full_description, 'material_complete' => $material->material, 'quantity' => (float)$material->quantity * (float)$equipment->quantity));
+                        // TODO: Reemplazo de materiales
+                        if ( $material->replacement == 0 )
+                        {
+                            array_push($materials, $material->material_id);
+                            array_push($materials_quantity, array('material_id' => $material->material_id, 'material' => $material->material->full_description, 'material_complete' => $material->material, 'quantity' => (float)$material->quantity * (float)$equipment->quantity));
+
+                        }
 
                     }
                 }
@@ -539,7 +548,7 @@ class OrderPurchaseController extends Controller
 
                     foreach ($equipment->materials as $material2) {
                         //dump($material2->material_id == $material['material_id']);
-                        if ( $material2->material_id == $material['material_id'] )
+                        if ( $material2->material_id == $material['material_id'] && $material2->replacement == 0 )
                         {
                             $quantity += $material2->quantity*$equipment->quantity;
                         }
