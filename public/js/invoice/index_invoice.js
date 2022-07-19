@@ -120,7 +120,7 @@ $(document).ready(function () {
                     {
                         return item.currency_invoice+' '+ item.sub_total;
                     } else {
-                        return item.currency_invoice+' '+ (parseFloat(item.total) - parseFloat(item.igv));
+                        return item.currency_order+' '+ (parseFloat(item.total) - parseFloat(item.igv));
                     }
 
                 }
@@ -134,7 +134,7 @@ $(document).ready(function () {
                     {
                         return item.currency_invoice+' '+item.taxes;
                     } else {
-                        return item.currency_invoice+' '+item.igv;
+                        return item.currency_order+' '+item.igv;
                     }
 
                 }
@@ -149,7 +149,7 @@ $(document).ready(function () {
                     {
                         return item.currency_invoice+' '+item.total;
                     } else {
-                        return item.currency_invoice+' '+item.total;
+                        return item.currency_order+' '+item.total;
                     }
 
                 }
