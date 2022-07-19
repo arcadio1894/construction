@@ -40,13 +40,17 @@ class ReportController extends Controller
                 //dump($detail_entry);
                 $currency = $detail_entry->entry->currency_invoice;
 
-                if ( $currency === 'USD' )
+                if ( isset($detail_entry) )
                 {
-                    $amount_dollars = $amount_dollars + (float)$item->price;
-                } else {
-                    $amount_soles = $amount_soles + (float)$item->price;
+                    if ( $currency === 'USD' )
+                    {
+                        $amount_dollars = $amount_dollars + (float)$item->price;
+                    } else {
+                        $amount_soles = $amount_soles + (float)$item->price;
+                    }
+                    $quantity_items = $quantity_items + (float)$item->percentage;
                 }
-                $quantity_items = $quantity_items + (float)$item->percentage;
+
             }
         }
         /*$items = Item::whereNotIn('state_item', ['exited'])
