@@ -245,7 +245,7 @@ function renderTemplateMaterial(id, code, material, length, width, percentage, q
     clone.querySelector("[data-material]").innerHTML = material;
     clone.querySelector("[data-length]").innerHTML = length;
     clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-quantity]").innerHTML = (parseFloat(quantity)*parseFloat(percentage)).toFixed(2);
 
     $('#table-items').append(clone);
 }

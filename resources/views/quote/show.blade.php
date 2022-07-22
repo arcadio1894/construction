@@ -166,7 +166,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="table-responsive">
-                                    <table class="table table-head-fixed text-nowrap">
+                                    <table class="table table-head-fixed">
                                         <thead>
                                         <tr>
                                             <th>Codigo</th>
