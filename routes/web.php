@@ -1037,6 +1037,11 @@ Route::middleware('auth')->group(function (){
         Route::post('/delete/request/purchase/operator', 'RequestPurchaseController@destroyRequestPurchase')
             ->name('request.purchase.delete.operator')
             ->middleware('permission:delete_requestPurchaseOperator');
+
+
+        // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
+        Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
+
     });
 });
 

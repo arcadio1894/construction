@@ -1469,4 +1469,126 @@ class OrderPurchaseController extends Controller
         return datatables($lost)->toJson();
     }
 
+    public function pruebaCantidades()
+    {
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')
+            ->with('equipments')->get();
+
+        $materials = [];
+        $materials_quantity = [];
+
+        foreach ( $quotesRaised as $quote )
+        {
+            foreach ( $quote->equipments as $equipment )
+            {
+                if ( !$equipment->finished )
+                {
+                    foreach ( $equipment->materials as $material )
+                    {
+                        // TODO: Reemplazo de materiales
+                        if ( $material->replacement == 0 )
+                        {
+                            array_push($materials, $material->material_id);
+                            //$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
+                            array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->material->full_description, 'material_complete'=>$material->material, 'quantity'=> (float)$material->quantity*(float)$equipment->quantity));
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+        $new_arr = array();
+        foreach($materials_quantity as $item) {
+            if(isset($new_arr[$item['material_id']])) {
+                $new_arr[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr[$item['material_id']] = $item;
+        }
+
+        $materials_quantity = array_values($new_arr);
+
+        $array_materials = [];
+
+        // TODO: Nueva logica para hallar las cantidades
+
+        foreach ( $materials_quantity as $item )
+        {
+            $cantidadEnCotizaciones = $item['quantity'];
+            $stockReal = $item['material_complete']->stock_current;
+            $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+            $tengoReal = $stockReal + $amount;
+            $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
+            $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+            $balance = $faltaReal - $tengoReal;
+            if ( $balance > 0 )
+            {
+                array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $balance));
+            }
+
+            /*if ( $item['material_complete']->stock_current < $item['quantity'] )
+            {
+                //$stringQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', 39).'" data-toggle="tooltip" data-placement="top" title="4">COT-00039</a> <a class="btn btn-primary btn-xs" href="'.route('quote.show', 27).'" data-toggle="tooltip" data-placement="top" title="9" target="_blank">COT-00027</a>';
+                $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
+                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+                $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
+                $missing = (float)$item['quantity'] - (float)$item['material_complete']->stock_current;
+                if ( !isset($material_missing) )
+                {
+                    $missing_real = $missing - $materials_taken;
+                    //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+                    array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+
+                } else {
+                    if ( $missing > $amount )
+                    {
+                        $missing_real = $missing - $amount - $materials_taken;
+                        //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+                        array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
+
+                    }
+                }
+
+            }*/
+        }
+
+        dump($materials_quantity);
+        dump($array_materials);
+
+        $arrayMaterialsFinal = [];
+
+        foreach ( $array_materials as $material )
+        {
+            $stringQuote = '';
+            foreach ( $quotesRaised as $quote )
+            {
+                $quantity = 0;
+                foreach ($quote->equipments as $equipment)
+                {
+                    if ( !$equipment->finished ) {
+                        foreach ($equipment->materials as $material2) {
+                            //dump($material2->material_id == $material['material_id']);
+                            if ($material2->material_id == $material['material_id'] && $material2->replacement == 0) {
+                                $quantity += $material2->quantity * $equipment->quantity;
+                            }
+                        }
+                    }
+                }
+                if ( $quantity > 0 )
+                {
+                    $stringQuote = $stringQuote.'<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.$quantity.'">'.$quote->code.'</a> ';
+                }
+            }
+            //dump($stringQuote);
+            array_push($arrayMaterialsFinal, array('material_id'=>$material['material_id'], 'material'=>$material['material'], 'material_complete'=>$material['material_complete'], 'quantity'=> $material['quantity'], 'missing_amount'=> $material['missing_amount'], 'quotes'=>$stringQuote));
+        }
+
+        dump($arrayMaterialsFinal);
+
+    }
+
 }
