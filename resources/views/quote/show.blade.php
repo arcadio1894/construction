@@ -181,6 +181,7 @@
                                         </thead>
                                         <tbody data-bodyMaterials>
                                         @foreach( $equipment->materials as $material )
+                                            @if ( $material->replacement == 0 )
                                             <tr>
                                                 <td data-code>{{ $material->material->code }}</td>
                                                 <td data-description>{{ $material->material->full_description }}</td>
@@ -191,6 +192,7 @@
                                                 <td @cannot('showPrices_quote')style="display: none" @endcannot data-total2>{{ round($material->total/1.18,2) }}</td>
                                                 <td @cannot('showPrices_quote')style="display: none" @endcannot data-total>{{ $material->total }}</td>
                                             </tr>
+                                            @endif
                                         @endforeach
                                         </tbody>
 
