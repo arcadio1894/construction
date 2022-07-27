@@ -116,7 +116,78 @@
                 </div>
                 <!-- /.card -->
             </div>
-            <div class="col-md-12">
+            @foreach($quote->equipments as $equipment)
+                <div class="col-md-12">
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">EQUIPO: {{ $equipment->description }}</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                    <i class="fas fa-minus"></i></button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card">
+                                        <!-- /.card-header -->
+                                        <div class="card-body table-responsive p-0">
+                                            <table class="table table-head-fixed">
+                                                <thead>
+                                                <tr>
+                                                    <th>Material</th>
+                                                    <th>Largo</th>
+                                                    <th>Ancho</th>
+                                                    <th>Cantidad Total</th>
+                                                    <th>Detalles</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                @foreach ( $equipment->materials as $key => $material )
+                                                    <tr>
+                                                        <td>{{ $material->material->full_description }}</td>
+                                                        <td>{{ $material->length }}</td>
+                                                        <td>{{ $material->width }}</td>
+                                                        <td>{{ (float)$material->quantity*(float)$equipment->quantity }}</td>
+                                                        <td>
+                                                            <button type="button" data-toggle="tooltip" data-placement="top" title="Detalle de cantidades" class="btn btn-success" data-show data-name="{{ $material->material->full_description }}" data-quote="{{ $quote->id }}" data-material="{{ $material->material_id }}"><i class="fas fa-search-plus"></i></button>
+                                                            <button type="button" data-toggle="tooltip" data-placement="top" title="Seguimiento de material" class="btn btn-primary" data-follow data-name="{{ $material->material->full_description }}" data-quote="{{ $quote->id }}" data-material="{{ $material->material_id }}"><i class="far fa-thumbs-up"></i></button>
+
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                                @foreach ( $equipment->consumables as $key => $consumable )
+                                                    @if ($consumable->material->category_id == 2 && trim($consumable->material->subcategory_id) == 22)
+                                                        <tr>
+                                                            <td>{{ $consumable->material->full_description }}</td>
+                                                            <td>  --  </td>
+                                                            <td>  --  </td>
+                                                            <td>{{ (float)$consumable->quantity*(float)$equipment->quantity }}</td>
+                                                            <td>
+                                                                <button type="button" data-toggle="tooltip" data-placement="top" title="Detalle de cantidades" class="btn btn-success" data-show data-name="{{ $consumable->material->full_description }}" data-quote="{{ $quote->id }}" data-material="{{ $consumable->material_id }}"><i class="fas fa-search-plus"></i></button>
+                                                                <button type="button" data-toggle="tooltip" data-placement="top" title="Seguimiento de material" class="btn btn-primary" data-follow data-name="{{ $consumable->material->full_description }}" data-quote="{{ $quote->id }}" data-material="{{ $consumable->material_id }}"><i class="far fa-thumbs-up"></i></button>
+
+                                                            </td>
+                                                        </tr>
+                                                    @endif
+                                                @endforeach
+                                                </tbody>
+                                            </table>
+
+                                        </div>
+                                        <!-- /.card-body -->
+                                    </div>
+                                    <!-- /.card -->
+                                </div>
+                            </div>
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            @endforeach
+            {{--<div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Materiales de la orden de ejecución</h3>
@@ -151,6 +222,51 @@
                                                     <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) != null ? $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: 0}}</td>
                                                     <td>{{ ( array_search($material['material_id'], array_column($items, 'material_id')) ) != null ? $material['quantity'] - $items[array_search($material['material_id'], array_column($items, 'material_id')) ]['quantity']: ''}}</td>
 
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>--}}
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Consumibles de la orden de ejecución</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <!-- /.card-header -->
+                                    <div class="card-body table-responsive p-0">
+                                        <table class="table table-head-fixed text-nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>Consumible</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ( $consumables as $key => $consumable )
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $consumable['material'] }}</td>
+                                                    <td>{{ $consumable['quantity'] }}</td>
                                                 </tr>
                                             @endforeach
                                             </tbody>
@@ -229,7 +345,19 @@
                         </div>
                     </div>
                     <div class="card-body" id="element_loader">
-
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="equipments_order">Equipo del cual se solicitará el material <span class="right badge badge-danger">(*)</span></label>
+                                    <select id="equipments_order" name="equipments_order" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $quote->equipments as $equipment )
+                                            <option value="{{ $equipment->id }}">{{ $equipment->description }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-8">
                                 <div class="form-group">
@@ -427,14 +555,14 @@
 
                     </div>
                     <br>
-                    <div class="row" id="show-btn-follow">
-                        <div class="col-md-4 offset-4" id="show_btn_follow_material">
-                            <button type="button" data-follow id="btn-follow" class="btn btn-block btn-outline-success">Dar seguimiento al material <i class="far fa-thumbs-up"></i></button>
+                    <div class="row" id="show-btn-follow2">
+                        <div class="col-md-4 offset-4" id="show_btn_follow_material2">
+                            <button type="button" data-follow id="btn-follow2" class="btn btn-block btn-outline-success">Dar seguimiento al material <i class="far fa-thumbs-up"></i></button>
                         </div>
                     </div>
-                    <div class="row" id="show-btn-unfollow">
-                        <div class="col-md-4 offset-4" id="show_btn_follow_material">
-                            <button type="button" data-unfollow id="btn-unfollow" class="btn btn-block btn-outline-danger">Dejar de seguir al material <i class="far fa-thumbs-down"></i></button>
+                    <div class="row" id="show-btn-unfollow2">
+                        <div class="col-md-4 offset-4" id="show_btn_unfollow_material2">
+                            <button type="button" data-unfollow id="btn-unfollow2" class="btn btn-block btn-outline-danger">Dejar de seguir al material <i class="far fa-thumbs-down"></i></button>
                         </div>
                     </div>
                     <hr>
@@ -522,6 +650,9 @@
         $(function () {
             $('#responsible_user').select2({
                 placeholder: "Seleccione un usuario",
+            });
+            $('#equipments_order').select2({
+                placeholder: "Seleccione un equipo",
             });
         })
     </script>

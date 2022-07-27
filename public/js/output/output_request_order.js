@@ -497,6 +497,8 @@ function unfollowMaterial() {
 function saveTableItems() {
     event.preventDefault();
     console.log($itemsSelected);
+    var equipment_id = $modalAddItems.find('[id=equipment]').val();
+    var equipment_name = $modalAddItems.find('[id=equipment_name]').val();
 
     for ( var i=0; i<$itemsSelected.length; i++ )
     {
@@ -560,6 +562,35 @@ function selectItem() {
 function addItems() {
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
+
+    //$("#material_unit").val('').trigger('change');
+    //$( "#material_unit option:selected" ).text();
+    console.log($('#equipments_order').val());
+    var equipment = $('#equipments_order').val();
+    var equipment_name = $('#equipments_order option:selected').text();
+
+    if( $('#equipments_order').val() == '' )
+    {
+        toastr.error('Debe elegir un equipo', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
 
     if( $('#material_search').val().trim() === '' )
     {
@@ -662,8 +693,9 @@ function addItems() {
     console.log($itemsComplete);
 
     $('#material_selected_quantity').val('');
+    $modalAddItems.find('[id=equipment]').val(equipment);
+    $modalAddItems.find('[id=equipment_name]').val(equipment_name);
     $modalAddItems.find('[id=show_btn_request_quantity]').show();
-
     $modalAddItems.modal('show');
 
     /*$items.push({
@@ -758,6 +790,34 @@ function requestItemsQuantity() {
 function addItemsScrap() {
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
+
+    //$("#material_unit").val('').trigger('change');
+    //$( "#material_unit option:selected" ).text();
+
+    if( $('#equipments_order').val() === '' )
+    {
+        toastr.error('Debe elegir un equipo', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    console.log($('#equipments_order').val());
 
     if( $('#material_search').val().trim() === '' )
     {
@@ -894,8 +954,35 @@ function addItemsScrap() {
 
 // TODO: agregamos item custom
 function addItemsCustom() {
-    $('#show-btn-follow').hide();
-    $('#show-btn-unfollow').hide();
+    $('#show-btn-follow2').hide();
+    $('#show-btn-unfollow2').hide();
+    //$("#material_unit").val('').trigger('change');
+    //$( "#material_unit option:selected" ).text();
+
+    if( $('#equipments_order').val() === '' )
+    {
+        toastr.error('Debe elegir un equipo', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    console.log($('#equipments_order').val());
 
     if( $('#material_search').val().trim() === '' )
     {
@@ -966,10 +1053,10 @@ function addItemsCustom() {
     }
 
     let material_name = $('#material_search').val();
-    $modalAddItems.find('[id=material_selected]').val(material_name);
-    $modalAddItems.find('[id=material_selected]').prop('disabled', true);
-    $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', true);
-    $modalAddItems.find('[id=show_btn_request_quantity]').hide();
+    $modalAddItemsCustom.find('[id=material_selected]').val(material_name);
+    $modalAddItemsCustom.find('[id=material_selected]').prop('disabled', true);
+    $modalAddItemsCustom.find('[id=material_selected_quantity]').prop('disabled', true);
+    $modalAddItemsCustom.find('[id=show_btn_request_quantity]').hide();
     $('#material_selected_quantity').val('');
     $('#body-items').html('');
 
@@ -1006,8 +1093,8 @@ function addItemsCustom() {
         $('#width_new_item_custom').val(0);
     }
 
-    $('#show-btn-follow').hide();
-    $('#show-btn-unfollow').hide();
+    $('#show-btn-follow2').hide();
+    $('#show-btn-unfollow2').hide();
     // TODO: Agregamos la logica de preguntar si lo esta siguiendo al material o no
     $.ajax({
         url: "/dashboard/get/follow/material/"+result.id,
@@ -1017,15 +1104,17 @@ function addItemsCustom() {
             console.log(json);
             if ( json != null )
             {
+                console.log('Mostrar dejar seguir');
                 // Si es diferente a null se mostrará el dejar de seguir
-                $('#show-btn-follow').hide();
-                $('#show-btn-unfollow').show();
-                $('#btn-unfollow').attr('data-unfollow', result.id);
+                $('#show-btn-follow2').hide();
+                $('#show-btn-unfollow2').show();
+                $('#btn-unfollow2').attr('data-unfollow', result.id);
             } else {
                 // Se mostrara el seguir
-                $('#show-btn-follow').show();
-                $('#btn-follow').attr('data-follow', result.id);
-                $('#show-btn-unfollow').hide();
+                console.log('Mostrar seguir');
+                $('#show-btn-unfollow2').hide();
+                $('#show-btn-follow2').show();
+                $('#btn-follow2').attr('data-follow', result.id);
             }
         }
     });

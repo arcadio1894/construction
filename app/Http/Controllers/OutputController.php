@@ -51,7 +51,10 @@ class OutputController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $quote = Quote::with('equipments')->find($id_quote);
+        $quote = Quote::with(['equipments' => function ($query) {
+                $query->with(['materials']);
+            }])
+            ->find($id_quote);
 
         /*$outputs = Output::where('execution_order', $quote->order_execution)
             //->where('indicator', 'orn')
@@ -195,7 +198,10 @@ class OutputController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $quote = Quote::with('equipments')->find($id_quote);
+        $quote = Quote::with(['equipments' => function ($query) {
+            $query->with(['materials']);
+        }])
+            ->find($id_quote);
 
         $materials_quantity = [];
         $materials = [];
@@ -291,11 +297,49 @@ class OutputController extends Controller
         }*/
 
         /*$items = array_values($new_arr3);*/
+        $consumables = [];
+        $consumables_quantity = [];
+
+        foreach ( $quote->equipments as $equipment )
+        {
+            foreach ( $equipment->consumables as $consumable )
+            {
+                $subcategory = Subcategory::find($consumable->material->subcategory_id);
+                if (isset( $subcategory ))
+                {
+                    $category = Category::find($consumable->material->category_id);
+                    if ( $category->id == 2 && trim($subcategory->name) <> 'MIXTO' )
+                    {
+                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                } else {
+                    array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                }
+
+
+            }
+
+        }
+
+        $new_arr2 = array();
+        foreach($consumables_quantity as $item) {
+            if(isset($new_arr2[$item['material_id']])) {
+                $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['material_id']] = $item;
+        }
+
+        $consumables = array_values($new_arr2);
+
         $items = [];
 
         $users = User::all();
 
-        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'quote', 'items', 'turnstiles'));
+        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'consumables', 'quote', 'items', 'turnstiles'));
     }
 
     public function getOutputRequest()
@@ -443,6 +487,8 @@ class OutputController extends Controller
 
                 $quote = Quote::where('order_execution', $output->execution_order)->first();
 
+                // TODO: Verificar si la salida es normal o extra
+                // TODO: Si es normal se coloca en material_taken
                 if (isset($quote))
                 {
                     MaterialTaken::create([

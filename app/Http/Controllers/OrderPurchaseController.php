@@ -1512,51 +1512,74 @@ class OrderPurchaseController extends Controller
 
         $materials_quantity = array_values($new_arr);
 
+        dump($materials_quantity);
         $array_materials = [];
-
+        $array_takens = [];
         // TODO: Nueva logica para hallar las cantidades
 
         foreach ( $materials_quantity as $item )
         {
+            $material_id = $item['material_id'];
+            //dump($material_id);
+            $cotizaciones = DB::table('equipments')
+                ->join('equipment_materials', function ($join) {
+                    $join->on('equipment_materials.equipment_id', '=', 'equipments.id');
+                    //->where('contacts.user_id', '>', 5);
+                })
+                ->join('quotes', function ($join) {
+                    $join->on('quotes.id', '=', 'equipments.quote_id')
+                        ->where('quotes.state_active', '=', 'open')
+                        ->where('quotes.raise_status', '=', 1);
+                })
+                ->where('equipments.finished', '=', 0)
+                ->where('equipment_materials.material_id', '=', $material_id)
+                ->select('equipments.quote_id')
+                ->get()->pluck('quote_id');
+
+            //dump($cotizaciones);
+            $query = DB::table('material_takens')
+                ->whereIn('material_takens.quote_id', $cotizaciones)
+                ->where('material_takens.material_id', '=', $material_id)
+                ->sum('quantity_request');
+
+            //dump($query);
+
+            array_push($array_takens, array('material_id'=>$material_id, 'quantity'=> (float)$query));
+
+        }
+        dump('Arreglo de materiales tomados');
+        dump($array_takens);
+
+        dump($array_takens[array_search(91, array_column($array_takens, 'material_id'))]['quantity']);
+
+        foreach ( $materials_quantity as $item )
+        {
+            dump('Logica  ' . $item['material_id'] );
             $cantidadEnCotizaciones = $item['quantity'];
+            dump('CC  ' . $cantidadEnCotizaciones);
             $stockReal = $item['material_complete']->stock_current;
+            dump('stock  ' . $stockReal);
             $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+            dump('orden  ' . $amount);
             $tengoReal = $stockReal + $amount;
-            $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
+            dump('TR  ' . $tengoReal);
+            $materials_taken = $array_takens[array_search($item['material_id'], array_column($array_takens, 'material_id'))]['quantity'];
+            dump('taken  ' . $materials_taken);
             $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+            dump('FR  ' . $faltaReal);
             $balance = $faltaReal - $tengoReal;
+            dump('bal  ' . $balance);
+
+
+
             if ( $balance > 0 )
             {
                 array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $balance));
             }
-
-            /*if ( $item['material_complete']->stock_current < $item['quantity'] )
-            {
-                //$stringQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', 39).'" data-toggle="tooltip" data-placement="top" title="4">COT-00039</a> <a class="btn btn-primary btn-xs" href="'.route('quote.show', 27).'" data-toggle="tooltip" data-placement="top" title="9" target="_blank">COT-00027</a>';
-                $material_missing = MaterialOrder::where('material_id', $item['material_id'])->first();
-                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
-                $materials_taken = MaterialTaken::where('material_id', $item['material_id'])->sum('quantity_request');
-                $missing = (float)$item['quantity'] - (float)$item['material_complete']->stock_current;
-                if ( !isset($material_missing) )
-                {
-                    $missing_real = $missing - $materials_taken;
-                    //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
-                    array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
-
-                } else {
-                    if ( $missing > $amount )
-                    {
-                        $missing_real = $missing - $amount - $materials_taken;
-                        //array_push($array_materials, array('quote'=>$stringQuote,'material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
-                        array_push($array_materials, array('material_id'=>$item['material_id'], 'material'=>$item['material'], 'material_complete'=>$item['material_complete'], 'quantity'=> (float)$item['quantity'], 'missing_amount'=> $missing_real));
-
-                    }
-                }
-
-            }*/
         }
-
+        dump('Arreglo de cantidades');
         dump($materials_quantity);
+        dump('Arreglo de cantidades 2');
         dump($array_materials);
 
         $arrayMaterialsFinal = [];
@@ -1587,6 +1610,7 @@ class OrderPurchaseController extends Controller
             array_push($arrayMaterialsFinal, array('material_id'=>$material['material_id'], 'material'=>$material['material'], 'material_complete'=>$material['material_complete'], 'quantity'=> $material['quantity'], 'missing_amount'=> $material['missing_amount'], 'quotes'=>$stringQuote));
         }
 
+        dump('Arreglo de etiquetas');
         dump($arrayMaterialsFinal);
 
     }

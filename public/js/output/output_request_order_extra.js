@@ -727,8 +727,8 @@ function addItemsScrap() {
 
 // TODO: agregamos item custom
 function addItemsCustom() {
-    $('#show-btn-follow').hide();
-    $('#show-btn-unfollow').hide();
+    $('#show-btn-follow2').hide();
+    $('#show-btn-unfollow2').hide();
 
     if( $('#material_search').val().trim() === '' )
     {
@@ -799,10 +799,10 @@ function addItemsCustom() {
     }
 
     let material_name = $('#material_search').val();
-    $modalAddItems.find('[id=material_selected]').val(material_name);
-    $modalAddItems.find('[id=material_selected]').prop('disabled', true);
-    $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', true);
-    $modalAddItems.find('[id=show_btn_request_quantity]').hide();
+    $modalAddItemsCustom.find('[id=material_selected]').val(material_name);
+    $modalAddItemsCustom.find('[id=material_selected]').prop('disabled', true);
+    $modalAddItemsCustom.find('[id=material_selected_quantity]').prop('disabled', true);
+    $modalAddItemsCustom.find('[id=show_btn_request_quantity]').hide();
     $('#material_selected_quantity').val('');
     $('#body-items').html('');
 
@@ -841,8 +841,8 @@ function addItemsCustom() {
 
     //$('#length_custom').val(result);
 
-    $('#show-btn-follow').hide();
-    $('#show-btn-unfollow').hide();
+    $('#show-btn-follow2').hide();
+    $('#show-btn-unfollow2').hide();
     // TODO: Agregamos la logica de preguntar si lo esta siguiendo al material o no
     $.ajax({
         url: "/dashboard/get/follow/material/"+result.id,
@@ -853,14 +853,14 @@ function addItemsCustom() {
             if ( json != null )
             {
                 // Si es diferente a null se mostrará el dejar de seguir
-                $('#show-btn-follow').hide();
-                $('#show-btn-unfollow').show();
-                $('#btn-unfollow').attr('data-unfollow', result.id);
+                $('#show-btn-follow2').hide();
+                $('#show-btn-unfollow2').show();
+                $('#btn-unfollow2').attr('data-unfollow', result.id);
             } else {
                 // Se mostrara el seguir
-                $('#show-btn-follow').show();
-                $('#btn-follow').attr('data-follow', result.id);
-                $('#show-btn-unfollow').hide();
+                $('#show-btn-follow2').show();
+                $('#btn-follow2').attr('data-follow', result.id);
+                $('#show-btn-unfollow2').hide();
             }
         }
     });
