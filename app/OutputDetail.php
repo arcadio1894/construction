@@ -13,7 +13,10 @@ class OutputDetail extends Model
         'width',
         'price',
         'percentage',
-        'material_id'
+        'material_id',
+        'equipment_id',
+        'quote_id',
+        'custom'
     ];
 
     public function output()
@@ -29,5 +32,15 @@ class OutputDetail extends Model
     public function material()
     {
         return $this->belongsTo('App\Material');
+    }
+
+    public function equipment()
+    {
+        return $this->belongsTo('App\Equipment');
+    }
+
+    public function quote()
+    {
+        return $this->belongsTo('App\Quote');
     }
 }

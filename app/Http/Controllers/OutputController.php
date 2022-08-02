@@ -495,7 +495,10 @@ class OutputController extends Controller
                         'material_id' => $material->id,
                         'quantity_request' => $item->percentage,
                         'quote_id' => $quote->id,
-                        'output_id' => $output->id
+                        'output_id' => $output->id,
+                        'equipment_id' => $output->equipment_id,
+                        'output_detail_id' => $outputDetail->id,
+                        'type_output' => $output->indicator
                     ]);
                 }
 
@@ -534,6 +537,11 @@ class OutputController extends Controller
     {
         //dd($request);
         $validated = $request->validated();
+        // TODO: Hacer la validacion de la cotizacion si ya cumplio la cantidad
+        // Obtener la cotizacion con esa orden de ejecucion
+        $quote = Quote::where('order_execution', $request->get('execution_order'))
+            ->get();
+
         DB::beginTransaction();
         try {
             $requesting_user = User::where('name', $request->get('requesting_user'))->first();
@@ -548,6 +556,89 @@ class OutputController extends Controller
             ]);
 
             $items = json_decode($request->get('items'));
+
+            // TODO: 1° Sacamos los equipos y materiales
+            $arregloEquipMaterials = [];
+            foreach ( $items as $item )
+            {
+                array_push($arregloEquipMaterials, ['equipment'=>$item->equipment_id, 'material'=>$item->material_id]);
+            }
+
+            $arregloEquipoMateriales = array_unique($arregloEquipMaterials, SORT_REGULAR);
+
+            foreach ( $arregloEquipoMateriales as $item )
+            {
+                // TODO: 2° Sacar los equipment_materials de ese equipo
+                $equipment_id = $item->equipment;
+                $material_id = $item->material;
+                $cant_equipment = EquipmentMaterial::where('equipment_id', $equipment_id)
+                    ->where('material_id', $material_id)->sum('quantity');
+                if( $cant_equipment == 0 )
+                {
+                    $cant_equipment = EquipmentConsumable::where('equipment_id', $equipment_id)
+                        ->where('material_id', $material_id)->sum('quantity');
+                } else {
+                    $cant_equipment = 0;
+                }
+                $equipment = Equipment::find($equipment_id);
+
+                $cant_equipment_material = (float)$cant_equipment * (float)$equipment->quantity;
+
+                // TODO: 3° Sacar las salidas de ese equipment y material
+                $cant_equipment_material_salidas = OutputDetail::where('equipment_id', $equipment_id)
+                    ->where('material_id', $material_id)->sum('percentage');
+
+                // TODO: 4° Recorremos los item sumando los porcentajes de equip mat
+                $cant_equipment_material_solicitado = 0;
+                foreach ( $items as $item2 )
+                {
+                    if ( $item2->equipment_id == $equipment_id && $item2->material_id == $material_id )
+                    {
+                        $cant_equipment_material_solicitado += $item2->percentage;
+                    }
+                }
+
+                // TODO: 5°
+                if ( ($cant_equipment_material_solicitado + $cant_equipment_material_salidas) > $cant_equipment_material )
+                {
+                    return response()->json(['message' => 'Lo sentimos, un material ya sobrepasó la cantidad pedida en cotización.'], 422);
+                }
+
+            }
+
+            /*foreach ( $arregloResumen as $item )
+            {
+                // Obtener la suma de las cantidades de ese material (L)
+                // Obtener las salidas de esa cotizacion
+                // Sumar las salidas de ese material
+                // Luego sumar la cantidad de los items de ese material
+                // Por ultimo sumar ambas cantidades
+                // Finalmente comparar las salidas de ese material con la cant de cot
+                if ( isset($quote) )
+                {
+                    $quantity = 0;
+                    foreach ( $quote->equipments as $equipment )
+                    {
+                        if ( !$equipment->finished && $equipment->id == $item->equipment_id)
+                        {
+                            foreach ( $equipment->materials as $material )
+                            {
+                                // TODO: Reemplazo de materiales
+                                if ( $material->replacement == 0 && $material->material_id == $item->material_id )
+                                {
+                                    $quantity += (float)$material->quantity*(float)$equipment->quantity;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    $outputs_details = OutputDetail::where('quote_id', $quote->id)
+                        ->where('equipment_id', $item->equipment_id)
+                        ->where()
+                }
+            }*/
 
             foreach ( $items as $item )
             {
@@ -564,7 +655,11 @@ class OutputController extends Controller
                         'width' => $item->width,
                         'price' => $item->price,
                         'percentage' => $item->percentage,
-                        'material_id' => $item->material
+                        'material_id' => $item->material,
+                        'equipment_id' => $item->equipment_id,
+                        'quote_id' => $quote->id,
+                        'custom' => 1
+
                     ]);
                 } else {
                     $item_selected = Item::find($item->item);
@@ -575,9 +670,18 @@ class OutputController extends Controller
                         $item_selected->state_item = 'reserved';
                         $item_selected->save();
 
+                        // TODO: Esto va a cambiar
                         $detail_output = OutputDetail::create([
                             'output_id' => $output->id,
                             'item_id' => $item->item,
+                            'length' => $item->length,
+                            'width' => $item->width,
+                            'price' => $item->price,
+                            'percentage' => $item->percentage,
+                            'material_id' => $item->material,
+                            'equipment_id' => $item->equipment_id,
+                            'quote_id' => $quote->id,
+                            'custom' => 0
                         ]);
                     }
                 }

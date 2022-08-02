@@ -504,8 +504,8 @@ function saveTableItems() {
     {
         if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
         {
-            $items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
-            renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
+            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width});
+            renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
         } else {
             toastr.error('Este item ya fue ingresado. Elija otro', 'Error',
                 {
@@ -793,6 +793,9 @@ function addItemsScrap() {
 
     //$("#material_unit").val('').trigger('change');
     //$( "#material_unit option:selected" ).text();
+    console.log($('#equipments_order').val());
+    var equipment = $('#equipments_order').val();
+    var equipment_name = $('#equipments_order option:selected').text();
 
     if( $('#equipments_order').val() === '' )
     {
@@ -943,13 +946,10 @@ function addItemsScrap() {
 
     console.log($itemsComplete);
 
+    $modalAddItems.find('[id=equipment]').val(equipment);
+    $modalAddItems.find('[id=equipment_name]').val(equipment_name);
     $modalAddItems.modal('show');
 
-    /*$items.push({
-        "productId" : sku,
-        "qty" : qty,
-        "price" : price
-    });*/
 }
 
 // TODO: agregamos item custom
@@ -958,6 +958,10 @@ function addItemsCustom() {
     $('#show-btn-unfollow2').hide();
     //$("#material_unit").val('').trigger('change');
     //$( "#material_unit option:selected" ).text();
+
+    console.log($('#equipments_order').val());
+    var equipment = $('#equipments_order').val();
+    var equipment_name = $('#equipments_order option:selected').text();
 
     if( $('#equipments_order').val() === '' )
     {
@@ -1118,7 +1122,8 @@ function addItemsCustom() {
             }
         }
     });
-
+    $modalAddItemsCustom.find('[id=equipment_custom]').val(equipment);
+    $modalAddItemsCustom.find('[id=equipment_name_custom]').val(equipment_name);
     $modalAddItemsCustom.modal('show');
 
     /*$items.push({
@@ -1130,6 +1135,9 @@ function addItemsCustom() {
 
 function saveTableItemsCustom() {
     event.preventDefault();
+    var equipment_id = $modalAddItemsCustom.find('[id=equipment_custom]').val();
+    var equipment_name = $modalAddItemsCustom.find('[id=equipment_name_custom]').val();
+
     const result = $materialsComplete.find( material => material.material.trim() === $('#material_selected_custom').val().trim() );
     if ( result.typescrap == 1 || result.typescrap == 2 )
     {
@@ -1147,8 +1155,8 @@ function saveTableItemsCustom() {
         console.log(precio);
 
         let code = rand_code($caracteres, 5);
-        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
-        renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
+        $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
+        renderTemplateMaterial(equipment_name, result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
 
     }
     if ( result.typescrap == 3 )
@@ -1159,8 +1167,8 @@ function saveTableItemsCustom() {
         let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
         let precio = result.price * porcentaje;
         let code = rand_code($caracteres, 5);
-        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
-        renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
+        $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
+        renderTemplateMaterial(equipment_name,result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
 
     }
 
@@ -1218,9 +1226,10 @@ function renderTemplateFollow(json) {
 }
 
 
-function renderTemplateMaterial(material, item, location, state, price, id, length, width) {
+function renderTemplateMaterial(equipment, material, item, location, state, price, id, length, width) {
     var clone = activateTemplate('#materials-selected');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        clone.querySelector("[data-equipment]").innerHTML = equipment;
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
         clone.querySelector("[data-price]").innerHTML = parseFloat(price).toFixed(2);
@@ -1230,6 +1239,7 @@ function renderTemplateMaterial(material, item, location, state, price, id, leng
         clone.querySelector("[data-delete]").setAttribute('data-delete', id);
         $('#body-materials').append(clone);
     } else {
+        clone.querySelector("[data-equipment]").innerHTML = equipment;
         clone.querySelector("[data-description]").innerHTML = material;
         clone.querySelector("[data-item]").innerHTML = item;
         clone.querySelector("[data-price]").innerHTML = '';
