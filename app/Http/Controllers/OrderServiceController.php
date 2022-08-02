@@ -783,7 +783,7 @@ class OrderServiceController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Orden de servicio '.$codeOrder.' guardada con éxito.', 'url' => route('invoice.index')], 200);
+        return response()->json(['message' => 'Orden de servicio '.$orderService->code.' guardada con éxito.', 'url' => route('invoice.index')], 200);
 
     }
 

@@ -42,7 +42,15 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.date_entry).format('DD/MM/YYYY') +'</p>'
+                    var date_final = '';
+                    if ( item.date_entry == null )
+                    {
+                        date_final = item.date_invoice;
+                    } else {
+                        date_final = item.date_entry;
+                    }
+
+                    return '<p> '+ moment(date_final).format('DD/MM/YYYY') +'</p>'
                 }
             },
             { data: null,
