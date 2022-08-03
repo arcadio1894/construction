@@ -164,7 +164,7 @@
                                     <th>Codigo</th>
                                     <th>Material</th>
                                     <th>Cotizaciones</th>
-                                    <th>Cantidad</th>
+                                    <th>Cantidad Faltante</th>
                                     <th>Precio</th>
                                     <th>Seleccionar</th>
                                 </tr>
