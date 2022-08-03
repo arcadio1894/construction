@@ -504,7 +504,7 @@ function saveTableItems() {
     {
         if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
         {
-            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width});
+            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
             renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
         } else {
             toastr.error('Este item ya fue ingresado. Elija otro', 'Error',
@@ -532,6 +532,7 @@ function saveTableItems() {
     $('#material_search').val('');
     $('#material_selected').val('');
     $('#body-items').html('');
+    $("#equipments_order").val('').trigger('change');
 
     $itemsSelected = [];
 
@@ -1177,7 +1178,7 @@ function saveTableItemsCustom() {
     $('#width_custom').val('');
     $('#length_new_custom').val('');
     $('#width_new_custom').val('');
-
+    $("#equipments_order").val('').trigger('change');
     $itemsSelected = [];
 
     $modalAddItemsCustom.modal('hide');

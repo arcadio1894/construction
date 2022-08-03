@@ -392,6 +392,7 @@
                                         <table class="table table-head-fixed text-nowrap">
                                             <thead>
                                                 <tr>
+                                                    <th>Equipo</th>
                                                     <th>Material</th>
                                                     <th>Item</th>
                                                     <th>Precio</th>
@@ -404,6 +405,7 @@
                                             <tbody id="body-materials">
                                                 <template id="materials-selected">
                                                     <tr>
+                                                        <td data-equipment></td>
                                                         <td data-description></td>
                                                         <td data-item></td>
                                                         <td data-price></td>
@@ -450,6 +452,8 @@
                     <div class="row">
                         <div class="col-md-8">
                             <label class="col-sm-12 control-label" for="material_selected"> Material </label>
+                            <input type="hidden" name="equipment" id="equipment">
+                            <input type="hidden" name="equipment_name" id="equipment_name">
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected" name="material_selected" class="form-control" />
@@ -547,6 +551,8 @@
                     <div class="row">
                         <div class="col-md-8">
                             <label class="col-sm-12 control-label" for="material_selected_custom"> Material </label>
+                            <input type="hidden" name="equipment_custom" id="equipment_custom">
+                            <input type="hidden" name="equipment_name_custom" id="equipment_name_custom">
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected_custom" name="material_selected_custom" class="form-control" readonly/>

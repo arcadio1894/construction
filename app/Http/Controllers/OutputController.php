@@ -537,13 +537,15 @@ class OutputController extends Controller
     {
         //dd($request);
         $validated = $request->validated();
-        // TODO: Hacer la validacion de la cotizacion si ya cumplio la cantidad
-        // Obtener la cotizacion con esa orden de ejecucion
-        $quote = Quote::where('order_execution', $request->get('execution_order'))
-            ->get();
 
         DB::beginTransaction();
         try {
+            // TODO: Hacer la validacion de la cotizacion si ya cumplio la cantidad
+            // Obtener la cotizacion con esa orden de ejecucion
+            $quote = Quote::where('order_execution', $request->get('execution_order'))
+                ->first();
+            //dd($quote->id);
+
             $requesting_user = User::where('name', $request->get('requesting_user'))->first();
             $responsible_user = User::where('id', $request->get('responsible_user'))->first();
             $output = Output::create([
@@ -554,19 +556,20 @@ class OutputController extends Controller
                 'state' => 'created',
                 'indicator' => $request->get('indicator'),
             ]);
-
+            //dump($output->id);
             $items = json_decode($request->get('items'));
+            //dd('asdasd');
 
             // TODO: 1° Sacamos los equipos y materiales
-            $arregloEquipMaterials = [];
-            foreach ( $items as $item )
+            //$arregloEquipMaterials = [];
+            /*foreach ( $items as $item )
             {
                 array_push($arregloEquipMaterials, ['equipment'=>$item->equipment_id, 'material'=>$item->material_id]);
-            }
+            }*/
 
-            $arregloEquipoMateriales = array_unique($arregloEquipMaterials, SORT_REGULAR);
+            //$arregloEquipoMateriales = array_unique($arregloEquipMaterials, SORT_REGULAR);
 
-            foreach ( $arregloEquipoMateriales as $item )
+            /*foreach ( $arregloEquipoMateriales as $item )
             {
                 // TODO: 2° Sacar los equipment_materials de ese equipo
                 $equipment_id = $item->equipment;
@@ -604,7 +607,7 @@ class OutputController extends Controller
                     return response()->json(['message' => 'Lo sentimos, un material ya sobrepasó la cantidad pedida en cotización.'], 422);
                 }
 
-            }
+            }*/
 
             /*foreach ( $arregloResumen as $item )
             {
@@ -655,7 +658,7 @@ class OutputController extends Controller
                         'width' => $item->width,
                         'price' => $item->price,
                         'percentage' => $item->percentage,
-                        'material_id' => $item->material,
+                        'material_id' => $item->material_id,
                         'equipment_id' => $item->equipment_id,
                         'quote_id' => $quote->id,
                         'custom' => 1
@@ -678,7 +681,7 @@ class OutputController extends Controller
                             'width' => $item->width,
                             'price' => $item->price,
                             'percentage' => $item->percentage,
-                            'material_id' => $item->material,
+                            'material_id' => $item->material_id,
                             'equipment_id' => $item->equipment_id,
                             'quote_id' => $quote->id,
                             'custom' => 0
