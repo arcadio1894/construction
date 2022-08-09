@@ -1041,6 +1041,7 @@ Route::middleware('auth')->group(function (){
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
+        Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');
 
     });
 });

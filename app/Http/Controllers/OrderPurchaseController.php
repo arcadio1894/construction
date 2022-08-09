@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\FollowMaterial;
 use App\Http\Requests\StoreOrderPurchaseRequest;
+use App\Item;
+use App\Material;
 use App\MaterialOrder;
 use App\MaterialTaken;
 use App\Notification;
 use App\NotificationUser;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
+use App\Output;
+use App\OutputDetail;
 use App\PaymentDeadline;
 use App\Quote;
 use App\Supplier;
@@ -1759,4 +1763,313 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function pruebaBD()
+    {
+        /*
+        SELECT OD.*
+        FROM output_details OD
+        INNER JOIN outputs O
+        ON OD.output_id = O.id
+        WHERE O.indicator <> 'or'*/
+        //SELECT * FROM `output_details` WHERE id IN (33,34,35,36,37,40,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59)
+        //dump('Obteniendo las salidas');
+        $outputs = Output::with('details')
+            ->where('indicator', '<>', 'or')
+            ->get();
+        //dump('Cantidad de salidas' . count($outputs));
+        //dump('Recorriendo las salidas');
+        foreach ( $outputs as $output )
+        {
+            //dump('============');
+            //dump($output->id);
+            $quote = Quote::with('equipments')
+                ->where('order_execution', $output->execution_order)
+                ->first();
+            foreach ( $output->details as $detail )
+            {
+                $idMaterial = 0;
+                if ( $detail->material_id == null )
+                {
+                    $item = Item::find($detail->item_id);
+                    $idMaterial = $item->material_id;
+                } else {
+                    $idMaterial = $detail->material_id;
+                }
+                $lo_tiene_una_sola_vez = $this->solounEquipoTieneEseMaterial($quote->id, $idMaterial);
+
+                //dump('$lo_tiene_una_sola_vez   -'.$lo_tiene_una_sola_vez);
+                //dump('FALSE    -'. ($lo_tiene_una_sola_vez !== null));
+                if ($lo_tiene_una_sola_vez != null || $lo_tiene_una_sola_vez != '')
+                {
+                    //dump('material_id    '. ($detail->material_id));
+                    //dump('FALSE    '. ($detail->material_id !== null));
+                    if( $detail->material_id != null || $detail->material_id != '' )
+                    {
+                        // Detalle personalizado
+                        if ( $detail->item_id == null )
+                        {
+                            $detail->quote_id = $quote->id;
+                            $detail->equipment_id = $lo_tiene_una_sola_vez;
+                            $detail->custom = 1;
+                            $detail->save();
+                        } else {
+                            $item = Item::find($detail->item_id);
+
+                            $detail->length = $item->length;
+                            $detail->width = $item->width;
+                            $detail->price = $item->price;
+                            $detail->percentage = $item->percentage;
+                            $detail->material_id = $item->material_id;
+                            $detail->quote_id = $quote->id;
+                            $detail->equipment_id = $lo_tiene_una_sola_vez;
+                            $detail->custom = 1;
+                            $detail->save();
+                        }
+
+                    } else {
+                        $item = Item::find($detail->item_id);
+                        $detail->length = $item->length;
+                        $detail->width = $item->width;
+                        $detail->price = $item->price;
+                        $detail->percentage = $item->percentage;
+                        $detail->material_id = $item->material_id;
+                        $detail->quote_id = $quote->id;
+                        $detail->equipment_id = $lo_tiene_una_sola_vez;
+                        $detail->custom = 0;
+                        $detail->save();
+                    }
+                } else {
+
+                    // Logica que se usara para dos cosas
+                    // 1. Cuando el material que encontro era una extra correcta y no hay
+                    // 2. Cuando el material esta en dos equipos diferentes
+                    //dump('Ingrese al if donde esta logica nueva');
+                    $existeEquipo = $this->existeEquipo($quote->id, $idMaterial);
+                    //dump('$existeEquipo  -' . $existeEquipo);
+                    if ( $existeEquipo !== null || $existeEquipo !== ''  )
+                    {
+                        //dump('Entre al if1  -' . ($detail->material_id != null || $detail->material_id != ''));
+                        if( $detail->material_id != null || $detail->material_id != '' )
+                        {
+                            //dump('Entre al if2');
+                            //dump('IF $detail->item_id -'.( $detail->item_id == null ));
+                            if ( $detail->item_id == null )
+                            {
+                                //dump('Entre al if3 ');
+                                $detail->quote_id = $quote->id;
+                                $detail->custom = 1;
+                                $detail->equipment_id = $existeEquipo;
+                                $detail->save();
+                            } else {
+                                //dump('Entre al else3 ');
+                                $item = Item::find($detail->item_id);
+
+                                $detail->length = $item->length;
+                                $detail->width = $item->width;
+                                $detail->price = $item->price;
+                                $detail->percentage = $item->percentage;
+                                $detail->material_id = $item->material_id;
+                                $detail->quote_id = $quote->id;
+                                $detail->equipment_id = $existeEquipo;
+                                $detail->custom = 1;
+                                $detail->save();
+                            }
+                        } else {
+                            //dump('Entre al else1 ');
+                            $item = Item::find($detail->item_id);
+                            $detail->length = $item->length;
+                            $detail->width = $item->width;
+                            $detail->price = $item->price;
+                            $detail->percentage = $item->percentage;
+                            $detail->material_id = $item->material_id;
+                            $detail->quote_id = $quote->id;
+                            $detail->equipment_id = $existeEquipo;
+                            $detail->custom = 0;
+                            $detail->save();
+                        }
+                    } else {
+                        //dump('No pude encontrar el equipo ');
+                        if( $detail->material_id != null || $detail->material_id != '' )
+                        {
+                            if ( $detail->item_id == null )
+                            {
+                                $detail->quote_id = $quote->id;
+                                $detail->custom = 1;
+                                $detail->save();
+                            } else {
+                                $item = Item::find($detail->item_id);
+
+                                $detail->length = $item->length;
+                                $detail->width = $item->width;
+                                $detail->price = $item->price;
+                                $detail->percentage = $item->percentage;
+                                $detail->material_id = $item->material_id;
+                                $detail->quote_id = $quote->id;
+                                $detail->custom = 1;
+                                $detail->save();
+                            }
+                        } else {
+                            $item = Item::find($detail->item_id);
+                            $detail->length = $item->length;
+                            $detail->width = $item->width;
+                            $detail->price = $item->price;
+                            $detail->percentage = $item->percentage;
+                            $detail->material_id = $item->material_id;
+                            $detail->quote_id = $quote->id;
+                            $detail->custom = 0;
+                            $detail->save();
+                        }
+                    }
+
+                }
+            }
+        }
+
+        //dump('Ahora los materiales tomados');
+        $material_takens = MaterialTaken::all();
+        //dump('Cantidad de registros materiales tomados');
+        //dump(count($material_takens));
+        foreach ( $material_takens as $material_taken )
+        {
+            $output = Output::find($material_taken->output_id);
+            $output_detail = OutputDetail::where('output_id', $output->id)
+                ->where('material_id', $material_taken->material_id)
+                ->first();
+            $material_taken->type_output = $output->indicator;
+            $material_taken->equipment_id = $output_detail->equipment_id;
+            $material_taken->save();
+        }
+    }
+
+    public function solounEquipoTieneEseMaterial( $id_quote, $id_material )
+    {
+        $quote = Quote::with('equipments')->find($id_quote);
+        //dump('COT-27-   '. $quote->id);
+        $material2 = Material::find($id_material);
+        //dump('MAT-1   '. $material2->id);
+        $lo_tiene_una_sola_vez = false;
+        $id_equipo = 0;
+        foreach ( $quote->equipments as $equipment )
+        {
+            //dump('EQUIP-94   '. $equipment->id);
+            foreach ( $equipment->materials as $material )
+            {
+                //dump('EQUIP_MAT-116   '. $material->id);
+                //dump('TRUE   '. ($material->material_id == $material2->id && $material->replacement == 0));
+                if ( $material->material_id == $material2->id && $material->replacement == 0 )
+                {
+                    //dump('Entre al if');
+                    if ( $id_equipo == 0 && $lo_tiene_una_sola_vez == false)
+                    {
+                        //dump('Entre al 2° if');
+                        $id_equipo = $equipment->id;
+                        //dump('ID_EQUIPO   '.$id_equipo);
+                        $lo_tiene_una_sola_vez = true;
+                        //dump('$lo_tiene_una_sola_vez   '.$lo_tiene_una_sola_vez);
+                    } else {
+                        //dump('Entre al else');
+                        if ( $id_equipo != $equipment->id )
+                        {
+                            //dump('Entre al break');
+                            $lo_tiene_una_sola_vez = false;
+                            break 2;
+                        }
+                    }
+                }
+            }
+            foreach ( $equipment->consumables as $material )
+            {
+                //dump('EQUIP_MAT-116   '. $material->id);
+                //dump('TRUE   '. ($material->material_id == $material2->id && $material->replacement == 0));
+                if ( $material->material_id == $material2->id && $material->replacement == 0 )
+                {
+                    //dump('Entre al if');
+                    if ( $id_equipo == 0 && $lo_tiene_una_sola_vez == false)
+                    {
+                        //dump('Entre al 2° if');
+                        $id_equipo = $equipment->id;
+                        //dump('ID_EQUIPO   '.$id_equipo);
+                        $lo_tiene_una_sola_vez = true;
+                        //dump('$lo_tiene_una_sola_vez   '.$lo_tiene_una_sola_vez);
+                    } else {
+                        //dump('Entre al else');
+                        if ( $id_equipo != $equipment->id )
+                        {
+                            //dump('Entre al break');
+                            $lo_tiene_una_sola_vez = false;
+                            break 2;
+                        }
+                    }
+                }
+            }
+        }
+        //dump('Retorno?    '.$lo_tiene_una_sola_vez);
+        if ($lo_tiene_una_sola_vez)
+        {
+            //dump('Retorné    '.$id_equipo);
+            return $id_equipo;
+        } else {
+            //dump('Retorné    null');
+            return null;
+        }
+
+    }
+
+    public function existeEquipo( $id_quote, $id_material )
+    {
+        $quote = Quote::with('equipments')->find($id_quote);
+        //dump('COT-   '. $quote->id);
+        $material2 = Material::find($id_material);
+        //dump('MAT   '. $material2->id);
+        $existeEquipo = false;
+        $id_equipo = 0;
+        foreach ( $quote->equipments as $equipment )
+        {
+            //dump('EQUIP-   '. $equipment->id);
+            foreach ( $equipment->materials as $material )
+            {
+                //dump('EQUIP_MAT-   '. $material->id);
+                //dump('TRUE   '. ($material->material_id == $material2->id && $material->replacement == 0));
+                if ( $material->material_id == $material2->id && $material->replacement == 0 )
+                {
+                    //dump('Entre al if');
+                    $id_equipo = $equipment->id;
+                    //dump('ID_EQUIPO   '.$id_equipo);
+                    $existeEquipo = true;
+                    //dump('$lo_tiene_una_sola_vez   '.$existeEquipo);
+                    //dump('Entre al if');
+                    break 2;
+                }
+            }
+            foreach ( $equipment->consumables as $material )
+            {
+                //dump('EQUIP_MAT   '. $material->id);
+                //dump('TRUE   '. ($material->material_id == $material2->id && $material->replacement == 0));
+                if ( $material->material_id == $material2->id && $material->replacement == 0 )
+                {
+                    //dump('Entre al if');
+                    $id_equipo = $equipment->id;
+                    //dump('ID_EQUIPO   '.$id_equipo);
+                    $existeEquipo = true;
+                    //dump('$lo_tiene_una_sola_vez   '.$existeEquipo);
+                    break 2;
+                }
+            }
+        }
+        //dump('Retorno?    '.$existeEquipo);
+        if ($existeEquipo)
+        {
+            //dump('Retorné    '.$id_equipo);
+            return $id_equipo;
+        } else {
+            //dump('Retorné    null');
+            return null;
+        }
+
+    }
+
+
+    /*
+     * crear una cotizacion con dos equi
+     */
 }
