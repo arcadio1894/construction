@@ -1775,6 +1775,7 @@ class OrderPurchaseController extends Controller
         //dump('Obteniendo las salidas');
         $outputs = Output::with('details')
             ->where('indicator', '<>', 'or')
+            ->where('id', '<', 1160)
             ->get();
         //dump('Cantidad de salidas' . count($outputs));
         //dump('Recorriendo las salidas');

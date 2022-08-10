@@ -10,7 +10,10 @@ class MaterialTaken extends Model
         'material_id',
         'quantity_request',
         'quote_id',
-        'output_id'
+        'output_id',
+        'equipment_id',
+        'output_detail_id',
+        'type_output'
     ];
 
     public function material()
