@@ -442,9 +442,14 @@ function showModalDeletePartial() {
         dataType: 'json',
         success: function (json) {
             console.log(json);
-            for (var i=0; i<json.length; i++)
+            for (var i=0; i<json.array.length; i++)
             {
-                renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+                    //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
             }
 
         }
@@ -520,13 +525,16 @@ function renderTemplateConsumable(id, code, material, cantidad) {
     $('#table-consumables').append(clone);
 }
 
-function renderTemplateItemDetailDelete(id, item, output, material, code) {
+function renderTemplateItemDetailDelete(id, code, material, length, width, percentage, output_detail, id_item) {
     var clone = activateTemplate('#template-itemDelete');
     clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
     clone.querySelector("[data-code]").innerHTML = code;
-    clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', item);
-    clone.querySelector("[data-itemDelete]").setAttribute('data-output', output);
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-percentage]").innerHTML = percentage;
+    clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', id_item);
+    clone.querySelector("[data-itemDelete]").setAttribute('data-output', output_detail);
     $('#table-itemsDelete').append(clone);
 }
 
@@ -711,10 +719,10 @@ function deletePartialOutput() {
     console.log('Llegue');
     event.preventDefault();
     // Obtener la URL
-    var idOutput = $(this).data('output');
+    var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemdelete');
     $.ajax({
-        url: '/dashboard/destroy/output/'+idOutput+'/item/'+idItem,
+        url: '/dashboard/destroy/output/'+idOutputDetail+'/item/'+idItem,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         processData:false,

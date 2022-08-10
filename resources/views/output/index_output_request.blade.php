@@ -128,8 +128,11 @@
                         <thead>
                             <tr>
                                 <th style="width: 10px">#</th>
-                                <th>Material</th>
                                 <th>Código</th>
+                                <th>Material</th>
+                                <th>Largo</th>
+                                <th>Ancho</th>
+                                <th>Porcentaje</th>
                                 <th>Acción</th>
                             </tr>
                         </thead>
@@ -139,8 +142,11 @@
                         <template id="template-itemDelete">
                             <tr>
                                 <td data-i></td>
-                                <td data-material></td>
                                 <td data-code></td>
+                                <td data-material></td>
+                                <td data-length></td>
+                                <td data-width></td>
+                                <td data-percentage></td>
                                 <td >
                                     <button type="button" data-itemDelete data-output class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Quitar</button>
                                 </td>

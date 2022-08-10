@@ -377,6 +377,7 @@ class OutputController extends Controller
                         'width' => $item->width,
                         'weight' => $item->weight,
                         'price' => $item->price,
+                        'percentage' => $item->percentage,
                         'location' => $l,
                         'state' => $item->state,
                         'detail_id' =>$outputDetail->id
@@ -393,6 +394,7 @@ class OutputController extends Controller
                         'weight' => null,
                         'price' => $outputDetail->price,
                         'location' => 'Personalizado',
+                        'percentage' => $outputDetail->percentage,
                         'state' => 'Personalizado',
                         'detail_id' =>$outputDetail->id
                     ]);
@@ -713,22 +715,27 @@ class OutputController extends Controller
                 $outputDetails = OutputDetail::where('output_id', $output->id)->get();
                 foreach ( $outputDetails as $outputDetail )
                 {
-                    $item = Item::find($outputDetail->item_id);
-                    $items = Item::where('code',$item->code)->get();
-                    $count_items = count($items);
-                    $last_item = Item::where('code',$item->code)
-                        ->orderBy('created_at', 'desc')->first();
-                    if ( $last_item->state_item === 'scraped' ) {
-                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                    } else {
-                        if ($count_items>1){
-                            $item->state_item = 'scraped';
-                            $item->save();
+                    if ( $outputDetail->item_id != null )
+                    {
+                        $item = Item::find($outputDetail->item_id);
+
+                        $items = Item::where('code',$item->code)->get();
+                        $count_items = count($items);
+                        $last_item = Item::where('code',$item->code)
+                            ->orderBy('created_at', 'desc')->first();
+                        if ( $last_item->state_item === 'scraped' ) {
+                            return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
-                            $item->state_item = 'entered';
-                            $item->save();
+                            if ($count_items>1){
+                                $item->state_item = 'scraped';
+                                $item->save();
+                            } else {
+                                $item->state_item = 'entered';
+                                $item->save();
+                            }
                         }
                     }
+
                     $outputDetail->delete();
                 }
                 $output->delete();
@@ -739,30 +746,33 @@ class OutputController extends Controller
                 $outputDetails = OutputDetail::where('output_id', $output->id)->get();
                 foreach ( $outputDetails as $outputDetail )
                 {
-                    $item = Item::find($outputDetail->item_id);
-                    $items = Item::where('code',$item->code)->get();
-                    $count_items = count($items);
-                    $last_item = Item::where('code',$item->code)
-                        ->orderBy('created_at', 'desc')->first();
-                    if ( $last_item->state_item === 'scraped' ) {
-                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                    } else {
-                        if ($count_items>1){
-                            $item->state_item = 'scraped';
-                            $item->save();
-                            $material = Material::find($item->material_id);
-                            $material->stock_current = $material->stock_current + $item->percentage;
-                            $material->save();
+                    if ( $outputDetail->item_id == null )
+                    {
+                        $item = Item::find($outputDetail->item_id);
+                        $items = Item::where('code',$item->code)->get();
+                        $count_items = count($items);
+                        $last_item = Item::where('code',$item->code)
+                            ->orderBy('created_at', 'desc')->first();
+                        if ( $last_item->state_item === 'scraped' ) {
+                            return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
-                            $item->state_item = 'entered';
-                            $item->save();
-                            $material = Material::find($item->material_id);
-                            $material->stock_current = $material->stock_current + $item->percentage;
-                            $material->save();
+                            if ($count_items>1){
+                                $item->state_item = 'scraped';
+                                $item->save();
+                                $material = Material::find($item->material_id);
+                                $material->stock_current = $material->stock_current + $item->percentage;
+                                $material->save();
+                            } else {
+                                $item->state_item = 'entered';
+                                $item->save();
+                                $material = Material::find($item->material_id);
+                                $material->stock_current = $material->stock_current + $item->percentage;
+                                $material->save();
+                            }
                         }
-                    }
 
-                    // TODO: Dismunir el stock del material
+                        // TODO: Dismunir el stock del material
+                    }
 
                     $outputDetail->delete();
 
@@ -780,6 +790,11 @@ class OutputController extends Controller
 
     }
 
+    public function puedoEliminarSalida( $output_id )
+    {
+
+    }
+
     public function destroyPartialOutputRequest(Request $request, $id_output, $id_item)
     {
         //dump($request);
@@ -787,63 +802,73 @@ class OutputController extends Controller
         DB::beginTransaction();
         try {
 
-            $output = Output::find($id_output);
+            $outputDetailG =  OutputDetail::find($id_output);
+            $output = Output::find($outputDetailG->output_id);
 
             if ($output->state === 'created')
             {
-                $outputDetail = OutputDetail::where('output_id', $output->id)
-                    ->where('item_id', $id_item)->first();
+                if ( $id_item != 'Personalizado' )
+                {
+                    $outputDetail = OutputDetail::where('output_id', $output->id)
+                        ->where('item_id', $id_item)->first();
 
-                $item = Item::find($outputDetail->item_id);
-                $items = Item::where('code',$item->code)->get();
-                $count_items = count($items);
-                $last_item = Item::where('code',$item->code)
-                    ->orderBy('created_at', 'desc')->first();
-                if ( $last_item->state_item === 'scraped' ) {
-                    return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                } else {
-                    if ($count_items>1){
-                        $item->state_item = 'scraped';
-                        $item->save();
+                    $item = Item::find($outputDetail->item_id);
+                    $items = Item::where('code',$item->code)->get();
+                    $count_items = count($items);
+                    $last_item = Item::where('code',$item->code)
+                        ->orderBy('created_at', 'desc')->first();
+                    if ( $last_item->state_item === 'scraped' ) {
+                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                     } else {
-                        $item->state_item = 'entered';
-                        $item->save();
+                        if ($count_items>1){
+                            $item->state_item = 'scraped';
+                            $item->save();
+                        } else {
+                            $item->state_item = 'entered';
+                            $item->save();
+                        }
                     }
+                    $outputDetail->delete();
+                } else {
+                    $outputDetailG->delete();
                 }
-                $outputDetail->delete();
+
             }
 
             if ($output->state !== 'created')
             {
-                $outputDetail = OutputDetail::where('output_id', $output->id)
-                    ->where('item_id', $id_item)->first();
+                if ( $id_item != 'Perzonalizado' )
+                {
+                    $outputDetail = OutputDetail::where('output_id', $output->id)
+                        ->where('item_id', $id_item)->first();
 
-                $item = Item::find($outputDetail->item_id);
-                $items = Item::where('code',$item->code)->get();
-                $count_items = count($items);
-                $last_item = Item::where('code',$item->code)
-                    ->orderBy('created_at', 'desc')->first();
-                if ( $last_item->state_item === 'scraped' ) {
-                    return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                } else {
-                    if ($count_items>1){
-                        $item->state_item = 'scraped';
-                        $item->save();
-                        $material = Material::find($item->material_id);
-                        $material->stock_current = $material->stock_current + $item->percentage;
-                        $material->save();
+                    $item = Item::find($outputDetail->item_id);
+                    $items = Item::where('code',$item->code)->get();
+                    $count_items = count($items);
+                    $last_item = Item::where('code',$item->code)
+                        ->orderBy('created_at', 'desc')->first();
+                    if ( $last_item->state_item === 'scraped' ) {
+                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                     } else {
-                        $item->state_item = 'entered';
-                        $item->save();
-                        $material = Material::find($item->material_id);
-                        $material->stock_current = $material->stock_current + $item->percentage;
-                        $material->save();
+                        if ($count_items>1){
+                            $item->state_item = 'scraped';
+                            $item->save();
+                            $material = Material::find($item->material_id);
+                            $material->stock_current = $material->stock_current + $item->percentage;
+                            $material->save();
+                        } else {
+                            $item->state_item = 'entered';
+                            $item->save();
+                            $material = Material::find($item->material_id);
+                            $material->stock_current = $material->stock_current + $item->percentage;
+                            $material->save();
+                        }
                     }
+
+                    $outputDetail->delete();
+                } else {
+                    $outputDetailG->delete();
                 }
-
-                // TODO: Dismunir el stock del material
-
-                $outputDetail->delete();
 
             }
 
