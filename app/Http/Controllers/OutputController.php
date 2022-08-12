@@ -1208,4 +1208,17 @@ class OutputController extends Controller
     {
         //
     }
+
+    public function modificandoMaterialesTomados()
+    {
+        $material_takens = MaterialTaken::whereNotNull('output_detail_id')->get();
+        //dump('Cantidad de registros materiales tomados');
+        dump(count($material_takens));
+        /*foreach ( $material_takens as $material_taken )
+        {
+            $output_detail = OutputDetail::find($material_taken->output_detail_id);
+            $material_taken->equipment_id = $output_detail->equipment_id;
+            $material_taken->save();
+        }*/
+    }
 }
