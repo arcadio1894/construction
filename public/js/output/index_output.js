@@ -104,6 +104,10 @@ $(document).ready(function () {
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
 
                     }
+                    if (item.state === 'confirmed')
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+item.id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                    }
                     var custom = false;
                     for (let value of item.details) {
                         if ( value.item_id == null )
@@ -266,7 +270,7 @@ $(document).ready(function () {
     // Array to track the ids of the details displayed rows
     var detailRows = [];
 
-    $('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
+    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
         var idx = $.inArray( tr.attr('id'), detailRows );
@@ -288,15 +292,15 @@ $(document).ready(function () {
             }
         }
     } );
-
+*/
     // On each draw, loop over the `detailRows` array and show any child rows
-    table.on( 'draw', function () {
+    /*table.on( 'draw', function () {
         $.each( detailRows, function ( i, id ) {
             $('#'+id+' td.details-control').trigger( 'click' );
         } );
-    } );
+    } );*/
 
-    $(document).on('click', '[data-column]', function (e) {
+    /*$(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
 
         // Get the column API object
@@ -304,7 +308,7 @@ $(document).ready(function () {
 
         // Toggle the visibility
         column.visible( ! column.visible() );
-    } );
+    } );*/
 
     $modalAddItems = $('#modalAddItems');
 
@@ -336,7 +340,12 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-materials]', showMaterialsInQuote);
 
+    $(document).on('click', '[data-return]', showModalReturnMaterials);
+
+    $(document).on('click', '[data-itemReturn]', returnItemMaterials);
+
     $modalItemsMaterials = $('#modalItemsMaterials');
+    $modalReturnMaterials = $('#modalReturnMaterials');
 
     $('body').tooltip({
         selector: '[data-toggle]'
@@ -366,6 +375,8 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 let $modalItemsMaterials;
+
+let $modalReturnMaterials;
 
 function showMaterialsInQuote() {
     $modalItemsMaterials.find('[id=code_quote]').html('');
@@ -439,7 +450,9 @@ function showModalDeletePartial() {
             console.log(json);
             for (var i=0; i<json.array.length; i++)
             {
-                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].id_item, output_id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width);
+                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+
+                //renderTemplateItemDetailDelete(json.array[i].id, json.array[i].id_item, output_id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width);
             }
 
         }
@@ -474,32 +487,73 @@ function showItems() {
     $modalItems.modal('show');
 }
 
-function renderTemplateItemDetail(id, material, code, length, width, price, location, state) {
+function showModalReturnMaterials() {
+    $('#table-itemsDelete').html('');
+    var output_id = $(this).data('return');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.array.length; i++)
+            {
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemReturn(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+                //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
+    });
+    $modalReturnMaterials.modal('show');
+}
+
+function renderTemplateItemReturn(id, code, material, length, width, percentage, output_detail, id_item) {
+    var clone = activateTemplate('#template-itemReturn');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-percentage]").innerHTML = percentage;
+    clone.querySelector("[data-itemReturn]").setAttribute('data-itemReturn', id_item);
+    clone.querySelector("[data-itemReturn]").setAttribute('data-output', output_detail);
+    $('#table-itemsReturn').append(clone);
+}
+
+function renderTemplateItemDetail(id, material, code, length, width, price, location, state, output_detail) {
     var status = (state === 'good') ? '<span class="badge bg-success">En buen estado</span>' :
         (state === 'bad') ? '<span class="badge bg-secondary">En mal estado</span>' :
-            'Indefinido';
+            'Personalizado';
     var clone = activateTemplate('#template-item');
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+    if ( status !== 'Personalizado' )
+    {
         clone.querySelector("[data-i]").innerHTML = id;
         clone.querySelector("[data-material]").innerHTML = material;
         clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-itemCustom]").setAttribute('style', 'display:none');
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
         clone.querySelector("[data-price]").innerHTML = price;
         clone.querySelector("[data-location]").innerHTML = location;
         clone.querySelector("[data-state]").innerHTML = status;
+        $('#table-items').append(clone);
     } else {
         clone.querySelector("[data-i]").innerHTML = id;
         clone.querySelector("[data-material]").innerHTML = material;
         clone.querySelector("[data-code]").innerHTML = code;
+        clone.querySelector("[data-itemCustom]").setAttribute('data-itemCustom', output_detail);
         clone.querySelector("[data-length]").innerHTML = length;
         clone.querySelector("[data-width]").innerHTML = width;
-        clone.querySelector("[data-price]").innerHTML = '';
+        clone.querySelector("[data-price]").innerHTML = price;
         clone.querySelector("[data-location]").innerHTML = location;
         clone.querySelector("[data-state]").innerHTML = status;
+        $('#table-items').append(clone);
     }
-
-    $('#table-items').append(clone);
 }
 
 function renderTemplateConsumable(id, code, material, cantidad) {
@@ -511,15 +565,16 @@ function renderTemplateConsumable(id, code, material, cantidad) {
     $('#table-consumables').append(clone);
 }
 
-function renderTemplateItemDetailDelete(id, item, output, material, code, length, width) {
+function renderTemplateItemDetailDelete(id, code, material, length, width, percentage, output_detail, id_item) {
     var clone = activateTemplate('#template-itemDelete');
     clone.querySelector("[data-i]").innerHTML = id;
-    clone.querySelector("[data-material]").innerHTML = material;
     clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
     clone.querySelector("[data-length]").innerHTML = length;
     clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', item);
-    clone.querySelector("[data-itemDelete]").setAttribute('data-output', output);
+    clone.querySelector("[data-percentage]").innerHTML = percentage;
+    clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', id_item);
+    clone.querySelector("[data-itemDelete]").setAttribute('data-output', output_detail);
     $('#table-itemsDelete').append(clone);
 }
 
@@ -620,10 +675,10 @@ function deletePartialOutput() {
     console.log('Llegue');
     event.preventDefault();
     // Obtener la URL
-    var idOutput = $(this).data('output');
+    var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemdelete');
     $.ajax({
-        url: '/dashboard/destroy/output/'+idOutput+'/item/'+idItem,
+        url: '/dashboard/destroy/output/'+idOutputDetail+'/item/'+idItem,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         processData:false,
@@ -697,6 +752,88 @@ function deletePartialOutput() {
         },
     });
 
+}
+
+function returnItemMaterials() {
+    console.log('Llegue');
+    event.preventDefault();
+    // Obtener la URL
+    var idOutputDetail = $(this).data('output');
+    var idItem = $(this).data('itemreturn');
+    $.ajax({
+        url: '/dashboard/return/output/'+idOutputDetail+'/item/'+idItem,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
+    $(this).parent().parent().remove();
 }
 
 function confirmOutput() {

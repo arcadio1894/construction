@@ -808,18 +808,30 @@ class OutputController extends Controller
                 if ($count_items>1){
                     $item->state_item = 'scraped';
                     $item->save();
+                    $material = Material::find($item->material_id);
+                    $material->stock_current = $material->stock_current + $item->percentage;
+                    $material->save();
                 } else {
                     if ( $this->esCompleto($item->id) )
                     {
                         $item->state_item = 'entered';
                         $item->save();
+                        $material = Material::find($item->material_id);
+                        $material->stock_current = $material->stock_current + $item->percentage;
+                        $material->save();
                     } else {
                         $item->state_item = 'scraped';
                         $item->save();
+                        $material = Material::find($item->material_id);
+                        $material->stock_current = $material->stock_current + $item->percentage;
+                        $material->save();
                     }
 
                 }
             }
+            $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
+            $material_taken->delete();
+
             $outputDetail->delete();
             DB::commit();
         } catch ( \Throwable $e ) {
