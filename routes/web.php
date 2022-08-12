@@ -592,6 +592,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/crear/item/personalizado/{id_detail}', 'OutputController@createItemCustom')
             ->name('create.item.custom');
         Route::post('/assign/item/{item_id}/output/detail/{detail_id}', 'OutputController@assignItemToOutputDetail');
+        Route::post('/return/output/{id_output}/item/{id_item}', 'OutputController@returnItemOutputDetail');
 
         // TRANSFER
         Route::get('transferencias', 'TransferController@index')

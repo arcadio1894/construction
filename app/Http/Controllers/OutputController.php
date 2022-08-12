@@ -14,6 +14,7 @@ use App\Output;
 use App\OutputDetail;
 use App\Quote;
 use App\Subcategory;
+use App\Typescrap;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -498,7 +499,7 @@ class OutputController extends Controller
                         'quantity_request' => $item->percentage,
                         'quote_id' => $quote->id,
                         'output_id' => $output->id,
-                        'equipment_id' => $output->equipment_id,
+                        'equipment_id' => $outputDetail->equipment_id,
                         'output_detail_id' => $outputDetail->id,
                         'type_output' => $output->indicator
                     ]);
@@ -787,6 +788,73 @@ class OutputController extends Controller
         }
 
         return response()->json(['message' => 'Eliminación total con éxito.'], 200);
+
+    }
+
+    public function returnItemOutputDetail(Request $request, $id_output, $id_item)
+    {
+        DB::beginTransaction();
+        try {
+            $outputDetail = OutputDetail::find($id_output);
+
+            $item = Item::find($id_item);
+            $items = Item::where('code',$item->code)->get();
+            $count_items = count($items);
+            $last_item = Item::where('code',$item->code)
+                ->orderBy('created_at', 'desc')->first();
+            if ( $last_item->state_item === 'scraped' ) {
+                return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+            } else {
+                if ($count_items>1){
+                    $item->state_item = 'scraped';
+                    $item->save();
+                } else {
+                    if ( $this->esCompleto($item->id) )
+                    {
+                        $item->state_item = 'entered';
+                        $item->save();
+                    } else {
+                        $item->state_item = 'scraped';
+                        $item->save();
+                    }
+
+                }
+            }
+            $outputDetail->delete();
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Item devuelto.'], 200);
+
+    }
+
+    public function esCompleto($id_item)
+    {
+        $item = Item::find($id_item);
+        if ( $item->typescrap_id == null )
+        {
+            return true;
+        } else {
+            $typescrap = Typescrap::find($item->typescrap_id);
+            if ( $item->typescrap_id == 1 || $item->typescrap_id == 2 )
+            {
+                // Planchas
+                if ( $item->length == $typescrap->length && $item->width == $typescrap->width )
+                {
+                    return true;
+                }
+            } elseif ( $item->typescrap_id == 3 || $item->typescrap_id == 4 ) {
+                // Tubos
+                if ( $item->length == $typescrap->length )
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
 
     }
 
