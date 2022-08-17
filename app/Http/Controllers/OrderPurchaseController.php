@@ -575,7 +575,7 @@ class OrderPurchaseController extends Controller
         $array_materials = [];
 
         // TODO: Nueva logica para hallar las cantidades
-        //$array_takens = [];
+        $array_takens = [];
         foreach ( $quotesRaised as $quote )
         {
             foreach ( $quote->equipments as $equipment )
