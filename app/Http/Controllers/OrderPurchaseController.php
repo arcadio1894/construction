@@ -1662,8 +1662,22 @@ class OrderPurchaseController extends Controller
             }
         }
 
+        $new_arr2 = array();
+        foreach($array_takens as $item) {
+            if(isset($new_arr2[$item['material_id']])) {
+                $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['material_id']] = $item;
+        }
+
+        $materials_takens = array_values($new_arr2);
+
+        //dump($materials_takens);
+
         dump('Arreglo de materiales tomados');
-        dump($array_takens);
+        dump($materials_takens);
 
         $array_materials = [];
         //$array_takens = [];
@@ -1715,7 +1729,7 @@ class OrderPurchaseController extends Controller
                 dump('orden  ' . $amount);
                 $tengoReal = $stockReal + $amount;
                 dump('TR  ' . $tengoReal);
-                $materials_taken = $array_takens[array_search($item['material_id'], array_column($array_takens, 'material_id'))]['quantity'];
+                $materials_taken = $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
                 dump('taken  ' . $materials_taken);
                 $faltaReal = $cantidadEnCotizaciones - $materials_taken;
                 dump('FR  ' . $faltaReal);
