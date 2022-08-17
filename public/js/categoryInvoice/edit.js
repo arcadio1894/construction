@@ -43,7 +43,7 @@ function updateCategory() {
                 });
             setTimeout( function () {
                 $(location).attr('href', data.url)
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

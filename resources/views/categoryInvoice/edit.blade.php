@@ -1,27 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openConfig')
+@section('openCategoryInvoice')
     menu-open
 @endsection
 
-@section('activeConfig')
+@section('activeCategoryInvoice')
     active
 @endsection
 
-@section('openCategory')
-    menu-open
-@endsection
-
-@section('activeCategory')
-
-@endsection
-
-@section('activeListCategory')
+@section('activeCreateCategoryInvoice')
     active
 @endsection
 
 @section('title')
-    Categorias
+    Categorias de Facturas
 @endsection
 
 @section('styles-plugins')
@@ -42,11 +34,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Categorias</h1>
+    <h1 class="page-title">Categorias de Facturas</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Editar categoria {{$category->name}}</h5>
+    <h5 class="card-title">Editar categoría  de factura {{$category->name}}</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -55,14 +47,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('category.index') }}"><i class="fa fa-archive"></i> Categorías</a>
+            <a href="{{ route('categoryInvoice.index') }}"><i class="fa fa-archive"></i> Categorías de facturas</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formEdit" class="form-horizontal" data-url="{{ route('category.update') }}" enctype="multipart/form-data">
+    <form id="formEdit" class="form-horizontal" data-url="{{ route('categoryInvoice.update') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" class="form-control" name="category_id" value="{{$category->id}}">
 
@@ -70,14 +62,14 @@
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Nombre <span class="right badge badge-danger">(*)</span></label>
                 <div class="col-sm-10">
-                    <input type="text" class="form-control" onkeyup="mayus(this);" name="name" placeholder="Ejm: Categoría" value="{{$category->name}}">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="name" placeholder="Ejm: Categoría de Factura" value="{{$category->name}}">
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="inputEmail3" class="col-12 col-form-label">Descripcion</label>
+                <label for="inputEmail3" class="col-12 col-form-label">Descripción</label>
                 <div class="col-sm-10">
                     <input type="text" class="form-control" onkeyup="mayus(this);" name="description" placeholder="Ejm: Descripción" value="{{$category->description}}">
                 </div>

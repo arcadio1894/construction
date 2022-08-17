@@ -13,7 +13,7 @@ class StoreCategoryInvoiceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,30 @@ class StoreCategoryInvoiceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:255',
+
+
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'El :attribute es obligatoria.',
+            'name.string' => 'El :attribute debe contener caracteres válidos.',
+            'name.max' => 'El :attribute debe contener máximo 255 caracteres.',
+            'description.string' => 'La :attribute debe contener caracteres válidos.',
+            'description.max' => 'La :attribute es demasiado largo.',
+
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'name' => 'nombre de categoría de factura',
+            'description' => 'descripción de categoría de factura',
         ];
     }
 }

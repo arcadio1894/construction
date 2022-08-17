@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log($permissions);
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/categories",
+            url: "/dashboard/all/categories/invoices",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -17,7 +17,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('update_category', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/categoria/'+item.id+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/categoria/factura/'+item.id+
                             '" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>';
                     }
                     if ( $.inArray('destroy_category', $permissions) !== -1 ) {
@@ -223,7 +223,7 @@ function destroyCategory() {
             $modalDelete.modal('hide');
             setTimeout( function () {
                 location.reload();
-            }, 4000 )
+            }, 2000 )
         },
         error: function (data) {
             for ( var property in data.responseJSON.errors ) {

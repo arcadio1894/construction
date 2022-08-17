@@ -225,25 +225,25 @@ Route::middleware('auth')->group(function (){
 
         //CATEGORY INVOICES
         Route::get('/all/categories/invoices', 'CategoryInvoiceController@getCategories')
-            ->middleware('permission:list_category');
-        Route::get('Categorias/Facturas', 'CategoryController@index')
-            ->name('category.index')
-            ->middleware('permission:list_category');
+            ->middleware('permission:list_categoryInvoice');
+        Route::get('/categorias/facturas', 'CategoryInvoiceController@index')
+            ->name('categoryInvoice.index')
+            ->middleware('permission:list_categoryInvoice');
         Route::get('crear/categoria/facturas', 'CategoryInvoiceController@create')
-            ->name('category.create')
-            ->middleware('permission:create_category');
+            ->name('categoryInvoice.create')
+            ->middleware('permission:create_categoryInvoice');
         Route::post('category/invoice/store', 'CategoryInvoiceController@store')
-            ->name('category.store')
-            ->middleware('permission:create_category');
+            ->name('categoryInvoice.store')
+            ->middleware('permission:create_categoryInvoice');
         Route::get('/editar/categoria/factura/{id}', 'CategoryInvoiceController@edit')
-            ->name('category.edit')
-            ->middleware('permission:update_category');
+            ->name('categoryInvoice.edit')
+            ->middleware('permission:update_categoryInvoice');
         Route::post('category/invoice/update', 'CategoryInvoiceController@update')
-            ->name('category.update')
-            ->middleware('permission:update_category');
+            ->name('categoryInvoice.update')
+            ->middleware('permission:update_categoryInvoice');
         Route::post('category/invoice/destroy', 'CategoryInvoiceController@destroy')
-            ->name('category.destroy')
-            ->middleware('permission:destroy_category');
+            ->name('categoryInvoice.destroy')
+            ->middleware('permission:destroy_categoryInvoice');
 
         //EXAMPLER
         Route::get('/all/examplers', 'ExamplerController@getExamplers')

@@ -1,27 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openConfig')
+@section('openCategoryInvoice')
     menu-open
 @endsection
 
-@section('openCategory')
-    menu-open
-@endsection
-
-@section('activeConfig')
+@section('activeCategoryInvoice')
     active
 @endsection
 
-@section('activeCategory')
-
-@endsection
-
-@section('activeListCategory')
+@section('activeListCategoryInvoice')
     active
 @endsection
 
 @section('title')
-    Categorias
+    Categorias de facturas
 @endsection
 
 @section('styles-plugins')
@@ -42,9 +34,9 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de categorias</h5>
-    @can('create_category')
-    <a href="{{ route('category.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Categoria </a>
+    <h5 class="card-title">Listado de categorias de facturas</h5>
+    @can('create_categoryInvoice')
+    <a href="{{ route('categoryInvoice.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Categoria de Factura </a>
     @endcan
 @endsection
 
@@ -54,7 +46,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('category.index') }}"><i class="fa fa-archive"></i> Categorías</a>
+            <a href="{{ route('categoryInvoice.index') }}"><i class="fa fa-archive"></i> Categorías de Facturas</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -77,7 +69,7 @@
             </tbody>
         </table>
     </div>
-    @can('destroy_category')
+    @can('destroy_categoryInvoice')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -85,7 +77,7 @@
                     <h4 class="modal-title">Confirmar eliminación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('category.destroy') }}">
+                <form id="formDelete" data-url="{{ route('categoryInvoice.destroy') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="category_id" name="category_id">

@@ -13,7 +13,7 @@ class DeleteCategoryInvoiceRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,22 @@ class DeleteCategoryInvoiceRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'category_id' => 'required|exists:category_invoices,id',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'category_id.required' => 'El :attribute es obligatorio.',
+            'category_id.exists' => 'El :attribute no existe en la base de datos.'
+        ];
+    }
+
+    public function attributes()
+    {
+        return [
+            'category_id' => 'id de categoría de factura'
         ];
     }
 }

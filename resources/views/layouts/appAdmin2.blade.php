@@ -1328,6 +1328,37 @@
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany
+
+                    @can('list_categoryInvoice')
+                        <li class="nav-item has-treeview @yield('openCategoryInvoice')">
+                            <a href="#" class="nav-link @yield('activeCategoryInvoice')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Categorías
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_categoryInvoice')
+                                    <li class="nav-item">
+                                        <a href="{{route('categoryInvoice.index')}}" class="nav-link @yield('activeListCategoryInvoice')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar categorías</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_categoryInvoice')
+                                    <li class="nav-item">
+                                        <a href="{{ route('categoryInvoice.create') }}" class="nav-link @yield('activeCreateCategoryInvoice')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear categoría</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
+
                     @can('list_invoice')
                         <li class="nav-item has-treeview @yield('openInvoice')">
                             <a href="#" class="nav-link @yield('activeInvoice')">
