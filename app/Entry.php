@@ -89,6 +89,11 @@ class Entry extends Model
         return $this->belongsTo('App\Supplier');
     }
 
+    public function category_invoice()
+    {
+        return $this->belongsTo('App\CategoryInvoice');
+    }
+
     public function credit()
     {
         return $this->hasOne('App\SupplierCredit');
