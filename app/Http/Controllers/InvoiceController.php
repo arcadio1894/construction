@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CategoryInvoice;
 use App\DetailEntry;
 use App\Entry;
 use App\Http\Requests\StoreInvoiceRequest;
@@ -33,7 +34,8 @@ class InvoiceController extends Controller
     {
         $suppliers = Supplier::all();
         $unitMeasures = UnitMeasure::all();
-        return view('invoice.create_invoice', compact('suppliers', 'unitMeasures'));
+        $categories = CategoryInvoice::all();
+        return view('invoice.create_invoice', compact('suppliers', 'unitMeasures', 'categories'));
     }
 
     public function storeInvoice(StoreInvoiceRequest $request)
@@ -83,6 +85,7 @@ class InvoiceController extends Controller
                 'currency_compra' => (float) $tipoCambioSunat->compra,
                 'currency_venta' => (float) $tipoCambioSunat->venta,
                 'observation' => $request->get('observation'),
+                'category_invoice_id' => $request->get('category_invoice_id'),
             ]);
 
             // TODO: Tratamiento de un archivo de forma tradicional

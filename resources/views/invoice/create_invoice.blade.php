@@ -136,6 +136,15 @@
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
                                     <input id="btn-currency" type="checkbox" name="currency_invoice" data-bootstrap-switch data-off-color="primary" data-on-text="DOLARES" data-off-text="SOLES" data-on-color="success">
                                 </div>
+                                <div class="form-group">
+                                    <label for="category_invoice">Categoría </label>
+                                    <select id="category_invoice" name="category_invoice_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $categories as $category )
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -479,7 +488,10 @@
         });
         $('#type_order').select2({
             placeholder: "Seleccione un tipo",
-        })
+        });
+        $('#category_invoice').select2({
+            placeholder: "Seleccione una categoría",
+        });
     </script>
     <script src="{{ asset('js/invoice/invoice.js') }}"></script>
 

@@ -27,6 +27,7 @@ class Entry extends Model
         'image',
         'imageOb',
         'type_order',
+        'category_invoice_id'
     ];
 
     public function getSubTotalAttribute()
