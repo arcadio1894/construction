@@ -1704,21 +1704,41 @@ class OrderPurchaseController extends Controller
 
         foreach ( $materials_quantity as $item )
         {
-            //dump('Logica  ' . $item['material_id'] );
-            $cantidadEnCotizaciones = $item['quantity'];
-            //dump('CC  ' . $cantidadEnCotizaciones);
-            $stockReal = $item['material_complete']->stock_current;
-            //dump('stock  ' . $stockReal);
-            $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
-            //dump('orden  ' . $amount);
-            $tengoReal = $stockReal + $amount;
-            //dump('TR  ' . $tengoReal);
-            $materials_taken = $array_takens[array_search($item['material_id'], array_column($array_takens, 'material_id'))]['quantity'];
-            //dump('taken  ' . $materials_taken);
-            $faltaReal = $cantidadEnCotizaciones - $materials_taken;
-            //dump('FR  ' . $faltaReal);
-            $balance = $faltaReal - $tengoReal;
-            //dump('bal  ' . $balance);
+            if ($item['material_id'] == 822)
+            {
+                dump('Logica  ' . $item['material_id'] );
+                $cantidadEnCotizaciones = $item['quantity'];
+                dump('CC  ' . $cantidadEnCotizaciones);
+                $stockReal = $item['material_complete']->stock_current;
+                dump('stock  ' . $stockReal);
+                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+                dump('orden  ' . $amount);
+                $tengoReal = $stockReal + $amount;
+                dump('TR  ' . $tengoReal);
+                $materials_taken = $array_takens[array_search($item['material_id'], array_column($array_takens, 'material_id'))]['quantity'];
+                dump('taken  ' . $materials_taken);
+                $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+                dump('FR  ' . $faltaReal);
+                $balance = $faltaReal - $tengoReal;
+                dump('bal  ' . $balance);
+            } else {
+                //dump('Logica  ' . $item['material_id'] );
+                $cantidadEnCotizaciones = $item['quantity'];
+                //dump('CC  ' . $cantidadEnCotizaciones);
+                $stockReal = $item['material_complete']->stock_current;
+                //dump('stock  ' . $stockReal);
+                $amount = MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_request') - MaterialOrder::where('material_id', $item['material_id'])->sum('quantity_entered');
+                //dump('orden  ' . $amount);
+                $tengoReal = $stockReal + $amount;
+                //dump('TR  ' . $tengoReal);
+                $materials_taken = $array_takens[array_search($item['material_id'], array_column($array_takens, 'material_id'))]['quantity'];
+                //dump('taken  ' . $materials_taken);
+                $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+                //dump('FR  ' . $faltaReal);
+                $balance = $faltaReal - $tengoReal;
+                //dump('bal  ' . $balance);
+            }
+
 
             if ( $balance > 0 )
             {
