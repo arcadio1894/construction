@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeCreateInvoice')
+@section('activeListInvoice')
     active
 @endsection
 
@@ -106,6 +106,15 @@
                                     <label for="observation">Observación </label>
                                     <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">{{$entry->observation}}</textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="category_invoice">Categoría </label>
+                                    <select id="category_invoice" name="category_invoice_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $categories as $category )
+                                            <option value="{{ $category->id }}" {{ ($category->id == $entry->category_invoice_id) ? 'selected':'' }}>{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -138,6 +147,10 @@
                                     @endif
                                     {{--<img data-image src="{{ asset('images/entries/'.$entry->image) }}" alt="{{$entry->invoice}}" width="100px" height="100px">--}}
                                 </div>
+                                <div class="col-md-4">
+                                    <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
+                                    <input id="btn-currency" type="checkbox" {{ ($entry->currency_invoice === 'USD') ? 'checked':''}} name="currency_invoice" data-bootstrap-switch data-off-color="primary" data-on-text="DOLARES" data-off-text="SOLES" data-on-color="success">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -157,6 +170,50 @@
                     </div>
                     <div class="card-body">
 
+                        @if ( substr($entry->purchase_order, 0, 1) === '0' || empty($entry->purchase_order) )
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="material_search">Ingresar material/Servicio <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
+
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="material_unit">Unidad <span class="right badge badge-danger">(*)</span></label>
+                                    <select id="material_unit" name="material_unit" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $unitMeasures as $unitMeasure )
+                                            <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="number" id="quantity" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="price">Precio Total C/IGV <span class="right badge badge-danger">(*)</span></label>
+                                    <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="btn-add"> &nbsp; </label>
+                                <button type="button" id="btn-add" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+
+                        </div>
+
+                        <hr>
+                        @endif
+
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="card">
@@ -165,7 +222,7 @@
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body table-responsive p-0">
-                                        <table class="table table-head-fixed text-nowrap">
+                                        <table id="tablita" class="table table-head-fixed text-nowrap">
                                             <thead>
                                                 <tr>
                                                     <th>Material</th>
@@ -175,10 +232,11 @@
                                                     <th>Total sin Imp.</th>
                                                     <th>Total Imp.</th>
                                                     <th>Importe</th>
+                                                    <th>Acciones</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
-                                                @foreach( $entry->details as $detail )
+                                                @foreach( $entry->details as $key => $detail )
                                                     <tr>
                                                         <td data-description>{{$detail->material_description}}</td>
                                                         <td data-quantity>{{$detail->entered_quantity}}</td>
@@ -187,10 +245,29 @@
                                                         <td data-subtotal>{{ $detail->sub_total }}</td>
                                                         <td data-taxes>{{ $detail->taxes }}</td>
                                                         <td data-total>{{ $detail->total }}</td>
+                                                        <td data-action>
+                                                            @if ( substr($entry->purchase_order, 0, 1) === '0' || empty($entry->purchase_order) )
+                                                                <button type="button" data-delete="{{ $detail->id }}" data-i="{{ $key+1 }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                            @endif
+                                                        </td>
                                                     </tr>
                                                 @endforeach
 
                                             </tbody>
+                                            <template id="materials-selected">
+                                                <tr>
+                                                    <td data-description>John Doe</td>
+                                                    <td data-quantity>John Doe</td>
+                                                    <td data-unit>11-7-2014</td>
+                                                    <td data-price>11-7-2014</td>
+                                                    <td data-subtotal>11-7-2014</td>
+                                                    <td data-taxes>11-7-2014</td>
+                                                    <td data-total>11-7-2014</td>
+                                                    <td>
+                                                        <button type="button" data-deleteNew="" class="btn btn-outline-warning btn-sm"><i class="fas fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </table>
                                     </div>
                                     <!-- /.card-body -->
@@ -208,16 +285,17 @@
                                                 <table class="table">
                                                     <tr>
                                                         <th style="width:50%">Subtotal: </th>
-                                                        <td id="subtotal">{{ $entry->sub_total }}</td>
+                                                        <td ><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="subtotal">{{ $entry->sub_total }}</span> </td>
                                                     </tr>
                                                     <tr>
                                                         <th>Igv: </th>
-                                                        <td id="taxes">{{ $entry->taxes }}</td>
+                                                        <td ><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="taxes">{{ $entry->taxes }}</span> </td>
                                                     </tr>
                                                     <tr>
                                                         <th>Total: </th>
-                                                        <td id="total">{{ $entry->total }}</td>
+                                                        <td ><span class="moneda">{{ $entry->currency_invoice }}</span> <span id="total">{{ $entry->total }}</span> </td>
                                                     </tr>
+
                                                 </table>
                                             </div>
                                         </div>
@@ -449,7 +527,13 @@
         });
         $('#type_order').select2({
             placeholder: "Seleccione un tipo",
-        })
+        });
+        $('#category_invoice').select2({
+            placeholder: "Seleccione una categoría",
+        });
+        $('#material_unit').select2({
+            placeholder: "Seleccione unidad",
+        });
     </script>
     <script src="{{ asset('js/invoice/edit_invoice.js') }}"></script>
 

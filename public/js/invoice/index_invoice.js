@@ -231,6 +231,7 @@ $(document).ready(function () {
                                 {
                                     text = text + ' <a href="'+document.location.origin+ '/dashboard/regularizar/automaticamente/entrada/compra/'+item.id+'" '+
                                         ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Regularizar automaticamente compra"><i class="fas fa-share-square"></i></a>';
+
                                 }
                             }
                             text = text + '<button type="button" data-details="' + item.id + '" data-code="0" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
@@ -239,6 +240,20 @@ $(document).ready(function () {
                             if ($.inArray('update_invoice', $permissions) !== -1) {
                                 text = text + '<a href="' + document.location.origin + '/dashboard/factura/compra/editar/' + item.id + '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
                             }
+
+                            if (item.purchase_order == null  )
+                            {
+                                if ($.inArray('destroy_invoice', $permissions) !== -1) {
+                                    text = text + '<button type="button" data-delete="' + item.id + '" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular factura"><i class="fa fa-trash"></i> </button>';
+                                }
+                            } else {
+                                if (item.purchase_order.substr(0, 1) === '0') {
+                                    if ($.inArray('destroy_invoice', $permissions) !== -1) {
+                                        text = text + '<button type="button" data-delete="' + item.id + '" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular factura"><i class="fa fa-trash"></i> </button>';
+                                    }
+                                }
+                            }
+
                             if ( item.type_order == 'purchase' )
                             {
 
@@ -464,6 +479,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-image]', showImage);
 
+    $(document).on('click', '[data-delete]', deleteItem);
+
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
@@ -520,6 +537,95 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function deleteItem() {
+    var id = $(this).data('delete');
+    var button = $(this);
+    console.log(id);
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de eliminar esta factura?',
+        content: 'Se eliminará directamente de la base de datos',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/destroy/total/invoice/'+id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+
+
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function showImage() {
     var path = $(this).data('src');
@@ -710,11 +816,6 @@ function rand_code($caracteres, $longitud){
         code += $caracteres.substr(rand, 1);
     }
     return code;
-}
-
-function deleteItem() {
-    //console.log($(this).parent().parent().parent());
-    $(this).parent().parent().parent().remove();
 }
 
 function renderTemplateMaterial(id, price, material, item, location, state) {

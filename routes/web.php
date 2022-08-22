@@ -874,6 +874,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_invoice');
         Route::post('invoice/store', 'InvoiceController@storeInvoice')->name('invoice.store')
             ->middleware('permission:create_invoice');
+        Route::post('destroy/detail/invoice/{idDetail}', 'InvoiceController@destroyDetailInvoice')
+            ->middleware('permission:update_invoice');
+        Route::post('destroy/total/invoice/{id}', 'InvoiceController@destroyInvoice')
+            ->middleware('permission:destroy_invoice');
 
         Route::get('/get/json/invoices/purchase', 'InvoiceController@getJsonInvoices');
         Route::get('/get/invoices/purchase', 'InvoiceController@getInvoices');

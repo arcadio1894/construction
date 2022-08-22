@@ -105,6 +105,15 @@
                                     <label for="observation">Observación </label>
                                     <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="category_invoice">Categoría </label>
+                                    <select id="category_invoice" name="category_invoice_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $categories as $category )
+                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group row">
@@ -136,15 +145,7 @@
                                     <label for="btn-currency"> Moneda <span class="right badge badge-danger">(*)</span></label> <br>
                                     <input id="btn-currency" type="checkbox" name="currency_invoice" data-bootstrap-switch data-off-color="primary" data-on-text="DOLARES" data-off-text="SOLES" data-on-color="success">
                                 </div>
-                                <div class="form-group">
-                                    <label for="category_invoice">Categoría </label>
-                                    <select id="category_invoice" name="category_invoice_id" class="form-control select2" style="width: 100%;">
-                                        <option></option>
-                                        @foreach( $categories as $category )
-                                            <option value="{{ $category->id }}">{{ $category->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -229,23 +230,24 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="body-materials">
-                                                <template id="materials-selected">
-                                                    <tr>
-                                                        <td data-id>183</td>
-                                                        <td data-description>John Doe</td>
-                                                        <td data-quantity>John Doe</td>
-                                                        <td data-unit>11-7-2014</td>
-                                                        <td data-price>11-7-2014</td>
-                                                        <td data-subtotal>11-7-2014</td>
-                                                        <td data-taxes>11-7-2014</td>
-                                                        <td data-total>11-7-2014</td>
-                                                        <td>
-                                                            <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
-                                                        </td>
-                                                    </tr>
-                                                </template>
+
 
                                             </tbody>
+                                            <template id="materials-selected">
+                                                <tr>
+                                                    <td data-id>183</td>
+                                                    <td data-description>John Doe</td>
+                                                    <td data-quantity>John Doe</td>
+                                                    <td data-unit>11-7-2014</td>
+                                                    <td data-price>11-7-2014</td>
+                                                    <td data-subtotal>11-7-2014</td>
+                                                    <td data-taxes>11-7-2014</td>
+                                                    <td data-total>11-7-2014</td>
+                                                    <td>
+                                                        <button type="button" data-delete="" class="btn btn-danger"><i class="fas fa-trash"></i></button>
+                                                    </td>
+                                                </tr>
+                                            </template>
                                         </table>
                                     </div>
                                     <!-- /.card-body -->

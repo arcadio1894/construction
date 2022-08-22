@@ -338,7 +338,9 @@ class InvoiceController extends Controller
     public function editInvoice(Entry $entry)
     {
         $suppliers = Supplier::all();
-        return view('invoice.edit_invoice', compact('entry', 'suppliers'));
+        $unitMeasures = UnitMeasure::all();
+        $categories = CategoryInvoice::all();
+        return view('invoice.edit_invoice', compact('entry', 'suppliers', 'categories', 'unitMeasures'));
     }
 
     public function updateInvoice(UpdateInvoiceRequest $request)
@@ -354,6 +356,7 @@ class InvoiceController extends Controller
             $entry->date_entry = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
             $entry->type_order = $request->get('type_order');
             $entry->observation = $request->get('observation');
+            $entry->category_invoice_id = $request->get('category_invoice_id');
             $entry->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
@@ -388,6 +391,25 @@ class InvoiceController extends Controller
                 $entry->image = $filename;
                 $entry->save();*/
             }
+
+            $items = json_decode($request->get('items'));
+
+            for ( $i=0; $i<sizeof($items); $i++ )
+            {
+                if ( $items[$i]->old == 0 )
+                {
+                    $detail_entry = DetailEntry::create([
+                        'entry_id' => $entry->id,
+                        'material_name' => $items[$i]->material,
+                        'ordered_quantity' => $items[$i]->quantity,
+                        'entered_quantity' => $items[$i]->quantity,
+                        'unit_price' => (float) round((float)$items[$i]->price,2),
+                        'material_unit' => $items[$i]->unit,
+                        'total_detail' => (float) $items[$i]->total
+                    ]);
+                }
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -397,5 +419,44 @@ class InvoiceController extends Controller
 
     }
 
+    public function destroyDetailInvoice(Request $request, $idDetail)
+    {
+        DB::beginTransaction();
+        try {
+            $detail = DetailEntry::find($idDetail);
 
+            $detail->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Detalle de factura eliminado.'], 200);
+
+    }
+
+    public function destroyInvoice( Request $request, $id )
+    {
+        DB::beginTransaction();
+        try {
+            $entry = Entry::find($id);
+
+            foreach ( $entry->details as $detail )
+            {
+                $detail->delete();
+            }
+
+            $entry->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Factura eliminada.'], 200);
+
+    }
 }
