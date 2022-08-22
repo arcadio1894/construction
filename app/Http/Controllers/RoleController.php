@@ -57,6 +57,7 @@ class RoleController extends Controller
         'orderExecutionAlmacen' => 'ORDENES EJECUCION PARA ALMACEN',
         'followMaterials' => 'SEGUIMIENTO DE MATERIALES',
         'requestPurchaseOperator' => 'SOLICITUD DE COMPRA',
+        'categoryInvoice'=>'CATEGORÍAS FACTURAS',
     ];
 
     public function index()
