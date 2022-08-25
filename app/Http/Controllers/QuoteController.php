@@ -17,6 +17,7 @@ use App\MaterialTaken;
 use App\Notification;
 use App\NotificationUser;
 use App\PaymentDeadline;
+use App\PorcentageQuote;
 use App\Quote;
 use App\QuoteUser;
 use App\UnitMeasure;
@@ -54,7 +55,11 @@ class QuoteController extends Controller
         $length = 5;
         $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
-        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines'));
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
+
+        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter'));
     }
 
     public function store(StoreQuoteRequest $request)
@@ -296,6 +301,9 @@ class QuoteController extends Controller
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
         $quote3 = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
@@ -397,7 +405,7 @@ class QuoteController extends Controller
             }])->first();
 
         //dump($quote);
-        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines'));
+        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter'));
 
     }
 

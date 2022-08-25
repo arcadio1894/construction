@@ -178,9 +178,9 @@
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
 
-                                <input type="hidden" name="" data-utilityEquipment value="20">
-                                <input type="hidden" name="" data-rentEquipment value="2">
-                                <input type="hidden" name="" data-letterEquipment value="3.7">
+                                <input type="hidden" name="" data-utilityEquipment value="{{ $utility->value }}">
+                                <input type="hidden" name="" data-rentEquipment value="{{ $rent->value }}">
+                                <input type="hidden" name="" data-letterEquipment value="{{ $letter->value }}">
 
                             </div>
                             <div class="col-md-9">
@@ -1131,9 +1131,9 @@
                                 <input type="number" data-quantityEquipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                     this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                     ">
-                                <input type="hidden" name="" data-utilityEquipment value="20">
-                                <input type="hidden" name="" data-rentEquipment value="2">
-                                <input type="hidden" name="" data-letterEquipment value="3.7">
+                                <input type="hidden" name="" data-utilityEquipment value="{{ $utility->value }}">
+                                <input type="hidden" name="" data-rentEquipment value="{{ $rent->value }}">
+                                <input type="hidden" name="" data-letterEquipment value="{{ $letter->value }}">
 
                             </div>
                             <div class="col-md-9">
