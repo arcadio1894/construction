@@ -58,6 +58,7 @@ class RoleController extends Controller
         'followMaterials' => 'SEGUIMIENTO DE MATERIALES',
         'requestPurchaseOperator' => 'SOLICITUD DE COMPRA',
         'categoryInvoice'=>'CATEGORÍAS FACTURAS',
+        'porcentageQuote' => 'PORCENTAJES DE COTIZACION'
     ];
 
     public function index()

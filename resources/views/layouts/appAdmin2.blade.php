@@ -826,6 +826,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('list_porcentageQuote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('porcentageQuote.index') }}" class="nav-link @yield('activePorcentagesQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Porcentajes</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

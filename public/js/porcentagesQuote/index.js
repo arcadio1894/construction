@@ -3,27 +3,32 @@ $(document).ready(function () {
     console.log($permissions);
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/categories/invoices",
+            url: "/dashboard/all/porcentages/quotes",
             dataSrc: 'data'
         },
         bAutoWidth: false,
         "aoColumns": [
             { data: 'name' },
-            { data: 'description' },
+            { data: 'value' },
             { data: null,
                 title: 'Acciones',
                 wrap: true,
                 "render": function (item)
                 {
+                    var words = ['utility', 'rent', 'letter', 'igv'];
+                    const found = words.find(word => item.name.split(' ').find(s=>s===word));
                     var text = '';
-                    if ( $.inArray('update_categoryInvoice', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/categoria/factura/'+item.id+
+                    if ( $.inArray('update_porcentageQuote', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/porcentaje/cotizacion/'+item.id+
                             '" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i></a>';
                     }
-                    if ( $.inArray('destroy_categoryInvoice', $permissions) !== -1 ) {
-                        text = text + ' <button data-delete="'+item.id+'" data-name="'+item.name+'" '+
-                            '" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>';
+                    if ( !found){
+                        if ( $.inArray('destroy_porcentageQuote', $permissions) !== -1 ) {
+                            text = text + ' <button data-delete="'+item.id+'" data-name="'+item.name+'" '+
+                                '" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>';
+                        }
                     }
+
                     return text;
 
                 } },
@@ -171,7 +176,7 @@ $(document).ready(function () {
     } );
 
     $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyCategory);
+    $formDelete.on('submit', destroyPorcentageQuote);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 });
@@ -181,16 +186,16 @@ var $modalDelete;
 var $permissions;
 
 function openModalDelete() {
-    var category_id = $(this).data('delete');
+    var porcentage_id = $(this).data('delete');
     var name = $(this).data('name');
 
-    $modalDelete.find('[id=category_id]').val(category_id);
+    $modalDelete.find('[id=porcentage_id]').val(porcentage_id);
     $modalDelete.find('[id=name]').html(name);
 
     $modalDelete.modal('show');
 }
 
-function destroyCategory() {
+function destroyPorcentageQuote() {
     event.preventDefault();
     // Obtener la URL
     var deleteUrl = $formDelete.data('url');
@@ -213,7 +218,7 @@ function destroyCategory() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",
@@ -238,7 +243,7 @@ function destroyCategory() {
                         "onclick": null,
                         "showDuration": "300",
                         "hideDuration": "1000",
-                        "timeOut": "4000",
+                        "timeOut": "2000",
                         "extendedTimeOut": "1000",
                         "showEasing": "swing",
                         "hideEasing": "linear",

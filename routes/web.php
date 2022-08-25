@@ -1065,6 +1065,27 @@ Route::middleware('auth')->group(function (){
             ->name('request.purchase.delete.operator')
             ->middleware('permission:delete_requestPurchaseOperator');
 
+        //PORCENTAGE QUOTES
+        Route::get('/all/porcentages/quotes', 'PorcentageQuoteController@getPorcentageQuotes')
+            ->middleware('permission:list_porcentageQuote');
+        Route::get('porcentajes/cotizaciones', 'PorcentageQuoteController@index')
+            ->name('porcentageQuote.index')
+            ->middleware('permission:list_porcentageQuote');
+        Route::get('crear/porcentaje', 'PorcentageQuoteController@create')
+            ->name('porcentageQuote.create')
+            ->middleware('permission:create_porcentageQuote');
+        Route::post('porcentage/store', 'PorcentageQuoteController@store')
+            ->name('porcentageQuote.store')
+            ->middleware('permission:create_porcentageQuote');
+        Route::get('/editar/porcentaje/cotizacion/{id}', 'PorcentageQuoteController@edit')
+            ->name('porcentageQuote.edit')
+            ->middleware('permission:update_porcentageQuote');
+        Route::post('porcentages/update', 'PorcentageQuoteController@update')
+            ->name('porcentageQuote.update')
+            ->middleware('permission:update_porcentageQuote');
+        Route::post('porcentages/destroy', 'PorcentageQuoteController@destroy')
+            ->name('porcentageQuote.destroy')
+            ->middleware('permission:destroy_porcentageQuote');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
