@@ -1087,6 +1087,13 @@ Route::middleware('auth')->group(function (){
             ->name('porcentageQuote.destroy')
             ->middleware('permission:destroy_porcentageQuote');
 
+        // REPORTE DE FACTURAS POR CATEGORIAS
+        Route::get('/reporte/faturas/finanzas', 'InvoiceController@reportInvoiceFinance')
+            ->name('report.invoice.finance')
+            ->middleware('permission:list_invoice');
+        Route::get('/get/json/invoices/finance', 'InvoiceController@getJsonInvoicesFinance');
+
+
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');

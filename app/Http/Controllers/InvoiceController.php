@@ -459,4 +459,30 @@ class InvoiceController extends Controller
         return response()->json(['message' => 'Factura eliminada.'], 200);
 
     }
+
+    public function getJsonInvoicesFinance()
+    {
+        $entries = Entry::with('supplier')
+            ->with(['details' => function ($query) {
+                $query->with('material');
+            }])
+            ->where('finance', 1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+        $array = [];
+        foreach ( $entries as $entry )
+        {
+            array_push($array, $entry);
+        }
+        //dd(datatables($entries)->toJson());
+        return datatables($array)->toJson();
+    }
+
+    public function reportInvoiceFinance()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('invoice.report_invoice', compact('permissions'));
+    }
 }

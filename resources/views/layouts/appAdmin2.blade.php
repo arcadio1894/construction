@@ -1384,6 +1384,12 @@
                                             <p>Listar compras/Servicios</p>
                                         </a>
                                     </li>
+                                    {{--<li class="nav-item">
+                                        <a href="{{route('report.invoice.finance')}}" class="nav-link @yield('activeReportInvoice')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Facturas finanzas</p>
+                                        </a>
+                                    </li>--}}
                                 @endcan
                                 @can('create_invoice')
                                     <li class="nav-item">
