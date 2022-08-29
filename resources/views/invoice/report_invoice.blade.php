@@ -46,7 +46,7 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Facturas s}de Finanzas</h1>
+    <h1 class="page-title">Facturas de Finanzas</h1>
 @endsection
 
 @section('page-title')
@@ -92,6 +92,7 @@
                 <th>Tipo de entrada</th>
                 <th>Proveedor</th>
                 <th>Diferido</th>
+                <th>Categoría</th>
                 <th>Subtotal</th>
                 <th>Impuestos</th>
                 <th>Total</th>
@@ -104,7 +105,9 @@
             </tbody>
             <tfoot>
             <tr>
-                <th colspan="8" style="text-align:right">Total:</th>
+                <th colspan="3" style="text-align:right">Resumen de totales</th>
+                <th colspan="3"></th>
+                <th colspan="3"></th>
                 <th colspan="3"></th>
             </tr>
             </tfoot>
@@ -234,10 +237,12 @@
 
 @section('plugins')
     <!-- Datatables -->
+
     <script src="{{ asset('admin/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/datatables-responsive/js/dataTables.responsive.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
+    {{--<script src="https://cdn.datatables.net/plug-ins/1.12.1/api/sum().js"></script>--}}
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
 @endsection
@@ -247,4 +252,40 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/invoice/report_invoice.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            $('#example').DataTable({
+                footerCallback: function (row, data, start, end, display) {
+                    var api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    var intVal = function (i) {
+                        //console.log(i);
+                        return typeof i === 'string' ? i.replace(/[\$,]/g, '') * 1 : typeof i === 'number' ? i : 0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(4)
+                        .data()
+                        .reduce(function (a, b) {
+                            //console.log(a);
+                            //console.log(b);
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Total over this page
+                    pageTotal = api
+                        .column(4, { page: 'current' })
+                        .data()
+                        .reduce(function (a, b) {
+                            return intVal(a) + intVal(b);
+                        }, 0);
+
+                    // Update footer
+                    $(api.column(4).footer()).html('$' + pageTotal + ' ( $' + total + ' total)');
+                },
+            });
+        });
+    </script>
 @endsection

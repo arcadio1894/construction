@@ -265,7 +265,7 @@ class InvoiceController extends Controller
 
     public function getJsonInvoices()
     {
-        $entries = Entry::with('supplier')
+        $entries = Entry::with('supplier')->with('category_invoice')
             ->with(['details' => function ($query) {
                 $query->with('material');
             }])
@@ -318,7 +318,8 @@ class InvoiceController extends Controller
 
     public function getInvoices()
     {
-        $entries = Entry::with('supplier')->with(['details' => function ($query) {
+        $entries = Entry::with('supplier')
+            ->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered')
                     ->with('typescrap')
@@ -327,6 +328,7 @@ class InvoiceController extends Controller
                     }]);
             }]);
         }])
+            ->with('category_invoice')
             ->where('entry_type', 'Por compra')
             ->orderBy('created_at', 'desc')
             ->get();
@@ -466,6 +468,7 @@ class InvoiceController extends Controller
             ->with(['details' => function ($query) {
                 $query->with('material');
             }])
+            ->with('category_invoice')
             ->where('finance', 1)
             ->orderBy('created_at', 'desc')
             ->get();

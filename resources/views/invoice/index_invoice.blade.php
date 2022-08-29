@@ -92,6 +92,7 @@
                 <th>Tipo de entrada</th>
                 <th>Proveedor</th>
                 <th>Diferido</th>
+                <th>Categoría</th>
                 <th>Subtotal</th>
                 <th>Impuestos</th>
                 <th>Total</th>

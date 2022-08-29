@@ -120,6 +120,17 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Categoría',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.category_invoice_id != null )
+                        return '<span class="badge bg-success">'+ item.category_invoice.name +'</span>';
+                    else
+                        return '<span class="badge bg-warning">No tiene</span>';
+                }
+            },
+            { data: null,
                 title: 'Subtotal',
                 wrap: true,
                 "render": function (item)

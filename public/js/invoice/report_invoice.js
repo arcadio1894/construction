@@ -30,45 +30,84 @@ $(document).ready(function () {
     });
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
+
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/invoices/finance",
             dataSrc: 'data'
         },
         bAutoWidth: false,
-        footerCallback: function (row, data, start, end, display) {
+        "footerCallback": function (row, data, start, end, display) {
             var api = this.api();
-
+            var json = api.ajax.json();
+            console.log(json);
             // Remove the formatting to get integer data for summation
             var intVal = function (i) {
-
-                if ( isNaN(parseFloat(i.total)) == false )
+                /*if ( isNaN(parseFloat(i.total)) == false )
                 {
                     console.log(parseFloat(i.total));
                     return parseFloat(i.total);
-                }
+                }*/
                 //console.log(parseFloat(i.total));
-                return 0;//parseFloat(i.slice(0, 3));
+                //return 0;//parseFloat(i.slice(0, 3));
+                //console.log(i);
+                //console.log(typeof i);
+                /*console.log(typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0);*/
+                //return (isNaN(parseFloat(i.total)) === false) ? parseFloat(i.total): 0 ;
+                return typeof i === 'string' ?
+                    i.replace(/[\$,]/g, '')*1 :
+                    typeof i === 'number' ?
+                        i : 0;
             };
 
-            // Total over all pages
-            total = api
-                .column(8)
+            // Total over all pages USD
+            var totalUSD = api
+                .column(9, {search: 'applied'})
                 .data()
                 .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
+                    var newB = (b.currency_invoice === 'USD') ? parseFloat(b.total):0;
+                    return intVal(a) + intVal(parseFloat(newB));
+                    //return intVal(a) + intVal(b);
+                }, 0);
+            var totalPEN = api
+                .column(9, {search: 'applied'})
+                .data()
+                .reduce(function (a, b) {
+                    var newB = (b.currency_invoice === 'PEN') ? parseFloat(b.total):0;
+                    return intVal(a) + intVal(parseFloat(newB));
+                    //return intVal(a) + intVal(b);
+                }, 0);
+
+            // Total over all pages PEN
+            var total = api
+                .column(9, {search: 'applied'})
+                .data()
+                .reduce(function (a, b) {
+                    var newB = (b.currency_invoice === 'USD') ? parseFloat(b.currency_venta)*parseFloat(b.total):parseFloat(b.total);
+                    return intVal(a) + intVal(parseFloat(newB));
+                    //return intVal(a) + intVal(b);
                 }, 0);
 
             // Total over this page
-            pageTotal = api
-                .column(8, { page: 'current' })
+            var pageTotal = api
+                .column(9, { page: 'current' })
                 .data()
                 .reduce(function (a, b) {
-                    return intVal(a) + intVal(b);
+                    //console.log(a);
+                    //console.log(parseFloat(b.total));
+                    var newB = (b.currency_invoice === 'USD') ? parseFloat(b.currency_venta)*parseFloat(b.total):parseFloat(b.total);
+                    return intVal(a) + intVal(parseFloat(newB));
                 }, 0);
 
             // Update footer
-            $(api.column(8).footer()).html('$' + pageTotal + ' ( $' + total + ' total)');
+            //$(api.column(8).footer()).html('PEN ' + parseFloat(pageTotal).toFixed(2) + ' ( PEN ' + parseFloat(total).toFixed(2) + ' total)');
+            $(api.column(9).footer()).html('Total Total: PEN ' + parseFloat(total).toFixed(2) );
+            $(api.column(6).footer()).html('Total USD: USD ' + parseFloat(totalUSD).toFixed(2));
+            $(api.column(3).footer()).html('Total PEN: PEN ' + parseFloat(totalPEN).toFixed(2));
+
         },
         "aoColumns": [
             { data: null,
@@ -154,6 +193,17 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Categoría',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.category_invoice_id != null )
+                        return '<span class="badge bg-success">'+ item.category_invoice.name +'</span>';
+                    else
+                        return '<span class="badge bg-warning">No tiene</span>';
+                }
+            },
+            { data: null,
                 title: 'Subtotal',
                 wrap: true,
                 "render": function (item)
@@ -190,8 +240,10 @@ $(document).ready(function () {
                     if ( item.code == null )
                     {
                         return item.currency_invoice+' '+item.total;
+                        //return parseFloat(item.total);
                     } else {
                         return item.currency_order+' '+item.total;
+                        //return parseFloat(item.total);
                     }
 
                 }
