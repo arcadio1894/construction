@@ -1140,6 +1140,81 @@ function saveTableItemsCustom() {
     var equipment_name = $modalAddItemsCustom.find('[id=equipment_name_custom]').val();
 
     const result = $materialsComplete.find( material => material.material.trim() === $('#material_selected_custom').val().trim() );
+
+
+    if ( result.typescrap == 1 || result.typescrap == 2 )
+    {
+        if ($('#length_new_custom').val() == '' || $('#length_new_custom').val() == 0)
+        {
+            toastr.error('Debe colocar un largo adecuado', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if ($('#width_new_custom').val() == '' || $('#width_new_custom').val() == 0)
+        {
+            toastr.error('Debe colocar un ancho adecuado', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    }
+    if ( result.typescrap == 3 )
+    {
+        if ($('#length_new_custom').val() == '' || $('#length_new_custom').val() == 0)
+        {
+            toastr.error('Debe colocar un largo adecuado', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    }
+
     if ( result.typescrap == 1 || result.typescrap == 2 )
     {
         let largo = $('#length_new_custom').val();
