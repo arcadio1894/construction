@@ -200,6 +200,7 @@
                             <th style="width: 10px">#</th>
                             <th>Material</th>
                             <th>Código</th>
+                            <th>Crear Item</th>
                             <th>Largo</th>
                             <th>Ancho</th>
                             <th>Precio</th>
@@ -215,6 +216,9 @@
                                 <td data-i></td>
                                 <td data-material></td>
                                 <td data-code></td>
+                                <td>
+                                    <button type="button" data-itemCustom class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Crear</button>
+                                </td>
                                 <td data-length></td>
                                 <td data-width><span class="badge bg-danger">55%</span></td>
                                 <td data-price></td>

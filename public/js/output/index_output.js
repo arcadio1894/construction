@@ -472,7 +472,7 @@ function showItems() {
             //
             for (var i=0; i<json.array.length; i++)
             {
-                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state);
+                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state, json.array[i].detail_id);
                 //$materials.push(json[i].material);
             }
 
