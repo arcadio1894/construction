@@ -79,7 +79,9 @@
                 <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end">
             </div>
         </div>
-
+        <div class="col-md-3">
+            <button type="button" id="btn-export" class="btn btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
+        </div>
         <br><br>
     </div>
     <div class="table-responsive">

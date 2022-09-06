@@ -566,6 +566,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', deleteItem);
 
+    $('#btn-export').on('click', exportExcel);
+
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
@@ -578,12 +580,12 @@ $(document).ready(function () {
 
             if ( (min === "" || max === "") ||  (diffDate.isBetween(startDate, endDate, null, '[]')) )
             {
-                console.log("Es true" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
-                console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate + " " );
+                //console.log("Es true" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+                //console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate + " " );
                 return true;
             }
-            console.log("Es false" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
-            console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate);
+            //console.log("Es false" + (diffDate.isBetween(startDate, endDate, null, '[]')) );
+            //console.log(min + " " + max + " " + createdAt + " " + startDate + " " + endDate + " " + diffDate);
 
             return false;
 
@@ -622,6 +624,239 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function exportExcel() {
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    console.log(start);
+    console.log(end);-
+    console.log(startDate);
+    console.log(endDate);
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todas las facturas',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/reporte/factura/?" + $.param(query);
+
+                        window.location = url;
+
+                        /*$.ajax({
+                            url: '/dashboard/exportar/reporte/factura',
+                            method: 'POST',
+                            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                            data: { start:JSON.stringify(start), end:JSON.stringify(end) },
+                            processData:false,
+                            contentType:false,
+                            success: function (response) {
+                                console.log(response);
+                                const url = window.URL.createObjectURL(new Blob([response.data]));
+                                const link = document.createElement('a');
+                                link.setAttribute('download', 'file.pdf');
+                                document.body.appendChild(link);
+                                link.click();
+
+                                $.alert('Reporte de facturas descargado.');
+                                setTimeout( function () {
+                                    //location.reload();
+                                }, 2000 )
+
+                            },
+                            error: function (data) {
+                                if( data.responseJSON.message && !data.responseJSON.errors )
+                                {
+                                    toastr.error(data.responseJSON.message, 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+                                for ( var property in data.responseJSON.errors ) {
+                                    toastr.error(data.responseJSON.errors[property], 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                }
+
+
+                            },
+                        });*/
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+        /*$.ajax({
+            url: '/dashboard/exportar/reporte/factura',
+            method: 'POST',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data: { start:JSON.stringify(start), end:JSON.stringify(end) },
+            //processData:false,
+            //contentType:'application/json; charset=utf-8',
+            success: function (data) {
+                console.log(data);
+
+                toastr.success('Descarga realizada!!', 'Éxito',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "2000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                setTimeout( function () {
+                    //location.reload();
+                }, 2000 )
+
+            },
+            error: function (data) {
+                if( data.responseJSON.message && !data.responseJSON.errors )
+                {
+                    toastr.error(data.responseJSON.message, 'Error',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                }
+                for ( var property in data.responseJSON.errors ) {
+                    toastr.error(data.responseJSON.errors[property], 'Error',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                }
+
+
+            },
+        });*/
+        var query = {
+            start: start,
+            end: end
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/reporte/factura/?" + $.param(query);
+
+        window.location = url;
+
+    }
+
+}
 
 function deleteItem() {
     var id = $(this).data('delete');

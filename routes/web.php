@@ -909,6 +909,8 @@ Route::middleware('auth')->group(function (){
         Route::get('reporte/cotizaciones/resumen', 'ReportController@quoteSummaryReport')
             ->name('report.quote.summary')
             ->middleware('permission:quoteTotal_report');
+        Route::get('exportar/reporte/factura', 'InvoiceController@exportInvoices')
+            ->middleware('permission:list_invoice');
 
         // SERVICIOS y ORDENES DE SERVICIOS
         Route::get('/ordenes/servicio', 'OrderServiceController@indexOrderServices')
