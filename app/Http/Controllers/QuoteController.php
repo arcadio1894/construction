@@ -42,6 +42,15 @@ class QuoteController extends Controller
         return view('quote.index', compact('quotes', 'permissions'));
     }
 
+    public function indexGeneral()
+    {
+        $quotes = Quote::with(['customer'])->get();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('quote.general', compact('quotes', 'permissions'));
+    }
+
     public function create()
     {
         $user = Auth::user();
@@ -741,6 +750,18 @@ class QuoteController extends Controller
             ->where('raise_status', 0)
             ->whereNotIn('state', ['canceled', 'expired'])
             ->where('state_active', 'open')
+            ->orderBy('created_at', 'desc')
+            ->get();
+        return datatables($quotes)->toJson();
+    }
+
+    public function getAllQuotesGeneral()
+    {
+        $quotes = Quote::with('customer')
+            ->with('deadline')
+            ->with(['users' => function ($query) {
+                $query->with(['user']);
+            }])
             ->orderBy('created_at', 'desc')
             ->get();
         return datatables($quotes)->toJson();

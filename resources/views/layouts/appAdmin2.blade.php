@@ -780,6 +780,14 @@
                             <ul class="nav nav-treeview">
                                 @can('list_quote')
                                     <li class="nav-item">
+                                        <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listado general</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('list_quote')
+                                    <li class="nav-item">
                                         <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar cotizaciones</p>

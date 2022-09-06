@@ -653,6 +653,9 @@ Route::middleware('auth')->group(function (){
         Route::get('cotizaciones', 'QuoteController@index')
             ->name('quote.index')
             ->middleware('permission:list_quote');
+        Route::get('cotizaciones/totales', 'QuoteController@indexGeneral')
+            ->name('quote.list.general')
+            ->middleware('permission:list_quote');
         Route::get('crear/cotizacion', 'QuoteController@create')
             ->name('quote.create')
             ->middleware('permission:create_quote');
@@ -670,6 +673,7 @@ Route::middleware('auth')->group(function (){
             ->name('quote.store')
             ->middleware('permission:create_quote');
         Route::get('/all/quotes', 'QuoteController@getAllQuotes');
+        Route::get('/all/quotes/general', 'QuoteController@getAllQuotesGeneral');
         Route::get('ver/cotizacion/{quote}', 'QuoteController@show')
             ->name('quote.show')
             ->middleware('permission:list_quote');
