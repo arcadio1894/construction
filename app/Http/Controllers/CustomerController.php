@@ -28,27 +28,34 @@ class CustomerController extends Controller
 
     public function store(StoreCustomerRequest $request)
     {
+        //dd($request);
         $validated = $request->validated();
 
         DB::beginTransaction();
         try {
 
-                $customer = Customer::create([
-                    'business_name' => $request->get('business_name'),
-                    'RUC' => $request->get('ruc'),
-                    'address' => $request->get('address'),
-                    'location' => $request->get('location'),
-                ]);
+            if ( ($request->get('special') !== 'true') && strlen($request->get('ruc')) > 11 )
+            {
+                return response()->json(['message' => 'El RUC es demasiado largo, porque no es extranjero'], 422);
+            }
 
-                $length = 5;
-                $string = $customer->id;
-                $codecustomer = 'C-'.str_pad($string,$length,"0", STR_PAD_LEFT);
-                //output: 0012345
+            $customer = Customer::create([
+                'business_name' => $request->get('business_name'),
+                'RUC' => $request->get('ruc'),
+                'address' => $request->get('address'),
+                'location' => $request->get('location'),
+                'special' => ($request->get('special') === 'true') ? true:false,
+            ]);
 
-                $customer->code = $codecustomer;
-                $customer->save();
+            $length = 5;
+            $string = $customer->id;
+            $codecustomer = 'C-'.str_pad($string,$length,"0", STR_PAD_LEFT);
+            //output: 0012345
 
-                DB::commit();
+            $customer->code = $codecustomer;
+            $customer->save();
+
+            DB::commit();
 
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -65,12 +72,18 @@ class CustomerController extends Controller
         DB::beginTransaction();
         try {
 
+            if ( ($request->get('special') !== 'true') && strlen($request->get('ruc')) > 11 )
+            {
+                return response()->json(['message' => 'El RUC es demasiado largo, porque no es extranjero'], 422);
+            }
+
             $customer = Customer::find($request->get('customer_id'));
 
             $customer->business_name = $request->get('business_name');
             $customer->RUC = $request->get('ruc');
             $customer->address = $request->get('address');
             $customer->location = $request->get('location');
+            $customer->special = ($request->get('special') === 'true') ? true:false;
             $customer->save();
 
             DB::commit();

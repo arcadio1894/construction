@@ -26,7 +26,7 @@ class UpdateCustomerRequest extends FormRequest
         return [
             'customer_id' => 'required|exists:customers,id',
             'business_name' => 'required|string|max:255',
-            'ruc' => 'required|digits:11|string',
+            'ruc' => 'required|string',
             'address' => 'nullable|string|max:255',
             'location' => 'nullable|string|max:255',
             
@@ -46,8 +46,8 @@ class UpdateCustomerRequest extends FormRequest
 
             'ruc.required' => 'El :attribute es obligatorio.',
             'ruc.string' => 'El :attribute debe contener caracteres válidos.',            
-            'ruc.digits' => 'El :attribute es demasiado largo.',
-            'ruc.numeric' => 'El :attribute debe ser numerico.',
+            //'ruc.digits' => 'El :attribute es demasiado largo.',
+            //'ruc.numeric' => 'El :attribute debe ser numerico.',
 
             'address.string' => 'La :attribute debe contener caracteres válidos.',
             'address.max' => 'La :attribute debe contener máximo 255 caracteres.',

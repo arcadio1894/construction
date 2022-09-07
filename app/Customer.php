@@ -12,7 +12,7 @@ class Customer extends Model
     use SoftDeletes, CascadeSoftDeletes;
 
     protected $fillable = [
-        'business_name','RUC', 'code','address', 'location'
+        'business_name','RUC', 'code','address', 'location', 'special'
     ];
 
     protected $cascadeDeletes = ['contactNames'];
