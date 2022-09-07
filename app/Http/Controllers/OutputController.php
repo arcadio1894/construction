@@ -1152,24 +1152,36 @@ class OutputController extends Controller
             $details = $output->details;
             foreach ( $details as $detail )
             {
-                $item = Item::find($detail->item_id);
-                // TODO:Logica para traer el verdadero quantity del item
-                $after_item = Item::where('code', $item->code)
-                    ->where('id', '<>', $item->id)
-                    ->orderBy('created_at', 'asc')
-                    ->first();
-
-                if ( $after_item )
+                if ( $detail->material_id == $material_id )
                 {
-                    $quantity = ($item->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item->percentage-(float)$after_item->percentage;
-                } else {
-                    $quantity = (float)$item->percentage;
-                }
-                if ( $item->material_id == $material_id )
-                {
-                    array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
+                    if ( $detail->item_id == null )
+                    {
+                        $material = Material::find($detail->material_id);
+                        array_push($items_quantity, array('material_id'=>$material->id, 'material'=>$material->full_description, 'quantity'=> $detail->percentage));
 
+                    } else {
+                        $item = Item::find($detail->item_id);
+                        // TODO:Logica para traer el verdadero quantity del item
+                        $after_item = Item::where('code', $item->code)
+                            ->where('id', '<>', $item->id)
+                            ->orderBy('created_at', 'asc')
+                            ->first();
+
+                        if ( $after_item )
+                        {
+                            $quantity = ($item->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item->percentage-(float)$after_item->percentage;
+                        } else {
+                            $quantity = (float)$item->percentage;
+                        }
+                        if ( $item->material_id == $material_id )
+                        {
+                            array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'quantity'=> $quantity));
+
+                        }
+                    }
                 }
+
+
                 //array_push($items_quantity, array('material_id'=>$item->material_id, 'material'=>$item->material->full_description, 'material_complete'=>$item->material, 'quantity'=> $item->percentage));
 
             }
@@ -1189,7 +1201,7 @@ class OutputController extends Controller
         $items = array_values($new_arr3);
 
         return response()->json(
-            [   'material' => (float)$materials[0]['material'],
+            [   'material' => (float)$materials[0]['material_id'],
                 'quantity' => ($materials[0]['quantity'] == null) ? 0 : (float)$materials[0]['quantity'],
                 'request' => ( count($items) == 0) ? 0 : (float)$items[0]['quantity'],
                 'missing' => ( count($items) == 0) ? (float)$materials[0]['quantity'] : (float)$materials[0]['quantity'] - (float)$items[0]['quantity']
