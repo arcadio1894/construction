@@ -1245,4 +1245,26 @@ class OutputController extends Controller
             $material_taken->save();
         }
     }
+
+    public function confirmAllOutputsAttend( Request $request )
+    {
+        DB::beginTransaction();
+        try {
+            $outputs = Output::where('state', 'attended')->get();
+
+            //dd($outputs);
+            foreach ( $outputs as $output )
+            {
+                $output->state = 'confirmed';
+                $output->save();
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Salidas confirmadas con éxito.'], 200);
+
+    }
 }

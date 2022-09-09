@@ -352,6 +352,8 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-confirm]', openModalConfirm);
+
+    $('#btn-allconfirm').on('click', confirmAllOutputs);
 });
 
 let $modalItems;
@@ -377,6 +379,48 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function confirmAllOutputs() {
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de confirmar todas las solicitudes atendidas?',
+        content: 'Acepte para continuar',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: 'confirm/outputs/attend',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Confirmación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function showMaterialsInQuote() {
     $modalItemsMaterials.find('[id=code_quote]').html('');

@@ -46,8 +46,13 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de salidas</h5>
+
     @can('create_request')
-    <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud </a>
+       <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud </a>
+    @endcan
+
+    @can('confirm_output')
+         <button id="btn-allconfirm" class="btn btn-outline-warning btn-sm float-right" > <i class="fas fa-check-double"></i> Confirmar solicitudes atendidas </button>
     @endcan
 @endsection
 
