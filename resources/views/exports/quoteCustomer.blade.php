@@ -247,8 +247,11 @@
         <div>TÉRMINOS Y CONDICIONES:</div>
         <div class="notice">FORMA DE PAGO: {{ ($quote->deadline !== null) ? $quote->deadline->description : 'No tiene forma de pago' }} </div>
         <div class="notice">TIEMPO DE ENTREGA: {{ $quote->delivery_time }}</div>
-        <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
-
+        @if( $quote->currency_invoice === 'USD' )
+            <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
+        @else
+            <div class="notice">PRECIO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
+        @endif
     </div>
     <br><br>
     <div id="notices">
