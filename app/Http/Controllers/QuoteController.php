@@ -684,13 +684,14 @@ class QuoteController extends Controller
 
     public function getMaterials()
     {
-        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')->get();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('enable_status', 1)->get();
         return $materials;
     }
 
     public function getMaterialsTypeahead()
     {
-        $materials = Material::all();
+        $materials = Material::where('enable_status', 1)->get();
         return $materials;
     }
 
@@ -736,7 +737,7 @@ class QuoteController extends Controller
     public function getConsumables()
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
-            ->where('category_id', 2)->get();
+            ->where('category_id', 2)->where('enable_status', 1)->get();
         return $materials;
     }
 
