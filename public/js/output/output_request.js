@@ -334,7 +334,8 @@ function saveTableItems() {
         //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
         if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
         {
-            $items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
+            //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
+            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':'','equipment_id': '','item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
             renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
         } else {
             toastr.error('Este item ya fue ingresado. Elija otro', 'Error',

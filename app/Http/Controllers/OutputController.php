@@ -662,8 +662,8 @@ class OutputController extends Controller
                         'price' => $item->price,
                         'percentage' => $item->percentage,
                         'material_id' => $item->material_id,
-                        'equipment_id' => $item->equipment_id,
-                        'quote_id' => $quote->id,
+                        'equipment_id' => ( $item->equipment_id == '' ) ? null:$item->equipment_id,
+                        'quote_id' => ($quote == null) ? '': $quote->id,
                         'custom' => 1
 
                     ]);
@@ -685,8 +685,8 @@ class OutputController extends Controller
                             'price' => $item->price,
                             'percentage' => $item->percentage,
                             'material_id' => $item->material_id,
-                            'equipment_id' => $item->equipment_id,
-                            'quote_id' => $quote->id,
+                            'equipment_id' => ( $item->equipment_id == '' ) ? null:$item->equipment_id,
+                            'quote_id' => ($quote == null) ? null: $quote->id,
                             'custom' => 0
                         ]);
                     }
@@ -830,7 +830,10 @@ class OutputController extends Controller
                 }
             }
             $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
-            $material_taken->delete();
+            if (isset( $material_taken->id ))
+            {
+                $material_taken->delete();
+            }
 
             $outputDetail->delete();
             DB::commit();

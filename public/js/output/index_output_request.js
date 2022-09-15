@@ -4,6 +4,7 @@ let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
 
+/*
 function format ( d ) {
     var mensaje = "";
     var detalles = d.details;
@@ -21,6 +22,7 @@ function format ( d ) {
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
 }
+*/
 
 $(document).ready(function () {
     var table = $('#dynamic-table').DataTable( {
@@ -471,7 +473,7 @@ function showModalDeletePartial() {
 }
 
 function showModalReturnMaterials() {
-    $('#table-itemsDelete').html('');
+    $('#table-itemsReturn').html('');
     var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
@@ -880,6 +882,7 @@ function returnItemMaterials() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            $modalReturnMaterials.modal('hide');
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )

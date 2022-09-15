@@ -164,6 +164,56 @@
         </div>
     </div>
 
+    <div id="modalReturnMaterials" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Retornar items de la solicitud</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12">
+                        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Importante!</strong> Al hacer click en retornar se modificará la base de datos.
+                        </div>
+                    </div>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Código</th>
+                            <th>Material</th>
+                            <th>Largo</th>
+                            <th>Ancho</th>
+                            <th>Porcentaje</th>
+                            <th>Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-itemsReturn">
+
+                        </tbody>
+                        <template id="template-itemReturn">
+                            <tr>
+                                <td data-i></td>
+                                <td data-code></td>
+                                <td data-material></td>
+                                <td data-length></td>
+                                <td data-width></td>
+                                <td data-percentage></td>
+                                <td >
+                                    <button type="button" data-itemReturn data-output class="btn btn-sm btn-success"><i class="fa fa-trash"></i> Devolver</button>
+                                </td>
+                            </tr>
+                        </template>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     @can('confirm_output')
     <div id="modalConfirm" class="modal fade" tabindex="-1">
         <div class="modal-dialog">

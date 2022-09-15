@@ -532,7 +532,7 @@ function showItems() {
 }
 
 function showModalReturnMaterials() {
-    $('#table-itemsDelete').html('');
+    $('#table-itemsReturn').html('');
     var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
@@ -830,6 +830,7 @@ function returnItemMaterials() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            $modalReturnMaterials.modal('hide');
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
