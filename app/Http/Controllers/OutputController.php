@@ -357,11 +357,6 @@ class OutputController extends Controller
         {
             $itemsNull = OutputDetail::where('output_id', $output->id)
                 ->whereNull('item_id')->count();
-            $status = ($output->state === 'created') ? '<span class="badge bg-success">Solicitud creada</span>' :
-                ($output->state === 'attended') ? '<span class="badge bg-warning">Solicitud atendida</span>' :
-                    ($output->state === 'confirmed') ? '<span class="badge bg-secondary">Solicitud confirmada</span>' :
-                        'Indefinido';
-            $custom = ($itemsNull > 0) ? '<span class="badge bg-danger">Solicitud personalizada</span>': '';
             array_push($array, [
                 'id' => $output->id,
                 'execution_order' => $output->execution_order,
@@ -369,7 +364,6 @@ class OutputController extends Controller
                 'request_date' => $output->request_date,
                 'requesting_user' => $output->requestingUser->name,
                 'responsible_user' => $output->responsibleUser->name,
-                'state_custom' => '<p> '.$status.' </p>' . '<p> '.$custom.' </p>',
                 'state' => $output->state,
                 'custom' => ($itemsNull > 0) ? true: false,
             ]);
