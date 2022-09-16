@@ -521,9 +521,10 @@ class InvoiceController extends Controller
                     'type_order' => ($invoice->type_order == 'purchase' || $invoice->type_order == null) ? 'Por compra':'Por servicio',
                     'supplier' => ($invoice->supplier_id != null) ? $invoice->supplier->business_name:'No tiene',
                     'category' => ($invoice->category_invoice_id != null) ? $invoice->category_invoice->name:'No tiene',
-                    'subtotal' => $invoice->currency_invoice.' '. $invoice->sub_total,
-                    'taxes' => $invoice->currency_invoice.' '. $invoice->taxes,
-                    'total' => $invoice->currency_invoice.' '. $invoice->total,
+                    'currency' => $invoice->currency_invoice,
+                    'subtotal' => $invoice->sub_total,
+                    'taxes' => $invoice->taxes,
+                    'total' => $invoice->total,
                 ]);
             }
 
@@ -551,9 +552,10 @@ class InvoiceController extends Controller
                     'type_order' => ($invoice->type_order == 'purchase' || $invoice->type_order == null) ? 'Por compra':'Por servicio',
                     'supplier' => ($invoice->supplier_id != null) ? $invoice->supplier->business_name:'No tiene',
                     'category' => ($invoice->category_invoice_id != null) ? $invoice->category_invoice->name:'No tiene',
-                    'subtotal' => $invoice->currency_invoice.' '. $invoice->sub_total,
-                    'taxes' => $invoice->currency_invoice.' '. $invoice->taxes,
-                    'total' => $invoice->currency_invoice.' '. $invoice->total,
+                    'currency' => $invoice->currency_invoice,
+                    'subtotal' => $invoice->sub_total,
+                    'taxes' => $invoice->taxes,
+                    'total' => $invoice->total,
                 ]);
             }
 

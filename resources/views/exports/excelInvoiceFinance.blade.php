@@ -77,6 +77,7 @@
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Tipo de orden</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Proveedor</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Categoría</th>
+            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Moneda</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Sub Total</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Impuestos</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Total</th>
@@ -92,6 +93,7 @@
                 <th width="150px">{{ $invoices[$i]['type_order'] }}</th>
                 <th width="150px">{{ $invoices[$i]['supplier'] }}</th>
                 <th width="150px">{{ $invoices[$i]['category'] }}</th>
+                <th width="150px">{{ $invoices[$i]['currency'] }}</th>
                 <th width="150px">{{ $invoices[$i]['subtotal'] }}</th>
                 <th width="150px">{{ $invoices[$i]['taxes'] }}</th>
                 <th width="150px">{{ $invoices[$i]['total'] }}</th>
@@ -104,6 +106,7 @@
                 <th width="150px">{{ $invoices[$i]['type_order'] }}</th>
                 <th width="150px">{{ $invoices[$i]['supplier'] }}</th>
                 <th width="150px">{{ $invoices[$i]['category'] }}</th>
+                <th width="150px">{{ $invoices[$i]['currency'] }}</th>
                 <th width="150px">{{ $invoices[$i]['subtotal'] }}</th>
                 <th width="150px">{{ $invoices[$i]['taxes'] }}</th>
                 <th width="150px">{{ $invoices[$i]['total'] }}</th>
