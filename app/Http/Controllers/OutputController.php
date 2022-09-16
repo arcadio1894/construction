@@ -346,14 +346,37 @@ class OutputController extends Controller
     public function getOutputRequest()
     {
         $outputs = Output::with('requestingUser')
-            ->with('details')
             ->with('responsibleUser')
             ->with('quote')
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+            $status = ($output->state === 'created') ? '<span class="badge bg-success">Solicitud creada</span>' :
+                ($output->state === 'attended') ? '<span class="badge bg-warning">Solicitud atendida</span>' :
+                    ($output->state === 'confirmed') ? '<span class="badge bg-secondary">Solicitud confirmada</span>' :
+                        'Indefinido';
+            $custom = ($itemsNull > 0) ? '<span class="badge bg-danger">Solicitud personalizada</span>': '';
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $output->requestingUser->name,
+                'responsible_user' => $output->responsibleUser->name,
+                'state_custom' => '<p> '.$status.' </p>' . '<p> '.$custom.' </p>',
+                'state' => $output->state,
+                'custom' => ($itemsNull > 0) ? true: false,
+            ]);
+        }
+
         //dd($outputs);
-        return datatables($outputs)->toJson();
+        return datatables($array)->toJson();
     }
 
     public function getJsonItemsOutputRequest( $output_id )
@@ -870,11 +893,6 @@ class OutputController extends Controller
             }
             return false;
         }
-
-    }
-
-    public function puedoEliminarSalida( $output_id )
-    {
 
     }
 

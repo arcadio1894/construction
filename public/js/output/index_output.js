@@ -5,7 +5,7 @@ let $locationsComplete=[];
 let $items=[];
 var $permissions;
 
-function format ( d ) {
+/*function format ( d ) {
     var mensaje = "";
     var detalles = d.details;
     console.log(detalles);
@@ -21,7 +21,7 @@ function format ( d ) {
     }
     return 'DETALLES DE ENTRADA'+'<br>'+
         mensaje;
-}
+}*/
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
@@ -41,18 +41,27 @@ $(document).ready(function () {
                     return '<p> Solicitud-'+ item.id +'</p>';
                 }
             },
-            { data: 'execution_order' },
+            { data: null,
+                title: 'Orden de ejecución',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.execution_order;
+                }
+            },
+            /*{ data: 'execution_order' },*/
             { data: null,
                 title: 'Descripción',
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.quote != null )
+                    /*if ( item.quote != null )
                     {
                         return '<p>'+ item.quote.description_quote +'</p>';
                     } else {
                         return '<p> No hay datos </p>';
-                    }
+                    }*/
+                    return '<p>'+ item.description_quote +'</p>';
 
                 }
             },
@@ -64,8 +73,24 @@ $(document).ready(function () {
                     return '<p> '+ moment(item.request_date).format('DD-MM-YYYY H:m a') +'</p>'
                 }
             },
-            { data: 'requesting_user.name' },
-            { data: 'responsible_user.name' },
+            /*{ data: 'requesting_user.name' },*/
+            { data: null,
+                title: 'Usuario solicitante',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.requesting_user;
+                }
+            },
+            /*{ data: 'responsible_user.name' },*/
+            { data: null,
+                title: 'Usuario responsable',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.responsible_user;
+                }
+            },
             { data: null,
                 title: 'Estado',
                 wrap: true,
@@ -75,14 +100,10 @@ $(document).ready(function () {
                         (item.state === 'attended') ? '<span class="badge bg-warning">Solicitud atendida</span>' :
                             (item.state === 'confirmed') ? '<span class="badge bg-secondary">Solicitud confirmada</span>' :
                                 'Indefinido';
-                    var custom = '';
-                    for (let value of item.details) {
-                        if ( value.item_id == null )
-                        {
-                            custom = custom + '<span class="badge bg-danger">Solicitud personalizada</span>';
-                        }
-                    }
+                    var custom = (item.custom == false) ? '': '<span class="badge bg-danger">Solicitud personalizada</span>';
+
                     return '<p> '+status+' </p>' + '<p> '+custom+' </p>'
+                    //return item.state_custom;
                 }
             },
             { data: null,
@@ -108,19 +129,23 @@ $(document).ready(function () {
                     {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+item.id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
                     }
-                    var custom = false;
+                    /*var custom = false;
                     for (let value of item.details) {
                         if ( value.item_id == null )
                         {
                             custom = true;
                         }
-                    }
+                    }*/
 
-                    if ( (custom === false) && (item.state == 'attended' && item.state !== 'confirmed') )
+                    /*if ( (custom === false) && (item.state == 'attended' && item.state !== 'confirmed') )
                     {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';
-                    }
+                    }*/
 
+                    if ( (item.custom == false) && (item.state == 'attended' && item.state !== 'confirmed') )
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
+                    }
                     return text;
                 }
 
