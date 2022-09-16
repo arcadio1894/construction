@@ -18,7 +18,7 @@ $(document).ready(function () {
                     text: json[i].location
                 }));
             }
-
+            $('.location').val(1).trigger('change');
         }
     });
 

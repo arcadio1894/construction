@@ -319,6 +319,7 @@ function addItems() {
                 limit: 12,
                 source: substringMatcher($locations)
             });
+        $("#locationGroup").typeahead('val',"AR:Producción|AL:Principal|AN:General|NIV:General|CON:General|CON:General").trigger('change');
 
         $modalAddGroupItems.modal('show');
 
@@ -348,6 +349,7 @@ function addItems() {
                 limit: 12,
                 source: substringMatcher($locations)
             });
+        $(".locations").typeahead('val',"AR:Producción|AL:Principal|AN:General|NIV:General|CON:General|CON:General").trigger('change');
 
         $modalAddItems.modal('show');
     }
