@@ -144,7 +144,7 @@ $(document).ready(function () {
 
                     if ( (item.custom == false) && (item.state == 'attended' && item.state !== 'confirmed') )
                     {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
                     }
                     return text;
                 }
