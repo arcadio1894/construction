@@ -2501,9 +2501,45 @@ function addMaterial() {
 
 }
 
+function editedActive() {
+    var flag = false;
+    $(document).find('[data-equip]').each(function(){
+        console.log($(this));
+        if ($(this).hasClass('card-gray-dark'))
+        {
+            flag = true;
+        }
+    });
+
+    return flag;
+}
+
 function storeQuote() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
+    if ( editedActive() )
+    {
+        toastr.error('No se puede guardar porque hay equipos no confirmados.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
     if( $equipments.length === 0 )
     {
         toastr.error('No se puede crear una cotización sin equipos.', 'Error',
