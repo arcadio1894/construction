@@ -1502,4 +1502,61 @@ class EntryController extends Controller
         return response()->json(['message' => 'Su orden de compra con el código '.$codeOrder.' se guardó con éxito.', 'url'=>route('invoice.index')], 200);
 
     }
+
+    public function reportMaterialEntries()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('entry.reportMaterialEntries', compact('permissions'));
+    }
+
+    public function getJsonMaterialsInEntry()
+    {
+        $materials = Material::where('enable_status', 1)->get();
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code]);
+        }
+        return $array;
+    }
+
+    public function getJsonEntriesOfMaterial( $id_material )
+    {
+        $entryDetails = DetailEntry::where('material_id', '=', $id_material)
+            ->get();
+        $entries = [];
+        foreach ($entryDetails as $entryDetail) {
+            $entry = Entry::with(['supplier'])->find($entryDetail->entry_id);
+
+            array_push($entries, [
+                'entry' => $entry->id,
+                'guide' => $entry->referral_guide,
+                'order' => $entry->purchase_order,
+                'invoice' => $entry->invoice,
+                'supplier' => ( $entry->supplier == null ) ? 'Sin proveedor':$entry->supplier->business_name,
+                'date' => $entry->date_entry,
+                'quantity' => (float)$entryDetail->entered_quantity,
+            ]);
+
+        }
+
+        $new_arr2 = array();
+        foreach($entries as $item) {
+            if(isset($new_arr2[$item['entry']])) {
+                $new_arr2[ $item['entry']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['entry']] = $item;
+        }
+
+        $centries_final = array_values($new_arr2);
+        //dump($outputs);
+        //$result = array_values( array_unique($outputs) );
+
+        return $centries_final;
+    }
 }

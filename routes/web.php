@@ -1051,6 +1051,15 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/outputs/of/material/{id_material}', 'OutputController@getJsonOutputsOfMaterial')
             ->middleware('permission:report_output');
 
+        // REPORTE DE MATERIALES Y SUS ENTRADAS
+        Route::get('/reporte/material/ingresos', 'EntryController@reportMaterialEntries')
+            ->name('report.materials.entries')
+            ->middleware('permission:report_output');
+        Route::get('/get/json/materials/in/entry', 'EntryController@getJsonMaterialsInEntry')
+            ->middleware('permission:report_output');
+        Route::get('/get/json/entries/of/material/{id_material}', 'EntryController@getJsonEntriesOfMaterial')
+            ->middleware('permission:report_output');
+
         Route::get('/get/json/quantity/output/material/{id_quote}/{id_material}', 'OutputController@getQuantityMaterialOutputs')
             ->middleware('permission:report_output');
 
