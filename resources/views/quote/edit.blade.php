@@ -155,7 +155,7 @@
         <div class="row" id="element_loader">
             @foreach( $quote->equipments as $equipment )
             <div class="col-md-12">
-                <div class="card card-success collapsed-card">
+                <div class="card card-success collapsed-card" data-equip>
                     <div class="card-header">
                         <h3 class="card-title">EQUIPO: {{$equipment->description}}</h3>
 
