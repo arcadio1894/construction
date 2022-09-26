@@ -943,12 +943,12 @@
                                 </a>
                             </li>
 
-                            {{--<li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('report.materials.entries') }}" class="nav-link @yield('activeReportMaterialEntry')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Reporte Ingresos</p>
                                 </a>
-                            </li>--}}
+                            </li>
                             @endcan
                         </ul>
                     </li>

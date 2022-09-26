@@ -1526,20 +1526,23 @@ class EntryController extends Controller
     public function getJsonEntriesOfMaterial( $id_material )
     {
         $entryDetails = DetailEntry::where('material_id', '=', $id_material)
+            //->where('entry_type', 'Por compra')
             ->get();
         $entries = [];
         foreach ($entryDetails as $entryDetail) {
             $entry = Entry::with(['supplier'])->find($entryDetail->entry_id);
-
-            array_push($entries, [
-                'entry' => $entry->id,
-                'guide' => $entry->referral_guide,
-                'order' => $entry->purchase_order,
-                'invoice' => $entry->invoice,
-                'supplier' => ( $entry->supplier == null ) ? 'Sin proveedor':$entry->supplier->business_name,
-                'date' => $entry->date_entry,
-                'quantity' => (float)$entryDetail->entered_quantity,
-            ]);
+            if ( $entry->entry_type != 'Retacería' )
+            {
+                array_push($entries, [
+                    'entry' => $entry->id,
+                    'guide' => $entry->referral_guide,
+                    'order' => $entry->purchase_order,
+                    'invoice' => $entry->invoice,
+                    'supplier' => ( $entry->supplier == null ) ? 'Sin proveedor':$entry->supplier->business_name,
+                    'date' => $entry->date_entry,
+                    'quantity' => (float)$entryDetail->entered_quantity,
+                ]);
+            }
 
         }
 

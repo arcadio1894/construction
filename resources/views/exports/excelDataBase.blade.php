@@ -80,6 +80,7 @@
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Stock Actual</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Prioridad</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Precio Unit.</th>
+            <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Precio Total</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Categoría</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Subcategoría</th>
             <th width="150px" style="background-color: #7A8DC5; font-size: 14px">Tipo</th>
@@ -119,6 +120,7 @@
                 <th width="150px" style="color: green">{{ $materials[$i]['priority'] }}</th>
             @endif
             <th width="150px">{{ $materials[$i]['price'] }}</th>
+            <th width="150px">{{ round( ((float)$materials[$i]['price'] * (float)$materials[$i]['stock_current']) , 2 ) }}</th>
             <th width="150px">{{ $materials[$i]['category'] }}</th>
             <th width="150px">{{ $materials[$i]['subcategory'] }}</th>
             <th width="150px">{{ $materials[$i]['type'] }}</th>
@@ -155,6 +157,7 @@
                     <th width="150px" style="background-color: #D0E4F7;color: green">{{ $materials[$i]['priority'] }}</th>
                 @endif
                 <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['price'] }}</th>
+                <th width="150px">{{ round( ((float)$materials[$i]['price'] * (float)$materials[$i]['stock_current']) , 2 ) }}</th>
                 <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['category'] }}</th>
                 <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['subcategory'] }}</th>
                 <th width="150px" style="background-color: #D0E4F7">{{ $materials[$i]['type'] }}</th>

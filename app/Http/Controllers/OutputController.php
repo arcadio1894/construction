@@ -982,7 +982,7 @@ class OutputController extends Controller
         $outputDetail = OutputDetail::find($id_detail);
         $material = Material::find($outputDetail->material_id);
         //dd($outputDetail);
-        return view('output/create_item_custom', compact('outputDetail', 'material'));
+        return view('output.create_item_custom', compact('outputDetail', 'material'));
     }
 
     public function assignItemToOutputDetail($id_item, $id_detail)
