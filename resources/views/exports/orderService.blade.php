@@ -224,6 +224,7 @@
         <div><span>TELÉFONO</span>: {{ ($service_order->supplier !== null) ? $service_order->supplier->phone : 'No tiene telefono' }} </div>
         <div><span>CORREO</span>: {{ ($service_order->supplier !== null) ? $service_order->supplier->email : 'No tiene email' }} </div>
         <div><span>COTIZACIÓN</span>: {{ ($service_order->quote_supplier !== null) ? $service_order->quote_supplier : 'No tiene cotización' }} </div>
+        <div><span>OBSERVACIÓN</span>: {{ ($service_order->observation !== null) ? $service_order->observation : 'No tiene observación' }} </div>
 
     </div>
 

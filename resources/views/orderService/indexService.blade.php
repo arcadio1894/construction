@@ -63,6 +63,7 @@
                 <th>Código</th>
                 <th>Fecha Orden</th>
                 <th>Fecha Entrega</th>
+                <th>Observación</th>
                 <th>Proveedor</th>
                 <th>Aprobado por</th>
                 <th>Moneda</th>

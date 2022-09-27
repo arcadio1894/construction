@@ -38,6 +38,17 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Observación',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.observation !== null )
+                        return '<p> '+ item.observation +'</p>';
+                    else
+                        return '<p> -- </p>'
+                }
+            },
+            { data: null,
                 title: 'Proveedor',
                 wrap: true,
                 "render": function (item)

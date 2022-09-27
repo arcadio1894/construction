@@ -224,6 +224,7 @@
         <div><span>TELÉFONO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->phone : 'No tiene telefono' }} </div>
         <div><span>CORREO</span>: {{ ($purchase_order->supplier !== null) ? $purchase_order->supplier->email : 'No tiene email' }} </div>
         <div><span>COTIZACIÓN</span>: {{ ($purchase_order->quote_supplier !== null) ? $purchase_order->quote_supplier : 'No tiene cotización' }} </div>
+        <div><span>OBSERVACIÓN</span>: {{ ($purchase_order->observation !== null) ? $purchase_order->observation : 'No tiene observación' }} </div>
 
     </div>
 
