@@ -826,7 +826,7 @@ function addItemsCustom() {
         $('#width_new_item_custom').show();
         $('#width_new_item_custom').val(0);
     }
-    if ( result.typescrap == 3 )
+    if ( result.typescrap == 3 || result.typescrap == 4 )
     {
         $('#length_item_custom').show();
         $('#width_item_custom').hide();
@@ -891,7 +891,7 @@ function saveTableItemsCustom() {
         renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
 
     }
-    if ( result.typescrap == 3 )
+    if ( result.typescrap == 3 || result.typescrap == 4 )
     {
         let largo = $('#length_new_custom').val();
         let areaPedida = parseFloat(largo);
