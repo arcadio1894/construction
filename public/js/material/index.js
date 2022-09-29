@@ -40,7 +40,18 @@ $(document).ready(function () {
             { data: 'unit_measure.name' },
             { data: 'stock_max' },
             { data: 'stock_min' },
-            { data: 'stock_current' },
+            //{ data: 'stock_current' },
+            { data: null,
+                title: 'Stock Actual',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+                        return item.stock_current;
+                    }
+                    return '--';
+                }
+            },
             { data: 'priority' },
             { data: 'unit_price' },
             { data: null,
