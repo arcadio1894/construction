@@ -437,6 +437,29 @@ function addItems() {
                     "hideMethod": "fadeOut"
                 });
             return;
+        } else {
+            if ( parseFloat(result2.stock_current) <= 0 )
+            {
+                toastr.error('No hay stock del material', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
         }
     }
 
@@ -657,6 +680,28 @@ function addItemsScrap() {
                     });
                 return;
             }
+            if ( parseFloat(result2.stock_current) <= 0 )
+            {
+                toastr.error('No hay stock del material', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
         }
     }
 
@@ -776,6 +821,28 @@ function addItemsCustom() {
         } else {
             if ( result2.typescrap == "" || result2.typescrap == null ){
                 toastr.error('El material no permite retazos.', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+            if ( parseFloat(result2.stock_current) <= 0 )
+            {
+                toastr.error('No hay stock del material', 'Error',
                     {
                         "closeButton": true,
                         "debug": false,
