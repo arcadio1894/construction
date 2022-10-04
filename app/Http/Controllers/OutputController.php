@@ -680,7 +680,7 @@ class OutputController extends Controller
                         'percentage' => $item->percentage,
                         'material_id' => $item->material_id,
                         'equipment_id' => ( $item->equipment_id == '' ) ? null:$item->equipment_id,
-                        'quote_id' => ($quote == null) ? '': $quote->id,
+                        'quote_id' => ($quote == null) ? null: $quote->id,
                         'custom' => 1
 
                     ]);

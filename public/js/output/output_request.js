@@ -954,7 +954,7 @@ function saveTableItemsCustom() {
         console.log(precio);
 
         let code = rand_code($caracteres, 5);
-        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
+        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material_id': result.id, 'equipment_id': '', 'equipment_name':''});
         renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
 
     }
@@ -966,7 +966,7 @@ function saveTableItemsCustom() {
         let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
         let precio = result.price * porcentaje;
         let code = rand_code($caracteres, 5);
-        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
+        $items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material_id': result.id, 'equipment_id': '', 'equipment_name':''});
         renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
 
     }
