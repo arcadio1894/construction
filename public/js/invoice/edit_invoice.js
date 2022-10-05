@@ -18,7 +18,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-delete]', deleteItem);
 
     $formEdit = $("#formEdit");
-    $formEdit.on('submit', updateInvoice);
+    //$formEdit.on('submit', updateInvoice);
+    $('#btn-submit').on('click', updateInvoice);
 });
 
 let $modalImage;
@@ -321,11 +322,14 @@ function renderTemplateMaterial(id, description, quantity, unit, price, subtotal
 
 function updateInvoice() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var createUrl = $formEdit.data('url');
     var state = $('#btn-grouped').bootstrapSwitch('state');
+    var currency = $('#btn-currency').bootstrapSwitch('state');
     var form = new FormData($('#formEdit')[0]);
     form.append('deferred_invoice', state);
+    form.append('currency_invoice', currency);
     var items = JSON.stringify($items);
     //var form = new FormData(this);
     form.append('items', items);
@@ -356,6 +360,7 @@ function updateInvoice() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -380,7 +385,7 @@ function updateInvoice() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });

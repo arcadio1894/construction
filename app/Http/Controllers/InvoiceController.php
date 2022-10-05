@@ -361,6 +361,7 @@ class InvoiceController extends Controller
             $entry->type_order = $request->get('type_order');
             $entry->observation = $request->get('observation');
             $entry->category_invoice_id = $request->get('category_invoice_id');
+            $entry->currency_invoice = ($request->get('currency_invoice') === 'true') ? 'USD': 'PEN';
             $entry->save();
 
             // TODO: Tratamiento de un archivo de forma tradicional
