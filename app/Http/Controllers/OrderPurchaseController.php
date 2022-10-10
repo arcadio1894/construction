@@ -446,6 +446,19 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function showOrderOperator($code)
+    {
+        $suppliers = Supplier::all();
+        $users = User::all();
+
+        $order = OrderPurchase::with(['supplier', 'approved_user', 'deadline'])->where('code', $code)->first();
+        $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
+            ->with(['material'])->get();
+
+        return view('orderPurchase.showOperator', compact('order', 'details', 'suppliers', 'users'));
+
+    }
+
     public function updateOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
     {
         $validated = $request->validated();

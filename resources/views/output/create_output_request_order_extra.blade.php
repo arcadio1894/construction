@@ -13,7 +13,7 @@
 @endsection
 
 @section('title')
-    Solicitud de salida
+    Solicitud de salida Extra
 @endsection
 
 @section('styles-plugins')
@@ -40,6 +40,49 @@
             height: auto;
             min-height: 100%;
         }
+
+        #modal-dialog-custom {
+            height: 60% !important;
+        }
+        #change-color {
+            height: 60% !important;
+        }
+        .modal-header-success {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #5cb85c;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .modal-header-warning {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #f0ad4e;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
+        .modal-header-danger {
+            color:#fff;
+            padding:9px 15px;
+            border-bottom:1px solid #eee;
+            background-color: #d9534f;
+            -webkit-border-top-left-radius: 5px;
+            -webkit-border-top-right-radius: 5px;
+            -moz-border-radius-topleft: 5px;
+            -moz-border-radius-topright: 5px;
+            border-top-left-radius: 5px;
+            border-top-right-radius: 5px;
+        }
     </style>
 @endsection
 
@@ -48,7 +91,7 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nueva solicitud de salida</h5>
+    <h5 class="card-title">Crear nueva solicitud de salida extra</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -59,7 +102,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('order.execution.index') }}"><i class="fa fa-archive"></i> Órdenes de ejecución</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nueva solicitud</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nueva solicitud extra</li>
     </ol>
 @endsection
 
@@ -635,6 +678,129 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
                     <button type="button" id="btn-saveItemsCustom" class="btn btn-outline-primary">Agregar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalShowDetailsMaterial" class="modal fade" tabindex="-1">
+        <div id="modal-dialog-custom" class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cantidades pedidas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="col-sm-12 control-label" for="material_selected_custom"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_details" name="material_selected_details" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="quantity_material"> Cantidad total </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="quantity_material" name="quantity_material" class="form-control form-control-sm" readonly >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="request_material"> Cantidad Pedida </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="request_material" name="request_material" class="form-control form-control-sm" readonly >
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4" >
+                                    <label class="col-sm-12 control-label" for="missing_material"> Cantidad faltante </label>
+
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <input type="text" id="missing_material" name="missing_material" class="form-control form-control-sm" readonly >
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalFollowDetailsMaterial" class="modal fade" tabindex="-1">
+        <div id="change-color" class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header" id="color-custom">
+                    <h4 class="modal-title">Estados del material</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label class="col-sm-12 control-label" for="material_selected_follow"> Material </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_follow" name="material_selected_follow" class="form-control" readonly />
+                            </div>
+                        </div>
+
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+                                <table class="table">
+                                    <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Stock</th>
+                                        <th>Estado</th>
+                                        <th>Órdenes de compra</th>
+                                        <th>Fechas de llegada</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="body-follow">
+
+
+                                    </tbody>
+                                    <template id="template-follow">
+                                        <tr>
+                                            <td data-code></td>
+                                            <td data-stock></td>
+                                            <td data-state></td>
+                                            <td data-orders></td>
+                                            <td data-dates></td>
+                                        </tr>
+                                    </template>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
                 </div>
 
             </div>

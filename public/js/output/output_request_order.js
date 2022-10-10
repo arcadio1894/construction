@@ -1348,7 +1348,7 @@ function renderTemplateFollow(json) {
     var array2 = json[0].dates;
     var orders = '';
     for (let i = 0; i < array.length; i++) {
-        orders = orders + ' <span class="badge bg-success">' + array[i] + '</span> ';
+        orders = orders + '<a target="_blank" href="'+document.location.origin+ '/dashboard/visualizar/orden/compra/'+array[i]+'"> <span class="badge bg-success">' + array[i] + '</span> </a> ';
     }
 
     var dates = '';

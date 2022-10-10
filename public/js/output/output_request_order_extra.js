@@ -128,6 +128,12 @@ $(document).ready(function () {
 
     $('#btn-unfollow').on('click', unfollowMaterial);
 
+    $(document).on('click', '[data-show]', showDetailsMaterial);
+    $modalShowDetailsMaterial = $('#modalShowDetailsMaterial');
+
+    $(document).on('click', '[data-follow]', showFollowMaterial);
+    $modalFollowDetailsMaterial = $('#modalFollowDetailsMaterial');
+
 });
 
 // Initializing the typeahead
@@ -158,10 +164,160 @@ let $formCreate;
 let $modalAddItems;
 
 let $modalAddItemsCustom;
+let $modalShowDetailsMaterial;
+let $modalFollowDetailsMaterial;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 let $longitud = 20;
+
+function showFollowMaterial() {
+    event.preventDefault();
+    $('#body-follow').html('');
+    var button = $(this);
+    button.attr("disabled", true);
+    var material_id = $(this).data('material');
+    var quote_id = $(this).data('quote');
+    var material_name = $(this).data('name');
+    $.ajax({
+        url: "/dashboard/get/json/follow/output/material/"+material_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json.array);
+            var state = json.array[0].state;
+            $('#color-custom').removeClass('modal-header-success');
+            $('#color-custom').removeClass('modal-header-warning');
+            $('#color-custom').removeClass('modal-header-danger');
+            if ( state == 'green' )
+            {
+                $('#color-custom').addClass('modal-header-success');
+            } else {
+                if (state == 'yellow') {
+                    $('#color-custom').addClass('modal-header-warning');
+                } else {
+                    $('#color-custom').addClass('modal-header-danger');
+                }
+            }
+
+            $('#material_selected_follow').val(json.array[0].material);
+            renderTemplateFollow(json.array);
+            button.attr("disabled", false);
+            $modalFollowDetailsMaterial.modal('show');
+
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+        }
+    });
+}
+
+function showDetailsMaterial() {
+    event.preventDefault();
+    var button = $(this);
+    button.attr("disabled", true);
+    var material_id = $(this).data('material');
+    var quote_id = $(this).data('quote');
+    var material_name = $(this).data('name');
+    $.ajax({
+        url: "/dashboard/get/json/quantity/output/material/"+quote_id+"/"+material_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            $('#material_selected_details').val(material_name);
+            $('#quantity_material').val(json.quantity);
+            $('#request_material').val(json.request);
+            $('#missing_material').val(json.missing);
+            button.attr("disabled", false);
+            $modalShowDetailsMaterial.modal('show');
+
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+        }
+    });
+}
 
 function followMaterial() {
     var material_id = $(this).data('follow');
@@ -1178,6 +1334,31 @@ function deleteItem() {
     var itemId = $(this).data('delete');
     $items = $items.filter(item => item.item !== itemId);
     $(this).parent().parent().remove();
+}
+
+function renderTemplateFollow(json) {
+    var array = json[0].orders;
+    var array2 = json[0].dates;
+    var orders = '';
+    for (let i = 0; i < array.length; i++) {
+        orders = orders + '<a target="_blank" href="'+document.location.origin+ '/dashboard/visualizar/orden/compra/'+array[i]+'"> <span class="badge bg-success">' + array[i] + '</span> </a> ';
+    }
+
+    var dates = '';
+    for (let i = 0; i < array2.length; i++) {
+        dates = dates + ' <span class="badge bg-primary">' + array2[i] + '</span> ';
+    }
+    var clone = activateTemplate('#template-follow');
+
+    var state = (json[0].state === 'red') ? '<span class="badge bg-danger">Sin stock</span>':
+        (json[0].state === 'yellow') ? '<span class="badge bg-warning">En orden</span>': '<span class="badge bg-success">En almacén</span>' ;
+
+    clone.querySelector("[data-code]").innerHTML = json[0].code;
+    clone.querySelector("[data-stock]").innerHTML = json[0].stock;
+    clone.querySelector("[data-state]").innerHTML = state;
+    clone.querySelector("[data-orders]").innerHTML = orders;
+    clone.querySelector("[data-dates]").innerHTML = dates;
+    $('#body-follow').append(clone);
 }
 
 /*

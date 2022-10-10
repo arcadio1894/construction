@@ -1026,7 +1026,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/dejar/seguir/{follow_id}', 'FollowMaterialController@unFollowMaterialUser');
 
         Route::get('/get/json/follow/output/material/{id}', 'FollowMaterialController@getJsonDetailFollowMaterial');
-
+        Route::get('/visualizar/orden/compra/{code}', 'OrderPurchaseController@showOrderOperator');
 
         // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE COMPRA
         Route::get('/regularizar/automaticamente/entrada/compra/{entry_id}', 'EntryController@regularizeAutoOrderEntryPurchase')
