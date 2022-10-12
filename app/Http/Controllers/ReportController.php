@@ -1400,4 +1400,167 @@ class ReportController extends Controller
 
         return $pdf->stream($name);
     }
+
+
+    /*public function exportQuotesExcel()
+    {
+        //dd($request);
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $type = $_GET['type'];
+        //dump($start);
+        //dump($end);
+        $invoices_array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            //dump('Descargar todos');
+            $dates = 'TOTALES';
+            $quotes = [];
+            switch ($type) {
+                case 'all':
+                    $quotes = Quote::with(['customer'])
+                        //->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'raised':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'finished':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','close')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $quotes as $quote )
+            {
+                $date_quote = Carbon::createFromFormat('Y-m-d H:i:s', $quote->date_quote)->format('d-m-Y');
+
+                $monto_materiales = 0;
+                $monto_consumibles = 0;
+                $monto_servicios_varios = 0;
+                $monto_servicios_adicionales = 0;
+                $monto_dias_trabajo = 0;
+
+                foreach( $quote->equipments as $equipment )
+                {
+                    foreach ( $equipment->materials as $material  )
+                    {
+                        if ( $material->original == 1 )
+                        {
+                            $monto_materiales += ($material->price * $material->quantity);
+                        }
+
+                    }
+
+                    foreach ( $equipment->consumables as $consumable  )
+                    {
+                        $monto_consumibles += ($consumable->price * $consumable->quantity);
+                    }
+
+                    foreach ( $equipment->workforces as $workforce  )
+                    {
+                        $monto_servicios_varios += ($workforce->price * $workforce->quantity);
+                    }
+
+                    foreach ( $equipment->turnstiles as $turnstile  )
+                    {
+                        $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
+                    }
+
+                    foreach ( $equipment->workdays as $workday  )
+                    {
+                        $monto_dias_trabajo += ($workday->total);
+                    }
+                }
+
+
+                array_push($invoices_array, [
+                    'date' => $date_quote,
+                    'code' => $quote->code,
+                    'description' => $quote->description,
+                    'materials_quote' => '',
+                    'materials_real' => '',
+                    'consumables_quote' => '',
+                    'consumables_real' => '',
+                    'monto_servicios_varios' => '',
+                    'monto_servicios_adicionales' => '',
+                    'monto_dias_trabajo' => '',
+                    'total' => $quote->total_quote,
+                ]);
+            }
+
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'DEL '. $start .' AL '. $end;
+            switch ($type) {
+                case 'all':
+                    $quotes = Quote::with(['customer'])
+                        //->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'raised':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'finished':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','close')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $quotes as $invoice )
+            {
+                $date_entry = Carbon::createFromFormat('Y-m-d H:i:s', $invoice->date_entry)->format('d-m-Y');
+                array_push($invoices_array, [
+                    'date' => $date_entry,
+                    'order' => ($invoice->purchase_order != null) ? $invoice->purchase_order:'No tiene',
+                    'invoice' => $invoice->invoice,
+                    'type_order' => ($invoice->type_order == 'purchase' || $invoice->type_order == null) ? 'Por compra':'Por servicio',
+                    'supplier' => ($invoice->supplier_id != null) ? $invoice->supplier->business_name:'No tiene',
+                    'category' => ($invoice->category_invoice_id != null) ? $invoice->category_invoice->name:'No tiene',
+                    'currency' => $invoice->currency_invoice,
+                    'subtotal' => $invoice->sub_total,
+                    'taxes' => $invoice->taxes,
+                    'total' => $invoice->total,
+                ]);
+            }
+
+            //dump($date_start);
+            //dump($end_start);
+        }
+        //dump($invoices_array);
+        //dd('Fechas');
+        //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);
+        //(new UsersExport)->download('users.xlsx');
+        return (new InvoicesFinanceExport($invoices_array, $dates))->download('facturasFinanzas.xlsx');
+
+    }*/
 }

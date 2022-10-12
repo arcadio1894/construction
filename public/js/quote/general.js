@@ -1,4 +1,11 @@
 $(document).ready(function () {
+    $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
     $('#dynamic-table').DataTable( {
@@ -399,12 +406,105 @@ $(document).ready(function () {
     $(document).on('click', '[data-send]', sendQuote);
 
     $(document).on('click', '[data-renew]', renewQuote);
+
+    /*$('#btn-export').on('click', exportQuotes);*/
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+/*function exportQuotes() {
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+    var typeQuote = $("input[name='typeQuote']:checked").val();
+
+    console.log(start);
+    console.log(end);
+    console.log(startDate);
+    console.log(endDate);
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todas las cotizaciones',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end,
+                            type: typeQuote
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/reporte/cotizaciones/?" + $.param(query);
+
+                        window.location = url;
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end,
+            type: typeQuote
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/reporte/cotizaciones/?" + $.param(query);
+
+        window.location = url;
+
+    }
+
+}*/
 
 function renewQuote() {
     var quote_id = $(this).data('renew');

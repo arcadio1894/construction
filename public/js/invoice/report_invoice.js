@@ -632,7 +632,7 @@ function exportExcel() {
     var endDate     = moment(end, "DD/MM/YYYY");
 
     console.log(start);
-    console.log(end);-
+    console.log(end);
     console.log(startDate);
     console.log(endDate);
 

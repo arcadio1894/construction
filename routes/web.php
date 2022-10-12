@@ -918,6 +918,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:quoteTotal_report');
         Route::get('exportar/reporte/factura', 'InvoiceController@exportInvoices')
             ->middleware('permission:list_invoice');
+        Route::get('exportar/reporte/cotizaciones', 'ReportController@exportQuotesExcel')
+            ->middleware('permission:quoteTotal_report');
 
         // SERVICIOS y ORDENES DE SERVICIOS
         Route::get('/ordenes/servicio', 'OrderServiceController@indexOrderServices')

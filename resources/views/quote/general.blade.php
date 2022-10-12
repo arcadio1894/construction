@@ -23,6 +23,13 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+    <!-- iCheck for checkboxes and radio inputs -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+
 @endsection
 
 @section('styles')
@@ -51,7 +58,42 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-
+    {{--<div class="row">
+        <div class="col-md-2">
+            <strong> Seleccione fechas: </strong>
+        </div>
+        <div class="col-md-4" id="sandbox-container">
+            <div class="input-daterange input-group" id="datepicker">
+                <input type="text" class="form-control form-control-sm date-range-filter" id="start" name="start">
+                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end">
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="form-group clearfix">
+                <div class="icheck-primary d-inline">
+                    <input type="radio" name="typeQuote" checked="" id="allQuotes" value="all">
+                    <label for="allQuotes">Todas
+                    </label>
+                </div>
+                <div class="icheck-success d-inline">
+                    <input type="radio" name="typeQuote" id="raisedQuotes" value="raised">
+                    <label for="raisedQuotes">Elevadas
+                    </label>
+                </div>
+                <div class="icheck-danger d-inline">
+                    <input type="radio" name="typeQuote" id="finishedQuotes" value="finished">
+                    <label for="finishedQuotes">Finalizadas
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2">
+            <button type="button" id="btn-export" class="btn btn-block btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
+        </div>
+        <br><br>
+    </div>--}}
+    <hr>
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm" id="dynamic-table">
             <thead>
@@ -116,5 +158,7 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('js/quote/general.js') }}"></script>
 @endsection
