@@ -6,6 +6,7 @@ use App\DetailEntry;
 use App\Entry;
 use App\Exports\AmountReport;
 use App\Exports\DatabaseMaterialsExport;
+use App\Exports\QuotesReportExcelExport;
 use App\Exports\QuoteSummaryExport;
 use App\Item;
 use App\Material;
@@ -1402,7 +1403,7 @@ class ReportController extends Controller
     }
 
 
-    /*public function exportQuotesExcel()
+    public function exportQuotesExcel()
     {
         //dd($request);
         $start = $_GET['start'];
@@ -1410,7 +1411,7 @@ class ReportController extends Controller
         $type = $_GET['type'];
         //dump($start);
         //dump($end);
-        $invoices_array = [];
+        $quotes_array = [];
         $dates = '';
 
         if ( $start == '' || $end == '' )
@@ -1459,7 +1460,7 @@ class ReportController extends Controller
                 {
                     foreach ( $equipment->materials as $material  )
                     {
-                        if ( $material->original == 1 )
+                        if ( $material->original == 1 && $material->replacement = 0 )
                         {
                             $monto_materiales += ($material->price * $material->quantity);
                         }
@@ -1487,19 +1488,51 @@ class ReportController extends Controller
                     }
                 }
 
+                $output_details = OutputDetail::where('quote_id', $quote->id)
+                    ->get();
 
-                array_push($invoices_array, [
+                $monto_materiales_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id != 2 )
+                        {
+                            $monto_materiales_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+                $monto_consumibles_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id == 2 )
+                        {
+                            $monto_consumibles_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+
+                array_push($quotes_array, [
                     'date' => $date_quote,
                     'code' => $quote->code,
                     'description' => $quote->description,
-                    'materials_quote' => '',
-                    'materials_real' => '',
-                    'consumables_quote' => '',
-                    'consumables_real' => '',
-                    'monto_servicios_varios' => '',
-                    'monto_servicios_adicionales' => '',
-                    'monto_dias_trabajo' => '',
+                    'materials_quote' => $monto_materiales,
+                    'materials_real' => $monto_materiales_real,
+                    'consumables_quote' => $monto_consumibles,
+                    'consumables_real' => $monto_consumibles_real,
+                    'monto_servicios_varios' => $monto_servicios_varios,
+                    'monto_servicios_adicionales' => $monto_servicios_adicionales,
+                    'monto_dias_trabajo' => $monto_dias_trabajo,
                     'total' => $quote->total_quote,
+                    'currency_invoice' => $quote->currency_invoice,
                 ]);
             }
 
@@ -1509,12 +1542,15 @@ class ReportController extends Controller
             $end_start = Carbon::createFromFormat('d/m/Y', $end);
 
             $dates = 'DEL '. $start .' AL '. $end;
+            $quotes = [];
             switch ($type) {
                 case 'all':
                     $quotes = Quote::with(['customer'])
                         //->where('state_active','open')
                         ->where('state','confirmed')
                         ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
                         ->orderBy('created_at', 'desc')
                         ->get();
                     break;
@@ -1523,6 +1559,8 @@ class ReportController extends Controller
                         ->where('state_active','open')
                         ->where('state','confirmed')
                         ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
                         ->orderBy('created_at', 'desc')
                         ->get();
                     break;
@@ -1531,25 +1569,100 @@ class ReportController extends Controller
                         ->where('state_active','close')
                         ->where('state','confirmed')
                         ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
                         ->orderBy('created_at', 'desc')
                         ->get();
                     break;
             }
 
-            foreach ( $quotes as $invoice )
+            foreach ( $quotes as $quote )
             {
-                $date_entry = Carbon::createFromFormat('Y-m-d H:i:s', $invoice->date_entry)->format('d-m-Y');
-                array_push($invoices_array, [
-                    'date' => $date_entry,
-                    'order' => ($invoice->purchase_order != null) ? $invoice->purchase_order:'No tiene',
-                    'invoice' => $invoice->invoice,
-                    'type_order' => ($invoice->type_order == 'purchase' || $invoice->type_order == null) ? 'Por compra':'Por servicio',
-                    'supplier' => ($invoice->supplier_id != null) ? $invoice->supplier->business_name:'No tiene',
-                    'category' => ($invoice->category_invoice_id != null) ? $invoice->category_invoice->name:'No tiene',
-                    'currency' => $invoice->currency_invoice,
-                    'subtotal' => $invoice->sub_total,
-                    'taxes' => $invoice->taxes,
-                    'total' => $invoice->total,
+                $date_quote = Carbon::createFromFormat('Y-m-d H:i:s', $quote->date_quote)->format('d-m-Y');
+
+                $monto_materiales = 0;
+                $monto_consumibles = 0;
+                $monto_servicios_varios = 0;
+                $monto_servicios_adicionales = 0;
+                $monto_dias_trabajo = 0;
+
+                foreach( $quote->equipments as $equipment )
+                {
+                    foreach ( $equipment->materials as $material  )
+                    {
+                        if ( $material->original == 1 && $material->replacement = 0 )
+                        {
+                            $monto_materiales += ($material->price * $material->quantity);
+                        }
+
+                    }
+
+                    foreach ( $equipment->consumables as $consumable  )
+                    {
+                        $monto_consumibles += ($consumable->price * $consumable->quantity);
+                    }
+
+                    foreach ( $equipment->workforces as $workforce  )
+                    {
+                        $monto_servicios_varios += ($workforce->price * $workforce->quantity);
+                    }
+
+                    foreach ( $equipment->turnstiles as $turnstile  )
+                    {
+                        $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
+                    }
+
+                    foreach ( $equipment->workdays as $workday  )
+                    {
+                        $monto_dias_trabajo += ($workday->total);
+                    }
+                }
+
+                $output_details = OutputDetail::where('quote_id', $quote->id)
+                    ->get();
+
+                $monto_materiales_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id != 2 )
+                        {
+                            $monto_materiales_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+                $monto_consumibles_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id == 2 )
+                        {
+                            $monto_consumibles_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+
+                array_push($quotes_array, [
+                    'date' => $date_quote,
+                    'code' => $quote->code,
+                    'description' => $quote->description,
+                    'materials_quote' => $monto_materiales,
+                    'materials_real' => $monto_materiales_real,
+                    'consumables_quote' => $monto_consumibles,
+                    'consumables_real' => $monto_consumibles_real,
+                    'monto_servicios_varios' => $monto_servicios_varios,
+                    'monto_servicios_adicionales' => $monto_servicios_adicionales,
+                    'monto_dias_trabajo' => $monto_dias_trabajo,
+                    'total' => $quote->total_quote,
+                    'currency_invoice' => $quote->currency_invoice,
                 ]);
             }
 
@@ -1560,7 +1673,7 @@ class ReportController extends Controller
         //dd('Fechas');
         //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);
         //(new UsersExport)->download('users.xlsx');
-        return (new InvoicesFinanceExport($invoices_array, $dates))->download('facturasFinanzas.xlsx');
+        return (new QuotesReportExcelExport($quotes_array, $dates))->download('reporteCotizaciones.xlsx');
 
-    }*/
+    }
 }

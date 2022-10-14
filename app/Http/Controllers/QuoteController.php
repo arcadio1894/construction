@@ -1749,4 +1749,23 @@ class QuoteController extends Controller
         return response()->json(['message' => 'El material se ha guardado correctamente'], 200);
 
     }
+
+    public function activeQuote($id)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($id);
+
+            $quote->state_active = 'open';
+            $quote->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cotización activada con éxito.'], 200);
+
+    }
 }

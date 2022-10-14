@@ -737,6 +737,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:finish_quote');
         Route::get('/get/contact/{customer}', 'QuoteController@getContactsByCustomer');
 
+        Route::post('/active/quote/{quote}', 'QuoteController@activeQuote')
+            ->middleware('permission:finish_quote');
+
+
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')
             ->middleware('permission:update_quote');

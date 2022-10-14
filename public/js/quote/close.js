@@ -132,6 +132,11 @@ $(document).ready(function () {
                             ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
                     }
 
+                    if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                        text = text + ' <button data-active="'+item.id+'" data-name="'+item.description_quote+'" '+
+                            ' class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reactivar"><i class="fas fa-lock-open"></i></button>';
+                    }
+
                     return text;
                 }
             },
@@ -287,12 +292,61 @@ $(document).ready(function () {
     $modalDelete = $('#modalDelete');
 
     $(document).on('click', '[data-renew]', renewQuote);
+    $(document).on('click', '[data-active]', activeQuote);
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function activeQuote() {
+    var quote_id = $(this).data('active');
+
+    $.confirm({
+        icon: 'fas fa-lock-open',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'orange',
+        columnClass: 'medium',
+        title: '¿Está seguro de reactivar esta cotización?',
+        content: 'Se va a activar la cotización y se puede seguir trabajando.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/active/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no activada.");
+                },
+            },
+        }
+    });
+
+}
 
 function cancelQuote() {
     var quote_id = $(this).data('delete');
@@ -441,7 +495,7 @@ function renewQuote() {
             cancel: {
                 text: 'CANCELAR',
                 action: function (e) {
-                    $.alert("Cotización no elevada.");
+                    $.alert("Cotización no renovada.");
                 },
             },
         }

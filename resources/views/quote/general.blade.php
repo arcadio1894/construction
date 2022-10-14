@@ -58,7 +58,7 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-    {{--<div class="row">
+    <div class="row">
         <div class="col-md-2">
             <strong> Seleccione fechas: </strong>
         </div>
@@ -92,7 +92,7 @@
             <button type="button" id="btn-export" class="btn btn-block btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
         </div>
         <br><br>
-    </div>--}}
+    </div>
     <hr>
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm" id="dynamic-table">

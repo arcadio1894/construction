@@ -182,7 +182,7 @@ $(document).ready(function () {
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a> ';
                         }
                         if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-confirm="'+item.id+'" data-name="'+item.description_quote+'" '+
+                            text = text + ' <button data-status="'+ item.send_state +'" data-confirm="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Confirmar"><i class="fa fa-check"></i></button>';
                         }
                         if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
@@ -483,6 +483,31 @@ function confirmQuote() {
     var quote_id = $(this).data('confirm');
     var description = $(this).data('name');
 
+    var status_send = $(this).data('status');
+
+    if ( status_send == 0 )
+    {
+        toastr.error('No puede confirmar sin antes enviar.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "3000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
     $.confirm({
         icon: 'fas fa-smile',
         theme: 'modern',
@@ -522,6 +547,7 @@ function confirmQuote() {
             },
         },
     });
+
 
 }
 
