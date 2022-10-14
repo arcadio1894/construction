@@ -1768,4 +1768,26 @@ class QuoteController extends Controller
         return response()->json(['message' => 'Cotización activada con éxito.'], 200);
 
     }
+
+    public function deselevarQuote($id)
+    {
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($id);
+
+            //$quote->order_execution = $codeOrderExecution;
+            $quote->code_customer = '';
+            $quote->state = 'created';
+            $quote->raise_status = false;
+            $quote->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cotización regresada a enviado con éxito.'], 200);
+
+    }
 }

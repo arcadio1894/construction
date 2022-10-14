@@ -230,6 +230,11 @@ $(document).ready(function () {
                                 text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
                                     '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
                             }
+                            //TODO: Boton de deselevar
+                            if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-deselevar="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Regresar a enviado"><i class="fas fa-level-down-alt"></i></button>';
+                            }
                         }
 
                         if ( item.total_soles == 0 ) {
@@ -408,12 +413,62 @@ $(document).ready(function () {
     $(document).on('click', '[data-renew]', renewQuote);
 
     $('#btn-export').on('click', exportQuotes);
+
+    $(document).on('click', '[data-deselevar]', deselevarQuote);
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function deselevarQuote() {
+    var quote_id = $(this).data('deselevar');
+
+    $.confirm({
+        icon: 'fas fa-level-down',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de regresar a enviado esta cotización?',
+        content: 'Se va a regresar el estado enviado y se inhabilitará la orden de ejecución.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/deselevar/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Se canceló el proceso.");
+                },
+            },
+        }
+    });
+
+}
 
 function exportQuotes() {
     var start  = $('#start').val();
