@@ -821,6 +821,86 @@
             </div>
         </div>
 
+        {{--<div class="row" id="body-images">
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Images de planos</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <label for="descriptionQuote">Descripción general de cotización </label>
+                                <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-4">
+                                <label for="description">Código de cotización </label>
+                                <input type="text" id="codeQuote" readonly value="{{ $codeQuote }}" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm">
+                            </div>
+                            @hasanyrole('logistic|admin|principal')
+                            <div class="col-md-4" id="sandbox-container">
+                                <label for="date_quote">Fecha de cotización </label>
+                                <div class="input-daterange" id="datepicker">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_quote" name="date_quote">
+                                </div>
+                            </div>
+                            <div class="col-md-4" id="sandbox-container">
+                                <label for="date_end">Válido hasta </label>
+                                <div class="input-daterange" id="datepicker2">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_validate" name="date_validate">
+                                </div>
+                            </div>
+                            @endhasanyrole
+
+                            @hasanyrole('logistic|admin|principal')
+                            <div class="col-md-4">
+                                <label for="paymentQuote">Forma de pago </label>
+                                --}}{{--<input type="hidden" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm">--}}{{--
+                                <select id="paymentQuote" name="payment_deadline" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $paymentDeadlines as $paymentDeadline )
+                                        <option value="{{ $paymentDeadline->id }}">{{ $paymentDeadline->description }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            @endhasanyrole
+                            <div class="col-md-4">
+                                <label for="description">Tiempo de entrega </label>
+                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm">
+                            </div>
+                            --}}{{--@hasanyrole('logistic|admin')--}}{{--
+                            <div class="col-md-4">
+                                <label for="customer_id">Cliente </label>
+                                <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                    @foreach( $customers as $customer )
+                                        <option value="{{ $customer->id }}">{{ $customer->business_name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="contact_id">Contacto </label>
+                                <select id="contact_id" name="contact_id" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                </select>
+                            </div>
+                            --}}{{--@endhasanyrole--}}{{--
+                        </div>
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>--}}
+
         @can('showPrices_quote')
         <div class="row">
             <!-- accepted payments column -->
