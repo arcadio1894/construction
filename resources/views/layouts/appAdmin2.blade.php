@@ -249,7 +249,13 @@
                                 <li class="nav-item">
                                     <a href="{{ route('user.index') }}" class="nav-link @yield('activeUser')">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Usuarios</p>
+                                        <p>Usuarios Activos</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{{ route('user.indexEnable') }}" class="nav-link @yield('activeUserEnable')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Usuarios Eliminados</p>
                                     </a>
                                 </li>
                             @endcan

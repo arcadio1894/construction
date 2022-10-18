@@ -188,10 +188,10 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar eliminación</h4>
+                    <h4 class="modal-title">Confirmar inhabilitación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('user.destroy') }}">
+                <form id="formDelete" data-url="{{ route('user.disable') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="user_id" name="user_id">
@@ -200,7 +200,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <button type="submit" class="btn btn-danger">Inhabilitar</button>
                     </div>
                 </form>
             </div>

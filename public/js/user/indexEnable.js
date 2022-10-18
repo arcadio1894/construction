@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log($permissions);
     $('#dynamic-table').DataTable( {
             ajax: {
-                url: "/dashboard/all/users",
+                url: "/dashboard/all/users/delete",
                 dataSrc: 'data'
             },
             bAutoWidth: false,
@@ -25,11 +25,8 @@ $(document).ready(function () {
                     "render": function (item)
                     {
                         var text = '';
-                        if ( $.inArray('update_user', $permissions) !== -1 ) {
-                            text = text + '<button data-image="'+item.image+'" data-email="'+item.email+'" data-name="'+item.name+'" data-edit="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> Editar</button> ';
-                        }
                         if ( $.inArray('destroy_user', $permissions) !== -1 ) {
-                            text = text + ' <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Inhabilitar</button>';
+                            text = text + ' <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-success btn-sm"><i class="fas fa-recycle"></i> Habilitar</button>';
                         }
                         return text;
 
@@ -182,15 +179,6 @@ $(document).ready(function () {
         placeholder: "Selecione los roles",
         allowClear: true
     });
-    $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeUser);
-    $modalCreate = $('#modalCreate');
-    $('#newUser').on('click', openModalCreate);
-
-    $formEdit = $('#formEdit');
-    $formEdit.on('submit', updateUser);
-    $modalEdit = $('#modalEdit');
-    $(document).on('click', '[data-edit]', openModalEdit);
 
     $formDelete = $('#formDelete');
     $formDelete.on('submit', destroyUser);
@@ -199,183 +187,10 @@ $(document).ready(function () {
 
 });
 
-var $formCreate;
-var $modalCreate;
-
-var $formEdit;
-var $modalEdit;
-
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
-
-function openModalCreate() {
-    $modalCreate.modal('show');
-}
-
-function storeUser() {
-    event.preventDefault();
-    // Obtener la URL
-    var createUrl = $formCreate.data('url');
-    $.ajax({
-        url: createUrl,
-        method: 'POST',
-        data: new FormData(this),
-        processData:false,
-        contentType:false,
-        success: function (data) {
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "4000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalCreate.modal('hide');
-            setTimeout( function () {
-                location.reload();
-            }, 4000 )
-        },
-        error: function (data) {
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "4000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-
-
-        },
-    });
-}
-
-function openModalEdit() {
-    var user_id = $(this).data('edit');
-    var name = $(this).data('name');
-    var email = $(this).data('email');
-    var image = $(this).data('image');
-
-    // Reseteamos el select para que se llene nuevamente
-    $('#rolesE').html('');
-
-    // Traer los permisos del role que ya estan guardados para
-    // colocarlos en el select
-    $.get( '/dashboard/user/roles/'+user_id )
-        .done(function( data ) {
-            $.each( data.rolesAll, function( key, value ) {
-                //console.log( value.name );
-                if(jQuery.inArray(value.name, data.rolesSelected) !== -1)
-                {
-                    $("#rolesE").append('<option selected value= '+value.name+'>' + value.description + '</option>');
-                }else{
-                    $("#rolesE").append('<option value= '+value.name+'>' + value.description + '</option>');
-                }
-
-            });
-
-            // Volver a actualizar el select select2
-            $('#rolesE').select2();
-        });
-
-    $modalEdit.find('[id=user_id]').val(user_id);
-    $modalEdit.find('[id=nameE]').val(name);
-    $modalEdit.find('[id=emailE]').val(email);
-
-    var path = document.location.origin;
-    var completePath = path + '/images/users/' + image;
-    $modalEdit.find('[id=image-preview]').attr('src', completePath);
-
-    $modalEdit.modal('show');
-}
-
-function updateUser() {
-    event.preventDefault();
-    // Obtener la URL
-    var editUrl = $formEdit.data('url');
-    $.ajax({
-        url: editUrl,
-        method: 'POST',
-        data: new FormData(this),
-        processData:false,
-        contentType:false,
-        success: function (data) {
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "4000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalEdit.modal('hide');
-            setTimeout( function () {
-                location.reload();
-            }, 4000 )
-        },
-        error: function (data) {
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "4000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-
-
-        },
-    });
-}
 
 function openModalDelete() {
     var user_id = $(this).data('delete');
@@ -445,8 +260,6 @@ function destroyUser() {
                         "hideMethod": "fadeOut"
                     });
             }
-
-
         },
     });
 }

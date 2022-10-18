@@ -128,14 +128,17 @@ class UserController extends Controller
 
     public function getUsers()
     {
-        $users = User::select('id', 'name', 'email', 'image')->get();
+        $users = User::select('id', 'name', 'email', 'image', 'enable')
+            ->where('enable', true)->get();
         return datatables($users)->toJson();
     }
 
     public function getUsers2()
     {
         $users = User::select('id', 'name')
-            ->where('id', '!=' , Auth::user()->id)->get();
+            ->where('id', '!=' , Auth::user()->id)
+            ->where('enable', true)
+            ->get();
         return json_encode($users);
     }
 
@@ -213,5 +216,68 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Contraseña actualizada con éxito.'], 200);
 
+    }
+
+    public function disable(DeleteUserRequest $request)
+    {
+        //dd($request);
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $user = User::find($request->get('user_id'));
+
+            $user->enable = false;
+            $user->save();
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Usuario inhabilitado con éxito.'], 200);
+
+    }
+
+    public function enable(DeleteUserRequest $request)
+    {
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $user = User::find($request->get('user_id'));
+
+            $user->enable = true;
+            $user->save();
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Usuario habilitado con éxito.'], 200);
+
+    }
+
+    public function indexEnable()
+    {
+        $users = User::all();
+        $roles = Role::all();
+
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('user.indexEnable', compact('users', 'roles', 'permissions'));
+    }
+
+    public function getUsersDelete()
+    {
+        $users = User::select('id', 'name', 'email', 'image', 'enable')
+            ->where('enable', false)->get();
+        return datatables($users)->toJson();
     }
 }

@@ -49,6 +49,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/user/roles/{id}', 'UserController@getRoles')->name('user.roles')
             ->middleware('permission:update_user');
 
+        Route::get('usuarios/eliminados', 'UserController@indexEnable')->name('user.indexEnable')
+            ->middleware('permission:list_user');
+        Route::get('/all/users/delete', 'UserController@getUsersDelete');
+        Route::post('user/disable', 'UserController@disable')->name('user.disable')
+            ->middleware('permission:destroy_user');
+        Route::post('user/enable', 'UserController@enable')->name('user.enable')
+            ->middleware('permission:destroy_user');
+
         //CUSTOMER
         Route::get('/all/customers', 'CustomerController@getCustomers')
             ->middleware('permission:list_customer');
