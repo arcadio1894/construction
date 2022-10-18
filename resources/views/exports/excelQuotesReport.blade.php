@@ -67,7 +67,7 @@
 
 </head>
 <body>
-<h1>REPORTE DE FACTURAS {{ $dates }}</h1>
+<h1>REPORTE DE COTIZACIONES {{ $dates }}</h1>
 <table id="table">
     <thead>
         <tr>
@@ -81,6 +81,7 @@
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Monto Dias de Trabajo</th>
             <th width="80px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Moneda</th>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Pagó Cliente</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Estado</th>
         </tr>
     </thead>
     <tbody>
@@ -99,6 +100,7 @@
                 <th width="100px" rowspan="2">{{ $quotes[$i]['monto_dias_trabajo'] }}</th>
                 <th width="80px" rowspan="2">{{ $quotes[$i]['currency_invoice'] }}</th>
                 <th width="100px" rowspan="2">{{ $quotes[$i]['total'] }}</th>
+                <th width="100px" rowspan="2">{{ ( $quotes[$i]['state_active'] ) == 'open' ? 'Elevada':'Finalizada' }}</th>
             </tr>
             <tr>
                 <th width="60px">Real</th>
@@ -120,6 +122,7 @@
                 <th width="100px" rowspan="2">{{ $quotes[$i]['monto_dias_trabajo'] }}</th>
                 <th width="80px" rowspan="2">{{ $quotes[$i]['currency_invoice'] }}</th>
                 <th width="100px" rowspan="2">{{ $quotes[$i]['total'] }}</th>
+                <th width="100px" rowspan="2">{{ ( $quotes[$i]['state_active'] ) == 'open' ? 'Elevada':'Finalizada' }}</th>
             </tr>
             <tr>
                 <th width="60px">Real</th>

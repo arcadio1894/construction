@@ -1460,7 +1460,7 @@ class ReportController extends Controller
                 {
                     foreach ( $equipment->materials as $material  )
                     {
-                        if ( $material->original == 1 && $material->replacement = 0 )
+                        if ( $material->original == 1 && $material->replacement == 0 )
                         {
                             $monto_materiales += ($material->price * $material->quantity);
                         }
@@ -1523,7 +1523,7 @@ class ReportController extends Controller
                 array_push($quotes_array, [
                     'date' => $date_quote,
                     'code' => $quote->code,
-                    'description' => $quote->description,
+                    'description' => $quote->description_quote,
                     'materials_quote' => $monto_materiales,
                     'materials_real' => $monto_materiales_real,
                     'consumables_quote' => $monto_consumibles,
@@ -1533,6 +1533,8 @@ class ReportController extends Controller
                     'monto_dias_trabajo' => $monto_dias_trabajo,
                     'total' => $quote->total_quote,
                     'currency_invoice' => $quote->currency_invoice,
+                    'state_raise' => $quote->raise_status,
+                    'state_active' => $quote->state_active,
                 ]);
             }
 
@@ -1653,7 +1655,7 @@ class ReportController extends Controller
                 array_push($quotes_array, [
                     'date' => $date_quote,
                     'code' => $quote->code,
-                    'description' => $quote->description,
+                    'description' => $quote->description_quote,
                     'materials_quote' => $monto_materiales,
                     'materials_real' => $monto_materiales_real,
                     'consumables_quote' => $monto_consumibles,
@@ -1663,6 +1665,8 @@ class ReportController extends Controller
                     'monto_dias_trabajo' => $monto_dias_trabajo,
                     'total' => $quote->total_quote,
                     'currency_invoice' => $quote->currency_invoice,
+                    'state_raise' => $quote->raise_status,
+                    'state_active' => $quote->state_active,
                 ]);
             }
 
