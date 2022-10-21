@@ -12,6 +12,7 @@ use App\EquipmentWorkday;
 use App\EquipmentWorkforce;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
+use App\ImagesQuote;
 use App\Material;
 use App\MaterialTaken;
 use App\Notification;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
+use Intervention\Image\Facades\Image;
 
 class QuoteController extends Controller
 {
@@ -74,6 +76,9 @@ class QuoteController extends Controller
     public function store(StoreQuoteRequest $request)
     {
         //dump($request);
+        //dump($request->descplanos);
+        //dump($request->planos);
+        //dd();
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -244,6 +249,33 @@ class QuoteController extends Controller
 
             $quote->save();
 
+            // TODO: Tratamiento de las imagenes de los planos
+            $images = $request->planos;
+            $descriptions = $request->descplanos;
+
+            if ( count($images) != 0 && count($descriptions) )
+            {
+                foreach ( $images as $key => $image )
+                {
+                    $path = public_path().'/images/planos/';
+                    $img = $image;
+
+                    $filename = $quote->id .'_'. $this->generateRandomString(20). '.JPG';
+                    $imgQuote = Image::make($img);
+                    $imgQuote->orientate();
+                    $imgQuote->save($path.$filename, 80, 'JPG');
+
+                    ImagesQuote::create([
+                        'quote_id' => $quote->id,
+                        'description' => $descriptions[$key],
+                        'image' => $filename,
+                        'order' => $key+1
+                    ]);
+
+                }
+            }
+
+
             // Crear notificacion
             $notification = Notification::create([
                 'content' => $quote->code.' creada por '.Auth::user()->name,
@@ -279,6 +311,16 @@ class QuoteController extends Controller
         }
         return response()->json(['message' => 'Cotización '.$codeQuote.' guardada con éxito.'], 200);
 
+    }
+
+    public function generateRandomString($length = 25) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 
     public function show($id)
@@ -413,8 +455,131 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
 
+        $images = [];
+
+        $imagenes = ImagesQuote::where('quote_id', $quote->id)->get();
+
+        if ($imagenes->count() > 0)
+        {
+            $images = $imagenes;
+        }
         //dump($quote);
-        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter'));
+        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'images'));
+
+    }
+
+    public function editPlanos($id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $quote = Quote::where('id', $id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments' => function ($query) {
+                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+            }])->first();
+
+        $images = [];
+
+        $imagenes = ImagesQuote::where('quote_id', $quote->id)->get();
+
+        if ($imagenes->count() > 0)
+        {
+            $images = $imagenes;
+        }
+        //dump($quote);
+        return view('quote.editPlanos', compact('quote','permissions', 'images'));
+
+    }
+
+    public function updatePlanos(Request $request, $image)
+    {
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            $id = $request->get('image_id');
+            $description = $request->get('image_description');
+            $order = $request->get('image_order');
+
+            $image = ImagesQuote::find($id);
+            $image->description = $description;
+            $image->order = $order;
+            $image->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imagen modificada con éxito'], 200);
+
+    }
+
+    public function deletePlanos(Request $request, $image)
+    {
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            $id = $request->get('image_id');
+
+            $imagen = ImagesQuote::find($id);
+
+            $image_path = public_path().'/images/planos/'.$imagen->image;
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
+
+            $imagen->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imagen eliminada con éxito'], 200);
+
+    }
+
+    public function savePlanos(Request $request, $quote_id)
+    {
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            // TODO: Tratamiento de las imagenes de los planos
+
+            $images = $request->planos;
+            $descriptions = $request->descplanos;
+            $orders = $request->orderplanos;
+
+            if ( count($images) != 0 && count($descriptions) )
+            {
+                foreach ( $images as $key => $image )
+                {
+                    $path = public_path().'/images/planos/';
+                    $img = $image;
+
+                    $filename = $quote_id .'_'. $this->generateRandomString(20). '.JPG';
+                    $imgQuote = Image::make($img);
+                    $imgQuote->orientate();
+                    $imgQuote->save($path.$filename, 80, 'JPG');
+
+                    ImagesQuote::create([
+                        'quote_id' => $quote_id,
+                        'description' => $descriptions[$key],
+                        'image' => $filename,
+                        'order' => $orders[$key],
+                    ]);
+
+                }
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imagenes guardadas con éxito'], 200);
 
     }
 

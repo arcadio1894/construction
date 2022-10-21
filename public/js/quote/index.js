@@ -147,6 +147,10 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
+                    if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/planos/cotizacion/'+item.id+
+                            '" class="btn bg-lime color-palette btn-sm" data-toggle="tooltip" data-placement="top" title="Editar planos"><i class="fas fa-images"></i></a> ';
+                    }
                     if ( item.state === 'confirmed' ) {
                         if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +

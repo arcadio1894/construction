@@ -428,6 +428,10 @@ $(document).ready(function () {
         });
 
     });
+
+    $('#addImage').on('click', addImage);
+    $(document).on('click', '[data-imagedelete]', imageDelete);
+
 });
 
 var $formCreate;
@@ -436,6 +440,40 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+
+function imageDelete() {
+    console.log('click');
+    var element = $(this).parent().parent().parent().parent();
+    $(this).tooltip('hide');
+    element.remove();
+}
+
+function addImage() {
+
+    renderTemplateImage();
+}
+
+function renderTemplateImage() {
+    var clone = activateTemplate('#template-image');
+
+    $('#body-images').append(clone);
+}
+
+function previewFile(input) {
+    var preview = input.parentElement.parentElement.nextElementSibling;
+    var file = input.files[0];
+    var reader = new FileReader();
+
+    reader.onloadend = function() {
+        preview.src = reader.result;
+    };
+
+    if (file) {
+        reader.readAsDataURL(file);
+    } else {
+        preview.src = "";
+    }
+}
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
@@ -2514,9 +2552,50 @@ function editedActive() {
     return flag;
 }
 
+function imagesIncomplete() {
+    var flag = false;
+    var descripciones = $(document).find("[name='descplanos[]']").length;
+    var planos = $("input[type='file'][name='planos[]']").filter(function (){
+        return this.value
+    }).length;
+    console.log(descripciones);
+    console.log(planos);
+    if ( descripciones != planos )
+    {
+        flag = true;
+    }
+
+    return flag;
+}
+
 function storeQuote() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
+    console.log(imagesIncomplete());
+    if ( imagesIncomplete() )
+    {
+        toastr.error('No se puede guardar porque faltan imagenes o descripciones.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+
     if ( editedActive() )
     {
         toastr.error('No se puede guardar porque hay equipos no confirmados.', 'Error',

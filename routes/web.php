@@ -751,6 +751,17 @@ Route::middleware('auth')->group(function (){
         Route::post('/deselevar/quote/{quote}', 'QuoteController@deselevarQuote')
             ->middleware('permission:raise_quote');
 
+        Route::get('editar/planos/cotizacion/{quote}', 'QuoteController@editPlanos')
+            ->name('quote.edit.planos')
+            ->middleware('permission:update_quote');
+
+        Route::post('/modificar/planos/cotizacion/{image}', 'QuoteController@updatePlanos')
+            ->middleware('permission:update_quote');
+        Route::post('/eliminar/planos/cotizacion/{image}', 'QuoteController@deletePlanos')
+            ->middleware('permission:update_quote');
+        Route::post('/guardar/planos/cotizacion/{quote}', 'QuoteController@savePlanos')
+            ->name('save.planos.quote')
+            ->middleware('permission:update_quote');
 
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')

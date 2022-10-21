@@ -1563,6 +1563,104 @@
             </div>--}}
         </div>
 
+        <div class="row" >
+            <div class="col-md-12">
+                <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">IMAGENES DE PLANOS</h3>
+
+                        <div class="card-tools">
+                            {{--<a id="addImage" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Agregar imagen">
+                                <i class="far fa-images"></i> Agregar Imagen
+                            </a>--}}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body" >
+                        <div class="row" id="body-images">
+                            @foreach( $images as $image )
+                            <div class="col-md-4">
+                                <div class="card card-outline card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Imagen Guardada</h3>
+
+                                        <div class="card-tools">
+                                            {{--<button type="button" data-imageeditold class="btn btn-sm btn-outline-warning" ><i class="fas fa-pen"></i></i>
+                                            </button>
+                                            <button type="button" data-imagedeleteold class="btn btn-sm btn-outline-danger" ><i class="fas fa-trash"></i></i>
+                                            </button>--}}
+                                        </div>
+                                        <!-- /.card-tools -->
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <textarea class="form-control" rows="2" readonly placeholder="Enter ...">{{ $image->description }}</textarea>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
+                                            {{--<div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" accept="image/*" class="form-control" onchange="previewFile(this)">
+                                                </div>
+                                            </div>--}}
+                                            <br>
+                                            <img height="150px" class="center" src="{{ asset('images/planos/'.$image->image) }}" />
+
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                            @endforeach
+                        </div>
+
+                        <template id="template-image">
+                            <div class="col-md-4">
+                                <div class="card card-outline card-success">
+                                    <div class="card-header">
+                                        <h3 class="card-title">Imagen Seleccionada</h3>
+
+                                        <div class="card-tools">
+                                            <button type="button" data-imagedelete class="btn btn-sm btn-outline-danger" ><i class="fas fa-trash"></i></i>
+                                            </button>
+                                        </div>
+                                        <!-- /.card-tools -->
+                                    </div>
+                                    <!-- /.card-header -->
+                                    <div class="card-body">
+                                        <div class="form-group">
+                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <textarea class="form-control" name="descplanos[]" rows="2" placeholder="Enter ..."></textarea>
+
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
+                                            <div class="input-group">
+                                                <div class="custom-file">
+                                                    <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
+                                                </div>
+                                            </div>
+                                            <img height="100px" />
+
+                                        </div>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </template>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+        </div>
+
         @can('showPrices_quote')
             <p class="lead">Resumen de Cotización</p>
             <div class="row">
