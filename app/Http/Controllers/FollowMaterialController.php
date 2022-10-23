@@ -152,4 +152,39 @@ class FollowMaterialController extends Controller
         return response()->json(['array' => $array], 200);
 
     }
+
+    public function getJsonStockAllMaterials()
+    {
+        $array = [];
+
+        // TODO: Solo categoria de estructuras
+        $materials = Material::where('category_id', 5)
+            ->get();
+
+        foreach ( $materials as $material )
+        {
+            $state = ( $material->stock_current < $material->stock_min ) ? 'Deshabastecido': ($material->stock_current < 0.25 * $material->stock_max) ? 'Por deshabastecer': 'Suficiente';
+
+            array_push($array, [
+                'id' => $material->id,
+                'code' => $material->code,
+                'material' => $material->full_description,
+                'stock' => $material->stock_current,
+                'stock_max' => $material->stock_max,
+                'stock_min' => $material->stock_min,
+                'state' => $state,
+            ]);
+        }
+
+        return datatables($array)->toJson();
+    }
+
+    public function indexStock()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('follow.stock', compact('permissions'));
+
+    }
 }

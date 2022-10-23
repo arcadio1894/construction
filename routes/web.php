@@ -1056,6 +1056,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/follow/output/material/{id}', 'FollowMaterialController@getJsonDetailFollowMaterial');
         Route::get('/visualizar/orden/compra/{code}', 'OrderPurchaseController@showOrderOperator');
 
+        Route::get('/get/json/stock/all/materials', 'FollowMaterialController@getJsonStockAllMaterials');
+        Route::get('/alerta/stock/materiales', 'FollowMaterialController@indexStock')
+            ->name('stock.index')
+            ->middleware('permission:stock_followMaterials');
+
         // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE COMPRA
         Route::get('/regularizar/automaticamente/entrada/compra/{entry_id}', 'EntryController@regularizeAutoOrderEntryPurchase')
             ->middleware('permission:create_orderPurchaseExpress');

@@ -1122,6 +1122,14 @@
                                     </a>
                                 </li>
                                 @endcan
+                                @can('stock_followMaterials')
+                                    <li class="nav-item">
+                                        <a href="{{ route('stock.index') }}" class="nav-link @yield('activeStockMaterials')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Stock materiales</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan
