@@ -42,7 +42,8 @@ class ReportController extends Controller
 
                 if ( isset($detail_entry) )
                 {
-                    $currency = $detail_entry->entry->currency_invoice;
+                    $entry = Entry::find($detail_entry->entry_id);
+                    $currency = $entry->currency_invoice;
 
                     if ( $currency === 'USD' )
                     {
@@ -100,7 +101,8 @@ class ReportController extends Controller
                 //dump($detail_entry);
                 if ( isset($detail_entry) )
                 {
-                    $currency = $detail_entry->entry->currency_invoice;
+                    $entry = Entry::find($detail_entry->entry_id);
+                    $currency = $entry->currency_invoice;
 
                     if ( $currency === 'USD' )
                     {
