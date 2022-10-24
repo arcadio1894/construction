@@ -366,7 +366,7 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
 
-        if ( $quote3->state === 'created' && $quote3->send_state == 0 )
+        if ( $quote3->state === 'created' /*&& $quote3->send_state == 0*/ )
         {
             foreach( $quote3->equipments as $equipment )
             {
