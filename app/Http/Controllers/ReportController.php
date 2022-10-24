@@ -1592,7 +1592,7 @@ class ReportController extends Controller
                 {
                     foreach ( $equipment->materials as $material  )
                     {
-                        if ( $material->original == 1 && $material->replacement = 0 )
+                        if ( $material->original == 1 && $material->replacement == 0 )
                         {
                             $monto_materiales += ($material->price * $material->quantity);
                         }
