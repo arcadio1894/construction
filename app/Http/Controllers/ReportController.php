@@ -98,16 +98,20 @@ class ReportController extends Controller
             {
                 $detail_entry = DetailEntry::with('entry')->find($item->detail_entry_id);
                 //dump($detail_entry);
-                $currency = $detail_entry->entry->currency_invoice;
-
-                if ( $currency === 'USD' )
+                if ( isset($detail_entry) )
                 {
-                    $amount_dollars = $amount_dollars + (float)$item->price;
-                    $quantity_dollars = $quantity_dollars + (float)$item->percentage;
-                } else {
-                    $amount_soles = $amount_soles + (float)$item->price;
-                    $quantity_soles = $quantity_soles + (float)$item->percentage;
+                    $currency = $detail_entry->entry->currency_invoice;
+
+                    if ( $currency === 'USD' )
+                    {
+                        $amount_dollars = $amount_dollars + (float)$item->price;
+                        $quantity_dollars = $quantity_dollars + (float)$item->percentage;
+                    } else {
+                        $amount_soles = $amount_soles + (float)$item->price;
+                        $quantity_soles = $quantity_soles + (float)$item->percentage;
+                    }
                 }
+
             }
 
             array_push($materials_array, ['material'=>$material->full_description, 'stock_dollars'=>$quantity_dollars, 'stock_soles'=>$quantity_soles, 'amount_dollars'=>$amount_dollars, 'amount_soles'=>$amount_soles]);
