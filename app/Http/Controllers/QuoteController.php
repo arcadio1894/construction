@@ -253,25 +253,28 @@ class QuoteController extends Controller
             $images = $request->planos;
             $descriptions = $request->descplanos;
 
-            if ( count($images) != 0 && count($descriptions) )
+            if ( isset($images) )
             {
-                foreach ( $images as $key => $image )
+                if ( count($images) != 0 && count($descriptions) )
                 {
-                    $path = public_path().'/images/planos/';
-                    $img = $image;
+                    foreach ( $images as $key => $image )
+                    {
+                        $path = public_path().'/images/planos/';
+                        $img = $image;
 
-                    $filename = $quote->id .'_'. $this->generateRandomString(20). '.JPG';
-                    $imgQuote = Image::make($img);
-                    $imgQuote->orientate();
-                    $imgQuote->save($path.$filename, 80, 'JPG');
+                        $filename = $quote->id .'_'. $this->generateRandomString(20). '.JPG';
+                        $imgQuote = Image::make($img);
+                        $imgQuote->orientate();
+                        $imgQuote->save($path.$filename, 80, 'JPG');
 
-                    ImagesQuote::create([
-                        'quote_id' => $quote->id,
-                        'description' => $descriptions[$key],
-                        'image' => $filename,
-                        'order' => $key+1
-                    ]);
+                        ImagesQuote::create([
+                            'quote_id' => $quote->id,
+                            'description' => $descriptions[$key],
+                            'image' => $filename,
+                            'order' => $key+1
+                        ]);
 
+                    }
                 }
             }
 
