@@ -163,8 +163,16 @@ class FollowMaterialController extends Controller
 
         foreach ( $materials as $material )
         {
-            $state = ( $material->stock_current < $material->stock_min ) ? 'Deshabastecido': ($material->stock_current < 0.25 * $material->stock_max) ? 'Por deshabastecer': 'Suficiente';
+            $state = '';
 
+            if ( $material->stock_current < $material->stock_min )
+            {
+                $state = 'Deshabastecido';
+            } elseif ( $material->stock_current < 0.25 * $material->stock_max ) {
+                $state = 'Por deshabastecer';
+            } else {
+                $state = 'Suficiente';
+            }
             array_push($array, [
                 'id' => $material->id,
                 'code' => $material->code,
