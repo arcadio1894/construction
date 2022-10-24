@@ -126,7 +126,7 @@
                                                 </div>
                                             </div>--}}
                                             <br>
-                                            <img height="150px" class="center" src="{{ asset('images/planos/'.$image->image) }}" />
+                                            <img height="150px" width="100%" class="center" src="{{ asset('images/planos/'.$image->image) }}" />
 
                                         </div>
                                     </div>
@@ -167,7 +167,7 @@
                                                     <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
                                                 </div>
                                             </div>
-                                            <img height="100px" />
+                                            <img height="100px" width="100%" />
 
                                         </div>
                                     </div>

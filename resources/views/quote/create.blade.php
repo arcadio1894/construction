@@ -863,7 +863,7 @@
                                                     <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
                                                 </div>
                                             </div>
-                                            <img height="100px" />
+                                            <img height="100px" width="100%" />
 
                                         </div>
                                     </div>
@@ -899,7 +899,7 @@
                                                     <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
                                                 </div>
                                             </div>
-                                            <img height="100px" />
+                                            <img height="100px" width="100%" />
 
                                         </div>
                                     </div>

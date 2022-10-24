@@ -303,6 +303,19 @@
         <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
     @endforeach
 </div>
+
+<div id="notices">
+    @if ( count($images) > 0 )
+        <div><strong>PLANOS DE LA COTIZACIÓN {{ $quote->code }}</strong> </div>
+        <br>
+    @endif
+
+    @foreach( $images as $image )
+        <div class="notice">{{ $image->description }}</div>
+        <div class="notice"><img src="{{ asset('/images/planos/'.$image->image) }}">
+        </div><br>
+    @endforeach
+</div>
 <footer>
     A.H. Ramiro Prialé Mz. 17 Lte. 1  |  +51 998-396-337
 </footer>
