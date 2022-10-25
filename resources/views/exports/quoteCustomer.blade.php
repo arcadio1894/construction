@@ -311,8 +311,11 @@
     @endif
 
     @foreach( $images as $image )
-        <div class="notice">{{ $image->description }}</div>
-        <div class="notice"><img src="{{ asset('/images/planos/'.$image->image) }}">
+
+        <div class="notice">
+            <div class="notice"><em><u>{{ $image->description }}</u></em></div>
+            <img src="{{ asset('/images/planos/'.$image->image) }}">
+
         </div><br>
     @endforeach
 </div>
