@@ -151,6 +151,28 @@
         .page-break {
             page-break-after: always;
         }
+
+        .plano {
+            width: auto;
+            height: 250px;
+            max-width: 2000px;
+        }
+
+        .fill {
+            object-fit: fill;
+        }
+
+        .contain {
+            object-fit: contain;
+        }
+
+        .cover {
+            object-fit: cover;
+        }
+
+        .scale-down {
+            object-fit: scale-down;
+        }
     </style>
 </head>
 <body>
@@ -313,10 +335,9 @@
     @foreach( $images as $image )
 
         <div class="notice">
-            <div class="notice"><em><u>{{ $image->description }}</u></em></div>
-            <img src="{{ asset('/images/planos/'.$image->image) }}">
-
-        </div><br>
+            <div class="notice"><em><u>{{ $image->description }}</u></em></div><br>
+            <img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
+            </div><br>
     @endforeach
 </div>
 <footer>

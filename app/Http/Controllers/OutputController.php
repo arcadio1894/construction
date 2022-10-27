@@ -791,7 +791,11 @@ class OutputController extends Controller
 
                         // TODO: Dismunir el stock del material
                     }
-
+                    $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
+                    if (isset( $material_taken->id ))
+                    {
+                        $material_taken->delete();
+                    }
                     $outputDetail->delete();
 
                 }
@@ -932,7 +936,7 @@ class OutputController extends Controller
 
             if ($output->state !== 'created')
             {
-                if ( $id_item != 'Perzonalizado' )
+                if ( $id_item != 'Personalizado' )
                 {
                     $outputDetail = OutputDetail::where('output_id', $output->id)
                         ->where('item_id', $id_item)->first();
@@ -959,9 +963,18 @@ class OutputController extends Controller
                             $material->save();
                         }
                     }
-
+                    $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
+                    if (isset( $material_taken->id ))
+                    {
+                        $material_taken->delete();
+                    }
                     $outputDetail->delete();
                 } else {
+                    $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
+                    if (isset( $material_taken->id ))
+                    {
+                        $material_taken->delete();
+                    }
                     $outputDetailG->delete();
                 }
 

@@ -2,13 +2,18 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\StockMaterialsExcel;
 use App\FollowMaterial;
+use App\Mail\StockmaterialsEmail;
 use App\Material;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Mail;
 
 class FollowMaterialController extends Controller
 {
@@ -195,4 +200,59 @@ class FollowMaterialController extends Controller
         return view('follow.stock', compact('permissions'));
 
     }
+
+    public function sendEmailWithExcel()
+    {
+        // TODO: Obtener los materiales por deshabastecerse
+        $array = [];
+
+        // TODO: Solo categoria de estructuras
+        $materials = Material::where('category_id', 5)
+            ->where('stock_min', '>',0)
+            ->get();
+
+        foreach ( $materials as $material )
+        {
+            $state = '';
+
+            if ( $material->stock_current < $material->stock_min )
+            {
+                $state = 'Deshabastecido';
+                array_push($array, [
+                    'id' => $material->id,
+                    'code' => $material->code,
+                    'material' => $material->full_description,
+                    'stock' => $material->stock_current,
+                    'stock_max' => $material->stock_max,
+                    'stock_min' => $material->stock_min,
+                    'state' => $state,
+                ]);
+            } elseif ( $material->stock_current < 0.25 * $material->stock_max ) {
+                $state = 'Por deshabastecer';
+                array_push($array, [
+                    'id' => $material->id,
+                    'code' => $material->code,
+                    'material' => $material->full_description,
+                    'stock' => $material->stock_current,
+                    'stock_max' => $material->stock_max,
+                    'stock_min' => $material->stock_min,
+                    'state' => $state,
+                ]);
+            }
+
+        }
+
+        // TODO: Crear el excel y guardarlo
+        $path = public_path().'/excels/';
+        $dt = Carbon::now();
+        $filename = 'MaterialesDeshabastecidos' . $dt->toDateString() . 'xlsx';
+        Excel::store(new StockMaterialsExcel($array), $filename, $path);
+
+        //TODO: Enviar el correo
+        Mail::to('jmauricio@sermeind.com')
+            ->cc('')
+            ->send(new StockmaterialsEmail());
+
+    }
+    
 }
