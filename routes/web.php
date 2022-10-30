@@ -1061,6 +1061,9 @@ Route::middleware('auth')->group(function (){
             ->name('stock.index')
             ->middleware('permission:stock_followMaterials');
 
+        Route::get('/send/email/with/excel', 'FollowMaterialController@sendEmailWithExcel');
+
+
         // REGULARIZAR AUTOMATICAMENTE ENTRADAS DE COMPRA
         Route::get('/regularizar/automaticamente/entrada/compra/{entry_id}', 'EntryController@regularizeAutoOrderEntryPurchase')
             ->middleware('permission:create_orderPurchaseExpress');

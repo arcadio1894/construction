@@ -67,30 +67,28 @@
 
 </head>
 <body>
-<h1>REPORTE DE MATERIALES POR DESAHABASTECERSE</h1>
+<h1>REPORTE DE MATERIALES POR DESHABASTECERSE</h1>
 <table id="table">
     <thead>
         <tr>
-            <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Código</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Código</th>
             <th width="180px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Material</th>
-            <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Actual</th>
-            <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Minimo</th>
-            <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Maximo</th>
-            <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Estado</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Actual</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Minimo</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Maximo</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Estado</th>
         </tr>
     </thead>
     <tbody>
     @for ( $i = 0; $i<count($materials); $i++ )
-
         <tr>
-            <th width="90px">{{ $materials[$i]['code'] }}</th>
-            <th width="180px" style="word-wrap: break-word">{{ $materials[$i]['material'] }}</th>
-            <th width="90px">{{ $materials[$i]['stock'] }}<</th>
-            <th width="90px">{{ $materials[$i]['stock_min'] }}<</th>
-            <th width="90px">{{ $materials[$i]['stock_max'] }}<</th>
-            <th width="90px">{{ $quotes[$i]['state'] }}</th>
+            <td width="100px">{{ $materials[$i]['code'] }}</td>
+            <td width="180px" style="word-wrap: break-word">{{ $materials[$i]['material'] }}</td>
+            <td width="100px">{{ $materials[$i]['stock'] }}</td>
+            <td width="100px">{{ $materials[$i]['stock_min'] }}</td>
+            <td width="100px">{{ $materials[$i]['stock_max'] }}</td>
+            <td width="100px">{{ $materials[$i]['state'] }}</td>
         </tr>
-
     @endfor
     </tbody>
 </table>

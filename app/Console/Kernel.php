@@ -35,7 +35,8 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // Solo de prueba, cambiar a ->daily()
-        $schedule->command('credits:update')->daily();
+        //$schedule->command('credits:update')->daily();
+        $schedule->command('stocks:send')->saturdays()->at('11:00');
     }
 
     /**

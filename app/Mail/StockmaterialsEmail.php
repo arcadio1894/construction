@@ -17,9 +17,13 @@ class StockmaterialsEmail extends Mailable
      * @return void
      */
 
+    public $filename;
+    public $pathComplete;
 
-    public function __construct()
+    public function __construct($pathComplete, $filename)
     {
+        $this->filename = $filename;
+        $this->pathComplete = $pathComplete;
     }
 
     /**
@@ -29,10 +33,10 @@ class StockmaterialsEmail extends Mailable
      */
     public function build()
     {
-        return $this->view('email.sendContactMail')
-            ->attach('/path/to/file', [
-                'as' => 'name.pdf',
-                'mime' => 'application/pdf',
+        return $this->view('email.sendStockMail')
+            ->attach($this->pathComplete, [
+                'as' => $this->filename,
+                'mime' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
     }
 }

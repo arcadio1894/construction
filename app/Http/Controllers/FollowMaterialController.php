@@ -242,17 +242,22 @@ class FollowMaterialController extends Controller
 
         }
 
+        //return (new StockMaterialsExcel($array))->download('facturasFinanzas.xlsx');
+
+        //dd($array);
         // TODO: Crear el excel y guardarlo
-        $path = public_path().'/excels/';
+        $path = public_path('\excels');
         $dt = Carbon::now();
-        $filename = 'MaterialesDeshabastecidos' . $dt->toDateString() . 'xlsx';
-        Excel::store(new StockMaterialsExcel($array), $filename, $path);
+        $filename = 'MaterialesDeshabastecidos_'. $dt->toDateString() .'.xlsx';
+        Excel::store(new StockMaterialsExcel($array), $filename, 'excel_uploads');
 
+        $pathComplete = $path .'/'. $filename;
         //TODO: Enviar el correo
-        Mail::to('jmauricio@sermeind.com')
-            ->cc('')
-            ->send(new StockmaterialsEmail());
+        Mail::to('joryes1894@gmail.com')
+            ->cc('edesceperu@gmail.com')
+            ->send(new StockmaterialsEmail($pathComplete, $filename));
 
+        return response()->json(['message' => 'Todos correcto'], 200);
     }
     
 }
