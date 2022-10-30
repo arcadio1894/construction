@@ -81,7 +81,7 @@ class SendEmailStock extends Command
 
         //dd($array);
         // TODO: Crear el excel y guardarlo
-        $path = public_path('\excels');
+        $path = public_path('excels');
         $dt = Carbon::now();
         $filename = 'MaterialesDeshabastecidos_'. $dt->toDateString() .'.xlsx';
         Excel::store(new StockMaterialsExcel($array), $filename, 'excel_uploads');
