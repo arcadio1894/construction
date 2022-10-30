@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
     {
         // Solo de prueba, cambiar a ->daily()
         //$schedule->command('credits:update')->daily();
-        $schedule->command('stocks:send')->saturdays()->at('11:15');
+        $schedule->command('stocks:send')->saturdays()->at('11:40');
     }
 
     /**
