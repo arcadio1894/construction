@@ -376,49 +376,69 @@ class OutputController extends Controller
     public function getJsonItemsOutputRequest( $output_id )
     {
         $array = [];
+        $materials = [];
+        $materials_quantity = [];
         $outputDetails = OutputDetail::where('output_id', $output_id)->get();
         foreach ( $outputDetails as $key => $outputDetail )
         {
             $item = Item::with(['location', 'material'])
                 ->find($outputDetail->item_id);
 
-            if ( isset($item) )
+            $material = Material::find($outputDetail->material_id);
+            if ( $material->typescrap_id != null || $material->typescrap_id != '' )
             {
-                $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name;
-                array_push($array,
-                    [
-                        'id'=> $key+1,
-                        'material' => $item->material->full_description,
-                        'id_item' => $item->id,
-                        'code' => $item->code,
-                        'length' => $item->length,
-                        'width' => $item->width,
-                        'weight' => $item->weight,
-                        'price' => $item->price,
-                        'percentage' => $item->percentage,
-                        'location' => $l,
-                        'state' => $item->state,
-                        'detail_id' =>$outputDetail->id
-                    ]);
+                if (isset($item)) {
+                    $l = 'AR:' . $item->location->area->name . '|AL:' . $item->location->warehouse->name . '|AN:' . $item->location->shelf->name . '|NIV:' . $item->location->level->name . '|CON:' . $item->location->container->name;
+                    array_push($array,
+                        [
+                            'id' => $key + 1,
+                            'material' => $item->material->full_description,
+                            'id_item' => $item->id,
+                            'code' => $item->code,
+                            'length' => $item->length,
+                            'width' => $item->width,
+                            'weight' => $item->weight,
+                            'price' => $item->price,
+                            'percentage' => $item->percentage,
+                            'location' => $l,
+                            'state' => $item->state,
+                            'detail_id' => $outputDetail->id
+                        ]);
+
+                } else {
+                    array_push($array,
+                        [
+                            'id' => $key + 1,
+                            'material' => $outputDetail->material->full_description,
+                            'id_item' => 'Personalizado',
+                            'code' => 'Personalizado',
+                            'length' => $outputDetail->length,
+                            'width' => $outputDetail->width,
+                            'weight' => null,
+                            'price' => $outputDetail->price,
+                            'location' => 'Personalizado',
+                            'percentage' => $outputDetail->percentage,
+                            'state' => 'Personalizado',
+                            'detail_id' => $outputDetail->id
+                        ]);
+                }
             } else {
-                array_push($array,
-                    [
-                        'id'=> $key+1,
-                        'material' => $outputDetail->material->full_description,
-                        'id_item' => 'Personalizado',
-                        'code' => 'Personalizado',
-                        'length' => $outputDetail->length,
-                        'width' => $outputDetail->width,
-                        'weight' => null,
-                        'price' => $outputDetail->price,
-                        'location' => 'Personalizado',
-                        'percentage' => $outputDetail->percentage,
-                        'state' => 'Personalizado',
-                        'detail_id' =>$outputDetail->id
-                    ]);
+                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->full_description, 'material_complete'=>$material, 'quantity'=> (float)$item->percentage));
+
+            }
+        }
+
+        $new_arr3 = array();
+        foreach($materials_quantity as $item) {
+            if(isset($new_arr3[$item['material_id']])) {
+                $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
             }
 
+            $new_arr3[$item['material_id']] = $item;
         }
+
+        $materials = array_values($new_arr3);
 
         $output = Output::find($output_id);
         $quote = Quote::where('order_execution', $output->execution_order)->first();
@@ -482,7 +502,7 @@ class OutputController extends Controller
 
 
         //dd($array);
-        return json_encode(['array'=>$array, 'consumables'=>$consumables]);
+        return json_encode(['array'=>$array, 'consumables'=>$consumables, 'materials'=>$materials]);
     }
 
     public function attendOutputRequest(Request $request)

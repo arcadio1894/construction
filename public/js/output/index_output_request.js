@@ -521,6 +521,7 @@ function showModalReturnMaterials() {
 function showItems() {
     $('#table-items').html('');
     $('#table-consumables').html('');
+    $('#table-materiales').html('');
     var output_id = $(this).data('details');
     $.ajax({
         url: "/dashboard/get/json/items/output/"+output_id,
@@ -531,6 +532,12 @@ function showItems() {
             for (var i=0; i<json.array.length; i++)
             {
                 renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state, json.array[i].detail_id);
+                //$materials.push(json[i].material);
+            }
+
+            for (var k=0; k<json.materials.length; k++)
+            {
+                renderTemplateMaterials(k+1, json.materials[k].material_complete.code, json.materials[k].material, json.materials[k].quantity);
                 //$materials.push(json[i].material);
             }
 
@@ -588,6 +595,15 @@ function renderTemplateItemDetail(id, material, code, length, width, price, loca
         $('#table-items').append(clone);
     }
 
+}
+
+function renderTemplateMaterials(id, code, material, cantidad) {
+    var clone = activateTemplate('#template-materiale');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = cantidad;
+    $('#table-materiales').append(clone);
 }
 
 function renderTemplateConsumable(id, code, material, cantidad) {

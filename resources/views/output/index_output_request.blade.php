@@ -284,6 +284,27 @@
                         <tr>
                             <th style="width: 10px">#</th>
                             <th>Código</th>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-materiales">
+
+                        </tbody>
+                        <template id="template-materiale">
+                            <tr>
+                                <td data-i></td>
+                                <td data-code></td>
+                                <td data-material></td>
+                                <td data-quantity></td>
+                            </tr>
+                        </template>
+                    </table>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Código</th>
                             <th>Consumible</th>
                             <th>Cantidad</th>
                         </tr>
