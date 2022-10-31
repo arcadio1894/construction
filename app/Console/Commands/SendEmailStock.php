@@ -88,8 +88,8 @@ class SendEmailStock extends Command
 
         $pathComplete = $path .'/'. $filename;
         //TODO: Enviar el correo
-        Mail::to('joryes1894@gmail.com')
-            ->cc('edesceperu@gmail.com')
+        Mail::to('kparedes@sermeind.com')
+            ->cc(['almacen.sermeind@gmail.com','joryes1894@gmail.com'])
             ->send(new StockmaterialsEmail($pathComplete, $filename));
     }
 }
