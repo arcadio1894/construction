@@ -1468,29 +1468,29 @@ class ReportController extends Controller
                     {
                         if ( $material->original == 1 && $material->replacement == 0 )
                         {
-                            $monto_materiales += ($material->price * $material->quantity);
+                            $monto_materiales += (($material->price * $material->quantity)*$equipment->quantity);
                         }
 
                     }
 
                     foreach ( $equipment->consumables as $consumable  )
                     {
-                        $monto_consumibles += ($consumable->price * $consumable->quantity);
+                        $monto_consumibles += (($consumable->price * $consumable->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->workforces as $workforce  )
                     {
-                        $monto_servicios_varios += ($workforce->price * $workforce->quantity);
+                        $monto_servicios_varios += (($workforce->price * $workforce->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->turnstiles as $turnstile  )
                     {
-                        $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
+                        $monto_servicios_adicionales += (($turnstile->price * $turnstile->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->workdays as $workday  )
                     {
-                        $monto_dias_trabajo += ($workday->total);
+                        $monto_dias_trabajo += (($workday->total)*$equipment->quantity);
                     }
                 }
 
@@ -1600,29 +1600,29 @@ class ReportController extends Controller
                     {
                         if ( $material->original == 1 && $material->replacement == 0 )
                         {
-                            $monto_materiales += ($material->price * $material->quantity);
+                            $monto_materiales += (($material->price * $material->quantity)*$equipment->quantity);
                         }
 
                     }
 
                     foreach ( $equipment->consumables as $consumable  )
                     {
-                        $monto_consumibles += ($consumable->price * $consumable->quantity);
+                        $monto_consumibles += (($consumable->price * $consumable->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->workforces as $workforce  )
                     {
-                        $monto_servicios_varios += ($workforce->price * $workforce->quantity);
+                        $monto_servicios_varios += (($workforce->price * $workforce->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->turnstiles as $turnstile  )
                     {
-                        $monto_servicios_adicionales += ($turnstile->price * $turnstile->quantity);
+                        $monto_servicios_adicionales += (($turnstile->price * $turnstile->quantity)*$equipment->quantity);
                     }
 
                     foreach ( $equipment->workdays as $workday  )
                     {
-                        $monto_dias_trabajo += ($workday->total);
+                        $monto_dias_trabajo += (($workday->total)*$equipment->quantity);
                     }
                 }
 
