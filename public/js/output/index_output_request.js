@@ -25,6 +25,7 @@ function format ( d ) {
 */
 
 $(document).ready(function () {
+    $permissions = JSON.parse($('#permissions').val());
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/output/request",
@@ -350,7 +351,8 @@ $(document).ready(function () {
 
     $formAttend = $('#formAttend');
 
-    $formAttend.on('submit', attendOutput);
+    //$formAttend.on('submit', attendOutput);
+    $("#btn-submit").on("click", attendOutput);
 
     $formDeleteTotal.on('submit', deleteTotalOutput);
 
@@ -475,7 +477,7 @@ function showModalDeletePartial() {
     var output_id = $(this).data('deletepartial');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/"+output_id,
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -500,7 +502,7 @@ function showModalReturnMaterials() {
     var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/"+output_id,
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -641,13 +643,16 @@ function openModalAttend() {
 
 function attendOutput() {
     console.log('Llegue');
+    $("#btn-submit").attr("disabled", true);
+    var formulario = $('#formAttend')[0];
+    var form = new FormData(formulario);
     event.preventDefault();
     // Obtener la URL
     var attendUrl = $formAttend.data('url');
     $.ajax({
         url: attendUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -672,6 +677,7 @@ function attendOutput() {
                 });
             $modalAttend.modal('hide');
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -717,7 +723,7 @@ function attendOutput() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
@@ -810,6 +816,8 @@ function deleteTotalOutput() {
 function deletePartialOutput() {
     console.log('Llegue');
     event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
     // Obtener la URL
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemdelete');
@@ -839,6 +847,8 @@ function deletePartialOutput() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            button.attr("disabled", false);
+            $(this).parent().parent().remove();
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -882,16 +892,18 @@ function deletePartialOutput() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            button.attr("disabled", false);
 
         },
     });
-    $(this).parent().parent().remove();
+
 }
 
 function returnItemMaterials() {
     console.log('Llegue');
     event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
     // Obtener la URL
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemreturn');
@@ -921,6 +933,8 @@ function returnItemMaterials() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            button.attr("disabled", false);
+            $(this).parent().parent().remove();
             $modalReturnMaterials.modal('hide');
         },
         error: function (data) {
@@ -965,11 +979,11 @@ function returnItemMaterials() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            button.attr("disabled", false);
 
         },
     });
-    $(this).parent().parent().remove();
+
 }
 
 function addItems() {

@@ -423,7 +423,7 @@ class OutputController extends Controller
                         ]);
                 }
             } else {
-                array_push($materials_quantity, array('material_id'=>$material->material_id, 'material'=>$material->full_description, 'material_complete'=>$material, 'quantity'=> (float)$item->percentage));
+                array_push($materials_quantity, array('material_id'=>$material->id, 'material'=>$material->full_description, 'material_complete'=>$material, 'quantity'=> (float)$item->percentage));
 
             }
         }
@@ -503,6 +503,122 @@ class OutputController extends Controller
 
         //dd($array);
         return json_encode(['array'=>$array, 'consumables'=>$consumables, 'materials'=>$materials]);
+    }
+
+    public function getJsonItemsOutputRequestDevolver( $output_id )
+    {
+        $array = [];
+        $materials = [];
+        $materials_quantity = [];
+        $outputDetails = OutputDetail::where('output_id', $output_id)->get();
+        foreach ( $outputDetails as $key => $outputDetail )
+        {
+            $item = Item::with(['location', 'material'])
+                ->find($outputDetail->item_id);
+
+            $material = Material::find($outputDetail->material_id);
+
+                if (isset($item)) {
+                    $l = 'AR:' . $item->location->area->name . '|AL:' . $item->location->warehouse->name . '|AN:' . $item->location->shelf->name . '|NIV:' . $item->location->level->name . '|CON:' . $item->location->container->name;
+                    array_push($array,
+                        [
+                            'id' => $key + 1,
+                            'material' => $item->material->full_description,
+                            'id_item' => $item->id,
+                            'code' => $item->code,
+                            'length' => $item->length,
+                            'width' => $item->width,
+                            'weight' => $item->weight,
+                            'price' => $item->price,
+                            'percentage' => $item->percentage,
+                            'location' => $l,
+                            'state' => $item->state,
+                            'detail_id' => $outputDetail->id
+                        ]);
+
+                } else {
+                    array_push($array,
+                        [
+                            'id' => $key + 1,
+                            'material' => $outputDetail->material->full_description,
+                            'id_item' => 'Personalizado',
+                            'code' => 'Personalizado',
+                            'length' => $outputDetail->length,
+                            'width' => $outputDetail->width,
+                            'weight' => null,
+                            'price' => $outputDetail->price,
+                            'location' => 'Personalizado',
+                            'percentage' => $outputDetail->percentage,
+                            'state' => 'Personalizado',
+                            'detail_id' => $outputDetail->id
+                        ]);
+                }
+
+        }
+
+        $output = Output::find($output_id);
+        $quote = Quote::where('order_execution', $output->execution_order)->first();
+
+        $consumables = [];
+        $consumables_quantity = [];
+        if ( isset( $quote ) )
+        {
+            foreach ( $quote->equipments as $equipment )
+            {
+                foreach ( $equipment->consumables as $key => $consumable )
+                {
+                    if (isset( $consumable->material->subcategory ))
+                    {
+                        if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                        {
+                            array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                        }
+                    } else {
+                        array_push($consumables_quantity, array('id'=>$key+1, 'material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+                }
+
+            }
+
+            foreach ( $quote->equipments as $equipment )
+            {
+                foreach ( $equipment->consumables as $consumable )
+                {
+                    if (isset( $consumable->material->subcategory ))
+                    {
+                        if ( $consumable->material->category_id == 2 && trim($consumable->material->subcategory->name) <> 'MIXTO' )
+                        {
+                            array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                        }
+                    } else {
+                        array_push($consumables_quantity, array('material_id'=>$consumable->material_id, 'material'=>$consumable->material->full_description, 'material_complete'=>$consumable->material, 'quantity'=> (float)$consumable->quantity*(float)$equipment->quantity));
+
+                    }
+
+
+                }
+
+            }
+
+            $new_arr2 = array();
+            foreach($consumables_quantity as $item) {
+                if(isset($new_arr2[$item['material_id']])) {
+                    $new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                    continue;
+                }
+
+                $new_arr2[$item['material_id']] = $item;
+            }
+
+            $consumables = array_values($new_arr2);
+        }
+
+
+        //dd($array);
+        return json_encode(['array'=>$array, 'consumables'=>$consumables]);
     }
 
     public function attendOutputRequest(Request $request)

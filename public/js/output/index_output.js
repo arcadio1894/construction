@@ -570,7 +570,7 @@ function showModalReturnMaterials() {
     var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/"+output_id,
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -761,6 +761,8 @@ function deleteTotalOutput() {
 function deletePartialOutput() {
     console.log('Llegue');
     event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
     // Obtener la URL
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemdelete');
@@ -790,6 +792,7 @@ function deletePartialOutput() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            button.attr("disabled", false);
             $(this).parent().parent().remove();
         },
         error: function (data) {
@@ -834,7 +837,7 @@ function deletePartialOutput() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            button.attr("disabled", false);
 
         },
     });
@@ -844,6 +847,8 @@ function deletePartialOutput() {
 function returnItemMaterials() {
     console.log('Llegue');
     event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
     // Obtener la URL
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemreturn');
@@ -873,6 +878,8 @@ function returnItemMaterials() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            button.attr("disabled", false);
+            $(this).parent().parent().remove();
             $modalReturnMaterials.modal('hide');
         },
         error: function (data) {
@@ -917,11 +924,11 @@ function returnItemMaterials() {
                         "hideMethod": "fadeOut"
                     });
             }
-
+            button.attr("disabled", false);
 
         },
     });
-    $(this).parent().parent().remove();
+
 }
 
 function confirmOutput() {

@@ -608,6 +608,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:create_request');
         Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
         Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
+        Route::get('/get/json/items/output/devolver/{output_id}', 'OutputController@getJsonItemsOutputRequestDevolver');
+
         Route::post('output_request/attend', 'OutputController@attendOutputRequest')
             ->name('output.attend')
             ->middleware('permission:attend_request');

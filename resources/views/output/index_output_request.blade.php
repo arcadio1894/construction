@@ -229,7 +229,7 @@
                         <p id="descriptionAttend"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" >Atender</button>
+                        <button type="button" id="btn-submit" class="btn btn-primary" >Atender</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
                     </div>
                 </form>
