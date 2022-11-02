@@ -84,6 +84,11 @@ class EntryScrapsController extends Controller
                 {
                     return response()->json(['message' => 'Bloquee uno de las medidas para realizar el corte.'], 422);
                 }
+
+                if ( $length_new > $length || $width_new > $width )
+                {
+                    return response()->json(['message' => 'El largo o ancho es incorrecto, creará items negativos'], 422);
+                }
             }
 
             // TODO: Agregamos tubos pequeños
@@ -92,6 +97,11 @@ class EntryScrapsController extends Controller
                 if ( $length_new == 0 )
                 {
                     return response()->json(['message' => 'Ingrese el largo mayor a cero'], 422);
+                }
+
+                if ( $length_new >= $length )
+                {
+                    return response()->json(['message' => 'El largo es incorrecto, creará items negativos'], 422);
                 }
 
             }
