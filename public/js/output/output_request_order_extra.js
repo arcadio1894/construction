@@ -111,6 +111,7 @@ $(document).ready(function () {
     $('#btn-saveItemsCustom').on('click', saveTableItemsCustom);
 
     $('#btn-request-quantity').on('click', requestItemsQuantity);
+    $('#material_selected_quantity').on('keyup', requestItemsQuantity2);
 
     $('#btn-add-scrap').on('click', addItemsScrap);
 
@@ -800,6 +801,87 @@ function requestItemsQuantity() {
 
 
 
+}
+
+function requestItemsQuantity2(event) {
+    /*if (event.keyCode === 13) {
+        let material_name = $('#material_selected').val();
+        let material_quantity = $('#material_selected_quantity').val();
+        const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+        let material_stock = result.stock_current;
+        if( material_name.trim() === '' )
+        {
+            toastr.error('Debe elegir un material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( parseFloat(material_quantity) > parseFloat(material_stock) )
+        {
+            toastr.error('No hay stock suficiente en el almacén', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $('#body-items').html('');
+
+        $.ajax({
+            url: "/dashboard/get/items/output/complete/"+result.id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (json){
+                let iterator = 1;
+                for (var i=0; i<json.length; i++)
+                {
+                    //$users.push(json[i].name);
+                    $itemsComplete.push(json[i]);
+                    if (iterator <= material_quantity)
+                    {
+                        renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+                        const result = $itemsComplete.find( item => item.id == json[i].id );
+                        $itemsSelected.push(result);
+                        iterator+=1;
+                    } else {
+                        renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+                        iterator+=1;
+                    }
+                }
+
+            }
+        });
+    }
+*/
 }
 
 function addItemsScrap() {

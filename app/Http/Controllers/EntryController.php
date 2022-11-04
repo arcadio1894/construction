@@ -1273,9 +1273,39 @@ class EntryController extends Controller
 
     public function getOrderPurchaseComplete($order)
     {
-        $order = Entry::where('purchase_order', $order)
+        $entry = Entry::where('purchase_order', $order)
             ->first();
-        if ( isset($order) )
+
+        $order_purchase = OrderPurchase::where('code', $order)->first();
+
+        if ( isset($order_purchase) )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $order_purchase->id)->get();
+
+            if (isset($details))
+            {
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $entry_details_sum = DetailEntry::where('entry_id', $entry->id)
+                        ->where('material_id', $material)->sum('entered_quantity');
+
+                    if ($entry_details_sum < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        return 0;
+                    }
+                }
+                // TODO: Esto significa que esta completa
+                return 1;
+            }
+            // TODO: Esto significa que esta por ingresar
+            return 2;
+        }
+        // TODO: Esto significa que esta por ingresar
+        return 2;
+        /*if ( isset($order) )
         {
             $details = DetailEntry::where('entry_id', $order->id)->get();
             if (isset($details))
@@ -1291,7 +1321,7 @@ class EntryController extends Controller
             }
             return 2;
         }
-        return 2;
+        return 2;*/
 
     }
 

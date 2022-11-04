@@ -86,7 +86,7 @@ class ItemController extends Controller
                     'id'=> $detail->id,
                     'material' => $detail->material->full_description,
                     'code' => $detail->material->code,
-                    'ordered_quantity' => $detail->ordered_quantity,
+                    'ordered_quantity' => $detail->entered_quantity,
                     'unit_price' => $detail->unit_price
                 ]);
 
@@ -105,7 +105,7 @@ class ItemController extends Controller
                         'width' => $item->width,
                         'weight' => $item->weight,
                         'price' => $item->material->unit_price,
-                        'location' => $l,
+                        'location' => substr($l,0,30).'...',
                         'state' => $item->state,
                     ]);
             }
