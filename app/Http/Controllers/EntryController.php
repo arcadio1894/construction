@@ -1278,7 +1278,7 @@ class EntryController extends Controller
 
         $order_purchase = OrderPurchase::where('code', $order)->first();
 
-        if ( isset($order_purchase) )
+        if ( isset($entry) )
         {
             $details = OrderPurchaseDetail::where('order_purchase_id', $order_purchase->id)->get();
 
