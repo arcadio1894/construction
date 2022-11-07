@@ -119,6 +119,10 @@ $(document).ready(function () {
     $('#btn-saveItems').on('click', saveTableItems);
 
     $('#btn-request-quantity').on('click', requestItemsQuantity);
+    $('#material_selected_quantity').on('keyup', requestItemsQuantity2);
+
+    $('#width_new_custom').on('keyup', saveTableItemsCustom2);
+    $('#length_new_custom').on('keyup', saveTableItemsCustom2);
 
     $('#btn-add-scrap').on('click', addItemsScrap);
 
@@ -811,6 +815,86 @@ function requestItemsQuantity() {
 
 }
 
+function requestItemsQuantity2(event) {
+    if (event.keyCode === 13) {
+        let material_name = $('#material_selected').val();
+        let material_quantity = $('#material_selected_quantity').val();
+        const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+        let material_stock = result.stock_current;
+        if( material_name.trim() === '' )
+        {
+            toastr.error('Debe elegir un material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( parseFloat(material_quantity) > parseFloat(material_stock) )
+        {
+            toastr.error('No hay stock suficiente en el almacén', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $('#body-items').html('');
+
+        $.ajax({
+            url: "/dashboard/get/items/output/complete/"+result.id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (json){
+                let iterator = 1;
+                for (var i=0; i<json.length; i++)
+                {
+                    //$users.push(json[i].name);
+                    $itemsComplete.push(json[i]);
+                    if (iterator <= material_quantity)
+                    {
+                        renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+                        const result = $itemsComplete.find( item => item.id == json[i].id );
+                        $itemsSelected.push(result);
+                        iterator+=1;
+                    } else {
+                        renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+                        iterator+=1;
+                    }
+                }
+
+            }
+        });
+    }
+}
+
 function addItemsScrap() {
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
@@ -1324,6 +1408,141 @@ function saveTableItemsCustom() {
     $itemsSelected = [];
 
     $modalAddItemsCustom.modal('hide');
+}
+
+function saveTableItemsCustom2(event) {
+    if (event.keyCode === 13) {
+        event.preventDefault();
+
+        var equipment_id = $modalAddItemsCustom.find('[id=equipment_custom]').val();
+        var equipment_name = $modalAddItemsCustom.find('[id=equipment_name_custom]').val();
+
+        const result = $materialsComplete.find( material => material.material.trim() === $('#material_selected_custom').val().trim() );
+
+        if ( result.typescrap == 1 || result.typescrap == 2 )
+        {
+            if ($('#length_new_custom').val() == '' || $('#length_new_custom').val() == 0)
+            {
+                toastr.error('Debe colocar un largo adecuado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+            if ($('#width_new_custom').val() == '' || $('#width_new_custom').val() == 0)
+            {
+                toastr.error('Debe colocar un ancho adecuado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }
+        if ( result.typescrap == 3 || result.typescrap == 4 )
+        {
+            if ($('#length_new_custom').val() == '' || $('#length_new_custom').val() == 0)
+            {
+                toastr.error('Debe colocar un largo adecuado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                return;
+            }
+        }
+
+        if ( result.typescrap == 1 || result.typescrap == 2 )
+        {
+            let largo = $('#length_new_custom').val();
+            console.log(largo);
+            let ancho = $('#width_new_custom').val();
+            console.log(ancho);
+            let areaPedida = parseFloat(largo) * parseFloat(ancho);
+            console.log(areaPedida);
+            let areaTotal = parseFloat(result.full_typescrap.length) * parseFloat(result.full_typescrap.width);
+            console.log(areaTotal);
+            let porcentaje = parseFloat(areaPedida/areaTotal).toFixed(2);
+            console.log(porcentaje);
+            let precio = result.price * porcentaje;
+            console.log(precio);
+
+            let code = rand_code($caracteres, 5);
+            //$items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
+            $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': ancho, 'price': precio, 'material': result.id});
+
+            //renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
+            renderTemplateMaterial(equipment_name, result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, ancho);
+
+        }
+        if ( result.typescrap == 3 || result.typescrap == 4 )
+        {
+            let largo = $('#length_new_custom').val();
+            let areaPedida = parseFloat(largo);
+            let areaTotal = parseFloat(result.full_typescrap.length);
+            let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
+            let precio = result.price * porcentaje;
+            let code = rand_code($caracteres, 5);
+            //$items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
+            $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
+
+            //renderTemplateMaterial(result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
+            renderTemplateMaterial(equipment_name,result.material, 'Personalizado_'+code, 'Sin ubicación', 'Sin estado',  precio, 'Personalizado_'+code, largo, 'S/N');
+
+        }
+        $('#material_search').val('');
+        $('#material_selected').val('');
+        $('#material_selected_custom').val('');
+        $('#length_custom').val('');
+        $('#width_custom').val('');
+        $('#length_new_custom').val('');
+        $('#width_new_custom').val('');
+        $("#equipments_order").val('').trigger('change');
+        $itemsSelected = [];
+
+        $modalAddItemsCustom.modal('hide');
+    }
+
 }
 
 function rand_code($caracteres, $longitud){

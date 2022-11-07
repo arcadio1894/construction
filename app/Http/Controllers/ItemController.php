@@ -128,7 +128,7 @@ class ItemController extends Controller
             array_push($array,
                 [
                     'id'=> $item->id,
-                    'location' => $l,
+                    'location' => substr($l,0,30).'...',
                     'location_id' => $item->location->id,
                     'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
                     'material' => $item->material->full_description,
@@ -160,7 +160,7 @@ class ItemController extends Controller
             array_push($array,
                 [
                     'id'=> $item->id,
-                    'location' => $l,
+                    'location' => substr($l,0,20).'...',
                     'location_id' => $item->location->id,
                     'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
                     'material' => $item->material->full_description,
@@ -192,7 +192,7 @@ class ItemController extends Controller
             array_push($array,
                 [
                     'id'=> $item->id,
-                    'location' => $l,
+                    'location' => substr($l,0,20).'...',
                     'location_id' => $item->location->id,
                     'typescrap' => (isset($item->typescrap)) ? $item->typescrap->id : '',
                     'material' => $item->material->full_description,

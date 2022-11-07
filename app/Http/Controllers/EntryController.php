@@ -618,11 +618,27 @@ class EntryController extends Controller
 
                 }
 
+                $order_purchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+
                 foreach ( $details_entry as $detail )
                 {
                     $material = Material::find($detail->material_id);
                     $material->stock_current = $material->stock_current - $detail->entered_quantity;
                     $material->save();
+
+                    // TODO: Modificamos los material orders
+                    $order_purchase_detail = OrderPurchaseDetail::where('order_purchase_id', $order_purchase->id)
+                        ->where('material_id', $material->id)->first();
+
+                    $material_orders = MaterialOrder::where('order_purchase_detail_id', $order_purchase_detail->id)->get();
+                    if (isset($material_orders))
+                    {
+                        foreach ( $material_orders as $material_order )
+                        {
+                            $material_order->quantity_entered = 0;
+                            $material_order->save();
+                        }
+                    }
 
                     $items = Item::where('detail_entry_id', $detail->id)->get();
                     foreach ( $items as $item )
