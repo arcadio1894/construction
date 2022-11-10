@@ -200,7 +200,7 @@ $(document).ready(function () {
                             ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
 */
                     } else {
-                        var id2 = item.image;
+                        var id2 = item.image_invoice;
                         if ( id2 != null ) {
                             var string2 = id2.substr(id2.length - 3);
                             if( string2.toUpperCase() == 'PDF')
@@ -285,6 +285,10 @@ $(document).ready(function () {
                         if ( $.inArray('update_orderService', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar servicio"><i class="fa fa-pen"></i></a> ';
+                        }
+                        if ( $.inArray('update_orderService', $permissions) !== -1 ) {
+                            text = text + ' <button data-deleteOS="'+item.id+'" data-name="'+item.code+'" '+
+                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
                         text = text + '<button type="button" data-details="' + item.id + '" data-code="1" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i> </button>';
 
@@ -492,6 +496,8 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', deleteItem);
 
+    $(document).on('click', '[data-deleteOS]', deleteOS);
+
     // Extend dataTables search
     $.fn.dataTable.ext.search.push(
         function( settings, data, dataIndex ) {
@@ -567,6 +573,95 @@ function deleteItem() {
                 action: function (e) {
                     $.ajax({
                         url: '/dashboard/destroy/total/invoice/'+id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+
+
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+}
+
+function deleteOS() {
+    var id = $(this).data('deleteos');
+    var button = $(this);
+    console.log(id);
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de eliminar esta factura?',
+        content: 'Se eliminará directamente de la base de datos',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/destroy/order/service/'+id,
                         method: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         processData:false,

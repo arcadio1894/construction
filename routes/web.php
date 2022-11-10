@@ -1152,6 +1152,18 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_invoice');
         Route::get('/get/json/invoices/finance', 'InvoiceController@getJsonInvoicesFinance');
 
+        // CRONOGRAMAS DE CONTROL DE HORAS
+        Route::get('/cronogramas', 'TimelineController@showTimelines')
+            ->name('index.timelines');
+        /*Route::get('/crear/cronograma', 'TimelineController@createTimelines')
+            ->name('create.timeline');*/
+        Route::get('/get/timeline/current', 'TimelineController@getTimelineCurrent');
+        Route::get('/gestionar/cronograma/{timeline}', 'TimelineController@manageTimeline')
+            ->name('manage.timeline');
+        Route::get('/ver/cronograma/{timeline}', 'TimelineController@showTimeline')
+            ->name('show.timeline');
+
+
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

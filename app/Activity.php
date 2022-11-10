@@ -12,6 +12,7 @@ class Activity extends Model
     protected $fillable = [
         'id',
         'quote_id',
+        'timeline_id',
         'description_quote',
         'activity',
         'progress'
@@ -22,6 +23,16 @@ class Activity extends Model
     public function quote()
     {
         return $this->belongsTo('App\Quote');
+    }
+
+    public function timeline()
+    {
+        return $this->belongsTo('App\Timeline');
+    }
+
+    public function activity_workers()
+    {
+        return $this->hasMany('App\ActivityWorker');
     }
 
 

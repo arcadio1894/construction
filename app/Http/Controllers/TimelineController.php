@@ -3,83 +3,63 @@
 namespace App\Http\Controllers;
 
 use App\Timeline;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TimelineController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function showTimelines()
     {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('timeline.index', compact( 'permissions'));
+
+    }
+
+    public function getTimelineCurrent()
+    {
+        $date_current = Carbon::now('America/Lima')->format('Y-m-d');
+
+        $lastTimeline = Timeline::withTrashed()->latest('id')->first();;
+
+        $date = '';
+        if ( isset($lastTimeline) )
+        {
+            $date = $lastTimeline->date;
+        }
+
+        if ($date_current == $date)
+        {
+            return response()->json(['message' => 'Ya existe un cronograma para este día.', 'error'=>1], 200);
+        }
+
+        $timeline = Timeline::create([
+            'date' => $date_current,
+        ]);
+
+        return response()->json(['message' => 'Redireccionando ...', 'error'=>0, 'url' => route('manage.timeline', $timeline->id)], 200);
+
+        //dd($date_current . ' -  ' . $date);
         //
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function manageTimeline($timeline_id)
     {
-        //
-    }
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+        $timeline = Timeline::with('responsibleUser')
+            ->with(['activities' => function ($query) {
+                $query->with('quote')
+                ->with(['activity_workers' => function ($query) {
+                    $query->with('worker');
+                }]);
+            }])
+            ->find($timeline_id);
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Timeline  $timeline
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Timeline $timeline)
-    {
-        //
-    }
+        return view('timeline.manage', compact( 'permissions', 'timeline'));
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Timeline  $timeline
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Timeline $timeline)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Timeline  $timeline
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Timeline $timeline)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Timeline  $timeline
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Timeline $timeline)
-    {
-        //
     }
 }

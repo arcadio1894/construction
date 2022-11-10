@@ -1043,6 +1043,33 @@
                         </li>
                     @endcan
 
+                    {{--<li class="nav-header">CONTROL DE HORAS</li>
+                    <li class="nav-item has-treeview @yield('openTimelines')">
+                        <a href="#" class="nav-link @yield('activeTimelines')">
+                            <i class="nav-icon far fa-calendar-alt"></i>
+                            <p>
+                                Cronogramas
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{{ route('index.timelines') }}" class="nav-link @yield('activeShowTimelines')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Ver cronogramas</p>
+                                </a>
+                            </li>
+                            --}}{{--<li class="nav-item">
+                                <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear cronograma</p>
+                                </a>
+                            </li>--}}{{--
+
+                        </ul>
+                    </li>--}}
+
                     @can('list_request')
                     <li class="nav-header">SOLICITUDES</li>
                     <li class="nav-item has-treeview @yield('openOutputRequest')">

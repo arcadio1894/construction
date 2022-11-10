@@ -17,5 +17,16 @@ class Timeline extends Model
         'timeline_area_id'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date', 'created_at', 'updated_at'];
+
+
+    public function activities()
+    {
+        return $this->hasMany('App\Activity');
+    }
+
+    public function responsibleUser()
+    {
+        return $this->belongsTo('App\Worker', 'responsible');
+    }
 }
