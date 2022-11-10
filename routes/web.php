@@ -57,6 +57,9 @@ Route::middleware('auth')->group(function (){
         Route::post('user/enable', 'UserController@enable')->name('user.enable')
             ->middleware('permission:destroy_user');
 
+        Route::get('users/to/workers', 'UserController@convertUsersToWorkers')
+            ->middleware('permission:list_user');
+
         //CUSTOMER
         Route::get('/all/customers', 'CustomerController@getCustomers')
             ->middleware('permission:list_customer');

@@ -197,6 +197,8 @@ $(document).ready(function () {
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
+    $('#newWorkers').on('click', convertUsersToWorkers);
+
 });
 
 var $formCreate;
@@ -209,6 +211,43 @@ var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function convertUsersToWorkers() {
+    $.confirm({
+        icon: 'fas fa-sync',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de convertir los usuarios a trabajadores?',
+        content: 'Se van a crear los trabajadores de los usuarios activos.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: "/dashboard/users/to/workers/",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (json) {
+
+                            $.alert('Trabajadores creados.');
+                        }
+                    });
+
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+}
 
 function openModalCreate() {
     $modalCreate.modal('show');

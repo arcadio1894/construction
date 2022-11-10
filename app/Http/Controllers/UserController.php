@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateUserPasswordRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Requests\UpdateUserSettingsRequest;
 use App\User;
+use App\Worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -279,5 +280,37 @@ class UserController extends Controller
         $users = User::select('id', 'name', 'email', 'image', 'enable')
             ->where('enable', false)->get();
         return datatables($users)->toJson();
+    }
+
+    public function convertUsersToWorkers()
+    {
+        DB::beginTransaction();
+        try {
+
+            $user_actives = User::where('enable', true)
+                ->where('id', '<>', 1)
+                ->get();
+
+            if ( count($user_actives) > 0 )
+            {
+                foreach ( $user_actives as $user_active )
+                {
+                    $worker = Worker::create([
+                        'first_name' => $user_active->name,
+                        'email' => $user_active->email,
+                        'image' => $user_active->image
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Trabajadores creados.'], 200);
+
     }
 }
