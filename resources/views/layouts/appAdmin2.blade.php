@@ -1060,12 +1060,12 @@
                                     <p>Ver cronogramas</p>
                                 </a>
                             </li>
-                            --}}{{--<li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear cronograma</p>
                                 </a>
-                            </li>--}}{{--
+                            </li>
 
                         </ul>
                     </li>--}}

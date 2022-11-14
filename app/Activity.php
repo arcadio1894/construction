@@ -15,7 +15,9 @@ class Activity extends Model
         'timeline_id',
         'description_quote',
         'activity',
-        'progress'
+        'progress',
+        'phase',
+        'performer'
     ];
 
     protected $dates = ['deleted_at'];
@@ -28,6 +30,12 @@ class Activity extends Model
     public function timeline()
     {
         return $this->belongsTo('App\Timeline');
+    }
+
+    public function performer_worker()
+    {
+        return $this->belongsTo('App\Worker', 'performer');
+
     }
 
     public function activity_workers()

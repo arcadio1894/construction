@@ -23,10 +23,7 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
-    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/daterangepicker/daterangepicker.css') }}">
 
 @endsection
 
@@ -46,7 +43,8 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Gestionar Cronograma</h5>
+    <h5 class="card-title">Registrar Avances</h5>
+    <a href="{{ route('show.timeline', $timeline->id) }}" class="btn btn-sm btn-success btn-sm float-right" > <i class="far fa-eye"></i> Regresar a la Visualización </a>
 
 @endsection
 
@@ -58,13 +56,12 @@
         <li class="breadcrumb-item">
             <a href="{{ route('index.timelines') }}"><i class="fa fa-archive"></i> Cronogramas</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Registrar avances</li>
     </ol>
 @endsection
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-    <input type="hidden" id="idtimeline" value="{{ $timeline->id }}">
 
     <div class="row">
         <div class="col-md-12">
@@ -73,8 +70,6 @@
                     <h3 class="card-title">ACTIVIDADES</h3>
 
                     <div class="card-tools">
-                        <button type="button" id="newActivity" class="btn btn-warning btn-sm " > <i class="far fa-clock"></i> Agregar Actividad </button>
-                        <button type="button" id="lostActivity" class="btn btn-danger btn-sm " > <i class="fas fa-list-alt"></i> Actividades pendientes </button>
 
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
@@ -88,10 +83,10 @@
                                     <h3 class="card-title"></h3>
 
                                     <div class="card-tools">
-                                        <button type="button" data-activityedit="{{ $activity->id }}" class="btn btn-sm btn-outline-success" data-toggle="tooltip" data-placement="top" title="Guardar cambios" ><i class="fas fa-save"></i>
+                                        <button type="button" data-activityedit="{{ $activity->id }}" class="btn btn-sm btn-outline-success" data-toggle="tooltip" data-placement="top" title="Registrar avances" ><i class="fas fa-save"></i>
                                         </button>
-                                        <button type="button" data-activitydelete="{{ $activity->id }}" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Eliminar" ><i class="fas fa-trash"></i>
-                                        </button>
+                                        {{--<button type="button" data-activitydelete="{{ $activity->id }}" class="btn btn-sm btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Eliminar" ><i class="fas fa-trash"></i>
+                                        </button>--}}
                                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                             <i class="fas fa-minus text-success"></i></button>
                                     </div>
@@ -102,39 +97,28 @@
                                     <div class="row">
                                         <div class="col-sm-4">
                                             <label for="quote">Cotización: </label>
-                                            <select class="quote_description form-control form-control-sm select2" style="width: 100%;">
-                                                <option></option>
-                                                <option value="0">Ninguna</option>
-                                                @foreach( $quotes as $quote )
-                                                    <option value="{{ $quote->id }}" {{ ($quote->id == $activity->quote_id) ? 'selected':'' }} data-quote="{{ $quote->description_quote }}">{{ $quote->order_execution . '-' . $quote->description_quote}}</option>
-                                                @endforeach
-                                            </select>
+                                            <textarea name="" cols="30" class="form-control form-control-sm" readonly="">{{ ( $activity->quote_id == null ) ? 'Ninguna cotización': $activity->quote->order_execution . ' ' . $activity->quote->description_quote }}</textarea>
 
                                         </div>
                                         <div class="col-sm-4">
                                             <label for="descriptionQuote">Descripción: </label>
-                                            <textarea name="" data-descriptionQuote cols="30" class="form-control form-control-sm">{{ $activity->description_quote }}</textarea>
+                                            <textarea name="" cols="30" class="form-control form-control-sm" readonly>{{ $activity->description_quote }}</textarea>
 
                                         </div>
                                         <div class="col-sm-4">
                                             <label for="descriptionQuote">Etapa: </label>
-                                            <textarea name="" data-phase cols="30" class="form-control form-control-sm">{{ $activity->phase }}</textarea>
+                                            <textarea name="" cols="30" class="form-control form-control-sm" readonly>{{ $activity->phase }}</textarea>
 
                                         </div>
                                         <div class="col-sm-4">
                                             <label for="activity">Actividad: </label>
-                                            <textarea name="" data-activity cols="30" class="form-control form-control-sm">{{ $activity->activity }}</textarea>
+                                            <textarea name="" cols="30" class="form-control form-control-sm" readonly>{{ $activity->activity }}</textarea>
 
                                         </div>
                                         <div class="col-sm-4">
                                             <label for="activity">Responsable: </label>
-                                            <select data-performer class="performers form-control form-control-sm select2" style="width: 100%;">
-                                                <option></option>
-                                                <option value="0">Ninguno</option>
-                                                @foreach( $workers as $worker )
-                                                    <option value="{{ $worker->id }}" {{ ($worker->id == $activity->performer) ? 'selected':'' }}>{{ $worker->first_name . ' ' . $worker->last_name}}</option>
-                                                @endforeach
-                                            </select>
+                                            <input type="text" class="form-control form-control-sm" value="{{ ( $activity->performer == null ) ? 'Ninguno' : $activity->performer_worker->first_name . ' ' . $activity->performer_worker->last_name}}" readonly>
+
                                         </div>
                                         <div class="col-sm-4">
                                             <label for="activity">Avance: </label>
@@ -147,28 +131,23 @@
                                         </div>
                                         <div class="col-sm-12">
                                             <label for="activity">Colaboradores:
-                                                <button type="button" data-activityworker="{{ $activity->id }}" class="btn btn-xs btn-outline-success float-right" data-toggle="tooltip" data-placement="top" title="Guardar cambios" ><i class="fas fa-plus"></i>
-                                                </button>
+                                                {{--<button type="button" data-activityworker="{{ $activity->id }}" class="btn btn-xs btn-outline-success float-right" data-toggle="tooltip" data-placement="top" title="Guardar cambios" ><i class="fas fa-plus"></i>
+                                                </button>--}}
                                             </label>
 
                                             <div id="body-workers">
                                                 @foreach( $activity->activity_workers as $collaborator )
                                                     <div class="row">
-                                                        <div class="col-sm-5">
-                                                            <select data-worker class="workers form-control form-control-sm select2" style="width: 100%;">
-                                                                <option></option>
-                                                                <option value="0">Ninguno</option>
-                                                                @foreach( $workers as $worker )
-                                                                    <option value="{{ $worker->id }}" {{ ($worker->id == $collaborator->worker_id) ? 'selected':'' }}>{{ $worker->first_name . ' ' . $worker->last_name}}</option>
-                                                                @endforeach
-                                                            </select>
+                                                        <div class="col-sm-6">
+                                                            <input type="hidden" data-worker value="{{ $collaborator->id }}">
+                                                            <input type="text" class="form-control form-control-sm" value="{{ ($collaborator->worker_id == null) ? 'Ninguno':  $collaborator->worker->first_name . ' ' . $collaborator->worker->last_name}}" readonly>
                                                         </div>
 
                                                         <div class="col-sm-3">
                                                             <div class="form-group row">
                                                                 <label class="col-sm-5 col-form-label">H-H Plan: </label>
                                                                 <div class="col-sm-7">
-                                                                    <input type="number" min="0" step="0.1" data-hoursplan name="hours_plan" value="{{ $collaborator->hours_plan }}" class="form-control form-control-sm ">
+                                                                    <input type="number" readonly min="0" step="0.1" data-hoursplan name="hours_plan" value="{{ $collaborator->hours_plan }}" class="form-control form-control-sm ">
                                                                 </div>
                                                             </div>
 
@@ -181,12 +160,12 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="col-sm-1">
+                                                        {{--<div class="col-sm-1">
                                                             <div class="form-group row">
-                                                                <button type="button" data-activityworkerdelete class="btn btn-sm btn-outline-danger btn-block" data-toggle="tooltip" data-placement="top" title="Quitar" ><i class="fas fa-trash"></i>
-                                                                </button>
+                                                                --}}{{--<button type="button" data-activityworkerdelete class="btn btn-sm btn-outline-danger btn-block" data-toggle="tooltip" data-placement="top" title="Quitar" ><i class="fas fa-trash"></i>
+                                                                </button>--}}{{--
                                                             </div>
-                                                        </div>
+                                                        </div>--}}
                                                     </div>
                                                 @endforeach
                                             </div>
@@ -395,22 +374,13 @@
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
-    <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/daterangepicker/daterangepicker.js') }}"></script>
 
 @endsection
 
 @section('scripts')
     <script>
         $(function () {
-            $('#sandbox-container .input-daterange').datepicker({
-                todayBtn: "linked",
-                clearBtn: true,
-                language: "es",
-                multidate: false,
-                autoclose: true
-            });
-
             //Initialize Select2 Elements
             $('.quote_description').select2({
                 placeholder: "Selecione cotización",
@@ -424,15 +394,11 @@
                 placeholder: "Selecione responsable",
             });
 
-            $('.performers').select2({
-                placeholder: "Selecione responsable",
-            });
-
             $('.areas').select2({
                 placeholder: "Selecione una área",
             });
         })
     </script>
-    <script src="{{ asset('js/timeline/manage.js') }}"></script>
+    <script src="{{ asset('js/timeline/progress.js') }}"></script>
 
 @endsection

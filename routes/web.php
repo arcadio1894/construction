@@ -1162,8 +1162,16 @@ Route::middleware('auth')->group(function (){
             ->name('manage.timeline');
         Route::get('/ver/cronograma/{timeline}', 'TimelineController@showTimeline')
             ->name('show.timeline');
+        Route::get('/registrar/avances/cronograma/{timeline}', 'TimelineController@registerProgressTimeline')
+            ->name('register.progress');
+        Route::get('/get/timeline/forget/{date}', 'TimelineController@getTimelineForget');
 
 
+        Route::post('/create/activity/timeline/{id}', 'TimelineController@createNewActivity');
+        Route::get('/check/timeline/for/create/{date}', 'TimelineController@checkTimelineForCreate');
+        Route::post('/remove/activity/timeline/{id}', 'TimelineController@deleteActivity');
+        Route::post('/save/activity/timeline/{id}', 'TimelineController@saveActivity');
+        Route::post('/save/progress/activity/{id}', 'TimelineController@saveProgressActivity');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

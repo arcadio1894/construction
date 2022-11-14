@@ -50,12 +50,13 @@
 @section('page-title')
     <h5 class="card-title">Calendario mensual</h5>
     {{--@can('create_supplier')--}}
-    <button id="newTimeline" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-clock"></i> Nuevo Cronograma </button>
+    <button id="newTimeline" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-clock"></i> Nuevo Cronograma para Mañana </button>
     {{--@endcan--}}
 @endsection
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <input type="hidden" id="events" value="{{ json_encode($events) }}">
 
     <!-- Main content -->
     <section class="content">
@@ -160,6 +161,8 @@
                 }
             });*/
 
+            var events =  JSON.parse($('#events').val());
+            console.log(events);
             var calendar = new Calendar(calendarEl, {
                 plugins: [ 'bootstrap', 'interaction', 'dayGrid', 'timeGrid' ],
                 header    : {
@@ -173,10 +176,310 @@
                 weekNumbers: true,
                 //Random default events
                 dateClick: function(info) {
-                    alert('Date: ' + info.dateStr);
-                    alert('Resource ID: ' + info.resource.id);
+                    $.ajax({
+                        url: "/dashboard/check/timeline/for/create/"+info.dateStr,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function (json) {
+                            
+                            switch ( json.res ) {
+                                case 1:
+                                    // Si es 1 redireccionamos al manage
+                                    toastr.success(json.message, 'Éxito',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    setTimeout( function () {
+                                        location.href = json.url;
+                                    }, 2000 );
+                                    break;
+                                case 2:
+                                    $.confirm({
+                                        icon: 'far fa-clock',
+                                        theme: 'modern',
+                                        closeIcon: true,
+                                        animation: 'zoom',
+                                        type: 'green',
+                                        columnClass: 'medium',
+                                        title: json.message,
+                                        content: 'Se va a crear un cronograma con la fecha seleccionada.',
+                                        buttons: {
+                                            confirm: {
+                                                text: 'CONFIRMAR',
+                                                btnClass: 'btn-blue',
+                                                action: function () {
+                                                    $.ajax({
+                                                        url: "/dashboard/get/timeline/forget/"+info.dateStr,
+                                                        type: 'GET',
+                                                        dataType: 'json',
+                                                        success: function (json) {
+                                                            toastr.success(json.message, 'Éxito',
+                                                                {
+                                                                    "closeButton": true,
+                                                                    "debug": false,
+                                                                    "newestOnTop": false,
+                                                                    "progressBar": true,
+                                                                    "positionClass": "toast-top-right",
+                                                                    "preventDuplicates": false,
+                                                                    "onclick": null,
+                                                                    "showDuration": "300",
+                                                                    "hideDuration": "1000",
+                                                                    "timeOut": "2000",
+                                                                    "extendedTimeOut": "1000",
+                                                                    "showEasing": "swing",
+                                                                    "hideEasing": "linear",
+                                                                    "showMethod": "fadeIn",
+                                                                    "hideMethod": "fadeOut"
+                                                                });
+                                                            setTimeout( function () {
+                                                                location.href = json.url;
+                                                            }, 2000 );
+
+                                                        }
+                                                    });
+                                                    //$.alert('Your name is ' + name);
+                                                }
+                                            },
+                                            cancel: {
+                                                text: 'CANCELAR',
+                                                action: function (e) {
+                                                    $.alert("Cronograma no creado.");
+                                                },
+                                            },
+                                        }
+                                    });
+                                    break;
+                                case 3:
+                                    toastr.success(json.message, 'Éxito',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    setTimeout( function () {
+                                        location.href = json.url;
+                                    }, 2000 );
+                                    break;
+                                case 4:
+                                    $.confirm({
+                                        icon: 'far fa-clock',
+                                        theme: 'modern',
+                                        closeIcon: true,
+                                        animation: 'zoom',
+                                        type: 'green',
+                                        columnClass: 'medium',
+                                        title: json.message,
+                                        content: 'Se va a crear un cronograma con la fecha seleccionada.',
+                                        buttons: {
+                                            confirm: {
+                                                text: 'CONFIRMAR',
+                                                btnClass: 'btn-blue',
+                                                action: function () {
+                                                    $.ajax({
+                                                        url: "/dashboard/get/timeline/forget/"+info.dateStr,
+                                                        type: 'GET',
+                                                        dataType: 'json',
+                                                        success: function (json) {
+                                                            toastr.success(json.message, 'Éxito',
+                                                                {
+                                                                    "closeButton": true,
+                                                                    "debug": false,
+                                                                    "newestOnTop": false,
+                                                                    "progressBar": true,
+                                                                    "positionClass": "toast-top-right",
+                                                                    "preventDuplicates": false,
+                                                                    "onclick": null,
+                                                                    "showDuration": "300",
+                                                                    "hideDuration": "1000",
+                                                                    "timeOut": "2000",
+                                                                    "extendedTimeOut": "1000",
+                                                                    "showEasing": "swing",
+                                                                    "hideEasing": "linear",
+                                                                    "showMethod": "fadeIn",
+                                                                    "hideMethod": "fadeOut"
+                                                                });
+                                                            setTimeout( function () {
+                                                                location.href = json.url;
+                                                            }, 2000 );
+
+                                                        }
+                                                    });
+                                                    //$.alert('Your name is ' + name);
+                                                }
+                                            },
+                                            cancel: {
+                                                text: 'CANCELAR',
+                                                action: function (e) {
+                                                    $.alert("Cronograma no creado.");
+                                                },
+                                            },
+                                        }
+                                    });
+                                    break;
+                                case 5:
+                                    toastr.success(json.message, 'Éxito',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    setTimeout( function () {
+                                        location.href = json.url;
+                                    }, 2000 );
+                                    break;
+                                case 6:
+                                    toastr.error(json.message, 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    break;
+                                case 7:
+                                    toastr.error(json.message, 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    break;
+                                default:
+                                    toastr.error('Ocurrió un error inesperado.', 'Error',
+                                        {
+                                            "closeButton": true,
+                                            "debug": false,
+                                            "newestOnTop": false,
+                                            "progressBar": true,
+                                            "positionClass": "toast-top-right",
+                                            "preventDuplicates": false,
+                                            "onclick": null,
+                                            "showDuration": "300",
+                                            "hideDuration": "1000",
+                                            "timeOut": "2000",
+                                            "extendedTimeOut": "1000",
+                                            "showEasing": "swing",
+                                            "hideEasing": "linear",
+                                            "showMethod": "fadeIn",
+                                            "hideMethod": "fadeOut"
+                                        });
+                                    break;
+                                // code block
+                            }
+                            
+                            /*if ( json.error == 1 )
+                            {
+                                toastr.error(json.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+
+                            } else {
+                                toastr.success(json.message, 'Éxito',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                                setTimeout( function () {
+                                    location.href = json.url;
+                                }, 2000 )
+                            }*/
+
+                        }
+                    });
+                    //alert('Date: ' + info.dateStr);
+                    //alert('Resource ID: ' + info.resource.id);
                 },
-                events    : [
+                events: events,
+                /*events    : [
                     {
                         title          : '' ,
                         start          : new Date(y, m, 1),
@@ -191,7 +494,7 @@
                         borderColor    : '#f56954', //red
                         allDay         : true
                     },
-                    /*{
+                    /!*{
                         title          : 'Long Event',
                         start          : new Date(y, m, d - 5),
                         end            : new Date(y, m, d - 2),
@@ -228,8 +531,8 @@
                         url            : 'http://google.com/',
                         backgroundColor: '#3c8dbc', //Primary (light-blue)
                         borderColor    : '#3c8dbc' //Primary (light-blue)
-                    }*/
-                ],
+                    }*!/
+                ],*/
                 editable  : false,
                 droppable : false, // this allows things to be dropped onto the calendar !!!
                 drop      : function(info) {
