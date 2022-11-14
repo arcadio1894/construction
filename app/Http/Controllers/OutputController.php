@@ -689,6 +689,25 @@ class OutputController extends Controller
 
     }
 
+    public function editOutputExecution(Request $request)
+    {
+        //dd($request);
+        $output = Output::find($request->get('output_id'));
+        DB::beginTransaction();
+        try {
+            $output->execution_order = $request->get('execution_order');
+            $output->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cambios guardados con éxito.'], 200);
+
+    }
+
     public function storeOutputRequest(StoreRequestOutputRequest $request)
     {
         //dd($request);

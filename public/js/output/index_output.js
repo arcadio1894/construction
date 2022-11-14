@@ -148,6 +148,11 @@ $(document).ready(function () {
                             text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="' + item.id + '" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
                         }
                     }
+
+                    if ( item.description_quote == 'No hay datos' )
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + item.id + '" data-execution_order="' + item.execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
+                    }
                     return text;
                 }
 
@@ -381,7 +386,15 @@ $(document).ready(function () {
     $(document).on('click', '[data-confirm]', openModalConfirm);
 
     $('#btn-allconfirm').on('click', confirmAllOutputs);
+
+    $formEdit = $('#formEdit');
+    $("#btn-submitEdit").on("click", editOrderExecution);
+    $(document).on('click', '[data-edit]', showModalEdit);
+    $modalEdit = $('#modalEdit');
 });
+
+let $modalEdit;
+var $formEdit;
 
 let $modalItems;
 
@@ -406,6 +419,104 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function showModalEdit() {
+    var output_id = $(this).data('edit');
+    var execution_order = $(this).data('execution_order');
+
+    $modalEdit.find('[id=output_id]').val(output_id);
+    $modalEdit.find('[id=execution_order]').val(execution_order);
+
+    $modalEdit.modal('show');
+}
+
+function editOrderExecution() {
+    console.log('Llegue');
+    $("#btn-submitEdit").attr("disabled", true);
+    var formulario = $('#formEdit')[0];
+    var form = new FormData(formulario);
+    event.preventDefault();
+    // Obtener la URL
+    var editdUrl = $formEdit.data('url');
+    $.ajax({
+        url: editdUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalEdit.modal('hide');
+            setTimeout( function () {
+                $("#btn-submitEdit").attr("disabled", false);
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $("#btn-submitEdit").attr("disabled", false);
+
+        },
+    });
+}
 
 function confirmAllOutputs() {
     $.confirm({

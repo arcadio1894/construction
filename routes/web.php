@@ -612,6 +612,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
         Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
         Route::get('/get/json/items/output/devolver/{output_id}', 'OutputController@getJsonItemsOutputRequestDevolver');
+        Route::post('output_request/edit/execution', 'OutputController@editOutputExecution')
+            ->name('output.edit.execution');
 
         Route::post('output_request/attend', 'OutputController@attendOutputRequest')
             ->name('output.attend')

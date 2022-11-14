@@ -26,6 +26,9 @@ function format ( d ) {
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/json/output/request",
@@ -144,6 +147,11 @@ $(document).ready(function () {
                         if ( $.inArray('attend_request', $permissions) !== -1 ) {
                             text = text + '<button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="' + item.id + '" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
                         }
+                    }
+
+                    if ( item.description_quote == 'No hay datos' )
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + item.id + '" data-execution_order="' + item.execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
                     }
 
                     return text;
@@ -347,12 +355,18 @@ $(document).ready(function () {
 
     $formDeleteTotal = $('#formDeleteTotal');
 
+    $formEdit = $('#formEdit');
+
     $modalItemsDelete = $('#modalDeletePartial');
 
     $formAttend = $('#formAttend');
 
     //$formAttend.on('submit', attendOutput);
     $("#btn-submit").on("click", attendOutput);
+
+    $("#btn-submitEdit").on("click", editOrderExecution);
+    $(document).on('click', '[data-edit]', showModalEdit);
+    $modalEdit = $('#modalEdit');
 
     $formDeleteTotal.on('submit', deleteTotalOutput);
 
@@ -375,12 +389,16 @@ $(document).ready(function () {
     $modalItemsMaterials = $('#modalItemsMaterials');
     $modalReturnMaterials = $('#modalReturnMaterials');
 
-    $('body').tooltip({
+    /*$('body').tooltip({
         selector: '[data-toggle]'
     });
-
+*/
     $(document).on('click', '[data-attend]', openModalAttend);
 });
+
+let $permissions;
+
+let $modalEdit;
 
 let $modalItems;
 
@@ -396,6 +414,8 @@ var $formAttend;
 
 var $formDeleteTotal;
 
+var $formEdit;
+
 let $modalAddItems;
 
 let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -405,6 +425,104 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function showModalEdit() {
+    var output_id = $(this).data('edit');
+    var execution_order = $(this).data('execution_order');
+
+    $modalEdit.find('[id=output_id]').val(output_id);
+    $modalEdit.find('[id=execution_order]').val(execution_order);
+
+    $modalEdit.modal('show');
+}
+
+function editOrderExecution() {
+    console.log('Llegue');
+    $("#btn-submitEdit").attr("disabled", true);
+    var formulario = $('#formEdit')[0];
+    var form = new FormData(formulario);
+    event.preventDefault();
+    // Obtener la URL
+    var editdUrl = $formEdit.data('url');
+    $.ajax({
+        url: editdUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalEdit.modal('hide');
+            setTimeout( function () {
+                $("#btn-submitEdit").attr("disabled", false);
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $("#btn-submitEdit").attr("disabled", false);
+
+        },
+    });
+}
 
 function goToCreateItem() {
     let id_detail = $(this).data('itemcustom');
