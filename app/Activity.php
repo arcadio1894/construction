@@ -17,7 +17,9 @@ class Activity extends Model
         'activity',
         'progress',
         'phase',
-        'performer'
+        'performer',
+        'assign_status',
+        'parent_activity'
     ];
 
     protected $dates = ['deleted_at'];
@@ -35,6 +37,12 @@ class Activity extends Model
     public function performer_worker()
     {
         return $this->belongsTo('App\Worker', 'performer');
+
+    }
+
+    public function activity_parent()
+    {
+        return $this->belongsTo('App\Activity', 'parent_activity');
 
     }
 

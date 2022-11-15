@@ -266,6 +266,15 @@ class TimelineController extends Controller
         try {
             $activity = Activity::find($id_activity);
 
+            $activity_parent = Activity::where('id', $activity->parent_activity)
+                ->first();
+
+            if ( isset($activity_parent) )
+            {
+                $activity_parent->assign_status = false;
+                $activity_parent->save();
+            }
+
             $activity_workers = ActivityWorker::where('activity_id', $activity->id)->get();
 
             if ( count($activity_workers) > 0 )
@@ -372,6 +381,94 @@ class TimelineController extends Controller
         }
 
         return response()->json(['message' => 'Avance registrado con éxito.'], 200);
+
+    }
+
+    public function getActivityForget($id_timeline)
+    {
+        $timeline = Timeline::find($id_timeline);
+
+        $timelines = Timeline::where('date', '<', $timeline->date)->get();
+
+        $activitiesArray = [];
+
+        foreach ( $timelines as $timeline )
+        {
+            $activities = Activity::where('progress', '<', 100)
+                ->where('assign_status', 0)
+                ->where('timeline_id', $timeline->id)
+                ->get();
+
+            foreach ( $activities as $activity )
+            {
+                array_push($activitiesArray, [
+                    'activity_id' => $activity->id,
+                    'quote_id' => $activity->quote_id,
+                    'description_quote' => $activity->description_quote,
+                    'activity' => $activity->activity,
+                    'progress' => $activity->progress,
+                    'phase' => $activity->phase,
+                    'performer' => $activity->performer
+                ]);
+            }
+
+        }
+        return response()->json(['activities' => $activitiesArray], 200);
+
+    }
+
+    public function assignActivityToTimeline( $id_activity, $id_timeline )
+    {
+        DB::beginTransaction();
+        try {
+
+            $activity = Activity::find($id_activity);
+            $activity->assign_status = true;
+            $activity->save();
+
+            $timeline = Timeline::find($id_timeline);
+
+            $actividad = Activity::create([
+                'timeline_id' => $timeline->id,
+                'quote_id' => $activity->quote_id,
+                'description_quote' => $activity->description_quote,
+                'activity' => $activity->activity,
+                'progress' => $activity->progress,
+                'phase' => $activity->phase,
+                'performer' => $activity->performer,
+                'parent_activity' => $activity->id
+            ]);
+
+            $activity_workers = ActivityWorker::where('activity_id', $activity->id)->get();
+
+            if ( count($activity_workers) > 0 )
+            {
+                foreach ( $activity_workers as $worker )
+                {
+                    $activity_worker = ActivityWorker::create([
+                        'activity_id' => $actividad->id,
+                        'worker_id' => $worker->worker_id,
+                        'hours_plan' => $worker->hours_plan,
+                        'hours_real' => $worker->hours_real,
+                    ]);
+                }
+            }
+
+            $sendActivity = Activity::where('id', $actividad->id)
+                ->with('quote')
+                ->with('performer_worker')
+                ->with('timeline')
+                ->with(['activity_workers' => function ($query) {
+                    $query->with('worker');
+                }])->get();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Actividad asignada al cronograma con éxito.', 'activity' => $sendActivity], 200);
 
     }
 }

@@ -114,9 +114,114 @@ $(document).ready(function () {
         card.addClass('card-gray-dark');
     });
 
+    $('#lostActivity').on('click', getLostActivities);
+    $modalActivities = $('#modalActivities');
+    $(document).on('click', '[data-activitylostid]', assignActivity);
+
 });
 
 var $permissions;
+var $modalActivities;
+
+function getLostActivities() {
+    $(this).tooltip('hide');
+    event.preventDefault();
+    var id_timeline = $('#idtimeline').val();
+    var button = $(this);
+    //button.attr("disabled", true);
+
+    $.get( "/dashboard/get/activity/forget/"+id_timeline, function( data ) {
+        $('#table-lost-activities').html('');
+
+        for ( var i=0; i<data.activities.length; i++ )
+        {
+            renderTemplateLostActivities(i+1 ,data.activities[i].activity_id, data.activities[i].description_quote, data.activities[i].phase, data.activities[i].activity, data.activities[i].progress);
+        }
+    });
+
+    $modalActivities.modal('show');
+}
+
+function assignActivity() {
+    var id_timeline = $('#idtimeline').val();
+    var button = $(this);
+    button.attr("disabled", true);
+
+    var activity_id = $(this).data('activitylostid');
+
+    $.confirm({
+        icon: 'fas fa-save',
+        theme: 'modern',
+        //closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Esta seguro de asignar esta actividad a este cronograma?',
+        content: 'Se guardará toda la información de la actividad.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/assign/activity/'+ activity_id +'/timeline/'+id_timeline,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:'application/json; charset=utf-8',
+                        success: function (data) {
+                            console.log(data.activity[0].activity);
+                            button.attr("disabled", false);
+
+                            $.alert(data.message);
+
+                            // Quitar de la tabla y agregar a las actividades
+                            button.parent().parent().remove();
+
+                            renderActivityLost( data.activity[0] );
+
+                            $modalActivities.modal('hide');
+
+                        },
+                        error: function (data) {
+                            button.attr("disabled", false);
+                            toastr.error('Algo sucedió en el servidor.', 'Error',
+                                {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "newestOnTop": false,
+                                    "progressBar": true,
+                                    "positionClass": "toast-top-right",
+                                    "preventDuplicates": false,
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "2000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                });
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Actividad no asignada.");
+                    button.attr("disabled", false);
+                },
+            },
+        }
+    });
+
+    //var phase = $(this).parent().parent().next().children().children().next() .children().next().val();
+
+}
 
 function saveActivity() {
     $(this).tooltip('hide');
@@ -457,6 +562,48 @@ function addWorker() {
     });
 }
 
+function renderActivityLost(activity) {
+    var clone = activateTemplate('#template-activity');
+
+    clone.querySelector("[data-activityedit]").setAttribute('data-activityedit', activity.id);
+    clone.querySelector("[data-activitydelete]").setAttribute('data-activitydelete', activity.id);
+    //clone.querySelector("[data-quote_description]").setAttribute('value', activity_id);
+    var select_quote = clone.querySelector("[data-quote_description]");
+    select_quote.value = activity.quote_id;
+    clone.querySelector("[data-descriptionQuote]").innerHTML = activity.description_quote;
+    clone.querySelector("[data-phase]").innerHTML = activity.phase;
+    clone.querySelector("[data-activity]").innerHTML = activity.activity;
+    //clone.querySelector("[data-performer]").setAttribute('data-activityworker', activity_id);
+    var select_performer = clone.querySelector("[data-performer]");
+    select_performer.value = activity.performer;
+    clone.querySelector("[data-progress]").setAttribute('value', activity.progress);
+
+    var render = clone.querySelector("[id=body-workers]");
+    for (let i = 0; i < activity.activity_workers.length ; i++) {
+        var cloneWorker = activateTemplate('#template-worker');
+        var select_worker = cloneWorker.querySelector("[data-worker]");
+        select_worker.value = activity.activity_workers[i].worker_id;
+        cloneWorker.querySelector("[data-hoursplan]").setAttribute('value', activity.activity_workers[i].hours_plan);
+        cloneWorker.querySelector("[data-hoursreal]").setAttribute('value', activity.activity_workers[i].hours_real);
+        cloneWorker.querySelector("[data-activityworkerdelete]").setAttribute('data-activityworkerdelete', activity.activity_workers[i].id);
+        render.append(cloneWorker);
+    }
+
+    $('#body-activities').append(clone);
+
+    $('.quote_description').select2({
+        placeholder: "Selecione cotización",
+    });
+    $('.workers').select2({
+        placeholder: "Seleccione colaborador",
+    });
+
+    $('.performers').select2({
+        placeholder: "Seleccione responsable",
+    });
+
+}
+
 function renderTemplateActivity(timeline_id, activity_id) {
     var clone = activateTemplate('#template-activity');
 
@@ -471,6 +618,17 @@ function renderTemplateWorker(render) {
     var clone = activateTemplate('#template-worker');
 
     render.append(clone);
+}
+
+function renderTemplateLostActivities(i, id, quote, phase, activity, progress) {
+    var clone = activateTemplate('#template-lostActivity');
+    clone.querySelector("[data-i]").innerHTML = i;
+    clone.querySelector("[data-quote]").innerHTML = quote;
+    clone.querySelector("[data-phase]").innerHTML = phase;
+    clone.querySelector("[data-activity]").innerHTML = activity;
+    clone.querySelector("[data-progress]").innerHTML = progress;
+    clone.querySelector("[data-activitylostid]").setAttribute('data-activitylostid', id);
+    $('#table-lost-activities').append(clone);
 }
 
 function activateTemplate(id) {

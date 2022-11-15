@@ -262,6 +262,39 @@
         </div>
     </div>
 
+    <div id="modalActivities" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Actividades Incompletas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body table-responsive" style="height: 300px;">
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Cotización</th>
+                            <th>Etapa</th>
+                            <th>Actividad</th>
+                            <th>Progreso</th>
+                            <th>Acción</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-lost-activities">
+
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="modal-footer">
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <template id="template-worker">
 
         <div class="row">
@@ -323,7 +356,7 @@
                     <div class="row">
                         <div class="col-sm-4">
                             <label for="quote">Cotización: </label>
-                            <select class="quote_description form-control form-control-sm select2" style="width: 100%;">
+                            <select data-quote_description class="quote_description form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 <option value="0">Ninguna</option>
                                 @foreach( $quotes as $quote )
@@ -383,6 +416,19 @@
             </div>
             <!-- /.card -->
         </div>
+    </template>
+
+    <template id="template-lostActivity">
+        <tr>
+            <td data-i></td>
+            <td data-quote></td>
+            <td data-phase></td>
+            <td data-activity></td>
+            <td data-progress></td>
+            <td>
+                <button type="button" data-activitylostid class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Agregar</button>
+            </td>
+        </tr>
     </template>
 @endsection
 
