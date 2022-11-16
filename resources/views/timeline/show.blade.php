@@ -45,7 +45,7 @@
 @section('page-title')
     <h5 class="card-title">Visualizar Cronograma</h5>
     <a href="{{ route('manage.timeline', $timeline->id) }}" class="btn btn-sm btn-success btn-sm float-right" > <i class="far fa-clock"></i> Gestionar Cronograma </a>
-    <button type="button" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </button>
+    <a href="{{ route('download.timeline', $timeline->id) }}" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>
     <a href="{{ route('register.progress', $timeline->id) }}" class="btn btn-sm btn-warning btn-sm float-right" > <i class="far fa-edit"></i> Registrar avances </a>
 
 @endsection

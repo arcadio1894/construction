@@ -7,10 +7,17 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-activityworker]', addWorker);
 
-    $('#newActivity').on('click', addActivity)
+    $('#newActivity').on('click', addActivity);
+
+    $('#btn-download').on('click', downloadTimeline)
 });
 
 var $permissions;
+
+function downloadTimeline() {
+    var timeline_id = $(this).data('id');
+
+}
 
 function addActivity() {
     event.preventDefault();

@@ -199,66 +199,8 @@
                         </div>
                         <!-- /.card -->
                     @endforeach
-                    {{--<div class="col-md-12">
-                        <div class="card card-outline card-success">
-                            <div class="card-header">
-                                <h3 class="card-title"></h3>
-
-                                <div class="card-tools">
-                                    <button type="button" data-activityedit class="btn btn-sm btn-outline-success" data-toggle="tooltip" data-placement="top" title="Guardar cambios" ><i class="fas fa-save"></i>
-                                    </button>
-                                    <button type="button" data-activitydelete class="btn btn-sm btn-outline-danger" data-toggle="tooltip" data-placement="top" title="Quitar" ><i class="fas fa-trash"></i>
-                                    </button>
-                                    <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                        <i class="fas fa-minus text-success"></i></button>
-                                </div>
-                                <!-- /.card-tools -->
-                            </div>
-                            <!-- /.card-header -->
-                            <div class="card-body">
-                                --}}{{--<div class="row">
-                                    <div class="col-sm-4">
-                                        <label for="quote">Cotización: </label>
-                                        <select class="quote_description form-control form-control-sm select2" style="width: 100%;">
-                                            <option></option>
-                                            @foreach( $quotes as $quote )
-                                                <option value="{{ $quote->id }}" data-quote="{{ $quote->description_quote }}">{{ $quote->order_execution . '-' . $quote->description_quote}}</option>
-                                            @endforeach
-                                        </select>
-
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label for="descriptionQuote">Descripción: </label>
-                                        <textarea name="" data-descriptionQuote cols="30" class="form-control form-control-sm"></textarea>
-
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <label for="activity">Actividad: </label>
-                                        <textarea name="" data-activity cols="30" class="form-control form-control-sm"></textarea>
-
-                                    </div>
-                                    <div class="col-sm-12">
-                                        <div class="row">
-                                            <label for="activity">Trabajadores:
-                                                <button type="button" data-activityworker class="btn btn-xs btn-outline-success float-right" data-toggle="tooltip" data-placement="top" title="Guardar cambios" ><i class="fas fa-plus"></i>
-                                                </button>
-                                            </label>
-                                        </div>
-                                        <div id="body-workers">
-
-                                        </div>
-
-                                    </div>
-                                </div>--}}{{--
-                            </div>
-                            <!-- /.card-body -->
-                        </div>
-                        <!-- /.card -->
-                    </div>--}}
                 </div>
-                <!-- /.card-body -->
             </div>
-            <!-- /.card -->
         </div>
     </div>
 
@@ -382,7 +324,7 @@
                         </div>
                         <div class="col-sm-4">
                             <label for="activity">Responsable: </label>
-                            <select data-performer class="workers form-control form-control-sm select2" style="width: 100%;">
+                            <select data-performer class="performers form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $workers as $worker )
                                     <option value="{{ $worker->id }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>

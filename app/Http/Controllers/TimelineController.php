@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class TimelineController extends Controller
 {
@@ -470,5 +471,31 @@ class TimelineController extends Controller
 
         return response()->json(['message' => 'Actividad asignada al cronograma con éxito.', 'activity' => $sendActivity], 200);
 
+    }
+
+    public function printTimeline( $timeline_id )
+    {
+        $timeline = Timeline::with('responsibleUser')
+            ->with(['activities' => function ($query) {
+                $query->with('quote')->with('performer_worker')
+                    ->with(['activity_workers' => function ($query) {
+                        $query->with('worker');
+                    }]);
+            }])
+            ->find($timeline_id);
+
+        /*foreach ( $timeline->activities as $activity )
+        {
+            dd(count($activity->activity_workers));
+        }*/
+
+
+        $view = view('exports.timelinePDF', compact('timeline'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
+
+        return $pdf->stream($name);
     }
 }

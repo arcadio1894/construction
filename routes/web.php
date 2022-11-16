@@ -1176,6 +1176,8 @@ Route::middleware('auth')->group(function (){
         Route::post('/save/activity/timeline/{id}', 'TimelineController@saveActivity');
         Route::post('/save/progress/activity/{id}', 'TimelineController@saveProgressActivity');
         Route::post('/assign/activity/{activity_id}/timeline/{timeline_id}', 'TimelineController@assignActivityToTimeline');
+        Route::get('/print/timeline/{id_timeline}', 'TimelineController@printTimeline')
+            ->name('download.timeline');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
