@@ -1043,33 +1043,6 @@
                         </li>
                     @endcan
 
-                    {{--<li class="nav-header">CONTROL DE HORAS</li>
-                    <li class="nav-item has-treeview @yield('openTimelines')">
-                        <a href="#" class="nav-link @yield('activeTimelines')">
-                            <i class="nav-icon far fa-calendar-alt"></i>
-                            <p>
-                                Cronogramas
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-
-                            <li class="nav-item">
-                                <a href="{{ route('index.timelines') }}" class="nav-link @yield('activeShowTimelines')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Ver cronogramas</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Crear cronograma</p>
-                                </a>
-                            </li>
-
-                        </ul>
-                    </li>--}}
-
                     @can('list_request')
                     <li class="nav-header">SOLICITUDES</li>
                     <li class="nav-item has-treeview @yield('openOutputRequest')">
@@ -1332,6 +1305,201 @@
                         </li>
                     @endcan--}}
 
+                    {{--<li class="nav-header">CONTROL DE HORAS</li>
+                    <li class="nav-item has-treeview @yield('openTimelines')">
+                        <a href="#" class="nav-link @yield('activeTimelines')">
+                            <i class="nav-icon far fa-calendar-alt"></i>
+                            <p>
+                                Cronogramas
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="{{ route('index.timelines') }}" class="nav-link @yield('activeShowTimelines')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Ver cronogramas</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>
+
+                    <li class="nav-header">RECURSOS HUMANOS</li>
+                    <li class="nav-item has-treeview @yield('openConfigRH')">
+                        <a href="#" class="nav-link @yield('activeConfigRH')">
+                            <i class="fas fa-users-cog nav-icon"></i>
+                            <p>
+                                Configuraciones
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item has-treeview @yield('openContract')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Contratos
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeListContract')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar contratos</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeCreateContract')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear contrato</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            <li class="nav-item has-treeview @yield('openCivilStatus')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Estado Civil
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeListCivilStatus')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar Estados Civil</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeCreateCivilStatus')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear Estados Civil</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            <li class="nav-item has-treeview @yield('openWorkFunction')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Cargos / Funciones
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeListWorkFunction')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar cargos</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeCreateWorkFunction')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear cargo</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                            <li class="nav-item has-treeview @yield('openPensionSystem')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon text-success"></i>
+                                    <p>
+                                        Sistemas de Pensión
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeListPensionSystem')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Listar sistemas</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="" class="nav-link @yield('activeCreatePensionSystem')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Crear sistema</p>
+                                        </a>
+                                    </li>
+
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </li>
+                    <li class="nav-item has-treeview @yield('openWorker')">
+                            <a href="#" class="nav-link @yield('activeWorker')">
+                                <i class="fas fa-user-tie nav-icon"></i>
+                                <p>
+                                    Colaboradores
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+
+                                <li class="nav-item">
+                                    <a href="{{route('worker.index')}}" class="nav-link @yield('activeListWorker')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar colaboradores</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="" class="nav-link @yield('activeCreateWorker')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Crear colaboradores</p>
+                                    </a>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a href="" class="nav-link @yield('activeEnableWorker')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Habilitar colaboradores</p>
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li>
+                    <li class="nav-item has-treeview @yield('openAttendance')">
+                        <a href="#" class="nav-link @yield('activeAttendance')">
+                            <i class="far fa-calendar-check nav-icon"></i>
+                            <p>
+                                Asistencia
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+
+                            <li class="nav-item">
+                                <a href="" class="nav-link @yield('activeListAttendance')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar asitencisa</p>
+                                </a>
+                            </li>
+
+                        </ul>
+                    </li>--}}
+
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>
                     @endcanany
@@ -1487,7 +1655,7 @@
                             </ul>
                         </li>
                     @endcan
-                    @can('enable_credit')
+                    {{--@can('enable_credit')
                     <li class="nav-header">CRÉDITOS</li>
                     <li class="nav-item has-treeview @yield('openCredit')">
                         <a href="#" class="nav-link @yield('activeCreditSupplier')">
@@ -1508,7 +1676,7 @@
                         </ul>
                         @endcan
                     </li>
-                    @endcan
+                    @endcan--}}
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

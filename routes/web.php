@@ -1179,6 +1179,37 @@ Route::middleware('auth')->group(function (){
         Route::get('/print/timeline/{id_timeline}', 'TimelineController@printTimeline')
             ->name('download.timeline');
 
+        // Cambio de Cronogramas
+        Route::get('/crear/cronograma/{timeline}', 'TimelineController@createTimeline')
+            ->name('create.timeline');
+        Route::post('/create/work/timeline/{id}', 'TimelineController@createNewWork');
+        Route::post('/edit/work/{work_id}/timeline/{timeline_id}', 'TimelineController@editWork');
+        Route::post('/create/phase/work/{id}', 'TimelineController@createNewPhase');
+        Route::post('/edit/phase/{phase_id}/timeline/{timeline_id}', 'TimelineController@editPhase');
+        Route::post('/create/task/phase/{id}', 'TimelineController@createNewTask');
+        Route::post('/save/task/timeline/{id}', 'TimelineController@saveTask');
+        Route::post('/remove/task/{id}', 'TimelineController@deleteTask');
+        Route::post('/remove/phase/{id}', 'TimelineController@deletePhase');
+        Route::post('/remove/work/{id}', 'TimelineController@deleteWork');
+        Route::get('/revisar/cronograma/{timeline}', 'TimelineController@reviewTimeline')
+            ->name('review.timeline');
+        Route::get('/revisar/avances/cronograma/{timeline}', 'TimelineController@checkProgressTimeline')
+            ->name('save.progress');
+        Route::post('/save/progress/task/{id}', 'TimelineController@saveProgressTask');
+        Route::post('/assign/task/{task_id}/timeline/{timeline_id}', 'TimelineController@assignTaskToTimeline');
+        Route::get('/descargar/excel/timeline/{id_timeline}', 'TimelineController@downloadTimeline')
+            ->name('excel.timeline');
+
+        // TRABAJADORES
+        Route::get('/colaboradores', 'WorkerController@index')
+            ->name('worker.index');
+        Route::get('/get/workers/', 'WorkerController@getWorkers');
+        Route::get('/registrar/colaborador', 'WorkerController@create')
+            ->name('worker.create');
+        Route::post('worker/store', 'WorkerController@store')
+            ->name('worker.store');
+            /*->middleware('permission:create_material');*/
+
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');

@@ -25,6 +25,17 @@ class Timeline extends Model
         return $this->hasMany('App\Activity');
     }
 
+    public function works()
+    {
+        return $this->hasMany('App\Work');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany('App\Task');
+    }
+
+
     public function responsibleUser()
     {
         return $this->belongsTo('App\Worker', 'responsible');

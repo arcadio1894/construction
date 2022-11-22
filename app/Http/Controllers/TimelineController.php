@@ -4,15 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\ActivityWorker;
+use App\Exports\TimelinesExports;
+use App\Phase;
 use App\Quote;
+use App\Task;
+use App\TaskWorker;
 use App\Timeline;
 use App\TimelineArea;
+use App\Work;
 use App\Worker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade as PDF;
+use Maatwebsite\Excel\Facades\Excel;
 
 class TimelineController extends Controller
 {
@@ -94,6 +100,35 @@ class TimelineController extends Controller
 
     }
 
+    public function createTimeline($timeline_id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $quotes = Quote::where('state_active','open')
+            ->where('raise_status',1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $workers = Worker::select('id', 'first_name', 'last_name')->get();
+
+        $timeline = Timeline::with(['works' => function ($query) {
+                $query->with('quote')
+                    ->with(['phases' => function ($query) {
+                        $query->with(['tasks' => function ($query) {
+                            $query->with('performer');
+                            $query->with(['task_workers' => function ($query) {
+                                $query->with('worker');
+                            }]);
+                        }]);
+                    }]);
+            }])
+            ->find($timeline_id);
+
+        return view('timeline.create', compact( 'permissions', 'workers', 'timeline', 'quotes'));
+
+    }
+
     public function showTimeline($timeline_id)
     {
         $user = Auth::user();
@@ -166,6 +201,702 @@ class TimelineController extends Controller
 
     }
 
+    public function createNewWork( $id_timeline )
+    {
+        DB::beginTransaction();
+        try {
+            $work = Work::create([
+                'timeline_id' => $id_timeline,
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Trabajo creado con éxito.', 'work' => $work], 200);
+
+    }
+
+    public function editWork( Request $request, $work_id, $timeline_id )
+    {
+        //dump($request);
+        //dump($request->input('quote_id'));
+        //dd($request->input('quote_description'));
+        DB::beginTransaction();
+        try {
+
+            if ( $request->get('quote_id') != 0 || $request->get('quote_id') != '' )
+            {
+                $works = Work::where('timeline_id', $timeline_id)
+                    ->where('quote_id',$request->get('quote_id') )
+                    ->get();
+
+                if ( count($works) > 0 )
+                {
+                    return response()->json(['message' => 'Ya existe este trabajo registrado para este cronograma.'], 422);
+                }
+            }
+            $work = Work::find($work_id);
+            $work->quote_id = ($request->get('quote_id') == 0) ? null: $request->get('quote_id');
+            $work->description_quote = ($request->get('quote_description') == '')? null: $request->get('quote_description');
+            $work->save();
+
+            $work_send = Work::find($work_id);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Trabajo editado con éxito.', 'work' => $work_send], 200);
+
+    }
+
+    public function createNewPhase( $work_id )
+    {
+        DB::beginTransaction();
+        try {
+            $work = Work::find($work_id);
+
+            $phase = Phase::create([
+                'timeline_id' => $work->timeline_id,
+                'work_id' => $work->id,
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Etapa creada con éxito.', 'phase' => $phase], 200);
+
+    }
+
+    public function editPhase( Request $request, $phase_id, $timeline_id )
+    {
+        //dump($request);
+        //dump($request->input('quote_id'));
+        //dd($request->input('quote_description'));
+        DB::beginTransaction();
+        try {
+
+            $phase = Phase::find($phase_id);
+            $phase->description = ($request->get('phase_description') == '')? null: $request->get('phase_description');
+            $phase->save();
+
+            $work_send = Phase::find($phase_id);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Etapa editada con éxito.', 'phase' => $work_send], 200);
+
+    }
+
+    public function createNewTask( $phase_id )
+    {
+        DB::beginTransaction();
+        try {
+            $phase = Phase::find($phase_id);
+
+            $work = Work::find($phase->work_id);
+
+            $timeline = Timeline::find($work->timeline_id);
+
+            $task = Task::create([
+                'timeline_id' => $timeline->id,
+                'quote_id' => $timeline->quote_id,
+                'work_id' => $work->id,
+                'phase_id' => $phase->id,
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Tarea creada con éxito.', 'task' => $task], 200);
+
+    }
+
+    public function saveTask( Request $request, $id_task )
+    {
+        DB::beginTransaction();
+        try {
+            $task_id = $id_task;
+            $activities = $request->input('task');
+
+            foreach ( $activities as $activity )
+            {
+                $actividad = Task::find($activity['task_id']);
+                $actividad->activity = $activity['activity'];
+                $actividad->progress = ($activity['progress'] == '') ? 0: (int) $activity['progress'];
+                $actividad->performer_id = ($activity['performer'] == '') ? null: (int) $activity['performer'];
+                $actividad->save();
+
+                // Borramos los trabajadores
+                $task_workers = TaskWorker::where('task_id', $task_id)->get();
+
+                foreach ( $task_workers as $worker )
+                {
+                    $worker->delete();
+                }
+
+                // Ahora creamos los trabajadores
+                $workers = $activity['workers'];
+
+                foreach ( $workers as $worker )
+                {
+                    $task_worker = TaskWorker::create([
+                        'task_id' => $actividad->id,
+                        'worker_id' => (int)$worker['worker'],
+                        'hours_plan' => (float) $worker['hoursplan'],
+                        'hours_real' => (float) $worker['hoursreal'],
+                    ]);
+                }
+
+            }
+
+            $activity = Task::find($id_task);
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Tarea guardada con éxito.', 'task' => $activity], 200);
+
+    }
+
+    public function deleteTask( $id_task )
+    {
+        DB::beginTransaction();
+        try {
+            $activity = Task::find($id_task);
+
+            $acts = Task::where('parent_task_id', $activity->id)->get();
+
+            foreach ( $acts as $act )
+            {
+                $act->parent_task_id = null;
+                $act->save();
+            }
+
+            $activity_parent = Task::where('id', $activity->parent_task_id)
+                ->first();
+
+            if ( isset($activity_parent) )
+            {
+                $activity_parent->assign_status = false;
+                $activity_parent->save();
+            }
+
+            $activity_workers = TaskWorker::where('task_id', $activity->id)->get();
+
+            if ( count($activity_workers) > 0 )
+            {
+                foreach ( $activity_workers as $worker )
+                {
+                    $worker->delete();
+                }
+            }
+
+            $activity->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Tarea eliminada con éxito.'], 200);
+
+    }
+
+    public function deletePhase( $id_phase )
+    {
+        DB::beginTransaction();
+        try {
+
+            $phase = Phase::find($id_phase);
+
+            foreach ($phase->tasks as $task) {
+                $activity = Task::find($task->id);
+
+                $acts = Task::where('parent_task_id', $activity->id)->get();
+
+                foreach ( $acts as $act )
+                {
+                    $act->parent_task_id = null;
+                    $act->save();
+                }
+
+                $activity_parent = Task::where('id', $activity->parent_task_id)
+                    ->first();
+
+                if ( isset($activity_parent) )
+                {
+                    $activity_parent->assign_status = false;
+                    $activity_parent->save();
+                }
+
+                $activity_workers = TaskWorker::where('task_id', $activity->id)->get();
+
+                if ( count($activity_workers) > 0 )
+                {
+                    foreach ( $activity_workers as $worker )
+                    {
+                        $worker->delete();
+                    }
+                }
+
+                $activity->delete();
+            }
+
+            $phase->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Etapa eliminada con éxito.'], 200);
+
+    }
+
+    public function deleteWork( $id_work )
+    {
+        DB::beginTransaction();
+        try {
+
+            $work = Work::find($id_work);
+
+            foreach ( $work->phases as $phase ){
+                $phase = Phase::find($phase->id);
+
+                foreach ($phase->tasks as $task) {
+
+                    $activity = Task::find($task->id);
+
+                    $acts = Task::where('parent_task_id', $activity->id)->get();
+
+                    foreach ( $acts as $act )
+                    {
+                        $act->parent_task_id = null;
+                        $act->save();
+                    }
+
+                    $activity_parent = Task::where('id', $activity->parent_task_id)
+                        ->first();
+
+                    if ( isset($activity_parent) )
+                    {
+                        $activity_parent->assign_status = false;
+                        $activity_parent->save();
+                    }
+
+                    $activity_workers = TaskWorker::where('task_id', $activity->id)->get();
+
+                    if ( count($activity_workers) > 0 )
+                    {
+                        foreach ( $activity_workers as $worker )
+                        {
+                            $worker->delete();
+                        }
+                    }
+
+                    $activity->delete();
+                }
+
+                $phase->delete();
+            }
+
+            $work->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Trabajo eliminada con éxito.'], 200);
+
+    }
+
+    public function reviewTimeline($timeline_id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $quotes = Quote::where('state_active','open')
+            ->where('raise_status',1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $workers = Worker::select('id', 'first_name', 'last_name')->get();
+
+        $timeline = Timeline::with(['works' => function ($query) {
+            $query->with('quote')
+                ->with(['phases' => function ($query) {
+                    $query->with(['tasks' => function ($query) {
+                        $query->with('performer');
+                        $query->with(['task_workers' => function ($query) {
+                            $query->with('worker');
+                        }]);
+                    }]);
+                }]);
+        }])
+            ->find($timeline_id);
+
+        return view('timeline.review', compact( 'permissions', 'workers', 'timeline', 'quotes'));
+
+    }
+
+    public function checkProgressTimeline($timeline_id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $quotes = Quote::where('state_active','open')
+            ->where('raise_status',1)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $workers = Worker::select('id', 'first_name', 'last_name')->get();
+
+        $timeline = Timeline::with(['works' => function ($query) {
+            $query->with('quote')
+                ->with(['phases' => function ($query) {
+                    $query->with(['tasks' => function ($query) {
+                        $query->with('performer');
+                        $query->with(['task_workers' => function ($query) {
+                            $query->with('worker');
+                        }]);
+                    }]);
+                }]);
+        }])
+            ->find($timeline_id);
+
+        return view('timeline.saveProgress', compact( 'permissions', 'workers', 'timeline', 'quotes'));
+
+    }
+
+    public function saveProgressTask( Request $request, $id_task )
+    {
+        DB::beginTransaction();
+        try {
+            $task_id = $id_task;
+            $tasks = $request->input('task');
+
+            foreach ( $tasks as $task )
+            {
+                $tarea = Task::find($task['task_id']);
+                $tarea->progress = ($task['progress'] == '') ? 0: (int) $task['progress'];
+                $tarea->save();
+
+                // Ahora creamos los trabajadores
+                $workers = $task['workers'];
+
+                foreach ( $workers as $worker )
+                {
+                    $task_worker = TaskWorker::where('task_id', $tarea->id)
+                        ->where('worker_id', $worker['worker'])->first();
+                    $task_worker->hours_real = ($worker['hoursreal'] == '') ? 0: (float) $worker['hoursreal'];
+                    $task_worker->save();
+                }
+
+            }
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Avance registrado con éxito.'], 200);
+
+    }
+
+    public function assignTaskToTimeline( $id_task, $id_timeline )
+    {
+        DB::beginTransaction();
+        try {
+
+            $task = Task::find($id_task);
+            $task->assign_status = true;
+            $task->save();
+
+            $timeline = Timeline::find($id_timeline);
+
+            // Si el trabajo cotizacion pertenece a este timeline
+            $work_repeat = Work::where('timeline_id', $id_timeline)
+                ->where('quote_id', $task->work->quote_id)->first();
+
+            if ( isset($work_repeat) )
+            {
+                // Verificar si ya existe una phase repetida
+                $phase_repeat = Phase::where('timeline_id', $id_timeline)
+                    ->where('work_id', $work_repeat->id)
+                    ->where('description', $task->phase->description)
+                    ->first();
+
+                if ( isset( $phase_repeat ) )
+                {
+                    // Solo creamos la actividad
+                    $act = Task::create([
+                        'timeline_id' => $id_timeline,
+                        'work_id' => $work_repeat->id,
+                        'phase_id' => $phase_repeat->id,
+                        'quote_id' => $work_repeat->quote_id,
+                        'performer_id' => $task->performer_id,
+                        'parent_task_id' => $id_task,
+                        'activity' => $task->activity,
+                        'progress' => $task->progress,
+
+                    ]);
+
+                    $activity_workers = TaskWorker::where('task_id', $task->id)->get();
+
+                    if ( count($activity_workers) > 0 )
+                    {
+                        foreach ( $activity_workers as $worker )
+                        {
+                            $activity_worker = TaskWorker::create([
+                                'task_id' => $act->id,
+                                'worker_id' => $worker->worker_id,
+                                'hours_plan' => $worker->hours_plan,
+                                'hours_real' => $worker->hours_real,
+                            ]);
+                        }
+                    }
+                } else {
+                    // Solo creamos la fase y la actividad
+                    $phase = Phase::create([
+                        'timeline_id' => $id_timeline,
+                        'work_id' => $work_repeat->id,
+                        'description' => $task->phase->description
+                    ]);
+                    $act = Task::create([
+                        'timeline_id' => $id_timeline,
+                        'work_id' => $work_repeat->id,
+                        'phase_id' => $phase->id,
+                        'quote_id' => $work_repeat->quote_id,
+                        'performer_id' => $task->performer_id,
+                        'parent_task_id' => $task->id,
+                        'activity' => $task->activity,
+                        'progress' => $task->progress,
+
+                    ]);
+
+                    $activity_workers = TaskWorker::where('task_id', $task->id)->get();
+
+                    if ( count($activity_workers) > 0 )
+                    {
+                        foreach ( $activity_workers as $worker )
+                        {
+                            $activity_worker = TaskWorker::create([
+                                'task_id' => $act->id,
+                                'worker_id' => $worker->worker_id,
+                                'hours_plan' => $worker->hours_plan,
+                                'hours_real' => $worker->hours_real,
+                            ]);
+                        }
+                    }
+                }
+
+            } else {
+                // Creamos el work, phase y actividad
+                $work = Work::create([
+                    'timeline_id' => $id_timeline,
+                    'quote_id' => $task->work->quote_id,
+                    'description_quote' => $task->work->description_quote,
+                ]);
+
+                $phase = Phase::create([
+                    'timeline_id' => $id_timeline,
+                    'work_id' => $work->id,
+                    'description' => $task->phase->description
+                ]);
+
+                $act = Task::create([
+                    'timeline_id' => $id_timeline,
+                    'work_id' => $work->id,
+                    'phase_id' => $phase->id,
+                    'quote_id' => $work->quote_id,
+                    'performer_id' => $task->performer_id,
+                    'parent_task_id' => $task->id,
+                    'activity' => $task->activity,
+                    'progress' => $task->progress,
+
+                ]);
+
+                $activity_workers = TaskWorker::where('task_id', $task->id)->get();
+
+                if ( count($activity_workers) > 0 )
+                {
+                    foreach ( $activity_workers as $worker )
+                    {
+                        $activity_worker = TaskWorker::create([
+                            'task_id' => $act->id,
+                            'worker_id' => $worker->worker_id,
+                            'hours_plan' => $worker->hours_plan,
+                            'hours_real' => $worker->hours_real,
+                        ]);
+                    }
+                }
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Actividad asignada al cronograma con éxito.'], 200);
+
+    }
+
+    public function downloadTimeline( $timeline_id )
+    {
+        $timeline = Timeline::with(['works' => function ($query) {
+            $query->with('quote')
+                ->with(['phases' => function ($query) {
+                    $query->with(['tasks' => function ($query) {
+                        $query->with('performer');
+                        $query->with(['task_workers' => function ($query) {
+                            $query->with('worker');
+                        }]);
+                    }]);
+                }]);
+        }])
+            ->find($timeline_id);
+
+        $arrayTasks = [];
+        foreach ( $timeline->tasks as $task )
+        {
+            $workers = count($task->task_workers);
+            if ( $workers > 0 )
+            {
+                foreach ( $task->task_workers as $task_worker )
+                {
+                    array_push( $arrayTasks, [
+                        'quote' => $task->work->description_quote,
+                        'phase' => $task->phase->description,
+                        'task' => $task->activity,
+                        'performer' => $task->performer->first_name.' '.$task->performer->last_name,
+                        'progress' => ($task->progress==0 || $task->progress==null || $task->progress=='') ? '': $task->progress,
+                        'worker' => $task_worker->worker->first_name.' '.$task_worker->worker->last_name,
+                        'hours_plan' => ($task_worker->hours_plan==0 || $task_worker->hours_plan==null || $task_worker->hours_plan=='') ? '': $task_worker->hours_plan,
+                        'hours_real' => ($task_worker->hours_real==0 || $task_worker->hours_real==null || $task_worker->hours_real=='') ? '': $task_worker->hours_real,
+
+                    ] );
+                }
+            } else {
+                array_push( $arrayTasks, [
+                    'quote' => $task->work->description_quote,
+                    'phase' => $task->phase->description,
+                    'task' => $task->activity,
+                    'performer' => $task->performer->first_name.' '.$task->performer->last_name,
+                    'progress' => ($task->progress==0 || $task->progress==null || $task->progress=='') ? '': $task->progress,
+                    'worker' => '',
+                    'hours_plan' => '',
+                    'hours_real' => '',
+
+                ] );
+
+            }
+
+
+        }
+
+        $tasks = [];
+
+        $id = 1;
+
+        for ( $i = 0; $i < count( $arrayTasks ); $i++ )
+        {
+            if ( $i == 0 )
+            {
+                array_push($tasks, [
+                    'id' => $id,
+                    'quote' => $arrayTasks[$i]['quote'],
+                    'phase' => $arrayTasks[$i]['phase'],
+                    'task' => $arrayTasks[$i]['task'],
+                    'performer' => $arrayTasks[$i]['performer'],
+                    'progress' => $arrayTasks[$i]['progress'],
+                    'worker' => $arrayTasks[$i]['worker'],
+                    'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                    'hours_real' => $arrayTasks[$i]['hours_real'],
+                ]);
+                $id = $id +1;
+            } else {
+                if ( $arrayTasks[$i]['quote'] == $arrayTasks[$i-1]['quote'] )
+                {
+                    array_push($tasks, [
+                        'id' => '',
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'progress' => $arrayTasks[$i]['progress'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'hours_real' => $arrayTasks[$i]['hours_real'],
+                    ]);
+
+                } else {
+                    array_push($tasks, [
+                        'id' => $id,
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'progress' => $arrayTasks[$i]['progress'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'hours_real' => $arrayTasks[$i]['hours_real'],
+                    ]);
+                    $id = $id +1;
+                }
+            }
+
+        }
+
+        //dd($tasks);
+
+        /*for ( $i = 0; $i < count( $tasks ); $i++ )
+        {
+            if ( $i != 0 )
+            {
+                dump($tasks[$i]['quote'] . ' ' . $tasks[$i-1]['quote']);
+            } else {
+                dump($tasks[$i]['quote']);
+            }
+
+        }
+        dd($tasks);*/
+        //dd($tasks);
+        $title = 'PROGRAMACION DE ACTIVIDADES: '.$timeline->date->format('d-m-Y');
+
+        return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
+
+        /*$view = view('exports.timelineExcel', compact('timeline', 'tasks', 'title'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
+
+        return $pdf->stream($name);*/
+    }
+
     public function checkTimelineForCreate($date)
     {
         $date_current = Carbon::now('America/Lima')->format('Y-m-d');
@@ -185,7 +916,7 @@ class TimelineController extends Controller
                 // Si existe cronograma, redireccionar al manage
                 return response()->json([
                     'message' => 'Redireccionando ...',
-                    'url' => route('manage.timeline', $timeline->id),
+                    'url' => route('review.timeline', $timeline->id),
                     'res' => 1
                 ], 200);
 
@@ -206,7 +937,7 @@ class TimelineController extends Controller
                     // Si existe cronograma, redireccionar al show
                     return response()->json([
                         'message' => 'Redireccionando ...',
-                        'url' => route('show.timeline', $timeline->id),
+                        'url' => route('review.timeline', $timeline->id),
                         'res' => 3
                     ], 200);
 
@@ -227,7 +958,7 @@ class TimelineController extends Controller
                         // Si existe cronograma, redireccionar al show
                         return response()->json([
                             'message' => 'Redireccionando ...',
-                            'url' => route('manage.timeline', $timeline->id),
+                            'url' => route('review.timeline', $timeline->id),
                             'res' => 5
                         ], 200);
 
@@ -389,18 +1120,48 @@ class TimelineController extends Controller
     {
         $timeline = Timeline::find($id_timeline);
 
+        $tasks = Task::where('progress', '<', 100)
+            ->where('assign_status', 0)
+            ->where('timeline_id', '<>',$timeline->id)
+            ->get();
+
+        $tasksArray = [];
+
+        foreach ($tasks as $task) {
+            array_push($tasksArray, [
+                'task_id' => $task->id,
+                'quote_id' => $task->work->quote_id,
+                'description_quote' => $task->work->description_quote,
+                'task' => $task->activity,
+                'progress' => $task->progress,
+                'phase' => $task->phase->description
+            ]);
+        }
+
+        /*$timeline = Timeline::find($id_timeline);
+
         $timelines = Timeline::where('date', '<', $timeline->date)->get();
 
         $activitiesArray = [];
 
         foreach ( $timelines as $timeline )
         {
-            $activities = Activity::where('progress', '<', 100)
+            foreach ( $timeline->works as $work )
+            {
+                foreach ( $work->phases as $phase )
+                {
+                    foreach ( $phase->tasks as $task )
+                    {
+
+                    }
+                }
+            }
+            $tasks = Task::where('progress', '<', 100)
                 ->where('assign_status', 0)
                 ->where('timeline_id', $timeline->id)
                 ->get();
 
-            foreach ( $activities as $activity )
+            foreach ( $tasks as $task )
             {
                 array_push($activitiesArray, [
                     'activity_id' => $activity->id,
@@ -413,8 +1174,8 @@ class TimelineController extends Controller
                 ]);
             }
 
-        }
-        return response()->json(['activities' => $activitiesArray], 200);
+        }*/
+        return response()->json(['tasks' => $tasksArray], 200);
 
     }
 

@@ -193,7 +193,7 @@
             <th>#</th>
             <th width="90px" style="word-wrap: break-word">COTIZACIÓN</th>
             <th>ETAPA</th>
-            <th width="90px" style="word-wrap: break-word">DESCRIPCION DE TAREA</th>
+            <th width="90px" style="word-wrap: break-word">DESCRIPCIÓN DE TAREA</th>
             <th>RESPONSABLE</th>
             <th>AVANCE</th>
             <th>EJECUT.</th>
@@ -209,11 +209,11 @@
             <td rowspan="{{ count($activity->activity_workers) }}">{{ $activity->phase }}</td>
             <td width="90px" style="word-wrap: break-word" rowspan="{{ count($activity->activity_workers) }}">{{ $activity->activity }} </td>
             <td rowspan="{{ count($activity->activity_workers) }}">{{ ($activity->performer == null) ? 'No tiene responsable':$activity->performer_worker->first_name.' '.$activity->performer_worker->last_name }} </td>
-            <td rowspan="{{ count($activity->activity_workers) }}">{{ ($activity->progress == null) ? 0: $activity->progress }} </td>
+            <td rowspan="{{ count($activity->activity_workers) }}">{{ ($activity->progress == null ) ? 0: $activity->progress }} </td>
             @if ( count($activity->activity_workers) > 0 )
                 <td >{{ $activity->activity_workers[0]->worker->first_name }} </td>
-                <td >{{ $activity->activity_workers[0]->hours_plan }} </td>
-                <td >{{ $activity->activity_workers[0]->hours_real }} </td>
+                <td >{{ ($activity->activity_workers[0]->hours_plan == 0 || $activity->activity_workers[0]->hours_plan == null) ? '':$activity->activity_workers[0]->hours_plan }} </td>
+                <td >{{ ($activity->activity_workers[0]->hours_real == 0 || $activity->activity_workers[0]->hours_real == null) ? '':$activity->activity_workers[0]->hours_real }} </td>
             @else
                 <td > </td>
                 <td > </td>
@@ -223,8 +223,8 @@
             @for ( $i = 1; $i<count($activity->activity_workers); $i++ )
             <tr>
                 <td >{{ $activity->activity_workers[$i]->worker->first_name }}</td>
-                <td >{{ $activity->activity_workers[$i]->hours_plan }} </td>
-                <td >{{ $activity->activity_workers[$i]->hours_real }} </td>
+                <td >{{ ($activity->activity_workers[$i]->hours_plan == 0 || $activity->activity_workers[$i]->hours_plan == null) ? '':$activity->activity_workers[$i]->hours_plan }} </td>
+                <td >{{ ($activity->activity_workers[$i]->hours_real == 0 || $activity->activity_workers[$i]->hours_real == null) ? '':$activity->activity_workers[$i]->hours_real }} </td>
             </tr>
             @endfor
         @endforeach

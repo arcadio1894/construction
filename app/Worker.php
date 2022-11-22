@@ -63,5 +63,5 @@ class Worker extends Model
         return $this->belongsTo('App\PensionSystem');
     }
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'birthplace', 'admission_date', 'termination_date'];
 }
