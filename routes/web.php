@@ -1209,6 +1209,15 @@ Route::middleware('auth')->group(function (){
         Route::post('worker/store', 'WorkerController@store')
             ->name('worker.store');
             /*->middleware('permission:create_material');*/
+        Route::get('editar/colaborador/{id}', 'WorkerController@edit')
+            ->name('worker.edit');
+        Route::post('worker/update/{id}', 'WorkerController@update')
+            ->name('worker.update');
+        Route::post('/destroy/worker/{id}', 'WorkerController@destroy');
+        Route::get('/habilitar/colaborador', 'WorkerController@indexEnable')
+            ->name('worker.enable');
+        Route::get('/get/workers/enable/', 'WorkerController@getWorkersEnable');
+        Route::post('/enable/worker/{id}', 'WorkerController@enable');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

@@ -229,6 +229,14 @@ class UserController extends Controller
 
             $user = User::find($request->get('user_id'));
 
+            $worker = Worker::where('user_id', $user->id)->first();
+
+            if ( !is_null($worker) )
+            {
+                $worker->enable = false;
+                $worker->save();
+            }
+
             $user->enable = false;
             $user->save();
             DB::commit();
@@ -250,6 +258,14 @@ class UserController extends Controller
         try {
 
             $user = User::find($request->get('user_id'));
+
+            $worker = Worker::where('user_id', $user->id)->first();
+
+            if ( !is_null($worker) )
+            {
+                $worker->enable = true;
+                $worker->save();
+            }
 
             $user->enable = true;
             $user->save();

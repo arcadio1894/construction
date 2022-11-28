@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeListWorker')
+@section('activeEnableWorker')
     active
 @endsection
 
@@ -240,5 +240,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/worker/index.js') }}"></script>
+    <script src="{{ asset('js/worker/indexEnable.js') }}"></script>
 @endsection

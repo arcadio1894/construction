@@ -76,7 +76,9 @@
 
 @section('page-title')
     <h5 class="card-title">Visualizar Cronograma</h5>
+    @if ( $active_edit == true )
     <a href="{{ route('create.timeline', $timeline->id) }}" class="btn btn-sm btn-success btn-sm float-right" > <i class="far fa-clock"></i> Gestionar Cronograma </a>
+    @endif
     <a href="{{ route('excel.timeline', $timeline->id) }}" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>
     <a href="{{ route('save.progress', $timeline->id) }}" class="btn btn-sm btn-warning btn-sm float-right" > <i class="far fa-edit"></i> Registrar avances </a>
 

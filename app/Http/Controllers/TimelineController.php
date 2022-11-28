@@ -110,7 +110,9 @@ class TimelineController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $workers = Worker::select('id', 'first_name', 'last_name')->get();
+        $workers = Worker::select('id', 'first_name', 'last_name')
+            ->where('enable', 1)
+            ->get();
 
         $timeline = Timeline::with(['works' => function ($query) {
                 $query->with('quote')
@@ -557,7 +559,18 @@ class TimelineController extends Controller
         }])
             ->find($timeline_id);
 
-        return view('timeline.review', compact( 'permissions', 'workers', 'timeline', 'quotes'));
+        $fecha_actual = Carbon::now('America/Lima');
+        $fecha_max = $timeline->date->addDay()->addHours(7);
+        $fecha_min = $timeline->date->subHours(23);
+        $active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
+
+        //dump('Actual -> '.$fecha_actual);
+        //dump('Maxima -> '.$fecha_max);
+        //dump('Minima -> '.$fecha_min);
+        //dump('Real -> '.$timeline->date);
+        //dump($active_edit);
+
+        return view('timeline.review', compact( 'active_edit','permissions', 'workers', 'timeline', 'quotes'));
 
     }
 

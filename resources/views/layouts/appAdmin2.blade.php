@@ -1305,7 +1305,7 @@
                         </li>
                     @endcan--}}
 
-                    {{--<li class="nav-header">CONTROL DE HORAS</li>
+                    <li class="nav-header">CONTROL DE HORAS</li>
                     <li class="nav-item has-treeview @yield('openTimelines')">
                         <a href="#" class="nav-link @yield('activeTimelines')">
                             <i class="nav-icon far fa-calendar-alt"></i>
@@ -1465,14 +1465,14 @@
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="" class="nav-link @yield('activeCreateWorker')">
+                                    <a href="{{route('worker.create')}}" class="nav-link @yield('activeCreateWorker')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Crear colaboradores</p>
                                     </a>
                                 </li>
 
                                 <li class="nav-item">
-                                    <a href="" class="nav-link @yield('activeEnableWorker')">
+                                    <a href="{{route('worker.enable')}}" class="nav-link @yield('activeEnableWorker')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Habilitar colaboradores</p>
                                     </a>
@@ -1498,7 +1498,7 @@
                             </li>
 
                         </ul>
-                    </li>--}}
+                    </li>
 
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>

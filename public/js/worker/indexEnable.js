@@ -3,7 +3,7 @@ $(document).ready(function () {
     console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/get/workers/",
+            url: "/dashboard/get/workers/enable/",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -39,11 +39,9 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    //if ( $.inArray('update_material', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/colaborador/'+item.id+'" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
-                    //}
+
                     //if ( $.inArray('enable_material', $permissions) !== -1 ) {
-                        text = text + '<button data-delete="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-window-close"></i> </button>  ';
+                        text = text + '<button data-enable="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Habilitar"><i class="fas fa-recycle"></i> </button>  ';
                     //}
                     return text ;
                 }
@@ -209,7 +207,7 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
 
-    $(document).on('click', '[data-delete]', destroyWorker);
+    $(document).on('click', '[data-enable]', destroyWorker);
 });
 
 var $formDelete;
@@ -218,13 +216,13 @@ var $permissions;
 
 function destroyWorker() {
     event.preventDefault();
-    var id_worker = $(this).data('delete');
+    var id_worker = $(this).data('enable');
     var button = $(this);
     var nombre = $(this).data('nombre');
 
     vdialog({
         type:'alert',// alert, success, error, confirm
-        title: '¿Esta seguro de inhabilitar este colaborador?',
+        title: '¿Esta seguro de habilitar este colaborador?',
         content: nombre,
         okValue:'Aceptar',
         modal:true,
@@ -232,7 +230,7 @@ function destroyWorker() {
         ok: function(){
 
             $.ajax({
-                url: '/dashboard/destroy/worker/'+id_worker,
+                url: '/dashboard/enable/worker/'+id_worker,
                 method: 'POST',
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                 processData:false,
