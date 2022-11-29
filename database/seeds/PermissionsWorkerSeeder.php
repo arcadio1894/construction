@@ -34,12 +34,29 @@ class PermissionsWorkerSeeder extends Seeder
             'description' => 'Eliminar colaborador'
         ]);
         Permission::create([
-            'name' => 'destroy_worker',
-            'description' => 'Eliminar colaborador'
-        ]);
-        Permission::create([
             'name' => 'restore_worker',
             'description' => 'Habilitar colaborador'
+        ]);
+
+        Permission::create([
+            'name' => 'enableConfig_worker',
+            'description' => 'Habilitar config. colaboradores'
+        ]);
+        Permission::create([
+            'name' => 'contract_worker',
+            'description' => 'Configurar contratos'
+        ]);
+        Permission::create([
+            'name' => 'statusCivil_worker',
+            'description' => 'Configurar estados civiles'
+        ]);
+        Permission::create([
+            'name' => 'function_worker',
+            'description' => 'Configurar funciones'
+        ]);
+        Permission::create([
+            'name' => 'systemPension_worker',
+            'description' => 'Configurar sistemas de pension'
         ]);
 
         $role = Role::findByName('admin');
@@ -51,6 +68,11 @@ class PermissionsWorkerSeeder extends Seeder
             'edit_worker',
             'destroy_worker',
             'restore_worker',
+            'enableConfig_worker',
+            'contract_worker',
+            'statusCivil_worker',
+            'function_worker',
+            'systemPension_worker',
         ]);
     }
 }

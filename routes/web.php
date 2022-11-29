@@ -1156,7 +1156,8 @@ Route::middleware('auth')->group(function (){
 
         // CRONOGRAMAS DE CONTROL DE HORAS
         Route::get('/cronogramas', 'TimelineController@showTimelines')
-            ->name('index.timelines');
+            ->name('index.timelines')
+            ->middleware('permission:index_timeline');
         /*Route::get('/crear/cronograma', 'TimelineController@createTimelines')
             ->name('create.timeline');*/
         Route::get('/get/timeline/current', 'TimelineController@getTimelineCurrent');
@@ -1181,7 +1182,8 @@ Route::middleware('auth')->group(function (){
 
         // Cambio de Cronogramas
         Route::get('/crear/cronograma/{timeline}', 'TimelineController@createTimeline')
-            ->name('create.timeline');
+            ->name('create.timeline')
+            ->middleware('permission:create_timeline');
         Route::post('/create/work/timeline/{id}', 'TimelineController@createNewWork');
         Route::post('/edit/work/{work_id}/timeline/{timeline_id}', 'TimelineController@editWork');
         Route::post('/create/phase/work/{id}', 'TimelineController@createNewPhase');
@@ -1192,32 +1194,43 @@ Route::middleware('auth')->group(function (){
         Route::post('/remove/phase/{id}', 'TimelineController@deletePhase');
         Route::post('/remove/work/{id}', 'TimelineController@deleteWork');
         Route::get('/revisar/cronograma/{timeline}', 'TimelineController@reviewTimeline')
-            ->name('review.timeline');
+            ->name('review.timeline')
+            ->middleware('permission:show_timeline');
         Route::get('/revisar/avances/cronograma/{timeline}', 'TimelineController@checkProgressTimeline')
-            ->name('save.progress');
+            ->name('save.progress')
+            ->middleware('permission:progress_timeline');
         Route::post('/save/progress/task/{id}', 'TimelineController@saveProgressTask');
         Route::post('/assign/task/{task_id}/timeline/{timeline_id}', 'TimelineController@assignTaskToTimeline');
         Route::get('/descargar/excel/timeline/{id_timeline}', 'TimelineController@downloadTimeline')
-            ->name('excel.timeline');
+            ->name('excel.timeline')
+            ->middleware('permission:download_timeline');
 
         // TRABAJADORES
         Route::get('/colaboradores', 'WorkerController@index')
-            ->name('worker.index');
+            ->name('worker.index')
+            ->middleware('permission:list_worker');
         Route::get('/get/workers/', 'WorkerController@getWorkers');
         Route::get('/registrar/colaborador', 'WorkerController@create')
-            ->name('worker.create');
+            ->name('worker.create')
+            ->middleware('permission:create_worker');
         Route::post('worker/store', 'WorkerController@store')
-            ->name('worker.store');
+            ->name('worker.store')
+            ->middleware('permission:create_worker');
             /*->middleware('permission:create_material');*/
         Route::get('editar/colaborador/{id}', 'WorkerController@edit')
-            ->name('worker.edit');
+            ->name('worker.edit')
+            ->middleware('permission:edit_worker');
         Route::post('worker/update/{id}', 'WorkerController@update')
-            ->name('worker.update');
-        Route::post('/destroy/worker/{id}', 'WorkerController@destroy');
+            ->name('worker.update')
+            ->middleware('permission:edit_worker');
+        Route::post('/destroy/worker/{id}', 'WorkerController@destroy')
+            ->middleware('permission:destroy_worker');
         Route::get('/habilitar/colaborador', 'WorkerController@indexEnable')
-            ->name('worker.enable');
+            ->name('worker.enable')
+            ->middleware('permission:restore_worker');
         Route::get('/get/workers/enable/', 'WorkerController@getWorkersEnable');
-        Route::post('/enable/worker/{id}', 'WorkerController@enable');
+        Route::post('/enable/worker/{id}', 'WorkerController@enable')
+            ->middleware('permission:restore_worker');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

@@ -1304,9 +1304,12 @@
                             </ul>
                         </li>
                     @endcan--}}
-
+                    @can('enable_timeline')
                     <li class="nav-header">CONTROL DE HORAS</li>
+                    @endcan
+
                     <li class="nav-item has-treeview @yield('openTimelines')">
+                        @can('enable_timeline')
                         <a href="#" class="nav-link @yield('activeTimelines')">
                             <i class="nav-icon far fa-calendar-alt"></i>
                             <p>
@@ -1314,20 +1317,24 @@
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
+                        @endcan
                         <ul class="nav nav-treeview">
-
+                            @can('index_timeline')
                             <li class="nav-item">
                                 <a href="{{ route('index.timelines') }}" class="nav-link @yield('activeShowTimelines')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Ver cronogramas</p>
                                 </a>
                             </li>
-
+                            @endcan
                         </ul>
                     </li>
 
+                    @can('enable_worker')
                     <li class="nav-header">RECURSOS HUMANOS</li>
+                    @endcan
                     <li class="nav-item has-treeview @yield('openConfigRH')">
+                        @can('enableConfig_worker')
                         <a href="#" class="nav-link @yield('activeConfigRH')">
                             <i class="fas fa-users-cog nav-icon"></i>
                             <p>
@@ -1335,8 +1342,9 @@
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
+                        @endcan
                         <ul class="nav nav-treeview">
-
+                            @can('contract_worker')
                             <li class="nav-item has-treeview @yield('openContract')">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon text-success"></i>
@@ -1363,7 +1371,8 @@
 
                                 </ul>
                             </li>
-
+                            @endcan
+                            @can('statusCivil_worker')
                             <li class="nav-item has-treeview @yield('openCivilStatus')">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon text-success"></i>
@@ -1390,7 +1399,8 @@
 
                                 </ul>
                             </li>
-
+                            @endcan
+                            @can('function_worker')
                             <li class="nav-item has-treeview @yield('openWorkFunction')">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon text-success"></i>
@@ -1417,7 +1427,8 @@
 
                                 </ul>
                             </li>
-
+                            @endcan
+                            @can('systemPension_worker')
                             <li class="nav-item has-treeview @yield('openPensionSystem')">
                                 <a href="#" class="nav-link">
                                     <i class="far fa-circle nav-icon text-success"></i>
@@ -1444,43 +1455,49 @@
 
                                 </ul>
                             </li>
-
+                            @endcan
                         </ul>
                     </li>
+
                     <li class="nav-item has-treeview @yield('openWorker')">
-                            <a href="#" class="nav-link @yield('activeWorker')">
-                                <i class="fas fa-user-tie nav-icon"></i>
-                                <p>
-                                    Colaboradores
-                                    <i class="right fas fa-angle-left"></i>
-                                </p>
-                            </a>
-                            <ul class="nav nav-treeview">
+                        @can('enable_worker')
+                        <a href="#" class="nav-link @yield('activeWorker')">
+                            <i class="fas fa-user-tie nav-icon"></i>
+                            <p>
+                                Colaboradores
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        @endcan
+                        <ul class="nav nav-treeview">
+                            @can('list_worker')
+                            <li class="nav-item">
+                                <a href="{{route('worker.index')}}" class="nav-link @yield('activeListWorker')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar colaboradores</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('create_worker')
+                            <li class="nav-item">
+                                <a href="{{route('worker.create')}}" class="nav-link @yield('activeCreateWorker')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Crear colaboradores</p>
+                                </a>
+                            </li>
+                            @endcan
+                            @can('restore_worker')
+                            <li class="nav-item">
+                                <a href="{{route('worker.enable')}}" class="nav-link @yield('activeEnableWorker')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Habilitar colaboradores</p>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
 
-                                <li class="nav-item">
-                                    <a href="{{route('worker.index')}}" class="nav-link @yield('activeListWorker')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Listar colaboradores</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="{{route('worker.create')}}" class="nav-link @yield('activeCreateWorker')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Crear colaboradores</p>
-                                    </a>
-                                </li>
-
-                                <li class="nav-item">
-                                    <a href="{{route('worker.enable')}}" class="nav-link @yield('activeEnableWorker')">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Habilitar colaboradores</p>
-                                    </a>
-                                </li>
-
-                            </ul>
-                        </li>
-                    <li class="nav-item has-treeview @yield('openAttendance')">
+                    {{--<li class="nav-item has-treeview @yield('openAttendance')">
                         <a href="#" class="nav-link @yield('activeAttendance')">
                             <i class="far fa-calendar-check nav-icon"></i>
                             <p>
@@ -1498,7 +1515,7 @@
                             </li>
 
                         </ul>
-                    </li>
+                    </li>--}}
 
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>
