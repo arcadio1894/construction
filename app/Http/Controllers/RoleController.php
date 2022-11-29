@@ -59,6 +59,7 @@ class RoleController extends Controller
         'requestPurchaseOperator' => 'SOLICITUD DE COMPRA',
         'categoryInvoice'=>'CATEGORÍAS FACTURAS',
         'worker' => 'COLABORADORES',
+        'porcentageQuote' => 'PORCENTEAJES DE COTIZACION',
         'timeline' => 'CRONOGRAMAS'
     ];
 
