@@ -23,6 +23,11 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+
 @endsection
 
 @section('styles')
@@ -54,7 +59,22 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-
+    <div class="row">
+        <div class="col-md-3">
+            <strong> Seleccione un rango de fechas: </strong>
+        </div>
+        <div class="col-md-6" id="sandbox-container">
+            <div class="input-daterange input-group" id="datepicker">
+                <input type="text" class="form-control form-control-sm date-range-filter" id="start" name="start">
+                <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <button type="button" id="btn-export" class="btn btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
+        </div>
+        <br><br>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
@@ -91,5 +111,8 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+
     <script src="{{ asset('js/entry/listOrders.js') }}"></script>
 @endsection

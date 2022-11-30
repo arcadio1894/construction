@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReportOrderPurchaseExport;
 use App\FollowMaterial;
 use App\Http\Requests\StoreOrderPurchaseRequest;
 use App\Item;
@@ -1619,6 +1620,93 @@ class OrderPurchaseController extends Controller
 
         return datatables($lost)->toJson();
     }
+
+    public function reportOrderPurchase()
+    {
+        //dd($request);
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        //dump($start);
+        //dump($end);
+        //dd();
+        $orders_array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            //dump('Descargar todos');
+            $dates = 'TOTALES';
+            $orders = OrderPurchase::with(['supplier', 'approved_user', 'details'])
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            foreach ( $orders as $order )
+            {
+                foreach ( $order->details as $detail) {
+                    $total_con_igv = round((float)$detail->price * (float)$detail->quantity,2);
+                    $date_order = ($order->date_order == null) ? '': Carbon::createFromFormat('Y-m-d', $order->date_order)->format('d-m-Y');
+                    $date_arrival = ($order->date_arrival == null) ? '': Carbon::createFromFormat('Y-m-d', $order->date_arrival)->format('d-m-Y');
+                    array_push($orders_array, [
+                        'order' => $order->code,
+                        'date_order' => ($order->date_order != null) ? $date_order:'No tiene',
+                        'date_arrive' => ($order->date_arrival != null) ? $date_arrival:'No tiene',
+                        'supplier' => ($order->supplier_id != null) ? $order->supplier->business_name:'No tiene',
+                        'material' => ($detail->material_id != null) ? $detail->material->full_description:'No tiene',
+                        'quantity' => $detail->quantity,
+                        'currency' => $order->currency_order,
+                        'price_igv' => round((float)$detail->price, 2),
+                        'price_sin_igv' => round((float)$detail->price/1.18, 2),
+                        'total_igv' => ($detail->total_detail != null) ? $detail->total_detail : $total_con_igv,
+                    ]);
+                }
+
+            }
+
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'DEL '. $start .' AL '. $end;
+            $orders = OrderPurchase::with(['supplier', 'approved_user', 'details'])
+                ->whereDate('date_order', '>=',$date_start)
+                ->whereDate('date_order', '<=',$end_start)
+                ->orderBy('created_at', 'desc')
+                ->get();
+
+            foreach ( $orders as $order )
+            {
+                foreach ( $order->details as $detail) {
+                    $total_con_igv = round((float)$detail->price * (float)$detail->quantity,2);
+                    $date_order = ($order->date_order == null) ? '': Carbon::createFromFormat('Y-m-d', $order->date_order)->format('d-m-Y');
+                    $date_arrival = ($order->date_arrival == null) ? '': Carbon::createFromFormat('Y-m-d', $order->date_arrival)->format('d-m-Y');
+                    array_push($orders_array, [
+                        'order' => $order->code,
+                        'date_order' => ($order->date_order != null) ? $date_order:'No tiene',
+                        'date_arrive' => ($order->date_arrival != null) ? $date_arrival:'No tiene',
+                        'supplier' => ($order->supplier_id != null) ? $order->supplier->business_name:'No tiene',
+                        'material' => ($detail->material_id != null) ? $detail->material->full_description:'No tiene',
+                        'quantity' => $detail->quantity,
+                        'currency' => $order->currency_order,
+                        'price_igv' => round((float)$detail->price, 2),
+                        'price_sin_igv' => round((float)$detail->price/1.18, 2),
+                        'total_igv' => ($detail->total_detail != null) ? $detail->total_detail : $total_con_igv,
+                    ]);
+                }
+
+            }
+
+            //dump($date_start);
+            //dump($end_start);
+        }
+        //dump($invoices_array);
+        //dd('Fechas');
+        //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);
+        //(new UsersExport)->download('users.xlsx');
+        return (new ReportOrderPurchaseExport($orders_array, $dates))->download('ordenesCompra.xlsx');
+
+    }
+    
 
     public function pruebaCantidades()
     {

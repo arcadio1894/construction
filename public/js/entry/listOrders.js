@@ -1,4 +1,11 @@
 $(document).ready(function () {
+    $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
     $permissions = JSON.parse($('#permissions').val());
     console.log($permissions);
     $('#dynamic-table').DataTable( {
@@ -286,12 +293,102 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', cancelOrden);
 
+    $('#btn-export').on('click', exportExcel);
+
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function exportExcel() {
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    console.log(start);
+    console.log(end);
+    console.log(startDate);
+    console.log(endDate);
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todas las órdenes de compras',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/reporte/ordenes/compra/?" + $.param(query);
+
+                        window.location = url;
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/reporte/ordenes/compra/?" + $.param(query);
+
+        window.location = url;
+
+    }
+
+}
 
 function cancelOrden() {
     var order_id = $(this).data('delete');

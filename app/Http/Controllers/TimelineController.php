@@ -67,7 +67,7 @@ class TimelineController extends Controller
             'date' => $date_current,
         ]);
 
-        return response()->json(['message' => 'Redireccionando ...', 'error'=>0, 'url' => route('manage.timeline', $timeline->id)], 200);
+        return response()->json(['message' => 'Redireccionando ...', 'error'=>0, 'url' => route('create.timeline', $timeline->id)], 200);
 
         //dd($date_current . ' -  ' . $date);
         //
@@ -899,15 +899,17 @@ class TimelineController extends Controller
         //dd($tasks);
         $title = 'PROGRAMACION DE ACTIVIDADES: '.$timeline->date->format('d-m-Y');
 
-        return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
+        //return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
 
-        /*$view = view('exports.timelineExcel', compact('timeline', 'tasks', 'title'));
+        $view = view('exports.timelineExcel', compact('timeline', 'tasks', 'title'));
 
         $pdf = PDF::loadHTML($view);
 
         $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
 
-        return $pdf->stream($name);*/
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream($name);
     }
 
     public function checkTimelineForCreate($date)
@@ -1001,7 +1003,7 @@ class TimelineController extends Controller
             'date' => $date,
         ]);
 
-        return response()->json(['message' => 'Redireccionando ...', 'error'=>0, 'url' => route('manage.timeline', $timeline->id)], 200);
+        return response()->json(['message' => 'Redireccionando ...', 'error'=>0, 'url' => route('create.timeline', $timeline->id)], 200);
 
     }
 

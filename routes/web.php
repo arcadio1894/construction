@@ -567,6 +567,11 @@ Route::middleware('auth')->group(function (){
         Route::post('/add/materials/entry/{id_entry}', 'EntryController@addDetailOfEntry')
             ->middleware('permission:destroy_entryPurchase');
 
+        // Reporte de ordenes de compra
+        Route::get('exportar/reporte/ordenes/compra', 'OrderPurchaseController@reportOrderPurchase')
+            ->name('report.order.purchase')
+            ->middleware('permission:create_entryPurchase');
+
         // Crear retazos en almacen
         Route::get('/crear/retazos/materiales', 'EntryScrapsController@indexScrapsMaterials')
             ->name('entry.create.scrap')
