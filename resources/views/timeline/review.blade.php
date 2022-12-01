@@ -82,7 +82,7 @@
     @endif
     @endcan
     @can('download_timeline')
-    <a href="{{ route('excel.timeline', $timeline->id) }}" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>
+    <a href="{{ route('excel.timeline', $timeline->id) }}" target="_blank" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>
     @endcan
     @can('progress_timeline')
     <a href="{{ route('save.progress', $timeline->id) }}" class="btn btn-sm btn-warning btn-sm float-right" > <i class="far fa-edit"></i> Registrar avances </a>
@@ -114,7 +114,7 @@
                         <div class="accordion-group">
                             <!-- Work -->
                             <div class="accordion-heading area">
-                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote }}</a>
+                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote . ' | ' . ($work->supervisor_id != null) ? $work->supervisor->first_name.' '.$work->supervisor->last_name : ''}}</a>
 
                             </div>
                             <!-- /Work -->

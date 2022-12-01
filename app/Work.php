@@ -14,7 +14,13 @@ class Work extends Model
         'timeline_id',
         'quote_id',
         'description_quote',
+        'supervisor_id'
     ];
+
+    public function supervisor()
+    {
+        return $this->belongsTo('App\Worker', 'supervisor_id');
+    }
 
     public function timeline()
     {

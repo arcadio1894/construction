@@ -560,10 +560,10 @@ class TimelineController extends Controller
             ->find($timeline_id);
 
         $fecha_actual = Carbon::now('America/Lima');
-        $fecha_max = $timeline->date->addDay()->addHours(7);
+        $fecha_max = $timeline->date->addHours(7);
         $fecha_min = $timeline->date->subHours(23);
-        $active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
-
+        //$active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
+        $active_edit = true;
         //dump('Actual -> '.$fecha_actual);
         //dump('Maxima -> '.$fecha_max);
         //dump('Minima -> '.$fecha_min);

@@ -798,24 +798,33 @@ function editWork() {
     var card_quote1 = $(this).parent().prev().children().children().children().next();
     var card_quote2 = $(this).parent().prev().children().children().next().children().next();
     var card_quote3 = $(this).parent().prev().prev();
+    var card_quote4 = $(this).parent().prev().children().next().children().children().next();
 
     console.log(card_quote1);
     console.log(card_quote2);
     console.log(card_quote3);
+    console.log(card_quote4);
 
     var quote_id = card_quote1.val();
     var quote_description = card_quote2.val();
     var work_id = card_quote3.val();
+    var supervisor_id = $("#supervisor").val();
+    var name_supervisor = $("#supervisor option:selected").text();
 
     console.log(quote_id);
     console.log(quote_description);
     console.log(work_id);
+    console.log(supervisor_id);
+    console.log(name_supervisor);
+
+    var nombre_supervisor = (supervisor_id =='' || supervisor_id == 0) ? '': name_supervisor ;
+    var nombre_cotizacion = (quote_description=='') ? 'Trabajo #':quote_description ;
 
     $.ajax({
         url: '/dashboard/edit/work/'+work_id+'/timeline/'+id_timeline,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        data: JSON.stringify({ quote_id: quote_id, quote_description:quote_description }),
+        data: JSON.stringify({ quote_id: quote_id, quote_description:quote_description, supervisor_id:supervisor_id }),
         processData:false,
         contentType:'application/json; charset=utf-8',
         success: function (data) {
@@ -839,7 +848,7 @@ function editWork() {
                     "hideMethod": "fadeOut"
                 });
             // Aqui se renderizará y se colocará los datos del trabajo
-            $(document).find('[data-idwork='+work_id+']').html((quote_description=='') ? 'Trabajo #':quote_description);
+            $(document).find('[data-idwork='+work_id+']').html(nombre_cotizacion+ ' | ' + nombre_supervisor);
             $(document).find('[data-idwork='+work_id+']').attr('data-quoteid', (quote_id==0)? '':quote_id);
             $(document).find('[data-idwork='+work_id+']').attr('data-description', (quote_description=='') ? '':quote_description);
 

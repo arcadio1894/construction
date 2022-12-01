@@ -107,7 +107,9 @@
                         <div class="accordion-group">
                             <!-- Work -->
                             <div class="accordion-heading area">
-                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote }}</a>
+                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote }} {{' | '}} {{ ($work->supervisor_id == null) ? '' : ($work->supervisor->first_name.' '.$work->supervisor->last_name) }}</a>
+                                {{--<a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote . ' | ' . ($work->supervisor_id == null) ? '' : ($work->supervisor->first_name.' '.$work->supervisor->last_name)}}</a>
+--}}
                                 <div class="dropdown dropleft edit">
                                     <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
                                         <i class="fas fa-edit"></i>
@@ -300,7 +302,7 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Cotizaciones Elevadas</h4>
+                    <h4 class="modal-title">Editar trabajo</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <input type="hidden" id="work_id">
@@ -321,6 +323,20 @@
                         <div class="col-sm-6">
                             <label for="descriptionQuote">Descripción: </label>
                             <textarea name="" id="descriptionQuote" data-descriptionQuote cols="30" class="form-control form-control-sm"></textarea>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <label for="quote">Supervisor: </label>
+                            <select data-supervisor id="supervisor" class="supervisor form-control form-control-sm select2" style="width: 100%;">
+                                <option></option>
+                                <option value="0">Ninguno</option>
+                                @foreach( $workers as $worker )
+                                    <option value="{{ $worker->id }}" data-supervisor="{{  $worker->first_name . ' ' . $worker->last_name }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                                @endforeach
+                            </select>
+
 
                         </div>
                     </div>
@@ -660,6 +676,10 @@
             //Initialize Select2 Elements
             $('.quote_description').select2({
                 placeholder: "Selecione cotización",
+            });
+
+            $('.supervisor').select2({
+                placeholder: "Selecione supervisor",
             });
 
             $('.workers').select2({
