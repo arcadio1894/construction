@@ -910,8 +910,21 @@ function editWork() {
 function openModalQuotes() {
     event.preventDefault();
     var work_id = $(this).data('editwork');
+
     console.log(work_id);
     $modalQuotes.find('[id=work_id]').val(work_id);
+
+    $.ajax({
+        url: "/dashboard/get/info/work/"+work_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            $("#quote_description").val(json.quote_id).change();
+            $("#descriptionQuote").val(json.quote_description);
+            $("#supervisor").val(json.supervisor_id).change();
+        }
+    });
+
     $modalQuotes.modal('show');
 }
 

@@ -1209,6 +1209,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/descargar/excel/timeline/{id_timeline}', 'TimelineController@downloadTimeline')
             ->name('excel.timeline')
             ->middleware('permission:download_timeline');
+        Route::get('/get/info/work/{id}', 'TimelineController@getInfoWork');
+
 
         // TRABAJADORES
         Route::get('/colaboradores', 'WorkerController@index')
@@ -1236,6 +1238,126 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/workers/enable/', 'WorkerController@getWorkersEnable');
         Route::post('/enable/worker/{id}', 'WorkerController@enable')
             ->middleware('permission:restore_worker');
+
+        // CRUD Contratos
+        Route::get('/all/contracts', 'ContractController@getAllContracts')
+            ->middleware('permission:contract_worker');
+        Route::get('contratos', 'ContractController@index')
+            ->name('contract.index')
+            ->middleware('permission:contract_worker');
+        Route::get('crear/contrato', 'ContractController@create')
+            ->name('contract.create')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/store', 'ContractController@store')
+            ->name('contract.store')
+            ->middleware('permission:contract_worker');
+        Route::get('/editar/contrato/{id}', 'ContractController@edit')
+            ->name('contract.edit')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/update', 'ContractController@update')
+            ->name('contract.update')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/destroy', 'ContractController@destroy')
+            ->name('contract.destroy')
+            ->middleware('permission:contract_worker');
+        Route::get('/all/contracts/deleted', 'ContractController@getContractsDeleted')
+            ->middleware('permission:contract_worker');
+        Route::get('contratos/eliminados', 'ContractController@indexDeleted')
+            ->name('contract.deleted')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/restore', 'ContractController@restore')
+            ->name('contract.restore')
+            ->middleware('permission:contract_worker');
+
+        // CRUD Estado Civil
+        Route::get('/all/civilStatuses', 'CivilStatusController@getAllCivilStatus')
+            ->middleware('permission:statusCivil_worker');
+        Route::get('estado/civil', 'CivilStatusController@index')
+            ->name('civilStatuses.index')
+            ->middleware('permission:statusCivil_worker');
+        Route::get('crear/estado/civil', 'CivilStatusController@create')
+            ->name('civilStatuses.create')
+            ->middleware('permission:statusCivil_worker');
+        Route::post('civilStatuses/store', 'CivilStatusController@store')
+            ->name('civilStatuses.store')
+            ->middleware('permission:statusCivil_worker');
+        Route::get('/editar/estado/civil/{id}', 'CivilStatusController@edit')
+            ->name('civilStatuses.edit')
+            ->middleware('permission:statusCivil_worker');
+        Route::post('civilStatuses/update', 'CivilStatusController@update')
+            ->name('civilStatuses.update')
+            ->middleware('permission:statusCivil_worker');
+        Route::post('civilStatuses/destroy', 'CivilStatusController@destroy')
+            ->name('civilStatuses.destroy')
+            ->middleware('permission:statusCivil_worker');
+        Route::get('/all/civilStatuses/deleted', 'CivilStatusController@getCivilStatusesDeleted')
+            ->middleware('permission:statusCivil_worker');
+        Route::get('estado/civil/eliminados', 'CivilStatusController@indexDeleted')
+            ->name('civilStatuses.deleted')
+            ->middleware('permission:statusCivil_worker');
+        Route::post('civilStatuses/restore', 'CivilStatusController@restore')
+            ->name('civilStatuses.restore')
+            ->middleware('permission:statusCivil_worker');
+
+        // CRUD Cargos
+        Route::get('/all/workFunctions', 'WorkFunctionController@getAllWorkFunctions')
+            ->middleware('permission:function_worker');
+        Route::get('cargos', 'WorkFunctionController@index')
+            ->name('workFunctions.index')
+            ->middleware('permission:function_worker');
+        Route::get('crear/cargo', 'WorkFunctionController@create')
+            ->name('workFunctions.create')
+            ->middleware('permission:function_worker');
+        Route::post('workFunctions/store', 'WorkFunctionController@store')
+            ->name('workFunctions.store')
+            ->middleware('permission:function_worker');
+        Route::get('/editar/cargo/{id}', 'WorkFunctionController@edit')
+            ->name('workFunctions.edit')
+            ->middleware('permission:function_worker');
+        Route::post('workFunctions/update', 'WorkFunctionController@update')
+            ->name('workFunctions.update')
+            ->middleware('permission:function_worker');
+        Route::post('workFunctions/destroy', 'WorkFunctionController@destroy')
+            ->name('workFunctions.destroy')
+            ->middleware('permission:function_worker');
+        Route::get('/all/workFunctions/deleted', 'WorkFunctionController@getWorkFunctionsDeleted')
+            ->middleware('permission:function_worker');
+        Route::get('cargos/eliminados', 'WorkFunctionController@indexDeleted')
+            ->name('workFunctions.deleted')
+            ->middleware('permission:function_worker');
+        Route::post('workFunctions/restore', 'WorkFunctionController@restore')
+            ->name('workFunctions.restore')
+            ->middleware('permission:function_worker');
+
+        // CRUD Sistemas de pension
+        Route::get('/all/pensionSystems', 'PensionSystemController@getAllPensionSystems')
+            ->middleware('permission:systemPension_worker');
+        Route::get('sistemas/pension', 'PensionSystemController@index')
+            ->name('workFunctions.index')
+            ->middleware('permission:systemPension_worker');
+        Route::get('crear/cargo', 'PensionSystemController@create')
+            ->name('workFunctions.create')
+            ->middleware('permission:systemPension_worker');
+        Route::post('pensionSystems/store', 'PensionSystemController@store')
+            ->name('workFunctions.store')
+            ->middleware('permission:systemPension_worker');
+        Route::get('/editar/cargo/{id}', 'PensionSystemController@edit')
+            ->name('workFunctions.edit')
+            ->middleware('permission:systemPension_worker');
+        Route::post('pensionSystems/update', 'PensionSystemController@update')
+            ->name('workFunctions.update')
+            ->middleware('permission:systemPension_worker');
+        Route::post('pensionSystems/destroy', 'PensionSystemController@destroy')
+            ->name('workFunctions.destroy')
+            ->middleware('permission:systemPension_worker');
+        Route::get('/all/workFunctions/deleted', 'PensionSystemController@getWorkFunctionsDeleted')
+            ->middleware('permission:systemPension_worker');
+        Route::get('cargos/eliminados', 'PensionSystemController@indexDeleted')
+            ->name('workFunctions.deleted')
+            ->middleware('permission:systemPension_worker');
+        Route::post('pensionSystems/restore', 'PensionSystemController@restore')
+            ->name('workFunctions.restore')
+            ->middleware('permission:systemPension_worker');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

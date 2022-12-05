@@ -233,6 +233,7 @@ class TimelineController extends Controller
             {
                 $works = Work::where('timeline_id', $timeline_id)
                     ->where('quote_id',$request->get('quote_id') )
+                    ->where('id', '<>', $work_id )
                     ->get();
 
                 if ( count($works) > 0 )
@@ -241,8 +242,9 @@ class TimelineController extends Controller
                 }
             }
             $work = Work::find($work_id);
-            $work->quote_id = ($request->get('quote_id') == 0) ? null: $request->get('quote_id');
+            $work->quote_id = ($request->get('quote_id') == 0 || $request->get('quote_id') == '') ? null: $request->get('quote_id');
             $work->description_quote = ($request->get('quote_description') == '')? null: $request->get('quote_description');
+            $work->supervisor_id = ($request->get('supervisor_id') == '' || $request->get('supervisor_id') == 0)? null: $request->get('supervisor_id');
             $work->save();
 
             $work_send = Work::find($work_id);
@@ -798,13 +800,26 @@ class TimelineController extends Controller
             $workers = count($task->task_workers);
             if ( $workers > 0 )
             {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
+
+
                 foreach ( $task->task_workers as $task_worker )
                 {
                     array_push( $arrayTasks, [
                         'quote' => $task->work->description_quote,
                         'phase' => $task->phase->description,
                         'task' => $task->activity,
-                        'performer' => $task->performer->first_name.' '.$task->performer->last_name,
+                        'performer' => $name_supervisor,
                         'progress' => ($task->progress==0 || $task->progress==null || $task->progress=='') ? '': $task->progress,
                         'worker' => $task_worker->worker->first_name.' '.$task_worker->worker->last_name,
                         'hours_plan' => ($task_worker->hours_plan==0 || $task_worker->hours_plan==null || $task_worker->hours_plan=='') ? '': $task_worker->hours_plan,
@@ -813,11 +828,22 @@ class TimelineController extends Controller
                     ] );
                 }
             } else {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
                 array_push( $arrayTasks, [
                     'quote' => $task->work->description_quote,
                     'phase' => $task->phase->description,
                     'task' => $task->activity,
-                    'performer' => $task->performer->first_name.' '.$task->performer->last_name,
+                    'performer' => $name_supervisor,
                     'progress' => ($task->progress==0 || $task->progress==null || $task->progress=='') ? '': $task->progress,
                     'worker' => '',
                     'hours_plan' => '',
@@ -1273,5 +1299,17 @@ class TimelineController extends Controller
         $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
 
         return $pdf->stream($name);
+    }
+
+    public function getInfoWork( $id )
+    {
+        $work = Work::find($id);
+
+        return response()->json([
+            'quote_id' => $work->quote_id,
+            'quote_description' => $work->description_quote,
+            'supervisor_id' => $work->supervisor_id,
+        ], 200);
+
     }
 }

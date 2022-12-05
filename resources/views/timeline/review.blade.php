@@ -114,7 +114,7 @@
                         <div class="accordion-group">
                             <!-- Work -->
                             <div class="accordion-heading area">
-                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote . ' | ' . ($work->supervisor_id != null) ? $work->supervisor->first_name.' '.$work->supervisor->last_name : ''}}</a>
+                                <a class="accordion-toggle" data-idwork="{{ $work->id }}" data-quoteid="{{ $work->quote_id }}" data-description="{{ $work->description_quote }}" data-toggle="collapse" href="#work{{$work->id}}">{{ ($work->description_quote == null || $work->description_quote == '') ? 'Trabajo #':$work->description_quote }} {{' | '}} {{ ($work->supervisor_id == null) ? '' : ($work->supervisor->first_name.' '.$work->supervisor->last_name) }}</a>
 
                             </div>
                             <!-- /Work -->

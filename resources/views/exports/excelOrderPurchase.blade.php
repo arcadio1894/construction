@@ -78,11 +78,12 @@
             <th width="120px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Fecha de llegada</th>
             <th width="150px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Empresa</th>
             <th width="150px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Material</th>
+            <th width="150px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Categoría</th>
             <th width="80px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Cantidad</th>
             <th width="80px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Moneda</th>
-            <th width="90px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio C/IGV</th>
-            <th width="90px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio S/IGV</th>
-            <th width="90px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Total C/IGV</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio C/IGV</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio S/IGV</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Total C/IGV</th>
         </tr>
     </thead>
     <tbody>
@@ -94,11 +95,12 @@
                 <th width="130px">{{ $orders[$i]['date_arrive'] }}</th>
                 <th width="180px" style="word-wrap: break-word">{{ $orders[$i]['supplier'] }}</th>
                 <th width="300px" style="word-wrap: break-word">{{ $orders[$i]['material'] }}</th>
+                <th width="150px">{{ $orders[$i]['category'] }}</th>
                 <th width="80px">{{ $orders[$i]['quantity'] }}</th>
                 <th width="80px">{{ $orders[$i]['currency'] }}</th>
-                <th width="90px">{{ $orders[$i]['price_igv'] }}</th>
-                <th width="90px">{{ $orders[$i]['price_sin_igv'] }}</th>
-                <th width="90px">{{ $orders[$i]['total_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['price_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['price_sin_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['total_igv'] }}</th>
             </tr>
         @else
             <tr>
@@ -107,11 +109,12 @@
                 <th width="120px">{{ $orders[$i]['date_arrive'] }}</th>
                 <th width="180px" style="word-wrap: break-word">{{ $orders[$i]['supplier'] }}</th>
                 <th width="300px" style="word-wrap: break-word">{{ $orders[$i]['material'] }}</th>
+                <th width="150px">{{ $orders[$i]['category'] }}</th>
                 <th width="75px">{{ $orders[$i]['quantity'] }}</th>
                 <th width="80px">{{ $orders[$i]['currency'] }}</th>
-                <th width="90px">{{ $orders[$i]['price_igv'] }}</th>
-                <th width="90px">{{ $orders[$i]['price_sin_igv'] }}</th>
-                <th width="90px">{{ $orders[$i]['total_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['price_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['price_sin_igv'] }}</th>
+                <th width="70px">{{ $orders[$i]['total_igv'] }}</th>
             </tr>
         @endif
     @endfor
