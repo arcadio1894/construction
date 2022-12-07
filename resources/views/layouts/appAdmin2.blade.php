@@ -1391,16 +1391,23 @@
                                 <ul class="nav nav-treeview">
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeListCivilStatus')">
+                                        <a href="{{ route('civilStatuses.index') }}" class="nav-link @yield('activeListCivilStatus')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Listar Estados Civil</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeCreateCivilStatus')">
+                                        <a href="{{ route('civilStatuses.create') }}" class="nav-link @yield('activeCreateCivilStatus')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Crear Estados Civil</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('civilStatuses.deleted') }}" class="nav-link @yield('activeListCivilStatusDeleted')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Estados Civil eliminados</p>
                                         </a>
                                     </li>
 

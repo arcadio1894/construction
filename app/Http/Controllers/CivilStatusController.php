@@ -4,82 +4,138 @@ namespace App\Http\Controllers;
 
 use App\CivilStatus;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class CivilStatusController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('civilStatus.index', compact('permissions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function indexDeleted()
     {
-        //
+        //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('civilStatus.indexDeleted', compact('permissions'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $civilStatus = CivilStatus::create([
+                'description' => $request->get('description'),
+            ]);
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Estado civil guardado con éxito.'], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\CivilStatus  $civilStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function show(CivilStatus $civilStatus)
+
+    public function update(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $civilStatus = CivilStatus::find($request->get('civilStatus_id'));
+
+            $civilStatus->description = $request->get('description');
+            $civilStatus->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Estado civil modificado con éxito.','url'=>route('contract.index')], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\CivilStatus  $civilStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(CivilStatus $civilStatus)
+
+    public function destroy(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $civilStatus = CivilStatus::find($request->get('civilStatus_id'));
+
+            $civilStatus->enable = false;
+
+            $civilStatus->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Estado civil inhabilitado con éxito.'], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\CivilStatus  $civilStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, CivilStatus $civilStatus)
+
+    public function create()
     {
-        //
+        return view('civilStatus.create');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\CivilStatus  $civilStatus
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(CivilStatus $civilStatus)
+    public function edit($id)
     {
-        //
+        $civilStatus = CivilStatus::find($id);
+        return view('civilStatus.edit', compact('civilStatus'));
+    }
+
+
+    public function getAllCivilStatus()
+    {
+        $civilStatuses = CivilStatus::select('id', 'description', 'enable')
+            ->where('enable', true)->get();
+        return datatables($civilStatuses)->toJson();
+
+    }
+
+    public function getCivilStatusesDeleted()
+    {
+        $civilStatuses = CivilStatus::select('id', 'description', 'enable')
+            ->where('enable', false)->get();
+        return datatables($civilStatuses)->toJson();
+
+    }
+
+    public function restore(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $civilStatus = CivilStatus::find($request->get('civilStatus_id'));
+
+            $civilStatus->enable = true;
+
+            $civilStatus->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Estado civil habilitado con éxito.'], 200);
     }
 }

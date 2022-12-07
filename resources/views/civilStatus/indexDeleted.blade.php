@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openContract')
+@section('openCivilStatus')
     menu-open
 @endsection
 
-@section('activeListContractDeleted')
+@section('activeListCivilStatusDeleted')
     active
 @endsection
 
 @section('title')
-    Contratos
+    Estados civiles
 @endsection
 
 @section('styles-plugins')
@@ -38,8 +38,8 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de contratos eliminados</h5>
-    <a href="{{ route('contract.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Contrato </a>
+    <h5 class="card-title">Listado de estados civiles eliminados</h5>
+    <a href="{{ route('civilStatuses.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Estado Civil </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -48,7 +48,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('contract.index') }}"><i class="fa fa-archive"></i> Contratos</a>
+            <a href="{{ route('civilStatuses.index') }}"><i class="fa fa-archive"></i> Estados civiles</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -62,9 +62,7 @@
             <thead>
             <tr>
                 <th>Código</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Término</th>
-                <th>Archivo</th>
+                <th>Descripción</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -81,12 +79,12 @@
                     <h4 class="modal-title">Confirmar habilitación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('contract.restore') }}">
+                <form id="formDelete" data-url="{{ route('civilStatuses.restore') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="contract_id" name="contract_id">
-                        <p> ¿Desea habilitar este contrato? </p>
-                        <p id="code"></p>
+                        <input type="hidden" id="civilStatus_id" name="civilStatus_id">
+                        <p> ¿Desea habilitar este estado civil? </p>
+                        <p id="description"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -112,5 +110,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/contract/indexDeleted.js') }}"></script>
+    <script src="{{ asset('js/civilStatus/indexDeleted.js') }}"></script>
 @endsection
