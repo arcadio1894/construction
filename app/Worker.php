@@ -35,6 +35,7 @@ class Worker extends Model
         'civil_status_id', // id description
         'work_function_id', // id description
         'pension_system_id', // id description percentage
+        'enable'
     ];
 
     // TODO: Las relaciones

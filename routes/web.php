@@ -1333,30 +1333,30 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/pensionSystems', 'PensionSystemController@getAllPensionSystems')
             ->middleware('permission:systemPension_worker');
         Route::get('sistemas/pension', 'PensionSystemController@index')
-            ->name('workFunctions.index')
+            ->name('pensionSystems.index')
             ->middleware('permission:systemPension_worker');
-        Route::get('crear/cargo', 'PensionSystemController@create')
-            ->name('workFunctions.create')
+        Route::get('crear/sistema/pension', 'PensionSystemController@create')
+            ->name('pensionSystems.create')
             ->middleware('permission:systemPension_worker');
         Route::post('pensionSystems/store', 'PensionSystemController@store')
-            ->name('workFunctions.store')
+            ->name('pensionSystems.store')
             ->middleware('permission:systemPension_worker');
-        Route::get('/editar/cargo/{id}', 'PensionSystemController@edit')
-            ->name('workFunctions.edit')
+        Route::get('/editar/sistema/pension/{id}', 'PensionSystemController@edit')
+            ->name('pensionSystems.edit')
             ->middleware('permission:systemPension_worker');
         Route::post('pensionSystems/update', 'PensionSystemController@update')
-            ->name('workFunctions.update')
+            ->name('pensionSystems.update')
             ->middleware('permission:systemPension_worker');
         Route::post('pensionSystems/destroy', 'PensionSystemController@destroy')
-            ->name('workFunctions.destroy')
+            ->name('pensionSystems.destroy')
             ->middleware('permission:systemPension_worker');
-        Route::get('/all/workFunctions/deleted', 'PensionSystemController@getWorkFunctionsDeleted')
+        Route::get('/all/pensionSystems/deleted', 'PensionSystemController@getWorkFunctionsDeleted')
             ->middleware('permission:systemPension_worker');
-        Route::get('cargos/eliminados', 'PensionSystemController@indexDeleted')
-            ->name('workFunctions.deleted')
+        Route::get('sistemas/pension/eliminados', 'PensionSystemController@indexDeleted')
+            ->name('pensionSystems.deleted')
             ->middleware('permission:systemPension_worker');
         Route::post('pensionSystems/restore', 'PensionSystemController@restore')
-            ->name('workFunctions.restore')
+            ->name('pensionSystems.restore')
             ->middleware('permission:systemPension_worker');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades

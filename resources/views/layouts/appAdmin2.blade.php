@@ -1356,16 +1356,23 @@
                                 <ul class="nav nav-treeview">
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeListContract')">
+                                        <a href="{{ route('contract.index') }}" class="nav-link @yield('activeListContract')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Listar contratos</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeCreateContract')">
+                                        <a href="{{ route('contract.create') }}" class="nav-link @yield('activeCreateContract')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Crear contrato</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('contract.deleted') }}" class="nav-link @yield('activeListContractDeleted')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Contratos eliminados</p>
                                         </a>
                                     </li>
 

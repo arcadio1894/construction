@@ -14,7 +14,8 @@ class Contract extends Model
         'code',
         'date_start',
         'date_fin',
+        'file'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date_start', 'date_fin'];
 }
