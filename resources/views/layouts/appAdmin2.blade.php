@@ -1426,16 +1426,23 @@
                                 <ul class="nav nav-treeview">
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeListWorkFunction')">
+                                        <a href="{{ route('workFunctions.index') }}" class="nav-link @yield('activeListWorkFunction')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Listar cargos</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeCreateWorkFunction')">
+                                        <a href="{{ route('workFunctions.create') }}" class="nav-link @yield('activeCreateWorkFunction')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Crear cargo</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('workFunctions.deleted') }}" class="nav-link @yield('activeListWorkFunctionDeleted')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Cargos eliminados</p>
                                         </a>
                                     </li>
 

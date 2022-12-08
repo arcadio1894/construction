@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openCivilStatus')
+@section('openWorkFunction')
     menu-open
 @endsection
 
-@section('activeCreateCivilStatus')
+@section('activeListWorkFunction')
     active
 @endsection
 
 @section('title')
-    Estados Civiles
+    Cargos
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Estado civil</h1>
+    <h1 class="page-title">Cargo: {{ $workFunction->description }}</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear estado civil</h5>
-    <a href="{{ route('civilStatuses.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Estados Civiles</a>
+    <h5 class="card-title">Modificar cargo</h5>
+    <a href="{{ route('workFunctions.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Cargos</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,15 +52,16 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('civilStatuses.index') }}"><i class="fa fa-archive"></i> Estados Civiles</a>
+            <a href="{{ route('workFunctions.index') }}"><i class="fa fa-archive"></i> Cargos</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('civilStatuses.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('workFunctions.update') }}" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="workFunction_id" value="{{ $workFunction->id }}">
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
@@ -68,7 +69,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-keyboard"></i></span>
                     </div>
-                    <input id="description" type="text" class="form-control" name="description" >
+                    <input id="description" type="text" class="form-control" value="{{ $workFunction->description }}" name="description" >
                 </div>
             </div>
         </div>
@@ -95,5 +96,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/civilStatus/create.js') }}"></script>
+    <script src="{{ asset('js/workFunction/edit.js') }}"></script>
 @endsection

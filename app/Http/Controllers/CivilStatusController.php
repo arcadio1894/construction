@@ -64,7 +64,7 @@ class CivilStatusController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['message' => 'Estado civil modificado con éxito.','url'=>route('contract.index')], 200);
+        return response()->json(['message' => 'Estado civil modificado con éxito.','url'=>route('civilStatuses.index')], 200);
     }
 
 

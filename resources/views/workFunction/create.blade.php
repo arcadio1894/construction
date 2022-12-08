@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openCivilStatus')
+@section('openWorkFunction')
     menu-open
 @endsection
 
-@section('activeCreateCivilStatus')
+@section('activeCreateWorkFunction')
     active
 @endsection
 
 @section('title')
-    Estados Civiles
+    Cargos
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Estado civil</h1>
+    <h1 class="page-title">Cargos / Funciones</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear estado civil</h5>
-    <a href="{{ route('civilStatuses.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Estados Civiles</a>
+    <h5 class="card-title">Crear cargo</h5>
+    <a href="{{ route('workFunctions.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Cargos</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,14 +52,14 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('civilStatuses.index') }}"><i class="fa fa-archive"></i> Estados Civiles</a>
+            <a href="{{ route('workFunctions.index') }}"><i class="fa fa-archive"></i> Cargos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('civilStatuses.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('workFunctions.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
@@ -95,5 +95,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/civilStatus/create.js') }}"></script>
+    <script src="{{ asset('js/workFunction/create.js') }}"></script>
 @endsection

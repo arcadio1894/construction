@@ -4,82 +4,139 @@ namespace App\Http\Controllers;
 
 use App\WorkFunction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class WorkFunctionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('workFunction.index', compact('permissions'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function indexDeleted()
     {
-        //
+        //$permissions = Permission::all();
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('workFunction.indexDeleted', compact('permissions'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $workFunction = WorkFunction::create([
+                'description' => $request->get('description'),
+            ]);
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cargo guardado con éxito.'], 200);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\WorkFunction  $workFunction
-     * @return \Illuminate\Http\Response
-     */
-    public function show(WorkFunction $workFunction)
+
+    public function update(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $workFunction = WorkFunction::find($request->get('workFunction_id'));
+
+            $workFunction->description = $request->get('description');
+            $workFunction->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cargo modificado con éxito.','url'=>route('workFunctions.index')], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\WorkFunction  $workFunction
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(WorkFunction $workFunction)
+
+    public function destroy(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $workFunction = WorkFunction::find($request->get('workFunction_id'));
+
+            $workFunction->enable = false;
+
+            $workFunction->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cargo inhabilitado con éxito.'], 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\WorkFunction  $workFunction
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, WorkFunction $workFunction)
+
+    public function create()
     {
-        //
+        return view('workFunction.create');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\WorkFunction  $workFunction
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(WorkFunction $workFunction)
+    public function edit($id)
     {
-        //
+        $workFunction = WorkFunction::find($id);
+        return view('workFunction.edit', compact('workFunction'));
+    }
+
+
+    public function getAllWorkFunctions()
+    {
+        $workFunctions = WorkFunction::select('id', 'description', 'enable')
+            ->where('enable', true)->get();
+        return datatables($workFunctions)->toJson();
+
+    }
+
+    public function getWorkFunctionsDeleted()
+    {
+        $workFunctions = WorkFunction::select('id', 'description', 'enable')
+            ->where('enable', false)->get();
+        return datatables($workFunctions)->toJson();
+
+    }
+
+    public function restore(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+
+            $workFunction = WorkFunction::find($request->get('workFunction_id'));
+
+            $workFunction->enable = true;
+
+            $workFunction->save();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Cargo habilitado con éxito.'], 200);
     }
 }
