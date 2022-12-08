@@ -1461,16 +1461,23 @@
                                 <ul class="nav nav-treeview">
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeListPensionSystem')">
+                                        <a href="{{ route('pensionSystems.index') }}" class="nav-link @yield('activeListPensionSystem')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Listar sistemas</p>
                                         </a>
                                     </li>
 
                                     <li class="nav-item">
-                                        <a href="" class="nav-link @yield('activeCreatePensionSystem')">
+                                        <a href="{{ route('pensionSystems.create') }}" class="nav-link @yield('activeCreatePensionSystem')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Crear sistema</p>
+                                        </a>
+                                    </li>
+
+                                    <li class="nav-item">
+                                        <a href="{{ route('pensionSystems.deleted') }}" class="nav-link @yield('activeListPensionSystemDeleted')">
+                                            <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                            <p>Sistemas eliminados</p>
                                         </a>
                                     </li>
 

@@ -1350,7 +1350,7 @@ Route::middleware('auth')->group(function (){
         Route::post('pensionSystems/destroy', 'PensionSystemController@destroy')
             ->name('pensionSystems.destroy')
             ->middleware('permission:systemPension_worker');
-        Route::get('/all/pensionSystems/deleted', 'PensionSystemController@getWorkFunctionsDeleted')
+        Route::get('/all/pensionSystems/deleted', 'PensionSystemController@getPensionSystemsDeleted')
             ->middleware('permission:systemPension_worker');
         Route::get('sistemas/pension/eliminados', 'PensionSystemController@indexDeleted')
             ->name('pensionSystems.deleted')

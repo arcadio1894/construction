@@ -12,7 +12,8 @@ class PensionSystem extends Model
     protected $fillable = [
         'id',
         'description',
-        'percentage'
+        'percentage',
+        'enable'
     ];
 
     protected $dates = ['deleted_at'];

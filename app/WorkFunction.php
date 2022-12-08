@@ -12,6 +12,7 @@ class WorkFunction extends Model
     protected $fillable = [
         'id',
         'description',
+        'enable'
     ];
 
     protected $dates = ['deleted_at'];
