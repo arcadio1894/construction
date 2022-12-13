@@ -1359,6 +1359,25 @@ Route::middleware('auth')->group(function (){
             ->name('pensionSystems.restore')
             ->middleware('permission:systemPension_worker');
 
+        // ASISTENCIA
+        Route::get('calendario/asistencia', 'AssistanceController@index')
+            ->name('assistance.index');
+            //->middleware('permission:systemPension_worker');
+        Route::get('/check/assistance/{date}', 'AssistanceController@checkAssitanceForCreate');
+        Route::get('/registrar/asistencia/{assistance}', 'AssistanceController@createAssistance')
+            ->name('assistance.register');
+            /*->middleware('permission:create_timeline');*/
+
+        // JORNADAS (WORKING_DAYS)
+        Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
+            ->name('workingDay.create');
+        Route::post('/create/working/day/{id}', 'WorkingDayController@store')
+            ->name('workingDay.store');
+        Route::post('/update/working/day/{id}', 'WorkingDayController@update')
+            ->name('workingDay.update');
+        Route::post('/destroy/working/day/{id}', 'WorkingDayController@destroy')
+            ->name('workingDay.destroy');
+
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');
