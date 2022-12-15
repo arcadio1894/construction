@@ -1367,6 +1367,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/registrar/asistencia/{assistance}', 'AssistanceController@createAssistance')
             ->name('assistance.register');
             /*->middleware('permission:create_timeline');*/
+        Route::get('/ver/asistencias/', 'AssistanceController@showAssistance')
+            ->name('assistance.show');
 
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')

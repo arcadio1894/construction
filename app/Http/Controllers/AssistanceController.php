@@ -72,7 +72,7 @@ class AssistanceController extends Controller
             ->where('enable', true)
             ->get();
 
-        $working_days = WorkingDay::select('id', 'description', 'time_start', 'time_fin', 'enable')
+        $workingDays = WorkingDay::select('id', 'description', 'time_start', 'time_fin', 'enable')
             ->where('enable', true)
             ->get();
 
@@ -81,13 +81,17 @@ class AssistanceController extends Controller
             }])
             ->find($assistance_id);
 
-        return view('assistance.register', compact( 'permissions', 'workers', 'assistance', 'working_days'));
+        return view('assistance.register', compact( 'permissions', 'workers', 'assistance', 'workingDays'));
 
     }
 
-    public function show(Assistance $assistance)
+    public function showAssistance()
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('assistance.show', compact( 'permissions'));
+
     }
 
     public function edit(Assistance $assistance)

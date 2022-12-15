@@ -20,6 +20,9 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/MDtimepicker/css/mdtimepicker.css') }}">
+    <!-- VDialog -->
+    <link rel="stylesheet" href="{{ asset('admin/plugins/vdialog/css/vdialog.css') }}">
 
 @endsection
 
@@ -53,7 +56,71 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <div class="row">
 
+        <div class="row">
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-gradient-success elevation-1">A</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">ASISTIÓ</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-gradient-danger elevation-1">F</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">FALTÓ</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-gradient-gray-dark elevation-1">S</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">SUSPENSIÓN</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-info elevation-1">DM</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">DESCANSO MÉDICO</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-gradient-warning elevation-1">FJ</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">FALTA JUSTIFICADA</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="info-box">
+                    <span class="info-box-icon bg-gradient-fuchsia elevation-1">V</span>
+
+                    <div class="info-box-content">
+                        <span class="info-box-number">VACACIONES</span>
+                    </div>
+                    <!-- /.info-box-content -->
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-md-12">
             <div class="card card-primary">
@@ -66,7 +133,91 @@
                     </div>
                 </div>
                 <div class="card-body" id="body-assistances">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <strong>TRABAJADOR</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <strong>JORNADA</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <strong>HORA ENTRADA</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <strong>HORA SALIDA</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <strong>ESTADO</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <strong>OBSERV. JUSTIF.</strong>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            &nbsp;
+                        </div>
+                    </div>
+                    @foreach( $workers as $worker )
+                    <div class="row">
+                        <div class="col-md-2">
+                            <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $worker->first_name . ' ' . $worker->last_name }}</textarea>
+                        </div>
+                        <div class="col-md-2">
+                            <select data-workingDay class="workingDays form-control form-control-sm select2" style="width: 100%;">
+                                <option></option>
+                                @foreach( $workingDays as $workingDay )
+                                    <option value="{{ $workingDay->id }}" {{ ($workingDay->id == 1) ? 'selected':'' }}>{{ $workingDay->description}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group date input-group-sm" id="timepicker" data-target-input="nearest">
+                                <input type="text" data-dateStart class="form-control timepicker" />
+                                <div class="input-group-append">
+                                    <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <div class="input-group date input-group-sm" id="timepicker2" data-target-input="nearest">
+                                <input type="text" data-dateEnd class="form-control timepicker" />
+                                <div class="input-group-append" >
+                                    <div class="input-group-text"><i class="far fa-clock"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <select data-status class="state form-control form-control-sm select2" style="width: 100%;">
+                                <option></option>
+                                <option value="A">A</option>
+                                <option value="F">F</option>
+                                <option value="S">S</option>
+                                <option value="DM">DM</option>
+                                <option value="FJ">FJ</option>
+                                <option value="V">V</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm"></textarea>
 
+                        </div>
+                        <div class="col-md-1">
+                            <button type="button" data-save data-worker="{{ $worker->id }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
+                        </div>
+                    </div>
+                    <hr>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -81,11 +232,24 @@
     <!-- InputMask -->
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
+
+    <script src="{{ asset('admin/plugins/MDtimepicker/js/mdtimepicker.js') }}"></script>
+    <!-- Vdialog -->
+    <script src="{{ asset('admin/plugins/vdialog/js/lib/vdialog.js') }}"></script>
 @endsection
 
 @section('scripts')
     <script>
         $(function () {
+
+            $('.timepicker').mdtimepicker({
+                format:'h:mm tt',
+                theme:'blue',
+                readOnly:true,
+                hourPadding:false,
+                clearBtn:false
+
+            });
             //$('#datemask').inputmask()
             $('#admission_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#birthplace').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
@@ -95,23 +259,18 @@
             $('#dni').inputmask('99999999', { 'placeholder': '99999999' });
 
             //Initialize Select2 Elements
-            $('#work_function').select2({
-                placeholder: "Selecione un cargo",
+            $('.workingDays').select2({
+                placeholder: "Selecione una jornada",
             });
-            $('#pension_system').select2({
-                placeholder: "Selecione un sistema",
+            $('.state').select2({
+                placeholder: "Selecione un estado",
             });
-            $('#civil_status').select2({
-                placeholder: "Selecione un estado civill",
-            });
-            $('#contract').select2({
-                placeholder: "Selecione un contrato",
-            });
+
 
             $("input[data-bootstrap-switch]").each(function(){
                 $(this).bootstrapSwitch();
             });
         })
     </script>
-    <script src="{{ asset('js/worker/create.js') }}"></script>
+    <script src="{{ asset('js/assistance/register.js') }}"></script>
 @endsection

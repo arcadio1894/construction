@@ -1304,7 +1304,7 @@
                             </ul>
                         </li>
                     @endcan--}}
-                    @can('enable_timeline')
+                    {{--@can('enable_timeline')
                     <li class="nav-header">CONTROL DE HORAS</li>
                     @endcan
 
@@ -1328,8 +1328,8 @@
                             </li>
                             @endcan
                         </ul>
-                    </li>
-
+                    </li>--}}
+{{--
                     @can('enable_worker')
                     <li class="nav-header">RECURSOS HUMANOS</li>
                     @endcan
@@ -1523,7 +1523,7 @@
                             </li>
                             @endcan
                         </ul>
-                    </li>
+                    </li>--}}
 
                     {{--<li class="nav-item has-treeview @yield('openAttendance')">
                         <a href="#" class="nav-link @yield('activeAttendance')">
