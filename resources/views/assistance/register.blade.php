@@ -56,9 +56,8 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <input type="hidden" id="assistance_id" value="{{ $assistance->id }}">
     <div class="row">
-
-        <div class="row">
             <div class="col-md-2">
                 <div class="info-box">
                     <span class="info-box-icon bg-gradient-success elevation-1">A</span>
@@ -120,7 +119,7 @@
                 </div>
             </div>
         </div>
-    </div>
+
     <div class="row">
         <div class="col-md-12">
             <div class="card card-primary">
@@ -168,22 +167,22 @@
                             &nbsp;
                         </div>
                     </div>
-                    @foreach( $workers as $worker )
+                    @for( $i = 0; $i < count($arrayAssistances); $i++ )
                     <div class="row">
                         <div class="col-md-2">
-                            <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $worker->first_name . ' ' . $worker->last_name }}</textarea>
+                            <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $arrayAssistances[$i]['worker'] }}</textarea>
                         </div>
                         <div class="col-md-2">
                             <select data-workingDay class="workingDays form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $workingDays as $workingDay )
-                                    <option value="{{ $workingDay->id }}" {{ ($workingDay->id == 1) ? 'selected':'' }}>{{ $workingDay->description}}</option>
+                                    <option value="{{ $workingDay->id }}" {{ ($workingDay->id == $arrayAssistances[$i]['working_day']) ? 'selected':'' }}>{{ $workingDay->description}}</option>
                                 @endforeach
                             </select>
                         </div>
                         <div class="col-md-2">
                             <div class="input-group date input-group-sm" id="timepicker" data-target-input="nearest">
-                                <input type="text" data-dateStart class="form-control timepicker" />
+                                <input type="text" data-dateStart value="{{ $arrayAssistances[$i]['hour_entry'] }}" class="form-control timepicker" />
                                 <div class="input-group-append">
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>
                                 </div>
@@ -191,7 +190,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group date input-group-sm" id="timepicker2" data-target-input="nearest">
-                                <input type="text" data-dateEnd class="form-control timepicker" />
+                                <input type="text" data-dateEnd value="{{ $arrayAssistances[$i]['hour_out'] }}" class="form-control timepicker" />
                                 <div class="input-group-append" >
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>
                                 </div>
@@ -200,24 +199,26 @@
                         <div class="col-md-1">
                             <select data-status class="state form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
-                                <option value="A">A</option>
-                                <option value="F">F</option>
-                                <option value="S">S</option>
-                                <option value="DM">DM</option>
-                                <option value="FJ">FJ</option>
-                                <option value="V">V</option>
+                                <option value="A" {{ ($arrayAssistances[$i]['status'] == 'A') ? 'selected':'' }}>A</option>
+                                <option value="F" {{ ($arrayAssistances[$i]['status'] == 'F') ? 'selected':'' }}>F</option>
+                                <option value="S" {{ ($arrayAssistances[$i]['status'] == 'S') ? 'selected':'' }}>S</option>
+                                <option value="DM" {{ ($arrayAssistances[$i]['status'] == 'DM') ? 'selected':'' }}>DM</option>
+                                <option value="FJ" {{ ($arrayAssistances[$i]['status'] == 'FJ') ? 'selected':'' }}>FJ</option>
+                                <option value="V" {{ ($arrayAssistances[$i]['status'] == 'V') ? 'selected':'' }}>V</option>
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm"></textarea>
+                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm">
+                                {{ $arrayAssistances[$i]['obs_justification'] }}
+                            </textarea>
 
                         </div>
                         <div class="col-md-1">
-                            <button type="button" data-save data-worker="{{ $worker->id }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
+                            <button type="button" data-save data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
                         </div>
                     </div>
                     <hr>
-                    @endforeach
+                    @endfor
                 </div>
             </div>
         </div>
@@ -250,13 +251,6 @@
                 clearBtn:false
 
             });
-            //$('#datemask').inputmask()
-            $('#admission_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#birthplace').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-
-            $('#termination_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#phone').inputmask('(99) 999-999-999', { 'placeholder': '(99) 999-999-999' });
-            $('#dni').inputmask('99999999', { 'placeholder': '99999999' });
 
             //Initialize Select2 Elements
             $('.workingDays').select2({
