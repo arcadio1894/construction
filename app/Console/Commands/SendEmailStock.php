@@ -44,6 +44,7 @@ class SendEmailStock extends Command
         // TODO: Solo categoria de estructuras
         $materials = Material::where('category_id', 5)
             ->where('stock_min', '>',0)
+            ->where('enable_status', 1)
             ->get();
 
         foreach ( $materials as $material )
