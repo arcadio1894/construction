@@ -176,9 +176,11 @@ class AssistanceController extends Controller
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
-                $assistance_detail = AssistanceDetail::where('date_assistance',$fecha)->first();
+                $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                    ->where('worker_id', $worker->id)
+                    ->first();
 
-                if ( isset($assistance_detail) )
+                if ( !empty($assistance_detail) )
                 {
                     $color = '';
                     $estado = '';
@@ -197,7 +199,7 @@ class AssistanceController extends Controller
                         $estado = 'DM';
                     } elseif ( $assistance_detail->status == 'FJ' ){
                         $color = '#ffc107';
-                        $estado = 'DM';
+                        $estado = 'FJ';
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
@@ -289,9 +291,11 @@ class AssistanceController extends Controller
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
-                $assistance_detail = AssistanceDetail::where('date_assistance',$fecha)->first();
+                $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                    ->where('worker_id', $worker->id)
+                    ->first();
 
-                if ( isset($assistance_detail) )
+                if ( !empty($assistance_detail) )
                 {
                     $color = '';
                     $estado = '';
@@ -310,7 +314,7 @@ class AssistanceController extends Controller
                         $estado = 'DM';
                     } elseif ( $assistance_detail->status == 'FJ' ){
                         $color = '#ffc107';
-                        $estado = 'DM';
+                        $estado = 'FJ';
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
