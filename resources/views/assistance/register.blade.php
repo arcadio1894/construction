@@ -208,9 +208,7 @@
                             </select>
                         </div>
                         <div class="col-md-2">
-                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm">
-                                {{ $arrayAssistances[$i]['obs_justification'] }}
-                            </textarea>
+                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm">{{ $arrayAssistances[$i]['obs_justification'] }}</textarea>
 
                         </div>
                         <div class="col-md-1">

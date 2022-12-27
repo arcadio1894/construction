@@ -1370,7 +1370,10 @@ Route::middleware('auth')->group(function (){
         Route::get('/ver/asistencias/', 'AssistanceController@showAssistance')
             ->name('assistance.show');
         Route::get('/get/assistance/{month}/{year}', 'AssistanceController@getAssistancesMonthYear');
-
+        Route::post('/store/assistance/{id_assistance}/worker/{id_worker}', 'AssistanceController@store')
+            ->name('assistance.store');
+        Route::post('/update/assistance/detail/{assistanceDetail_id}', 'AssistanceController@update')
+            ->name('assistance.update');
 
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')

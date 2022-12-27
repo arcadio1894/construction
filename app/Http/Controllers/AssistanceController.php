@@ -9,6 +9,7 @@ use App\WorkingDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AssistanceController extends Controller
 {
@@ -348,14 +349,54 @@ class AssistanceController extends Controller
 
     }
 
-    public function edit(Assistance $assistance)
+    public function store(Request $request, $id_assistance, $id_worker)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $assistance = Assistance::find($id_assistance);
+            $assistanceDetail = AssistanceDetail::create([
+                'date_assistance' => $assistance->date_assistance,
+                'hour_entry' => ($request->get('time_entry') == '')? null: $request->get('time_entry'),
+                'hour_out' => ($request->get('time_out') == '')? null: $request->get('time_out'),
+                'status' => ($request->get('status') == '')? null: $request->get('status'),
+                'justification' => ($request->get('status') == 'FJ')? 1: 0,
+                'obs_justification' => ($request->get('obs_justification') == '')? null: $request->get('obs_justification'),
+                'worker_id' => $id_worker,
+                'assistance_id' => $id_assistance,
+                'working_day_id' => ($request->get('working_day') == '')? null: $request->get('working_day'),
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Asistencia guardada con éxito.', 'assistanceDetail' => $assistanceDetail], 200);
+
     }
 
-    public function update(Request $request, Assistance $assistance)
+    public function update(Request $request, $assistanceDetail_id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $assistanceDetail = AssistanceDetail::find($assistanceDetail_id);
+            $assistanceDetail->hour_entry = ($request->get('time_entry') == '')? null: $request->get('time_entry');
+            $assistanceDetail->hour_out = ($request->get('time_out') == '')? null: $request->get('time_out');
+            $assistanceDetail->status = ($request->get('status') == '')? null: $request->get('status');
+            $assistanceDetail->justification = ($request->get('status') == 'FJ')? 1: 0;
+            $assistanceDetail->obs_justification = ($request->get('obs_justification') == '')? null: $request->get('obs_justification');
+            $assistanceDetail->working_day_id = ($request->get('working_day') == '')? null: $request->get('working_day');
+            $assistanceDetail->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Asistencia actualizada con éxito.', 'assistanceDetail' => $assistanceDetail], 200);
+
     }
 
     public function destroy(Assistance $assistance)
