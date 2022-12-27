@@ -1304,7 +1304,7 @@
                             </ul>
                         </li>
                     @endcan--}}
-                    {{--@can('enable_timeline')
+                    @can('enable_timeline')
                     <li class="nav-header">CONTROL DE HORAS</li>
                     @endcan
 
@@ -1328,8 +1328,7 @@
                             </li>
                             @endcan
                         </ul>
-                    </li>--}}
-{{--
+                    </li>
                     @can('enable_worker')
                     <li class="nav-header">RECURSOS HUMANOS</li>
                     @endcan
@@ -1523,9 +1522,10 @@
                             </li>
                             @endcan
                         </ul>
-                    </li>--}}
+                    </li>
 
-                    {{--<li class="nav-item has-treeview @yield('openAttendance')">
+                    <li class="nav-item has-treeview @yield('openAttendance')">
+                        @can('enable_assistance')
                         <a href="#" class="nav-link @yield('activeAttendance')">
                             <i class="far fa-calendar-check nav-icon"></i>
                             <p>
@@ -1533,17 +1533,26 @@
                                 <i class="right fas fa-angle-left"></i>
                             </p>
                         </a>
+                        @endcan
                         <ul class="nav nav-treeview">
-
+                            @can('register_assistance')
                             <li class="nav-item">
-                                <a href="" class="nav-link @yield('activeListAttendance')">
+                                <a href="{{ route('assistance.index') }}" class="nav-link @yield('activeListAttendance')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Listar asitencisa</p>
+                                    <p>Listar asistencia</p>
                                 </a>
                             </li>
-
+                            @endcan
+                            @can('report_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show') }}" class="nav-link @yield('activeReportAttendance')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reporte asistencia</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
-                    </li>--}}
+                    </li>
 
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>

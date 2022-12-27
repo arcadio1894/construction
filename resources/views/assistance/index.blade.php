@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openTimelines')
+@section('openAttendance')
     menu-open
 @endsection
 
-@section('activeTimelines')
+@section('activeAttendance')
     active
 @endsection
 
-@section('activeShowTimelines')
+@section('activeListAttendance')
     active
 @endsection
 

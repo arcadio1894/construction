@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openWorker')
+@section('openAttendance')
     menu-open
 @endsection
 
-@section('activeWorker')
+@section('activeAttendance')
     active
 @endsection
 
-@section('activeCreateWorker')
+@section('activeListAttendance')
     active
 @endsection
 
@@ -40,6 +40,8 @@
 
 @section('page-title')
     <h5 class="card-title">Registrar Asistencias</h5>
+    <a href="{{ route('assistance.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar al calendario</a>
+
 @endsection
 
 @section('page-breadcrumb')
@@ -48,7 +50,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="#"><i class="fa fa-archive"></i> Asistencias</a>
+            <a href="{{ route('assistance.index') }}"><i class="fa fa-archive"></i> Asistencias</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Registrar</li>
     </ol>

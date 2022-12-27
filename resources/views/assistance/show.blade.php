@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openWorker')
+@section('openAttendance')
     menu-open
 @endsection
 
-@section('activeWorker')
+@section('activeAttendance')
     active
 @endsection
 
-@section('activeCreateWorker')
+@section('activeReportAttendance')
     active
 @endsection
 
@@ -83,6 +83,8 @@
 
 @section('page-title')
     <h5 class="card-title">Asistencias</h5>
+    <a href="{{ route('assistance.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar al calendario</a>
+
 @endsection
 
 @section('page-breadcrumb')
