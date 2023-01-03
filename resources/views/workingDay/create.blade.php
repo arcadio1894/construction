@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openWorker')
+@section('openAttendance')
     menu-open
 @endsection
 
-@section('activeWorker')
+@section('activeAttendance')
     active
 @endsection
 
-@section('activeCreateWorker')
+@section('activeListWorkingDay')
     active
 @endsection
 

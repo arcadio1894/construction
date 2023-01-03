@@ -1537,6 +1537,12 @@
                         <ul class="nav nav-treeview">
                             @can('register_assistance')
                             <li class="nav-item">
+                                <a href="{{ route('workingDay.create') }}" class="nav-link @yield('activeListWorkingDay')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Jornadas Trabajo</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('assistance.index') }}" class="nav-link @yield('activeListAttendance')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar asistencia</p>
