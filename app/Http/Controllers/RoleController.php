@@ -60,7 +60,8 @@ class RoleController extends Controller
         'categoryInvoice'=>'CATEGORÍAS FACTURAS',
         'worker' => 'COLABORADORES',
         'porcentageQuote' => 'PORCENTEAJES DE COTIZACION',
-        'timeline' => 'CRONOGRAMAS'
+        'timeline' => 'CRONOGRAMAS',
+        'assistance' => 'ASISTENCIAS'
     ];
 
     public function index()
