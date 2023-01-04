@@ -15,7 +15,8 @@ class StoreSupplierRequest extends FormRequest
     {
         return [
             'business_name' => 'required|string|max:255',
-            'ruc' => 'required|digits:11|string|unique:suppliers,RUC',
+            //'ruc' => 'required|digits:11|string|unique:suppliers,RUC',
+            'ruc' => 'required|string|unique:suppliers,RUC',
             'address' => 'nullable|string|max:255',
             'phone' => 'nullable|string|max:255',
             'email' => 'nullable|string|email|max:255'
@@ -32,9 +33,9 @@ class StoreSupplierRequest extends FormRequest
 
             'ruc.required' => 'El :attribute es obligatorio.',
             'ruc.string' => 'El :attribute debe contener caracteres válidos.',
-            'ruc.digits' => 'El :attribute es demasiado largo.',
+            /*'ruc.digits' => 'El :attribute es demasiado largo.',*/
             'ruc.unique' => 'El :attribute ya existe en la base de datos.',
-            'ruc.numeric' => 'El :attribute debe ser numerico.',
+            /*'ruc.numeric' => 'El :attribute debe ser numerico.',*/
 
             'address.string' => 'La :attribute debe contener caracteres válidos.',
             'address.max' => 'La :attribute debe contener máximo 255 caracteres.',
