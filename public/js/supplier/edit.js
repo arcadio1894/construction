@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updateSupplier);
-
+    //$formEdit.on('submit', updateSupplier);
+    $('#btn-submit').on('click', updateSupplier);
 });
 
 var $formEdit;
@@ -13,12 +13,16 @@ function mayus(e) {
 
 function updateSupplier() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var editUrl = $formEdit.data('url');
+    var state = $('#btn-grouped').bootstrapSwitch('state');
+    var form = new FormData($('#formEdit')[0]);
+    form.append('special', state);
     $.ajax({
         url: editUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -42,6 +46,7 @@ function updateSupplier() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 $(location).attr('href', data.url)
             }, 2000 )
         },
@@ -66,29 +71,29 @@ function updateSupplier() {
                         "showMethod": "fadeIn",
                         "hideMethod": "fadeOut"
                     });
-            } else {
-                for (var property in data.responseJSON.errors) {
-                    toastr.error(data.responseJSON.errors[property], 'Error',
-                        {
-                            "closeButton": true,
-                            "debug": false,
-                            "newestOnTop": false,
-                            "progressBar": true,
-                            "positionClass": "toast-top-right",
-                            "preventDuplicates": false,
-                            "onclick": null,
-                            "showDuration": "300",
-                            "hideDuration": "1000",
-                            "timeOut": "4000",
-                            "extendedTimeOut": "1000",
-                            "showEasing": "swing",
-                            "hideEasing": "linear",
-                            "showMethod": "fadeIn",
-                            "hideMethod": "fadeOut"
-                        });
-                }
+            }
+            for (var property in data.responseJSON.errors) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
             }
 
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

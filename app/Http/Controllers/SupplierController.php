@@ -34,12 +34,19 @@ class SupplierController extends Controller
         DB::beginTransaction();
         try {
 
+            if ( ($request->get('special') !== 'true') && strlen($request->get('ruc')) > 11 )
+            {
+                return response()->json(['message' => 'El RUC es demasiado largo, porque no es extranjero'], 422);
+            }
+
             $supplier = Supplier::create([
                 'business_name' => $request->get('business_name'),
                 'RUC' => $request->get('ruc'),
                 'address' => $request->get('address'),
                 'phone' => $request->get('phone'),
                 'email' => $request->get('email'),
+                'special' => ($request->get('special') === 'true') ? true:false,
+
             ]);
 
             $length = 5;
@@ -73,6 +80,11 @@ class SupplierController extends Controller
         DB::beginTransaction();
         try {
 
+            if ( ($request->get('special') !== 'true') && strlen($request->get('ruc')) > 11 )
+            {
+                return response()->json(['message' => 'El RUC es demasiado largo, porque no es extranjero'], 422);
+            }
+
             $supplier = Supplier::find($request->get('supplier_id'));
 
             $supplier->business_name = $request->get('business_name');
@@ -80,6 +92,7 @@ class SupplierController extends Controller
             $supplier->address = $request->get('address');
             $supplier->phone = $request->get('phone');
             $supplier->email = $request->get('email');
+            $supplier->special = ($request->get('special') === 'true') ? true:false;
             $supplier->save();
 
             DB::commit();

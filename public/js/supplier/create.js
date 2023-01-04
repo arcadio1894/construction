@@ -1,8 +1,8 @@
 $(document).ready(function () {
 
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeSupplier);
-
+    //$formCreate.on('submit', storeSupplier);
+    $('#btn-submit').on('click', storeSupplier);
 });
 
 var $formCreate;
@@ -13,12 +13,16 @@ function mayus(e) {
 
 function storeSupplier() {
     event.preventDefault();
+    $("#btn-submit").attr("disabled", true);
     // Obtener la URL
     var createUrl = $formCreate.data('url');
+    var state = $('#btn-grouped').bootstrapSwitch('state');
+    var form = new FormData($('#formCreate')[0]);
+    form.append('special', state);
     $.ajax({
         url: createUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -42,6 +46,7 @@ function storeSupplier() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
@@ -89,7 +94,7 @@ function storeSupplier() {
                 }
             }
 
-
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
