@@ -61,7 +61,8 @@ class RoleController extends Controller
         'worker' => 'COLABORADORES',
         'porcentageQuote' => 'PORCENTEAJES DE COTIZACION',
         'timeline' => 'CRONOGRAMAS',
-        'assistance' => 'ASISTENCIAS'
+        'assistance' => 'ASISTENCIAS',
+        'navbar' => 'BARRA NAVEGACION'
     ];
 
     public function index()
