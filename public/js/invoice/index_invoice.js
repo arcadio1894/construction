@@ -282,7 +282,7 @@ $(document).ready(function () {
 
                         }
                     } else {
-                        if ( $.inArray('update_orderService', $permissions) !== -1 ) {
+                        if ( ($.inArray('update_orderService', $permissions) !== -1) || ($.inArray('regularize_orderService', $permissions) !== -1) ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ingresar/orden/servicio/'+item.id+
                                 '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar servicio"><i class="fa fa-pen"></i></a> ';
                         }

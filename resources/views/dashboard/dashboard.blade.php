@@ -29,6 +29,7 @@
 @endsection
 
 @section('content')
+    @hasanyrole('admin|almacen|principal')
     <div class="row">
         @can('list_customer')
         <div class="col-lg-3 col-6">
@@ -150,11 +151,11 @@
         <!-- ./col -->
         @endcan
     </div>
-
+    @endhasanyrole
 @endsection
 
 @section('content-report')
-    @hasanyrole('logistic|admin|almacen|principal')
+    @hasanyrole('admin|almacen|principal')
     <div class="row">
         <div class="col-md-6">
             <div class="card card-info">
