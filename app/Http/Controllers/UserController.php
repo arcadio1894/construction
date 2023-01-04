@@ -39,6 +39,12 @@ class UserController extends Controller
             'password' => bcrypt('$ermeind2021'),
         ]);
 
+        $worker = Worker::create([
+            'first_name' => $user->name,
+            'email' => $user->email,
+            'image' => $user->image
+        ]);
+
         // Sincronizar con roles
         $roles = $request->get('roles');
         //var_dump($roles);

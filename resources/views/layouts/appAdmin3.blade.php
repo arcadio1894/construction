@@ -1831,7 +1831,7 @@
                     @endcan
                     <!-- FIN AREA SISTEMAS -->
                     <!-- AREA LOGISTICA -->
-                    @canany('enableLogistic_navbar')
+                    @can('enableLogistic_navbar')
                         <li class="nav-item has-treeview @yield('openCustomer')  @yield('openContactName')  @yield('openSupplier') @yield('openPaymentDeadline') @yield('openConfig') @yield('openMaterial') @yield('openQuote') @yield('openOrderExecutions') @yield('openOrderPurchaseGeneral') @yield('openOrderService') @yield('openEntryPurchase') @yield('openOutputs') @yield('openCategoryInvoice') @yield('openInvoice')">
 
                             <a href="#" class="nav-link @yield('activeCustomer')  @yield('activeContactName')  @yield('activeSupplier') @yield('activePaymentDeadline') @yield('activeConfig') @yield('activeMaterial') @yield('activeQuote') @yield('activeOrderExecutions') @yield('activeOrderPurchaseGeneral') @yield('activeOrderService') @yield('activeEntryPurchase') @yield('activeOutputs') @yield('activeCategoryInvoice') @yield('activeInvoice')">
@@ -2715,7 +2715,7 @@
                     @endcan
                     <!-- FIN AREA LOGISTICA -->
                     <!-- AREA OPERACIONES -->
-                    @canany('enableOperator_navbar')
+                    @can('enableOperator_navbar')
                         <li class="nav-item has-treeview @yield('openTimelines')  @yield('openWorker')  @yield('openMaterial') @yield('openQuote') @yield('openOrderExecutions') @yield('openMaterial') @yield('openQuote') @yield('openOrderExecutions') @yield('openOutputs') ">
 
                             <a href="#" class="nav-link @yield('activeTimelines')  @yield('activeWorker')  @yield('activeMaterial') @yield('activeQuote') @yield('activeOrderExecutions') @yield('activeMaterial') @yield('activeQuote') @yield('activeOrderExecutions') @yield('activeOutputs') ">
@@ -2954,7 +2954,7 @@
                     @endcan
                     <!-- FIN AREA OPERACIONES -->
                     <!-- AREA ALMACEN -->
-                    @canany('enableAlmacen_navbar')
+                    @can('enableAlmacen_navbar')
                         <li class="nav-item has-treeview @yield('openCustomer')  @yield('openSupplier')  @yield('openConfig') @yield('openMaterial') @yield('openQuote') @yield('openInventory') @yield('openTransfer') @yield('openEntryPurchase') @yield('openEntryScrap') @yield('openOrderExecutions') @yield('openOutputRequest') @yield('openInvoice') @yield('openService') ">
 
                             <a href="#" class="nav-link @yield('activeCustomer')  @yield('activeSupplier')  @yield('activeConfig') @yield('activeMaterial') @yield('activeQuote') @yield('activeInventory') @yield('activeTransfer') @yield('activeEntryPurchase') @yield('activeEntryScrap') @yield('activeOrderExecutions') @yield('activeOutputRequest') @yield('activeInvoice') @yield('activeService') ">
@@ -3737,7 +3737,7 @@
                     @endcan
                     <!-- FIN AREA ALMACEN -->
                     <!-- AREA RECURSOS HUMANOS -->
-                    @canany('enableResourcesHumans_navbar')
+                    @can('enableResourcesHumans_navbar')
                         <li class="nav-item has-treeview @yield('openConfigRH')  @yield('openSupplier')  @yield('openConfig') @yield('openMaterial') @yield('openQuote') @yield('openInventory') @yield('openTransfer') @yield('openEntryPurchase') @yield('openEntryScrap') @yield('openOrderExecutions') @yield('openOutputRequest') @yield('openInvoice') @yield('openService') ">
 
                             <a href="#" class="nav-link @yield('activeConfigRH')  @yield('activeSupplier')  @yield('activeConfig') @yield('activeMaterial') @yield('activeQuote') @yield('activeInventory') @yield('activeTransfer') @yield('activeEntryPurchase') @yield('activeEntryScrap') @yield('activeOrderExecutions') @yield('activeOutputRequest') @yield('activeInvoice') @yield('activeService') ">

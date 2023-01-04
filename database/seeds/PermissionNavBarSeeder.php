@@ -18,42 +18,64 @@ class PermissionNavBarSeeder extends Seeder
             'description' => 'Habilitar Área Sistemas'
         ]);
         Permission::create([
-            'name' => 'enableSystems_navbar',
-            'description' => 'Habilitar Área Sistemas'
+            'name' => 'enableLogistic_navbar',
+            'description' => 'Habilitar Área Logistica'
         ]);
         Permission::create([
-            'name' => 'enableSystems_navbar',
-            'description' => 'Habilitar Área Sistemas'
+            'name' => 'enableOperator_navbar',
+            'description' => 'Habilitar Área Operaciones'
         ]);
         Permission::create([
-            'name' => 'enableSystems_navbar',
-            'description' => 'Habilitar Área Sistemas'
+            'name' => 'enableAlmacen_navbar',
+            'description' => 'Habilitar Área Almacen'
         ]);
         Permission::create([
-            'name' => 'enableSystems_navbar',
-            'description' => 'Habilitar Área Sistemas'
-        ]);
-        Permission::create([
-            'name' => 'enableSystems_navbar',
-            'description' => 'Habilitar Área Sistemas'
+            'name' => 'enableResourcesHumans_navbar',
+            'description' => 'Habilitar Área RRHH'
         ]);
 
         $roleA = Role::findByName('admin');
 
         $roleA->givePermissionTo([
-            'finishEquipment_quote',
+            'enableSystems_navbar',
+            'enableLogistic_navbar',
+            'enableOperator_navbar',
+            'enableAlmacen_navbar',
+            'enableResourcesHumans_navbar',
         ]);
 
         $roleP = Role::findByName('principal');
 
         $roleP->givePermissionTo([
-            'finishEquipment_quote',
+            'enableSystems_navbar',
+            'enableLogistic_navbar',
+            'enableOperator_navbar',
+            'enableAlmacen_navbar',
+            'enableResourcesHumans_navbar',
         ]);
 
         $roleL = Role::findByName('logistic');
 
         $roleL->givePermissionTo([
-            'finishEquipment_quote',
+            'enableLogistic_navbar',
+        ]);
+
+        $roleO = Role::findByName('operator');
+
+        $roleO->givePermissionTo([
+            'enableOperator_navbar',
+        ]);
+
+        $roleA = Role::findByName('almacen');
+
+        $roleA->givePermissionTo([
+            'enableAlmacen_navbar',
+        ]);
+
+        $roleRH = Role::findByName('resources_humans');
+
+        $roleRH->givePermissionTo([
+            'enableResourcesHumans_navbar',
         ]);
     }
 }
