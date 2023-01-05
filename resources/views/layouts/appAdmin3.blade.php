@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <!-- Dashboard por areas -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
@@ -3738,9 +3739,9 @@
                     <!-- FIN AREA ALMACEN -->
                     <!-- AREA RECURSOS HUMANOS -->
                     @can('enableResourcesHumans_navbar')
-                        <li class="nav-item has-treeview @yield('openConfigRH')  @yield('openSupplier')  @yield('openConfig') @yield('openMaterial') @yield('openQuote') @yield('openInventory') @yield('openTransfer') @yield('openEntryPurchase') @yield('openEntryScrap') @yield('openOrderExecutions') @yield('openOutputRequest') @yield('openInvoice') @yield('openService') ">
+                        <li class="nav-item has-treeview @yield('openConfigRH')  @yield('openWorker')  @yield('openAttendance') ">
 
-                            <a href="#" class="nav-link @yield('activeConfigRH')  @yield('activeSupplier')  @yield('activeConfig') @yield('activeMaterial') @yield('activeQuote') @yield('activeInventory') @yield('activeTransfer') @yield('activeEntryPurchase') @yield('activeEntryScrap') @yield('activeOrderExecutions') @yield('activeOutputRequest') @yield('activeInvoice') @yield('activeService') ">
+                            <a href="#" class="nav-link @yield('activeConfigRH')  @yield('activeWorker')  @yield('activeAttendance') ">
                                 <i class="nav-icon"></i>
                                 <p>
                                     AREA: RECURSOS HUMANOS
@@ -3984,7 +3985,3045 @@
                     @endcan
                     <!-- FIN AREA RECURSOS HUMANOS -->
                     @else
-                        @can('access_permission')
+                        {{--@hasanyrole('principal')
+                        <li class="nav-item has-treeview menu-open">
+
+                            <a href="#" class="nav-link active">
+                                <i class="nav-icon"></i>
+                                <p>
+                                    AREA: GERENCIA
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_customer')
+                                    <li class="nav-item has-treeview @yield('openCustomer')">
+
+                                        <a href="#" class="nav-link @yield('activeCustomer')">
+                                            <i class="nav-icon fas fa-briefcase"></i>
+                                            <p>
+                                                <b>CLIENTES</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_customer')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('customer.index') }}" class="nav-link @yield('activeListCustomer')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar clientes</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_customer')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('customer.create') }}" class="nav-link @yield('activeCreateCustomer')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear clientes</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('destroy_customer')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('customer.indexrestore') }}" class="nav-link @yield('activeRestoreCustomer')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Restaurar clientes</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_contactName')
+                                    <li class="nav-item has-treeview @yield('openContactName')">
+                                        <a href="#" class="nav-link @yield('activeContactName')">
+                                            <i class="nav-icon fas fa-address-book"></i>
+                                            <p>
+                                                <b>CONTACTOS</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_contactName')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('contactName.index') }}" class="nav-link @yield('activeListContactName')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar contactos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_contactName')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('contactName.create') }}" class="nav-link @yield('activeCreateContactName')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear contacto</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('destroy_contactName')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('contactName.indexrestore') }}" class="nav-link @yield('activeRestoreContactName')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Restaurar contactos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_supplier')
+                                    <li class="nav-item has-treeview @yield('openSupplier')">
+                                        <a href="#" class="nav-link @yield('activeSupplier')">
+                                            <i class="nav-icon fas fa-building"></i>
+                                            <p>
+                                                <b>PROVEEDORES</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_supplier')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('supplier.index') }}" class="nav-link @yield('activeListSupplier')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar proveedores</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_supplier')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('supplier.create') }}" class="nav-link @yield('activeCreateSupplier')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear proveedores</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('destroy_supplier')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('supplier.indexrestore') }}" class="nav-link @yield('activeRestoreSupplier')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Restaurar proveedores</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            --}}{{--@can('assign_supplier')
+                                            <li class="nav-item">
+                                                <a href="#" class="nav-link">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>Proveedores y materiales</p>
+                                                </a>
+                                            </li>
+                                            @endcan--}}{{--
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('enable_paymentDeadline')
+                                    <li class="nav-item has-treeview @yield('openPaymentDeadline')">
+                                        <a href="#" class="nav-link @yield('activePaymentDeadline')">
+                                            <i class="nav-icon fas fa-handshake"></i>
+                                            <p>
+                                                <b>PLAZOS DE PAGO</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_paymentDeadline')
+                                                <li class="nav-item">
+                                                    <a href="{{route('paymentDeadline.index')}}" class="nav-link @yield('activeListPaymentDeadline')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar plazos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_paymentDeadline')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('paymentDeadline.create') }}" class="nav-link @yield('activeCreatePaymentDeadline')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear plazos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
+                                    <li class="nav-item has-treeview @yield('openConfig')">
+                                        <a href="#" class="nav-link @yield('activeConfig')">
+                                            <i class="fas fa-tools nav-icon"></i>
+                                            <p>
+                                                <b>CONFIG. MATERIAL</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_unitMeasure')
+                                                <li class="nav-item has-treeview @yield('openUnitMeasure')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Unidad de Medida
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_unitMeasure')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListUnitMeasure')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar unidades</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_unitMeasure')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateUnitMeasure')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear unidades</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_typeScrap')
+                                                <li class="nav-item has-treeview @yield('openTypeScrap')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Tipo de retacería
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_typeScrap')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar Tipo retacería</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_typeScrap')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear Tipo retacería</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_category')
+                                                <li class="nav-item has-treeview @yield('openCategory')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Categorías
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_category')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar categorias</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_category')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('category.create') }}" class="nav-link @yield('activeCreateCategory')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear categorias</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_subcategory')
+                                                <li class="nav-item has-treeview @yield('openSubcategory')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Subcategorías
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_subcategory')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('subcategory.index') }}" class="nav-link @yield('activeListSubcategory')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar subcategorias</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_subcategory')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('subcategory.create') }}" class="nav-link @yield('activeCreateSubcategory')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear subcategorias</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_materialType')
+                                                <li class="nav-item has-treeview @yield('openMaterialType')">
+                                                    <a href="#" class="nav-link @yield('activeMaterialType')">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Tipo Materiales
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_materialType')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar tipos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_materialType')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('materialtype.create') }}" class="nav-link @yield('activeCreateMaterialType')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear tipos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_subType')
+                                                <li class="nav-item has-treeview @yield('openSubType')">
+                                                    <a href="#" class="nav-link @yield('activeSubType')">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            SubTipos
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_subType')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('subtype.index') }}" class="nav-link @yield('activeListSubType')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar Subtipos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_subType')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('subtype.create') }}" class="nav-link @yield('activeCreateSubType')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear Subtipos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_warrant')
+                                                <li class="nav-item has-treeview @yield('openWarrant')">
+                                                    <a href="#" class="nav-link @yield('activeWarrant')">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Cédulas
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_warrant')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('warrant.index') }}" class="nav-link @yield('activeListWarrant')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar cédulas</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_warrant')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('warrant.create') }}" class="nav-link @yield('activeCreateWarrant')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear cédulas</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_quality')
+                                                <li class="nav-item has-treeview @yield('openQuality')">
+                                                    <a href="#" class="nav-link @yield('activeQuality')">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Calidades
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_quality')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('quality.index') }}" class="nav-link @yield('activeListQuality')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar calidades</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_quality')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('quality.create') }}" class="nav-link @yield('activeCreateQuality')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear calidades</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_brand')
+                                                <li class="nav-item has-treeview @yield('openBrand')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Marcas
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_brand')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('brand.index') }}" class="nav-link @yield('activeListBrand')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar marcas</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_brand')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('brand.create') }}" class="nav-link @yield('activeCreateBrand')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear marcas</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+                                            @can('list_exampler')
+                                                <li class="nav-item has-treeview @yield('openExampler')">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon text-success"></i>
+                                                        <p>
+                                                            Modelos
+                                                            <i class="right fas fa-angle-left"></i>
+                                                        </p>
+                                                    </a>
+                                                    <ul class="nav nav-treeview">
+                                                        @can('list_exampler')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('exampler.index') }}" class="nav-link @yield('activeListExampler')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar modelos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                        @can('create_exampler')
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('exampler.create') }}" class="nav-link @yield('activeCreateExampler')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear modelos</p>
+                                                                </a>
+                                                            </li>
+                                                        @endcan
+                                                    </ul>
+                                                </li>
+                                            @endcan
+
+
+                                        </ul>
+                                    </li>
+                                @endcanany
+                                @can('list_material')
+                                    <li class="nav-item has-treeview @yield('openMaterial')">
+                                        <a href="#" class="nav-link @yield('activeMaterial')">
+                                            <i class="nav-icon fas fa-boxes"></i>
+                                            <p>
+                                                <b>MATERIALES</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_material')
+                                                <li class="nav-item">
+                                                    <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar materiales</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_material')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear materiales</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('enable_material')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('material.index.enable') }}" class="nav-link @yield('activeEnableMaterial')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Habilitar materiales</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('stock_followMaterials')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('stock.index') }}" class="nav-link @yield('activeStockMaterials')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Seguimiento Stock</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_quote')
+                                    <li class="nav-item has-treeview @yield('openQuote')">
+                                        <a href="#" class="nav-link @yield('activeQuote')">
+                                            <i class="nav-icon fas fa-people-carry"></i>
+                                            <p>
+                                                <b>COTIZACIONES</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listado general</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar cotizaciones</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.create') }}" class="nav-link @yield('activeCreateQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear cotización</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('showRaised_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Elevar cotización</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('destroy_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Anuladas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('finish_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Finalizadas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_quote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('quote.list.lost') }}" class="nav-link @yield('activeLostQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Perdidas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_porcentageQuote')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('porcentageQuote.index') }}" class="nav-link @yield('activePorcentagesQuote')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Porcentajes</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_orderExecution')
+                                    <li class="nav-item has-treeview @yield('openOrderExecutions')">
+                                        <a href="#" class="nav-link @yield('activeOrderExecutions')">
+                                            <i class="nav-icon fas fa-hammer"></i>
+                                            <p>
+                                                <b>ORDEN EJECUCION</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            <li class="nav-item">
+                                                <a href="{{ route('order.execution.index') }}" class="nav-link @yield('activeListOrderExecutions')">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>Listar Ordenes</p>
+                                                </a>
+                                            </li>
+                                            --}}{{--<li class="nav-item">
+                                                <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>Ordenes Finalizadas</p>
+                                                </a>
+                                            </li>--}}{{--
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @canany('list_orderPurchaseNormal','list_orderPurchaseExpress')
+                                    <li class="nav-item has-treeview @yield('openOrderPurchaseGeneral')">
+                                        <a href="#" class="nav-link @yield('activeOrderPurchaseGeneral')">
+                                            <i class="nav-icon fas fa-credit-card"></i>
+                                            <p>
+                                                <b>ORDENES COMPRA</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{route('order.purchase.general.index')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar ordenes general</p>
+                                                    </a>
+                                                </li>
+                                            @endcanany
+                                            @can('list_orderPurchaseExpress')
+                                                <li class="nav-item">
+                                                    <a href="{{route('order.purchase.express.index')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar express</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{route('order.purchase.normal.index')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar normal</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_orderPurchaseExpress')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.purchase.express.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear Express</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear Normal</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.purchase.list.regularize') }}" class="nav-link @yield('activeListOrderPurchaseRegularize')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar regularizadas</p>
+                                                    </a>
+                                                </li>
+                                            @endcanany
+                                            @canany('destroy_orderPurchaseNormal','destroy_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{route('order.purchase.delete')}}" class="nav-link @yield('activeListOrderPurchaseDelete')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar eliminadas</p>
+                                                    </a>
+                                                </li>
+                                            @endcanany
+                                            @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                <li class="nav-item">
+                                                    <a href="{{route('order.purchase.list.lost')}}" class="nav-link @yield('activeListOrderPurchaseLost')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Ordenes perdidas</p>
+                                                    </a>
+                                                </li>
+                                            @endcanany
+                                        </ul>
+                                    </li>
+                                @endcanany
+                                @can('watch_orderService')
+                                    <li class="nav-item has-treeview @yield('openOrderService')">
+                                        <a href="#" class="nav-link @yield('activeOrderService')">
+                                            <i class="nav-icon fas fa-credit-card"></i>
+                                            <p>
+                                                <b>ORDENES SERVICIO</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_orderService')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar ordenes</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_orderService')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.service.create') }}" class="nav-link @yield('activeCreateOrderService')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear orden</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_orderService')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.service.list.regularize') }}" class="nav-link @yield('activeListOrderServiceRegularize')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar regularizadas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_orderService')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.service.list.deleted') }}" class="nav-link @yield('activeListOrderServiceDeleted')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar Anuladas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('list_orderService')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.service.list.lost') }}" class="nav-link @yield('activeListOrderServiceLost')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Ordenes Perdidas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_entryPurchase')
+                                    <li class="nav-item has-treeview @yield('openEntryPurchase')">
+                                        <a href="#" class="nav-link @yield('activeEntryPurchase')">
+                                            <i class="nav-icon fas fa-truck-loading"></i>
+                                            <p>
+                                                <b>ENTRADA ALMACEN</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_entryPurchase')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar entradas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            --}}{{--@can('create_entryPurchase')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('entry.purchase.create') }}" class="nav-link @yield('activeCreateEntryPurchase')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear entrada</p>
+                                                    </a>
+                                                </li>
+
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar órdenes</p>
+                                                    </a>
+                                                </li>
+
+                                                <li class="nav-item">
+                                                    <a href="{{ route('report.materials.entries') }}" class="nav-link @yield('activeReportMaterialEntry')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Reporte Ingresos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan--}}{{--
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_output')
+                                    <li class="nav-item has-treeview @yield('openOutputs')">
+                                        <a href="#" class="nav-link @yield('activeOutputs')">
+                                            <i class="nav-icon fas fa-share"></i>
+                                            <p>
+                                                <b>SALIDA ALMACEN</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            <li class="nav-item">
+                                                <a href="{{ route('output.confirm') }}" class="nav-link @yield('activeListOutput')">
+                                                    <i class="far fa-circle nav-icon"></i>
+                                                    <p>Listar salidas</p>
+                                                </a>
+                                            </li>
+
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_categoryInvoice')
+                                    <li class="nav-item has-treeview @yield('openCategoryInvoice')">
+                                        <a href="#" class="nav-link @yield('activeCategoryInvoice')">
+                                            <i class="nav-icon fas fa-receipt"></i>
+                                            <p>
+                                                <b>CATEG. FACTURA</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_categoryInvoice')
+                                                <li class="nav-item">
+                                                    <a href="{{route('categoryInvoice.index')}}" class="nav-link @yield('activeListCategoryInvoice')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar categorías</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_categoryInvoice')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('categoryInvoice.create') }}" class="nav-link @yield('activeCreateCategoryInvoice')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear categoría</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('list_invoice')
+                                    <li class="nav-item has-treeview @yield('openInvoice')">
+                                        <a href="#" class="nav-link @yield('activeInvoice')">
+                                            <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                                            <p>
+                                                <b>FACTURAS</b>
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_invoice')
+                                                <li class="nav-item">
+                                                    <a href="{{route('invoice.index')}}" class="nav-link @yield('activeListInvoice')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar compras/Servicios</p>
+                                                    </a>
+                                                </li>
+                                                <li class="nav-item">
+                                                    <a href="{{route('report.invoice.finance')}}" class="nav-link @yield('activeReportInvoice')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Reporte Facturas</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            --}}{{--@can('create_invoice')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('invoice.create') }}" class="nav-link @yield('activeCreateInvoice')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Crear compra/Servicios</p>
+                                                    </a>
+                                                </li>
+                                            @endcan--}}{{--
+                                        </ul>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                        @endhasanyrole--}}
+                        @hasanyrole('logistic')
+                        @can('enableLogistic_navbar')
+                            <li class="nav-item has-treeview menu-open">
+
+                                <a href="#" class="nav-link active">
+                                    <i class="nav-icon"></i>
+                                    <p>
+                                        AREA: LOGÍSTICA
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @can('list_customer')
+                                        <li class="nav-item has-treeview @yield('openCustomer')">
+
+                                            <a href="#" class="nav-link @yield('activeCustomer')">
+                                                <i class="nav-icon fas fa-briefcase"></i>
+                                                <p>
+                                                    <b>CLIENTES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.index') }}" class="nav-link @yield('activeListCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.create') }}" class="nav-link @yield('activeCreateCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.indexrestore') }}" class="nav-link @yield('activeRestoreCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Restaurar clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_contactName')
+                                        <li class="nav-item has-treeview @yield('openContactName')">
+                                            <a href="#" class="nav-link @yield('activeContactName')">
+                                                <i class="nav-icon fas fa-address-book"></i>
+                                                <p>
+                                                    <b>CONTACTOS</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_contactName')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('contactName.index') }}" class="nav-link @yield('activeListContactName')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar contactos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_contactName')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('contactName.create') }}" class="nav-link @yield('activeCreateContactName')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear contacto</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_contactName')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('contactName.indexrestore') }}" class="nav-link @yield('activeRestoreContactName')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Restaurar contactos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_supplier')
+                                        <li class="nav-item has-treeview @yield('openSupplier')">
+                                            <a href="#" class="nav-link @yield('activeSupplier')">
+                                                <i class="nav-icon fas fa-building"></i>
+                                                <p>
+                                                    <b>PROVEEDORES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.index') }}" class="nav-link @yield('activeListSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.create') }}" class="nav-link @yield('activeCreateSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.indexrestore') }}" class="nav-link @yield('activeRestoreSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Restaurar proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('assign_supplier')
+                                                <li class="nav-item">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Proveedores y materiales</p>
+                                                    </a>
+                                                </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('enable_paymentDeadline')
+                                        <li class="nav-item has-treeview @yield('openPaymentDeadline')">
+                                            <a href="#" class="nav-link @yield('activePaymentDeadline')">
+                                                <i class="nav-icon fas fa-handshake"></i>
+                                                <p>
+                                                    <b>PLAZOS DE PAGO</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_paymentDeadline')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('paymentDeadline.index')}}" class="nav-link @yield('activeListPaymentDeadline')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar plazos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_paymentDeadline')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('paymentDeadline.create') }}" class="nav-link @yield('activeCreatePaymentDeadline')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear plazos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
+                                        <li class="nav-item has-treeview @yield('openConfig')">
+                                            <a href="#" class="nav-link @yield('activeConfig')">
+                                                <i class="fas fa-tools nav-icon"></i>
+                                                <p>
+                                                    <b>CONFIG. MATERIAL</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_unitMeasure')
+                                                    <li class="nav-item has-treeview @yield('openUnitMeasure')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Unidad de Medida
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_unitMeasure')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListUnitMeasure')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar unidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_unitMeasure')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateUnitMeasure')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear unidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_typeScrap')
+                                                    <li class="nav-item has-treeview @yield('openTypeScrap')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Tipo de retacería
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_typeScrap')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar Tipo retacería</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_typeScrap')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear Tipo retacería</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_category')
+                                                    <li class="nav-item has-treeview @yield('openCategory')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Categorías
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_category')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar categorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_category')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('category.create') }}" class="nav-link @yield('activeCreateCategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear categorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_subcategory')
+                                                    <li class="nav-item has-treeview @yield('openSubcategory')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Subcategorías
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_subcategory')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subcategory.index') }}" class="nav-link @yield('activeListSubcategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar subcategorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_subcategory')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subcategory.create') }}" class="nav-link @yield('activeCreateSubcategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear subcategorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_materialType')
+                                                    <li class="nav-item has-treeview @yield('openMaterialType')">
+                                                        <a href="#" class="nav-link @yield('activeMaterialType')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Tipo Materiales
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_materialType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar tipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_materialType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('materialtype.create') }}" class="nav-link @yield('activeCreateMaterialType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear tipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_subType')
+                                                    <li class="nav-item has-treeview @yield('openSubType')">
+                                                        <a href="#" class="nav-link @yield('activeSubType')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                SubTipos
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_subType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subtype.index') }}" class="nav-link @yield('activeListSubType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar Subtipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_subType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subtype.create') }}" class="nav-link @yield('activeCreateSubType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear Subtipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_warrant')
+                                                    <li class="nav-item has-treeview @yield('openWarrant')">
+                                                        <a href="#" class="nav-link @yield('activeWarrant')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Cédulas
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_warrant')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('warrant.index') }}" class="nav-link @yield('activeListWarrant')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar cédulas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_warrant')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('warrant.create') }}" class="nav-link @yield('activeCreateWarrant')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear cédulas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_quality')
+                                                    <li class="nav-item has-treeview @yield('openQuality')">
+                                                        <a href="#" class="nav-link @yield('activeQuality')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Calidades
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_quality')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('quality.index') }}" class="nav-link @yield('activeListQuality')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar calidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_quality')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('quality.create') }}" class="nav-link @yield('activeCreateQuality')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear calidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_brand')
+                                                    <li class="nav-item has-treeview @yield('openBrand')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Marcas
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_brand')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('brand.index') }}" class="nav-link @yield('activeListBrand')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar marcas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_brand')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('brand.create') }}" class="nav-link @yield('activeCreateBrand')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear marcas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_exampler')
+                                                    <li class="nav-item has-treeview @yield('openExampler')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Modelos
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_exampler')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('exampler.index') }}" class="nav-link @yield('activeListExampler')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar modelos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_exampler')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('exampler.create') }}" class="nav-link @yield('activeCreateExampler')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear modelos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+
+                                            </ul>
+                                        </li>
+                                    @endcanany
+                                    @can('list_material')
+                                        <li class="nav-item has-treeview @yield('openMaterial')">
+                                            <a href="#" class="nav-link @yield('activeMaterial')">
+                                                <i class="nav-icon fas fa-boxes"></i>
+                                                <p>
+                                                    <b>MATERIALES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('enable_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('material.index.enable') }}" class="nav-link @yield('activeEnableMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Habilitar materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('stock_followMaterials')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('stock.index') }}" class="nav-link @yield('activeStockMaterials')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Seguimiento Stock</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_quote')
+                                        <li class="nav-item has-treeview @yield('openQuote')">
+                                            <a href="#" class="nav-link @yield('activeQuote')">
+                                                <i class="nav-icon fas fa-people-carry"></i>
+                                                <p>
+                                                    <b>COTIZACIONES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listado general</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar cotizaciones</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.create') }}" class="nav-link @yield('activeCreateQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear cotización</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('showRaised_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Elevar cotización</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Anuladas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('finish_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Finalizadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.lost') }}" class="nav-link @yield('activeLostQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Perdidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_porcentageQuote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('porcentageQuote.index') }}" class="nav-link @yield('activePorcentagesQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Porcentajes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_orderExecution')
+                                        <li class="nav-item has-treeview @yield('openOrderExecutions')">
+                                            <a href="#" class="nav-link @yield('activeOrderExecutions')">
+                                                <i class="nav-icon fas fa-hammer"></i>
+                                                <p>
+                                                    <b>ORDEN EJECUCION</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.execution.index') }}" class="nav-link @yield('activeListOrderExecutions')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar Ordenes</p>
+                                                    </a>
+                                                </li>
+                                                {{--<li class="nav-item">
+                                                    <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Ordenes Finalizadas</p>
+                                                    </a>
+                                                </li>--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @canany('list_orderPurchaseNormal','list_orderPurchaseExpress')
+                                        <li class="nav-item has-treeview @yield('openOrderPurchaseGeneral')">
+                                            <a href="#" class="nav-link @yield('activeOrderPurchaseGeneral')">
+                                                <i class="nav-icon fas fa-credit-card"></i>
+                                                <p>
+                                                    <b>ORDENES COMPRA</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('order.purchase.general.index')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar ordenes general</p>
+                                                        </a>
+                                                    </li>
+                                                @endcanany
+                                                @can('list_orderPurchaseExpress')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('order.purchase.express.index')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar express</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('order.purchase.normal.index')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar normal</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_orderPurchaseExpress')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.purchase.express.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear Express</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear Normal</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.purchase.list.regularize') }}" class="nav-link @yield('activeListOrderPurchaseRegularize')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar regularizadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcanany
+                                                @canany('destroy_orderPurchaseNormal','destroy_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('order.purchase.delete')}}" class="nav-link @yield('activeListOrderPurchaseDelete')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar eliminadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcanany
+                                                @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('order.purchase.list.lost')}}" class="nav-link @yield('activeListOrderPurchaseLost')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Ordenes perdidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcanany
+                                            </ul>
+                                        </li>
+                                    @endcanany
+                                    @can('watch_orderService')
+                                        <li class="nav-item has-treeview @yield('openOrderService')">
+                                            <a href="#" class="nav-link @yield('activeOrderService')">
+                                                <i class="nav-icon fas fa-credit-card"></i>
+                                                <p>
+                                                    <b>ORDENES SERVICIO</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar ordenes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.create') }}" class="nav-link @yield('activeCreateOrderService')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear orden</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.list.regularize') }}" class="nav-link @yield('activeListOrderServiceRegularize')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar regularizadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.list.deleted') }}" class="nav-link @yield('activeListOrderServiceDeleted')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar Anuladas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.list.lost') }}" class="nav-link @yield('activeListOrderServiceLost')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Ordenes Perdidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_entryPurchase')
+                                        <li class="nav-item has-treeview @yield('openEntryPurchase')">
+                                            <a href="#" class="nav-link @yield('activeEntryPurchase')">
+                                                <i class="nav-icon fas fa-truck-loading"></i>
+                                                <p>
+                                                    <b>ENTRADA ALMACEN</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_entryPurchase')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar entradas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('create_entryPurchase')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.purchase.create') }}" class="nav-link @yield('activeCreateEntryPurchase')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear entrada</p>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar órdenes</p>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('report.materials.entries') }}" class="nav-link @yield('activeReportMaterialEntry')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Reporte Ingresos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_output')
+                                        <li class="nav-item has-treeview @yield('openOutputs')">
+                                            <a href="#" class="nav-link @yield('activeOutputs')">
+                                                <i class="nav-icon fas fa-share"></i>
+                                                <p>
+                                                    <b>SALIDA ALMACEN</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                <li class="nav-item">
+                                                    <a href="{{ route('output.confirm') }}" class="nav-link @yield('activeListOutput')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar salidas</p>
+                                                    </a>
+                                                </li>
+
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_categoryInvoice')
+                                        <li class="nav-item has-treeview @yield('openCategoryInvoice')">
+                                            <a href="#" class="nav-link @yield('activeCategoryInvoice')">
+                                                <i class="nav-icon fas fa-receipt"></i>
+                                                <p>
+                                                    <b>CATEG. FACTURA</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_categoryInvoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('categoryInvoice.index')}}" class="nav-link @yield('activeListCategoryInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar categorías</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_categoryInvoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('categoryInvoice.create') }}" class="nav-link @yield('activeCreateCategoryInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear categoría</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_invoice')
+                                        <li class="nav-item has-treeview @yield('openInvoice')">
+                                            <a href="#" class="nav-link @yield('activeInvoice')">
+                                                <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                                                <p>
+                                                    <b>FACTURAS</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_invoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('invoice.index')}}" class="nav-link @yield('activeListInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar compras/Servicios</p>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="{{route('report.invoice.finance')}}" class="nav-link @yield('activeReportInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Reporte Facturas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('create_invoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('invoice.create') }}" class="nav-link @yield('activeCreateInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear compra/Servicios</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
+                        @endhasanyrole
+
+                        @hasanyrole('operator')
+                        @can('enableOperator_navbar')
+                            <li class="nav-item has-treeview menu-open ">
+
+                                <a href="#" class="nav-link active ">
+                                    <i class="nav-icon"></i>
+                                    <p>
+                                        AREA: OPERACIONES
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @can('enable_timeline')
+                                        <li class="nav-item has-treeview @yield('openTimelines')">
+                                            @can('enable_timeline')
+                                                <a href="#" class="nav-link @yield('activeTimelines')">
+                                                    <i class="nav-icon far fa-calendar-alt"></i>
+                                                    <p>
+                                                        <b>CRONOGRAMAS</b>
+                                                        <i class="right fas fa-angle-left"></i>
+                                                    </p>
+                                                </a>
+                                            @endcan
+                                            <ul class="nav nav-treeview">
+                                                @can('index_timeline')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('index.timelines') }}" class="nav-link @yield('activeShowTimelines')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Ver cronogramas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('enable_worker')
+                                        <li class="nav-item has-treeview @yield('openWorker')">
+                                            @can('enable_worker')
+                                                <a href="#" class="nav-link @yield('activeWorker')">
+                                                    <i class="fas fa-user-tie nav-icon"></i>
+                                                    <p>
+                                                        <b>COLABORADORES</b>
+                                                        <i class="right fas fa-angle-left"></i>
+                                                    </p>
+                                                </a>
+                                            @endcan
+                                            <ul class="nav nav-treeview">
+                                                @can('list_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.index')}}" class="nav-link @yield('activeListWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.create')}}" class="nav-link @yield('activeCreateWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('restore_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.enable')}}" class="nav-link @yield('activeEnableWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Habilitar colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_material')
+                                        <li class="nav-item has-treeview @yield('openMaterial')">
+                                            <a href="#" class="nav-link @yield('activeMaterial')">
+                                                <i class="nav-icon fas fa-boxes"></i>
+                                                <p>
+                                                    <b>MATERIALES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('stock_followMaterials')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('stock.index') }}" class="nav-link @yield('activeStockMaterials')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Seguimiento Stock</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_quote')
+                                        <li class="nav-item has-treeview @yield('openQuote')">
+                                            <a href="#" class="nav-link @yield('activeQuote')">
+                                                <i class="nav-icon fas fa-people-carry"></i>
+                                                <p>
+                                                    <b>COTIZACIONES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listado general</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar cotizaciones</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.create') }}" class="nav-link @yield('activeCreateQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear cotización</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('showRaised_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Elevadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Anuladas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('finish_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Finalizadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.lost') }}" class="nav-link @yield('activeLostQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Perdidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('list_porcentageQuote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('porcentageQuote.index') }}" class="nav-link @yield('activePorcentagesQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Porcentajes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_orderExecution')
+                                        <li class="nav-item has-treeview @yield('openOrderExecutions')">
+                                            <a href="#" class="nav-link @yield('activeOrderExecutions')">
+                                                <i class="nav-icon fas fa-hammer"></i>
+                                                <p>
+                                                    <b>ORDEN EJECUCION</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.execution.index') }}" class="nav-link @yield('activeListOrderExecutions')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar Ordenes</p>
+                                                    </a>
+                                                </li>
+                                                {{--<li class="nav-item">
+                                                    <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Ordenes Finalizadas</p>
+                                                    </a>
+                                                </li>--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_output')
+                                        <li class="nav-item has-treeview @yield('openOutputs')">
+                                            <a href="#" class="nav-link @yield('activeOutputs')">
+                                                <i class="nav-icon fas fa-share"></i>
+                                                <p>
+                                                    <b>SALIDAS ALMACEN</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_output')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('output.confirm') }}" class="nav-link @yield('activeListOutput')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar salidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_request')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear solicitudes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
+                        @endhasanyrole
+
+                        @hasanyrole('almacen')
+                        @can('enableAlmacen_navbar')
+                            <li class="nav-item has-treeview menu-open ">
+
+                                <a href="#" class="nav-link active ">
+                                    <i class="nav-icon"></i>
+                                    <p>
+                                        AREA: ALMACEN
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @can('list_customer')
+                                        <li class="nav-item has-treeview @yield('openCustomer')">
+                                            <a href="#" class="nav-link @yield('activeCustomer')">
+                                                <i class="nav-icon fas fa-briefcase"></i>
+                                                <p>
+                                                    <b>CLIENTES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.index') }}" class="nav-link @yield('activeListCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('create_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.create') }}" class="nav-link @yield('activeCreateCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                                {{--@can('destroy_customer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('customer.indexrestore') }}" class="nav-link @yield('activeRestoreCustomer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Restaurar clientes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_supplier')
+                                        <li class="nav-item has-treeview @yield('openSupplier')">
+                                            <a href="#" class="nav-link @yield('activeSupplier')">
+                                                <i class="nav-icon fas fa-building"></i>
+                                                <p>
+                                                    <b>PROVEEDORES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.index') }}" class="nav-link @yield('activeListSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.create') }}" class="nav-link @yield('activeCreateSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('destroy_supplier')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('supplier.indexrestore') }}" class="nav-link @yield('activeRestoreSupplier')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Restaurar proveedores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('assign_supplier')
+                                                <li class="nav-item">
+                                                    <a href="#" class="nav-link">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Proveedores y materiales</p>
+                                                    </a>
+                                                </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @canany('list_material','list_unitMeasure', 'list_typeScrap', 'list_category', 'list_subcategory', 'list_materialType', 'list_subType', 'list_warrant', 'list_quality', 'list_brand', 'list_exampler')
+                                        <li class="nav-item has-treeview @yield('openConfig')">
+                                            <a href="#" class="nav-link @yield('activeConfig')">
+                                                <i class="fas fa-tools nav-icon"></i>
+                                                <p>
+                                                    <b>CONFIG. MATERIAL</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_unitMeasure')
+                                                    <li class="nav-item has-treeview @yield('openUnitMeasure')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Unidad de Medida
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_unitMeasure')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListUnitMeasure')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar unidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_unitMeasure')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateUnitMeasure')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear unidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_typeScrap')
+                                                    <li class="nav-item has-treeview @yield('openTypeScrap')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Tipo de retacería
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_typeScrap')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('typescrap.index') }}" class="nav-link @yield('activeListTypeScrap')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar Tipo retacería</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_typeScrap')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('typescrap.create') }}" class="nav-link @yield('activeCreateTypeScrap')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear Tipo retacería</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_category')
+                                                    <li class="nav-item has-treeview @yield('openCategory')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Categorías
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_category')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('category.index') }}" class="nav-link @yield('activeListCategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar categorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_category')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('category.create') }}" class="nav-link @yield('activeCreateCategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear categorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_subcategory')
+                                                    <li class="nav-item has-treeview @yield('openSubcategory')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Subcategorías
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_subcategory')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subcategory.index') }}" class="nav-link @yield('activeListSubcategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar subcategorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_subcategory')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subcategory.create') }}" class="nav-link @yield('activeCreateSubcategory')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear subcategorias</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_materialType')
+                                                    <li class="nav-item has-treeview @yield('openMaterialType')">
+                                                        <a href="#" class="nav-link @yield('activeMaterialType')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Tipo Materiales
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_materialType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('materialtype.index') }}" class="nav-link @yield('activeListMaterialType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar tipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_materialType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('materialtype.create') }}" class="nav-link @yield('activeCreateMaterialType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear tipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_subType')
+                                                    <li class="nav-item has-treeview @yield('openSubType')">
+                                                        <a href="#" class="nav-link @yield('activeSubType')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                SubTipos
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_subType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subtype.index') }}" class="nav-link @yield('activeListSubType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar Subtipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_subType')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('subtype.create') }}" class="nav-link @yield('activeCreateSubType')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear Subtipos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_warrant')
+                                                    <li class="nav-item has-treeview @yield('openWarrant')">
+                                                        <a href="#" class="nav-link @yield('activeWarrant')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Cédulas
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_warrant')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('warrant.index') }}" class="nav-link @yield('activeListWarrant')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar cédulas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_warrant')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('warrant.create') }}" class="nav-link @yield('activeCreateWarrant')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear cédulas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_quality')
+                                                    <li class="nav-item has-treeview @yield('openQuality')">
+                                                        <a href="#" class="nav-link @yield('activeQuality')">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Calidades
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_quality')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('quality.index') }}" class="nav-link @yield('activeListQuality')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar calidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_quality')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('quality.create') }}" class="nav-link @yield('activeCreateQuality')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear calidades</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_brand')
+                                                    <li class="nav-item has-treeview @yield('openBrand')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Marcas
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_brand')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('brand.index') }}" class="nav-link @yield('activeListBrand')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar marcas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_brand')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('brand.create') }}" class="nav-link @yield('activeCreateBrand')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear marcas</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+                                                @can('list_exampler')
+                                                    <li class="nav-item has-treeview @yield('openExampler')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Modelos
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+                                                            @can('list_exampler')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('exampler.index') }}" class="nav-link @yield('activeListExampler')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Listar modelos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                            @can('create_exampler')
+                                                                <li class="nav-item">
+                                                                    <a href="{{ route('exampler.create') }}" class="nav-link @yield('activeCreateExampler')">
+                                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                        <p>Crear modelos</p>
+                                                                    </a>
+                                                                </li>
+                                                            @endcan
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+
+
+                                            </ul>
+                                        </li>
+                                    @endcanany
+                                    @can('list_material')
+                                        <li class="nav-item has-treeview @yield('openMaterial')">
+                                            <a href="#" class="nav-link @yield('activeMaterial')">
+                                                <i class="nav-icon fas fa-boxes"></i>
+                                                <p>
+                                                    <b>MATERIALES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('material.create') }}" class="nav-link @yield('activeCreateMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('enable_material')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('material.index.enable') }}" class="nav-link @yield('activeEnableMaterial')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Habilitar materiales</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('stock_followMaterials')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('stock.index') }}" class="nav-link @yield('activeStockMaterials')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Seguimiento Stock</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_quote')
+                                        <li class="nav-item has-treeview @yield('openQuote')">
+                                            <a href="#" class="nav-link @yield('activeQuote')">
+                                                <i class="nav-icon fas fa-people-carry"></i>
+                                                <p>
+                                                    <b>COTIZACIONES</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listado general</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar cotizaciones</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                                {{--@can('create_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.create') }}" class="nav-link @yield('activeCreateQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear cotización</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                                @can('showRaised_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Elevadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('destroy_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.deleted') }}" class="nav-link @yield('activeDeletedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Anuladas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('finish_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.closed') }}" class="nav-link @yield('activeClosedQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Finalizadas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_quote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('quote.list.lost') }}" class="nav-link @yield('activeLostQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Perdidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                                {{--@can('list_porcentageQuote')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('porcentageQuote.index') }}" class="nav-link @yield('activePorcentagesQuote')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Porcentajes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_area')
+                                        <li class="nav-item has-treeview @yield('openInventory')">
+                                            <a href="#" class="nav-link @yield('activeInventory')">
+                                                <i class="nav-icon fas fa-book"></i>
+                                                <p>
+                                                    <b>INVENTARIO FISICO</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_area')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('area.index') }}" class="nav-link @yield('activeAreas')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Áreas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('list_location')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('location.index') }}" class="nav-link @yield('activeLocations')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Ubicaciones</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_transfer')
+                                        <li class="nav-item has-treeview @yield('openTransfer')">
+                                            <a href="#" class="nav-link @yield('activeTransfer')">
+                                                <i class="nav-icon fas fa-retweet"></i>
+                                                <p>
+                                                    <b>TRANSFERENCIAS</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_transfer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('transfer.index') }}" class="nav-link @yield('activeListTransfer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar traslados</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_transfer')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('transfer.create') }}" class="nav-link @yield('activeCreateTransfer')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear traslado</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_entryPurchase')
+                                        <li class="nav-item has-treeview @yield('openEntryPurchase')">
+                                            <a href="#" class="nav-link @yield('activeEntryPurchase')">
+                                                <i class="nav-icon fas fa-truck-loading"></i>
+                                                <p>
+                                                    <b>ENTRADA ALMACEN</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_entryPurchase')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar entradas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_entryPurchase')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.purchase.create') }}" class="nav-link @yield('activeCreateEntryPurchase')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear entrada</p>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar órdenes</p>
+                                                        </a>
+                                                    </li>
+
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('report.materials.entries') }}" class="nav-link @yield('activeReportMaterialEntry')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Reporte Ingresos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_entryScrap')
+                                        <li class="nav-item has-treeview @yield('openEntryScrap')">
+                                            <a href="#" class="nav-link @yield('activeEntryScrap')">
+                                                <i class="nav-icon fas fa-archive"></i>
+                                                <p>
+                                                    <b>RETACERÍA</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_entryScrap')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.scrap.index') }}" class="nav-link @yield('activeListEntryScrap')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar entradas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_entryScrap')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('entry.create.scrap') }}" class="nav-link @yield('activeCreateScrap')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear retazos</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_orderExecution')
+                                        <li class="nav-item has-treeview @yield('openOrderExecutions')">
+                                            <a href="#" class="nav-link @yield('activeOrderExecutions')">
+                                                <i class="nav-icon fas fa-hammer"></i>
+                                                <p>
+                                                    <b>ORDEN EJECUCION</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                <li class="nav-item">
+                                                    <a href="{{ route('order.execution.index') }}" class="nav-link @yield('activeListOrderExecutions')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Listar Ordenes</p>
+                                                    </a>
+                                                </li>
+                                                {{--<li class="nav-item">
+                                                    <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
+                                                        <i class="far fa-circle nav-icon"></i>
+                                                        <p>Ordenes Finalizadas</p>
+                                                    </a>
+                                                </li>--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_request')
+                                        <li class="nav-item has-treeview @yield('openOutputRequest')">
+                                            <a href="#" class="nav-link @yield('activeOutputRequest')">
+                                                <i class="nav-icon fas fa-file"></i>
+                                                <p>
+                                                    <b>SALIDAS ALMACEN</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_request')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('output.request.index') }}" class="nav-link @yield('activeListOutputRequest')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar solicitudes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_request')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('output.request.create') }}" class="nav-link @yield('activeCreateOutputRequest')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear solicitudes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('report_output')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('report.materials.outputs') }}" class="nav-link @yield('activeReportMaterialOutput')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Materiales en salidas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('list_invoice')
+                                        <li class="nav-item has-treeview @yield('openInvoice')">
+                                            <a href="#" class="nav-link @yield('activeInvoice')">
+                                                <i class="nav-icon fas fa-file-invoice-dollar"></i>
+                                                <p>
+                                                    <b>FACTURAS</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_invoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('invoice.index')}}" class="nav-link @yield('activeListInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar compras/Servicios</p>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="{{route('report.invoice.finance')}}" class="nav-link @yield('activeReportInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Reporte Facturas</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                {{--@can('create_invoice')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('invoice.create') }}" class="nav-link @yield('activeCreateInvoice')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear compra/Servicios</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan--}}
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('show_service')
+                                        <li class="nav-item has-treeview @yield('openService')">
+                                            <a href="#" class="nav-link @yield('activeService')">
+                                                <i class="nav-icon fas fa-credit-card"></i>
+                                                <p>
+                                                    <b>SERVICIOS</b>
+                                                    <i class="right fas fa-angle-left"></i>
+                                                </p>
+                                            </a>
+                                            <ul class="nav nav-treeview">
+                                                @can('list_orderService')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar órdenes</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
+                        @endhasanyrole
+
+                        @hasanyrole('resources_humans')
+                        @can('enableResourcesHumans_navbar')
+                            <li class="nav-item has-treeview menu-open ">
+
+                                <a href="#" class="nav-link active ">
+                                    <i class="nav-icon"></i>
+                                    <p>
+                                        AREA: RECURSOS HUMANOS
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @can('enableConfig_worker')
+                                        <li class="nav-item has-treeview @yield('openConfigRH')">
+                                            @can('enableConfig_worker')
+                                                <a href="#" class="nav-link @yield('activeConfigRH')">
+                                                    <i class="fas fa-users-cog nav-icon"></i>
+                                                    <p>
+                                                        <b>CONFIG. TRABAJAD.</b>
+                                                        <i class="right fas fa-angle-left"></i>
+                                                    </p>
+                                                </a>
+                                            @endcan
+                                            <ul class="nav nav-treeview">
+                                                @can('contract_worker')
+                                                    <li class="nav-item has-treeview @yield('openContract')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Contratos
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('contract.index') }}" class="nav-link @yield('activeListContract')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar contratos</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('contract.create') }}" class="nav-link @yield('activeCreateContract')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear contrato</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('contract.deleted') }}" class="nav-link @yield('activeListContractDeleted')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Contratos eliminados</p>
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+                                                @can('statusCivil_worker')
+                                                    <li class="nav-item has-treeview @yield('openCivilStatus')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Estado Civil
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('civilStatuses.index') }}" class="nav-link @yield('activeListCivilStatus')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar Estados Civil</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('civilStatuses.create') }}" class="nav-link @yield('activeCreateCivilStatus')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear Estados Civil</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('civilStatuses.deleted') }}" class="nav-link @yield('activeListCivilStatusDeleted')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Estados Civil eliminados</p>
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+                                                @can('function_worker')
+                                                    <li class="nav-item has-treeview @yield('openWorkFunction')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Cargos / Funciones
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('workFunctions.index') }}" class="nav-link @yield('activeListWorkFunction')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar cargos</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('workFunctions.create') }}" class="nav-link @yield('activeCreateWorkFunction')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear cargo</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('workFunctions.deleted') }}" class="nav-link @yield('activeListWorkFunctionDeleted')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Cargos eliminados</p>
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+                                                @can('systemPension_worker')
+                                                    <li class="nav-item has-treeview @yield('openPensionSystem')">
+                                                        <a href="#" class="nav-link">
+                                                            <i class="far fa-circle nav-icon text-success"></i>
+                                                            <p>
+                                                                Sistemas de Pensión
+                                                                <i class="right fas fa-angle-left"></i>
+                                                            </p>
+                                                        </a>
+                                                        <ul class="nav nav-treeview">
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('pensionSystems.index') }}" class="nav-link @yield('activeListPensionSystem')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Listar sistemas</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('pensionSystems.create') }}" class="nav-link @yield('activeCreatePensionSystem')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Crear sistema</p>
+                                                                </a>
+                                                            </li>
+
+                                                            <li class="nav-item">
+                                                                <a href="{{ route('pensionSystems.deleted') }}" class="nav-link @yield('activeListPensionSystemDeleted')">
+                                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                                    <p>Sistemas eliminados</p>
+                                                                </a>
+                                                            </li>
+
+                                                        </ul>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('enable_worker')
+                                        <li class="nav-item has-treeview @yield('openWorker')">
+                                            @can('enable_worker')
+                                                <a href="#" class="nav-link @yield('activeWorker')">
+                                                    <i class="fas fa-user-tie nav-icon"></i>
+                                                    <p>
+                                                        <b>COLABORADORES</b>
+                                                        <i class="right fas fa-angle-left"></i>
+                                                    </p>
+                                                </a>
+                                            @endcan
+                                            <ul class="nav nav-treeview">
+                                                @can('list_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.index')}}" class="nav-link @yield('activeListWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('create_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.create')}}" class="nav-link @yield('activeCreateWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Crear colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('restore_worker')
+                                                    <li class="nav-item">
+                                                        <a href="{{route('worker.enable')}}" class="nav-link @yield('activeEnableWorker')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Habilitar colaboradores</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                    @can('enable_assistance')
+                                        <li class="nav-item has-treeview @yield('openAttendance')">
+                                            @can('enable_assistance')
+                                                <a href="#" class="nav-link @yield('activeAttendance')">
+                                                    <i class="far fa-calendar-check nav-icon"></i>
+                                                    <p>
+                                                        <b>ASISTENCIAS</b>
+                                                        <i class="right fas fa-angle-left"></i>
+                                                    </p>
+                                                </a>
+                                            @endcan
+                                            <ul class="nav nav-treeview">
+                                                @can('register_assistance')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('workingDay.create') }}" class="nav-link @yield('activeListWorkingDay')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Jornadas Trabajo</p>
+                                                        </a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('assistance.index') }}" class="nav-link @yield('activeListAttendance')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Listar asistencia</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                                @can('report_assistance')
+                                                    <li class="nav-item">
+                                                        <a href="{{ route('assistance.show') }}" class="nav-link @yield('activeReportAttendance')">
+                                                            <i class="far fa-circle nav-icon"></i>
+                                                            <p>Reporte asistencia</p>
+                                                        </a>
+                                                    </li>
+                                                @endcan
+                                            </ul>
+                                        </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                        @endcan
+                        @endhasanyrole
+                        {{--@can('access_permission')
                             <li class="nav-header">ADMINISTRADOR</li>
                             <li class="nav-item has-treeview @yield('openAccess')">
 
@@ -4142,14 +7181,14 @@
                                             </a>
                                         </li>
                                     @endcan
-                                    {{--@can('assign_supplier')
+                                    --}}{{--@can('assign_supplier')
                                     <li class="nav-item">
                                         <a href="#" class="nav-link">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Proveedores y materiales</p>
                                         </a>
                                     </li>
-                                    @endcan--}}
+                                    @endcan--}}{{--
                                 </ul>
                             </li>
                         @endcan
@@ -4745,12 +7784,12 @@
                                         </li>
                                     @endcan
                                     @can('create_entryScrap')
-                                        {{--<li class="nav-item">
+                                        --}}{{--<li class="nav-item">
                                             <a href="{{ route('entry.scrap.create') }}" class="nav-link @yield('activeCreateEntryScrap')">
                                                 <i class="far fa-circle nav-icon"></i>
                                                 <p>Crear entrada</p>
                                             </a>
-                                        </li>--}}
+                                        </li>--}}{{--
                                         <li class="nav-item">
                                             <a href="{{ route('entry.create.scrap') }}" class="nav-link @yield('activeCreateScrap')">
                                                 <i class="far fa-circle nav-icon"></i>
@@ -4800,12 +7839,12 @@
                                             <p>Listar Ordenes</p>
                                         </a>
                                     </li>
-                                    {{--<li class="nav-item">
+                                    --}}{{--<li class="nav-item">
                                         <a href="{{ route('order.execution.finish') }}" class="nav-link @yield('activeListOrderExecutionsFinish')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Ordenes Finalizadas</p>
                                         </a>
-                                    </li>--}}
+                                    </li>--}}{{--
                                 </ul>
                             </li>
                         @endcan
@@ -5407,14 +8446,14 @@
                                     </p>
                                 </a>
                                 <ul class="nav nav-treeview">
-                                    {{--@can('list_service')
+                                    --}}{{--@can('list_service')
                                         <li class="nav-item">
                                             <a href="{{route('service.index')}}" class="nav-link @yield('activeListService')">
                                                 <i class="far fa-circle nav-icon"></i>
                                                 <p>Listar servicios</p>
                                             </a>
                                         </li>
-                                    @endcan--}}
+                                    @endcan--}}{{--
                                     @can('list_orderService')
                                         <li class="nav-item">
                                             <a href="{{ route('order.service.index') }}" class="nav-link @yield('activeListOrderService')">
@@ -5425,7 +8464,7 @@
                                     @endcan
                                 </ul>
                             </li>
-                        @endcan
+                        @endcan--}}
                         {{--@can('enable_credit')
                         <li class="nav-header">CRÉDITOS</li>
                         <li class="nav-item has-treeview @yield('openCredit')">

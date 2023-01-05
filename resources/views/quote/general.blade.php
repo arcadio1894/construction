@@ -69,6 +69,7 @@
                 <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end">
             </div>
         </div>
+        @hasanyrole('admin|principal')
         <div class="col-md-4">
             <div class="form-group clearfix">
                 <div class="icheck-primary d-inline">
@@ -91,6 +92,7 @@
         <div class="col-md-2">
             <button type="button" id="btn-export" class="btn btn-block btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
         </div>
+        @endhasanyrole
         <br><br>
     </div>
     <hr>
