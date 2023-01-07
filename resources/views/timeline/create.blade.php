@@ -203,7 +203,7 @@
                                                                                     <div id="body-workers">
                                                                                         @foreach( $task->task_workers as $task_worker )
                                                                                             <div class="row">
-                                                                                                <div class="col-sm-5">
+                                                                                                <div class="col-sm-3">
                                                                                                     <select data-worker class="workers form-control form-control-sm select2" style="width: 100%;">
                                                                                                         <option></option>
                                                                                                         <option value="0">Ninguno</option>
@@ -213,23 +213,42 @@
                                                                                                     </select>
                                                                                                 </div>
 
-                                                                                                <div class="col-sm-3">
+                                                                                                <div class="col-sm-2">
                                                                                                     <div class="form-group row">
-                                                                                                        <label class="col-sm-5 col-form-label">H-H Plan: </label>
-                                                                                                        <div class="col-sm-7">
+                                                                                                        <label class="col-sm-7 col-form-label">H-H Plan: </label>
+                                                                                                        <div class="col-sm-5">
                                                                                                             <input type="number" min="0" step="0.1" value="{{ $task_worker->hours_plan }}" data-hoursplan name="hours_plan" class="form-control form-control-sm ">
                                                                                                         </div>
                                                                                                     </div>
 
                                                                                                 </div>
-                                                                                                <div class="col-sm-3">
+                                                                                                <div class="col-sm-2">
                                                                                                     <div class="form-group row">
-                                                                                                        <label class="col-sm-5 col-form-label">H-H Real: </label>
-                                                                                                        <div class="col-sm-7">
-                                                                                                            <input type="number" min="0" step="0.1" value="{{ $task_worker->hours_real }}" data-hoursreal name="hours_real" class="form-control form-control-sm ">
+                                                                                                        <label class="col-sm-7 col-form-label">H-H Real: </label>
+                                                                                                        <div class="col-sm-5">
+                                                                                                            <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->hours_real }}" data-hoursreal name="hours_real" class="form-control form-control-sm ">
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
+
+                                                                                                <div class="col-sm-2">
+                                                                                                    <div class="form-group row">
+                                                                                                        <label class="col-sm-7 col-form-label">Cant. Plan: </label>
+                                                                                                        <div class="col-sm-5">
+                                                                                                            <input type="number" min="0" step="0.1" value="{{ $task_worker->quantity_plan }}" data-quantityplan name="quantity_plan" class="form-control form-control-sm ">
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                </div>
+                                                                                                <div class="col-sm-2">
+                                                                                                    <div class="form-group row">
+                                                                                                        <label class="col-sm-7 col-form-label">Cant. Real: </label>
+                                                                                                        <div class="col-sm-5">
+                                                                                                            <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->quantity_real }}" data-quantityreal name="quantity_real" class="form-control form-control-sm ">
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
                                                                                                 <div class="col-sm-1">
                                                                                                     <div class="form-group row">
                                                                                                         <button type="button" data-taskworkerdelete class="btn btn-sm btn-outline-danger btn-block" data-toggle="tooltip" data-placement="top" title="Quitar" ><i class="fas fa-trash"></i>
@@ -511,7 +530,7 @@
     <template id="template-worker">
 
         <div class="row">
-            <div class="col-sm-5">
+            <div class="col-sm-3">
                 <select data-worker class="workers form-control form-control-sm select2" style="width: 100%;">
                     <option></option>
                     <option value="0">Ninguno</option>
@@ -521,20 +540,37 @@
                 </select>
             </div>
 
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">H-H Plan: </label>
-                    <div class="col-sm-7">
+                    <label class="col-sm-7 col-form-label">H-H Plan: </label>
+                    <div class="col-sm-5">
                         <input type="number" min="0" step="0.1" data-hoursplan name="hours_plan" class="form-control form-control-sm ">
                     </div>
                 </div>
 
             </div>
-            <div class="col-sm-3">
+            <div class="col-sm-2">
                 <div class="form-group row">
-                    <label class="col-sm-5 col-form-label">H-H Real: </label>
-                    <div class="col-sm-7">
-                        <input type="number" min="0" step="0.1" data-hoursreal name="hours_real" class="form-control form-control-sm ">
+                    <label class="col-sm-7 col-form-label">H-H Real: </label>
+                    <div class="col-sm-5">
+                        <input type="number" readonly min="0" step="0.1" data-hoursreal name="hours_real" class="form-control form-control-sm ">
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label">Cant. Plan: </label>
+                    <div class="col-sm-5">
+                        <input type="number" min="0" step="0.1" data-quantityplan name="quantity_plan" class="form-control form-control-sm ">
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group row">
+                    <label class="col-sm-7 col-form-label">Cant. Real: </label>
+                    <div class="col-sm-5">
+                        <input type="number" readonly min="0" step="0.1" data-quantityreal name="quantity_real" class="form-control form-control-sm ">
                     </div>
                 </div>
             </div>

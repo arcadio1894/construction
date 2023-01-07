@@ -79,12 +79,9 @@
         <th width="110px" style="background-color: #1c3c80; font-size: 13px; color: white">ETAPA</th>
         <th width="230px" style="word-wrap: break-word; background-color: #1c3c80; font-size: 13px; color: white">DESCRIPCIÓN DE TAREA</th>
         <th width="90px" style="background-color: #1c3c80; font-size: 13px; color: white">RESPONSABLE</th>
-        <th width="60px" style="background-color: #1c3c80; font-size: 13px; color: white">AVANCE</th>
         <th width="80px" style="background-color: #1c3c80; font-size: 13px; color: white">EJECUT.</th>
         <th width="60px" style="background-color: #1c3c80; font-size: 13px;word-wrap: break-word; color: white">H. PLAN</th>
-        <th width="60px" style="word-wrap: break-word; background-color: #1c3c80; font-size: 13px; color: white">H. REAL</th>
         <th width="60px" style="background-color: #1c3c80; font-size: 13px;word-wrap: break-word; color: white">C. PLAN</th>
-        <th width="60px" style="word-wrap: break-word; background-color: #1c3c80; font-size: 13px; color: white">C. REAL</th>
     </tr>
     </thead>
     <tbody>
@@ -96,12 +93,9 @@
                 <td width="110px" style="word-wrap: break-word;border-left:1px solid #1c3c80; border-right:1px solid #1c3c80">{{ $tasks[$i]['phase'] }}</td>
                 <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                 <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                 <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
             </tr>
         @else
             @if ( $tasks[$i]['quote'] == $tasks[$i-1]['quote'] )
@@ -114,12 +108,9 @@
                                 <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80"></td>
                                 <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80"></td>
                                 <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80"></td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80"></td>
                                 <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                             </tr>
                         @else
                             <tr>
@@ -128,12 +119,9 @@
                                 <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80"></td>
                                 <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80"></td>
                                 <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80"></td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80"></td>
                                 <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                             </tr>
                         @endif
 
@@ -145,12 +133,9 @@
                                 <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80"></td>
                                 <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                                 <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                                 <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                             </tr>
                         @else
                             <tr>
@@ -159,12 +144,9 @@
                                 <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80"></td>
                                 <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                                 <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                                 <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                                 <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                                <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                             </tr>
                         @endif
 
@@ -178,12 +160,9 @@
                             <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['phase'] }}</td>
                             <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                             <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                             <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                             <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                             <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                         </tr>
                     @else
                         <tr>
@@ -192,12 +171,9 @@
                             <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['phase'] }}</td>
                             <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                             <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                             <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                             <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                             <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                            <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-bottom:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                         </tr>
                     @endif
 
@@ -211,12 +187,9 @@
                         <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['phase'] }}</td>
                         <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                         <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                         <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                         <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                         <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                     </tr>
                 @else
                     <tr>
@@ -225,12 +198,9 @@
                         <td width="110px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['phase'] }}</td>
                         <td width="230px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['task'] }}</td>
                         <td width="90px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['performer'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80">{{ $tasks[$i]['progress'] }}</td>
                         <td width="80px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['worker'] }}</td>
                         <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_plan'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['hours_real'] }}</td>
                         <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_plan'] }}</td>
-                        <td width="60px" style="word-wrap: break-word; border-left:1px solid #1c3c80; border-right:1px solid #1c3c80; border-top:1px solid #1c3c80; border-bottom:1px solid #1c3c80">{{ $tasks[$i]['quantity_real'] }}</td>
                     </tr>
                 @endif
 

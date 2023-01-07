@@ -1206,8 +1206,14 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:progress_timeline');
         Route::post('/save/progress/task/{id}', 'TimelineController@saveProgressTask');
         Route::post('/assign/task/{task_id}/timeline/{timeline_id}', 'TimelineController@assignTaskToTimeline');
-        Route::get('/descargar/excel/timeline/{id_timeline}', 'TimelineController@downloadTimeline')
-            ->name('excel.timeline')
+        Route::get('/descargar/excel/timeline/operator/{id_timeline}', 'TimelineController@downloadTimelineOperator')
+            ->name('excel.operator.timeline')
+            ->middleware('permission:download_timeline');
+        Route::get('/descargar/excel/timeline/supervisor/{id_timeline}', 'TimelineController@downloadTimelineSupervisor')
+            ->name('excel.supervisor.timeline')
+            ->middleware('permission:download_timeline');
+        Route::get('/descargar/excel/timeline/principal/{id_timeline}', 'TimelineController@downloadTimelinePrincipal')
+            ->name('excel.principal.timeline')
             ->middleware('permission:download_timeline');
         Route::get('/get/info/work/{id}', 'TimelineController@getInfoWork');
 

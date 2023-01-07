@@ -87,6 +87,16 @@ $(document).ready(function () {
         card.removeClass('ponto');
         card.addClass('class-edit');
     });
+    $(document).on('input', '[data-quantityplan]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().prev();
+        card.removeClass('ponto');
+        card.addClass('class-edit');
+    });
+    $(document).on('input', '[data-quantityreal]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().prev();
+        card.removeClass('ponto');
+        card.addClass('class-edit');
+    });
 
     $('#lostActivity').on('click', getLostActivities);
     $modalActivities = $('#modalActivities');
@@ -356,6 +366,8 @@ function saveTask() {
     var worker = [];
     var hoursplan = [];
     var hoursreal = [];
+    var quantityplan = [];
+    var quantityreal = [];
 
     collaborators.each(function(e){
         $(this).find('[data-worker]').each(function(){
@@ -367,13 +379,19 @@ function saveTask() {
         $(this).find('[data-hoursreal]').each(function(){
             hoursreal.push($(this).val());
         });
+        $(this).find('[data-quantityplan]').each(function(){
+            quantityplan.push($(this).val());
+        });
+        $(this).find('[data-quantityreal]').each(function(){
+            quantityreal.push($(this).val());
+        });
 
     });
 
     var collaboratorsArray = [];
 
     for (let i = 0; i < worker.length; i++) {
-        collaboratorsArray.push({'worker':worker[i], 'hoursplan':parseFloat(hoursplan[i]), 'hoursreal':parseFloat(hoursreal[i])});
+        collaboratorsArray.push({'worker':worker[i], 'hoursplan':parseFloat(hoursplan[i]), 'hoursreal':parseFloat(hoursreal[i]), 'quantityplan':parseFloat(quantityplan[i]), 'quantityreal':parseFloat(quantityreal[i])});
     }
 
     /*console.log(activity_id);

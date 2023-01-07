@@ -364,6 +364,8 @@ class TimelineController extends Controller
                         'worker_id' => (int)$worker['worker'],
                         'hours_plan' => (float) $worker['hoursplan'],
                         'hours_real' => (float) $worker['hoursreal'],
+                        'quantity_plan' => (float) $worker['quantityplan'],
+                        'quantity_real' => (float) $worker['quantityreal'],
                     ]);
                 }
 
@@ -403,7 +405,7 @@ class TimelineController extends Controller
                 $activity_parent->save();
             }
 
-            $activity_workers = TaskWorker::where('task_id', $activity->id)->get();
+            $activity_workers = saveProgressTask::where('task_id', $activity->id)->get();
 
             if ( count($activity_workers) > 0 )
             {
@@ -564,8 +566,8 @@ class TimelineController extends Controller
         $fecha_actual = Carbon::now('America/Lima');
         $fecha_max = $timeline->date->addHours(7);
         $fecha_min = $timeline->date->subHours(23);
-        //$active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
-        $active_edit = true;
+        $active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
+        //$active_edit = true;
         //dump('Actual -> '.$fecha_actual);
         //dump('Maxima -> '.$fecha_max);
         //dump('Minima -> '.$fecha_min);
@@ -621,12 +623,25 @@ class TimelineController extends Controller
                 // Ahora creamos los trabajadores
                 $workers = $task['workers'];
 
+                $quantityPlan = 0;
+                $quantityReal = 0;
                 foreach ( $workers as $worker )
                 {
                     $task_worker = TaskWorker::where('task_id', $tarea->id)
                         ->where('worker_id', $worker['worker'])->first();
                     $task_worker->hours_real = ($worker['hoursreal'] == '') ? 0: (float) $worker['hoursreal'];
+                    $task_worker->quantity_real = ($worker['quantityreal'] == '') ? 0: (float) $worker['quantityreal'];
                     $task_worker->save();
+
+                    $quantityPlan = $quantityPlan + (($worker['quantityplan'] == '') ? 0: (float) $worker['quantityplan']);
+                    $quantityReal = $quantityReal + (($worker['quantityreal'] == '') ? 0: (float) $worker['quantityreal']);
+                }
+
+                $progress = round((($quantityReal / $quantityPlan) * 100), 2);
+
+                if ( $progress > 100 )
+                {
+                    return response()->json(['message' => 'No puede registrar progresos mas de 100%'], 422);
                 }
 
             }
@@ -636,7 +651,7 @@ class TimelineController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        return response()->json(['message' => 'Avance registrado con éxito.'], 200);
+        return response()->json(['message' => 'Avance registrado con éxito.', 'progress' => $progress], 200);
 
     }
 
@@ -779,7 +794,7 @@ class TimelineController extends Controller
 
     }
 
-    public function downloadTimeline( $timeline_id )
+    public function downloadTimelinePrincipal( $timeline_id )
     {
         $timeline = Timeline::with(['works' => function ($query) {
             $query->with('quote')
@@ -824,6 +839,8 @@ class TimelineController extends Controller
                         'worker' => $task_worker->worker->first_name.' '.$task_worker->worker->last_name,
                         'hours_plan' => ($task_worker->hours_plan==0 || $task_worker->hours_plan==null || $task_worker->hours_plan=='') ? '': $task_worker->hours_plan,
                         'hours_real' => ($task_worker->hours_real==0 || $task_worker->hours_real==null || $task_worker->hours_real=='') ? '': $task_worker->hours_real,
+                        'quantity_plan' => ($task_worker->quantity_plan==0 || $task_worker->quantity_plan==null || $task_worker->quantity_plan=='') ? '': $task_worker->quantity_plan,
+                        'quantity_real' => ($task_worker->quantity_real==0 || $task_worker->quantity_real==null || $task_worker->quantity_real=='') ? '': $task_worker->quantity_real,
 
                     ] );
                 }
@@ -848,7 +865,8 @@ class TimelineController extends Controller
                     'worker' => '',
                     'hours_plan' => '',
                     'hours_real' => '',
-
+                    'quantity_plan' => '',
+                    'quantity_real' => '',
                 ] );
 
             }
@@ -874,6 +892,8 @@ class TimelineController extends Controller
                     'worker' => $arrayTasks[$i]['worker'],
                     'hours_plan' => $arrayTasks[$i]['hours_plan'],
                     'hours_real' => $arrayTasks[$i]['hours_real'],
+                    'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                    'quantity_real' => $arrayTasks[$i]['quantity_real'],
                 ]);
                 $id = $id +1;
             } else {
@@ -889,6 +909,8 @@ class TimelineController extends Controller
                         'worker' => $arrayTasks[$i]['worker'],
                         'hours_plan' => $arrayTasks[$i]['hours_plan'],
                         'hours_real' => $arrayTasks[$i]['hours_real'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                        'quantity_real' => $arrayTasks[$i]['quantity_real'],
                     ]);
 
                 } else {
@@ -902,6 +924,9 @@ class TimelineController extends Controller
                         'worker' => $arrayTasks[$i]['worker'],
                         'hours_plan' => $arrayTasks[$i]['hours_plan'],
                         'hours_real' => $arrayTasks[$i]['hours_real'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                        'quantity_real' => $arrayTasks[$i]['quantity_real'],
+
                     ]);
                     $id = $id +1;
                 }
@@ -928,6 +953,325 @@ class TimelineController extends Controller
         //return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
 
         $view = view('exports.timelineExcel', compact('timeline', 'tasks', 'title'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream($name);
+    }
+
+    public function downloadTimelineSupervisor( $timeline_id )
+    {
+        $timeline = Timeline::with(['works' => function ($query) {
+            $query->with('quote')
+                ->with(['phases' => function ($query) {
+                    $query->with(['tasks' => function ($query) {
+                        $query->with('performer');
+                        $query->with(['task_workers' => function ($query) {
+                            $query->with('worker');
+                        }]);
+                    }]);
+                }]);
+        }])
+            ->find($timeline_id);
+
+        $arrayTasks = [];
+        foreach ( $timeline->tasks as $task )
+        {
+            $workers = count($task->task_workers);
+            if ( $workers > 0 )
+            {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
+
+
+                foreach ( $task->task_workers as $task_worker )
+                {
+                    array_push( $arrayTasks, [
+                        'quote' => $task->work->description_quote,
+                        'phase' => $task->phase->description,
+                        'task' => $task->activity,
+                        'performer' => $name_supervisor,
+                        'worker' => $task_worker->worker->first_name.' '.$task_worker->worker->last_name,
+                        'hours_plan' => ($task_worker->hours_plan==0 || $task_worker->hours_plan==null || $task_worker->hours_plan=='') ? '': $task_worker->hours_plan,
+                        'hours_real' => ($task_worker->hours_real==0 || $task_worker->hours_real==null || $task_worker->hours_real=='') ? '': $task_worker->hours_real,
+                        'quantity_plan' => ($task_worker->quantity_plan==0 || $task_worker->quantity_plan==null || $task_worker->quantity_plan=='') ? '': $task_worker->quantity_plan,
+                        'quantity_real' => ($task_worker->quantity_real==0 || $task_worker->quantity_real==null || $task_worker->quantity_real=='') ? '': $task_worker->quantity_real,
+
+                    ] );
+                }
+            } else {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
+                array_push( $arrayTasks, [
+                    'quote' => $task->work->description_quote,
+                    'phase' => $task->phase->description,
+                    'task' => $task->activity,
+                    'performer' => $name_supervisor,
+                    'worker' => '',
+                    'hours_plan' => '',
+                    'hours_real' => '',
+                    'quantity_plan' => '',
+                    'quantity_real' => '',
+                ] );
+
+            }
+
+
+        }
+
+        $tasks = [];
+
+        $id = 1;
+
+        for ( $i = 0; $i < count( $arrayTasks ); $i++ )
+        {
+            if ( $i == 0 )
+            {
+                array_push($tasks, [
+                    'id' => $id,
+                    'quote' => $arrayTasks[$i]['quote'],
+                    'phase' => $arrayTasks[$i]['phase'],
+                    'task' => $arrayTasks[$i]['task'],
+                    'performer' => $arrayTasks[$i]['performer'],
+                    'worker' => $arrayTasks[$i]['worker'],
+                    'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                    'hours_real' => $arrayTasks[$i]['hours_real'],
+                    'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                    'quantity_real' => $arrayTasks[$i]['quantity_real'],
+                ]);
+                $id = $id +1;
+            } else {
+                if ( $arrayTasks[$i]['quote'] == $arrayTasks[$i-1]['quote'] )
+                {
+                    array_push($tasks, [
+                        'id' => '',
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'hours_real' => $arrayTasks[$i]['hours_real'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                        'quantity_real' => $arrayTasks[$i]['quantity_real'],
+                    ]);
+
+                } else {
+                    array_push($tasks, [
+                        'id' => $id,
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'hours_real' => $arrayTasks[$i]['hours_real'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                        'quantity_real' => $arrayTasks[$i]['quantity_real'],
+
+                    ]);
+                    $id = $id +1;
+                }
+            }
+
+        }
+
+        //dd($tasks);
+
+        /*for ( $i = 0; $i < count( $tasks ); $i++ )
+        {
+            if ( $i != 0 )
+            {
+                dump($tasks[$i]['quote'] . ' ' . $tasks[$i-1]['quote']);
+            } else {
+                dump($tasks[$i]['quote']);
+            }
+
+        }
+        dd($tasks);*/
+        //dd($tasks);
+        $title = 'PROGRAMACION DE ACTIVIDADES: '.$timeline->date->format('d-m-Y');
+
+        //return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
+
+        $view = view('exports.timelineExcelSupervisor', compact('timeline', 'tasks', 'title'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Cronograma_' . $timeline->date->format('d-m-Y') . '.pdf';
+
+        $pdf->setPaper('A4', 'landscape');
+
+        return $pdf->stream($name);
+    }
+
+    public function downloadTimelineOperator( $timeline_id )
+    {
+        $timeline = Timeline::with(['works' => function ($query) {
+            $query->with('quote')
+                ->with(['phases' => function ($query) {
+                    $query->with(['tasks' => function ($query) {
+                        $query->with('performer');
+                        $query->with(['task_workers' => function ($query) {
+                            $query->with('worker');
+                        }]);
+                    }]);
+                }]);
+        }])
+            ->find($timeline_id);
+
+        $arrayTasks = [];
+        foreach ( $timeline->tasks as $task )
+        {
+            $workers = count($task->task_workers);
+            if ( $workers > 0 )
+            {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
+
+
+                foreach ( $task->task_workers as $task_worker )
+                {
+                    array_push( $arrayTasks, [
+                        'quote' => $task->work->description_quote,
+                        'phase' => $task->phase->description,
+                        'task' => $task->activity,
+                        'performer' => $name_supervisor,
+                        'worker' => $task_worker->worker->first_name.' '.$task_worker->worker->last_name,
+                        'hours_plan' => ($task_worker->hours_plan==0 || $task_worker->hours_plan==null || $task_worker->hours_plan=='') ? '': $task_worker->hours_plan,
+                        'quantity_plan' => ($task_worker->quantity_plan==0 || $task_worker->quantity_plan==null || $task_worker->quantity_plan=='') ? '': $task_worker->quantity_plan,
+
+                    ] );
+                }
+            } else {
+                $name_supervisor = 'No tiene';
+                if ( $task->performer_id == null )
+                {
+                    // Revisar el supervisor general
+                    if ( $task->work->supervisor_id != null )
+                    {
+                        $name_supervisor = $task->work->supervisor->first_name.' '.$task->work->supervisor->last_name;
+                    }
+                } else {
+                    $name_supervisor = $task->performer->first_name.' '.$task->performer->last_name;
+                }
+                array_push( $arrayTasks, [
+                    'quote' => $task->work->description_quote,
+                    'phase' => $task->phase->description,
+                    'task' => $task->activity,
+                    'performer' => $name_supervisor,
+                    'worker' => '',
+                    'hours_plan' => '',
+                    'quantity_plan' => '',
+                ] );
+
+            }
+
+
+        }
+
+        $tasks = [];
+
+        $id = 1;
+
+        for ( $i = 0; $i < count( $arrayTasks ); $i++ )
+        {
+            if ( $i == 0 )
+            {
+                array_push($tasks, [
+                    'id' => $id,
+                    'quote' => $arrayTasks[$i]['quote'],
+                    'phase' => $arrayTasks[$i]['phase'],
+                    'task' => $arrayTasks[$i]['task'],
+                    'performer' => $arrayTasks[$i]['performer'],
+                    'worker' => $arrayTasks[$i]['worker'],
+                    'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                    'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+
+                ]);
+                $id = $id +1;
+            } else {
+                if ( $arrayTasks[$i]['quote'] == $arrayTasks[$i-1]['quote'] )
+                {
+                    array_push($tasks, [
+                        'id' => '',
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+                    ]);
+
+                } else {
+                    array_push($tasks, [
+                        'id' => $id,
+                        'quote' => $arrayTasks[$i]['quote'],
+                        'phase' => $arrayTasks[$i]['phase'],
+                        'task' => $arrayTasks[$i]['task'],
+                        'performer' => $arrayTasks[$i]['performer'],
+                        'worker' => $arrayTasks[$i]['worker'],
+                        'hours_plan' => $arrayTasks[$i]['hours_plan'],
+                        'quantity_plan' => $arrayTasks[$i]['quantity_plan'],
+
+                    ]);
+                    $id = $id +1;
+                }
+            }
+
+        }
+
+        //dd($tasks);
+
+        /*for ( $i = 0; $i < count( $tasks ); $i++ )
+        {
+            if ( $i != 0 )
+            {
+                dump($tasks[$i]['quote'] . ' ' . $tasks[$i-1]['quote']);
+            } else {
+                dump($tasks[$i]['quote']);
+            }
+
+        }
+        dd($tasks);*/
+        //dd($tasks);
+        $title = 'PROGRAMACION DE ACTIVIDADES: '.$timeline->date->format('d-m-Y');
+
+        //return Excel::download(new TimelinesExports($title, $tasks), 'cronogramas.xlsx');
+
+        $view = view('exports.timelineExcelOperator', compact('timeline', 'tasks', 'title'));
 
         $pdf = PDF::loadHTML($view);
 

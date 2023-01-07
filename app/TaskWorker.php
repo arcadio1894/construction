@@ -15,6 +15,8 @@ class TaskWorker extends Model
         'worker_id',
         'hours_plan',
         'hours_real',
+        'quantity_plan',
+        'quantity_real',
     ];
 
     public function task()

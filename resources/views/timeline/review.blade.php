@@ -82,7 +82,30 @@
     @endif
     @endcan
     @can('download_timeline')
-    <a href="{{ route('excel.timeline', $timeline->id) }}" target="_blank" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>
+        {{--<div class="btn-group float-right">
+            <button type="button" class="btn btn-dark btn-sm"><i class="fas fa-file-pdf"></i> Descargar cronograma</button>
+            <button type="button" class="btn btn-dark btn-sm dropdown-toggle dropdown-hover dropdown-icon" data-toggle="dropdown">
+                <span class="sr-only">Toggle Dropdown</span>
+                <div class="dropdown-menu" role="menu">
+                    <a class="dropdown-item" href="{{ route('excel.operator.timeline', $timeline->id) }}" target="_blank">Descargar Operario</a>
+                    <a class="dropdown-item" href="{{ route('excel.supervisor.timeline', $timeline->id) }}" target="_blank">Descargar Supervisor</a>
+                    <a class="dropdown-item" href="{{ route('excel.principal.timeline', $timeline->id) }}" target="_blank">Descargar Gerencia</a>
+                </div>
+            </button>
+        </div>--}}
+        <div class=" float-right">
+            <button type="button" class="btn btn-dark btn-sm dropdown-toggle" data-toggle="dropdown">
+                <i class="fas fa-file-pdf"></i> Descargar cronograma
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="{{ route('excel.operator.timeline', $timeline->id) }}" target="_blank">Descargar Operario</a>
+                <a class="dropdown-item" href="{{ route('excel.supervisor.timeline', $timeline->id) }}" target="_blank">Descargar Supervisor</a>
+                @hasanyrole('admin|principal')
+                <a class="dropdown-item" href="{{ route('excel.principal.timeline', $timeline->id) }}" target="_blank">Descargar Gerencia</a>
+                @endhasanyrole
+            </div>
+        </div>
+    {{--<a href="" target="_blank" class="btn btn-sm btn-dark btn-sm float-right" > <i class="fas fa-file-pdf"></i> Descargar cronograma </a>--}}
     @endcan
     @can('progress_timeline')
     <a href="{{ route('save.progress', $timeline->id) }}" class="btn btn-sm btn-warning btn-sm float-right" > <i class="far fa-edit"></i> Registrar avances </a>
@@ -173,29 +196,45 @@
                                                                                     <div id="body-workers">
                                                                                         @foreach( $task->task_workers as $task_worker )
                                                                                             <div class="row">
-                                                                                                <div class="col-sm-6">
+                                                                                                <div class="col-sm-4">
                                                                                                     <input type="text" class="form-control form-control-sm" value="{{ ($task_worker->worker_id == null) ? 'Ninguno': $task_worker->worker->first_name . ' ' . $task_worker->worker->last_name}}" readonly>
 
                                                                                                 </div>
 
-                                                                                                <div class="col-sm-3">
+                                                                                                <div class="col-sm-2">
                                                                                                     <div class="form-group row">
-                                                                                                        <label class="col-sm-5 col-form-label">H-H Plan: </label>
-                                                                                                        <div class="col-sm-7">
+                                                                                                        <label class="col-sm-7 col-form-label">H-H Plan: </label>
+                                                                                                        <div class="col-sm-5">
                                                                                                             <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->hours_plan }}" data-hoursplan name="hours_plan" class="form-control form-control-sm ">
                                                                                                         </div>
                                                                                                     </div>
 
                                                                                                 </div>
-                                                                                                <div class="col-sm-3">
+                                                                                                <div class="col-sm-2">
                                                                                                     <div class="form-group row">
-                                                                                                        <label class="col-sm-5 col-form-label">H-H Real: </label>
-                                                                                                        <div class="col-sm-7">
+                                                                                                        <label class="col-sm-7 col-form-label">H-H Real: </label>
+                                                                                                        <div class="col-sm-5">
                                                                                                             <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->hours_real }}" data-hoursreal name="hours_real" class="form-control form-control-sm ">
                                                                                                         </div>
                                                                                                     </div>
                                                                                                 </div>
+                                                                                                <div class="col-sm-2">
+                                                                                                    <div class="form-group row">
+                                                                                                        <label class="col-sm-7 col-form-label">Cant. Plan: </label>
+                                                                                                        <div class="col-sm-5">
+                                                                                                            <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->quantity_plan }}" data-quantityplan name="quantity_plan" class="form-control form-control-sm ">
+                                                                                                        </div>
+                                                                                                    </div>
 
+                                                                                                </div>
+                                                                                                <div class="col-sm-2">
+                                                                                                    <div class="form-group row">
+                                                                                                        <label class="col-sm-7 col-form-label">Cant. Real: </label>
+                                                                                                        <div class="col-sm-5">
+                                                                                                            <input type="number" readonly min="0" step="0.1" value="{{ $task_worker->quantity_real }}" data-quantityreal name="quantity_real" class="form-control form-control-sm ">
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
                                                                                             </div>
                                                                                         @endforeach
                                                                                     </div>
