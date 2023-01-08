@@ -1305,6 +1305,36 @@ Route::middleware('auth')->group(function (){
             ->name('civilStatuses.restore')
             ->middleware('permission:statusCivil_worker');
 
+        // CRUD Parentescos
+        Route::get('/all/relationships', 'RelationshipController@getAllRelationships')
+            ->middleware('permission:relationship_worker');
+        Route::get('parentescos', 'RelationshipController@index')
+            ->name('relationship.index')
+            ->middleware('permission:relationship_worker');
+        Route::get('crear/parentesco', 'RelationshipController@create')
+            ->name('relationship.create')
+            ->middleware('permission:relationship_worker');
+        Route::post('relationship/store', 'RelationshipController@store')
+            ->name('relationship.store')
+            ->middleware('permission:relationship_worker');
+        Route::get('/editar/parentesco/{id}', 'RelationshipController@edit')
+            ->name('relationship.edit')
+            ->middleware('permission:relationship_worker');
+        Route::post('relationship/update', 'RelationshipController@update')
+            ->name('relationship.update')
+            ->middleware('permission:relationship_worker');
+        Route::post('relationship/destroy', 'RelationshipController@destroy')
+            ->name('relationship.destroy')
+            ->middleware('permission:relationship_worker');
+        Route::get('/all/relationship/deleted', 'RelationshipController@getCivilStatusesDeleted')
+            ->middleware('permission:relationship_worker');
+        Route::get('parentescos/eliminados', 'RelationshipController@indexDeleted')
+            ->name('relationship.deleted')
+            ->middleware('permission:relationship_worker');
+        Route::post('relationship/restore', 'RelationshipController@restore')
+            ->name('relationship.restore')
+            ->middleware('permission:relationship_worker');
+
         // CRUD Cargos
         Route::get('/all/workFunctions', 'WorkFunctionController@getAllWorkFunctions')
             ->middleware('permission:function_worker');

@@ -1379,6 +1379,34 @@
                                 </ul>
                             </li>
                             @endcan
+                            @can('relationship_worker')
+                                <li class="nav-item has-treeview @yield('openRelationships')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Parentescos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('relationship.index') }}" class="nav-link @yield('activeListRelationships')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar Parentesco</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('relationship.create') }}" class="nav-link @yield('activeCreateRelationships')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear Parentesco</p>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('statusCivil_worker')
                             <li class="nav-item has-treeview @yield('openCivilStatus')">
                                 <a href="#" class="nav-link">

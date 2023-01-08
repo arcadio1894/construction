@@ -141,5 +141,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/contract/create.js') }}"></script>
+    <script src="{{ asset('js/contract/edit.js') }}"></script>
 @endsection

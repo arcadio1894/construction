@@ -64,5 +64,10 @@ class Worker extends Model
         return $this->belongsTo('App\PensionSystem');
     }
 
+    public function emergency_contacts()
+    {
+        return $this->hasMany('App\EmergencyContact');
+    }
+
     protected $dates = ['deleted_at', 'birthplace', 'admission_date', 'termination_date'];
 }

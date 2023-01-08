@@ -75,9 +75,8 @@ class WorkerController extends Controller
         $civil_statuses = CivilStatus::select('id', 'description')->get();
         $work_functions = WorkFunction::select('id', 'description')->get();
         $pension_systems = PensionSystem::select('id', 'description', 'percentage')->get();
-        $contracts = Contract::select('id', 'code')->get();
 
-        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'contracts'));
+        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems'));
     }
 
     public function store(Request $request)

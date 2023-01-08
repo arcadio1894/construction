@@ -207,23 +207,10 @@
                                 </select>
                             </div>
                             <div class="col-sm-6">
-                                <label for="contract">Contrato </label>
-                                <select id="contract" name="contract" class="form-control select2" style="width: 100%;">
-                                    <option></option>
-                                    <option value="0">NINGUNO</option>
-                                    @foreach( $contracts as $contract )
-                                        <option value="{{ $contract->id }}">{{ $contract->code }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-sm-6">
                                 <label for="num_children">N° de hijos </label>
                                 <input type="number" id="num_children" name="num_children" class="form-control" placeholder="0" min="0" value="0" step="1">
                             </div>
+
                         </div>
 
                     </div>
@@ -233,7 +220,7 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-12">
+            <div class="col-md-6">
                 <div class="card card-primary">
                     <div class="card-header">
                         <h3 class="card-title">Datos para RR.HH.</h3>
@@ -248,35 +235,17 @@
 
                             <input type="hidden" id="value_assign_family" value="{{ $value_assign_family }}">
 
-                            <div class="col-md-3">
-                                <label for="assign_family">Asignación familiar </label>
-                                <input type="number" id="assign_family" name="assign_family" readonly class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
-                            </div>
-
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="daily_salary">Salario Diario </label>
                                 <input type="number" id="daily_salary" name="daily_salary" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
                             </div>
-                            <div class="col-md-3">
-                                <label for="pay_daily">Pago diario </label>
-                                <input type="number" id="pay_daily" readonly name="pay_daily" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="monthly_salary">Salario Mensual </label>
                                 <input type="number" id="monthly_salary" name="monthly_salary" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-3">
-                                <label for="essalud">ESSALUD</label>
-                                <div class="input-group">
-                                    <input type="number" readonly id="essalud" name="essalud" class="form-control" placeholder="0.00" min="0" value="{{ $value_essalud }}" step="0.01" >
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="pension_system">Sistema Pensión </label>
                                 <select id="pension_system" name="pension_system" class="form-control select2 pension_system" style="width: 100%;">
                                     <option></option>
@@ -286,16 +255,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            <div class="col-md-3">
-                                <label for="percentage_system_pension">% Sist. Pension </label>
-                                <div class="input-group">
-                                    <input type="number" readonly id="percentage_system_pension" name="percentage_system_pension" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
-                                    <div class="input-group-append">
-                                        <span class="input-group-text">%</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="pension">Pension Alimentos </label>
                                 <div class="input-group">
                                     <input type="number" id="pension" name="pension" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
@@ -306,11 +266,11 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="five_category">Quinta Categoría </label>
                                 <input type="number" id="five_category" name="five_category" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-6">
                                 <label for="observation">Observación </label>
                                 <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                             </div>
@@ -321,8 +281,61 @@
                 </div>
                 <!-- /.card -->
             </div>
+            <div class="col-md-6">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Contactos de Emergencia</h3>
 
+                        <div class="card-tools">
+                            <button type="button" id="newContact" class="btn btn-xs btn-warning" > <i class="fas fa-phone-volume"></i> Agregar Contacto </button>
+
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+
+                        </div>
+                    </div>
+                    <div class="card-body" id="body-contacts">
+                        {{--<div class="callout callout-info">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <label for="work_function">Nombre </label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
+                                        </div>
+                                        <input type="text" data-contactname name="contacts[]" class="form-control" placeholder="Nombre" value="">
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="work_function">Parentesco </label>
+                                        <select name="relations[]" class="relation form-control select2" style="width: 100%;">
+                                            <option></option>
+                                            @foreach( $work_functions as $function )
+                                                <option value="{{ $function->id }}">{{ $function->description }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="work_function">Teléfono </label>
+                                        <input type="text" data-phone name="phones[]" class="form-control" placeholder="000000000" value="">
+
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>--}}
+
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
         </div>
+
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
@@ -331,6 +344,42 @@
         </div>
         <!-- /.card-footer -->
     </form>
+
+    <template id="template-contact">
+        <div class="callout callout-info">
+            <div class="row">
+                <div class="col-md-12">
+                    <label for="work_function">Nombre </label>
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
+                        </div>
+                        <input type="text" data-contactname name="contacts[]" class="form-control" placeholder="Nombre" value="">
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="work_function">Parentesco </label>
+                        <select name="relations[]" class="relation form-control select2" style="width: 100%;">
+                            <option></option>
+                            @foreach( $work_functions as $function )
+                                <option value="{{ $function->id }}">{{ $function->description }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="work_function">Teléfono </label>
+                        <input type="text" data-phone name="phones[]" class="form-control" placeholder="000000000" value="">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </template>
 @endsection
 
 @section('plugins')
@@ -363,8 +412,8 @@
             $('#civil_status').select2({
                 placeholder: "Selecione un estado civill",
             });
-            $('#contract').select2({
-                placeholder: "Selecione un contrato",
+            $('.relation').select2({
+                placeholder: "Selecione un parentesco",
             });
 
             $("input[data-bootstrap-switch]").each(function(){
