@@ -57,7 +57,20 @@ class AssistanceController extends Controller
                 'date_assistance' => $date_assistance
             ]);
 
-            //
+            // Creamos los detalles de la asistencia
+            $workers = Worker::where('enable', true)
+                ->get();
+
+            foreach ( $workers as $worker) {
+                $assistance_detail = AssistanceDetail::create([
+                    'date_assistance' => $assistance2->date_assistance,
+                    'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:null,
+                    'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:null,
+                    'worker_id' => $worker->id,
+                    'assistance_id' => $assistance2->id,
+                    'working_day_id' => $worker->working_day_id
+                ]);
+            }
 
             return response()->json([
                 'message' => 'Se ha creado la asistencia y redireccionando ... ',
