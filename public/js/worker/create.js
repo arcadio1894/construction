@@ -64,15 +64,21 @@ $(document).ready(function () {
     });
 
     $formCreate = $('#formCreate');
-    $("#btn-submit").on("click", storeQuote);
+    $("#btn-submit").on("click", storeWorker);
 
     $('#newContact').on('click', addNewContact);
+
+    $(document).on('click', '[data-deletecontact]', deleteContact);
 
 });
 
 var $formCreate;
 
-function storeQuote() {
+function deleteContact() {
+    $(this).parent().parent().parent().remove();
+}
+
+function storeWorker() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
 
@@ -109,7 +115,7 @@ function storeQuote() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.reload();
+                //location.reload();
             }, 2000 )
         },
         error: function (data) {

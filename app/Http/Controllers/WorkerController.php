@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\CivilStatus;
 use App\Contract;
+use App\EmergencyContact;
 use App\PensionSystem;
+use App\Relationship;
 use App\User;
 use App\Work;
 use App\Worker;
@@ -75,8 +77,9 @@ class WorkerController extends Controller
         $civil_statuses = CivilStatus::select('id', 'description')->get();
         $work_functions = WorkFunction::select('id', 'description')->get();
         $pension_systems = PensionSystem::select('id', 'description', 'percentage')->get();
+        $relationships = Relationship::select('id', 'description')->get();
 
-        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems'));
+        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships'));
     }
 
     public function store(Request $request)
@@ -85,6 +88,8 @@ class WorkerController extends Controller
 
         DB::beginTransaction();
         try {
+            $value_assign_family = 102.50;
+            $value_essalud = 9;
 
             // Creamos el email con el formato mapellido@sermeind.com
             $nombres = $request->get('first_name');
@@ -103,7 +108,7 @@ class WorkerController extends Controller
             // Creamos al usuario
             $user = User::create([
                 'name' => $request->get('first_name').' '.$request->get('last_name'),
-                'email' => $primeraLetraNombres.$primerApellido.'@sermeind.com.pe',
+                'email' => $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe',
                 'password' => bcrypt('$ermeind2021'),
                 'image' => 'no_image.png'
             ]);
@@ -117,7 +122,7 @@ class WorkerController extends Controller
                 'personal_address' => $request->get('personal_address'),
                 'birthplace' => ($request->get('birthplace') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('birthplace')) : null,
                 'phone' => $request->get('phone'),
-                'email' => $request->get('email'),
+                'email' => ($request->get('email') == '' || $request->get('email') == null ) ? $user->email : $request->get('email') ,
                 'level_school' => $request->get('level_school'),
                 'image' => 'no_image.png',
                 'dni' => $request->get('dni'),
@@ -127,27 +132,56 @@ class WorkerController extends Controller
                 'monthly_salary' => $request->get('monthly_salary'),
                 'pension' => $request->get('pension'),
                 'gender' => $request->get('gender'),
-                'essalud' => $request->get('essalud'),
-                'assign_family' => $request->get('assign_family'),
+                'essalud' => $value_essalud,
+                'assign_family' => ($request->get('num_children') > 0) ? round($value_assign_family/30,2):0 ,
                 'five_category' => $request->get('five_category'),
                 'termination_date' => ($request->get('termination_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('termination_date')) : null,
                 'observation' => $request->get('observation'),
-                'contract_id' => ($request->get('contract') == 0) ? null: $request->get('contract'),
                 'user_id' => $user->id,
                 'civil_status_id' => ($request->get('civil_status') == 0) ? null: $request->get('civil_status'),
                 'work_function_id' => ($request->get('work_function') == 0) ? null: $request->get('work_function'),
                 'pension_system_id' => ($request->get('pension_system') == 0) ? null: $request->get('pension_system'),
             ]);
 
+            // Creacion de los contactos de emergencia
+            $names = $request->get('contacts');
+            $relations = $request->get('relations');
+            $phones = $request->get('phones');
+
+            if ( $names != null )
+            {
+                for( $i=0; $i<count($phones); $i++ )
+                {
+                    $emergencyContact = EmergencyContact::create([
+                        'name' => $names[$i],
+                        'relationship_id' => $relations[$i],
+                        'worker_id' => $worker->id,
+                        'phone' => $phones[$i]
+                    ]);
+                }
+            }
+
             DB::commit();
 
         } catch ( \Throwable $e ) {
             DB::rollBack();
+            dump($e);
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
         return response()->json(['message' => 'Colaborador registrado con éxito.'], 200);
 
+    }
+
+    public function eliminar_tildes($cadena){
+
+        $originales = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿ';
+        $modificadas = 'aaaaaaaceeeeiiiidnoooooouuuuybsaaaaaaaceeeeiiiidnoooooouuuyyby';
+        $cadena = utf8_decode($cadena);
+
+        $cadena = strtr($cadena, utf8_decode($originales), $modificadas);
+
+        return utf8_encode($cadena);
     }
 
     public function show(Worker $worker)
@@ -157,7 +191,7 @@ class WorkerController extends Controller
 
     public function edit($id)
     {
-        $worker = Worker::find($id);
+        $worker = Worker::with('emergency_contacts')->find($id);
 
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
@@ -168,9 +202,9 @@ class WorkerController extends Controller
         $civil_statuses = CivilStatus::select('id', 'description')->get();
         $work_functions = WorkFunction::select('id', 'description')->get();
         $pension_systems = PensionSystem::select('id', 'description', 'percentage')->get();
-        $contracts = Contract::select('id', 'code')->get();
+        $relationships = Relationship::select('id', 'description')->get();
 
-        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'contracts', 'worker'));
+        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'worker'));
 
     }
 
@@ -178,15 +212,35 @@ class WorkerController extends Controller
     {
         DB::beginTransaction();
         try {
+            $value_assign_family = 102.50;
+            $value_essalud = 9;
 
-            // Modificamos el trabajador
+            // Creamos el email con el formato mapellido@sermeind.com
+            $nombres = $request->get('first_name');
+            $apellidos = $request->get('last_name');
+
+            $primeraLetraNombres = strtolower(substr($nombres,0,1));
+            $pos = strpos($apellidos, ' ');
+
+            $primerApellido = '';
+
+            if ( $pos !== false )
+            {
+                $primerApellido = strtolower(substr($apellidos,0,$pos));
+            }
             $worker = Worker::find($id);
+
+            $user = User::find($worker->user_id);
+            $user->email = $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe';
+            $user->save();
+            // Modificamos el trabajador
+
             $worker->first_name = $request->get('first_name');
             $worker->last_name = $request->get('last_name');
             $worker->personal_address = $request->get('personal_address');
             $worker->birthplace = ($request->get('birthplace') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('birthplace')) : null;
             $worker->phone = $request->get('phone');
-            $worker->email = $request->get('email');
+            $worker->email = ($request->get('email') == '' || $request->get('email') == null ) ? $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe' : $request->get('email') ;
             $worker->level_school = $request->get('level_school');
             $worker->dni = $request->get('dni');
             $worker->admission_date = ($request->get('admission_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('admission_date')) : null;
@@ -195,16 +249,41 @@ class WorkerController extends Controller
             $worker->monthly_salary = $request->get('monthly_salary');
             $worker->pension = $request->get('pension');
             $worker->gender = $request->get('gender');
-            $worker->essalud = $request->get('essalud');
-            $worker->assign_family = $request->get('assign_family');
+            $worker->essalud = $value_essalud;
+            $worker->assign_family = ($request->get('num_children') > 0) ? round($value_assign_family/30,2):0;
             $worker->five_category = $request->get('five_category');
             $worker->termination_date = ($request->get('termination_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('termination_date')) : null;
             $worker->observation = $request->get('observation');
-            $worker->contract_id = ($request->get('contract') == 0) ? null: $request->get('contract');
             $worker->civil_status_id = ($request->get('civil_status') == 0) ? null: $request->get('civil_status');
             $worker->work_function_id = ($request->get('work_function') == 0) ? null: $request->get('work_function');
             $worker->pension_system_id = ($request->get('pension_system') == 0) ? null: $request->get('pension_system');
             $worker->save();
+
+            // Primero eliminamos los contactos
+            $emergencyContacts = EmergencyContact::where('worker_id', $worker->id)->get();
+
+            foreach ( $emergencyContacts as $emergencyContact )
+            {
+                $emergencyContact->delete();
+            }
+
+            // Creacion de los contactos de emergencia
+            $names = $request->get('contacts');
+            $relations = $request->get('relations');
+            $phones = $request->get('phones');
+
+            if ( $names != null )
+            {
+                for( $i=0; $i<count($phones); $i++ )
+                {
+                    $emergencyContact = EmergencyContact::create([
+                        'name' => $names[$i],
+                        'relationship_id' => $relations[$i],
+                        'worker_id' => $worker->id,
+                        'phone' => $phones[$i]
+                    ]);
+                }
+            }
 
             DB::commit();
 

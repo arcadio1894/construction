@@ -81,8 +81,8 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="dni">DNI </label>
-                                <input type="text" id="dni" name="dni" class="form-control" data-inputmask='"mask": "99999999"' data-mask>
+                                <label for="dni">DNI/C.E. </label>
+                                <input type="text" id="dni" name="dni" class="form-control" >
                             </div>
 
                             <div class="col-md-6">
@@ -181,7 +181,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-phone"></i></span>
                                     </div>
-                                    <input type="text" id="phone" name="phone" class="form-control" data-inputmask='"mask": "(99) 999-999-999"' data-mask>
+                                    <input type="text" id="phone" name="phone" class="form-control" >
                                 </div>
                             </div>
                             <div class="col-sm-6">
@@ -350,7 +350,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <label for="work_function">Nombre </label>
-                    <div class="input-group mb-3">
+                    <div class="input-group input-group-sm mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
                         </div>
@@ -361,10 +361,10 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="work_function">Parentesco </label>
-                        <select name="relations[]" class="relation form-control select2" style="width: 100%;">
+                        <select name="relations[]" class="relation form-control form-control-sm select2" style="width: 100%;">
                             <option></option>
-                            @foreach( $work_functions as $function )
-                                <option value="{{ $function->id }}">{{ $function->description }}</option>
+                            @foreach( $relationships as $relationship )
+                                <option value="{{ $relationship->id }}">{{ $relationship->description }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -372,12 +372,20 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="work_function">Teléfono </label>
-                        <input type="text" data-phone name="phones[]" class="form-control" placeholder="000000000" value="">
-
+                        <div class="input-group input-group-sm">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                            </div>
+                            <input type="text" data-phone name="phones[]" class="form-control" placeholder="000000000" value="">
+                        </div>
                     </div>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-md-4 offset-4">
+                    <button type="button" data-deletecontact class="btn btn-xs btn-outline-danger btn-block">Eliminar contacto</button>
+                </div>
+            </div>
         </div>
     </template>
 @endsection
@@ -399,8 +407,8 @@
             $('#birthplace').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
             $('#termination_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#phone').inputmask('(99) 999-999-999', { 'placeholder': '(99) 999-999-999' });
-            $('#dni').inputmask('99999999', { 'placeholder': '99999999' });
+            //$('#phone').inputmask('(99) 999-999-999', { 'placeholder': '(99) 999-999-999' });
+            //$('#dni').inputmask('99999999', { 'placeholder': '99999999' });
 
             //Initialize Select2 Elements
             $('#work_function').select2({

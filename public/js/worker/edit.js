@@ -64,15 +64,21 @@ $(document).ready(function () {
     });
 
     $formCreate = $('#formCreate');
-    $("#btn-submit").on("click", storeQuote);
+    $("#btn-submit").on("click", storeWorker);
 
+    $('#newContact').on('click', addNewContact);
 
+    $(document).on('click', '[data-deletecontact]', deleteContact);
 
 });
 
 var $formCreate;
 
-function storeQuote() {
+function deleteContact() {
+    $(this).parent().parent().parent().remove();
+}
+
+function storeWorker() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
 
@@ -158,4 +164,23 @@ function storeQuote() {
 
         },
     });
+}
+
+function addNewContact() {
+    renderTemplateContact();
+}
+
+function renderTemplateContact() {
+    var clone = activateTemplate('#template-contact');
+
+    $('#body-contacts').append(clone);
+
+    $('.relation').select2({
+        placeholder: "Selecione un parentesco",
+    });
+}
+
+function activateTemplate(id) {
+    var t = document.querySelector(id);
+    return document.importNode(t.content, true);
 }
