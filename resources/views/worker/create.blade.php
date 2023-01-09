@@ -274,6 +274,16 @@
                                 <label for="observation">Observación </label>
                                 <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                             </div>
+                            <div class="col-md-6">
+                                <label for="working_day">Jornada Laboral </label>
+                                <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0">NINGUNO</option>
+                                    @foreach( $working_days as $working_day )
+                                        <option value="{{ $working_day->id }}" >{{ $working_day->description }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
                         </div>
 
                     </div>
@@ -418,7 +428,10 @@
                 placeholder: "Selecione un sistema",
             });
             $('#civil_status').select2({
-                placeholder: "Selecione un estado civill",
+                placeholder: "Selecione un estado civil",
+            });
+            $('#working_day').select2({
+                placeholder: "Selecione una jornada",
             });
             $('.relation').select2({
                 placeholder: "Selecione un parentesco",

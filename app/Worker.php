@@ -35,6 +35,7 @@ class Worker extends Model
         'civil_status_id', // id description
         'work_function_id', // id description
         'pension_system_id', // id description percentage
+        'working_day_id',
         'enable'
     ];
 
@@ -57,6 +58,11 @@ class Worker extends Model
     public function work_function()
     {
         return $this->belongsTo('App\WorkFunction');
+    }
+
+    public function working_day()
+    {
+        return $this->belongsTo('App\WorkingDay');
     }
 
     public function pension_system()

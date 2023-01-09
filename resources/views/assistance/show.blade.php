@@ -134,7 +134,7 @@
         </div>
         <div class="col-md-2">
             <div class="info-box">
-                <span class="info-box-icon bg-info elevation-1">DM</span>
+                <span class="info-box-icon bg-info elevation-1">M</span>
 
                 <div class="info-box-content">
                     <span class="info-box-number">DESCANSO MÉDICO</span>
@@ -144,7 +144,7 @@
         </div>
         <div class="col-md-2">
             <div class="info-box">
-                <span class="info-box-icon bg-gradient-warning elevation-1">FJ</span>
+                <span class="info-box-icon bg-gradient-warning elevation-1">J</span>
 
                 <div class="info-box-content">
                     <span class="info-box-number">FALTA JUSTIFICADA</span>

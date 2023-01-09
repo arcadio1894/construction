@@ -92,7 +92,7 @@
             </div>
             <div class="col-md-2">
                 <div class="info-box">
-                    <span class="info-box-icon bg-info elevation-1">DM</span>
+                    <span class="info-box-icon bg-info elevation-1">M</span>
 
                     <div class="info-box-content">
                         <span class="info-box-number">DESCANSO MÉDICO</span>
@@ -102,7 +102,7 @@
             </div>
             <div class="col-md-2">
                 <div class="info-box">
-                    <span class="info-box-icon bg-gradient-warning elevation-1">FJ</span>
+                    <span class="info-box-icon bg-gradient-warning elevation-1">J</span>
 
                     <div class="info-box-content">
                         <span class="info-box-number">FALTA JUSTIFICADA</span>
@@ -204,8 +204,8 @@
                                 <option value="A" {{ ($arrayAssistances[$i]['status'] == 'A') ? 'selected':'' }}>A</option>
                                 <option value="F" {{ ($arrayAssistances[$i]['status'] == 'F') ? 'selected':'' }}>F</option>
                                 <option value="S" {{ ($arrayAssistances[$i]['status'] == 'S') ? 'selected':'' }}>S</option>
-                                <option value="DM" {{ ($arrayAssistances[$i]['status'] == 'DM') ? 'selected':'' }}>DM</option>
-                                <option value="FJ" {{ ($arrayAssistances[$i]['status'] == 'FJ') ? 'selected':'' }}>FJ</option>
+                                <option value="M" {{ ($arrayAssistances[$i]['status'] == 'M') ? 'selected':'' }}>M</option>
+                                <option value="J" {{ ($arrayAssistances[$i]['status'] == 'J') ? 'selected':'' }}>J</option>
                                 <option value="V" {{ ($arrayAssistances[$i]['status'] == 'V') ? 'selected':'' }}>V</option>
                             </select>
                         </div>

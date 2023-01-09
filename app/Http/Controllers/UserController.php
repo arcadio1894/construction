@@ -320,7 +320,8 @@ class UserController extends Controller
                     $worker = Worker::create([
                         'first_name' => $user_active->name,
                         'email' => $user_active->email,
-                        'image' => $user_active->image
+                        'image' => $user_active->image,
+                        'user_id' => $user_active->id
                     ]);
                 }
             }
