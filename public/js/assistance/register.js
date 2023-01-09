@@ -9,14 +9,15 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-save]', saveAssistance);
 
-    $('#timepicker').on('timechanged', function(e){
-        var card = $('#timepicker').parent().next().next().next().next().children();
+    $('.datestart').on('timechanged', function(e){
+        var card = $(this).parent().next().next().next().next().children();
         console.log(card);
         card.removeClass('btn-outline-success');
         card.addClass('btn-outline-warning');
     });
-    $('#timepicker2').on('timechanged', function(e){
-        var card = $('#timepicker2').parent().next().next().next().children();
+    $('.dateend').on('timechanged', function(e){
+        var card = $(this).parent().next().next().next().children();
+        console.log(card);
         card.removeClass('btn-outline-success');
         card.addClass('btn-outline-warning');
     });

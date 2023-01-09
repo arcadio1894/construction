@@ -135,14 +135,9 @@
                 </div>
                 <div class="card-body" id="body-assistances">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-4">
                             <div class="form-group">
                                 <strong>TRABAJADOR</strong>
-                            </div>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="form-group">
-                                <strong>JORNADA</strong>
                             </div>
                         </div>
                         <div class="col-md-2">
@@ -171,19 +166,13 @@
                     </div>
                     @for( $i = 0; $i < count($arrayAssistances); $i++ )
                     <div class="row">
-                        <div class="col-md-2">
-                            <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $arrayAssistances[$i]['worker'] }}</textarea>
+                        <div class="col-md-4">
+                            <input type="text" style="font-size: 15px" readonly data-worker class="form-control form-control-sm" value="{{ $arrayAssistances[$i]['worker'] }}" >
+                            {{--<textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $arrayAssistances[$i]['worker'] }}</textarea>
+                        --}}
                         </div>
                         <div class="col-md-2">
-                            <select data-workingDay class="workingDays form-control form-control-sm select2" style="width: 100%;">
-                                <option></option>
-                                @foreach( $workingDays as $workingDay )
-                                    <option value="{{ $workingDay->id }}" {{ ($workingDay->id == $arrayAssistances[$i]['working_day']) ? 'selected':'' }}>{{ $workingDay->description}}</option>
-                                @endforeach
-                            </select>
-                        </div>
-                        <div class="col-md-2">
-                            <div class="input-group date input-group-sm" id="timepicker" data-target-input="nearest">
+                            <div class="input-group date input-group-sm datestart" data-target-input="nearest">
                                 <input type="text" data-dateStart value="{{ $arrayAssistances[$i]['hour_entry'] }}" class="form-control timepicker" />
                                 <div class="input-group-append">
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>
@@ -191,7 +180,7 @@
                             </div>
                         </div>
                         <div class="col-md-2">
-                            <div class="input-group date input-group-sm" id="timepicker2" data-target-input="nearest">
+                            <div class="input-group date input-group-sm dateend" data-target-input="nearest">
                                 <input type="text" data-dateEnd value="{{ $arrayAssistances[$i]['hour_out'] }}" class="form-control timepicker" />
                                 <div class="input-group-append" >
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>

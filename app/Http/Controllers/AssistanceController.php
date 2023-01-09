@@ -57,6 +57,8 @@ class AssistanceController extends Controller
                 'date_assistance' => $date_assistance
             ]);
 
+            //
+
             return response()->json([
                 'message' => 'Se ha creado la asistencia y redireccionando ... ',
                 'url' => route('assistance.register', $assistance2->id),
