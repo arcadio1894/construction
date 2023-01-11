@@ -42,7 +42,7 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar contrato</h5>
+    <h5 class="card-title">Modificar contrato de {{ $contract->worker->first_name . ' ' . $contract->worker->last_name }}</h5>
     <a href="{{ route('contract.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Contratos</a>
 @endsection
 
@@ -69,7 +69,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-keyboard"></i></span>
                     </div>
-                    <input id="code" type="text" class="form-control" value="{{ $contract->code }}" name="code" >
+                    <input id="code" type="text" readonly class="form-control" value="{{ $contract->code }}" name="code" >
                 </div>
             </div>
 
@@ -81,10 +81,12 @@
                     </div>
                     <input type="file" id="file" name="file" class="form-control" >
                 </div>
-                @if ( substr($contract->file,-3) == 'pdf' )
-                    <a href="{{ asset('images/contracts/'.$contract->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
-                @else
-                    <img data-image src="{{ asset('images/contracts/'.$contract->file) }}" alt="{{$contract->code}}" width="100px" height="100px">
+                @if ( $contract->file != null )
+                    @if ( substr($contract->file,-3) == 'pdf' )
+                        <a href="{{ asset('images/contracts/'.$contract->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
+                    @else
+                        <img data-image src="{{ asset('images/contracts/'.$contract->file) }}" alt="{{$contract->code}}" width="100px" height="100px">
+                    @endif
                 @endif
             </div>
         </div>

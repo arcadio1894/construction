@@ -13,6 +13,14 @@ $(document).ready(function () {
         "aoColumns": [
             { data: 'code' },
             { data: null,
+                title: 'Colaborador',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.worker.first_name + ' ' + item.worker.last_name;
+                }
+            },
+            { data: null,
                 title: 'Fecha Inicio',
                 wrap: true,
                 "render": function (item)

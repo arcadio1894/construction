@@ -39,7 +39,6 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de contratos habilitados</h5>
-    <a href="{{ route('contract.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Contrato </a>
 @endsection
 
 @section('page-breadcrumb')
@@ -62,6 +61,7 @@
             <thead>
             <tr>
                 <th>Código</th>
+                <th>Colaborador</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Término</th>
                 <th>Archivo</th>

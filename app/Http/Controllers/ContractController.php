@@ -250,15 +250,18 @@ class ContractController extends Controller
 
     public function edit($id)
     {
-        $contract = Contract::find($id);
+        $contract = Contract::with('worker')->find($id);
         return view('contract.edit', compact('contract'));
     }
 
 
     public function getAllContracts()
     {
-        $contracts = Contract::select('id', 'code', 'date_start', 'date_fin', 'file', 'enable')
-            ->where('enable', true)->get();
+        $contracts = Contract::with('worker')
+            ->where('enable', true)
+            ->orderBy('updated_at', 'DESC')
+            /*->orderBy('post_status', 'DESC')*/
+            ->get();
         return datatables($contracts)->toJson();
 
     }
