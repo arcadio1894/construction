@@ -155,7 +155,7 @@
         .plano {
             width: auto;
             height: 250px;
-            max-width: 2000px;
+            max-width: 720px;
         }
 
         .fill {
