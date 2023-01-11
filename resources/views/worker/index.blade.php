@@ -200,29 +200,7 @@
             </tbody>
         </table>
     </div>
-    {{--@can('destroy_categoryInvoice')--}}
-    {{--<div id="modalDelete" class="modal fade" tabindex="-1">--}}
-        {{--<div class="modal-dialog">--}}
-            {{--<div class="modal-content">--}}
-                {{--<div class="modal-header">--}}
-                    {{--<h4 class="modal-title">Confirmar eliminación</h4>--}}
-                    {{--<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>--}}
-                {{--</div>--}}
-                {{--<form id="formDelete" data-url="{{ route('categoryInvoice.destroy') }}">--}}
-                    {{--@csrf--}}
-                    {{--<div class="modal-body">--}}
-                        {{--<input type="hidden" id="category_id" name="category_id">--}}
-                        {{--<p id="name"></p>--}}
-                    {{--</div>--}}
-                    {{--<div class="modal-footer">--}}
-                        {{--<button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>--}}
-                        {{--<button type="submit" class="btn btn-danger">Eliminar</button>--}}
-                    {{--</div>--}}
-                {{--</form>--}}
-            {{--</div>--}}
-        {{--</div>--}}
-    {{--</div>--}}
-    {{--@endcan--}}
+
 
 @endsection
 

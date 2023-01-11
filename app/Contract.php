@@ -10,13 +10,18 @@ class Contract extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'id',
         'code',
         'date_start',
         'date_fin',
         'file',
-        'enable'
+        'enable',
+        'worker_id'
     ];
 
     protected $dates = ['deleted_at', 'date_start', 'date_fin'];
+
+    public function worker()
+    {
+        return $this->belongsTo('App\Worker');
+    }
 }

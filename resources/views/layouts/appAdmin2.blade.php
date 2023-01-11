@@ -1362,12 +1362,12 @@
                                         </a>
                                     </li>
 
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{ route('contract.create') }}" class="nav-link @yield('activeCreateContract')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Crear contrato</p>
                                         </a>
-                                    </li>
+                                    </li>--}}
 
                                     <li class="nav-item">
                                         <a href="{{ route('contract.deleted') }}" class="nav-link @yield('activeListContractDeleted')">

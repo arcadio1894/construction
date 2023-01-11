@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contract;
+use App\Worker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,9 +35,13 @@ class ContractController extends Controller
     {
         DB::beginTransaction();
         try {
+            $length = 5;
+            $string = $request->get('worker_id');
+            $codeContract = 'CS-'.str_pad($string,$length,"0", STR_PAD_LEFT).'_1';
 
             $contract = Contract::create([
-                'code' => $request->get('code'),
+                'code' => $codeContract,
+                'worker_id' => $request->get('worker_id'),
                 'date_start' => ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null,
                 'date_fin' => ($request->get('date_fin') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_fin')) : null,
             ]);
@@ -74,9 +79,65 @@ class ContractController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Contrato guardado con éxito.'], 200);
+        return response()->json(['message' => 'Contrato guardado con éxito.', 'url' => route('worker.index')], 200);
     }
 
+    public function storeRenew(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $length = 5;
+            $string = $request->get('worker_id');
+            $codeContract = 'CS-'.str_pad($string,$length,"0", STR_PAD_LEFT);
+
+            $contract = DB::table('contracts')->where('worker_id', $request->get('worker_id'))->where('enable', true)->latest('updated_at')->first();
+
+            $pos = strpos($contract->code, '_');
+            $num_renew = (int) substr($contract->code,$pos+1);
+            $codeContractRenew = $codeContract.'_'.($num_renew+1);
+
+            $contract = Contract::create([
+                'code' => $codeContractRenew,
+                'worker_id' => $request->get('worker_id'),
+                'date_start' => ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null,
+                'date_fin' => ($request->get('date_fin') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_fin')) : null,
+            ]);
+
+            if (!$request->file('file')) {
+                $contract->file = null;
+                $contract->save();
+
+            } else {
+                $path = public_path().'/images/contracts/';
+                $image = $request->file('file');
+                $extension = $request->file('file')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $contract->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $contract->file = $filename;
+                    $contract->save();
+                } else {
+                    $filename = 'pdf'.$contract->id . '.' .$extension;
+                    $request->file('file')->move($path, $filename);
+                    $contract->file = $filename;
+                    $contract->save();
+                }
+
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Contrato '.$codeContractRenew.' renovado con éxito.', 'url' => route('worker.index')], 200);
+    }
 
     public function update(Request $request)
     {
@@ -140,7 +201,6 @@ class ContractController extends Controller
         return response()->json(['message' => 'Contrato modificado con éxito.','url'=>route('contract.index')], 200);
     }
 
-
     public function destroy(Request $request)
     {
         DB::beginTransaction();
@@ -162,10 +222,30 @@ class ContractController extends Controller
         return response()->json(['message' => 'Contrato inhabilitado con éxito.'], 200);
     }
 
-
-    public function create()
+    public function create($worker_id)
     {
-        return view('contract.create');
+        $length = 5;
+        $string = $worker_id;
+        $codeContract = 'CS-'.str_pad($string,$length,"0", STR_PAD_LEFT).'_1';
+
+        $worker = Worker::find($worker_id);
+        return view('contract.create', compact('worker', 'codeContract'));
+    }
+
+    public function renew($worker_id)
+    {
+        $length = 5;
+        $string = $worker_id;
+        $codeContract = 'CS-'.str_pad($string,$length,"0", STR_PAD_LEFT);
+
+        $contract = DB::table('contracts')->where('worker_id', $worker_id)->where('enable', true)->latest('updated_at')->first();
+
+        $pos = strpos($contract->code, '_');
+        $num_renew = (int) substr($contract->code,$pos+1);
+        $codeContractRenew = $codeContract.'_'.($num_renew+1);
+
+        $worker = Worker::find($worker_id);
+        return view('contract.renew', compact('worker', 'codeContractRenew'));
     }
 
     public function edit($id)

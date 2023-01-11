@@ -42,9 +42,21 @@ $(document).ready(function () {
                     //if ( $.inArray('update_material', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/editar/colaborador/'+item.id+'" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
                     //}
-                    //if ( $.inArray('enable_material', $permissions) !== -1 ) {
+                    //if ( $.inArray('contract_worker', $permissions) !== -1 ) {
                         text = text + '<button data-delete="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-window-close"></i> </button>  ';
                     //}
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        if ( item.have_contract == 0 )
+                        {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/contrato/'+item.id+'" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear contrato"><i class="fas fa-file-signature"></i> </a>  ';
+                            //text = text + '<button data-createcontract="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Crear contrato"><i class="fas fa-file-signature"></i> </button>  ';
+                        } else {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/renovar/contrato/'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Renovar contrato"><i class="fas fa-sync-alt"></i> </a>  ';
+                            //text = text + '<button data-renewcontract="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Renovar contrato"><i class="fas fa-sync-alt"></i> </button>  ';
+                        }
+
+                    }
+
                     return text ;
                 }
             },

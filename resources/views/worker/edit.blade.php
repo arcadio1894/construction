@@ -104,6 +104,14 @@
                                 <input type="text" id="level_school" name="level_school" value="{{ $worker->level_school }}" class="form-control">
                             </div>
                             <div class="col-md-6">
+                                <label for="profession">Profesión</label>
+                                <input type="text" id="profession" name="profession" class="form-control" value="{{ $worker->profession }}">
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
                                 <label for="gender">Género</label>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -122,9 +130,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="admission_date">Fecha de ingreso </label>
                                 <div class="input-group">
@@ -134,6 +140,10 @@
                                     <input type="text" id="admission_date" name="admission_date" value="{{ ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
+
+                        </div>
+
+                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="termination_date">Fecha de Cese </label>
                                 <div class="input-group">
@@ -142,6 +152,11 @@
                                     </div>
                                     <input type="text" id="termination_date" name="termination_date" value="{{ ($worker->termination_date == null) ? '':$worker->termination_date->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="observation">Motivo de Cese </label>
+                                <textarea name="reason_for_termination" id="reason_for_termination" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese motivo ....">{{$worker->reason_for_termination}}</textarea>
                             </div>
                         </div>
 
@@ -269,14 +284,6 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="five_category">Quinta Categoría </label>
-                                <input type="number" id="five_category" name="five_category" class="form-control" placeholder="0.00" min="0" value="{{ $worker->five_category }}" step="0.01" >
-                            </div>
-                            <div class="col-md-6">
-                                <label for="observation">Observación </label>
-                                <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">{{ $worker->observation }}</textarea>
-                            </div>
-                            <div class="col-md-6">
                                 <label for="working_day">Jornada Laboral </label>
                                 <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">
                                     <option></option>
@@ -286,6 +293,11 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <div class="col-md-6">
+                                <label for="observation">Observación </label>
+                                <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">{{ $worker->observation }}</textarea>
+                            </div>
+
                         </div>
 
                     </div>

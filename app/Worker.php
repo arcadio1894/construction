@@ -17,6 +17,7 @@ class Worker extends Model
         'phone',
         'email',
         'level_school',
+        'profession',
         'image',
         'dni',
         'admission_date',
@@ -29,6 +30,7 @@ class Worker extends Model
         'assign_family',
         'five_category',
         'termination_date',
+        'reason_for_termination',
         'observation',
         'contract_id', // id code date_start date_fin
         'user_id',

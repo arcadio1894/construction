@@ -25,7 +25,7 @@ $(document).ready(function () {
         $("#pay_daily").val(pago_diario);
 
         // Verificamos el salario mensual
-        var salario_mensual = parseFloat(pago_diario*30).toFixed(2);
+        var salario_mensual = parseFloat((assign_family + salario_diario)*30).toFixed(2);
 
         $("#monthly_salary").val(salario_mensual);
     });
@@ -48,7 +48,7 @@ $(document).ready(function () {
         $("#pay_daily").val(pago_diario);
 
         // Verificamos el salario mensual
-        var salario_mensual = parseFloat(pago_diario*30).toFixed(2);
+        var salario_mensual = parseFloat((assign_family + salario_diario)*30).toFixed(2);
 
         $("#monthly_salary").val(salario_mensual);
     });
@@ -115,7 +115,7 @@ function storeWorker() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                //location.reload();
+                location.reload();
             }, 2000 )
         },
         error: function (data) {

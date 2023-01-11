@@ -34,6 +34,9 @@ class WorkerController extends Controller
 
         foreach ( $workers as $worker )
         {
+            $haveContract = false;
+            $contract = DB::table('contracts')->where('worker_id', $worker->id)->latest('updated_at')->first();
+            $haveContract = ($contract != null) ? true:false ;
             array_push( $arrayWorkers, [
                 'id' => $worker->id,
                 'first_name' => $worker->first_name,
@@ -44,6 +47,8 @@ class WorkerController extends Controller
                 'phone' => $worker->phone,
                 'email' => $worker->email,
                 'level_school' => $worker->level_school,
+                'profession' => $worker->profession,
+                'reason_for_termination' => $worker->reason_for_termination,
                 'image' => $worker->image,
                 'dni' => $worker->dni,
                 'admission_date' => ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y'),
@@ -61,6 +66,7 @@ class WorkerController extends Controller
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'have_contract' => $haveContract
             ] );
         }
 
@@ -97,20 +103,20 @@ class WorkerController extends Controller
             $nombres = $request->get('first_name');
             $apellidos = $request->get('last_name');
 
-            $primeraLetraNombres = strtolower(substr($nombres,0,1));
+            $primeraLetraNombres = strtolower($this->eliminar_tildes(substr($nombres,0,1)));
             $pos = strpos($apellidos, ' ');
 
             $primerApellido = '';
 
             if ( $pos !== false )
             {
-                $primerApellido = strtolower(substr($apellidos,0,$pos));
+                $primerApellido = strtolower($this->eliminar_tildes(substr($apellidos,0,$pos)));
             }
 
             // Creamos al usuario
             $user = User::create([
                 'name' => $request->get('first_name').' '.$request->get('last_name'),
-                'email' => $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe',
+                'email' => $primeraLetraNombres.$primerApellido.'@sermeind.com.pe',
                 'password' => bcrypt('$ermeind2021'),
                 'image' => 'no_image.png'
             ]);
@@ -124,8 +130,10 @@ class WorkerController extends Controller
                 'personal_address' => $request->get('personal_address'),
                 'birthplace' => ($request->get('birthplace') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('birthplace')) : null,
                 'phone' => $request->get('phone'),
-                'email' => ($request->get('email') == '' || $request->get('email') == null ) ? $user->email : $request->get('email') ,
+                'email' => ($request->get('email') == '' || $request->get('email') == null ) ? $primeraLetraNombres.$primerApellido.'@sermeind.com.pe' : $request->get('email') ,
                 'level_school' => $request->get('level_school'),
+                'reason_for_termination' => $request->get('reason_for_termination'),
+                'profession' => $request->get('profession'),
                 'image' => 'no_image.png',
                 'dni' => $request->get('dni'),
                 'admission_date' => ($request->get('admission_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('admission_date')) : null,
@@ -136,7 +144,7 @@ class WorkerController extends Controller
                 'gender' => $request->get('gender'),
                 'essalud' => $value_essalud,
                 'assign_family' => ($request->get('num_children') > 0) ? round($value_assign_family/30,2):0 ,
-                'five_category' => $request->get('five_category'),
+                //'five_category' => $request->get('five_category'),
                 'termination_date' => ($request->get('termination_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('termination_date')) : null,
                 'observation' => $request->get('observation'),
                 'user_id' => $user->id,
@@ -223,19 +231,19 @@ class WorkerController extends Controller
             $nombres = $request->get('first_name');
             $apellidos = $request->get('last_name');
 
-            $primeraLetraNombres = strtolower(substr($nombres,0,1));
+            $primeraLetraNombres = strtolower($this->eliminar_tildes(substr($nombres,0,1)));
             $pos = strpos($apellidos, ' ');
 
             $primerApellido = '';
 
             if ( $pos !== false )
             {
-                $primerApellido = strtolower(substr($apellidos,0,$pos));
+                $primerApellido = strtolower($this->eliminar_tildes(substr($apellidos,0,$pos)));
             }
             $worker = Worker::find($id);
 
             $user = User::find($worker->user_id);
-            $user->email = $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe';
+            $user->email = $primeraLetraNombres.$primerApellido.'@sermeind.com.pe';
             $user->save();
             // Modificamos el trabajador
 
@@ -244,8 +252,10 @@ class WorkerController extends Controller
             $worker->personal_address = $request->get('personal_address');
             $worker->birthplace = ($request->get('birthplace') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('birthplace')) : null;
             $worker->phone = $request->get('phone');
-            $worker->email = ($request->get('email') == '' || $request->get('email') == null ) ? $this->eliminar_tildes($primeraLetraNombres).$this->eliminar_tildes($primerApellido).'@sermeind.com.pe' : $request->get('email') ;
+            $worker->email = ($request->get('email') == '' || $request->get('email') == null ) ? $primeraLetraNombres.$primerApellido.'@sermeind.com.pe' : $request->get('email') ;
             $worker->level_school = $request->get('level_school');
+            $worker->profession = $request->get('profession');
+            $worker->reason_for_termination = $request->get('reason_for_termination');
             $worker->dni = $request->get('dni');
             $worker->admission_date = ($request->get('admission_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('admission_date')) : null;
             $worker->num_children = $request->get('num_children');
@@ -255,7 +265,7 @@ class WorkerController extends Controller
             $worker->gender = $request->get('gender');
             $worker->essalud = $value_essalud;
             $worker->assign_family = ($request->get('num_children') > 0) ? round($value_assign_family/30,2):0;
-            $worker->five_category = $request->get('five_category');
+            //$worker->five_category = $request->get('five_category');
             $worker->termination_date = ($request->get('termination_date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('termination_date')) : null;
             $worker->observation = $request->get('observation');
             $worker->civil_status_id = ($request->get('civil_status') == 0) ? null: $request->get('civil_status');
@@ -372,6 +382,8 @@ class WorkerController extends Controller
 
         foreach ( $workers as $worker )
         {
+            $haveContract = rand(0,1);
+
             array_push( $arrayWorkers, [
                 'id' => $worker->id,
                 'first_name' => $worker->first_name,
@@ -382,6 +394,8 @@ class WorkerController extends Controller
                 'phone' => $worker->phone,
                 'email' => $worker->email,
                 'level_school' => $worker->level_school,
+                'profession' => $worker->profession,
+                'reason_for_termination' => $worker->reason_for_termination,
                 'image' => $worker->image,
                 'dni' => $worker->dni,
                 'admission_date' => ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y'),
@@ -399,9 +413,36 @@ class WorkerController extends Controller
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'have_contract' => rand(0,1)
             ] );
         }
 
         return datatables($arrayWorkers)->toJson();
+    }
+
+    public function pruebaCadenas()
+    {
+        $nombres = 'Gilberto';
+        $apellidos = 'Huamán López';
+
+        dump($apellidos);
+
+        $primeraLetraNombres = strtolower(substr($nombres,0,1));
+        $pos = strpos($apellidos, ' ');
+        dump($primeraLetraNombres);
+        $primerApellido = '';
+
+        if ( $pos !== false )
+        {
+            $primerApellido = strtolower(substr($apellidos,0,$pos));
+        }
+        dump(substr($apellidos,0,$pos));
+        dump($this->eliminar_tildes(substr($apellidos,0,$pos)));
+        dump(strtolower($this->eliminar_tildes(substr($apellidos,0,$pos))));
+        dump($this->eliminar_tildes($primeraLetraNombres));
+        dump($this->eliminar_tildes($primerApellido));
+        $email = '@sermeind.com.pe';
+
+        dump($email);
     }
 }

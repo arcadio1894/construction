@@ -61,14 +61,16 @@ class AssistanceController extends Controller
             $workers = Worker::where('enable', true)
                 ->get();
 
+            $workingDay = WorkingDay::where('enable', true)->first();
+
             foreach ( $workers as $worker) {
                 $assistance_detail = AssistanceDetail::create([
                     'date_assistance' => $assistance2->date_assistance,
-                    'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:null,
-                    'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:null,
+                    'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->id,
+                    'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->id,
                     'worker_id' => $worker->id,
                     'assistance_id' => $assistance2->id,
-                    'working_day_id' => $worker->working_day_id
+                    'working_day_id' => $workingDay->id
                 ]);
             }
 
@@ -324,15 +326,21 @@ class AssistanceController extends Controller
                     } elseif ( $assistance_detail->status == 'S' ){
                         $color = '#52585d';
                         $estado = 'S';
-                    } elseif ( $assistance_detail->status == 'DM' ){
+                    } elseif ( $assistance_detail->status == 'M' ){
                         $color = '#17a2b8';
-                        $estado = 'DM';
-                    } elseif ( $assistance_detail->status == 'FJ' ){
+                        $estado = 'M';
+                    } elseif ( $assistance_detail->status == 'J' ){
                         $color = '#ffc107';
-                        $estado = 'FJ';
+                        $estado = 'J';
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
+                    } elseif ( $assistance_detail->status == 'P' ){
+                        $color = '#007bff';
+                        $estado = 'P';
+                    } elseif ( $assistance_detail->status == 'T' ){
+                        $color = '#6610f2';
+                        $estado = 'T';
                     } else {
                         $color = '#fff';
                         $estado = 'N';

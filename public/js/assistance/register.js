@@ -54,7 +54,8 @@ function saveAssistance() {
     var assistance_id = $('#assistance_id').val();
 
     // Datos a guardar
-    var name_worker = button.parent().prev().prev().prev().prev().prev().children().val();
+    var name_worker = button.parent().prev().prev().prev().prev().prev().prev().children().val();
+    var working_day = button.parent().prev().prev().prev().prev().prev().children().val();
     var time_entry = button.parent().prev().prev().prev().prev().children().children().attr('data-time');
     var time_out = button.parent().prev().prev().prev().children().children().attr('data-time');
     var status = button.parent().prev().prev().children().val();
@@ -86,7 +87,7 @@ function saveAssistance() {
                     url: '/dashboard/store/assistance/'+assistance_id+'/worker/'+worker_id,
                     method: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: JSON.stringify({ name_worker: name_worker, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
+                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
                     processData:false,
                     contentType:'application/json; charset=utf-8',
                     success: function (data) {
@@ -162,7 +163,7 @@ function saveAssistance() {
                     url: '/dashboard/update/assistance/detail/'+assistanceDetail,
                     method: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: JSON.stringify({ name_worker: name_worker, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
+                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
                     processData:false,
                     contentType:'application/json; charset=utf-8',
                     success: function (data) {

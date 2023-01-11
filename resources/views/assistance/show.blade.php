@@ -102,7 +102,7 @@
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
     <div class="row">
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-gradient-success elevation-1">A</span>
 
@@ -112,7 +112,7 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-gradient-danger elevation-1">F</span>
 
@@ -122,7 +122,7 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-gradient-gray-dark elevation-1">S</span>
 
@@ -132,7 +132,7 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-info elevation-1">M</span>
 
@@ -142,7 +142,7 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-gradient-warning elevation-1">J</span>
 
@@ -152,7 +152,7 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
-        <div class="col-md-2">
+        <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon bg-gradient-fuchsia elevation-1">V</span>
 
@@ -162,6 +162,27 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-blue elevation-1">P</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">PERMISO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-indigo elevation-1">T</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">TARDANZA</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+
     </div>
     <div class="row">
         <div class="col-md-1">

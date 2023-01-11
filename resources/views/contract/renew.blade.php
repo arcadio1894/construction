@@ -38,11 +38,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Nuevo Contrato</h1>
+    <h1 class="page-title">Renovar Contrato</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo contrato para {{ $worker->first_name. ' '.$worker->last_name }}</h5>
+    <h5 class="card-title">Renovación de contrato de {{ $worker->first_name. ' '.$worker->last_name }}</h5>
     <a href="{{ route('contract.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Contratos</a>
     <a href="{{ route('worker.index') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Trabajadores</a>
 @endsection
@@ -55,12 +55,12 @@
         <li class="breadcrumb-item">
             <a href="{{ route('contract.index') }}"><i class="fa fa-archive"></i> Contratos</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Renovación</li>
     </ol>
 @endsection
 
 @section('content')
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('contract.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('contract.storeRenew') }}" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="worker_id" value="{{ $worker->id }}">
         <div class="form-group row">
@@ -70,7 +70,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-keyboard"></i></span>
                     </div>
-                    <input id="code" type="text" readonly class="form-control" name="code" value="{{ $codeContract }}">
+                    <input id="code" type="text" class="form-control" name="code" value="{{ $codeContractRenew }}" readonly>
                 </div>
             </div>
 
@@ -136,5 +136,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/contract/create.js') }}"></script>
+    <script src="{{ asset('js/contract/renew.js') }}"></script>
 @endsection

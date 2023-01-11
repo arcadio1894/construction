@@ -1245,17 +1245,25 @@ Route::middleware('auth')->group(function (){
         Route::post('/enable/worker/{id}', 'WorkerController@enable')
             ->middleware('permission:restore_worker');
 
+        //Route::get('/probar/cadenas', 'WorkerController@pruebaCadenas');
+
         // CRUD Contratos
         Route::get('/all/contracts', 'ContractController@getAllContracts')
             ->middleware('permission:contract_worker');
         Route::get('contratos', 'ContractController@index')
             ->name('contract.index')
             ->middleware('permission:contract_worker');
-        Route::get('crear/contrato', 'ContractController@create')
+        Route::get('crear/contrato/{worker_id}', 'ContractController@create')
             ->name('contract.create')
+            ->middleware('permission:contract_worker');
+        Route::get('renovar/contrato/{worker_id}', 'ContractController@renew')
+            ->name('contract.renew')
             ->middleware('permission:contract_worker');
         Route::post('contract/store', 'ContractController@store')
             ->name('contract.store')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/renew', 'ContractController@storeRenew')
+            ->name('contract.storeRenew')
             ->middleware('permission:contract_worker');
         Route::get('/editar/contrato/{id}', 'ContractController@edit')
             ->name('contract.edit')

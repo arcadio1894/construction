@@ -104,6 +104,14 @@
                                 <input type="text" id="level_school" name="level_school" class="form-control">
                             </div>
                             <div class="col-md-6">
+                                <label for="profession">Profesión</label>
+                                <input type="text" id="profession" name="profession" class="form-control">
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
                                 <label for="gender">Género</label>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -122,9 +130,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-
-                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="admission_date">Fecha de ingreso </label>
                                 <div class="input-group">
@@ -134,6 +139,10 @@
                                     <input type="text" id="admission_date" name="admission_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
+
+                        </div>
+
+                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="termination_date">Fecha de Cese </label>
                                 <div class="input-group">
@@ -142,6 +151,10 @@
                                     </div>
                                     <input type="text" id="termination_date" name="termination_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reason_for_termination">Motivo de Cese </label>
+                                <textarea name="reason_for_termination" id="reason_for_termination" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese motivo ...."></textarea>
                             </div>
                         </div>
 
@@ -267,23 +280,20 @@
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="five_category">Quinta Categoría </label>
-                                <input type="number" id="five_category" name="five_category" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
+                                <label for="working_day">Jornada Laboral </label>
+                                <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0">NINGUNO</option>
+                                    @foreach( $working_days as $key => $working_day )
+                                        <option value="{{ $working_day->id }}" {{ ($key==0) ? 'selected':'' }} >{{ $working_day->description }}</option>
+                                    @endforeach
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label for="observation">Observación </label>
                                 <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                             </div>
-                            <div class="col-md-6">
-                                <label for="working_day">Jornada Laboral </label>
-                                <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">
-                                    <option></option>
-                                    <option value="0">NINGUNO</option>
-                                    @foreach( $working_days as $working_day )
-                                        <option value="{{ $working_day->id }}" >{{ $working_day->description }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
+
                         </div>
 
                     </div>
@@ -305,39 +315,6 @@
                         </div>
                     </div>
                     <div class="card-body" id="body-contacts">
-                        {{--<div class="callout callout-info">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="work_function">Nombre </label>
-                                    <div class="input-group mb-3">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
-                                        </div>
-                                        <input type="text" data-contactname name="contacts[]" class="form-control" placeholder="Nombre" value="">
-                                    </div>
-                                </div>
-
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="work_function">Parentesco </label>
-                                        <select name="relations[]" class="relation form-control select2" style="width: 100%;">
-                                            <option></option>
-                                            @foreach( $work_functions as $function )
-                                                <option value="{{ $function->id }}">{{ $function->description }}</option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="work_function">Teléfono </label>
-                                        <input type="text" data-phone name="phones[]" class="form-control" placeholder="000000000" value="">
-
-                                    </div>
-                                </div>
-                            </div>
-
-                        </div>--}}
 
                     </div>
                     <!-- /.card-body -->
