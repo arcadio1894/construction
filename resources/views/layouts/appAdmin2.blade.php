@@ -1344,6 +1344,34 @@
                         </a>
                         @endcan
                         <ul class="nav nav-treeview">
+                            @can('holiday_worker')
+                                <li class="nav-item has-treeview @yield('openHoliday')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Feriados
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('holiday.index') }}" class="nav-link @yield('activeListHoliday')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar Feriados</p>
+                                            </a>
+                                        </li>
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('holiday.create') }}" class="nav-link @yield('activeCreateHoliday')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear Feriado</p>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('contract_worker')
                             <li class="nav-item has-treeview @yield('openContract')">
                                 <a href="#" class="nav-link">

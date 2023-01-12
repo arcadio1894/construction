@@ -1403,6 +1403,31 @@ Route::middleware('auth')->group(function (){
             ->name('pensionSystems.restore')
             ->middleware('permission:systemPension_worker');
 
+        // CRUD Feriados
+        Route::get('/all/holidays', 'HolidayController@getAllHolidays')
+            ->middleware('permission:holiday_worker');
+        Route::get('feriados', 'HolidayController@index')
+            ->name('holiday.index')
+            ->middleware('permission:holiday_worker');
+        Route::get('crear/feriado', 'HolidayController@create')
+            ->name('holiday.create')
+            ->middleware('permission:holiday_worker');
+        Route::post('holiday/store', 'HolidayController@store')
+            ->name('holiday.store')
+            ->middleware('permission:holiday_worker');
+        Route::get('/editar/feriado/{id}', 'HolidayController@edit')
+            ->name('holiday.edit')
+            ->middleware('permission:holiday_worker');
+        Route::post('holiday/update', 'HolidayController@update')
+            ->name('holiday.update')
+            ->middleware('permission:holiday_worker');
+        Route::post('holiday/destroy', 'HolidayController@destroy')
+            ->name('holiday.destroy')
+            ->middleware('permission:holiday_worker');
+        Route::get('/generate/holidays', 'HolidayController@generateHolidays')
+            ->name('holiday.generate')
+            ->middleware('permission:holiday_worker');
+
         // ASISTENCIA
         Route::get('calendario/asistencia', 'AssistanceController@index')
             ->name('assistance.index');
