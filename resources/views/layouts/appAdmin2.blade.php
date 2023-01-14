@@ -1540,6 +1540,35 @@
                                 </ul>
                             </li>
                             @endcan
+                            @can('list_percentageWorker')
+                                <li class="nav-item has-treeview @yield('openPercentageWorker')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Porcentajes
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_percentageWorker')
+                                        <li class="nav-item">
+                                            <a href="{{ route('percentageWorker.index') }}" class="nav-link @yield('activeListPercentageWorker')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Listar porcentajes</p>
+                                            </a>
+                                        </li>
+                                        @endcan
+                                        @can('create_percentageWorker')
+                                        <li class="nav-item">
+                                            <a href="{{ route('percentageWorker.create') }}" class="nav-link @yield('activeCreatePercentageWorker')">
+                                                <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                <p>Crear Porcentaje</p>
+                                            </a>
+                                        </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
 

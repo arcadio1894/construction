@@ -1247,6 +1247,28 @@ Route::middleware('auth')->group(function (){
 
         //Route::get('/probar/cadenas', 'WorkerController@pruebaCadenas');
 
+        //PORCENTAGE QUOTES
+        Route::get('/all/percentages/workers', 'PercentageWorkerController@getPercentageWorkers')
+            ->middleware('permission:list_percentageWorker');
+        Route::get('porcentajes/recursos/humanos', 'PercentageWorkerController@index')
+            ->name('percentageWorker.index')
+            ->middleware('permission:list_percentageWorker');
+        Route::get('crear/porcentaje/recursos/humanos', 'PercentageWorkerController@create')
+            ->name('percentageWorker.create')
+            ->middleware('permission:create_percentageWorker');
+        Route::post('percentage/worker/store', 'PercentageWorkerController@store')
+            ->name('percentageWorker.store')
+            ->middleware('permission:create_percentageWorker');
+        Route::get('/editar/porcentaje/recursos/humanos/{id}', 'PercentageWorkerController@edit')
+            ->name('percentageWorker.edit')
+            ->middleware('permission:update_percentageWorker');
+        Route::post('percentage/worker/update', 'PercentageWorkerController@update')
+            ->name('percentageWorker.update')
+            ->middleware('permission:update_percentageWorker');
+        Route::post('percentage/worker/destroy', 'PercentageWorkerController@destroy')
+            ->name('percentageWorker.destroy')
+            ->middleware('permission:destroy_percentageWorker');
+
         // CRUD Contratos
         Route::get('/all/contracts', 'ContractController@getAllContracts')
             ->middleware('permission:contract_worker');
