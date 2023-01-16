@@ -272,7 +272,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -283,8 +285,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -334,7 +336,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -345,8 +349,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -396,7 +400,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -407,8 +413,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -458,7 +464,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -469,8 +477,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -520,7 +528,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -531,8 +541,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -582,7 +592,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -593,8 +605,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -644,7 +656,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -655,8 +669,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -706,7 +720,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -717,8 +733,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -768,7 +784,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -779,8 +797,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -830,7 +848,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -841,8 +861,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -892,7 +912,9 @@
                                                         <tr class="d-flex">
                                                             <th class="col-md-3">Trabajador</th>
                                                             @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                                <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                                <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                    {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                                </th>
                                                             @endfor
                                                         </tr>
                                                         </thead>
@@ -903,8 +925,8 @@
                                                                     {{ $arrayAssistances[$b]['worker'] }}
                                                                 </td>
                                                                 @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                        {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
+                                                                    <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                        <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
                                                                     </td>
                                                                 @endfor
                                                             </tr>
@@ -954,7 +976,9 @@
                                                     <tr class="d-flex">
                                                         <th class="col-md-3">Trabajador</th>
                                                         @for( $a=0 ; $a<count($arrayAssistances[0]['assistances']) ; $a++ )
-                                                        <th style="width:35px">{{$arrayAssistances[0]['assistances'][$a]['number_day']}}</th>
+                                                            <th style="width:35px;background-color: {{ $arrayAssistances[0]['assistances'][$a]['bg_color'] }}">
+                                                                {{$arrayAssistances[0]['assistances'][$a]['number_day']}}
+                                                            </th>
                                                         @endfor
                                                     </tr>
                                                     </thead>
@@ -965,9 +989,9 @@
                                                                 {{ $arrayAssistances[$b]['worker'] }}
                                                             </td>
                                                             @for( $c=0 ; $c<count($arrayAssistances[$b]['assistances']) ; $c++ )
-                                                            <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">
-                                                                {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
-                                                            </td>
+                                                                <td style="width:35px; {{ ($arrayAssistances[$b]['assistances'][$c]['status'] == 'N') ? 'color:black':'color:white' }};background-color: {{ $arrayAssistances[$b]['assistances'][$c]['bg_color'] }}">
+                                                                    <span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color: {{ $arrayAssistances[$b]['assistances'][$c]['color'] }}">{!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}</span>
+                                                                </td>
                                                             @endfor
                                                         </tr>
                                                     @endfor

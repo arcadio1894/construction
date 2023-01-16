@@ -104,6 +104,8 @@ class HolidayController extends Controller
     public function getAllHolidays()
     {
         $holidays = Holiday::select('id', 'description', 'year', 'date_complete')
+            ->orderBy('year', 'DESC')
+            ->orderBy('date_complete', 'ASC')
             ->get();
         return datatables($holidays)->toJson();
 

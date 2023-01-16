@@ -126,7 +126,7 @@ function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab 
 
     var titles = '<th class="col-md-3" >Trabajador</th>';
     for (var k = 0; k < arrayAssistances[0]['assistances'].length; k++) {
-        titles = titles + '<th style="width:35px">'+arrayAssistances[0]['assistances'][k]['number_day']+'</th>'
+        titles = titles + '<th style="width:35px;background-color:'+arrayAssistances[0]['assistances'][k]['bg_color'] +'">'+arrayAssistances[0]['assistances'][k]['number_day']+'</th>'
     }
     titulos.innerHTML = titles;
 
@@ -136,7 +136,8 @@ function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab 
         for (var m = 0; m < arrayAssistances[l]['assistances'].length; m++) {
             var color = (arrayAssistances[l]["assistances"][m]["status"] === "N") ? "color:black":"color:white";
             var background = arrayAssistances[l]['assistances'][m]['color'];
-            assistances = assistances + '<td style="width:35px; ' + color +';background-color: '+ background + '">'+arrayAssistances[l]['assistances'][m]['status']+'</td>'
+            var td_background = arrayAssistances[l]['assistances'][m]['bg_color'];
+            assistances = assistances + '<td style="width:35px; ' + color +';background-color: '+ td_background + '"><span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color:'+background+' ">'+arrayAssistances[l]['assistances'][m]['status']+'</span></td>'
         }
         clone3.querySelector("[data-bodyassistances]").innerHTML = assistances;
         bodyAssistances.append(clone3);

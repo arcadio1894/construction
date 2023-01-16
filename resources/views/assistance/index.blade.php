@@ -154,6 +154,24 @@
                     center: 'title',
                     right : ''
                 },
+                dayRender: function (date, cell) {
+
+                    var today = new Date();
+                    var end = new Date();
+                    end.setDate(today.getDate()+7);
+                    //console.log(moment().weekday(date.getDate()));
+                    if ( date.date.getDay() === 0){
+                        date.el.style.backgroundColor = "#F3A79F";
+                    }
+                    //console.log(fecha.el.);
+                    /*if (fecha.date.getDate() === today.getDate()) {
+                        cell.css("background-color", "red");
+                    }
+                    if(fecha > today && fecha <= end) {
+                         cell.css("background-color", "yellow");
+                    }*/
+
+                },
                 'themeSystem': 'bootstrap',
                 locale: 'es',
                 defaultView: 'dayGridMonth',
@@ -305,7 +323,8 @@
                         // if so, remove the element from the "Draggable Events" list
                         info.draggedEl.parentNode.removeChild(info.draggedEl);
                     }
-                }
+                },
+
             });
 
             calendar.render();

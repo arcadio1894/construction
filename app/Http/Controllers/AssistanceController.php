@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Assistance;
 use App\AssistanceDetail;
+use App\Holiday;
 use App\Worker;
 use App\WorkingDay;
 use Carbon\Carbon;
@@ -19,6 +20,7 @@ class AssistanceController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         $assistances = Assistance::select('id', 'date_assistance')->get();
+        $holidays = Holiday::select('id', 'date_complete', 'description')->get();
 
         $events = [];
         foreach ( $assistances as $assistance )
@@ -26,11 +28,22 @@ class AssistanceController extends Controller
             array_push($events, [
                 'title' => 'Asistencia '.$assistance->date_assistance->format('d/m/Y'),
                 'start' => $assistance->date_assistance->format('Y-m-d'),
-                'backgroundColor' => '#f56954', //red
-                'borderColor' => '#f56954', //red
+                'backgroundColor' => '#0A23F7', //red
+                'borderColor' => '#0A23F7', //red
                 'allDay' => true
             ]);
 
+        }
+
+        foreach ( $holidays as $holiday )
+        {
+            array_push($events, [
+                'title' => $holiday->description,
+                'start' => $holiday->date_complete->format('Y-m-d'),
+                'backgroundColor' => '#117811', //red
+                'borderColor' => '#117811', //red
+                'allDay' => true
+            ]);
         }
 
         return view('assistance.index', compact( 'permissions', 'events'));
@@ -190,6 +203,7 @@ class AssistanceController extends Controller
         foreach ( $workers as $worker)
         {
             $arrayDayAssistances = [];
+
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -201,6 +215,8 @@ class AssistanceController extends Controller
                 {
                     $color = '';
                     $estado = '';
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
                     if ( $assistance_detail->status == 'A' )
                     {
                         $color = '#28a745';
@@ -211,15 +227,21 @@ class AssistanceController extends Controller
                     } elseif ( $assistance_detail->status == 'S' ){
                         $color = '#52585d';
                         $estado = 'S';
-                    } elseif ( $assistance_detail->status == 'DM' ){
+                    } elseif ( $assistance_detail->status == 'M' ){
                         $color = '#17a2b8';
-                        $estado = 'DM';
-                    } elseif ( $assistance_detail->status == 'FJ' ){
+                        $estado = 'M';
+                    } elseif ( $assistance_detail->status == 'J' ){
                         $color = '#ffc107';
-                        $estado = 'FJ';
+                        $estado = 'J';
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
+                    } elseif ( $assistance_detail->status == 'P' ){
+                        $color = '#007bff';
+                        $estado = 'P';
+                    } elseif ( $assistance_detail->status == 'T' ){
+                        $color = '#6610f2';
+                        $estado = 'T';
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -229,14 +251,18 @@ class AssistanceController extends Controller
                         'day' => $assistance_detail->date_assistance,
                         'number_day' => $i,
                         'status' => $estado,
-                        'color' => $color
+                        'color' => $color,
+                        'bg_color' => $backgroundColor
                     ]);
                 } else {
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
                     array_push($arrayDayAssistances, [
                         'day' => $fecha->format('d/m/Y'),
                         'number_day' => $i,
                         'status' => 'N',
-                        'color' => '#fff'
+                        'color' => '#fff',
+                        'bg_color' => $backgroundColor
                     ]);
                 }
 
@@ -247,6 +273,8 @@ class AssistanceController extends Controller
                 'assistances' => $arrayDayAssistances
             ]);
         }
+
+
 
         //dump($arrayAssistances);
 
@@ -316,6 +344,8 @@ class AssistanceController extends Controller
                 {
                     $color = '';
                     $estado = '';
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
                     if ( $assistance_detail->status == 'A' )
                     {
                         $color = '#28a745';
@@ -350,14 +380,18 @@ class AssistanceController extends Controller
                         'day' => $assistance_detail->date_assistance,
                         'number_day' => $i,
                         'status' => $estado,
-                        'color' => $color
+                        'color' => $color,
+                        'bg_color' => $backgroundColor
                     ]);
                 } else {
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
                     array_push($arrayDayAssistances, [
                         'day' => $fecha->format('d/m/Y'),
                         'number_day' => $i,
                         'status' => 'N',
-                        'color' => '#fff'
+                        'color' => '#fff',
+                        'bg_color' => $backgroundColor
                     ]);
                 }
 
