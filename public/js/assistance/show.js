@@ -91,17 +91,18 @@ function changeTab() {
         success: function (json) {
             var arrayAssistances = json.arrayAssistances;
             var arrayWeekWithDays = json.arrayWeekWithDays;
+            var arraySummary = json.arraySummary;
             console.log(arrayAssistances);
             console.log(arrayWeekWithDays);
-
-            renderTemplateAssistances(arrayAssistances, arrayWeekWithDays, id_tab);
+            console.log(arraySummary);
+            renderTemplateAssistances(arrayAssistances, arrayWeekWithDays, id_tab, arraySummary);
 
         }
     });
 
 }
 
-function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab ) {
+function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab, arraySummary ) {
 
     $('#'+id_tab).html('');
 
@@ -109,6 +110,7 @@ function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab 
     var bodyWeeks = clone.querySelector("[data-bodyweeks]");
     var titulos = clone.querySelector("[data-bodytitles]");
     var bodyAssistances = clone.querySelector("[data-bodyassists]");
+    var bodySummary = clone.querySelector("[data-bodySummary]");
     $('#'+id_tab).append(clone);
 
     for (var i = 0; i < arrayWeekWithDays.length; i++) {
@@ -142,7 +144,21 @@ function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab 
         clone3.querySelector("[data-bodyassistances]").innerHTML = assistances;
         bodyAssistances.append(clone3);
     }
-
+    bodySummary.innerHTML = '';
+    for (var t = 0; t < arraySummary.length ; t++) {
+        console.log(arraySummary[t]['cantA']);
+        var clone4 = activateTemplate('#template-summary');
+        clone4.querySelector("[data-summaryworker]").innerHTML = arraySummary[t]['worker'];
+        clone4.querySelector("[data-canta]").innerHTML = arraySummary[t]['cantA'];
+        clone4.querySelector("[data-cantf]").innerHTML = arraySummary[t]['cantF'];
+        clone4.querySelector("[data-cantt]").innerHTML = arraySummary[t]['cantT'];
+        clone4.querySelector("[data-cantm]").innerHTML = arraySummary[t]['cantM'];
+        clone4.querySelector("[data-cantj]").innerHTML = arraySummary[t]['cantJ'];
+        clone4.querySelector("[data-cantv]").innerHTML = arraySummary[t]['cantV'];
+        clone4.querySelector("[data-cantp]").innerHTML = arraySummary[t]['cantP'];
+        clone4.querySelector("[data-cants]").innerHTML = arraySummary[t]['cantS'];
+        bodySummary.append(clone4);
+    }
 }
 
 function activateTemplate(id) {

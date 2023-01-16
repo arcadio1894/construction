@@ -295,7 +295,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -359,7 +394,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -423,7 +493,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -487,7 +592,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -551,7 +691,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -615,7 +790,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -679,7 +889,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -743,7 +988,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -807,7 +1087,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -871,7 +1186,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -935,7 +1285,42 @@
                                                     </table>
                                                 </div>
                                             </div>
-
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <table class="table table-sm table-bordered" style="width: 100%">
+                                                        <thead>
+                                                        <tr >
+                                                            <th class="col-3 text-center">TRABAJADOR</th>
+                                                            <th class="text-center">ASISTIÓ</th>
+                                                            <th class="text-center">FALTAS</th>
+                                                            <th class="text-center">TARDANZAS</th>
+                                                            <th class="text-center">D. MEDICO</th>
+                                                            <th class="text-center">F. JUSTIFICADA</th>
+                                                            <th class="text-center">VACACIONES</th>
+                                                            <th class="text-center">PERMISOS</th>
+                                                            <th class="text-center">SUSPENSION</th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                            <tr >
+                                                                <td class="col-3">
+                                                                    {{ $arraySummary[$t]['worker'] }}
+                                                                </td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            </tr>
+                                                        @endfor
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
                                         </div>
                                     @endif
                                 </div>
@@ -999,7 +1384,42 @@
                                                 </table>
                                             </div>
                                         </div>
-
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <table class="table table-sm table-bordered" style="width: 100%">
+                                                    <thead>
+                                                    <tr >
+                                                        <th class="col-3 text-center">TRABAJADOR</th>
+                                                        <th class="text-center">ASISTIÓ</th>
+                                                        <th class="text-center">FALTAS</th>
+                                                        <th class="text-center">TARDANZAS</th>
+                                                        <th class="text-center">D. MEDICO</th>
+                                                        <th class="text-center">F. JUSTIFICADA</th>
+                                                        <th class="text-center">VACACIONES</th>
+                                                        <th class="text-center">PERMISOS</th>
+                                                        <th class="text-center">SUSPENSION</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                                                        <tr >
+                                                            <td class="col-3">
+                                                                {{ $arraySummary[$t]['worker'] }}
+                                                            </td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                        </tr>
+                                                    @endfor
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
                                     </div>
                                     @endif
                                 </div>
@@ -1060,7 +1480,42 @@
                     </table>
                 </div>
             </div>
-
+            <div class="row">
+                <div class="col-md-12">
+                    <table class="table table-sm table-bordered" style="width: 100%">
+                        <thead>
+                        <tr >
+                            <th class="col-3 text-center">TRABAJADOR</th>
+                            <th class="text-center">ASISTIÓ</th>
+                            <th class="text-center">FALTAS</th>
+                            <th class="text-center">TARDANZAS</th>
+                            <th class="text-center">D. MEDICO</th>
+                            <th class="text-center">F. JUSTIFICADA</th>
+                            <th class="text-center">VACACIONES</th>
+                            <th class="text-center">PERMISOS</th>
+                            <th class="text-center">SUSPENSION</th>
+                        </tr>
+                        </thead>
+                        <tbody data-bodySummary>
+                        @for( $t=0 ; $t<count($arraySummary) ; $t++ )
+                            <tr >
+                                <td class="col-3">
+                                    {{ $arraySummary[$t]['worker'] }}
+                                </td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantA'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantF'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantT'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantM'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantJ'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                            </tr>
+                        @endfor
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </template>
 
@@ -1088,6 +1543,20 @@
                     {!! $arrayAssistances[$b]['assistances'][$c]['status'] !!}
                 </td>
             @endfor--}}
+        </tr>
+    </template>
+
+    <template id="template-summary">
+        <tr >
+            <td class="col-3" data-summaryworker=""></td>
+            <td class="text-center" data-canta></td>
+            <td class="text-center" data-cantf></td>
+            <td class="text-center" data-cantt></td>
+            <td class="text-center" data-cantm></td>
+            <td class="text-center" data-cantj></td>
+            <td class="text-center" data-cantv></td>
+            <td class="text-center" data-cantp></td>
+            <td class="text-center" data-cants></td>
         </tr>
     </template>
 

@@ -199,10 +199,26 @@ class AssistanceController extends Controller
             dump($arrayWeekWithDays[$k]['week']);
         }*/
 
-
+        $arraySummary = [];
+        $cantA = 0;
+        $cantF = 0;
+        $cantS = 0;
+        $cantM = 0;
+        $cantJ = 0;
+        $cantV = 0;
+        $cantP = 0;
+        $cantT = 0;
         foreach ( $workers as $worker)
         {
             $arrayDayAssistances = [];
+            $cantA = 0;
+            $cantF = 0;
+            $cantS = 0;
+            $cantM = 0;
+            $cantJ = 0;
+            $cantV = 0;
+            $cantP = 0;
+            $cantT = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -221,27 +237,35 @@ class AssistanceController extends Controller
                     {
                         $color = '#28a745';
                         $estado = 'A';
+                        $cantA = $cantA + 1;
                     } elseif ( $assistance_detail->status == 'F' ) {
                         $color = '#dc3545';
                         $estado = 'F';
+                        $cantF = $cantF + 1;
                     } elseif ( $assistance_detail->status == 'S' ){
                         $color = '#52585d';
                         $estado = 'S';
+                        $cantS = $cantS + 1;
                     } elseif ( $assistance_detail->status == 'M' ){
                         $color = '#17a2b8';
                         $estado = 'M';
+                        $cantM = $cantM + 1;
                     } elseif ( $assistance_detail->status == 'J' ){
                         $color = '#ffc107';
                         $estado = 'J';
+                        $cantJ = $cantJ + 1;
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
+                        $cantV = $cantV + 1;
                     } elseif ( $assistance_detail->status == 'P' ){
                         $color = '#007bff';
                         $estado = 'P';
+                        $cantP = $cantP + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
+                        $cantT = $cantT + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -272,13 +296,25 @@ class AssistanceController extends Controller
                 'worker' => $worker->first_name . ' ' . $worker->last_name,
                 'assistances' => $arrayDayAssistances
             ]);
+
+            array_push($arraySummary, [
+                'worker' => $worker->first_name . ' ' . $worker->last_name,
+                'cantA' => $cantA,
+                'cantF' => $cantF,
+                'cantS' => $cantS,
+                'cantM' => $cantM,
+                'cantJ' => $cantJ,
+                'cantV' => $cantV,
+                'cantP' => $cantP,
+                'cantT' => $cantT
+            ]);
         }
 
 
 
         //dump($arrayAssistances);
 
-        return view('assistance.show', compact( 'permissions', 'yearCurrent', 'monthCurrent', 'nameMonth', 'weekOfYear', 'arrayWeekWithDays', 'arrayAssistances'));
+        return view('assistance.show', compact( 'permissions', 'yearCurrent', 'monthCurrent', 'nameMonth', 'weekOfYear', 'arrayWeekWithDays', 'arrayAssistances', 'arraySummary'));
 
     }
 
@@ -328,11 +364,27 @@ class AssistanceController extends Controller
         {
             dump($arrayWeekWithDays[$k]['week']);
         }*/
-
+        $arraySummary = [];
+        $cantA = 0;
+        $cantF = 0;
+        $cantS = 0;
+        $cantM = 0;
+        $cantJ = 0;
+        $cantV = 0;
+        $cantP = 0;
+        $cantT = 0;
 
         foreach ( $workers as $worker)
         {
             $arrayDayAssistances = [];
+            $cantA = 0;
+            $cantF = 0;
+            $cantS = 0;
+            $cantM = 0;
+            $cantJ = 0;
+            $cantV = 0;
+            $cantP = 0;
+            $cantT = 0;
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -350,27 +402,35 @@ class AssistanceController extends Controller
                     {
                         $color = '#28a745';
                         $estado = 'A';
+                        $cantA = $cantA + 1;
                     } elseif ( $assistance_detail->status == 'F' ) {
                         $color = '#dc3545';
                         $estado = 'F';
+                        $cantF = $cantF + 1;
                     } elseif ( $assistance_detail->status == 'S' ){
                         $color = '#52585d';
                         $estado = 'S';
+                        $cantS = $cantS + 1;
                     } elseif ( $assistance_detail->status == 'M' ){
                         $color = '#17a2b8';
                         $estado = 'M';
+                        $cantM = $cantM + 1;
                     } elseif ( $assistance_detail->status == 'J' ){
                         $color = '#ffc107';
                         $estado = 'J';
+                        $cantJ = $cantJ + 1;
                     } elseif ( $assistance_detail->status == 'V' ){
                         $color = '#f012be';
                         $estado = 'V';
+                        $cantV = $cantV + 1;
                     } elseif ( $assistance_detail->status == 'P' ){
                         $color = '#007bff';
                         $estado = 'P';
+                        $cantP = $cantP + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
+                        $cantT = $cantT + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -401,11 +461,24 @@ class AssistanceController extends Controller
                 'worker' => $worker->first_name . ' ' . $worker->last_name,
                 'assistances' => $arrayDayAssistances
             ]);
+
+            array_push($arraySummary, [
+                'worker' => $worker->first_name . ' ' . $worker->last_name,
+                'cantA' => $cantA,
+                'cantF' => $cantF,
+                'cantS' => $cantS,
+                'cantM' => $cantM,
+                'cantJ' => $cantJ,
+                'cantV' => $cantV,
+                'cantP' => $cantP,
+                'cantT' => $cantT
+            ]);
         }
 
         return response()->json([
             'arrayAssistances' => $arrayAssistances,
-            'arrayWeekWithDays' => $arrayWeekWithDays
+            'arrayWeekWithDays' => $arrayWeekWithDays,
+            'arraySummary' => $arraySummary
         ], 200);
 
     }
