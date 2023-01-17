@@ -207,6 +207,8 @@
                     <h3 class="card-title">ASISTENCIAS MENSUALES</h3>
 
                     <div class="card-tools">
+                        <button type="button" id="btn-download" class="btn btn-sm btn-success btn-sm" > <i class="far fa-file-excel"></i> Descargar asistencias </button>
+
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
                     </div>

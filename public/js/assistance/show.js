@@ -13,7 +13,54 @@ $(document).ready(function () {
     $('#btn-prev').on('click', changePrevYear);
     $('#btn-next').on('click', changeNextYear);
 
+    $('#btn-download').on('click', downloadExcelAssistance);
+
 });
+
+function downloadExcelAssistance() {
+    var yearCurrent = $('#yearCurrent').val();
+    var monthCurrent = $('#monthCurrent').val();
+
+    const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Descargar asistencias de '+meses[monthCurrent-1]+' del año '+yearCurrent,
+        content: 'Se descargará las asistencias del mes y año indicados en la pantalla',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    //$.alert('Descargado igual');
+                    console.log(monthCurrent);
+                    console.log(yearCurrent);
+
+                    var query = {
+                        year: yearCurrent,
+                        month: monthCurrent
+                    };
+
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/download/excel/assistance/?" + $.param(query);
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function mayus(e) {
     e.value = e.value.toUpperCase();
@@ -80,8 +127,10 @@ function changeNextYear() {
 function changeTab() {
     var id_tab = $(this).data('tab');
     var month = $(this).data('month');
+    var monthName = id_tab.substring(4);
     // Actualizar el monthCurrent
     $('#monthCurrent').val(month);
+    $('#nameMonth').val(monthName);
     var year = $('#yearCurrent').val();
 
     $.ajax({

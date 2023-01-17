@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Assistance;
 use App\AssistanceDetail;
+use App\Exports\AssistanceExcelMultipleSheets;
 use App\Holiday;
 use App\Worker;
 use App\WorkingDay;
@@ -480,6 +481,144 @@ class AssistanceController extends Controller
             'arrayWeekWithDays' => $arrayWeekWithDays,
             'arraySummary' => $arraySummary
         ], 200);
+
+    }
+
+    public function exportAssistancesMonthYear()
+    {
+        $year = $_GET['year'];
+        $month = $_GET['month'];;
+
+        $workers = Worker::where('enable', true)->get();
+
+        $date = Carbon::create($year,$month,1);
+        $yearCurrent = $date->year;
+        $monthCurrent = $date->month;
+        $nameMonth = $date->monthName;
+
+        $dates = 'Reporte de Asistencias del mes de ' .$nameMonth.' del año '.$yearCurrent;
+
+        $arrayAssistances = [];
+
+        $arraySummary = [];
+        $cantA = 0;
+        $cantF = 0;
+        $cantS = 0;
+        $cantM = 0;
+        $cantJ = 0;
+        $cantV = 0;
+        $cantP = 0;
+        $cantT = 0;
+
+        foreach ( $workers as $worker)
+        {
+            $arrayDayAssistances = [];
+            $cantA = 0;
+            $cantF = 0;
+            $cantS = 0;
+            $cantM = 0;
+            $cantJ = 0;
+            $cantV = 0;
+            $cantP = 0;
+            $cantT = 0;
+            for ( $i = 1; $i<=$date->daysInMonth; $i++ )
+            {
+                $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
+                $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                    ->where('worker_id', $worker->id)
+                    ->first();
+
+                if ( !empty($assistance_detail) )
+                {
+                    $color = '';
+                    $estado = '';
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
+                    if ( $assistance_detail->status == 'A' )
+                    {
+                        $color = '#28a745';
+                        $estado = 'A';
+                        $cantA = $cantA + 1;
+                    } elseif ( $assistance_detail->status == 'F' ) {
+                        $color = '#dc3545';
+                        $estado = 'F';
+                        $cantF = $cantF + 1;
+                    } elseif ( $assistance_detail->status == 'S' ){
+                        $color = '#52585d';
+                        $estado = 'S';
+                        $cantS = $cantS + 1;
+                    } elseif ( $assistance_detail->status == 'M' ){
+                        $color = '#17a2b8';
+                        $estado = 'M';
+                        $cantM = $cantM + 1;
+                    } elseif ( $assistance_detail->status == 'J' ){
+                        $color = '#ffc107';
+                        $estado = 'J';
+                        $cantJ = $cantJ + 1;
+                    } elseif ( $assistance_detail->status == 'V' ){
+                        $color = '#f012be';
+                        $estado = 'V';
+                        $cantV = $cantV + 1;
+                    } elseif ( $assistance_detail->status == 'P' ){
+                        $color = '#007bff';
+                        $estado = 'P';
+                        $cantP = $cantP + 1;
+                    } elseif ( $assistance_detail->status == 'T' ){
+                        $color = '#6610f2';
+                        $estado = 'T';
+                        $cantT = $cantT + 1;
+                    } else {
+                        $color = '#fff';
+                        $estado = 'N';
+                    }
+
+                    array_push($arrayDayAssistances, [
+                        'day' => $assistance_detail->date_assistance,
+                        'number_day' => $i,
+                        'status' => $estado,
+                        'color' => $color,
+                        'bg_color' => $backgroundColor
+                    ]);
+                } else {
+                    $backgroundColor = ($fecha->isSunday()) ? '#F18938': '#fff';
+
+                    array_push($arrayDayAssistances, [
+                        'day' => $fecha->format('d/m/Y'),
+                        'number_day' => $i,
+                        'status' => 'N',
+                        'color' => '#fff',
+                        'bg_color' => $backgroundColor
+                    ]);
+                }
+
+            }
+
+            array_push($arrayAssistances, [
+                'worker' => $worker->first_name . ' ' . $worker->last_name,
+                'assistances' => $arrayDayAssistances
+            ]);
+
+            array_push($arraySummary, [
+                'worker' => $worker->first_name . ' ' . $worker->last_name,
+                'cantA' => $cantA,
+                'cantF' => $cantF,
+                'cantS' => $cantS,
+                'cantM' => $cantM,
+                'cantJ' => $cantJ,
+                'cantV' => $cantV,
+                'cantP' => $cantP,
+                'cantT' => $cantT
+            ]);
+        }
+
+        return (new AssistanceExcelMultipleSheets($arrayAssistances, $arraySummary, $dates))->download('reporteAsistencias.xlsx');
+
+
+        /*return response()->json([
+            'arrayAssistances' => $arrayAssistances,
+            'arrayWeekWithDays' => $arrayWeekWithDays,
+            'arraySummary' => $arraySummary
+        ], 200);*/
 
     }
 

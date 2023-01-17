@@ -1245,6 +1245,8 @@ Route::middleware('auth')->group(function (){
         Route::post('/enable/worker/{id}', 'WorkerController@enable')
             ->middleware('permission:restore_worker');
 
+
+
         //Route::get('/probar/cadenas', 'WorkerController@pruebaCadenas');
 
         //PORCENTAGE QUOTES
@@ -1465,6 +1467,9 @@ Route::middleware('auth')->group(function (){
             ->name('assistance.store');
         Route::post('/update/assistance/detail/{assistanceDetail_id}', 'AssistanceController@update')
             ->name('assistance.update');
+
+        Route::get('/download/excel/assistance/', 'AssistanceController@exportAssistancesMonthYear')
+            ->name('download.excel.assistance');
 
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
