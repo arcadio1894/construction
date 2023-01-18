@@ -12,7 +12,8 @@ class OrderServiceDetail extends Model
         'unit',
         'quantity',
         'price',
-        'igv'
+        'igv',
+        'total_detail'
     ];
 
     public function order_service()
