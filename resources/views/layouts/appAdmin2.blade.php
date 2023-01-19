@@ -1540,6 +1540,35 @@
                                 </ul>
                             </li>
                             @endcan
+                            @can('list_areaWorker')
+                                <li class="nav-item has-treeview @yield('openAreaWorker')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Áreas Empresa
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_areaWorker')
+                                            <li class="nav-item">
+                                                <a href="{{ route('areaWorker.index') }}" class="nav-link @yield('activeListAreaWorker')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar Áreas</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_percentageWorker')
+                                            <li class="nav-item">
+                                                <a href="{{ route('areaWorker.create') }}" class="nav-link @yield('activeCreateAreaWorker')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear Áreas</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('list_percentageWorker')
                                 <li class="nav-item has-treeview @yield('openPercentageWorker')">
                                     <a href="#" class="nav-link">

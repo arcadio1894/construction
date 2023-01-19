@@ -38,13 +38,19 @@ class Worker extends Model
         'work_function_id', // id description
         'pension_system_id', // id description percentage
         'working_day_id',
-        'enable'
+        'enable',
+        'area_worker_id'
     ];
 
     // TODO: Las relaciones
     public function user()
     {
         return $this->belongsTo('App\User');
+    }
+
+    public function area_worker()
+    {
+        return $this->belongsTo('App\AreaWorker', 'area_worker_id');
     }
 
     public function contract()

@@ -1481,6 +1481,28 @@ Route::middleware('auth')->group(function (){
         Route::post('/destroy/working/day/{id}', 'WorkingDayController@destroy')
             ->name('workingDay.destroy');
 
+        // AREA WORKER
+        Route::get('/all/areaWorkers', 'AreaWorkerController@getAreas')
+            ->middleware('permission:list_areaWorker');
+        Route::get('areas/empresa', 'AreaWorkerController@index')
+            ->name('areaWorker.index')
+            ->middleware('permission:list_areaWorker');
+        Route::get('crear/area/empresa', 'AreaWorkerController@create')
+            ->name('areaWorker.create')
+            ->middleware('permission:create_areaWorker');
+        Route::post('areaWorker/store', 'AreaWorkerController@store')
+            ->name('areaWorker.store')
+            ->middleware('permission:create_areaWorker');
+        Route::get('/editar/area/empresa/{id}', 'AreaWorkerController@edit')
+            ->name('areaWorker.edit')
+            ->middleware('permission:update_areaWorker');
+        Route::post('areaWorker/update', 'AreaWorkerController@update')
+            ->name('areaWorker.update')
+            ->middleware('permission:update_areaWorker');
+        Route::post('areaWorker/destroy', 'AreaWorkerController@destroy')
+            ->name('areaWorker.destroy')
+            ->middleware('permission:destroy_areaWorker');
+
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');
