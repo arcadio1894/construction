@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\AreaWorker;
 use App\CivilStatus;
 use App\Contract;
 use App\EmergencyContact;
 use App\PensionSystem;
+use App\PercentageWorker;
 use App\Relationship;
 use App\User;
 use App\Work;
@@ -78,8 +80,12 @@ class WorkerController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $value_assign_family = 102.50;
-        $value_essalud = 9;
+        $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+        $essalud = PercentageWorker::where('name', 'essalud')->first();
+        $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+
+        $value_assign_family = round((float)$sueldo->value/(float)$assign_family->value, 2);
+        $value_essalud = $essalud->value;
 
         $civil_statuses = CivilStatus::select('id', 'description')->get();
         $work_functions = WorkFunction::select('id', 'description')->get();
@@ -87,7 +93,9 @@ class WorkerController extends Controller
         $relationships = Relationship::select('id', 'description')->get();
         $working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
 
-        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'working_days'));
+        $areaWorkers = AreaWorker::select('id', 'name')->get();
+
+        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'working_days', 'areaWorkers'));
     }
 
     public function store(Request $request)
@@ -96,8 +104,12 @@ class WorkerController extends Controller
 
         DB::beginTransaction();
         try {
-            $value_assign_family = 102.50;
-            $value_essalud = 9;
+            $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+            $essalud = PercentageWorker::where('name', 'essalud')->first();
+            $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+
+            $value_assign_family = round((float)$sueldo->value/(float)$assign_family->value, 2);
+            $value_essalud = $essalud->value;
 
             // Creamos el email con el formato mapellido@sermeind.com
             $nombres = $request->get('first_name');
@@ -152,6 +164,8 @@ class WorkerController extends Controller
                 'work_function_id' => ($request->get('work_function') == 0) ? null: $request->get('work_function'),
                 'pension_system_id' => ($request->get('pension_system') == 0) ? null: $request->get('pension_system'),
                 'working_day_id' => ($request->get('working_day') == 0) ? null: $request->get('working_day'),
+                'area_worker_id' => ($request->get('area_worker') == 0) ? null: $request->get('area_worker'),
+
             ]);
 
             // Creacion de los contactos de emergencia
@@ -207,8 +221,12 @@ class WorkerController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $value_assign_family = 102.50;
-        $value_essalud = 9;
+        $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+        $essalud = PercentageWorker::where('name', 'essalud')->first();
+        $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+
+        $value_assign_family = round((float)$sueldo->value/(float)$assign_family->value, 2);
+        $value_essalud = $essalud->value;
 
         $civil_statuses = CivilStatus::select('id', 'description')->get();
         $work_functions = WorkFunction::select('id', 'description')->get();
@@ -216,7 +234,9 @@ class WorkerController extends Controller
         $relationships = Relationship::select('id', 'description')->get();
         $working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
 
-        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'worker', 'working_days'));
+        $areaWorkers = AreaWorker::select('id', 'name')->get();
+
+        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'worker', 'working_days', 'areaWorkers'));
 
     }
 
@@ -224,8 +244,12 @@ class WorkerController extends Controller
     {
         DB::beginTransaction();
         try {
-            $value_assign_family = 102.50;
-            $value_essalud = 9;
+            $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+            $essalud = PercentageWorker::where('name', 'essalud')->first();
+            $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+
+            $value_assign_family = round((float)$sueldo->value/(float)$assign_family->value, 2);
+            $value_essalud = $essalud->value;
 
             // Creamos el email con el formato mapellido@sermeind.com
             $nombres = $request->get('first_name');
@@ -272,6 +296,7 @@ class WorkerController extends Controller
             $worker->work_function_id = ($request->get('work_function') == 0) ? null: $request->get('work_function');
             $worker->pension_system_id = ($request->get('pension_system') == 0) ? null: $request->get('pension_system');
             $worker->working_day_id = ($request->get('working_day') == 0) ? null: $request->get('working_day');
+            $worker->area_worker_id = ($request->get('area_worker') == 0) ? null: $request->get('area_worker');
             $worker->save();
 
             // Primero eliminamos los contactos

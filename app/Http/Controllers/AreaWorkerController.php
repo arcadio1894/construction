@@ -60,7 +60,7 @@ class AreaWorkerController extends Controller
     {
         $validated = $request->validated();
 
-        $area = AreaWorker::find($request->get('area_id'));
+        $area = AreaWorker::find($request->get('areaWorker_id'));
 
         $area->delete();
 

@@ -14,12 +14,17 @@ class PercentageWorkerSeeder extends Seeder
     {
         PercentageWorker::create([
             'name' => 'assign_family',
-            'value' => 102.50,
+            'value' => 10,
         ]);
 
         PercentageWorker::create([
             'name' => 'essalud',
             'value' => 9,
+        ]);
+
+        PercentageWorker::create([
+            'name' => 'sueldo',
+            'value' => 1025,
         ]);
     }
 }

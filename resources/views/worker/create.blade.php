@@ -84,33 +84,6 @@
                                 <label for="dni">DNI/C.E. </label>
                                 <input type="text" id="dni" name="dni" class="form-control" >
                             </div>
-
-                            <div class="col-md-6">
-                                <label for="work_function">Cargo </label>
-                                <select id="work_function" name="work_function" class="form-control select2" style="width: 100%;">
-                                    <option></option>
-                                    <option value="0">NINGUNO</option>
-                                    @foreach( $work_functions as $function )
-                                        <option value="{{ $function->id }}">{{ $function->description }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label for="level_school">Nivel de instrucción</label>
-                                <input type="text" id="level_school" name="level_school" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="profession">Profesión</label>
-                                <input type="text" id="profession" name="profession" class="form-control">
-                            </div>
-
-                        </div>
-
-                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="gender">Género</label>
                                 <div class="form-group row">
@@ -130,6 +103,36 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="work_function">Cargo </label>
+                                <select id="work_function" name="work_function" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0">NINGUNO</option>
+                                    @foreach( $work_functions as $function )
+                                        <option value="{{ $function->id }}">{{ $function->description }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="area_worker">Área </label>
+                                <select id="area_worker" name="area_worker" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0">NINGUNO</option>
+                                    @foreach( $areaWorkers as $areaWorker )
+                                        <option value="{{ $areaWorker->id }}">{{ $areaWorker->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+
                             <div class="col-md-6">
                                 <label for="admission_date">Fecha de ingreso </label>
                                 <div class="input-group">
@@ -139,10 +142,6 @@
                                     <input type="text" id="admission_date" name="admission_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
-
-                        </div>
-
-                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="termination_date">Fecha de Cese </label>
                                 <div class="input-group">
@@ -152,7 +151,11 @@
                                     <input type="text" id="termination_date" name="termination_date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
-                            <div class="col-md-6">
+                        </div>
+
+                        <div class="form-group row">
+
+                            <div class="col-md-12">
                                 <label for="reason_for_termination">Motivo de Cese </label>
                                 <textarea name="reason_for_termination" id="reason_for_termination" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese motivo ...."></textarea>
                             </div>
@@ -205,6 +208,17 @@
                                     </div>
                                     <input type="text" id="birthplace" name="birthplace" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="level_school">Nivel de instrucción</label>
+                                <input type="text" id="level_school" name="level_school" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profession">Profesión</label>
+                                <input type="text" id="profession" name="profession" class="form-control">
                             </div>
 
                         </div>
@@ -406,6 +420,9 @@
             });
             $('#civil_status').select2({
                 placeholder: "Selecione un estado civil",
+            });
+            $('#area_worker').select2({
+                placeholder: "Selecione un área",
             });
             $('#working_day').select2({
                 placeholder: "Selecione una jornada",

@@ -24,22 +24,22 @@ class DeleteAreaWorkerRequest extends FormRequest
     public function rules()
     {
         return [
-            'area_id' => 'required|exists:area_workers,id',
+            'areaWorker_id' => 'required|exists:area_workers,id',
         ];
     }
 
     public function messages()
     {
         return [
-            'area_id.required' => 'El :attribute es obligatorio.',
-            'area_id.exists' => 'El :attribute no existe en la base de datos.'
+            'areaWorker_id.required' => 'El :attribute es obligatorio.',
+            'areaWorker_id.exists' => 'El :attribute no existe en la base de datos.'
         ];
     }
 
     public function attributes()
     {
         return [
-            'area_id' => 'id del área'
+            'areaWorker_id' => 'id del área'
         ];
     }
 }

@@ -86,32 +86,6 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="work_function">Cargo </label>
-                                <select id="work_function" name="work_function" class="form-control select2" style="width: 100%;">
-                                    <option></option>
-                                    <option value="0" {{ ($worker->work_function_id == null) ? 'selected':'' }}>NINGUNO</option>
-                                    @foreach( $work_functions as $function )
-                                        <option value="{{ $function->id }}" {{ ($worker->work_function_id == $function->id) ? 'selected':'' }}>{{ $function->description }}</option>
-                                    @endforeach
-                                </select>
-
-                            </div>
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label for="level_school">Nivel de instrucción</label>
-                                <input type="text" id="level_school" name="level_school" value="{{ $worker->level_school }}" class="form-control">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="profession">Profesión</label>
-                                <input type="text" id="profession" name="profession" class="form-control" value="{{ $worker->profession }}">
-                            </div>
-
-                        </div>
-
-                        <div class="form-group row">
-                            <div class="col-md-6">
                                 <label for="gender">Género</label>
                                 <div class="form-group row">
                                     <div class="col-md-6">
@@ -130,9 +104,38 @@
                                     </div>
                                 </div>
                             </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="work_function">Cargo </label>
+                                <select id="work_function" name="work_function" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0" {{ ($worker->work_function_id == null) ? 'selected':'' }}>NINGUNO</option>
+                                    @foreach( $work_functions as $function )
+                                        <option value="{{ $function->id }}" {{ ($worker->work_function_id == $function->id) ? 'selected':'' }}>{{ $function->description }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
 
                             <div class="col-md-6">
-                                <label for="admission_date">Fecha de ingreso </label>
+                                <label for="area_worker">Área </label>
+                                <select id="area_worker" name="area_worker" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="0" {{ ($worker->area_worker_id == null) ? 'selected':'' }}>NINGUNO</option>
+                                    @foreach( $areaWorkers as $areaWorker )
+                                        <option value="{{ $areaWorker->id }}" {{ ($worker->area_worker_id == $areaWorker->id) ? 'selected':'' }}>{{ $areaWorker->name }}</option>
+                                    @endforeach
+                                </select>
+
+                            </div>
+
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="admission_date">Fecha de Ingreso </label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
@@ -140,10 +143,6 @@
                                     <input type="text" id="admission_date" name="admission_date" value="{{ ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
-
-                        </div>
-
-                        <div class="form-group row">
                             <div class="col-md-6">
                                 <label for="termination_date">Fecha de Cese </label>
                                 <div class="input-group">
@@ -153,8 +152,10 @@
                                     <input type="text" id="termination_date" name="termination_date" value="{{ ($worker->termination_date == null) ? '':$worker->termination_date->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="col-md-6">
+                        <div class="form-group row">
+                            <div class="col-md-12">
                                 <label for="observation">Motivo de Cese </label>
                                 <textarea name="reason_for_termination" id="reason_for_termination" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese motivo ....">{{$worker->reason_for_termination}}</textarea>
                             </div>
@@ -207,6 +208,17 @@
                                     </div>
                                     <input type="text" id="birthplace" name="birthplace" value="{{ ($worker->birthplace == null) ? '':$worker->birthplace->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                                 </div>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
+                                <label for="level_school">Nivel de instrucción</label>
+                                <input type="text" id="level_school" name="level_school" value="{{ $worker->level_school }}" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="profession">Profesión</label>
+                                <input type="text" id="profession" name="profession" class="form-control" value="{{ $worker->profession }}">
                             </div>
 
                         </div>
@@ -452,6 +464,9 @@
             });
             $('#working_day').select2({
                 placeholder: "Selecione un estado civill",
+            });
+            $('#area_worker').select2({
+                placeholder: "Selecione un área",
             });
             $('.relation').select2({
                 placeholder: "Selecione un parentesco",
