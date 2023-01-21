@@ -3,32 +3,15 @@ let $entriesJson=[];
 let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
-var $permissions;
-
-/*function format ( d ) {
-    var mensaje = "";
-    var detalles = d.details;
-    console.log(detalles);
-    for ( var i=0; i<detalles.length; i++ )
-    {
-        var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
-        mensaje = mensaje +
-            'Material: '+d.details[i].material.description+'<br>'+
-            'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
-            'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
-            'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
-    }
-    return 'DETALLES DE ENTRADA'+'<br>'+
-        mensaje;
-}*/
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/get/json/output/request",
+            url: "/dashboard/get/json/my/output/simple/",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -39,30 +22,6 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     return '<p> Solicitud-'+ item.id +'</p>';
-                }
-            },
-            { data: null,
-                title: 'Orden de ejecución',
-                wrap: true,
-                "render": function (item)
-                {
-                    return item.execution_order;
-                }
-            },
-            /*{ data: 'execution_order' },*/
-            { data: null,
-                title: 'Descripción',
-                wrap: true,
-                "render": function (item)
-                {
-                    /*if ( item.quote != null )
-                    {
-                        return '<p>'+ item.quote.description_quote +'</p>';
-                    } else {
-                        return '<p> No hay datos </p>';
-                    }*/
-                    return '<p>'+ item.description_quote +'</p>';
-
                 }
             },
             { data: null,
@@ -82,13 +41,20 @@ $(document).ready(function () {
                     return item.requesting_user;
                 }
             },
-            /*{ data: 'responsible_user.name' },*/
             { data: null,
                 title: 'Usuario responsable',
                 wrap: true,
                 "render": function (item)
                 {
                     return item.responsible_user;
+                }
+            },
+            { data: null,
+                title: 'Área solicitante',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.area;
                 }
             },
             { data: null,
@@ -114,33 +80,32 @@ $(document).ready(function () {
                     var text = '';
                     if (item.state === 'attended' || item.state === 'confirmed')
                     {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
-                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
                     } else {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
-                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
 
                     }
+
+                    if (item.state === 'attend')
+                    {
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+item.id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                    }
+
                     if (item.state === 'confirmed')
                     {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+item.id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
                     }
-                    /*var custom = false;
-                    for (let value of item.details) {
-                        if ( value.item_id == null )
-                        {
-                            custom = true;
-                        }
-                    }*/
 
-                    /*if ( (custom === false) && (item.state == 'attended' && item.state !== 'confirmed') )
+                    if ( (item.custom == false) && (item.state !== 'attended' && item.state !== 'confirmed') )
                     {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="'+item.id+'" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button> ';
-                    }*/
+                        if ( $.inArray('attend_request', $permissions) !== -1 ) {
+                            text = text + '<button data-toggle="tooltip" data-placement="top" title="Atender" data-attend="' + item.id + '" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
+                        }
+                    }
 
                     if ( (item.custom == false) && (item.state == 'attended' && item.state !== 'confirmed') )
                     {
@@ -149,10 +114,6 @@ $(document).ready(function () {
                         }
                     }
 
-                    if ( item.description_quote == 'No hay datos' )
-                    {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + item.id + '" data-execution_order="' + item.execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
-                    }
                     return text;
                 }
 
@@ -299,48 +260,6 @@ $(document).ready(function () {
         },
 
     } );
-    // Array to track the ids of the details displayed rows
-    var detailRows = [];
-
-    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
-        var idx = $.inArray( tr.attr('id'), detailRows );
-
-        if ( row.child.isShown() ) {
-            tr.removeClass( 'details' );
-            row.child.hide();
-
-            // Remove from the 'open' array
-            detailRows.splice( idx, 1 );
-        }
-        else {
-            tr.addClass( 'details' );
-            row.child( format( row.data() ) ).show();
-
-            // Add to the 'open' array
-            if ( idx === -1 ) {
-                detailRows.push( tr.attr('id') );
-            }
-        }
-    } );
-*/
-    // On each draw, loop over the `detailRows` array and show any child rows
-    /*table.on( 'draw', function () {
-        $.each( detailRows, function ( i, id ) {
-            $('#'+id+' td.details-control').trigger( 'click' );
-        } );
-    } );*/
-
-    /*$(document).on('click', '[data-column]', function (e) {
-        //e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );*/
 
     $modalAddItems = $('#modalAddItems');
 
@@ -348,19 +267,27 @@ $(document).ready(function () {
 
     $modalItems = $('#modalItems');
 
-    $modalConfirm = $('#modalConfirm');
+    $modalAttend = $('#modalAttend');
 
     $modalDeleteTotal = $('#modalDeleteTotal');
 
     $formDeleteTotal = $('#formDeleteTotal');
 
+    $formEdit = $('#formEdit');
+
     $modalItemsDelete = $('#modalDeletePartial');
 
-    $formConfirm = $('#formConfirm');
+    $formAttend = $('#formAttend');
 
-    $formConfirm.on('submit', confirmOutput);
+    //$formAttend.on('submit', attendOutput);
+    $("#btn-submit").on("click", attendOutput);
 
-    $formDeleteTotal.on('submit', deleteTotalOutput);
+    $("#btn-submitEdit").on("click", editOrderExecution);
+    $(document).on('click', '[data-edit]', showModalEdit);
+    $modalEdit = $('#modalEdit');
+
+    $("#btn-totalDelete").on("click", deleteTotalOutput);
+    //$formDeleteTotal.on('submit', deleteTotalOutput);
 
     $(document).on('click', '[data-details]', showItems);
 
@@ -371,6 +298,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-itemDelete]', deletePartialOutput);
 
     $(document).on('click', '[data-materials]', showMaterialsInQuote);
+    
+    $(document).on('click', '[data-itemCustom]', goToCreateItem);
 
     $(document).on('click', '[data-return]', showModalReturnMaterials);
 
@@ -379,36 +308,33 @@ $(document).ready(function () {
     $modalItemsMaterials = $('#modalItemsMaterials');
     $modalReturnMaterials = $('#modalReturnMaterials');
 
-    $('body').tooltip({
+    /*$('body').tooltip({
         selector: '[data-toggle]'
     });
-
-    $(document).on('click', '[data-confirm]', openModalConfirm);
-
+*/
+    $(document).on('click', '[data-attend]', openModalAttend);
     $('#btn-allconfirm').on('click', confirmAllOutputs);
-
-    $formEdit = $('#formEdit');
-    $("#btn-submitEdit").on("click", editOrderExecution);
-    $(document).on('click', '[data-edit]', showModalEdit);
-    $modalEdit = $('#modalEdit');
 });
 
+let $permissions;
+
 let $modalEdit;
-var $formEdit;
 
 let $modalItems;
 
-let $modalConfirm;
-
-let $formCreate;
-
-var $formConfirm;
+let $modalAttend;
 
 let $modalDeleteTotal;
 
 let $modalItemsDelete;
 
+let $formCreate;
+
+var $formAttend;
+
 var $formDeleteTotal;
+
+var $formEdit;
 
 let $modalAddItems;
 
@@ -419,6 +345,49 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function confirmAllOutputs() {
+    var url = $(this).data('url');
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de confirmar todas las solicitudes atendidas?',
+        content: 'Acepte para continuar',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: url,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Confirmación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function showModalEdit() {
     var output_id = $(this).data('edit');
@@ -518,47 +487,10 @@ function editOrderExecution() {
     });
 }
 
-function confirmAllOutputs() {
-    var url = $(this).data('url');
-    $.confirm({
-        icon: 'fas fa-check-double',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de confirmar todas las solicitudes atendidas?',
-        content: 'Acepte para continuar',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: url,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Confirmación cancelada.");
-                },
-            },
-        },
-    });
+function goToCreateItem() {
+    let id_detail = $(this).data('itemcustom');
+    //console.log(id_detail);
+    window.location.href = "/dashboard/crear/item/personalizado/" + id_detail;
 }
 
 function showMaterialsInQuote() {
@@ -624,65 +556,9 @@ function showModalDeleteTotal() {
 function showModalDeletePartial() {
     $('#table-itemsDelete').html('');
     var output_id = $(this).data('deletepartial');
-    //console.log(output_id);
-    $.ajax({
-        url: "/dashboard/get/json/items/output/"+output_id,
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            console.log(json);
-            for (var i=0; i<json.array.length; i++)
-            {
-                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
-
-                //renderTemplateItemDetailDelete(json.array[i].id, json.array[i].id_item, output_id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width);
-            }
-
-        }
-    });
-    $modalItemsDelete.modal('show');
-}
-
-function showItems() {
-    $('#table-items').html('');
-    $('#table-consumables').html('');
-    $('#table-materiales').html('');
-    var output_id = $(this).data('details');
-    $.ajax({
-        url: "/dashboard/get/json/items/output/"+output_id,
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            //
-            for (var i=0; i<json.array.length; i++)
-            {
-                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state, json.array[i].detail_id);
-                //$materials.push(json[i].material);
-            }
-
-            for (var k=0; k<json.materials.length; k++)
-            {
-                renderTemplateMaterials(k+1, json.materials[k].material_complete.code, json.materials[k].material, json.materials[k].quantity);
-                //$materials.push(json[i].material);
-            }
-
-            for (var j=0; j<json.consumables.length; j++)
-            {
-                renderTemplateConsumable(json.consumables[j].id, json.consumables[j].material_complete.code, json.consumables[j].material, json.consumables[j].quantity);
-                //$materials.push(json[i].material);
-            }
-
-        }
-    });
-    $modalItems.modal('show');
-}
-
-function showModalReturnMaterials() {
-    $('#table-itemsReturn').html('');
-    var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/devolver/"+output_id,
+        url: "/dashboard/get/json/items/output/simple/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -691,7 +567,32 @@ function showModalReturnMaterials() {
             {
                 //for (var i=0; i<json.array.length; i++)
                 //{
-                renderTemplateItemReturn(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].detail_id, json.array[i].id_item);
+                    //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
+    });
+    $modalItemsDelete.modal('show');
+}
+
+function showModalReturnMaterials() {
+    $('#table-itemsReturn').html('');
+    var output_id = $(this).data('return');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/simple/devolver/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.array.length; i++)
+            {
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemReturn(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].detail_id, json.array[i].id_item);
                 //$materials.push(json[i].material);
                 //}
                 //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
@@ -702,14 +603,33 @@ function showModalReturnMaterials() {
     $modalReturnMaterials.modal('show');
 }
 
-function renderTemplateItemReturn(id, code, material, length, width, percentage, output_detail, id_item) {
+function showItems() {
+    $('#table-items').html('');
+    $('#table-consumables').html('');
+    $('#table-materiales').html('');
+    var output_id = $(this).data('details');
+    $.ajax({
+        url: "/dashboard/get/json/items/output/simple/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //console.log(json.consumables.length);
+            for (var k=0; k<json.materials.length; k++)
+            {
+                renderTemplateMaterials(k+1, json.materials[k].material_complete.code, json.materials[k].material, json.materials[k].quantity);
+                //$materials.push(json[i].material);
+            }
+
+        }
+    });
+    $modalItems.modal('show');
+}
+
+function renderTemplateItemReturn(id, code, material, output_detail, id_item) {
     var clone = activateTemplate('#template-itemReturn');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-percentage]").innerHTML = percentage;
     clone.querySelector("[data-itemReturn]").setAttribute('data-itemReturn', id_item);
     clone.querySelector("[data-itemReturn]").setAttribute('data-output', output_detail);
     $('#table-itemsReturn').append(clone);
@@ -744,6 +664,7 @@ function renderTemplateItemDetail(id, material, code, length, width, price, loca
         clone.querySelector("[data-state]").innerHTML = status;
         $('#table-items').append(clone);
     }
+
 }
 
 function renderTemplateMaterials(id, code, material, cantidad) {
@@ -764,37 +685,126 @@ function renderTemplateConsumable(id, code, material, cantidad) {
     $('#table-consumables').append(clone);
 }
 
-function renderTemplateItemDetailDelete(id, code, material, length, width, percentage, output_detail, id_item) {
+function renderTemplateItemDetailDelete(id, code, material, output_detail, id_item) {
     var clone = activateTemplate('#template-itemDelete');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-material]").innerHTML = material;
-    clone.querySelector("[data-length]").innerHTML = length;
-    clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-percentage]").innerHTML = percentage;
     clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', id_item);
     clone.querySelector("[data-itemDelete]").setAttribute('data-output', output_detail);
     $('#table-itemsDelete').append(clone);
 }
 
-function openModalConfirm() {
-    var output_id = $(this).data('confirm');
+function openModalAttend() {
+    var output_id = $(this).data('attend');
 
-    $modalConfirm.find('[id=output_id]').val(output_id);
-    $modalConfirm.find('[id=descriptionAttend]').html('Solicitud-'+output_id);
+    $modalAttend.find('[id=output_id]').val(output_id);
+    $modalAttend.find('[id=descriptionAttend]').html('Solicitud-'+output_id);
 
-    $modalConfirm.modal('show');
+    $modalAttend.modal('show');
+}
+
+function attendOutput() {
+    console.log('Llegue');
+    $("#btn-submit").attr("disabled", true);
+    var formulario = $('#formAttend')[0];
+    var form = new FormData(formulario);
+    event.preventDefault();
+    // Obtener la URL
+    var attendUrl = $formAttend.data('url');
+    $.ajax({
+        url: attendUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalAttend.modal('hide');
+            setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $("#btn-submit").attr("disabled", false);
+
+        },
+    });
 }
 
 function deleteTotalOutput() {
     console.log('Llegue');
     event.preventDefault();
+    $("#btn-totalDelete").attr("disabled", true);
+    var formulario = $('#formDeleteTotal')[0];
+    var form = new FormData(formulario);
+
     // Obtener la URL
     var attendUrl = $formDeleteTotal.data('url');
     $.ajax({
         url: attendUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -905,7 +915,8 @@ function deletePartialOutput() {
                     "hideMethod": "fadeOut"
                 });
             button.attr("disabled", false);
-            $(this).parent().parent().remove();
+            button.parent().parent().remove();
+            $modalItemsDelete.modal('hide');
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -965,7 +976,7 @@ function returnItemMaterials() {
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemreturn');
     $.ajax({
-        url: '/dashboard/return/output/'+idOutputDetail+'/item/'+idItem,
+        url: '/dashboard/return/output/simple/'+idOutputDetail+'/item/'+idItem,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         processData:false,
@@ -991,8 +1002,9 @@ function returnItemMaterials() {
                     "hideMethod": "fadeOut"
                 });
             button.attr("disabled", false);
-            $(this).parent().parent().remove();
+            button.parent().parent().remove();
             $modalReturnMaterials.modal('hide');
+
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -1041,90 +1053,6 @@ function returnItemMaterials() {
         },
     });
 
-}
-
-function confirmOutput() {
-    //console.log('Llegue');
-    event.preventDefault();
-    // Obtener la URL
-    var attendUrl = $formConfirm.data('url');
-    $.ajax({
-        url: attendUrl,
-        method: 'POST',
-        data: new FormData(this),
-        processData:false,
-        contentType:false,
-        success: function (data) {
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalConfirm.modal('hide');
-            setTimeout( function () {
-                location.reload();
-            }, 2000 )
-        },
-        error: function (data) {
-            if( data.responseJSON.message && !data.responseJSON.errors )
-            {
-                toastr.error(data.responseJSON.message, 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "4000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-
-
-        },
-    });
 }
 
 function addItems() {

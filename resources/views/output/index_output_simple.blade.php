@@ -1,19 +1,19 @@
 @extends('layouts.appAdmin2')
 
-@section('openOutputs')
+@section('openOutputSimple')
     menu-open
 @endsection
 
-@section('activeOutputs')
+@section('activeOutputSimple')
     active
 @endsection
 
-@section('activeListOutput')
+@section('activeListOutputSimple')
     active
 @endsection
 
 @section('title')
-    Salidas
+    Solicitud de salida
 @endsection
 
 @section('styles-plugins')
@@ -41,18 +41,17 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Salidas</h1>
+    <h1 class="page-title">Solicitudes de área</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de salidas</h5>
-
-    @can('create_request')
-       <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud </a>
+    <h5 class="card-title">Listado de solicitudes de área</h5>
+    @can('create_requestSimple')
+    <a href="{{ route('output.simple.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud de área </a>
     @endcan
 
-    @can('confirm_output')
-         <button id="btn-allconfirm" data-url="{{ route('output.request.confirm.all') }}" class="btn btn-outline-warning btn-sm float-right" > <i class="fas fa-check-double"></i> Confirmar solicitudes atendidas </button>
+    @can('confirm_requestSimple')
+        <button id="btn-allconfirm" data-url="{{ route('output.simple.confirm.all') }}" class="btn btn-outline-warning btn-sm float-right" > <i class="fas fa-check-double"></i> Confirmar solicitudes atendidas </button>
     @endcan
 @endsection
 
@@ -61,7 +60,7 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-archive"></i> Salidas </li>
+        <li class="breadcrumb-item"><i class="fa fa-archive"></i> Solicitudes de área </li>
     </ol>
 @endsection
 
@@ -73,11 +72,10 @@
             <thead>
             <tr>
                 <th>N°</th>
-                <th>Orden de ejecución</th>
-                <th>Descripción</th>
                 <th>Fecha de solicitud</th>
                 <th>Usuario solicitante</th>
                 <th>Usuario responsable</th>
+                <th>Área solicitante</th>
                 <th>Estado</th>
                 <th>Acciones</th>
             </tr>
@@ -95,7 +93,7 @@
                     <h4 class="modal-title">Confirmar eliminación total</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDeleteTotal" data-url="{{ route('output.request.destroy') }}">
+                <form id="formDeleteTotal" data-url="{{ route('output.simple.destroy') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="output_id" name="output_id">
@@ -109,7 +107,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="submit" class="btn btn-danger">Eliminar</button>
+                        <button type="button" id="btn-totalDelete" class="btn btn-danger">Eliminar</button>
                     </div>
                 </form>
             </div>
@@ -129,16 +127,14 @@
                             <strong>Importante!</strong> Al hacer click en eliminar se eliminará en la base de datos.
                         </div>
                     </div>
-                    <table class="table table-head-fixed table-hover">
+                    <table class="table table-hover">
                         <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Material</th>
-                            <th>Código</th>
-                            <th>Largo</th>
-                            <th>Ancho</th>
-                            <th>Acción</th>
-                        </tr>
+                            <tr>
+                                <th style="width: 10px">#</th>
+                                <th>Código</th>
+                                <th>Material</th>
+                                <th>Acción</th>
+                            </tr>
                         </thead>
                         <tbody id="table-itemsDelete">
 
@@ -146,10 +142,8 @@
                         <template id="template-itemDelete">
                             <tr>
                                 <td data-i></td>
-                                <td data-material></td>
                                 <td data-code></td>
-                                <td data-length></td>
-                                <td data-width></td>
+                                <td data-material></td>
                                 <td >
                                     <button type="button" data-itemDelete data-output class="btn btn-sm btn-danger"><i class="fa fa-trash"></i> Quitar</button>
                                 </td>
@@ -183,9 +177,6 @@
                             <th style="width: 10px">#</th>
                             <th>Código</th>
                             <th>Material</th>
-                            <th>Largo</th>
-                            <th>Ancho</th>
-                            <th>Porcentaje</th>
                             <th>Acción</th>
                         </tr>
                         </thead>
@@ -197,9 +188,6 @@
                                 <td data-i></td>
                                 <td data-code></td>
                                 <td data-material></td>
-                                <td data-length></td>
-                                <td data-width></td>
-                                <td data-percentage></td>
                                 <td >
                                     <button type="button" data-itemReturn data-output class="btn btn-sm btn-success"><i class="fa fa-trash"></i> Devolver</button>
                                 </td>
@@ -214,25 +202,25 @@
         </div>
     </div>
 
-    @can('confirm_output')
-    <div id="modalConfirm" class="modal fade" tabindex="-1">
+    @can('attend_request')
+    <div id="modalAttend" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar salida</h4>
+                    <h4 class="modal-title">Atender solicitud</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formConfirm" data-url="{{ route('output.confirmed') }}">
+                <form id="formAttend" data-url="{{ route('output.attend') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="output_id" name="output_id">
                         <strong>
-                            ¿Está seguro de confirmar esta solicitud de salida?
+                            ¿Está seguro de atender esta solicitud de salida?
                         </strong>
                         <p id="descriptionAttend"></p>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-primary" >Confirmar</button>
+                        <button type="button" id="btn-submit" class="btn btn-primary" >Atender</button>
                         <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
                     </div>
                 </form>
@@ -249,39 +237,6 @@
                 </div>
 
                 <div class="modal-body table-responsive" style="height: 300px;">
-                    <table class="table table-head-fixed table-hover">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Material</th>
-                            <th>Código</th>
-                            <th>Crear Item</th>
-                            <th>Largo</th>
-                            <th>Ancho</th>
-                            <th>Precio</th>
-                            <th>Ubicación</th>
-                            <th>Estado</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-items">
-
-                        </tbody>
-                        <template id="template-item">
-                            <tr>
-                                <td data-i></td>
-                                <td data-material></td>
-                                <td data-code></td>
-                                <td>
-                                    <button type="button" data-itemCustom class="btn btn-sm btn-primary"><i class="fa fa-plus"></i> Crear</button>
-                                </td>
-                                <td data-length></td>
-                                <td data-width><span class="badge bg-danger">55%</span></td>
-                                <td data-price></td>
-                                <td data-location></td>
-                                <td data-state></td>
-                            </tr>
-                        </template>
-                    </table>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -303,27 +258,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-head-fixed table-hover">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Código</th>
-                            <th>Consumible</th>
-                            <th>Cantidad</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-consumables">
 
-                        </tbody>
-                        <template id="template-consumable">
-                            <tr>
-                                <td data-i></td>
-                                <td data-code></td>
-                                <td data-material></td>
-                                <td data-quantity></td>
-                            </tr>
-                        </template>
-                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -367,27 +302,7 @@
                             </tr>
                         </template>
                     </table>
-                    <table class="table table-hover">
-                        <thead>
-                        <tr>
-                            <th style="width: 10px">#</th>
-                            <th>Código</th>
-                            <th>Consumible</th>
-                            <th>Cantidad</th>
-                        </tr>
-                        </thead>
-                        <tbody id="table-consumables-quote">
 
-                        </tbody>
-                        <template id="template-consumable-quote">
-                            <tr>
-                                <td data-i></td>
-                                <td data-code></td>
-                                <td data-material></td>
-                                <td data-quantity></td>
-                            </tr>
-                        </template>
-                    </table>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
@@ -433,5 +348,5 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('js/output/index_output.js') }}"></script>
+    <script src="{{ asset('js/output/index_output_simple.js') }}"></script>
 @endsection

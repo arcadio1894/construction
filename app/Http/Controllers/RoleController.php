@@ -64,7 +64,8 @@ class RoleController extends Controller
         'assistance' => 'ASISTENCIAS',
         'navbar' => 'BARRA NAVEGACION',
         'percentageWorker' => 'PORCENTAJES DE RRHH',
-        'areaWorker' => 'ÁREAS DE LA EMPRESA'
+        'areaWorker' => 'ÁREAS DE LA EMPRESA',
+        'requestSimple' => 'SOLICITUDES AREAS'
     ];
 
     public function index()

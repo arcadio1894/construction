@@ -1044,6 +1044,46 @@
                         </li>
                     @endcan
 
+                    @can('enable_requestSimple')
+                        <li class="nav-header">SOLICITUD DE ÁREA</li>
+                        <li class="nav-item has-treeview @yield('openOutputSimple')">
+                            <a href="#" class="nav-link @yield('activeOutputSimple')">
+                                <i class="nav-icon fas fa-file"></i>
+                                <p>
+                                    Solicitud de Área
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_requestSimple')
+                                    <li class="nav-item">
+                                        <a href="{{ route('output.simple.index') }}" class="nav-link @yield('activeListOutputSimple')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar solicitudes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('myRequest_requestSimple')
+                                    <li class="nav-item">
+                                        <a href="{{ route('output.simple.my.index') }}" class="nav-link @yield('activeListMyOutputSimple')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar mis solicitudes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_requestSimple')
+                                    <li class="nav-item">
+                                        <a href="{{ route('output.simple.create') }}" class="nav-link @yield('activeCreateOutputSimple')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear solicitudes</p>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                            </ul>
+                        </li>
+                    @endcan
+
                     @can('list_request')
                     <li class="nav-header">SOLICITUDES</li>
                     <li class="nav-item has-treeview @yield('openOutputRequest')">

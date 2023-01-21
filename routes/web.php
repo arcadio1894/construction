@@ -637,6 +637,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/return/output/{id_output}/item/{id_item}', 'OutputController@returnItemOutputDetail');
 
         Route::post('confirm/outputs/attend', 'OutputController@confirmAllOutputsAttend')
+            ->name('output.request.confirm.all')
             ->middleware('permission:confirm_output');
 
         // TRANSFER
@@ -1502,6 +1503,45 @@ Route::middleware('auth')->group(function (){
         Route::post('areaWorker/destroy', 'AreaWorkerController@destroy')
             ->name('areaWorker.destroy')
             ->middleware('permission:destroy_areaWorker');
+
+        // OUTPUT SIMPLES
+        Route::get('solicitudes/area/', 'OutputController@indexOutputSimple')
+            ->name('output.simple.index')
+            ->middleware('permission:list_requestSimple');
+        Route::get('mis/solicitudes/area/', 'OutputController@indexMyOutputSimple')
+            ->name('output.simple.my.index')
+            ->middleware('permission:list_requestSimple');
+        Route::get('crear/solicitud/area', 'OutputController@createOutputSimple')
+            ->name('output.simple.create')
+            ->middleware('permission:create_requestSimple');
+        Route::post('output/area/store', 'OutputController@storeOutputSimple')
+            ->name('output.simple.store')
+            ->middleware('permission:create_requestSimple');
+
+        Route::get('/get/json/output/simple', 'OutputController@getOutputSimple');
+        Route::get('/get/json/my/output/simple/', 'OutputController@getMyOutputSimple');
+        Route::get('/get/json/items/output/simple/{output_id}', 'OutputController@getJsonItemsOutputSimple');
+        Route::get('/get/json/items/output/simple/devolver/{output_id}', 'OutputController@getJsonItemsOutputSimpleDevolver');
+
+        Route::post('output/simple/attend', 'OutputController@attendOutputSimple')
+            ->name('output.simple.attend')
+            ->middleware('permission:attend_requestSimple');
+        Route::post('output/simple/confirm', 'OutputController@confirmOutputSimple')
+            ->name('output.simple.confirmed')
+            ->middleware('permission:confirm_requestSimple');
+
+        Route::post('output/area/delete/total', 'OutputController@destroyTotalOutputSimple')
+            ->name('output.simple.destroy')
+            ->middleware('permission:delete_requestSimple');
+        Route::post('/destroy/output/simple/{id_output}/item/{id_item}', 'OutputController@destroyPartialOutputSimple')
+            ->middleware('permission:delete_requestSimple');
+
+        Route::post('/return/output/simple/{id_output}/item/{id_item}', 'OutputController@returnItemOutputSimpleDetail');
+
+        Route::post('confirm/outputs/simple/attend', 'OutputController@confirmAllOutputSimpleAttend')
+            ->name('output.simple.confirm.all')
+            ->middleware('permission:confirm_requestSimple');
+
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

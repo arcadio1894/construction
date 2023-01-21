@@ -4,26 +4,6 @@ let $materialsComplete=[];
 let $locationsComplete=[];
 let $items=[];
 
-/*
-function format ( d ) {
-    var mensaje = "";
-    var detalles = d.details;
-    console.log(detalles);
-    for ( var i=0; i<detalles.length; i++ )
-    {
-        var state = ( d.details[i].isComplete === 1 ) ? 'Completa' : 'Faltante';
-        mensaje = mensaje +
-            'Material: '+d.details[i].material.description+'<br>'+
-            'Cantidad ordenada: '+d.details[i].ordered_quantity+'<br>'+
-            'Cantidad ingresada: '+d.details[i].entered_quantity+'<br>'+
-            'Estado: '+state+'<br>'+
-            '<a class="btn btn-outline-primary btn-sm" data-detail="'+d.details[i].id+'"> Items </a>'+'<br>';
-    }
-    return 'DETALLES DE ENTRADA'+'<br>'+
-        mensaje;
-}
-*/
-
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     $('body').tooltip({
@@ -300,48 +280,6 @@ $(document).ready(function () {
         },
 
     } );
-    // Array to track the ids of the details displayed rows
-    var detailRows = [];
-
-    /*$('#dynamic-table tbody').on( 'click', 'tr td.details-control', function () {
-        var tr = $(this).closest('tr');
-        var row = table.row( tr );
-        var idx = $.inArray( tr.attr('id'), detailRows );
-
-        if ( row.child.isShown() ) {
-            tr.removeClass( 'details' );
-            row.child.hide();
-
-            // Remove from the 'open' array
-            detailRows.splice( idx, 1 );
-        }
-        else {
-            tr.addClass( 'details' );
-            row.child( format( row.data() ) ).show();
-
-            // Add to the 'open' array
-            if ( idx === -1 ) {
-                detailRows.push( tr.attr('id') );
-            }
-        }
-    } );
-*/
-    // On each draw, loop over the `detailRows` array and show any child rows
-    /*table.on( 'draw', function () {
-        $.each( detailRows, function ( i, id ) {
-            $('#'+id+' td.details-control').trigger( 'click' );
-        } );
-    } );*/
-
-    /*$(document).on('click', '[data-column]', function (e) {
-        //e.preventDefault();
-
-        // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
-
-        // Toggle the visibility
-        column.visible( ! column.visible() );
-    } );*/
 
     $modalAddItems = $('#modalAddItems');
 
