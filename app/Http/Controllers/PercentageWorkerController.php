@@ -54,7 +54,7 @@ class PercentageWorkerController extends Controller
 
             $percentageWorker = PercentageWorker::find($request->get('percentage_id'));
 
-            if ( !in_array( $percentageWorker->name,  ['assign_family', 'essalud'] ))
+            if ( !in_array( $percentageWorker->name,  ['assign_family', 'essalud', 'rmv'] ))
             {
                 $percentageWorker->name = $request->get('name');
             }

@@ -15,7 +15,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    var words = ['assign_family', 'essalud'];
+                    var words = ['assign_family', 'essalud', 'rmv'];
                     const found = words.find(word => item.name.split(' ').find(s=>s===word));
                     var text = '';
                     if ( $.inArray('update_percentageWorker', $permissions) !== -1 ) {
