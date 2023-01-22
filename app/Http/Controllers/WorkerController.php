@@ -80,7 +80,7 @@ class WorkerController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+        $sueldo = PercentageWorker::where('name', 'rmv')->first();
         $essalud = PercentageWorker::where('name', 'essalud')->first();
         $assign_family = PercentageWorker::where('name', 'assign_family')->first();
 
@@ -104,7 +104,7 @@ class WorkerController extends Controller
 
         DB::beginTransaction();
         try {
-            $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+            $sueldo = PercentageWorker::where('name', 'rmv')->first();
             $essalud = PercentageWorker::where('name', 'essalud')->first();
             $assign_family = PercentageWorker::where('name', 'assign_family')->first();
 
@@ -190,7 +190,7 @@ class WorkerController extends Controller
 
         } catch ( \Throwable $e ) {
             DB::rollBack();
-            dump($e);
+            //dump($e);
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
@@ -221,7 +221,7 @@ class WorkerController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+        $sueldo = PercentageWorker::where('name', 'rmv')->first();
         $essalud = PercentageWorker::where('name', 'essalud')->first();
         $assign_family = PercentageWorker::where('name', 'assign_family')->first();
 
@@ -244,7 +244,7 @@ class WorkerController extends Controller
     {
         DB::beginTransaction();
         try {
-            $sueldo = PercentageWorker::where('name', 'sueldo')->first();
+            $sueldo = PercentageWorker::where('name', 'rmv')->first();
             $essalud = PercentageWorker::where('name', 'essalud')->first();
             $assign_family = PercentageWorker::where('name', 'assign_family')->first();
 

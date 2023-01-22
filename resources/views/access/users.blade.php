@@ -48,9 +48,11 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de usuarios</h5>
+    @can('create_permission')
+        <button id="newWorkers" class="btn btn-outline-primary btn-sm float-right" > <i class="fas fa-briefcase font-20"></i> Crear Trabajadores </button>
+    @endcan
     @can('create_user')
-        {{--<button id="newWorkers" class="btn btn-outline-primary btn-sm float-right" > <i class="fas fa-briefcase font-20"></i> Crear Trabajadores </button>
-        --}}<button id="newUser" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo usuario </button>
+        <button id="newUser" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo usuario </button>
     @endcan
 @endsection
 

@@ -310,7 +310,6 @@ class UserController extends Controller
         try {
 
             $user_actives = User::where('enable', true)
-                ->where('id', '<>', 1)
                 ->get();
 
             if ( count($user_actives) > 0 )

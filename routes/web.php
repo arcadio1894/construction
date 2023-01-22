@@ -58,7 +58,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_user');
 
         Route::get('users/to/workers', 'UserController@convertUsersToWorkers')
-            ->middleware('permission:list_user');
+            ->middleware('permission:create_permission');
 
         //CUSTOMER
         Route::get('/all/customers', 'CustomerController@getCustomers')

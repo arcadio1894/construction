@@ -23,7 +23,7 @@ class PercentageWorkerSeeder extends Seeder
         ]);
 
         PercentageWorker::create([
-            'name' => 'sueldo',
+            'name' => 'rmv',
             'value' => 1025,
         ]);
     }
