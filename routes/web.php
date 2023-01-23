@@ -1449,7 +1449,7 @@ Route::middleware('auth')->group(function (){
         Route::post('holiday/destroy', 'HolidayController@destroy')
             ->name('holiday.destroy')
             ->middleware('permission:holiday_worker');
-        Route::get('/generate/holidays', 'HolidayController@generateHolidays')
+        Route::post('/generate/holidays', 'HolidayController@generateHolidays')
             ->name('holiday.generate')
             ->middleware('permission:holiday_worker');
 

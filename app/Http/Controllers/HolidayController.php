@@ -110,4 +110,46 @@ class HolidayController extends Controller
         return datatables($holidays)->toJson();
 
     }
+
+    public function generateHolidays()
+    {
+        DB::beginTransaction();
+        try {
+
+            $yearCurrent = Carbon::now('America/Lima')->year;
+            $yearMax = (int) Holiday::max('year');
+
+            if ($yearCurrent+1 == $yearMax)
+            {
+                return response()->json(['message' => 'Lo sentimos, los feriados del próximo año ya fueron creados.'], 422);
+            }
+
+            $holidays = Holiday::select('id', 'description', 'year', 'date_complete')
+                ->where('year', $yearMax)
+                ->orderBy('year', 'DESC')
+                ->orderBy('date_complete', 'ASC')
+                ->get();
+
+            foreach ( $holidays as $holiday )
+            {
+                $tz = 'America/Lima';
+                $day = $holiday->date_complete->day;
+                $month = $holiday->date_complete->month;
+                $date = Carbon::createFromDate($yearMax+1, $month, $day, $tz);
+                Holiday::create([
+                    'description' => $holiday->description,
+                    'year' => $yearMax+1,
+                    'date_complete' => $date,
+                ]);
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Feriados generados con éxito.'], 200);
+
+    }
 }

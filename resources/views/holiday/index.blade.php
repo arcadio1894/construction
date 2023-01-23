@@ -39,6 +39,8 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Feriados</h5>
+    <button id="btn-generate" data-url="{{ route('holiday.generate') }}" class="btn btn-outline-warning btn-sm float-right" > <i class="fas fa-glass-cheers"></i> Generar feriados </button>
+
 @endsection
 
 @section('page-breadcrumb')
