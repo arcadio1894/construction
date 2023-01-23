@@ -22,23 +22,23 @@ class PermissionHourSpecialSeeder extends Seeder
         // TODO: Permisos para medicalRest
         Permission::create([
             'name' => 'enable_medicalRest',
-            'description' => 'Habilitar Mod. Descansos Medicos'
+            'description' => 'Habilitar Mod. Descansos Médicos'
         ]);
         Permission::create([
             'name' => 'list_medicalRest',
-            'description' => 'Listar Descansos Medicos'
+            'description' => 'Listar Descansos Médicos'
         ]);
         Permission::create([
             'name' => 'create_medicalRest',
-            'description' => 'Crear Descansos Medicos'
+            'description' => 'Crear Descansos Médicos'
         ]);
         Permission::create([
             'name' => 'edit_medicalRest',
-            'description' => 'Editar Descansos Medicos'
+            'description' => 'Editar Descansos Médicos'
         ]);
         Permission::create([
             'name' => 'delete_medicalRest',
-            'description' => 'Eliminar Descansos Medicos'
+            'description' => 'Eliminar Descansos Médicos'
         ]);
 
         // TODO: Permisos para vacation

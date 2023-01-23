@@ -1472,6 +1472,29 @@ Route::middleware('auth')->group(function (){
         Route::get('/download/excel/assistance/', 'AssistanceController@exportAssistancesMonthYear')
             ->name('download.excel.assistance');
 
+        // CRUD Descanso Medico
+        Route::get('/all/medical/rests', 'MedicalRestController@getAllMedicalRest')
+            ->middleware('permission:list_medicalRest');
+        Route::get('descansos/medicos', 'MedicalRestController@index')
+            ->name('medicalRest.index')
+            ->middleware('permission:list_medicalRest');
+        Route::get('crear/descanso/medico', 'MedicalRestController@create')
+            ->name('medicalRest.create')
+            ->middleware('permission:create_medicalRest');
+        Route::post('medicalRest/store', 'MedicalRestController@store')
+            ->name('medicalRest.store')
+            ->middleware('permission:create_medicalRest');
+        Route::get('/editar/descanso/medico/{id}', 'MedicalRestController@edit')
+            ->name('medicalRest.edit')
+            ->middleware('permission:edit_medicalRest');
+        Route::post('medicalRest/update', 'MedicalRestController@update')
+            ->name('medicalRest.update')
+            ->middleware('permission:edit_medicalRest');
+        Route::post('medicalRest/destroy', 'MedicalRestController@destroy')
+            ->name('medicalRest.destroy')
+            ->middleware('permission:delete_medicalRest');
+
+
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
             ->name('workingDay.create');

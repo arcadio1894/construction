@@ -3,83 +3,187 @@
 namespace App\Http\Controllers;
 
 use App\MedicalRest;
+use App\Worker;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class MedicalRestController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('medicalRest.index', compact('permissions'));
+
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
-        //
+        $workers = Worker::where('id', '<>', 1)
+            ->where('enable', 1)
+            ->get();
+        return view('medicalRest.create', compact('workers'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $medicalRest = MedicalRest::create([
+                'date_start' => ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null,
+                'date_end' => ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null,
+                'worker_id' => $request->get('worker_id'),
+            ]);
+
+            if (!$request->file('file')) {
+                $medicalRest->file = null;
+                $medicalRest->save();
+
+            } else {
+                $path = public_path().'/images/medicalRest/';
+                $image = $request->file('file');
+                $extension = $request->file('file')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $medicalRest->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $medicalRest->file = $filename;
+                    $medicalRest->save();
+                } else {
+                    $filename = 'pdf'.$medicalRest->id . '.' .$extension;
+                    $request->file('file')->move($path, $filename);
+                    $medicalRest->file = $filename;
+                    $medicalRest->save();
+                }
+
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Descanso médico guardado con éxito.'], 200);
+
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\MedicalRest  $medicalRest
-     * @return \Illuminate\Http\Response
-     */
-    public function show(MedicalRest $medicalRest)
+    public function edit($medicalRest_id)
     {
-        //
+        $workers = Worker::where('id', '<>', 1)
+            ->where('enable', 1)
+            ->get();
+
+        $medicalRest = MedicalRest::with('worker')->find($medicalRest_id);
+
+        return view('medicalRest.edit', compact('medicalRest', 'workers'));
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\MedicalRest  $medicalRest
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(MedicalRest $medicalRest)
+    public function update(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $medicalRest = MedicalRest::find($request->get('medicalRest_id'));
+
+            $medicalRest->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
+            $medicalRest->date_end = ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null;
+            $medicalRest->save();
+
+            if (!$request->file('file')) {
+                if ( $medicalRest->file == null )
+                {
+                    $medicalRest->file = null;
+                    $medicalRest->save();
+                }
+
+            } else {
+                // Primero eliminamos el pdf anterior
+                if ( $medicalRest->file != null )
+                {
+                    $image_path = public_path().'/images/medicalRest/'.$medicalRest->file;
+                    if (file_exists($image_path)) {
+                        unlink($image_path);
+                    }
+                }
+
+                // Ahora si guardamos el nuevo pdf
+                $path = public_path().'/images/medicalRest/';
+                $image = $request->file('file');
+                $extension = $request->file('file')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $medicalRest->id . '.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $medicalRest->file = $filename;
+                    $medicalRest->save();
+                } else {
+                    $filename = 'pdf'.$medicalRest->id . '.' .$extension;
+                    $request->file('file')->move($path, $filename);
+                    $medicalRest->file = $filename;
+                    $medicalRest->save();
+                }
+
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Descanso médico modificado con éxito.'], 200);
+
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\MedicalRest  $medicalRest
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, MedicalRest $medicalRest)
+    public function destroy(Request $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+
+            $medicalRest = MedicalRest::find($request->get('medicalRest_id'));
+
+            if ( $medicalRest->file != null )
+            {
+                $image_path = public_path().'/images/medicalRest/'.$medicalRest->file;
+                if (file_exists($image_path)) {
+                    unlink($image_path);
+                }
+            }
+
+            $medicalRest->delete();
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Descanso médico eliminado con éxito.'], 200);
+
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\MedicalRest  $medicalRest
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(MedicalRest $medicalRest)
+    public function getAllMedicalRest()
     {
-        //
+        $medicalRests = MedicalRest::select('id', 'date_start', 'date_end', 'file', 'worker_id', 'created_at')
+            ->with('worker')
+            ->orderBy('created_at', 'DESC')
+            ->get();
+        return datatables($medicalRests)->toJson();
+
     }
 }

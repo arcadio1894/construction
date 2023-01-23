@@ -1717,9 +1717,8 @@
 
                     @can('enable_hourSpecial')
                     <li class="nav-item has-treeview @yield('openHourSpecial')">
-
                         <a href="#" class="nav-link @yield('activeHourSpecial')">
-                            <i class="fal fa-business-time"></i>
+                            <i class="fas fa-business-time nav-icon"></i>
                             <p>
                                 Horas Especiales
                                 <i class="right fas fa-angle-left"></i>
@@ -1739,7 +1738,7 @@
                                     <ul class="nav nav-treeview">
                                         @can('list_medicalRest')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListMedicalRest')">
+                                                <a href="{{ route('medicalRest.index') }}" class="nav-link @yield('activeListMedicalRest')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar descansos</p>
                                                 </a>
@@ -1747,7 +1746,7 @@
                                         @endcan
                                         @can('create_medicalRest')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateMedicalRest')">
+                                                <a href="{{ route('medicalRest.create') }}" class="nav-link @yield('activeCreateMedicalRest')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Crear descanso</p>
                                                 </a>

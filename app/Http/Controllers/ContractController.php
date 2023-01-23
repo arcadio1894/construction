@@ -259,7 +259,7 @@ class ContractController extends Controller
     {
         $contracts = Contract::with('worker')
             ->where('enable', true)
-            ->orderBy('updated_at', 'DESC')
+            ->orderBy('created_at', 'DESC')
             /*->orderBy('post_status', 'DESC')*/
             ->get();
         return datatables($contracts)->toJson();
