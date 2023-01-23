@@ -68,6 +68,7 @@ class WorkerController extends Controller
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
                 'have_contract' => $haveContract
             ] );
         }
@@ -123,6 +124,8 @@ class WorkerController extends Controller
             if ( $pos !== false )
             {
                 $primerApellido = strtolower($this->eliminar_tildes(substr($apellidos,0,$pos)));
+            } else {
+                $primerApellido = strtolower($apellidos);
             }
 
             // Creamos al usuario
@@ -263,6 +266,8 @@ class WorkerController extends Controller
             if ( $pos !== false )
             {
                 $primerApellido = strtolower($this->eliminar_tildes(substr($apellidos,0,$pos)));
+            } else {
+                $primerApellido = strtolower($apellidos);
             }
             $worker = Worker::find($id);
 
@@ -438,6 +443,7 @@ class WorkerController extends Controller
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
                 'have_contract' => rand(0,1)
             ] );
         }

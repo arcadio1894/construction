@@ -23,16 +23,127 @@ $(document).ready(function () {
             { data: 'num_children' },
             { data: 'admission_date' },
             { data: 'termination_date' },
-            { data: 'daily_salary' },
-            { data: 'monthly_salary' },
-            { data: 'pension' },
-            { data: 'essalud' },
-            { data: 'assign_family' },
-            { data: 'five_category' },
-            { data: 'contract' },
+            /*{ data: 'daily_salary' },*/
+            { data: null,
+                title: 'Salario Diario',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.daily_salary) + parseFloat(item.assign_family) ).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'monthly_salary' },*/
+            { data: null,
+                title: 'Salario Mensual',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.monthly_salary)).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'pension' },*/
+            { data: null,
+                title: 'Pension Alimentos',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.pension)).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'essalud' },*/
+            { data: null,
+                title: 'ESSALUD',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.essalud)).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'assign_family' },*/
+            { data: null,
+                title: 'Asignación Familiar',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.assign_family)).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'five_category' },*/
+            { data: null,
+                title: 'Quinta Categoría ',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = (parseFloat(item.five_category)).toFixed(2);
+                    }
+                    return text ;
+                }
+            },
+            /*{ data: 'contract' },*/
+            { data: null,
+                title: 'Contrato',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = item.contract;
+                    }
+                    return text ;
+                }
+            },
             { data: 'civil_status' },
-            { data: 'pension_system' },
+            /*{ data: 'pension_system' },*/
+            { data: null,
+                title: 'Sistema Pensión',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = item.pension_system;
+                    }
+                    return text ;
+                }
+            },
             { data: 'observation' },
+            { data: 'area_worker' },
+            { data: 'profession' },
+            /*{ data: 'reason_for_termination' },*/
+            { data: null,
+                title: 'Motivo de Cese',
+                wrap: true,
+                "render": function (item)
+                {
+                    var text = '';
+                    if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                        text = item.reason_for_termination;
+                    }
+                    return text ;
+                }
+            },
             { data: null,
                 title: 'Acciones',
                 wrap: true,
@@ -66,7 +177,7 @@ $(document).ready(function () {
         "columnDefs": [
             {
                 "visible": false,
-                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24 ]
+                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24,26,27 ]
             }],
 
         select: {

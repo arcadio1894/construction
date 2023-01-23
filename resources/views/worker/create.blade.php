@@ -248,14 +248,15 @@
         </div>
         <div class="row">
             <div class="col-md-6">
-                <div class="card card-primary">
+                <div class="card card-primary collapsed-card">
                     <div class="card-header">
                         <h3 class="card-title">Datos para RR.HH.</h3>
-
+                        @can('contract_worker')
                         <div class="card-tools">
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                            </button>
                         </div>
+                        @endcan
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
@@ -316,17 +317,17 @@
                 <!-- /.card -->
             </div>
             <div class="col-md-6">
-                <div class="card card-primary">
+                <div class="card card-primary collapsed-card">
                     <div class="card-header">
                         <h3 class="card-title">Contactos de Emergencia</h3>
-
+                        @can('contract_worker')
                         <div class="card-tools">
                             <button type="button" id="newContact" class="btn btn-xs btn-warning" > <i class="fas fa-phone-volume"></i> Agregar Contacto </button>
 
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                            </button>
                         </div>
+                        @endcan
                     </div>
                     <div class="card-body" id="body-contacts">
 
