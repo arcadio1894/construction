@@ -65,7 +65,13 @@ class RoleController extends Controller
         'navbar' => 'BARRA NAVEGACION',
         'percentageWorker' => 'PORCENTAJES DE RRHH',
         'areaWorker' => 'ÁREAS DE LA EMPRESA',
-        'requestSimple' => 'SOLICITUDES AREAS'
+        'requestSimple' => 'SOLICITUDES AREAS',
+        'hourSpecial' => 'MOD. HORAS ESPECIALES',
+        'medicalRest' => 'DESCANSOS MEDICOS',
+        'vacation' => 'VACACIONES',
+        'license' => 'LICENCIAS',
+        'permit' => 'PERMISOS TRABAJADORES',
+        'suspension' => 'SUSPENSIONES'
     ];
 
     public function index()

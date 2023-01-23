@@ -1715,6 +1715,167 @@
                         </ul>
                     </li>
 
+                    @can('enable_hourSpecial')
+                    <li class="nav-item has-treeview @yield('openHourSpecial')">
+
+                        <a href="#" class="nav-link @yield('activeHourSpecial')">
+                            <i class="fal fa-business-time"></i>
+                            <p>
+                                Horas Especiales
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+
+                        <ul class="nav nav-treeview">
+                            @can('enable_medicalRest')
+                                <li class="nav-item has-treeview @yield('openMedicalRest')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Descansos Médicos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_medicalRest')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListMedicalRest')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar descansos</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_medicalRest')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateMedicalRest')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear descanso</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                            @can('enable_vacation')
+                                <li class="nav-item has-treeview @yield('openVacation')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Vacaciones
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_vacation')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListVacation')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar vacaciones</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_vacation')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateVacation')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Registrar vacaciones</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                            @can('enable_license')
+                                <li class="nav-item has-treeview @yield('openLicenses')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Licencias
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_license')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListLicense')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar licencias</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_license')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateLicense')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear licencia</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                            @can('enable_permit')
+                                <li class="nav-item has-treeview @yield('openPermit')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Permisos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_permit')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListPermit')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar permisos</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_permit')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreatePermit')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear permiso</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                            @can('enable_suspension')
+                                <li class="nav-item has-treeview @yield('openSuspension')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Suspensiones
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_suspension')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListSuspension')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar suspensiones</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_suspension')
+                                            <li class="nav-item">
+                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateSuspension')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear suspension</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcan
+
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>
                     @endcanany

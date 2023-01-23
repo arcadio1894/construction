@@ -900,7 +900,7 @@ class OutputController extends Controller
                         $count_items = count($items);
                         $last_item = Item::where('code',$item->code)
                             ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' ) {
+                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                             return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
                             if ($count_items>1){
@@ -930,7 +930,7 @@ class OutputController extends Controller
                         $count_items = count($items);
                         $last_item = Item::where('code',$item->code)
                             ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' ) {
+                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                             return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
                             if ($count_items>1){
@@ -982,7 +982,7 @@ class OutputController extends Controller
             $count_items = count($items);
             $last_item = Item::where('code',$item->code)
                 ->orderBy('created_at', 'desc')->first();
-            if ( $last_item->state_item === 'scraped' ) {
+            if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                 return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
             } else {
                 if ($count_items>1){
@@ -1075,7 +1075,7 @@ class OutputController extends Controller
                     $count_items = count($items);
                     $last_item = Item::where('code',$item->code)
                         ->orderBy('created_at', 'desc')->first();
-                    if ( $last_item->state_item === 'scraped' ) {
+                    if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                         return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                     } else {
                         if ($count_items>1){
@@ -1105,7 +1105,7 @@ class OutputController extends Controller
                     $count_items = count($items);
                     $last_item = Item::where('code',$item->code)
                         ->orderBy('created_at', 'desc')->first();
-                    if ( $last_item->state_item === 'scraped' ) {
+                    if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                         return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                     } else {
                         if ($count_items>1){
@@ -1767,7 +1767,7 @@ class OutputController extends Controller
                         $count_items = count($items);
                         $last_item = Item::where('code',$item->code)
                             ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' ) {
+                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                             return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
                             if ($count_items>1){
@@ -1797,7 +1797,7 @@ class OutputController extends Controller
                         $count_items = count($items);
                         $last_item = Item::where('code',$item->code)
                             ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' ) {
+                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                             return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
                         } else {
                             if ($count_items>1){
@@ -1925,7 +1925,7 @@ class OutputController extends Controller
             $count_items = count($items);
             $last_item = Item::where('code',$item->code)
                 ->orderBy('created_at', 'desc')->first();
-            if ( $last_item->state_item === 'scraped' ) {
+            if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
                 return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
             } else {
                 if ($count_items>1){
