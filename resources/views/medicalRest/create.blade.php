@@ -59,6 +59,19 @@
 @endsection
 
 @section('content')
+    <div class="row">
+        <div class="col-md-12">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Importante!</strong> Al crear un descanso médico se modificarán las asistencias de los días colocados.
+                <br>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br>
+
     <form id="formCreate" class="form-horizontal" data-url="{{ route('medicalRest.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">

@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Assistance;
+use App\AssistanceDetail;
 use App\MedicalRest;
 use App\Worker;
+use App\WorkingDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -65,6 +68,35 @@ class MedicalRestController extends Controller
                     $medicalRest->save();
                 }
 
+            }
+
+            // TODO: Logica para verificar las fechas de las asistencias
+            $assistances = Assistance::whereDate('date_assistance', '>=',$medicalRest->date_start)
+                ->whereDate('date_assistance', '<=',$medicalRest->date_end)->get();
+
+            if ( count($assistances) > 0 )
+            {
+                foreach ( $assistances as $assistance )
+                {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $medicalRest->worker_id)->get();
+
+                    if ( count( $assistancesDetails ) > 0 )
+                    {
+                        $workingDay = WorkingDay::where('enable', 1)
+                            ->orderBy('created_at', 'ASC')->first();
+                        foreach ( $assistancesDetails as $assistanceDetail )
+                        {
+                            $assistanceDetail->hour_entry = $workingDay->time_start;
+                            $assistanceDetail->hour_out = $workingDay->time_fin;
+                            $assistanceDetail->status = 'M';
+                            $assistanceDetail->justification = null;
+                            $assistanceDetail->obs_justification = null;
+                            $assistanceDetail->working_day_id = $workingDay->id;
+                            $assistanceDetail->save();
+                        }
+                    }
+                }
             }
 
             DB::commit();
@@ -138,6 +170,35 @@ class MedicalRestController extends Controller
                     $medicalRest->save();
                 }
 
+            }
+
+            // TODO: Logica para verificar las fechas de las asistencias
+            $assistances = Assistance::whereDate('date_assistance', '>=',$medicalRest->date_start)
+                ->whereDate('date_assistance', '<=',$medicalRest->date_end)->get();
+
+            if ( count($assistances) > 0 )
+            {
+                foreach ( $assistances as $assistance )
+                {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $medicalRest->worker_id)->get();
+
+                    if ( count( $assistancesDetails ) > 0 )
+                    {
+                        $workingDay = WorkingDay::where('enable', 1)
+                            ->orderBy('created_at', 'ASC')->first();
+                        foreach ( $assistancesDetails as $assistanceDetail )
+                        {
+                            $assistanceDetail->hour_entry = $workingDay->time_start;
+                            $assistanceDetail->hour_out = $workingDay->time_fin;
+                            $assistanceDetail->status = 'M';
+                            $assistanceDetail->justification = null;
+                            $assistanceDetail->obs_justification = null;
+                            $assistanceDetail->working_day_id = $workingDay->id;
+                            $assistanceDetail->save();
+                        }
+                    }
+                }
             }
 
             DB::commit();
