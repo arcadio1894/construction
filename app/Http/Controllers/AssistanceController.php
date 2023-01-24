@@ -6,6 +6,7 @@ use App\Assistance;
 use App\AssistanceDetail;
 use App\Exports\AssistanceExcelMultipleSheets;
 use App\Holiday;
+use App\MedicalRest;
 use App\Worker;
 use App\WorkingDay;
 use Carbon\Carbon;
@@ -78,16 +79,38 @@ class AssistanceController extends Controller
             $workingDay = WorkingDay::where('enable', true)->first();
 
             foreach ( $workers as $worker) {
-                $assistance_detail = AssistanceDetail::create([
-                    'date_assistance' => $assistance2->date_assistance,
-                    'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->id,
-                    'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->id,
-                    'worker_id' => $worker->id,
-                    'assistance_id' => $assistance2->id,
-                    'working_day_id' => $workingDay->id
-                ]);
+                // TODO: Revisamos si hay Descansos Medicos
+                //dump($worker->first_name .' '. $worker->last_name);
+                $medicalRests = MedicalRest::whereDate('date_start', '<=',$assistance2->date_assistance)
+                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                    ->where('worker_id', $worker->id)
+                    ->get();
+                //dump($medicalRests);
+                if ( count($medicalRests) > 0 )
+                {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id,
+                        'status' => 'M'
+                    ]);
+                } else {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id
+                    ]);
+                }
+
             }
 
+            //dd();
             return response()->json([
                 'message' => 'Se ha creado la asistencia y redireccionando ... ',
                 'url' => route('assistance.register', $assistance2->id),
