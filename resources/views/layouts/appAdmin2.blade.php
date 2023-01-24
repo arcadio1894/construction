@@ -1767,7 +1767,7 @@
                                     <ul class="nav nav-treeview">
                                         @can('list_vacation')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListVacation')">
+                                                <a href="{{ route('vacation.index') }}" class="nav-link @yield('activeListVacation')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar vacaciones</p>
                                                 </a>
@@ -1775,7 +1775,7 @@
                                         @endcan
                                         @can('create_vacation')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateVacation')">
+                                                <a href="{{ route('vacation.create') }}" class="nav-link @yield('activeCreateVacation')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Registrar vacaciones</p>
                                                 </a>

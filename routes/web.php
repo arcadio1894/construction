@@ -1495,6 +1495,29 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:delete_medicalRest');
 
 
+        // CRUD Vacaciones
+        Route::get('/all/vacations', 'VacationController@getAllVacation')
+            ->middleware('permission:list_vacation');
+        Route::get('vacaciones', 'VacationController@index')
+            ->name('vacation.index')
+            ->middleware('permission:list_vacation');
+        Route::get('crear/vacaciones', 'VacationController@create')
+            ->name('vacation.create')
+            ->middleware('permission:create_vacation');
+        Route::post('vacation/store', 'VacationController@store')
+            ->name('vacation.store')
+            ->middleware('permission:create_vacation');
+        Route::get('/editar/vacaciones/{id}', 'VacationController@edit')
+            ->name('vacation.edit')
+            ->middleware('permission:edit_vacation');
+        Route::post('vacation/update', 'VacationController@update')
+            ->name('vacation.update')
+            ->middleware('permission:edit_vacation');
+        Route::post('vacation/destroy', 'VacationController@destroy')
+            ->name('vacation.destroy')
+            ->middleware('permission:delete_vacation');
+
+
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
             ->name('workingDay.create');

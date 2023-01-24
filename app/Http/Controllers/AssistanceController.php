@@ -7,6 +7,7 @@ use App\AssistanceDetail;
 use App\Exports\AssistanceExcelMultipleSheets;
 use App\Holiday;
 use App\MedicalRest;
+use App\Vacation;
 use App\Worker;
 use App\WorkingDay;
 use Carbon\Carbon;
@@ -85,9 +86,12 @@ class AssistanceController extends Controller
                     ->whereDate('date_end', '>=',$assistance2->date_assistance)
                     ->where('worker_id', $worker->id)
                     ->get();
+                $vacations = Vacation::whereDate('date_start', '<=',$assistance2->date_assistance)
+                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                    ->where('worker_id', $worker->id)
+                    ->get();
                 //dump($medicalRests);
-                if ( count($medicalRests) > 0 )
-                {
+                if ( count($medicalRests) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
                         'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
@@ -96,6 +100,16 @@ class AssistanceController extends Controller
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
                         'status' => 'M'
+                    ]);
+                } elseif ( count($vacations) > 0 ) {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id,
+                        'status' => 'V'
                     ]);
                 } else {
                     AssistanceDetail::create([
