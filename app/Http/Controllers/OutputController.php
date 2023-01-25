@@ -1215,7 +1215,7 @@ class OutputController extends Controller
     public function getJsonOutputsOfMaterial( $id_material )
     {
         $dateCurrent = Carbon::now('America/Lima');
-        $date6MonthAgo = $dateCurrent->subMonths(6);
+        $date4MonthAgo = $dateCurrent->subMonths(4);
 
         /*Esto se puede usar para reportes muy antiguos pero demora mucho
          * $outputDetails = OutputDetail::with(
@@ -1226,14 +1226,13 @@ class OutputController extends Controller
             ->where('material_id', $id_material)
             ->get();*/
 
-        $outputDetails = OutputDetail::with('items')
-            ->where('created_at', '>=', $date6MonthAgo)
+        $outputDetails = OutputDetail::where('created_at', '>=', $date4MonthAgo)
             ->where('material_id', $id_material)
             ->get();
 
         $outputs = [];
         foreach ($outputDetails as $outputDetail) {
-            if ( $outputDetail->items != null )
+            if ( $outputDetail->item_id != null )
             {
 
                 /*if ( $outputDetail->items->material_id == $id_material )
@@ -1241,7 +1240,7 @@ class OutputController extends Controller
 
                     $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
                     //dump($output);
-                    $item_original = Item::find($outputDetail->items->id);
+                    $item_original = Item::find($outputDetail->item_id);
                     $after_item = Item::where('code', $item_original->code)
                         ->where('id', '<>', $item_original->id)
                         ->orderBy('created_at', 'asc')
