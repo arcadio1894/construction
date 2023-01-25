@@ -1214,10 +1214,23 @@ class OutputController extends Controller
 
     public function getJsonOutputsOfMaterial( $id_material )
     {
-        $outputDetails = OutputDetail::with(
+        $dateCurrent = Carbon::now('America/Lima');
+        $date6MonthAgo = $dateCurrent->subMonths(6);
+
+        /*Esto se puede usar para reportes muy antiguos pero demora mucho
+         * $outputDetails = OutputDetail::with(
             ['items' => function ($query) use ($id_material) {
                 $query->where('material_id', '=', $id_material);
-            }])->get();
+            }])
+            ->where('created_at', '>=', $date6MonthAgo)
+            ->where('material_id', $id_material)
+            ->get();*/
+
+        $outputDetails = OutputDetail::with('items')
+            ->where('created_at', '>=', $date6MonthAgo)
+            ->where('material_id', $id_material)
+            ->get();
+
         $outputs = [];
         foreach ($outputDetails as $outputDetail) {
             if ( $outputDetail->items != null )

@@ -101,11 +101,13 @@ $(document).ready(function () {
                             '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                            //'<button data-toggle="tooltip" data-placement="top" title="Anular por Cantidad" data-deleteQuantity="'+item.id+'" class="btn bg-orange color-palette btn-sm"><i class="fa fa-trash"></i> </button>';
                     } else {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                            //'<button data-toggle="tooltip" data-placement="top" title="Anular por Cantidad" data-deleteQuantity="'+item.id+'" class="btn bg-orange color-palette btn-sm"><i class="fa fa-trash"></i> </button>';
 
                     }
 
@@ -327,6 +329,8 @@ $(document).ready(function () {
     $modalItemsMaterials = $('#modalItemsMaterials');
     $modalReturnMaterials = $('#modalReturnMaterials');
 
+    $(document).on('click', '[data-deleteQuantity]', showModalDeleteQuantity);
+
     /*$('body').tooltip({
         selector: '[data-toggle]'
     });
@@ -363,6 +367,31 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function showModalDeleteQuantity() {
+    $('#table-itemsDelete').html('');
+    var output_id = $(this).data('deletepartial');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.array.length; i++)
+            {
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+                //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
+    });
+    $modalItemsDelete.modal('show');
+}
 
 function showModalEdit() {
     var output_id = $(this).data('edit');

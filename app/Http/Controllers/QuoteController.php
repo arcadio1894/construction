@@ -967,7 +967,10 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
 
-        $view = view('exports.quoteInternal', compact('quote'));
+        $images = ImagesQuote::where('quote_id', $quote->id)
+            ->orderBy('order', 'ASC')->get();
+
+        $view = view('exports.quoteInternal', compact('quote', 'images'));
 
         $pdf = PDF::loadHTML($view);
 

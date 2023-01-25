@@ -160,6 +160,28 @@
         .page-break {
             page-break-after: always;
         }
+
+        .plano {
+            width: auto;
+            height: 250px;
+            max-width: 720px;
+        }
+
+        .fill {
+            object-fit: fill;
+        }
+
+        .contain {
+            object-fit: contain;
+        }
+
+        .cover {
+            object-fit: cover;
+        }
+
+        .scale-down {
+            object-fit: scale-down;
+        }
     </style>
 </head>
 <body>
@@ -414,6 +436,21 @@
     @foreach( $quote->equipments as $equipment )
         <div class="notice"><strong>Equipo: {{ $equipment->description }}</strong> </div>
         <div class="notice">{!! nl2br($equipment->detail) !!} </div>
+    @endforeach
+</div>
+
+<div id="notices">
+    @if ( count($images) > 0 )
+        <div><strong>PLANOS DE LA COTIZACIÓN {{ $quote->code }}</strong> </div>
+        <br>
+    @endif
+
+    @foreach( $images as $image )
+
+        <div class="notice">
+            <div class="notice"><em><u>{{ $image->description }}</u></em></div><br>
+            <img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
+        </div><br>
     @endforeach
 </div>
 <footer>
