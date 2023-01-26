@@ -1588,7 +1588,6 @@ Route::middleware('auth')->group(function (){
             ->name('output.simple.confirm.all')
             ->middleware('permission:confirm_requestSimple');
 
-
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');

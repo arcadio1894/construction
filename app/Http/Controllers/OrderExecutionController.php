@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\Equipment;
 use App\EquipmentConsumable;
 use App\EquipmentMaterial;
@@ -22,12 +23,20 @@ class OrderExecutionController extends Controller
 
     public function getAllOrderExecution()
     {
+        $begin = microtime(true);
         $quotes = Quote::with('customer')
             ->where('raise_status', 1)
             ->where('state_active', 'open')
             ->whereNotIn('state', ['canceled', 'expired'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Ordenes de Ejecucion',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
@@ -42,12 +51,20 @@ class OrderExecutionController extends Controller
 
     public function getAllOrderExecutionFinished()
     {
+        $begin = microtime(true);
         $quotes = Quote::with('customer')
             ->where('raise_status', 1)
             ->where('state_active', 'close')
             ->whereNotIn('state', ['canceled', 'expired'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Ordenes de Ejecucion Finalizadas',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
@@ -62,6 +79,7 @@ class OrderExecutionController extends Controller
 
     public function getJsonMaterialsQuoteForAlmacen( $quote_id )
     {
+        $begin = microtime(true);
         $arrayMaterials = [];
         $arrayConsumables = [];
         $consumables_quantity = [];
@@ -119,11 +137,19 @@ class OrderExecutionController extends Controller
             $arrayConsumables = array_values($new_arr2);
         }
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Materiales en COtizacion para Almacen',
+            'time' => $end
+        ]);
         return json_encode(['arrayMaterials'=>$arrayMaterials, 'arrayConsumables'=>$arrayConsumables]);
     }
 
     public function getJsonMaterialsByQuoteExecutionForAlmacen( $code_execution )
     {
+        $begin = microtime(true);
         $arrayMaterials = [];
         $arrayConsumables = [];
         $consumables_quantity = [];

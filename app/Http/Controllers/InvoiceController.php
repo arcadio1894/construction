@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\CategoryInvoice;
 use App\DetailEntry;
 use App\Entry;
@@ -42,6 +43,7 @@ class InvoiceController extends Controller
 
     public function storeInvoice(StoreInvoiceRequest $request)
     {
+        $begin = microtime(true);
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
@@ -256,6 +258,14 @@ class InvoiceController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar factura finanza',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -267,6 +277,7 @@ class InvoiceController extends Controller
 
     public function getJsonInvoices()
     {
+        $begin = microtime(true);
         $entries = Entry::with('supplier')->with('category_invoice')
             ->with(['details' => function ($query) {
                 $query->with('material');
@@ -289,6 +300,13 @@ class InvoiceController extends Controller
             array_push($array, $orderService);
         }
         //dd(datatables($entries)->toJson());
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener facturas finanzas',
+            'time' => $end
+        ]);
         return datatables($array)->toJson();
     }
 
@@ -320,6 +338,8 @@ class InvoiceController extends Controller
 
     public function getInvoices()
     {
+        $begin = microtime(true);
+
         $entries = Entry::with('supplier')
             ->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
@@ -335,6 +355,13 @@ class InvoiceController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener facturas',
+            'time' => $end
+        ]);
         //dd(datatables($entries)->toJson());
         return $entries;
     }
@@ -349,6 +376,7 @@ class InvoiceController extends Controller
 
     public function updateInvoice(UpdateInvoiceRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
         DB::beginTransaction();
         try {
@@ -415,6 +443,14 @@ class InvoiceController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Modificacion de facturas finanzas',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -467,6 +503,7 @@ class InvoiceController extends Controller
 
     public function getJsonInvoicesFinance()
     {
+        $begin = microtime(true);
         $entries = Entry::with('supplier')
             ->with(['details' => function ($query) {
                 $query->with('material');
@@ -481,6 +518,13 @@ class InvoiceController extends Controller
             array_push($array, $entry);
         }
         //dd(datatables($entries)->toJson());
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener facturas finanzas',
+            'time' => $end
+        ]);
         return datatables($array)->toJson();
     }
 
@@ -494,6 +538,7 @@ class InvoiceController extends Controller
 
     public function exportInvoices()
     {
+        $begin = microtime(true);
         //dd($request);
         $start = $_GET['start'];
         $end = $_GET['end'];;
@@ -567,6 +612,13 @@ class InvoiceController extends Controller
         //dd('Fechas');
         //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);
         //(new UsersExport)->download('users.xlsx');
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Reporte Excel facturas finanzas',
+            'time' => $end
+        ]);
         return (new InvoicesFinanceExport($invoices_array, $dates))->download('facturasFinanzas.xlsx');
 
     }

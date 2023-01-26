@@ -299,6 +299,8 @@ $(document).ready(function () {
 
     $modalItemsDelete = $('#modalDeletePartial');
 
+    $modalItemsDeleteQuantity = $('#modalDeleteQuantity');
+
     $formAttend = $('#formAttend');
 
     //$formAttend.on('submit', attendOutput);
@@ -330,6 +332,7 @@ $(document).ready(function () {
     $modalReturnMaterials = $('#modalReturnMaterials');
 
     $(document).on('click', '[data-deleteQuantity]', showModalDeleteQuantity);
+    $(document).on('click', '[data-itemDeleteQuantity]', deleteOutputQuantity);
 
     /*$('body').tooltip({
         selector: '[data-toggle]'
@@ -350,6 +353,8 @@ let $modalDeleteTotal;
 
 let $modalItemsDelete;
 
+let $modalItemsDeleteQuantity;
+
 let $formCreate;
 
 var $formAttend;
@@ -369,20 +374,20 @@ let $modalItemsMaterials;
 let $modalReturnMaterials;
 
 function showModalDeleteQuantity() {
-    $('#table-itemsDelete').html('');
-    var output_id = $(this).data('deletepartial');
+    $('#table-itemsDeleteQuantity').html('');
+    var output_id = $(this).data('deletequantity');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/devolver/"+output_id,
+        url: "/dashboard/get/json/items/output/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
             console.log(json);
-            for (var i=0; i<json.array.length; i++)
+            for (var i=0; i<json.materials.length; i++)
             {
                 //for (var i=0; i<json.array.length; i++)
                 //{
-                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
+                renderTemplateItemDetailDeleteQuantity(i+1, json.materials[i].material_id, json.materials[i].code, json.materials[i].material, json.materials[i].quantity, output_id);
                 //$materials.push(json[i].material);
                 //}
                 //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
@@ -390,7 +395,132 @@ function showModalDeleteQuantity() {
 
         }
     });
-    $modalItemsDelete.modal('show');
+    $modalItemsDeleteQuantity.modal('show');
+}
+
+function deleteOutputQuantity() {
+    console.log('Llegue');
+    event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
+
+    // Obtener la URL
+    var idOutput = $(this).data('output');
+    var idMaterial = $(this).data('itemDeleteQuantity');
+
+    var quantityDelete = parseFloat($(this).parent().prev().children().val());
+    var quantityRequest = parseFloat($(this).parent().prev().prev().html());
+
+    if ( quantityDelete > quantityRequest )
+    {
+        toastr.error('No puede anular más de lo que fue solicitado', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+    }
+    /*$.ajax({
+        url: '/dashboard/destroy/output/'+idOutputDetail+'/item/'+idItem,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            button.attr("disabled", false);
+            $(this).parent().parent().remove();
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            button.attr("disabled", false);
+
+        },
+    });*/
+
+}
+
+function renderTemplateItemDetailDeleteQuantity(id, material_id, code, material, quantity, output_id) {
+    var clone = activateTemplate('#template-itemDeleteQuantity');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-anular]").setAttribute('value', quantity);
+    clone.querySelector("[data-anular]").setAttribute('data-anular', material_id);
+    clone.querySelector("[data-itemDeleteQuantity]").setAttribute('data-itemDeleteQuantity', material_id);
+    clone.querySelector("[data-itemDeleteQuantity]").setAttribute('data-output', output_id);
+    $('#table-itemsDeleteQuantity').append(clone);
 }
 
 function showModalEdit() {

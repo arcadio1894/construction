@@ -396,6 +396,7 @@ class OutputController extends Controller
                     array_push($array,
                         [
                             'id' => $key + 1,
+                            'material_id' => $item->material->id,
                             'material' => $item->material->full_description,
                             'id_item' => $item->id,
                             'code' => $item->code,
@@ -413,6 +414,7 @@ class OutputController extends Controller
                     array_push($array,
                         [
                             'id' => $key + 1,
+                            'material_id' => $outputDetail->material->id,
                             'material' => $outputDetail->material->full_description,
                             'id_item' => 'Personalizado',
                             'code' => 'Personalizado',
@@ -427,7 +429,7 @@ class OutputController extends Controller
                         ]);
                 }
             } else {
-                array_push($materials_quantity, array('material_id'=>$material->id, 'material'=>$material->full_description, 'material_complete'=>$material, 'quantity'=> (float)$item->percentage));
+                array_push($materials_quantity, array('code'=>$material->code, 'material_id'=>$material->id, 'material'=>$material->full_description, 'material_complete'=>$material, 'quantity'=> (float)$item->percentage));
 
             }
         }

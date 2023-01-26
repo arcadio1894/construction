@@ -256,15 +256,15 @@
             <td class="qty" style="text-align: center">{{ $detail->material->unitMeasure->name }}</td>
             <td class="qty" style="text-align: center">{{ $detail->quantity }}</td>
             {{--Precio sin IGV--}}
-            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format($detail->price/1.18, 2) }}</td>
+            <td class="qty" style="text-align: center"> {{ number_format($detail->price/1.18, 2) }}</td>
             {{--SUBTOTAL S/Igv--}}
-            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format(($detail->price/1.18)*$detail->quantity, 2) }}</td>
+            <td class="qty" style="text-align: center"> {{ number_format($detail->total_detail-$detail->igv, 2) }}</td>
             {{--PRECIO UNIT. C/Igv--}}
             {{--<td class="qty" style="text-align: center">--}}{{-- $purchase_order->currency_order --}}{{-- {{ number_format($detail->price, 2) }}</td>
             --}}{{--IGV--}}
-            <td class="qty" style="text-align: center"> {{-- $purchase_order->currency_order --}} {{ number_format((($detail->price/1.18)*$detail->quantity)*(0.18), 2) }}</td>
+            <td class="qty" style="text-align: center"> {{ number_format($detail->igv, 2) }}</td>
             {{--SUBTOTAL C/Igv--}}
-            <td class="qty" style="text-align: center">{{-- $purchase_order->currency_order --}} {{ number_format($detail->price*$detail->quantity, 2) }}</td>
+            <td class="qty" style="text-align: center"> {{ number_format($detail->total_detail, 2) }}</td>
         </tr>
         @endforeach
         </tbody>

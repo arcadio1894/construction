@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\DetailEntry;
 use App\Entry;
 use App\FollowMaterial;
@@ -57,6 +58,7 @@ class EntryController extends Controller
 
     public function storeEntryPurchase(StoreEntryPurchaseRequest $request)
     {
+        $begin = microtime(true);
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
@@ -380,6 +382,13 @@ class EntryController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Crear Ingreso Almacen',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -471,6 +480,7 @@ class EntryController extends Controller
 
     public function updateEntryPurchase(UpdateEntryPurchaseRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
         DB::beginTransaction();
         try {
@@ -588,6 +598,13 @@ class EntryController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar Ingreso Almacen',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -600,6 +617,7 @@ class EntryController extends Controller
     // No se borró la orden de compra
     public function destroyEntryPurchase(Entry $entry)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             if ( $entry->entry_type === 'Por compra' )
@@ -664,7 +682,13 @@ class EntryController extends Controller
 
                 $entry->delete();
             }
+            $end = microtime(true) - $begin;
 
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar Ingreso Almacen',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -676,6 +700,8 @@ class EntryController extends Controller
 
     public function getJsonEntriesPurchase()
     {
+        $begin = microtime(true);
+
         $entries = Entry::with('supplier')
             ->where('entry_type', 'Por compra')
             ->where('finance', false)
@@ -694,7 +720,13 @@ class EntryController extends Controller
             ->where('finance', false)
             ->orderBy('created_at', 'desc')
             ->get();*/
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener ingresos por compra ',
+            'time' => $end
+        ]);
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
     }
@@ -704,7 +736,7 @@ class EntryController extends Controller
         /*$entries = Entry::where('entry_type', 'Retacería')
             ->orderBy('created_at', 'desc')
             ->get();*/
-
+        $begin = microtime(true);
         $entries = Entry::with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 //$query->where('state_item', 'scraped');
@@ -713,13 +745,21 @@ class EntryController extends Controller
             ->where('entry_type', 'Retacería')
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener ingresos por retacería',
+            'time' => $end
+        ]);
         //dd(datatables($entries)->toJson());
         return datatables($entries)->toJson();
     }
 
     public function getEntriesPurchase()
     {
+        $begin = microtime(true);
+
         $entries = Entry::with('supplier')->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered')
@@ -734,12 +774,20 @@ class EntryController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Ingresos por Compra',
+            'time' => $end
+        ]);
         //dd(datatables($entries)->toJson());
         return $entries;
     }
 
     public function destroyDetailOfEntry( $id_detail, $id_entry )
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $entry = Entry::find($id_entry);
@@ -765,6 +813,14 @@ class EntryController extends Controller
 
             $detail->delete();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar detalle de ingreso',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -775,6 +831,7 @@ class EntryController extends Controller
 
     public function addDetailOfEntry( Request $request, $id_entry )
     {
+        $begin = microtime(true);
         //dump($request);
         DB::beginTransaction();
         try {
@@ -917,6 +974,13 @@ class EntryController extends Controller
                 $detail_entry->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Agregar detalle de ingreso',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -927,9 +991,17 @@ class EntryController extends Controller
 
     public function getAllOrders()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener ordenes de compra',
+            'time' => $end
+        ]);
         return datatables($orders)->toJson();
     }
 
@@ -944,17 +1016,26 @@ class EntryController extends Controller
 
     public function createEntryOrder($id)
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $orderPurchase = OrderPurchase::
             with(['details' => function ($query) {
                 $query->with(['material']);
             }])
             ->with('supplier')->find($id);
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear ingreso de Orden de compra',
+            'time' => $end
+        ]);
         return view('entry.create_entry_purchase_order', compact('suppliers', 'orderPurchase'));
     }
 
     public function storeEntryPurchaseOrder(StoreEntryPurchaseOrderRequest $request)
     {
+        $begin = microtime(true);
         //$extension = $request->file('image')->getClientOriginalExtension();
         //dd($extension);
 
@@ -1272,6 +1353,14 @@ class EntryController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar ingreso de Orden de compra',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1347,6 +1436,7 @@ class EntryController extends Controller
 
     public function regularizeAutoOrderEntryPurchase( $entry_id )
     {
+        $begin = microtime(true);
         $entry = Entry::find($entry_id);
         $details = DetailEntry::where('entry_id', $entry_id)->get();
         //dd($entry);
@@ -1365,12 +1455,20 @@ class EntryController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'AutoRegularizar Vista de orden de compra',
+            'time' => $end
+        ]);
         return view('orderPurchase.regularizeEntryPurchase', compact('entry', 'details', 'suppliers', 'users', 'codeOrder', 'payment_deadlines'));
 
     }
 
     public function regularizeEntryToOrderPurchase(StoreOrderPurchaseRequest $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $validated = $request->validated();
 
@@ -1544,6 +1642,14 @@ class EntryController extends Controller
             $entry->purchase_order = $orderPurchase->code;
             $entry->save();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'AutoRegularizar Post de orden de compra',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1563,6 +1669,7 @@ class EntryController extends Controller
 
     public function getJsonMaterialsInEntry()
     {
+        $begin = microtime(true);
         $materials = Material::where('enable_status', 1)->get();
 
         $array = [];
@@ -1570,11 +1677,20 @@ class EntryController extends Controller
         {
             array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code]);
         }
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener lista de materiales que tienen ingreso',
+            'time' => $end
+        ]);
+
         return $array;
     }
 
     public function getJsonEntriesOfMaterial( $id_material )
     {
+        $begin = microtime(true);
         $entryDetails = DetailEntry::where('material_id', '=', $id_material)
             //->where('entry_type', 'Por compra')
             ->get();
@@ -1609,7 +1725,13 @@ class EntryController extends Controller
         $centries_final = array_values($new_arr2);
         //dump($outputs);
         //$result = array_values( array_unique($outputs) );
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener ingresos de materiales',
+            'time' => $end
+        ]);
         return $centries_final;
     }
 }
