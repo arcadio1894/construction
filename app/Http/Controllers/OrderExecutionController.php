@@ -207,7 +207,13 @@ class OrderExecutionController extends Controller
 
             $arrayConsumables = array_values($new_arr2);
         }
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Materiales en Orden de ejecucion para Almacen',
+            'time' => $end
+        ]);
         return json_encode(['quote'=>$quote,'arrayMaterials'=>$arrayMaterials, 'arrayConsumables'=>$arrayConsumables]);
     }
 }

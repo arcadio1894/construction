@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\ContactName;
 use App\Customer;
 use App\Equipment;
@@ -56,6 +57,7 @@ class QuoteController extends Controller
 
     public function create()
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $unitMeasures = UnitMeasure::all();
@@ -71,11 +73,19 @@ class QuoteController extends Controller
         $rent = PorcentageQuote::where('name', 'rent')->first();
         $letter = PorcentageQuote::where('name', 'letter')->first();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear cotizacion VISTA',
+            'time' => $end
+        ]);
         return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter'));
     }
 
     public function store(StoreQuoteRequest $request)
     {
+        $begin = microtime(true);
         //dump($request);
         //dump($request->descplanos);
         //dump($request->planos);
@@ -308,6 +318,13 @@ class QuoteController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar cotizacion POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -329,6 +346,7 @@ class QuoteController extends Controller
 
     public function show($id)
     {
+        $begin = microtime(true);
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
@@ -343,11 +361,19 @@ class QuoteController extends Controller
             }])->first();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         //dump($quote);
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver cotizacion VISTA',
+            'time' => $end
+        ]);
         return view('quote.show', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines'));
     }
 
     public function edit($id)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $unitMeasures = UnitMeasure::all();
@@ -467,6 +493,14 @@ class QuoteController extends Controller
         {
             $images = $imagenes;
         }
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Editar cotizacion VISTA',
+            'time' => $end
+        ]);
         //dump($quote);
         return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'images'));
 
@@ -474,6 +508,7 @@ class QuoteController extends Controller
 
     public function editPlanos($id)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
@@ -492,6 +527,13 @@ class QuoteController extends Controller
         {
             $images = $imagenes;
         }
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver editar planos VISTA',
+            'time' => $end
+        ]);
         //dump($quote);
         return view('quote.editPlanos', compact('quote','permissions', 'images'));
 
@@ -499,6 +541,7 @@ class QuoteController extends Controller
 
     public function updatePlanos(Request $request, $image)
     {
+        $begin = microtime(true);
         //dd($request->get('image_id'));
         DB::beginTransaction();
         try {
@@ -511,6 +554,13 @@ class QuoteController extends Controller
             $image->order = $order;
             $image->save();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Imagenes de planos modificados',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -547,6 +597,7 @@ class QuoteController extends Controller
 
     public function savePlanos(Request $request, $quote_id)
     {
+        $begin = microtime(true);
         //dd($request->get('image_id'));
         DB::beginTransaction();
         try {
@@ -578,6 +629,13 @@ class QuoteController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar planos POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -589,6 +647,7 @@ class QuoteController extends Controller
 
     public function adjust($id)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $unitMeasures = UnitMeasure::all();
@@ -605,6 +664,14 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ajustar cotizaciones VISTA',
+            'time' => $end
+        ]);
+
         //dump($quote);
         return view('quote.adjust', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines'));
 
@@ -612,6 +679,7 @@ class QuoteController extends Controller
 
     public function update(UpdateQuoteRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -773,6 +841,14 @@ class QuoteController extends Controller
 
             $quote->save();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar cotizaciones POST',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -912,6 +988,7 @@ class QuoteController extends Controller
 
     public function getAllQuotes()
     {
+        $begin = microtime(true);
         $quotes = Quote::with('customer')
             ->with('deadline')
             ->with(['users' => function ($query) {
@@ -922,11 +999,19 @@ class QuoteController extends Controller
             ->where('state_active', 'open')
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener todas las cotizaciones VISTA',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
     public function getAllQuotesGeneral()
     {
+        $begin = microtime(true);
         $quotes = Quote::with('customer')
             ->with('deadline')
             ->with(['users' => function ($query) {
@@ -934,6 +1019,13 @@ class QuoteController extends Controller
             }])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener lista cotizaciones general',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
@@ -981,6 +1073,7 @@ class QuoteController extends Controller
 
     public function destroyEquipmentOfQuote($id_equipment, $id_quote)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
@@ -1034,6 +1127,14 @@ class QuoteController extends Controller
 
             $equipment_quote->delete();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar equipo de cotizacion',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1045,6 +1146,7 @@ class QuoteController extends Controller
 
     public function updateEquipmentOfQuote(Request $request, $id_equipment, $id_quote)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
@@ -1411,6 +1513,13 @@ class QuoteController extends Controller
                 $quote->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Modificar equipo de cotizacion',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1430,6 +1539,7 @@ class QuoteController extends Controller
 
     public function raiseQuote($quote_id, $code)
     {
+        $begin = microtime(true);
         $quote = Quote::find($quote_id);
 
         if ( !isset( $quote->order_execution ) )
@@ -1445,10 +1555,19 @@ class QuoteController extends Controller
         $quote->code_customer = $code;
         $quote->raise_status = true;
         $quote->save();
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Elevar cotizacion',
+            'time' => $end
+        ]);
     }
 
     public function getAllQuotesConfirmed()
     {
+        $begin = microtime(true);
         $quotes = Quote::with(['customer'])
             ->with('deadline')
             ->with(['users' => function ($query) {
@@ -1458,6 +1577,13 @@ class QuoteController extends Controller
             ->where('state','confirmed')
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener todas las cotizaciones confirmadas',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
@@ -1482,6 +1608,7 @@ class QuoteController extends Controller
 
     public function saveQuoteInSoles( Quote $quote )
     {
+        $begin = microtime(true);
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
         //dump($request->get('date_invoice'));
@@ -1517,6 +1644,13 @@ class QuoteController extends Controller
         $quote->total_soles = $quote->total * (float) $tipoCambioSunat->venta;
         $quote->save();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Cotizacion cambiada a soles',
+            'time' => $end
+        ]);
         return response()->json(['total' => $quote->total_soles, 'message'=>'Cotización cambiada a soles'], 200);
 
     }
@@ -1552,6 +1686,7 @@ class QuoteController extends Controller
 
     public function getAllQuotesDeleted()
     {
+        $begin = microtime(true);
         $quotes = Quote::with(['customer'])
             ->with('deadline')
             ->with(['users' => function ($query) {
@@ -1560,11 +1695,19 @@ class QuoteController extends Controller
             ->whereIn('state',['canceled', 'expired'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener todas las cotizaciones eliminadas',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
     public function getAllQuotesClosed()
     {
+        $begin = microtime(true);
         $quotes = Quote::with(['customer'])
             ->with('deadline')
             ->with(['users' => function ($query) {
@@ -1573,11 +1716,19 @@ class QuoteController extends Controller
             ->whereIn('state_active',['close'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener todas las cotizaciones terminadas',
+            'time' => $end
+        ]);
         return datatables($quotes)->toJson();
     }
 
     public function closeQuote($quote_id)
     {
+        $begin = microtime(true);
         $quote = Quote::find($quote_id);
 
         $quote->state_active = 'close';
@@ -1592,6 +1743,13 @@ class QuoteController extends Controller
             {
                 $material_taken->delete();
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Finalizar cotizaciones',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1612,6 +1770,7 @@ class QuoteController extends Controller
 
     public function renewQuote($id)
     {
+        $begin = microtime(true);
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
@@ -1771,6 +1930,14 @@ class QuoteController extends Controller
             $renew_quote->total = $totalQuote;
 
             $renew_quote->save();
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Renovar cotizaciones',
+                'time' => $end
+            ]);
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -1974,6 +2141,7 @@ class QuoteController extends Controller
 
     public function getAllQuoteLost()
     {
+        $begin = microtime(true);
         $quotes = Quote::pluck('code')->toArray();
         //dump($orders);
         $ids = [];
@@ -1996,6 +2164,13 @@ class QuoteController extends Controller
             $iterator++;
         }
         //dd($lost);
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener cotizaciones perdidas',
+            'time' => $end
+        ]);
 
         return datatables($lost)->toJson();
     }
@@ -2011,6 +2186,7 @@ class QuoteController extends Controller
 
     public function saveMaterialsReplacementToEquipment(Request $request, $id_equipment, $id_quote)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $equipments = json_decode($request->get('equipments'));
@@ -2109,6 +2285,13 @@ class QuoteController extends Controller
 
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar Materiales Reemplazados',
+                'time' => $end
+            ]);
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();

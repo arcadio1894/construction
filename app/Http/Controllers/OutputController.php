@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Area;
 use App\AreaWorker;
+use App\Audit;
 use App\Category;
 use App\Equipment;
 use App\EquipmentConsumable;
@@ -53,6 +54,7 @@ class OutputController extends Controller
 
     public function createOutputRequestOrder($id_quote)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
@@ -195,11 +197,20 @@ class OutputController extends Controller
         $consumables = array_values($new_arr2);
         $users = User::all();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear solicitud de salida normal',
+            'time' => $end
+        ]);
+
         return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items', 'turnstiles'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
@@ -344,11 +355,20 @@ class OutputController extends Controller
 
         $users = User::all();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear Solicitud de salida extra',
+            'time' => $end
+        ]);
+
         return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'consumables', 'quote', 'items', 'turnstiles'));
     }
 
     public function getOutputRequest()
     {
+        $begin = microtime(true);
         $outputs = Output::with('requestingUser')
             ->with('responsibleUser')
             ->with('quote')
@@ -373,12 +393,20 @@ class OutputController extends Controller
             ]);
         }
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Solicitudes de salida',
+            'time' => $end
+        ]);
         //dd($outputs);
         return datatables($array)->toJson();
     }
 
     public function getJsonItemsOutputRequest( $output_id )
     {
+        $begin = microtime(true);
         $array = [];
         $materials = [];
         $materials_quantity = [];
@@ -506,13 +534,20 @@ class OutputController extends Controller
             $consumables = array_values($new_arr2);
         }
 
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Materiales de las salidas',
+            'time' => $end
+        ]);
         //dd($array);
         return json_encode(['array'=>$array, 'consumables'=>$consumables, 'materials'=>$materials]);
     }
 
     public function getJsonItemsOutputRequestDevolver( $output_id )
     {
+        $begin = microtime(true);
         $array = [];
         $materials = [];
         $materials_quantity = [];
@@ -622,13 +657,20 @@ class OutputController extends Controller
             $consumables = array_values($new_arr2);
         }
 
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener materiales para devolver',
+            'time' => $end
+        ]);
         //dd($array);
         return json_encode(['array'=>$array, 'consumables'=>$consumables]);
     }
 
     public function attendOutputRequest(Request $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $output = Output::find($request->get('output_id'));
         DB::beginTransaction();
@@ -665,7 +707,13 @@ class OutputController extends Controller
                 }
 
             }
+            $end = microtime(true) - $begin;
 
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Atender Salidas',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -678,13 +726,20 @@ class OutputController extends Controller
 
     public function confirmOutputRequest(Request $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $output = Output::find($request->get('output_id'));
         DB::beginTransaction();
         try {
             $output->state = 'confirmed';
             $output->save();
+            $end = microtime(true) - $begin;
 
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Confirmar Salida',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -716,6 +771,7 @@ class OutputController extends Controller
 
     public function storeOutputRequest(StoreRequestOutputRequest $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $validated = $request->validated();
 
@@ -871,6 +927,14 @@ class OutputController extends Controller
                 }
 
             }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar solicitud de salida POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -883,7 +947,7 @@ class OutputController extends Controller
     public function destroyTotalOutputRequest(Request $request)
     {
         //dump($request);
-
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
 
@@ -963,6 +1027,13 @@ class OutputController extends Controller
                 $output->delete();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar total Salida',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -975,6 +1046,7 @@ class OutputController extends Controller
 
     public function returnItemOutputDetail(Request $request, $id_output, $id_item)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $outputDetail = OutputDetail::find($id_output);
@@ -1018,6 +1090,13 @@ class OutputController extends Controller
             }
 
             $outputDetail->delete();
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Retornar item de salida',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1058,7 +1137,7 @@ class OutputController extends Controller
     public function destroyPartialOutputRequest(Request $request, $id_output, $id_item)
     {
         //dump($request);
-
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
 
@@ -1141,6 +1220,13 @@ class OutputController extends Controller
 
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar parcial salida',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1189,6 +1275,7 @@ class OutputController extends Controller
 
     public function getJsonMaterialsInOutput()
     {
+        $begin = microtime(true);
         $materials = Material::where('enable_status', 1)->get();
 
         $array = [];
@@ -1196,6 +1283,14 @@ class OutputController extends Controller
         {
             array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code]);
         }
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Materiales que tienen salida',
+            'time' => $end
+        ]);
         return $array;
         /*$outputDetails = OutputDetail::with('items')->get();
         $materials = [];
@@ -1216,6 +1311,7 @@ class OutputController extends Controller
 
     public function getJsonOutputsOfMaterial( $id_material )
     {
+        $begin = microtime(true);
         $dateCurrent = Carbon::now('America/Lima');
         $date4MonthAgo = $dateCurrent->subMonths(4);
 
@@ -1283,11 +1379,19 @@ class OutputController extends Controller
         //dump($outputs);
         //$result = array_values( array_unique($outputs) );
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Reporte de Materiales en salida',
+            'time' => $end
+        ]);
         return $coutputs_final;
     }
 
     public function getQuantityMaterialOutputs($quote_id, $material_id)
     {
+        $begin = microtime(true);
         $quote = Quote::find($quote_id);
         $equipments = Equipment::where('quote_id', $quote_id)->get();
 
@@ -1401,6 +1505,14 @@ class OutputController extends Controller
 
         $items = array_values($new_arr3);
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener cantidad solicitada y faltante de materiales',
+            'time' => $end
+        ]);
+
         return response()->json(
             [   'material' => (float)$materials[0]['material_id'],
                 'quantity' => ($materials[0]['quantity'] == null) ? 0 : (float)$materials[0]['quantity'],
@@ -1449,6 +1561,7 @@ class OutputController extends Controller
 
     public function confirmAllOutputsAttend( Request $request )
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $outputs = Output::where('state', 'attended')->get();
@@ -1459,6 +1572,13 @@ class OutputController extends Controller
                 $output->state = 'confirmed';
                 $output->save();
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Confirmar todas las salidas',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1479,6 +1599,7 @@ class OutputController extends Controller
 
     public function getOutputSimple()
     {
+        $begin = microtime(true);
         $outputs = Output::with('requestingUser')
             ->with('responsibleUser')
             ->with('quote')
@@ -1507,6 +1628,13 @@ class OutputController extends Controller
             ]);
         }
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener salidas simples',
+            'time' => $end
+        ]);
         //dd($outputs);
         return datatables($array)->toJson();
     }
@@ -1522,6 +1650,7 @@ class OutputController extends Controller
 
     public function storeOutputSimple(StoreSimpleOutputRequest $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $validated = $request->validated();
 
@@ -1651,6 +1780,14 @@ class OutputController extends Controller
                     ]);
                 }
             }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar solicitud simple de area',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1662,6 +1799,7 @@ class OutputController extends Controller
 
     public function getJsonItemsOutputSimple($output_id)
     {
+        $begin = microtime(true);
         $materials = [];
         $materials_quantity = [];
         $outputDetails = OutputDetail::where('output_id', $output_id)->get();
@@ -1726,12 +1864,21 @@ class OutputController extends Controller
 
         $materials = array_values($new_arr3);
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Items de salida simple',
+            'time' => $end
+        ]);
+
         return json_encode(['materials'=>$materials]);
 
     }
 
     public function getJsonItemsOutputSimpleDevolver( $output_id )
     {
+        $begin = microtime(true);
         $array = [];
         $materials = [];
         $materials_quantity = [];
@@ -1757,12 +1904,20 @@ class OutputController extends Controller
             }
 
         }
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener items de salidas simple para devolver',
+            'time' => $end
+        ]);
         //dd($array);
         return json_encode(['array'=>$array]);
     }
 
     public function destroyTotalOutputSimple(Request $request)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
 
@@ -1842,6 +1997,13 @@ class OutputController extends Controller
                 $output->delete();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar total Salida simple',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1854,6 +2016,7 @@ class OutputController extends Controller
 
     public function attendOutputSimple(Request $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $output = Output::find($request->get('output_id'));
         DB::beginTransaction();
@@ -1873,6 +2036,13 @@ class OutputController extends Controller
                 $material->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Atender salida simple',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1885,6 +2055,7 @@ class OutputController extends Controller
 
     public function confirmOutputSimple(Request $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $output = Output::find($request->get('output_id'));
         DB::beginTransaction();
@@ -1892,6 +2063,13 @@ class OutputController extends Controller
             $output->state = 'confirmed';
             $output->save();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Confirmar Salida simple',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1904,6 +2082,7 @@ class OutputController extends Controller
 
     public function confirmAllOutputSimpleAttend( Request $request )
     {
+        $begin = microtime(true);
         $user = Auth::user();
 
         DB::beginTransaction();
@@ -1918,6 +2097,13 @@ class OutputController extends Controller
                 $output->state = 'confirmed';
                 $output->save();
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Confirmar todas las solicitudes',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1930,6 +2116,7 @@ class OutputController extends Controller
 
     public function returnItemOutputSimpleDetail(Request $request, $id_output, $id_item)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $outputDetail = OutputDetail::find($id_output);
@@ -1973,6 +2160,14 @@ class OutputController extends Controller
             }*/
 
             $outputDetail->delete();
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Retornar item en salidas simples',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1985,6 +2180,7 @@ class OutputController extends Controller
 
     public function getMyOutputSimple()
     {
+        $begin = microtime(true);
         $user = Auth::user();
         $outputs = Output::with('requestingUser')
             ->with('responsibleUser')
@@ -2015,6 +2211,13 @@ class OutputController extends Controller
             ]);
         }
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener mis solicitudes simples',
+            'time' => $end
+        ]);
         //dd($outputs);
         return datatables($array)->toJson();
     }

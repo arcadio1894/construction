@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\Exports\ReportOrderPurchaseExport;
 use App\FollowMaterial;
 use App\Http\Requests\StoreOrderPurchaseRequest;
@@ -57,6 +58,7 @@ class OrderPurchaseController extends Controller
 
     public function createOrderPurchaseExpress()
     {
+        $begin = microtime(true);
         $quotesRaised = Quote::where('raise_status', 1)
             ->where('state_active', 'open')
             ->with('equipments')->get();
@@ -254,11 +256,20 @@ class OrderPurchaseController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear Orden de Compra Express VISTA',
+            'time' => $end
+        ]);
+
         return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'arrayMaterialsFinal', 'payment_deadlines'));
     }
 
     public function storeOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
@@ -425,6 +436,14 @@ class OrderPurchaseController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Crear Orden de Compra Express POST',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -436,6 +455,7 @@ class OrderPurchaseController extends Controller
 
     public function showOrderPurchaseExpress($id)
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
 
@@ -443,12 +463,20 @@ class OrderPurchaseController extends Controller
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver Orden Compra Express',
+            'time' => $end
+        ]);
         return view('orderPurchase.showExpress', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
     public function showOrderOperator($code)
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
 
@@ -456,12 +484,20 @@ class OrderPurchaseController extends Controller
         $details = OrderPurchaseDetail::where('order_purchase_id', $order->id)
             ->with(['material'])->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver Orden Compra Operador',
+            'time' => $end
+        ]);
         return view('orderPurchase.showOperator', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
     public function updateOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -532,6 +568,14 @@ class OrderPurchaseController extends Controller
                 $credit->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar Orden Compra Express',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -543,6 +587,7 @@ class OrderPurchaseController extends Controller
 
     public function editOrderPurchaseExpress($id)
     {
+        $begin = microtime(true);
         $quotesRaised = Quote::where('raise_status', 1)
             ->where('state_active', 'open')
             ->with('equipments')->get();
@@ -721,11 +766,20 @@ class OrderPurchaseController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Editar Orden Compra Express VISTA',
+            'time' => $end
+        ]);
+
         return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'arrayMaterialsFinal', 'payment_deadlines'));
     }
 
     public function updateDetail(Request $request, $detail_id)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseDetail::find($detail_id);
@@ -830,6 +884,14 @@ class OrderPurchaseController extends Controller
                 }
 
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar Orden Compra Detalle',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -842,6 +904,7 @@ class OrderPurchaseController extends Controller
 
     public function destroyDetail($idDetail, $idMaterial)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseDetail::find($idDetail);
@@ -869,6 +932,14 @@ class OrderPurchaseController extends Controller
                 $material_order->delete();
                 $detail->delete();
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar Orden Compra Detalle',
+                'time' => $end
+            ]);
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -881,6 +952,7 @@ class OrderPurchaseController extends Controller
 
     public function destroyOrderPurchaseExpress($order_id)
     {
+        $begin = microtime(true);
         $orderPurchase = OrderPurchase::find($order_id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
         foreach ( $details as $detail )
@@ -910,6 +982,14 @@ class OrderPurchaseController extends Controller
 
         $orderPurchase->delete();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Eliminar Orden Compra',
+            'time' => $end
+        ]);
+
         return response()->json(['message' => 'Orden express eliminada con éxito.'], 200);
 
     }
@@ -925,23 +1005,40 @@ class OrderPurchaseController extends Controller
 
     public function getAllOrderGeneral()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Ordenes Compra General',
+            'time' => $end
+        ]);
         return datatables($orders)->toJson();
     }
 
     public function getOrderDeleteGeneral()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::onlyTrashed()
             ->with(['supplier', 'approved_user'])
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Ordenes eliminadas General',
+            'time' => $end
+        ]);
         return datatables($orders)->toJson();
     }
 
     public function createOrderPurchaseNormal()
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
 
@@ -955,12 +1052,20 @@ class OrderPurchaseController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear Orden compra Normal VISTA',
+            'time' => $end
+        ]);
         return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines'));
 
     }
 
     public function storeOrderPurchaseNormal(StoreOrderPurchaseRequest $request)
     {
+        $begin = microtime(true);
         //dd($request);
         $validated = $request->validated();
 
@@ -1128,6 +1233,13 @@ class OrderPurchaseController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar Orden Compra Normal POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1139,10 +1251,18 @@ class OrderPurchaseController extends Controller
 
     public function getAllOrderNormal()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('type', 'n')
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener todas Orden Compra',
+            'time' => $end
+        ]);
         return datatables($orders)->toJson();
     }
 
@@ -1185,6 +1305,7 @@ class OrderPurchaseController extends Controller
 
     public function destroyOrderPurchaseNormal($order_id)
     {
+        $begin = microtime(true);
         $orderPurchase = OrderPurchase::find($order_id);
         $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
         foreach ( $details as $detail )
@@ -1214,6 +1335,13 @@ class OrderPurchaseController extends Controller
 
         $orderPurchase->delete();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Eliminar Orden Compra Normal',
+            'time' => $end
+        ]);
         return response()->json(['message' => 'Orden normal eliminada con éxito.'], 200);
 
     }
@@ -1234,6 +1362,7 @@ class OrderPurchaseController extends Controller
 
     public function updateNormalDetail(Request $request, $detail_id)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseDetail::find($detail_id);
@@ -1344,6 +1473,13 @@ class OrderPurchaseController extends Controller
                 }
 
             }
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar Orden Compra Normal Detalle',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1356,6 +1492,7 @@ class OrderPurchaseController extends Controller
 
     public function destroyNormalDetail($idDetail, $idMaterial)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseDetail::find($idDetail);
@@ -1388,6 +1525,13 @@ class OrderPurchaseController extends Controller
                 $detail->delete();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar Orden Compra Normal Detalle',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1400,6 +1544,7 @@ class OrderPurchaseController extends Controller
 
     public function updateOrderPurchaseNormal(StoreOrderPurchaseRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -1471,6 +1616,13 @@ class OrderPurchaseController extends Controller
                 $credit->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Modificar Orden Compra Normal',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -1527,6 +1679,7 @@ class OrderPurchaseController extends Controller
 
     public function restoreOrderPurchaseDelete($id)
     {
+        $begin = microtime(true);
         $orderPurchase = OrderPurchase::onlyTrashed()->find($id);
 
         $details = OrderPurchaseDetail::onlyTrashed()
@@ -1543,6 +1696,13 @@ class OrderPurchaseController extends Controller
             ]);
         }
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Restaurar orden de compra',
+            'time' => $end
+        ]);
         $orderPurchase->restore();
 
     }
@@ -1576,10 +1736,18 @@ class OrderPurchaseController extends Controller
 
     public function getAllOrderRegularize()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('regularize', 'r')
             ->orderBy('created_at', 'desc')
             ->get();
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Orden Compra Regularizadas',
+            'time' => $end
+        ]);
         return datatables($orders)->toJson();
     }
 
@@ -1594,6 +1762,7 @@ class OrderPurchaseController extends Controller
 
     public function getAllOrderPurchaseLost()
     {
+        $begin = microtime(true);
         $orders = OrderPurchase::withTrashed()
             ->pluck('code')->toArray();
         //dump($orders);
@@ -1617,12 +1786,19 @@ class OrderPurchaseController extends Controller
             $iterator++;
         }
         //dd($lost);
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Orden Compra Perdidas',
+            'time' => $end
+        ]);
         return datatables($lost)->toJson();
     }
 
     public function reportOrderPurchase()
     {
+        $begin = microtime(true);
         //dd($request);
         $start = $_GET['start'];
         $end = $_GET['end'];
@@ -1701,6 +1877,13 @@ class OrderPurchaseController extends Controller
             //dump($date_start);
             //dump($end_start);
         }
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Reporte Orden Compra Excel',
+            'time' => $end
+        ]);
         //dump($invoices_array);
         //dd('Fechas');
         //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);

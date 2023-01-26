@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\DetailEntry;
 use App\Entry;
 use App\Http\Requests\StoreOrderServiceRequest;
@@ -58,6 +59,7 @@ class OrderServiceController extends Controller
 
     public function storeOrderServices(StoreOrderServiceRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
@@ -173,6 +175,13 @@ class OrderServiceController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar Orden Servicio',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -184,18 +193,27 @@ class OrderServiceController extends Controller
 
     public function showOrderService($id)
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
 
         $order = OrderService::with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderServiceDetail::where('order_service_id', $order->id)->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver Orden Servicio',
+            'time' => $end
+        ]);
         return view('orderService.showOrderService', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
     public function editOrderService($id)
     {
+        $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
         $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
@@ -205,12 +223,20 @@ class OrderServiceController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Editar Orden Servicio VISTA',
+            'time' => $end
+        ]);
         return view('orderService.editOrderService', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines'));
 
     }
 
     public function updateOrderService(StoreOrderServiceRequest $request)
     {
+        $begin = microtime(true);
         $validated = $request->validated();
 
         DB::beginTransaction();
@@ -273,6 +299,13 @@ class OrderServiceController extends Controller
                 $credit->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Modificar Orden Servicio',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -284,6 +317,7 @@ class OrderServiceController extends Controller
 
     public function destroyOrderService($order_id)
     {
+        $begin = microtime(true);
         $orderService = OrderService::find($order_id);
         $details = OrderServiceDetail::where('order_service_id', $orderService->id)->get();
         foreach ( $details as $detail )
@@ -300,7 +334,13 @@ class OrderServiceController extends Controller
         }
 
         $orderService->delete();
+        $end = microtime(true) - $begin;
 
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Eliminar Orden Servicio',
+            'time' => $end
+        ]);
         return response()->json(['message' => 'Orden de servicio eliminada con éxito.'], 200);
 
     }
@@ -336,6 +376,7 @@ class OrderServiceController extends Controller
 
     public function updateDetail(Request $request, $detail_id)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderServiceDetail::find($detail_id);
@@ -380,6 +421,14 @@ class OrderServiceController extends Controller
                     $credit->save();
                 }
             }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Modificar Orden Servicio Detalle',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -392,6 +441,7 @@ class OrderServiceController extends Controller
 
     public function destroyDetail($idDetail)
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $detail = OrderServiceDetail::find($idDetail);
@@ -412,6 +462,13 @@ class OrderServiceController extends Controller
 
             $detail->delete();
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar Orden Servicio Detalle',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -436,6 +493,7 @@ class OrderServiceController extends Controller
 
     public function regularizePostOrderService( Request $request )
     {
+        $begin = microtime(true);
         DB::beginTransaction();
         try {
             $orderService = OrderService::find($request->get('service_order_id'));
@@ -540,6 +598,13 @@ class OrderServiceController extends Controller
                 $credit->save();
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Regularizar Orden Servicio POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -569,6 +634,7 @@ class OrderServiceController extends Controller
 
     public function regularizeAutoOrderEntryService( $entry_id )
     {
+        $begin = microtime(true);
         $entry = Entry::find($entry_id);
         $suppliers = Supplier::all();
         $users = User::all();
@@ -584,11 +650,19 @@ class OrderServiceController extends Controller
         $details = DetailEntry::where('entry_id', $entry_id)->get();
         //dd($entry);
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Regularizar Orden Servicio VISTA',
+            'time' => $end
+        ]);
         return view('orderService.regularizeAutoEntryService', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines'));
     }
 
     public function regularizeEntryToOrderService(Request $request)
     {
+        $begin = microtime(true);
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
         //dump($request->get('date_invoice'));
@@ -778,6 +852,13 @@ class OrderServiceController extends Controller
                 }
             }
 
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Regularizar Orden Servicio POST',
+                'time' => $end
+            ]);
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -834,6 +915,7 @@ class OrderServiceController extends Controller
 
     public function getAllOrderLost()
     {
+        $begin = microtime(true);
         $orders = OrderService::withTrashed()
             ->pluck('code')->toArray();
         //dump($orders);
@@ -858,6 +940,13 @@ class OrderServiceController extends Controller
         }
         //dd($lost);
 
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Orden Servicio Perdidas',
+            'time' => $end
+        ]);
         return datatables($lost)->toJson();
     }
 }
