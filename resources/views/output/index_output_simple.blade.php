@@ -72,6 +72,7 @@
             <thead>
             <tr>
                 <th>N°</th>
+                <th>Descripción</th>
                 <th>Fecha de solicitud</th>
                 <th>Usuario solicitante</th>
                 <th>Usuario responsable</th>
@@ -315,15 +316,15 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Editar orden de ejecución</h4>
+                    <h4 class="modal-title">Editar descripción de solicitud</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formEdit" data-url="{{ route('output.edit.execution') }}">
+                <form id="formEdit" data-url="{{ route('output.simple.edit.description') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="output_id" name="output_id">
-                        <label for="execution_order">Orden de ejecución <span class="right badge badge-danger">(*)</span></label>
-                        <input type="text" id="execution_order" name="execution_order" value="" class="form-control">
+                        <label for="description">Orden de ejecución <span class="right badge badge-danger">(*)</span></label>
+                        <input type="text" id="description" name="description" value="" class="form-control">
 
                     </div>
                     <div class="modal-footer">

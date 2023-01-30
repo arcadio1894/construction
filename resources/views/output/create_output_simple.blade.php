@@ -94,6 +94,10 @@
                                     <label for="request_date">Fecha de Solicitud <span class="right badge badge-danger">(*)</span></label>
                                     <input type="text" id="request_date" name="request_date" class="form-control">
                                 </div>
+                                <div class="form-group">
+                                    <label for="execution_order">Descripción</label>
+                                    <input type="text" id="execution_order" name="execution_order" class="form-control">
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <div class="form-group">

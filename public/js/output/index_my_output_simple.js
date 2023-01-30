@@ -25,6 +25,14 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Descripción',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p>'+ item.description +'</p>';
+                }
+            },
+            { data: null,
                 title: 'Fecha de solicitud',
                 wrap: true,
                 "render": function (item)
@@ -113,6 +121,8 @@ $(document).ready(function () {
                             text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="' + item.id + '" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
                         }
                     }
+
+                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar descripción" data-edit="' + item.id + '" data-description="' + item.description + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
 
                     return text;
                 }
@@ -391,10 +401,10 @@ function confirmAllOutputs() {
 
 function showModalEdit() {
     var output_id = $(this).data('edit');
-    var execution_order = $(this).data('execution_order');
+    var description = $(this).data('description');
 
     $modalEdit.find('[id=output_id]').val(output_id);
-    $modalEdit.find('[id=execution_order]').val(execution_order);
+    $modalEdit.find('[id=description]').val(description);
 
     $modalEdit.modal('show');
 }

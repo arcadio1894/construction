@@ -10,8 +10,10 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
     var table = $('#dynamic-table').DataTable( {
+        processing: true,
+        serverSide: true,
         ajax: {
-            url: "/dashboard/get/json/output/simple",
+            url: "/dashboard/test/server/side",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -21,15 +23,24 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> Solicitud-'+ item.id +'</p>';
+                    return 'Solicitud-'+ item.id;
                 }
             },
+            { data: null,
+                title: 'Orden de ejecución',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.execution_order;
+                }
+            },
+            /*{ data: 'execution_order' },*/
             { data: null,
                 title: 'Descripción',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p>'+ item.description +'</p>';
+                    return item.description_quote;
                 }
             },
             { data: null,
@@ -37,7 +48,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.request_date).format('DD-MM-YYYY H:m a') +'</p>'
+                    return moment(item.request_date).format('DD-MM-YYYY H:m a');
                 }
             },
             /*{ data: 'requesting_user.name' },*/
@@ -49,6 +60,7 @@ $(document).ready(function () {
                     return item.requesting_user;
                 }
             },
+            /*{ data: 'responsible_user.name' },*/
             { data: null,
                 title: 'Usuario responsable',
                 wrap: true,
@@ -58,16 +70,9 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Área solicitante',
-                wrap: true,
-                "render": function (item)
-                {
-                    return item.area;
-                }
-            },
-            { data: null,
                 title: 'Estado',
                 wrap: true,
+                orderable: false, searchable: false,
                 "render": function (item)
                 {
                     var status = (item.state === 'created') ? '<span class="badge bg-success">Solicitud creada</span>' :
@@ -83,24 +88,25 @@ $(document).ready(function () {
             { data: null,
                 title: 'Acciones',
                 wrap: true,
+                orderable: false,
+                searchable: false,
                 "render": function (item)
                 {
                     var text = '';
                     if (item.state === 'attended' || item.state === 'confirmed')
                     {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                            //'<button data-toggle="tooltip" data-placement="top" title="Anular por Cantidad" data-deleteQuantity="'+item.id+'" class="btn bg-orange color-palette btn-sm"><i class="fa fa-trash"></i> </button>';
                     } else {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+item.execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
+                            '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                            //'<button data-toggle="tooltip" data-placement="top" title="Anular por Cantidad" data-deleteQuantity="'+item.id+'" class="btn bg-orange color-palette btn-sm"><i class="fa fa-trash"></i> </button>';
 
-                    }
-
-                    if (item.state === 'attend')
-                    {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+item.id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
                     }
 
                     if (item.state === 'confirmed')
@@ -115,14 +121,10 @@ $(document).ready(function () {
                         }
                     }
 
-                    if ( (item.custom == false) && (item.state == 'attended' && item.state !== 'confirmed') )
+                    if ( item.description_quote == 'No hay datos' )
                     {
-                        if ( $.inArray('confirm_output', $permissions) !== -1 ) {
-                            text = text + '<button data-toggle="tooltip" data-placement="top" title="Confirmar" data-confirm="' + item.id + '" class="btn btn-outline-success btn-sm"><i class="fa fa-check-square"></i> </button>  ';
-                        }
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + item.id + '" data-execution_order="' + item.execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
                     }
-
-                    //text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar descripción" data-edit="' + item.id + '" data-execution_order="' + item.description + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
 
                     return text;
                 }
@@ -287,6 +289,8 @@ $(document).ready(function () {
 
     $modalItemsDelete = $('#modalDeletePartial');
 
+    $modalItemsDeleteQuantity = $('#modalDeleteQuantity');
+
     $formAttend = $('#formAttend');
 
     //$formAttend.on('submit', attendOutput);
@@ -296,8 +300,7 @@ $(document).ready(function () {
     $(document).on('click', '[data-edit]', showModalEdit);
     $modalEdit = $('#modalEdit');
 
-    $("#btn-totalDelete").on("click", deleteTotalOutput);
-    //$formDeleteTotal.on('submit', deleteTotalOutput);
+    $formDeleteTotal.on('submit', deleteTotalOutput);
 
     $(document).on('click', '[data-details]', showItems);
 
@@ -318,12 +321,14 @@ $(document).ready(function () {
     $modalItemsMaterials = $('#modalItemsMaterials');
     $modalReturnMaterials = $('#modalReturnMaterials');
 
+    $(document).on('click', '[data-deleteQuantity]', showModalDeleteQuantity);
+    $(document).on('click', '[data-itemDeleteQuantity]', deleteOutputQuantity);
+
     /*$('body').tooltip({
         selector: '[data-toggle]'
     });
 */
     $(document).on('click', '[data-attend]', openModalAttend);
-    $('#btn-allconfirm').on('click', confirmAllOutputs);
 });
 
 let $permissions;
@@ -337,6 +342,8 @@ let $modalAttend;
 let $modalDeleteTotal;
 
 let $modalItemsDelete;
+
+let $modalItemsDeleteQuantity;
 
 let $formCreate;
 
@@ -356,55 +363,162 @@ let $modalItemsMaterials;
 
 let $modalReturnMaterials;
 
-function confirmAllOutputs() {
-    var url = $(this).data('url');
-    $.confirm({
-        icon: 'fas fa-check-double',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de confirmar todas las solicitudes atendidas?',
-        content: 'Acepte para continuar',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: url,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Confirmación cancelada.");
-                },
-            },
-        },
+function showModalDeleteQuantity() {
+    $('#table-itemsDeleteQuantity').html('');
+    var output_id = $(this).data('deletequantity');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.materials.length; i++)
+            {
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemDetailDeleteQuantity(i+1, json.materials[i].material_id, json.materials[i].code, json.materials[i].material, json.materials[i].quantity, output_id);
+                //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
     });
+    $modalItemsDeleteQuantity.modal('show');
+}
+
+function deleteOutputQuantity() {
+    console.log('Llegue');
+    event.preventDefault();
+    $(this).attr("disabled", true);
+    var button = $(this);
+
+    // Obtener la URL
+    var idOutput = $(this).data('output');
+    var idMaterial = $(this).data('itemDeleteQuantity');
+
+    var quantityDelete = parseFloat($(this).parent().prev().children().val());
+    var quantityRequest = parseFloat($(this).parent().prev().prev().html());
+
+    if ( quantityDelete > quantityRequest )
+    {
+        toastr.error('No puede anular más de lo que fue solicitado', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+    }
+    /*$.ajax({
+        url: '/dashboard/destroy/output/'+idOutputDetail+'/item/'+idItem,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            button.attr("disabled", false);
+            $(this).parent().parent().remove();
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            button.attr("disabled", false);
+
+        },
+    });*/
+
+}
+
+function renderTemplateItemDetailDeleteQuantity(id, material_id, code, material, quantity, output_id) {
+    var clone = activateTemplate('#template-itemDeleteQuantity');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-anular]").setAttribute('value', quantity);
+    clone.querySelector("[data-anular]").setAttribute('data-anular', material_id);
+    clone.querySelector("[data-itemDeleteQuantity]").setAttribute('data-itemDeleteQuantity', material_id);
+    clone.querySelector("[data-itemDeleteQuantity]").setAttribute('data-output', output_id);
+    $('#table-itemsDeleteQuantity').append(clone);
 }
 
 function showModalEdit() {
     var output_id = $(this).data('edit');
-    var description = $(this).data('description');
+    var execution_order = $(this).data('execution_order');
 
     $modalEdit.find('[id=output_id]').val(output_id);
-    $modalEdit.find('[id=description]').val(description);
+    $modalEdit.find('[id=execution_order]').val(execution_order);
 
     $modalEdit.modal('show');
 }
@@ -568,7 +682,7 @@ function showModalDeletePartial() {
     var output_id = $(this).data('deletepartial');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/simple/devolver/"+output_id,
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -577,7 +691,7 @@ function showModalDeletePartial() {
             {
                 //for (var i=0; i<json.array.length; i++)
                 //{
-                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].detail_id, json.array[i].id_item);
+                renderTemplateItemDetailDelete(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
                     //$materials.push(json[i].material);
                 //}
                 //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
@@ -593,7 +707,7 @@ function showModalReturnMaterials() {
     var output_id = $(this).data('return');
     console.log(output_id);
     $.ajax({
-        url: "/dashboard/get/json/items/output/simple/devolver/"+output_id,
+        url: "/dashboard/get/json/items/output/devolver/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -602,7 +716,7 @@ function showModalReturnMaterials() {
             {
                 //for (var i=0; i<json.array.length; i++)
                 //{
-                renderTemplateItemReturn(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].detail_id, json.array[i].id_item);
+                renderTemplateItemReturn(json.array[i].id, json.array[i].code, json.array[i].material, json.array[i].length, json.array[i].width, json.array[i].percentage, json.array[i].detail_id, json.array[i].id_item);
                 //$materials.push(json[i].material);
                 //}
                 //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
@@ -619,14 +733,26 @@ function showItems() {
     $('#table-materiales').html('');
     var output_id = $(this).data('details');
     $.ajax({
-        url: "/dashboard/get/json/items/output/simple/"+output_id,
+        url: "/dashboard/get/json/items/output/"+output_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
             //console.log(json.consumables.length);
+            for (var i=0; i<json.array.length; i++)
+            {
+                renderTemplateItemDetail(json.array[i].id, json.array[i].material, json.array[i].code, json.array[i].length, json.array[i].width, json.array[i].price, json.array[i].location, json.array[i].state, json.array[i].detail_id);
+                //$materials.push(json[i].material);
+            }
+
             for (var k=0; k<json.materials.length; k++)
             {
                 renderTemplateMaterials(k+1, json.materials[k].material_complete.code, json.materials[k].material, json.materials[k].quantity);
+                //$materials.push(json[i].material);
+            }
+
+            for (var j=0; j<json.consumables.length; j++)
+            {
+                renderTemplateConsumable(json.consumables[j].id, json.consumables[j].material_complete.code, json.consumables[j].material, json.consumables[j].quantity);
                 //$materials.push(json[i].material);
             }
 
@@ -635,11 +761,14 @@ function showItems() {
     $modalItems.modal('show');
 }
 
-function renderTemplateItemReturn(id, code, material, output_detail, id_item) {
+function renderTemplateItemReturn(id, code, material, length, width, percentage, output_detail, id_item) {
     var clone = activateTemplate('#template-itemReturn');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-percentage]").innerHTML = percentage;
     clone.querySelector("[data-itemReturn]").setAttribute('data-itemReturn', id_item);
     clone.querySelector("[data-itemReturn]").setAttribute('data-output', output_detail);
     $('#table-itemsReturn').append(clone);
@@ -695,11 +824,14 @@ function renderTemplateConsumable(id, code, material, cantidad) {
     $('#table-consumables').append(clone);
 }
 
-function renderTemplateItemDetailDelete(id, code, material, output_detail, id_item) {
+function renderTemplateItemDetailDelete(id, code, material, length, width, percentage, output_detail, id_item) {
     var clone = activateTemplate('#template-itemDelete');
     clone.querySelector("[data-i]").innerHTML = id;
     clone.querySelector("[data-code]").innerHTML = code;
     clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
+    clone.querySelector("[data-percentage]").innerHTML = percentage;
     clone.querySelector("[data-itemDelete]").setAttribute('data-itemDelete', id_item);
     clone.querySelector("[data-itemDelete]").setAttribute('data-output', output_detail);
     $('#table-itemsDelete').append(clone);
@@ -805,16 +937,12 @@ function attendOutput() {
 function deleteTotalOutput() {
     console.log('Llegue');
     event.preventDefault();
-    $("#btn-totalDelete").attr("disabled", true);
-    var formulario = $('#formDeleteTotal')[0];
-    var form = new FormData(formulario);
-
     // Obtener la URL
     var attendUrl = $formDeleteTotal.data('url');
     $.ajax({
         url: attendUrl,
         method: 'POST',
-        data: form,
+        data: new FormData(this),
         processData:false,
         contentType:false,
         success: function (data) {
@@ -925,8 +1053,7 @@ function deletePartialOutput() {
                     "hideMethod": "fadeOut"
                 });
             button.attr("disabled", false);
-            button.parent().parent().remove();
-            $modalItemsDelete.modal('hide');
+            $(this).parent().parent().remove();
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -986,7 +1113,7 @@ function returnItemMaterials() {
     var idOutputDetail = $(this).data('output');
     var idItem = $(this).data('itemreturn');
     $.ajax({
-        url: '/dashboard/return/output/simple/'+idOutputDetail+'/item/'+idItem,
+        url: '/dashboard/return/output/'+idOutputDetail+'/item/'+idItem,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         processData:false,
@@ -1012,9 +1139,8 @@ function returnItemMaterials() {
                     "hideMethod": "fadeOut"
                 });
             button.attr("disabled", false);
-            button.parent().parent().remove();
+            $(this).parent().parent().remove();
             $modalReturnMaterials.modal('hide');
-
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )

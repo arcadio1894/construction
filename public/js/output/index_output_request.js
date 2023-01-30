@@ -401,8 +401,8 @@ function showModalDeleteQuantity() {
 function deleteOutputQuantity() {
     console.log('Llegue');
     event.preventDefault();
-    $(this).attr("disabled", true);
     var button = $(this);
+    button.attr("disabled", true);
 
     // Obtener la URL
     var idOutput = $(this).data('output');
@@ -431,9 +431,11 @@ function deleteOutputQuantity() {
                 "showMethod": "fadeIn",
                 "hideMethod": "fadeOut"
             });
+        button.attr("disabled", false);
     }
-    /*$.ajax({
-        url: '/dashboard/destroy/output/'+idOutputDetail+'/item/'+idItem,
+
+    $.ajax({
+        url: '/dashboard/destroy/output/'+idOutput+'/material/'+idMaterial+'/quantity/'+quantityDelete,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         processData:false,
@@ -459,7 +461,7 @@ function deleteOutputQuantity() {
                     "hideMethod": "fadeOut"
                 });
             button.attr("disabled", false);
-            $(this).parent().parent().remove();
+            button.parent().parent().remove();
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -506,8 +508,9 @@ function deleteOutputQuantity() {
             button.attr("disabled", false);
 
         },
-    });*/
+    });
 
+    $modalItemsDeleteQuantity.modal('hide');
 }
 
 function renderTemplateItemDetailDeleteQuantity(id, material_id, code, material, quantity, output_id) {

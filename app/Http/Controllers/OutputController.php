@@ -1619,11 +1619,12 @@ class OutputController extends Controller
                 ->whereNull('item_id')->count();
             array_push($array, [
                 'id' => $output->id,
+                'description' => $output->execution_order,
                 'request_date' => $output->request_date,
                 'requesting_user' => $output->requestingUser->name,
                 'responsible_user' => $output->responsibleUser->name,
                 'state' => $output->state,
-                'area' => $area->name,
+                'area' => ($area == null)  ? 'Sin área':$area->name,
                 'custom' => ($itemsNull > 0) ? true: false,
             ]);
         }
@@ -1661,7 +1662,7 @@ class OutputController extends Controller
             $requesting_user = User::where('name', $request->get('requesting_user'))->first();
             $responsible_user = User::where('id', $request->get('responsible_user'))->first();
             $output = Output::create([
-                'execution_order' => '',
+                'execution_order' => ($request->get('execution_order') == '' || $request->get('execution_order') == null ) ? '': $request->get('execution_order'),
                 'request_date' => Carbon::createFromFormat( 'd/m/Y', ($request->get('request_date')) ),
                 'requesting_user' => $requesting_user->id,
                 'responsible_user' => $responsible_user->id,
@@ -2202,11 +2203,12 @@ class OutputController extends Controller
                 ->whereNull('item_id')->count();
             array_push($array, [
                 'id' => $output->id,
+                'description' => $output->execution_order,
                 'request_date' => $output->request_date,
                 'requesting_user' => $output->requestingUser->name,
                 'responsible_user' => $output->responsibleUser->name,
                 'state' => $output->state,
-                'area' => $area->name,
+                'area' => ($area == null) ? 'Sin área': $area->name,
                 'custom' => ($itemsNull > 0) ? true: false,
             ]);
         }
@@ -2230,4 +2232,74 @@ class OutputController extends Controller
         return view('output.index_my_output_simple', compact('permissions'));
     }
 
+    public function editOutputSimpleDescription(Request $request)
+    {
+        //dd($request);
+        $output = Output::find($request->get('output_id'));
+        DB::beginTransaction();
+        try {
+            $output->execution_order = $request->get('description');
+            $output->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Descripción guardada con éxito.'], 200);
+
+    }
+
+
+    public function getOutputRequestServerSide()
+    {
+        $begin = microtime(true);
+        $outputs = Output::with('requestingUser')
+            ->with('responsibleUser')
+            ->with('quote')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $output->requestingUser->name,
+                'responsible_user' => $output->responsibleUser->name,
+                'state' => $output->state,
+                'custom' => ($itemsNull > 0) ? true: false,
+            ]);
+        }
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Solicitudes de salida',
+            'time' => $end
+        ]);
+        //dd($outputs);
+        return datatables($array)->toJson();
+    }
+
+    public function indexOutputRequestServerside()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('output.index_output_request_server_side', compact('permissions'));
+    }
+
+    public function deleteOutputMaterialQuantity( $output, $material, $quantity )
+    {
+
+    }
 }

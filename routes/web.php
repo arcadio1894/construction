@@ -640,6 +640,9 @@ Route::middleware('auth')->group(function (){
             ->name('output.request.confirm.all')
             ->middleware('permission:confirm_output');
 
+        Route::post('/destroy/output/{idOutput}/material/{idMaterial}/quantity/{quantity}', 'OutputController@deleteOutputMaterialQuantity');
+
+
         // TRANSFER
         Route::get('transferencias', 'TransferController@index')
             ->name('transfer.index')
@@ -1588,11 +1591,16 @@ Route::middleware('auth')->group(function (){
             ->name('output.simple.confirm.all')
             ->middleware('permission:confirm_requestSimple');
 
+        Route::post('output/simple/edit/description', 'OutputController@editOutputSimpleDescription')
+            ->name('output.simple.edit.description');
+
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');
         Route::get('/prueba/bd/', 'OrderPurchaseController@pruebaBD');
         Route::get('/modificando/takens/', 'OutputController@modificandoMaterialesTomados');
 
+        Route::get('/test/server/side', 'OutputController@getOutputRequestServerSide')->name('test.server.side');
+        Route::get('solicitudes/server/side', 'OutputController@indexOutputRequestServerside');
     });
 });
 
