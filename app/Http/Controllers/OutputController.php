@@ -372,6 +372,7 @@ class OutputController extends Controller
         $outputs = Output::with('requestingUser')
             ->with('responsibleUser')
             ->with('quote')
+            ->where('indicator', '<>', 'ors')
             ->orderBy('created_at', 'desc')
             ->get();
 
