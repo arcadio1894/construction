@@ -160,8 +160,11 @@
         <div class="col-md-6">
             <div class="card card-info">
                 <div class="card-header border-0">
-                    <h3 class="card-title">Valor de existencias en almacén</h3>
+                    <h3 class="card-title">Valor de existencias en almacén </h3>
+
                     <div class="card-tools">
+                        <button type="button" id="btn-refresh" class="btn btn-sm btn-warning float-left"><i class="fas fa-sync text-success"></i> Refrescar</button>
+
                         <a href="{{ route('report.excel.amount') }}" class="btn btn-sm btn-tool" data-toggle="tooltip" data-placement="top" title="Descargar excel">
                             <i class="fas fa-download text-danger"></i> <span class="text-danger text-bold">Descargar</span>
                         </a>
@@ -1094,6 +1097,6 @@
 
     <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
     <script src="{{ asset('js/report/reportAmount.js') }}"></script>
-    <script src="{{ asset('js/report/viewReport.js') }}"></script>
-    <script src="{{ asset('js/report/charts.js') }}"></script>
+    {{--<script src="{{ asset('js/report/viewReport.js') }}"></script>--}}
+    {{--<script src="{{ asset('js/report/charts.js') }}"></script>--}}
 @endsection

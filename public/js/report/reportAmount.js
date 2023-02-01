@@ -2,6 +2,11 @@ $(document).ready(function () {
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
+
+    $('#btn-refresh').on('click', getAmountReport);
+});
+
+function getAmountReport() {
     $("#element_loader").LoadingOverlay("show", {
         background  : "rgba(61, 215, 239, 0.4)"
     });
@@ -12,4 +17,4 @@ $(document).ready(function () {
         $('#quantity_items').html(parseFloat(data.quantity_items).toFixed(2));
         $("#element_loader").LoadingOverlay("hide", true);
     });
-});
+}
