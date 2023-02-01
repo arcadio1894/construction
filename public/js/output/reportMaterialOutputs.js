@@ -173,9 +173,13 @@ $(document).ready(function () {
 });
 
 function showOutputs(){
+    $('#btn-outputs').attr("disabled", true);
     var id_material = $('#material').val();
     console.log(id_material);
     $("#total-outputs").html(0);
+    $("#element_loader").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
     $.ajax({
         url: "/dashboard/get/json/outputs/of/material/"+id_material,
         type: 'GET',
@@ -200,7 +204,8 @@ function showOutputs(){
                 total += json[i].quantity;
             }
             $("#total-outputs").html(parseFloat(total).toFixed(2));
-            //$("#element_loader").LoadingOverlay("hide", true);
+            $("#element_loader").LoadingOverlay("hide", true);
+            $('#btn-outputs').attr("disabled", false);
         }
     });
 }

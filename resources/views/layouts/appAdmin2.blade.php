@@ -1139,7 +1139,12 @@
                                     <p>Listar salidas</p>
                                 </a>
                             </li>
-
+                            <li class="nav-item">
+                                <a href="{{ route('output.index.confirmed') }}" class="nav-link @yield('activeListOutputConfirmed')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Salidas confirmadas</p>
+                                </a>
+                            </li>
                         </ul>
                     </li>
                     @endcan

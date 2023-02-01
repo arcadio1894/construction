@@ -595,6 +595,9 @@ Route::middleware('auth')->group(function (){
         Route::get('salidas', 'OutputController@indexOutputs')
             ->name('output.confirm')
             ->middleware('permission:list_output');
+        Route::get('salidas/confirmadas', 'OutputController@indexOutputsConfirmed')
+            ->name('output.index.confirmed')
+            ->middleware('permission:list_output');
         Route::get('crear/solicitud/', 'OutputController@createOutputRequest')
             ->name('output.request.create')
             ->middleware('permission:create_request');
@@ -615,6 +618,8 @@ Route::middleware('auth')->group(function (){
             ->name('output.request.store')
             ->middleware('permission:create_request');
         Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
+        Route::get('/get/json/output/confirmed', 'OutputController@getOutputConfirmed');
+        Route::get('/get/json/outputs/filters/confirmed', 'OutputController@getOutputsFilterConfirmed');
         Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
         Route::get('/get/json/items/output/devolver/{output_id}', 'OutputController@getJsonItemsOutputRequestDevolver');
         Route::post('output_request/edit/execution', 'OutputController@editOutputExecution')

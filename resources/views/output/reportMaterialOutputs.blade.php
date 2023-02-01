@@ -96,7 +96,7 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="table-responsive">
+                    <div class="table-responsive" id="element_loader">
                         <table class="table table-hover" id="dynamic-table">
                             <thead>
                             <tr>

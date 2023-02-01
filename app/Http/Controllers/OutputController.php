@@ -373,6 +373,7 @@ class OutputController extends Controller
             ->with('responsibleUser')
             ->with('quote')
             ->where('indicator', '<>', 'ors')
+            ->where('state', '<>', 'confirmed')
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -1588,6 +1589,191 @@ class OutputController extends Controller
 
         return response()->json(['message' => 'Salidas confirmadas con éxito.'], 200);
 
+    }
+
+    public function indexOutputsConfirmed()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $users = User::select('id', 'name')->get();
+        return view('output.index_output_confirmed', compact('permissions', 'users'));
+    }
+
+    public function getOutputConfirmed()
+    {
+        $begin = microtime(true);
+        $outputs = Output::with('requestingUser')
+            ->with('responsibleUser')
+            ->with('quote')
+            ->where('indicator', '<>','ors')
+            ->where('state','confirmed')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $user_id = $output->responsibleUser->id;
+
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $output->requestingUser->name,
+                'responsible_user' => $output->responsibleUser->name,
+                'state' => $output->state,
+                'custom' => ($itemsNull > 0) ? true: false,
+            ]);
+        }
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener salidas confirmadas',
+            'time' => $end
+        ]);
+        //dd($outputs);
+        return datatables($array)->toJson();
+    }
+
+    public function getOutputsFilterConfirmed()
+    {
+        $begin = microtime(true);
+
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $id_output = $_GET['id'];
+        $order_execution = $_GET['order_execution'];
+        $requesting_user_id = $_GET['requesting_user'];
+        $user = User::find($requesting_user_id);
+        $requesting_user = ($user == null) ? "":$user->name;
+
+        if ( $id_output != '' || $id_output != null )
+        {
+            $outputs = Output::with('requestingUser')
+                ->with('responsibleUser')
+                ->with('quote')
+                ->where('indicator', '<>','ors')
+                ->where('state','confirmed')
+                ->where('id',$id_output)
+                ->whereDate('request_date', '>=', $date_start)
+                ->whereDate('request_date', '<=', $end_start)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        } else {
+            $outputs = Output::with('requestingUser')
+                ->with('responsibleUser')
+                ->with('quote')
+                ->where('indicator', '<>','ors')
+                ->where('state','confirmed')
+                ->whereDate('request_date', '>=', $date_start)
+                ->whereDate('request_date', '<=', $end_start)
+                ->orderBy('created_at', 'desc')
+                ->get();
+        }
+
+        $array = [];
+
+        //dump($outputs);
+
+        foreach ( $outputs as $output )
+        {
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $output->requestingUser->name,
+                'responsible_user' => $output->responsibleUser->name,
+                'state' => $output->state,
+            ]);
+        }
+
+        //dump($array);
+
+        $arrayOutputs = [];
+
+        if ( $order_execution == '' && $requesting_user == '' )
+        {
+            for ( $i=0; $i<count($array); $i++ )
+            {
+                array_push($arrayOutputs, [
+                    'id' => $array[$i]['id'],
+                    'execution_order' => $array[$i]['execution_order'],
+                    'description_quote' => $array[$i]['description_quote'],
+                    'request_date' => $array[$i]['request_date'],
+                    'requesting_user' => $array[$i]['requesting_user'],
+                    'responsible_user' => $array[$i]['responsible_user'],
+                    'state' => $array[$i]['state'],
+                ]);
+            }
+        } elseif ($order_execution != '' && $requesting_user != '') {
+            for ( $i=0; $i<count($array); $i++ )
+            {
+                if ( stristr( $array[$i]['description_quote'], $order_execution) && stristr( $array[$i]['requesting_user'], $requesting_user) ){
+                    array_push($arrayOutputs, [
+                        'id' => $array[$i]['id'],
+                        'execution_order' => $array[$i]['execution_order'],
+                        'description_quote' => $array[$i]['description_quote'],
+                        'request_date' => $array[$i]['request_date'],
+                        'requesting_user' => $array[$i]['requesting_user'],
+                        'responsible_user' => $array[$i]['responsible_user'],
+                        'state' => $array[$i]['state'],
+                    ]);
+                }
+            }
+        } elseif ($order_execution == '' && $requesting_user != '') {
+            for ( $i=0; $i<count($array); $i++ )
+            {
+                if ( stristr( $array[$i]['requesting_user'], $requesting_user) ){
+                    array_push($arrayOutputs, [
+                        'id' => $array[$i]['id'],
+                        'execution_order' => $array[$i]['execution_order'],
+                        'description_quote' => $array[$i]['description_quote'],
+                        'request_date' => $array[$i]['request_date'],
+                        'requesting_user' => $array[$i]['requesting_user'],
+                        'responsible_user' => $array[$i]['responsible_user'],
+                        'state' => $array[$i]['state'],
+                    ]);
+                }
+            }
+        } elseif ($order_execution != '' && $requesting_user == '') {
+            for ( $i=0; $i<count($array); $i++ )
+            {
+                if ( stristr( $array[$i]['description_quote'], $order_execution) ){
+                    array_push($arrayOutputs, [
+                        'id' => $array[$i]['id'],
+                        'execution_order' => $array[$i]['execution_order'],
+                        'description_quote' => $array[$i]['description_quote'],
+                        'request_date' => $array[$i]['request_date'],
+                        'requesting_user' => $array[$i]['requesting_user'],
+                        'responsible_user' => $array[$i]['responsible_user'],
+                        'state' => $array[$i]['state'],
+                    ]);
+                }
+            }
+        }
+
+
+        //dump($arrayOutputs);
+        $end = microtime(true) - $begin;
+
+        /*Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener salidas confirmadas filtradas',
+            'time' => $end
+        ]);*/
+        //dd();
+        return $arrayOutputs;
     }
 
     public function indexOutputSimple()

@@ -1691,7 +1691,12 @@ class EntryController extends Controller
     public function getJsonEntriesOfMaterial( $id_material )
     {
         $begin = microtime(true);
+
+        $dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(4);
+
         $entryDetails = DetailEntry::where('material_id', '=', $id_material)
+            ->where('created_at', '>=', $date4MonthAgo)
             //->where('entry_type', 'Por compra')
             ->get();
         $entries = [];
