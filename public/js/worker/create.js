@@ -82,6 +82,80 @@ function storeWorker() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
 
+    // Verificar campos obligatorios
+    var first_name = $('#first_name').val();
+    var last_name = $('#last_name').val();
+    var dni = $('#dni').val();
+    if ( first_name == '' )
+    {
+        toastr.error('El nombre es obligatorio', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+    if (last_name == '')
+    {
+        toastr.error('El apellido es obligatorio', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+    if ( dni == '' )
+    {
+        toastr.error('El dni es obligatorio', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var formulario = $('#formCreate')[0];
