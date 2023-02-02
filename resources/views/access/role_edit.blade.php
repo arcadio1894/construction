@@ -99,7 +99,7 @@
         </div>
 
         <div class="text-center">
-            @hasRole('admin)
+            @hasRole('admin')
             <button type="submit" class="btn btn-outline-success">Guardar</button>
             @endhasrole
             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
