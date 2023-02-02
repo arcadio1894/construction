@@ -411,7 +411,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_role');
         Route::get('/crear/rol', 'RoleController@create')
             ->name('role.create');
-        Route::get('/editar/rol/{id}', 'RoleController@edit');
+        Route::get('/editar/rol/{id}', 'RoleController@edit')->name('role.edit');
 
         //PERMISSION
         Route::get('permisos', 'PermissionController@index')->name('permission.index')

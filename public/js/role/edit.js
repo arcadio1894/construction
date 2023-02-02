@@ -42,7 +42,7 @@ function updateRole() {
                 });
             $modalEdit.modal('hide');
             setTimeout( function () {
-                location.reload();
+                location.href = data.url;
             }, 4000 )
         },
         error: function (data) {

@@ -120,7 +120,7 @@ class RoleController extends Controller
         $permissions = $request->get('permissions');
         $role->syncPermissions($permissions);
 
-        return response()->json(['message' => 'Rol modificado con éxito.'], 200);
+        return response()->json(['message' => 'Rol modificado con éxito.', 'url' => route('role.edit', $role->name)], 200);
 
     }
 
