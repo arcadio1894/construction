@@ -646,6 +646,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:confirm_output');
 
         Route::post('/destroy/output/{idOutput}/material/{idMaterial}/quantity/{quantity}', 'OutputController@deleteOutputMaterialQuantity');
+        Route::post('/return/output/{idOutput}/material/{idMaterial}/quantity/{quantity}', 'OutputController@returnOutputMaterialQuantity');
 
 
         // TRANSFER

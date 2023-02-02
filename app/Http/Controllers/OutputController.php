@@ -975,8 +975,14 @@ class OutputController extends Controller
                                 $item->state_item = 'scraped';
                                 $item->save();
                             } else {
-                                $item->state_item = 'entered';
-                                $item->save();
+                                if ($item->percentage < 1)
+                                {
+                                    $item->state_item = 'scraped';
+                                    $item->save();
+                                } else {
+                                    $item->state_item = 'entered';
+                                    $item->save();
+                                }
                             }
                         }
                     }
@@ -1008,8 +1014,14 @@ class OutputController extends Controller
                                 $material->stock_current = $material->stock_current + $item->percentage;
                                 $material->save();
                             } else {
-                                $item->state_item = 'entered';
-                                $item->save();
+                                if ($item->percentage < 1)
+                                {
+                                    $item->state_item = 'scraped';
+                                    $item->save();
+                                } else {
+                                    $item->state_item = 'entered';
+                                    $item->save();
+                                }
                                 $material = Material::find($item->material_id);
                                 $material->stock_current = $material->stock_current + $item->percentage;
                                 $material->save();
@@ -1076,8 +1088,14 @@ class OutputController extends Controller
                         $material->stock_current = $material->stock_current + $item->percentage;
                         $material->save();
                     } else {
-                        $item->state_item = 'scraped';
-                        $item->save();
+                        if ($item->percentage < 1)
+                        {
+                            $item->state_item = 'scraped';
+                            $item->save();
+                        } else {
+                            $item->state_item = 'entered';
+                            $item->save();
+                        }
                         $material = Material::find($item->material_id);
                         $material->stock_current = $material->stock_current + $item->percentage;
                         $material->save();
@@ -1165,8 +1183,14 @@ class OutputController extends Controller
                             $item->state_item = 'scraped';
                             $item->save();
                         } else {
-                            $item->state_item = 'entered';
-                            $item->save();
+                            if ($item->percentage < 1)
+                            {
+                                $item->state_item = 'scraped';
+                                $item->save();
+                            } else {
+                                $item->state_item = 'entered';
+                                $item->save();
+                            }
                         }
                     }
                     $outputDetail->delete();
@@ -1198,8 +1222,14 @@ class OutputController extends Controller
                             $material->stock_current = $material->stock_current + $item->percentage;
                             $material->save();
                         } else {
-                            $item->state_item = 'entered';
-                            $item->save();
+                            if ($item->percentage < 1)
+                            {
+                                $item->state_item = 'scraped';
+                                $item->save();
+                            } else {
+                                $item->state_item = 'entered';
+                                $item->save();
+                            }
                             $material = Material::find($item->material_id);
                             $material->stock_current = $material->stock_current + $item->percentage;
                             $material->save();
@@ -2487,6 +2517,136 @@ class OutputController extends Controller
 
     public function deleteOutputMaterialQuantity( $output, $material, $quantity )
     {
+        DB::beginTransaction();
+        try {
+            $outputDetails = OutputDetail::where('output_id', $output)
+                ->where('material_id', $material)
+                ->where('item_id', '<>',null)
+                ->take($quantity)
+                ->get();
+
+            //dd($outputDetails);
+
+            $output = Output::find($output);
+
+            if ($output->state === 'created')
+            {
+                foreach ( $outputDetails as $outputDetail )
+                {
+                    if ( $outputDetail->item_id != null )
+                    {
+                        $item = Item::find($outputDetail->item_id);
+
+                        $items = Item::where('code',$item->code)->get();
+                        $count_items = count($items);
+                        $last_item = Item::where('code',$item->code)
+                            ->orderBy('created_at', 'desc')->first();
+                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
+                            return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                        } else {
+                            if ($count_items>1){
+                                $item->state_item = 'scraped';
+                                $item->save();
+                            } else {
+                                if ($item->percentage < 1)
+                                {
+                                    $item->state_item = 'scraped';
+                                    $item->save();
+                                } else {
+                                    $item->state_item = 'entered';
+                                    $item->save();
+                                }
+
+                            }
+                        }
+                    }
+
+                    $outputDetail->delete();
+                }
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Anulación por cantidad con éxito.'], 200);
+
 
     }
+
+    public function returnOutputMaterialQuantity( $output, $material, $quantity )
+    {
+        DB::beginTransaction();
+        try {
+            $outputDetails = OutputDetail::where('output_id', $output)
+                ->where('material_id', $material)
+                ->where('item_id', '<>',null)
+                ->take($quantity)
+                ->get();
+
+            //dd($outputDetails);
+
+            $output = Output::find($output);
+
+            if ($output->state !== 'created')
+            {
+                foreach ( $outputDetails as $outputDetail )
+                {
+                    $item = Item::find($outputDetail->item_id);
+
+                    $items = Item::where('code',$item->code)->get();
+                    $count_items = count($items);
+                    $last_item = Item::where('code',$item->code)
+                        ->orderBy('created_at', 'desc')->first();
+                    if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
+                        return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
+                    } else {
+                        if ($count_items>1){
+                            $item->state_item = 'scraped';
+                            $item->save();
+                            $material = Material::find($item->material_id);
+                            $material->stock_current = $material->stock_current + $item->percentage;
+                            $material->save();
+                        } else {
+                            if ($item->percentage < 1)
+                            {
+                                $item->state_item = 'scraped';
+                                $item->save();
+                                $material = Material::find($item->material_id);
+                                $material->stock_current = $material->stock_current + $item->percentage;
+                                $material->save();
+                            } else {
+                                $item->state_item = 'entered';
+                                $item->save();
+                                $material = Material::find($item->material_id);
+                                $material->stock_current = $material->stock_current + $item->percentage;
+                                $material->save();
+                            }
+
+                        }
+                    }
+
+                    $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
+                    if (isset( $material_taken->id ))
+                    {
+                        $material_taken->delete();
+                    }
+
+                    $outputDetail->delete();
+                }
+
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Devolución por cantidad con éxito.'], 200);
+
+    }
+
 }

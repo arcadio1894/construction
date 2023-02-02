@@ -212,10 +212,17 @@ $(document).ready(function () {
     $modalEdit = $('#modalEdit');
 
     $('#btn-outputs').on('click', showOutputs);
+
+    $modalReturnQuantity = $('#modalReturnQuantity');
+
+    $(document).on('click', '[data-returnQuantity]', showModalReturnQuantity);
+    $(document).on('click', '[data-itemReturnQuantity]', returnOutputQuantity);
 });
 
 let $modalEdit;
 var $formEdit;
+
+var $modalReturnQuantity;
 
 let $modalItems;
 
@@ -240,6 +247,159 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+function showModalReturnQuantity() {
+    $('#table-itemsReturnQuantity').html('');
+    var output_id = $(this).data('returnquantity');
+    console.log(output_id);
+    $.ajax({
+        url: "/dashboard/get/json/items/output/"+output_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            for (var i=0; i<json.materials.length; i++)
+            {
+                //for (var i=0; i<json.array.length; i++)
+                //{
+                renderTemplateItemDetailReturnQuantity(i+1, json.materials[i].material_id, json.materials[i].code, json.materials[i].material, json.materials[i].quantity, output_id);
+                //$materials.push(json[i].material);
+                //}
+                //renderTemplateItemDetailDelete(json[i].id, json[i].id_item, output_id, json[i].material, json[i].code);
+            }
+
+        }
+    });
+    $modalReturnQuantity.modal('show');
+}
+
+function returnOutputQuantity() {
+
+    event.preventDefault();
+    var button = $(this);
+    button.attr("disabled", true);
+
+    // Obtener la URL
+    var idOutput = $(this).data('output');
+    var idMaterial = $(this).data('itemreturnquantity');
+
+    var quantityDelete = parseFloat($(this).parent().prev().children().val());
+    var quantityRequest = parseFloat($(this).parent().prev().prev().html());
+
+    if ( quantityDelete > quantityRequest )
+    {
+        toastr.error('No puede devolver más de lo que fue solicitado', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        button.attr("disabled", false);
+        return;
+    }
+
+    $.ajax({
+        url: '/dashboard/return/output/'+idOutput+'/material/'+idMaterial+'/quantity/'+quantityDelete,
+        method: 'POST',
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            button.attr("disabled", false);
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            button.attr("disabled", false);
+
+        },
+    });
+
+    $modalReturnQuantity.modal('hide');
+}
+
+function renderTemplateItemDetailReturnQuantity(id, material_id, code, material, quantity, output_id) {
+    var clone = activateTemplate('#template-itemReturnQuantity');
+    clone.querySelector("[data-i]").innerHTML = id;
+    clone.querySelector("[data-code]").innerHTML = code;
+    clone.querySelector("[data-material]").innerHTML = material;
+    clone.querySelector("[data-quantity]").innerHTML = quantity;
+    clone.querySelector("[data-anular]").setAttribute('value', quantity);
+    clone.querySelector("[data-anular]").setAttribute('data-anular', material_id);
+    clone.querySelector("[data-itemReturnQuantity]").setAttribute('data-itemReturnQuantity', material_id);
+    clone.querySelector("[data-itemReturnQuantity]").setAttribute('data-output', output_id);
+    $('#table-itemsReturnQuantity').append(clone);
+}
 
 function showOutputs(){
     $('#btn-outputs').attr("disabled", true);
@@ -313,11 +473,12 @@ function showOutputs(){
                                     var text = '';
 
                                     text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+json[i].execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
-                                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+json[0].id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
-                                        '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+json[0].id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
-                                        '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+json[0].id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+json[0].id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ';
+                                        /*'<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+json[0].id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
+                                        '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+json[0].id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';*/
 
-                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver materiales" data-return="'+json[0].id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Unidad" data-return="'+json[0].id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Cantidad" data-returnQuantity="'+json[0].id+'" class="btn btn-warning btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
 
                                     if ( json[i].description_quote == 'No hay datos' )
                                     {
