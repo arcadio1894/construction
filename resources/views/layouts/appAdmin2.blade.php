@@ -1442,12 +1442,12 @@
                                         </a>
                                     </li>--}}
 
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{ route('contract.deleted') }}" class="nav-link @yield('activeListContractDeleted')">
                                             <i class="far fa-dot-circle nav-icon text-warning"></i>
                                             <p>Contratos eliminados</p>
                                         </a>
-                                    </li>
+                                    </li>--}}
 
                                 </ul>
                             </li>
