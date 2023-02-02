@@ -86,6 +86,8 @@ function storeWorker() {
     var first_name = $('#first_name').val();
     var last_name = $('#last_name').val();
     var dni = $('#dni').val();
+    var area_worker = $('#area_worker').val();
+
     if ( first_name == '' )
     {
         toastr.error('El nombre es obligatorio', 'Error',
@@ -135,6 +137,30 @@ function storeWorker() {
     if ( dni == '' )
     {
         toastr.error('El dni es obligatorio', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        $("#btn-submit").attr("disabled", false);
+        return;
+    }
+
+    if ( area_worker == 0 || area_worker == null )
+    {
+        toastr.error('El área es obligatorio', 'Error',
             {
                 "closeButton": true,
                 "debug": false,

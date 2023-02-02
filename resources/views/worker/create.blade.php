@@ -71,17 +71,17 @@
                         <div class="form-group row">
 
                             <div class="col-md-6">
-                                <label for="first_name">Nombres </label>
+                                <label for="first_name">Nombres <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="first_name" name="first_name" class="form-control">
                             </div>
                             <div class="col-md-6">
-                                <label for="last_name">Apellidos </label>
+                                <label for="last_name">Apellidos <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="last_name" name="last_name" class="form-control">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-6">
-                                <label for="dni">DNI/C.E. </label>
+                                <label for="dni">DNI/C.E. <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="dni" name="dni" class="form-control" >
                             </div>
                             <div class="col-md-6">
@@ -119,7 +119,7 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="area_worker">Área </label>
+                                <label for="area_worker">Área <span class="right badge badge-danger">(*)</span></label>
                                 <select id="area_worker" name="area_worker" class="form-control select2" style="width: 100%;">
                                     <option></option>
                                     <option value="0">NINGUNO</option>
