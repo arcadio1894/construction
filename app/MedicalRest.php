@@ -10,6 +10,7 @@ class MedicalRest extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'reason',
         'date_start',
         'date_end',
         'file',
