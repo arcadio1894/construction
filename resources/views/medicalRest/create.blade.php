@@ -75,7 +75,7 @@
     <form id="formCreate" class="form-horizontal" data-url="{{ route('medicalRest.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="worker_id">Trabajador: </label>
                 <select id="worker_id" name="worker_id" class="form-control form-control-sm select2" style="width: 100%;">
                     <option></option>
@@ -85,7 +85,13 @@
                 </select>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <label for="reason">Motivo </label>
+
+                <textarea name="reason" id="reason" class="form-control"></textarea>
+
+            </div>
+            <div class="col-md-4">
                 <label for="file">Archivo IMG/PDF </label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -97,7 +103,7 @@
         </div>
 
         <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="date_start">Fecha Inicio</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -106,7 +112,7 @@
                     <input type="text" id="date_start" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="date_end">Fecha Fin</label>
                 <div class="input-group">
                     <div class="input-group-prepend">

@@ -38,6 +38,7 @@ class MedicalRestController extends Controller
         try {
 
             $medicalRest = MedicalRest::create([
+                'reason' => $request->get('reason'),
                 'date_start' => ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null,
                 'date_end' => ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null,
                 'worker_id' => $request->get('worker_id'),
@@ -128,6 +129,7 @@ class MedicalRestController extends Controller
 
             $medicalRest = MedicalRest::find($request->get('medicalRest_id'));
 
+            $medicalRest->reason = $request->get('reason');
             $medicalRest->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
             $medicalRest->date_end = ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null;
             $medicalRest->save();
@@ -240,7 +242,7 @@ class MedicalRestController extends Controller
 
     public function getAllMedicalRest()
     {
-        $medicalRests = MedicalRest::select('id', 'date_start', 'date_end', 'file', 'worker_id', 'created_at')
+        $medicalRests = MedicalRest::select('id', 'reason', 'date_start', 'date_end', 'file', 'worker_id', 'created_at')
             ->with('worker')
             ->orderBy('created_at', 'DESC')
             ->get();

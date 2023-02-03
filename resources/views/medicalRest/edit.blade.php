@@ -78,6 +78,31 @@
 
         <div class="form-group row">
             <div class="col-md-6">
+                <label for="reason">Motivo </label>
+
+                <textarea name="reason" id="reason" class="form-control">{{$medicalRest->reason}}</textarea>
+
+            </div>
+            <div class="col-md-6">
+                <label for="file">Archivo IMG/PDF </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-file-archive"></i></span>
+                    </div>
+                    <input type="file" id="file" name="file" class="form-control" >
+                </div>
+                @if ( $medicalRest->file != null )
+                    @if ( substr($medicalRest->file,-3) == 'pdf' )
+                        <a href="{{ asset('images/medicalRest/'.$medicalRest->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
+                    @else
+                        <img data-image src="{{ asset('images/medicalRest/'.$medicalRest->file) }}" alt="{{$medicalRest->id}}" width="100px" height="100px">
+                    @endif
+                @endif
+            </div>
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-6">
                 <label for="date_start">Fecha Inicio</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -97,26 +122,6 @@
                 </div>
             </div>
         </div>
-
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="file">Archivo IMG/PDF </label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-file-archive"></i></span>
-                    </div>
-                    <input type="file" id="file" name="file" class="form-control" >
-                </div>
-                @if ( $medicalRest->file != null )
-                    @if ( substr($medicalRest->file,-3) == 'pdf' )
-                        <a href="{{ asset('images/medicalRest/'.$medicalRest->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
-                    @else
-                        <img data-image src="{{ asset('images/medicalRest/'.$medicalRest->file) }}" alt="{{$medicalRest->id}}" width="100px" height="100px">
-                    @endif
-                @endif
-            </div>
-        </div>
-
 
         <div class="text-center">
             <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar</button>

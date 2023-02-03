@@ -64,6 +64,7 @@
             <tr>
                 <th>Código</th>
                 <th>Colaborador</th>
+                <th>Motivo</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Término</th>
                 <th>Archivo</th>

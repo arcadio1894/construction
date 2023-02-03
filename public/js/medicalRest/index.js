@@ -28,6 +28,14 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Motivo',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.reason;
+                }
+            },
+            { data: null,
                 title: 'Fecha Inicio',
                 wrap: true,
                 "render": function (item)
