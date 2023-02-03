@@ -109,6 +109,8 @@ class RoleController extends Controller
     {
         $validated = $request->validated();
 
+        $name_role = $request->get('name');
+
         $role = Role::findById($request->get('role_id'));
 
         $role->name = $request->get('name');
@@ -120,7 +122,7 @@ class RoleController extends Controller
         $permissions = $request->get('permissions');
         $role->syncPermissions($permissions);
 
-        return response()->json(['message' => 'Rol modificado con éxito.', 'url' => route('role.edit', $role->name)], 200);
+        return response()->json(['message' => 'Rol modificado con éxito.', 'url' => route('role.edit', $name_role)], 200);
 
     }
 
