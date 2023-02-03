@@ -1801,7 +1801,7 @@
                                     <ul class="nav nav-treeview">
                                         @can('list_license')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListLicense')">
+                                                <a href="{{ route('license.index') }}" class="nav-link @yield('activeListLicense')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar licencias</p>
                                                 </a>
@@ -1809,7 +1809,7 @@
                                         @endcan
                                         @can('create_license')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateLicense')">
+                                                <a href="{{ route('license.create') }}" class="nav-link @yield('activeCreateLicense')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Crear licencia</p>
                                                 </a>

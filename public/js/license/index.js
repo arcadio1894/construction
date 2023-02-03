@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/medical/rests",
+            url: "/dashboard/all/licenses",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -25,6 +25,14 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     return item.worker.first_name + ' ' + item.worker.last_name;
+                }
+            },
+            { data: null,
+                title: 'Motivo',
+                wrap: true,
+                "render": function (item)
+                {
+                    return item.reason;
                 }
             },
             { data: null,
@@ -72,13 +80,13 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('edit_medicalRest', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/descanso/medico/'+item.id+
-                            '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar descanso médico"><i class="fa fa-pen"></i></a>';
+                    if ( $.inArray('edit_license', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/licencia/'+item.id+
+                            '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar licencia"><i class="fa fa-pen"></i></a>';
                     }
-                    if ( $.inArray('delete_medicalRest', $permissions) !== -1 ) {
+                    if ( $.inArray('delete_license', $permissions) !== -1 ) {
                         text = text + ' <button data-delete="'+item.id+'" data-end="'+moment(item.date_end).format('DD/MM/YYYY')+'" data-start="'+moment(item.date_start).format('DD/MM/YYYY')+'" '+
-                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar descanso médico"><i class="fa fa-trash"></i></button>';
+                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar licencia"><i class="fa fa-trash"></i></button>';
                     }
                     return text;
 
@@ -228,7 +236,7 @@ $(document).ready(function () {
 
     $formDelete = $('#formDelete');
     //$formDelete.on('submit', destroyContract);
-    $('#btn-submit').on('click', destroyContract);
+    $('#btn-submit').on('click', destroyLicense);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 });
@@ -238,19 +246,19 @@ var $modalDelete;
 var $permissions;
 
 function openModalDelete() {
-    var medicalRest_id = $(this).data('delete');
+    var license_id = $(this).data('delete');
     var date_start = $(this).data('start');
     var date_end = $(this).data('end');
 
     var fechas = date_start + ' - ' + date_end;
 
-    $modalDelete.find('[id=medicalRest_id]').val(medicalRest_id);
+    $modalDelete.find('[id=license_id]').val(license_id);
     $modalDelete.find('[id=code]').html(fechas);
 
     $modalDelete.modal('show');
 }
 
-function destroyContract() {
+function destroyLicense() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);

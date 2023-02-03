@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openMedicalRest')
+@section('openLicenses')
     menu-open
 @endsection
 
-@section('activeListMedicalRest')
+@section('activeListLicense')
     active
 @endsection
 
 @section('title')
-    Descansos Médicos
+    Licencias
 @endsection
 
 @section('styles-plugins')
@@ -38,8 +38,8 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de descansos médicos</h5>
-    <a href="{{ route('medicalRest.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo descanso médico </a>
+    <h5 class="card-title">Listado de licencias</h5>
+    <a href="{{ route('license.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva licencia </a>
 
 @endsection
 
@@ -49,7 +49,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('medicalRest.index') }}"><i class="fa fa-archive"></i> Descansos médicos</a>
+            <a href="{{ route('license.index') }}"><i class="fa fa-archive"></i> Licencias</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -64,6 +64,7 @@
             <tr>
                 <th>Código</th>
                 <th>Colaborador</th>
+                <th>Motivo</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Término</th>
                 <th>Archivo</th>
@@ -83,11 +84,11 @@
                     <h4 class="modal-title">Confirmar eliminación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('medicalRest.destroy') }}">
+                <form id="formDelete" data-url="{{ route('license.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="medicalRest_id" name="medicalRest_id">
-                        <strong> ¿Desea eliminar este descanso médico? </strong>
+                        <input type="hidden" id="license_id" name="license_id">
+                        <strong> ¿Desea eliminar esta licencia? </strong>
                         <p> Deberá verificar las asistencias en las fechas del descanso </p>
                         <p id="code"></p>
                     </div>
@@ -115,5 +116,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/medicalRest/index.js') }}"></script>
+    <script src="{{ asset('js/license/index.js') }}"></script>
 @endsection

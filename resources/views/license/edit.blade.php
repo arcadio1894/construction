@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openMedicalRest')
+@section('openLicenses')
     menu-open
 @endsection
 
-@section('activeListMedicalRest')
+@section('activeListLicense')
     active
 @endsection
 
 @section('title')
-    Descansos Médicos
+    Licencias
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Descanso médico de {{ $medicalRest->worker->first_name .' '.$medicalRest->worker->last_name }}</h1>
+    <h1 class="page-title">Licencia de {{ $license->worker->first_name .' '.$license->worker->last_name }}</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar decanso médico</h5>
-    <a href="{{ route('medicalRest.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Descansos Médicos</a>
+    <h5 class="card-title">Modificar licencia</h5>
+    <a href="{{ route('license.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Licencias</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,7 +52,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('medicalRest.index') }}"><i class="fa fa-archive"></i> Descansos Médicos</a>
+            <a href="{{ route('license.index') }}"><i class="fa fa-archive"></i> Licencias</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
@@ -72,9 +72,34 @@
     </div>
     <br>
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('medicalRest.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('license.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="medicalRest_id" value="{{ $medicalRest->id }}">
+        <input type="hidden" name="license_id" value="{{ $license->id }}">
+
+        <div class="form-group row">
+            <div class="col-md-6">
+                <label for="reason">Motivo </label>
+
+                <textarea name="reason" id="reason" class="form-control">{{$license->reason}}</textarea>
+
+            </div>
+            <div class="col-md-6">
+                <label for="file">Archivo IMG/PDF </label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="far fa-file-archive"></i></span>
+                    </div>
+                    <input type="file" id="file" name="file" class="form-control" >
+                </div>
+                @if ( $license->file != null )
+                    @if ( substr($license->file,-3) == 'pdf' )
+                        <a href="{{ asset('images/license/'.$license->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
+                    @else
+                        <img data-image src="{{ asset('images/license/'.$license->file) }}" alt="{{$medicalRest->id}}" width="100px" height="100px">
+                    @endif
+                @endif
+            </div>
+        </div>
 
         <div class="form-group row">
             <div class="col-md-6">
@@ -83,7 +108,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date_start" value="{{ ($medicalRest->date_start == null) ? '': $medicalRest->date_start->format('d/m/Y') }}" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="text" id="date_start" value="{{ ($license->date_start == null) ? '': $license->date_start->format('d/m/Y') }}" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
 
                 </div>
             </div>
@@ -93,30 +118,10 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date_end" name="date_end" value="{{ ($medicalRest->date_end == null) ? '': $medicalRest->date_end->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="text" id="date_end" name="date_end" value="{{ ($license->date_end == null) ? '': $license->date_end->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
             </div>
         </div>
-
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="file">Archivo IMG/PDF </label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-file-archive"></i></span>
-                    </div>
-                    <input type="file" id="file" name="file" class="form-control" >
-                </div>
-                @if ( $medicalRest->file != null )
-                    @if ( substr($medicalRest->file,-3) == 'pdf' )
-                        <a href="{{ asset('images/medicalRest/'.$medicalRest->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
-                    @else
-                        <img data-image src="{{ asset('images/medicalRest/'.$medicalRest->file) }}" alt="{{$medicalRest->id}}" width="100px" height="100px">
-                    @endif
-                @endif
-            </div>
-        </div>
-
 
         <div class="text-center">
             <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar</button>
@@ -148,5 +153,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/medicalRest/edit.js') }}"></script>
+    <script src="{{ asset('js/license/edit.js') }}"></script>
 @endsection

@@ -44,32 +44,32 @@ class LicenseController extends Controller
                 'worker_id' => $request->get('worker_id'),
             ]);
 
-            /*if (!$request->file('file')) {
-                $medicalRest->file = null;
-                $medicalRest->save();
+            if (!$request->file('file')) {
+                $license->file = null;
+                $license->save();
 
             } else {
-                $path = public_path().'/images/medicalRest/';
+                $path = public_path().'/images/license/';
                 $image = $request->file('file');
                 $extension = $request->file('file')->getClientOriginalExtension();
                 //$filename = $entry->id . '.' . $extension;
                 if ( strtoupper($extension) != "PDF" )
                 {
-                    $filename = $medicalRest->id . '.JPG';
+                    $filename = $license->id . '.JPG';
                     $img = Image::make($image);
                     $img->orientate();
                     $img->save($path.$filename, 80, 'JPG');
                     //$request->file('image')->move($path, $filename);
-                    $medicalRest->file = $filename;
-                    $medicalRest->save();
+                    $license->file = $filename;
+                    $license->save();
                 } else {
-                    $filename = 'pdf'.$medicalRest->id . '.' .$extension;
+                    $filename = 'pdf'.$license->id . '.' .$extension;
                     $request->file('file')->move($path, $filename);
-                    $medicalRest->file = $filename;
-                    $medicalRest->save();
+                    $license->file = $filename;
+                    $license->save();
                 }
 
-            }*/
+            }
 
             // TODO: Logica para verificar las fechas de las asistencias
             $assistances = Assistance::whereDate('date_assistance', '>=',$license->date_start)
@@ -127,14 +127,14 @@ class LicenseController extends Controller
         DB::beginTransaction();
         try {
 
-            $license = License::find($request->get('location_id'));
+            $license = License::find($request->get('license_id'));
 
             $license->reason = $request->get('reason');
             $license->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
             $license->date_end = ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null;
             $license->save();
 
-            /*if (!$request->file('file')) {
+            if (!$request->file('file')) {
                 if ( $license->file == null )
                 {
                     $license->file = null;
@@ -172,7 +172,7 @@ class LicenseController extends Controller
                     $license->save();
                 }
 
-            }*/
+            }
 
             // TODO: Logica para verificar las fechas de las asistencias
             $assistances = Assistance::whereDate('date_assistance', '>=',$license->date_start)
@@ -220,13 +220,13 @@ class LicenseController extends Controller
 
             $license = License::find($request->get('license_id'));
 
-            /*if ( $license->file != null )
+            if ( $license->file != null )
             {
                 $image_path = public_path().'/images/license/'.$license->file;
                 if (file_exists($image_path)) {
                     unlink($image_path);
                 }
-            }*/
+            }
 
             $license->delete();
 

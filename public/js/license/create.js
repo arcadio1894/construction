@@ -2,14 +2,14 @@ $(document).ready(function () {
 
     $formCreate = $('#formCreate');
     //$formCreate.on('submit', storeCategory);
-    $('#btn-submit').on('click', storeMedicalRest);
+    $('#btn-submit').on('click', storeLicense);
 
 });
 
 var $formCreate;
 
 
-function storeMedicalRest() {
+function storeLicense() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
