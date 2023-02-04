@@ -1570,6 +1570,28 @@ Route::middleware('auth')->group(function (){
             ->name('permit.destroy')
             ->middleware('permission:delete_permit');
 
+        // CRUD ReasonSuspension
+        Route::get('/all/reasonSuspensions', 'ReasonSuspensionController@getAllPermits')
+            ->middleware('permission:enable_suspension');
+        Route::get('razones/suspension', 'ReasonSuspensionController@index')
+            ->name('reasonSuspension.index')
+            ->middleware('permission:enable_suspension');
+        Route::get('crear/razon/suspension', 'ReasonSuspensionController@create')
+            ->name('reasonSuspension.create')
+            ->middleware('permission:enable_suspension');
+        Route::post('reasonSuspension/store', 'ReasonSuspensionController@store')
+            ->name('reasonSuspension.store')
+            ->middleware('permission:enable_suspension');
+        Route::get('/editar/razon/suspension/{id}', 'ReasonSuspensionController@edit')
+            ->name('reasonSuspension.edit')
+            ->middleware('permission:enable_suspension');
+        Route::post('reasonSuspension/update', 'ReasonSuspensionController@update')
+            ->name('reasonSuspension.update')
+            ->middleware('permission:enable_suspension');
+        Route::post('reasonSuspension/destroy', 'ReasonSuspensionController@destroy')
+            ->name('reasonSuspension.destroy')
+            ->middleware('permission:enable_suspension');
+
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
             ->name('workingDay.create');

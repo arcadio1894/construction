@@ -1859,6 +1859,12 @@
                                     <ul class="nav nav-treeview">
                                         @can('list_suspension')
                                             <li class="nav-item">
+                                                <a href="{{ route('reasonSuspension.index') }}" class="nav-link @yield('activeListReasonSuspension')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Razones de Suspensión</p>
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
                                                 <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListSuspension')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar suspensiones</p>

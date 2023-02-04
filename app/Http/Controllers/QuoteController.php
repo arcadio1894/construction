@@ -392,7 +392,7 @@ class QuoteController extends Controller
 
         if ( $quote3->state === 'created' /*&& $quote3->send_state == 0*/ )
         {
-            $huboCambios = false;
+
             foreach( $quote3->equipments as $equipment )
             {
                 // TODO: Actualizamos los porcentages si no estan registrados
@@ -402,7 +402,6 @@ class QuoteController extends Controller
                     $equipment->rent = $quote3->rent;
                     $equipment->letter = $quote3->letter;
                     $equipment->save();
-                    $huboCambios = true;
 
                 }
 
@@ -414,7 +413,6 @@ class QuoteController extends Controller
                         $equipment_material->price = $equipment_material->material->unit_price;
                         $equipment_material->total = $equipment_material->material->unit_price * $equipment_material->quantity;
                         $equipment_material->save();
-                        $huboCambios = true;
                     }
                 }
 
@@ -425,59 +423,56 @@ class QuoteController extends Controller
                         $equipment_consumable->price = $equipment_consumable->material->unit_price;
                         $equipment_consumable->total = $equipment_consumable->material->unit_price * $equipment_consumable->quantity;
                         $equipment_consumable->save();
-                        $huboCambios = true;
                     }
                 }
             }
 
-            if ( $huboCambios )
+            $quote2 = Quote::where('id', $id)
+                ->with(['equipments' => function ($query) {
+                    $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+                }])->first();
+
+            $new_total_quote = 0;
+            foreach( $quote2->equipments as $equipment )
             {
-                $quote2 = Quote::where('id', $id)
-                    ->with(['equipments' => function ($query) {
-                        $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
-                    }])->first();
-
-                $new_total_quote = 0;
-                foreach( $quote2->equipments as $equipment )
+                $new_total_material = 0;
+                foreach ( $equipment->materials as $equipment_material )
                 {
-                    $new_total_material = 0;
-                    foreach ( $equipment->materials as $equipment_material )
-                    {
-                        $new_total_material = $new_total_material + $equipment_material->total;
-                    }
-                    $new_total_consumable = 0;
-                    foreach ( $equipment->consumables as $equipment_consumable )
-                    {
-                        $new_total_consumable = $new_total_consumable + $equipment_consumable->total;
-                    }
-                    $new_total_workforce = 0;
-                    foreach ( $equipment->workforces as $equipment_workforce )
-                    {
-                        $new_total_workforce = $new_total_workforce + $equipment_workforce->total;
-                    }
-                    $new_total_turnstile = 0;
-                    foreach ( $equipment->turnstiles as $equipment_turnstile )
-                    {
-                        $new_total_turnstile = $new_total_turnstile + $equipment_turnstile->total;
-                    }
-                    $new_total_workday = 0;
-                    foreach ( $equipment->workdays as $equipment_workday )
-                    {
-                        $new_total_workday = $new_total_workday + $equipment_workday->total;
-                    }
-
-                    $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
-                    $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
-                    $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
-                    $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
-
-                    $new_total_quote = $new_total_quote + $totalEquipmentR;
-                    $equipment->total = $totalEquipo;
-                    $equipment->save();
+                    $new_total_material = $new_total_material + $equipment_material->total;
                 }
-                $quote2->total = $new_total_quote ;
-                $quote2->save();
+                $new_total_consumable = 0;
+                foreach ( $equipment->consumables as $equipment_consumable )
+                {
+                    $new_total_consumable = $new_total_consumable + $equipment_consumable->total;
+                }
+                $new_total_workforce = 0;
+                foreach ( $equipment->workforces as $equipment_workforce )
+                {
+                    $new_total_workforce = $new_total_workforce + $equipment_workforce->total;
+                }
+                $new_total_turnstile = 0;
+                foreach ( $equipment->turnstiles as $equipment_turnstile )
+                {
+                    $new_total_turnstile = $new_total_turnstile + $equipment_turnstile->total;
+                }
+                $new_total_workday = 0;
+                foreach ( $equipment->workdays as $equipment_workday )
+                {
+                    $new_total_workday = $new_total_workday + $equipment_workday->total;
+                }
+
+                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
+                $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+                $new_total_quote = $new_total_quote + $totalEquipmentR;
+                $equipment->total = $totalEquipo;
+                $equipment->save();
             }
+            $quote2->total = $new_total_quote ;
+            $quote2->save();
+
 
         }
 
