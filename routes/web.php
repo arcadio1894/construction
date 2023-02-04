@@ -1549,26 +1549,26 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:delete_license');
 
         // CRUD Permisos
-        Route::get('/all/licenses', 'LicenseController@getAllLicenses')
-            ->middleware('permission:list_license');
-        Route::get('licencias', 'LicenseController@index')
-            ->name('license.index')
-            ->middleware('permission:list_license');
-        Route::get('crear/licencia', 'LicenseController@create')
-            ->name('license.create')
-            ->middleware('permission:create_license');
-        Route::post('license/store', 'LicenseController@store')
-            ->name('license.store')
-            ->middleware('permission:create_license');
-        Route::get('/editar/licencia/{id}', 'LicenseController@edit')
-            ->name('license.edit')
-            ->middleware('permission:edit_license');
-        Route::post('license/update', 'LicenseController@update')
-            ->name('license.update')
-            ->middleware('permission:edit_license');
-        Route::post('license/destroy', 'LicenseController@destroy')
-            ->name('license.destroy')
-            ->middleware('permission:delete_license');
+        Route::get('/all/permits', 'PermitController@getAllPermits')
+            ->middleware('permission:list_permit');
+        Route::get('permisos/trabajadores', 'PermitController@index')
+            ->name('permit.index')
+            ->middleware('permission:list_permit');
+        Route::get('crear/permiso', 'PermitController@create')
+            ->name('permit.create')
+            ->middleware('permission:create_permit');
+        Route::post('permit/store', 'PermitController@store')
+            ->name('permit.store')
+            ->middleware('permission:create_permit');
+        Route::get('/editar/permiso/{id}', 'PermitController@edit')
+            ->name('permit.edit')
+            ->middleware('permission:edit_permit');
+        Route::post('permit/update', 'PermitController@update')
+            ->name('permit.update')
+            ->middleware('permission:edit_permit');
+        Route::post('permit/destroy', 'PermitController@destroy')
+            ->name('permit.destroy')
+            ->middleware('permission:delete_permit');
 
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')

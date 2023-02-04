@@ -1830,7 +1830,7 @@
                                     <ul class="nav nav-treeview">
                                         @can('list_permit')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListPermit')">
+                                                <a href="{{ route('permit.index') }}" class="nav-link @yield('activeListPermit')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar permisos</p>
                                                 </a>
@@ -1838,7 +1838,7 @@
                                         @endcan
                                         @can('create_permit')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreatePermit')">
+                                                <a href="{{ route('permit.create') }}" class="nav-link @yield('activeCreatePermit')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Crear permiso</p>
                                                 </a>
