@@ -1571,7 +1571,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:delete_permit');
 
         // CRUD ReasonSuspension
-        Route::get('/all/reasonSuspensions', 'ReasonSuspensionController@getAllPermits')
+        Route::get('/all/reasonSuspensions', 'ReasonSuspensionController@getAllReasonSuspensions')
             ->middleware('permission:enable_suspension');
         Route::get('razones/suspension', 'ReasonSuspensionController@index')
             ->name('reasonSuspension.index')

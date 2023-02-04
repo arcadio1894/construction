@@ -43,9 +43,9 @@ class ReasonSuspensionController extends Controller
 
     }
 
-    public function edit($permit_id)
+    public function edit($reason_id)
     {
-        $reason = ReasonSuspension::find($permit_id);
+        $reason = ReasonSuspension::find($reason_id);
 
         return view('reasonSuspension.edit', compact('reason'));
 
@@ -94,7 +94,6 @@ class ReasonSuspensionController extends Controller
     public function getAllReasonSuspensions()
     {
         $reasons = ReasonSuspension::select('id', 'reason', 'days')
-            ->with('worker')
             ->get();
         return datatables($reasons)->toJson();
 

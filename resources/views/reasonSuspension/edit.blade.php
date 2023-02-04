@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openPermit')
+@section('openSuspension')
     menu-open
 @endsection
 
-@section('activeListPermit')
+@section('activeListReasonSuspension')
     active
 @endsection
 
 @section('title')
-    Permisos
+    Razones de suspensión
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Permiso de {{ $permit->worker->first_name .' '.$permit->worker->last_name }}</h1>
+    <h1 class="page-title">Razones de suspensión</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar permiso</h5>
-    <a href="{{ route('permit.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Permisos</a>
+    <h5 class="card-title">Modificar razón de suspensión</h5>
+    <a href="{{ route('reasonSuspension.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Razones de Suspensión</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,57 +52,33 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('permit.index') }}"><i class="fa fa-archive"></i> Permisos</a>
+            <a href="{{ route('reasonSuspension.index') }}"><i class="fa fa-archive"></i> Razones de Suspensión</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Importante!</strong> Al modificar las fechas, debe tener en cuenta que se modificarán las asistencias pero debe revisar las asistencias de los días modificados.
-                <br>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <br>
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('permit.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('reasonSuspension.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="permit_id" value="{{ $permit->id }}">
+        <input type="hidden" name="reason_id" value="{{ $reason->id }}">
 
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="reason">Motivo </label>
 
-                <textarea name="reason" id="reason" class="form-control">{{$permit->reason}}</textarea>
+                <textarea name="reason" id="reason" class="form-control">{{$reason->reason}}</textarea>
 
             </div>
-        </div>
 
-        <div class="form-group row">
             <div class="col-md-6">
-                <label for="date_start">Fecha Inicio</label>
+                <label for="days">Días de Suspensión</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                        <span class="input-group-text"><i class="fas fa-sort-numeric-up"></i></span>
                     </div>
-                    <input type="text" id="date_start" value="{{ ($permit->date_start == null) ? '': $permit->date_start->format('d/m/Y') }}" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-
-                </div>
-            </div>
-            <div class="col-md-6">
-                <label for="date_end">Fecha Fin</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                    </div>
-                    <input type="text" id="date_end" name="date_end" value="{{ ($permit->date_end == null) ? '': $permit->date_end->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="number" name="days" id="days" class="form-control" min="1" value="{{ $reason->days }}" step="1">
                 </div>
             </div>
         </div>
@@ -137,5 +113,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/permit/edit.js') }}"></script>
+    <script src="{{ asset('js/reasonSuspension/edit.js') }}"></script>
 @endsection

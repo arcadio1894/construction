@@ -42,7 +42,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('enable_suspension', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/razon/suspension/'+item.id+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/razon/suspension/'+item.id+
                             '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar razón de suspensión"><i class="fa fa-pen"></i></a>';
                     }
                     if ( $.inArray('enable_suspension', $permissions) !== -1 ) {
@@ -245,7 +245,7 @@ function destroyReasonSuspension() {
                     "onclick": null,
                     "showDuration": "300",
                     "hideDuration": "1000",
-                    "timeOut": "4000",
+                    "timeOut": "2000",
                     "extendedTimeOut": "1000",
                     "showEasing": "swing",
                     "hideEasing": "linear",

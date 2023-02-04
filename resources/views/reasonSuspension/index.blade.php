@@ -84,9 +84,8 @@
                 <form id="formDelete" data-url="{{ route('reasonSuspension.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="permit_id" name="permit_id">
+                        <input type="hidden" id="reason_id" name="reason_id">
                         <strong> ¿Desea eliminar esta razón de suspensión? </strong>
-                        <p> Deberá verificar las asistencias en las fechas de la suspensión </p>
                         <p id="code"></p>
                     </div>
                     <div class="modal-footer">

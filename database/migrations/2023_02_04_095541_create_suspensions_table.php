@@ -19,7 +19,6 @@ class CreateSuspensionsTable extends Migration
             $table->date('date_end')->nullable();
             $table->foreignId('worker_id')->nullable()
                 ->constrained('workers')->nullOnDelete();
-            $table->softDeletes();
             $table->foreignId('reason_suspension_id')->nullable()
                 ->constrained('reason_suspensions')->nullOnDelete();
             $table->softDeletes();
