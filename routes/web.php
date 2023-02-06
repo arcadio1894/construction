@@ -1652,7 +1652,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_requestSimple');
         Route::get('mis/solicitudes/area/', 'OutputController@indexMyOutputSimple')
             ->name('output.simple.my.index')
-            ->middleware('permission:list_requestSimple');
+            ->middleware('permission:myRequest_requestSimple');
         Route::get('crear/solicitud/area', 'OutputController@createOutputSimple')
             ->name('output.simple.create')
             ->middleware('permission:create_requestSimple');
@@ -1686,6 +1686,14 @@ Route::middleware('auth')->group(function (){
 
         Route::post('output/simple/edit/description', 'OutputController@editOutputSimpleDescription')
             ->name('output.simple.edit.description');
+
+        Route::get('/reporte/material/salidas/area', 'OutputController@reportMaterialOutputsSimple')
+            ->name('output.simple.report')
+            ->middleware('permission:report_requestSimple');
+        Route::get('/get/json/materials/in/output/simple', 'OutputController@getJsonMaterialsInOutputSimple')
+            ->middleware('permission:report_requestSimple');
+        Route::get('/get/json/outputs/simple/of/material/{id_material}', 'OutputController@getJsonOutputsSimpleOfMaterial')
+            ->middleware('permission:report_requestSimple');
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

@@ -1368,10 +1368,14 @@ class OutputController extends Controller
                 /*if ( $outputDetail->items->material_id == $id_material )
                 {*/
 
-                    $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])->find($outputDetail->output_id);
-                    //dump($output);
+                $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])
+                    ->where('indicator' , '<>', 'ors')
+                    ->find($outputDetail->output_id);
+                //dump($output);
+                if (isset( $output ))
+                {
                     $item_original = Item::find($outputDetail->item_id);
-                    $after_item = Item::where('code', $item_original->code)
+                    /*$after_item = Item::where('code', $item_original->code)
                         ->where('id', '<>', $item_original->id)
                         ->orderBy('created_at', 'asc')
                         ->first();
@@ -1381,7 +1385,9 @@ class OutputController extends Controller
                         $quantity = ($item_original->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item_original->percentage-(float)$after_item->percentage;
                     } else {
                         $quantity = (float)$item_original->percentage;
-                    }
+                    }*/
+
+                    $quantity = (float)$item_original->percentage;
                     array_push($outputs, [
                         'output' => $output->id,
                         'order_execution' => $output->execution_order,
@@ -1391,8 +1397,8 @@ class OutputController extends Controller
                         'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
                         'quantity' => $quantity
                     ]);
-                /*}*/
-
+                    /*}*/
+                }
             }
 
         }
@@ -2649,4 +2655,114 @@ class OutputController extends Controller
 
     }
 
+    public function reportMaterialOutputsSimple()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('output.reportMaterialOutputsSimple', compact('permissions'));
+    }
+
+    public function getJsonMaterialsInOutputSimple()
+    {
+        $begin = microtime(true);
+        $materials = Material::where('enable_status', 1)
+            ->where('typescrap_id', null)
+            ->get();
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code]);
+        }
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener Materiales que tienen salida',
+            'time' => $end
+        ]);
+        return $array;
+    }
+
+    public function getJsonOutputsSimpleOfMaterial( $id_material )
+    {
+        $begin = microtime(true);
+        //$dateCurrent = Carbon::now('America/Lima');
+        //$date4MonthAgo = $dateCurrent->subMonths(4);
+
+        $firstOutputSimple = Output::where('indicator', 'ors')
+            ->orderBy('created_at', 'ASC')
+            ->first();
+
+        /*Esto se puede usar para reportes muy antiguos pero demora mucho
+         * $outputDetails = OutputDetail::with(
+            ['items' => function ($query) use ($id_material) {
+                $query->where('material_id', '=', $id_material);
+            }])
+            ->where('created_at', '>=', $date6MonthAgo)
+            ->where('material_id', $id_material)
+            ->get();*/
+
+        $outputDetails = OutputDetail::where('created_at', '>=', $firstOutputSimple->created_at)
+            ->where('material_id', $id_material)
+            ->get();
+
+        $outputs = [];
+        foreach ($outputDetails as $outputDetail) {
+            if ( $outputDetail->item_id != null )
+            {
+
+                /*if ( $outputDetail->items->material_id == $id_material )
+                {*/
+
+                $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])
+                    ->where('indicator', 'ors')
+                    ->find($outputDetail->output_id);
+                //dump($output);
+                if ( isset( $output ) ) {
+                    $item_original = Item::find($outputDetail->item_id);
+
+                    $quantity = (float)$item_original->percentage;
+
+                    array_push($outputs, [
+                        'output' => $output->id,
+                        'description' => $output->execution_order,
+                        'date' => $output->request_date,
+                        'user_responsible' => ($output->responsibleUser == null) ? 'Sin responsable':$output->responsibleUser->name,
+                        'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
+                        'quantity' => $quantity,
+                        'indicator' => $output->indicator
+                    ]);
+                }
+
+
+            }
+
+        }
+
+        $new_arr2 = array();
+        foreach($outputs as $item) {
+            if(isset($new_arr2[$item['output']])) {
+                $new_arr2[ $item['output']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $new_arr2[$item['output']] = $item;
+        }
+
+        $coutputs_final = array_values($new_arr2);
+        //dump($outputs);
+        //$result = array_values( array_unique($outputs) );
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Reporte de Materiales en salida Simple',
+            'time' => $end
+        ]);
+        return $coutputs_final;
+    }
 }
