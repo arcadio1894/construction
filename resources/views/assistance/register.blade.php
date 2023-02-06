@@ -35,7 +35,7 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Asistencia del día {{ $assistance->date_assistance->format('d/m/Y') }}</h1>
+    <h1 class="page-title">Asistencia del día {{ $assistance->date_assistance->locale('es_ES')->dayName }} {{ $assistance->date_assistance->format('d/m/Y') }}</h1>
 @endsection
 
 @section('page-title')

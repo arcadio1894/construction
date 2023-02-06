@@ -80,7 +80,7 @@ class AssistanceController extends Controller
             $workers = Worker::where('enable', true)
                 ->get();
 
-            $workingDay = WorkingDay::where('enable', true)->first();
+            //$workingDay = WorkingDay::where('enable', true)->first();
 
             foreach ( $workers as $worker) {
                 // TODO: Revisamos si hay Descansos Medicos
@@ -108,11 +108,17 @@ class AssistanceController extends Controller
                 // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
                 // TODO: Si es VIE la jornada 2
 
+                if ( $date_assistance->dayOfWeek != Carbon::FRIDAY )
+                {
+                    $workingDay = WorkingDay::where('enable', true)->first();
+                } else {
+                    $workingDay = WorkingDay::where('enable', true)->skip(1)->take(1)->first();
+                }
                 if ( count($medicalRests) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
@@ -121,8 +127,8 @@ class AssistanceController extends Controller
                 } elseif ( count($vacations) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
@@ -131,8 +137,8 @@ class AssistanceController extends Controller
                 } elseif ( count($licenses) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
@@ -141,8 +147,8 @@ class AssistanceController extends Controller
                 } elseif ( count($permits) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
@@ -151,8 +157,8 @@ class AssistanceController extends Controller
                 } elseif ( count($suspensions) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
@@ -161,8 +167,8 @@ class AssistanceController extends Controller
                 } else {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
-                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'hour_entry' => $workingDay->time_start,
+                        'hour_out' => $workingDay->time_fin,
                         'worker_id' => $worker->id,
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id

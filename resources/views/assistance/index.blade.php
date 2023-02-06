@@ -62,7 +62,7 @@
                 <!-- /.col -->
                 <div class="col-md-12">
                     <div class="card card-primary">
-                        <div class="card-body p-0">
+                        <div class="card-body p-0" id="element_loader">
                             <!-- THE CALENDAR -->
                             <div id="calendar"></div>
                         </div>
@@ -94,6 +94,8 @@
     <script src="{{ asset('admin/plugins/fullcalendar-interaction/main.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/fullcalendar-bootstrap/main.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/fullcalendar/locales-all.js') }}"></script>
+    <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+
 @endsection
 
 @section('scripts')
@@ -178,84 +180,116 @@
                 weekNumbers: true,
                 //Random default events
                 dateClick: function(info) {
-                    $.ajax({
-                        url: "/dashboard/check/assistance/"+info.dateStr,
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function (json) {
-                            
-                            switch ( json.res ) {
-                                case 1:
-                                    // Si es 1 redireccionamos al manage
-                                    toastr.success(json.message, 'Éxito',
-                                        {
-                                            "closeButton": true,
-                                            "debug": false,
-                                            "newestOnTop": false,
-                                            "progressBar": true,
-                                            "positionClass": "toast-top-right",
-                                            "preventDuplicates": false,
-                                            "onclick": null,
-                                            "showDuration": "300",
-                                            "hideDuration": "1000",
-                                            "timeOut": "2000",
-                                            "extendedTimeOut": "1000",
-                                            "showEasing": "swing",
-                                            "hideEasing": "linear",
-                                            "showMethod": "fadeIn",
-                                            "hideMethod": "fadeOut"
-                                        });
-                                    setTimeout( function () {
-                                        location.href = json.url;
-                                    }, 2000 );
-                                    break;
-                                case 2:
-                                    toastr.success(json.message, 'Éxito',
-                                        {
-                                            "closeButton": true,
-                                            "debug": false,
-                                            "newestOnTop": false,
-                                            "progressBar": true,
-                                            "positionClass": "toast-top-right",
-                                            "preventDuplicates": false,
-                                            "onclick": null,
-                                            "showDuration": "300",
-                                            "hideDuration": "1000",
-                                            "timeOut": "2000",
-                                            "extendedTimeOut": "1000",
-                                            "showEasing": "swing",
-                                            "hideEasing": "linear",
-                                            "showMethod": "fadeIn",
-                                            "hideMethod": "fadeOut"
-                                        });
-                                    setTimeout( function () {
-                                        location.href = json.url;
-                                    }, 2000 );
-                                    break;
-                                default:
-                                    toastr.error('Ocurrió un error inesperado.', 'Error',
-                                        {
-                                            "closeButton": true,
-                                            "debug": false,
-                                            "newestOnTop": false,
-                                            "progressBar": true,
-                                            "positionClass": "toast-top-right",
-                                            "preventDuplicates": false,
-                                            "onclick": null,
-                                            "showDuration": "300",
-                                            "hideDuration": "1000",
-                                            "timeOut": "2000",
-                                            "extendedTimeOut": "1000",
-                                            "showEasing": "swing",
-                                            "hideEasing": "linear",
-                                            "showMethod": "fadeIn",
-                                            "hideMethod": "fadeOut"
-                                        });
-                                    break;
-                                // code block
-                            }
+                    $.confirm({
+                        icon: 'far fa-clock',
+                        theme: 'modern',
+                        closeIcon: true,
+                        animation: 'zoom',
+                        type: 'green',
+                        columnClass: 'small',
+                        title: 'Registrar Asistencia',
+                        content: 'Se va a registrar la asistencia de los trabajadores registrados.',
+                        buttons: {
+                            confirm: {
+                                text: 'CONFIRMAR',
+                                btnClass: 'btn-blue',
+                                action: function () {
+                                    $("#element_loader").LoadingOverlay("show", {
+                                        background  : "rgba(236, 91, 23, 0.5)"
+                                    });
+                                    $.ajax({
+                                        url: "/dashboard/check/assistance/"+info.dateStr,
+                                        type: 'GET',
+                                        dataType: 'json',
+                                        success: function (json) {
+
+                                            switch ( json.res ) {
+                                                case 1:
+                                                    // Si es 1 redireccionamos al manage
+                                                    toastr.success(json.message, 'Éxito',
+                                                        {
+                                                            "closeButton": true,
+                                                            "debug": false,
+                                                            "newestOnTop": false,
+                                                            "progressBar": true,
+                                                            "positionClass": "toast-top-right",
+                                                            "preventDuplicates": false,
+                                                            "onclick": null,
+                                                            "showDuration": "300",
+                                                            "hideDuration": "1000",
+                                                            "timeOut": "2000",
+                                                            "extendedTimeOut": "1000",
+                                                            "showEasing": "swing",
+                                                            "hideEasing": "linear",
+                                                            "showMethod": "fadeIn",
+                                                            "hideMethod": "fadeOut"
+                                                        });
+                                                    setTimeout( function () {
+                                                        location.href = json.url;
+                                                        $("#element_loader").LoadingOverlay("hide", true);
+                                                    }, 2000 );
+                                                    break;
+                                                case 2:
+                                                    toastr.success(json.message, 'Éxito',
+                                                        {
+                                                            "closeButton": true,
+                                                            "debug": false,
+                                                            "newestOnTop": false,
+                                                            "progressBar": true,
+                                                            "positionClass": "toast-top-right",
+                                                            "preventDuplicates": false,
+                                                            "onclick": null,
+                                                            "showDuration": "300",
+                                                            "hideDuration": "1000",
+                                                            "timeOut": "2000",
+                                                            "extendedTimeOut": "1000",
+                                                            "showEasing": "swing",
+                                                            "hideEasing": "linear",
+                                                            "showMethod": "fadeIn",
+                                                            "hideMethod": "fadeOut"
+                                                        });
+                                                    setTimeout( function () {
+                                                        location.href = json.url;
+                                                        $("#element_loader").LoadingOverlay("hide", true);
+                                                    }, 2000 );
+                                                    break;
+                                                default:
+                                                    toastr.error('Ocurrió un error inesperado.', 'Error',
+                                                        {
+                                                            "closeButton": true,
+                                                            "debug": false,
+                                                            "newestOnTop": false,
+                                                            "progressBar": true,
+                                                            "positionClass": "toast-top-right",
+                                                            "preventDuplicates": false,
+                                                            "onclick": null,
+                                                            "showDuration": "300",
+                                                            "hideDuration": "1000",
+                                                            "timeOut": "2000",
+                                                            "extendedTimeOut": "1000",
+                                                            "showEasing": "swing",
+                                                            "hideEasing": "linear",
+                                                            "showMethod": "fadeIn",
+                                                            "hideMethod": "fadeOut"
+                                                        });
+                                                    break;
+                                                // code block
+                                            }
+                                        }
+                                    });
+                                    //$.alert('Your name is ' + name);
+                                }
+                            },
+                            cancel: {
+                                text: 'CANCELAR',
+                                action: function (e) {
+                                    $.alert("Cronograma no creado.");
+                                },
+                            },
                         }
                     });
+
+
                     //alert('Date: ' + info.dateStr);
                     //alert('Resource ID: ' + info.resource.id);
                 },
