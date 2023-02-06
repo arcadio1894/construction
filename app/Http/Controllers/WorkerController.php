@@ -92,11 +92,11 @@ class WorkerController extends Controller
         $work_functions = WorkFunction::select('id', 'description')->get();
         $pension_systems = PensionSystem::select('id', 'description', 'percentage')->get();
         $relationships = Relationship::select('id', 'description')->get();
-        $working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
+        //$working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
 
         $areaWorkers = AreaWorker::select('id', 'name')->get();
 
-        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'working_days', 'areaWorkers'));
+        return view('worker.create', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'areaWorkers'));
     }
 
     public function store(Request $request)
@@ -166,7 +166,7 @@ class WorkerController extends Controller
                 'civil_status_id' => ($request->get('civil_status') == 0) ? null: $request->get('civil_status'),
                 'work_function_id' => ($request->get('work_function') == 0) ? null: $request->get('work_function'),
                 'pension_system_id' => ($request->get('pension_system') == 0) ? null: $request->get('pension_system'),
-                'working_day_id' => ($request->get('working_day') == 0) ? null: $request->get('working_day'),
+                //'working_day_id' => ($request->get('working_day') == 0) ? null: $request->get('working_day'),
                 'area_worker_id' => ($request->get('area_worker') == 0) ? null: $request->get('area_worker'),
 
             ]);
@@ -235,11 +235,11 @@ class WorkerController extends Controller
         $work_functions = WorkFunction::select('id', 'description')->get();
         $pension_systems = PensionSystem::select('id', 'description', 'percentage')->get();
         $relationships = Relationship::select('id', 'description')->get();
-        $working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
+        //$working_days = WorkingDay::select('id', 'description')->where('enable', 1)->get();
 
         $areaWorkers = AreaWorker::select('id', 'name')->get();
 
-        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'worker', 'working_days', 'areaWorkers'));
+        return view('worker.edit', compact('value_essalud','value_assign_family','permissions','civil_statuses', 'work_functions', 'pension_systems', 'relationships', 'worker', 'areaWorkers'));
 
     }
 
@@ -300,7 +300,7 @@ class WorkerController extends Controller
             $worker->civil_status_id = ($request->get('civil_status') == 0) ? null: $request->get('civil_status');
             $worker->work_function_id = ($request->get('work_function') == 0) ? null: $request->get('work_function');
             $worker->pension_system_id = ($request->get('pension_system') == 0) ? null: $request->get('pension_system');
-            $worker->working_day_id = ($request->get('working_day') == 0) ? null: $request->get('working_day');
+            //$worker->working_day_id = ($request->get('working_day') == 0) ? null: $request->get('working_day');
             $worker->area_worker_id = ($request->get('area_worker') == 0) ? null: $request->get('area_worker');
             $worker->save();
 

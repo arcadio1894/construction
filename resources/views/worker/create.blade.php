@@ -294,7 +294,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <div class="col-md-6">
+                            {{--<div class="col-md-6">
                                 <label for="working_day">Jornada Laboral </label>
                                 <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">
                                     <option></option>
@@ -303,7 +303,7 @@
                                         <option value="{{ $working_day->id }}" {{ ($key==0) ? 'selected':'' }} >{{ $working_day->description }}</option>
                                     @endforeach
                                 </select>
-                            </div>
+                            </div>--}}
                             <div class="col-md-6">
                                 <label for="observation">Observación </label>
                                 <textarea name="observation" id="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
