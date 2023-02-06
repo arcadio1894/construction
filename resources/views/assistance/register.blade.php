@@ -156,7 +156,7 @@
                 </div>
                 <div class="card-body" id="body-assistances">
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <strong>TRABAJADOR</strong>
                             </div>
@@ -181,9 +181,9 @@
                                 <strong>ESTADO</strong>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-1">
                             <div class="form-group">
-                                <strong>OBSERV. JUSTIF.</strong>
+                                <strong>H. DESC.</strong>
                             </div>
                         </div>
                         <div class="col-md-1">
@@ -192,7 +192,7 @@
                     </div>
                     @for( $i = 0; $i < count($arrayAssistances); $i++ )
                     <div class="row">
-                        <div class="col-md-2">
+                        <div class="col-md-3">
                             {{--<input type="text" style="font-size: 15px" readonly data-worker class="form-control form-control-sm" value="{{ $arrayAssistances[$i]['worker'] }}" >--}}
                             <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $arrayAssistances[$i]['worker'] }}</textarea>
                         </div>
@@ -233,9 +233,9 @@
                                 <option value="T" {{ ($arrayAssistances[$i]['status'] == 'T') ? 'selected':'' }}>T</option>
                             </select>
                         </div>
-                        <div class="col-md-2">
-                            <textarea name="" data-observacion cols="30" class="form-control form-control-sm">{{ $arrayAssistances[$i]['obs_justification'] }}</textarea>
-
+                        <div class="col-md-1">
+                            {{--<textarea name="" data-observacion cols="30" class="form-control form-control-sm">{{ $arrayAssistances[$i]['obs_justification'] }}</textarea>--}}
+                            <input type="number" name="hours_discount" id="hours_discount" data-hours_discount class="form-control form-control-sm" step="0.1" min="0" value="{{ $arrayAssistances[$i]['hours_discount'] }}">
                         </div>
                         <div class="col-md-1">
                             <button type="button" data-save data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>

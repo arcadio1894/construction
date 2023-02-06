@@ -15,7 +15,8 @@ class AssistanceDetail extends Model
         'obs_justification',
         'worker_id',
         'assistance_id',
-        'working_day_id'
+        'working_day_id',
+        'hours_discount'
     ];
 
     protected $dates = ['date_assistance'];

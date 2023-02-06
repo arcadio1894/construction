@@ -40,6 +40,12 @@ $(document).ready(function () {
         card.addClass('btn-outline-warning');
     });
 
+    $(document).on('input', '[data-hours_discount]', function() {
+        var card = $(this).parent().next().children();
+        card.removeClass('btn-outline-success');
+        card.addClass('btn-outline-warning');
+    });
+
 });
 
 function mayus(e) {
@@ -59,7 +65,7 @@ function saveAssistance() {
     var time_entry = button.parent().prev().prev().prev().prev().children().children().attr('data-time');
     var time_out = button.parent().prev().prev().prev().children().children().attr('data-time');
     var status = button.parent().prev().prev().children().val();
-    var obs_justification = button.parent().prev().children().val();
+    var hours_discount = button.parent().prev().children().val();
 
     /*console.log(name_worker);
     console.log(working_day);
@@ -87,7 +93,7 @@ function saveAssistance() {
                     url: '/dashboard/store/assistance/'+assistance_id+'/worker/'+worker_id,
                     method: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
+                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, hours_discount:hours_discount }),
                     processData:false,
                     contentType:'application/json; charset=utf-8',
                     success: function (data) {
@@ -163,7 +169,7 @@ function saveAssistance() {
                     url: '/dashboard/update/assistance/detail/'+assistanceDetail,
                     method: 'POST',
                     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, obs_justification:obs_justification }),
+                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, hours_discount:hours_discount }),
                     processData:false,
                     contentType:'application/json; charset=utf-8',
                     success: function (data) {

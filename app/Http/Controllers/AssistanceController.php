@@ -6,7 +6,10 @@ use App\Assistance;
 use App\AssistanceDetail;
 use App\Exports\AssistanceExcelMultipleSheets;
 use App\Holiday;
+use App\License;
 use App\MedicalRest;
+use App\Permit;
+use App\Suspension;
 use App\Vacation;
 use App\Worker;
 use App\WorkingDay;
@@ -90,7 +93,21 @@ class AssistanceController extends Controller
                     ->whereDate('date_end', '>=',$assistance2->date_assistance)
                     ->where('worker_id', $worker->id)
                     ->get();
-                //dump($medicalRests);
+                $licenses = License::whereDate('date_start', '<=',$assistance2->date_assistance)
+                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                    ->where('worker_id', $worker->id)
+                    ->get();
+                $permits = Permit::whereDate('date_start', '<=',$assistance2->date_assistance)
+                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                    ->where('worker_id', $worker->id)
+                    ->get();
+                $suspensions = Suspension::whereDate('date_start', '<=',$assistance2->date_assistance)
+                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                    ->where('worker_id', $worker->id)
+                    ->get();
+                // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
+                // TODO: Si es VIE la jornada 2
+
                 if ( count($medicalRests) > 0 ) {
                     AssistanceDetail::create([
                         'date_assistance' => $assistance2->date_assistance,
@@ -110,6 +127,36 @@ class AssistanceController extends Controller
                         'assistance_id' => $assistance2->id,
                         'working_day_id' => $workingDay->id,
                         'status' => 'V'
+                    ]);
+                } elseif ( count($licenses) > 0 ) {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id,
+                        'status' => 'P'
+                    ]);
+                } elseif ( count($permits) > 0 ) {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id,
+                        'status' => 'P'
+                    ]);
+                } elseif ( count($suspensions) > 0 ) {
+                    AssistanceDetail::create([
+                        'date_assistance' => $assistance2->date_assistance,
+                        'hour_entry' => ($worker->working_day_id != null) ? $worker->working_day->time_start:$workingDay->time_start,
+                        'hour_out' => ($worker->working_day_id != null) ? $worker->working_day->time_fin:$workingDay->time_fin,
+                        'worker_id' => $worker->id,
+                        'assistance_id' => $assistance2->id,
+                        'working_day_id' => $workingDay->id,
+                        'status' => 'S'
                     ]);
                 } else {
                     AssistanceDetail::create([
@@ -162,6 +209,7 @@ class AssistanceController extends Controller
                     'hour_out' => $assistancesDetail->hour_out,
                     'status' => $assistancesDetail->status,
                     'obs_justification' => $assistancesDetail->obs_justification,
+                    'hours_discount' => $assistancesDetail->hours_discount,
                     'assistance_detail_id' => $assistancesDetail->id
                 ]);
             } else {
@@ -173,7 +221,8 @@ class AssistanceController extends Controller
                     'hour_out' => '',
                     'status' => '',
                     'obs_justification' => '',
-                    'assistance_detail_id' => ''
+                    'assistance_detail_id' => '',
+                    'hours_discount' => 0,
                 ]);
             }
         }
@@ -670,9 +719,10 @@ class AssistanceController extends Controller
                 'hour_out' => ($request->get('time_out') == '')? null: $request->get('time_out'),
                 'status' => ($request->get('status') == '')? null: $request->get('status'),
                 'justification' => ($request->get('status') == 'FJ')? 1: 0,
-                'obs_justification' => ($request->get('obs_justification') == '')? null: $request->get('obs_justification'),
+                //'obs_justification' => ($request->get('obs_justification') == '')? null: $request->get('obs_justification'),
                 'worker_id' => $id_worker,
                 'assistance_id' => $id_assistance,
+                'hours_discount' => ($request->get('hours_discount') == '')? 0: (float)$request->get('hours_discount'),
                 'working_day_id' => ($request->get('working_day') == '')? null: $request->get('working_day'),
             ]);
 
@@ -695,7 +745,8 @@ class AssistanceController extends Controller
             $assistanceDetail->hour_out = ($request->get('time_out') == '')? null: $request->get('time_out');
             $assistanceDetail->status = ($request->get('status') == '')? null: $request->get('status');
             $assistanceDetail->justification = ($request->get('status') == 'FJ')? 1: 0;
-            $assistanceDetail->obs_justification = ($request->get('obs_justification') == '')? null: $request->get('obs_justification');
+            //$assistanceDetail->obs_justification = ($request->get('obs_justification') == '')? null: $request->get('obs_justification');
+            $assistanceDetail->hours_discount = ($request->get('hours_discount') == '')? 0: (float)$request->get('hours_discount');
             $assistanceDetail->working_day_id = ($request->get('working_day') == '')? null: $request->get('working_day');
             $assistanceDetail->save();
 
