@@ -25,7 +25,7 @@ class Suspension extends Model
 
     public function reason()
     {
-        return $this->belongsTo('App\ReasonSuspension');
+        return $this->belongsTo('App\ReasonSuspension', 'reason_suspension_id');
     }
 
 }

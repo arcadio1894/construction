@@ -1865,7 +1865,7 @@
                                                 </a>
                                             </li>
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.index') }}" class="nav-link @yield('activeListSuspension')">
+                                                <a href="{{ route('suspension.index') }}" class="nav-link @yield('activeListSuspension')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Listar suspensiones</p>
                                                 </a>
@@ -1873,7 +1873,7 @@
                                         @endcan
                                         @can('create_suspension')
                                             <li class="nav-item">
-                                                <a href="{{ route('unitmeasure.create') }}" class="nav-link @yield('activeCreateSuspension')">
+                                                <a href="{{ route('suspension.create') }}" class="nav-link @yield('activeCreateSuspension')">
                                                     <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                     <p>Crear suspension</p>
                                                 </a>

@@ -88,23 +88,23 @@ class PermissionHourSpecialSeeder extends Seeder
         // TODO: Permisos para permit
         Permission::create([
             'name' => 'enable_permit',
-            'description' => 'Habilitar Mod. Permisos Trabajdores'
+            'description' => 'Habilitar Mod. Permisos Trabajadores'
         ]);
         Permission::create([
             'name' => 'list_permit',
-            'description' => 'Listar Permisos Trabajdores'
+            'description' => 'Listar Permisos Trabajadores'
         ]);
         Permission::create([
             'name' => 'create_permit',
-            'description' => 'Crear Permisos Trabajdores'
+            'description' => 'Crear Permisos Trabajadores'
         ]);
         Permission::create([
             'name' => 'edit_permit',
-            'description' => 'Editar Permisos Trabajdores'
+            'description' => 'Editar Permisos Trabajadores'
         ]);
         Permission::create([
             'name' => 'delete_permit',
-            'description' => 'Eliminar Permisos Trabajdores'
+            'description' => 'Eliminar Permisos Trabajadores'
         ]);
 
         // TODO: Permisos para suspension

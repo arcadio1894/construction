@@ -1592,6 +1592,28 @@ Route::middleware('auth')->group(function (){
             ->name('reasonSuspension.destroy')
             ->middleware('permission:enable_suspension');
 
+        // CRUD Suspension
+        Route::get('/all/suspensions', 'SuspensionController@getAllSuspensions')
+            ->middleware('permission:list_suspension');
+        Route::get('suspensiones', 'SuspensionController@index')
+            ->name('suspension.index')
+            ->middleware('permission:list_suspension');
+        Route::get('crear/suspension', 'SuspensionController@create')
+            ->name('suspension.create')
+            ->middleware('permission:create_suspension');
+        Route::post('suspension/store', 'SuspensionController@store')
+            ->name('suspension.store')
+            ->middleware('permission:create_suspension');
+        Route::get('/editar/suspension/{id}', 'SuspensionController@edit')
+            ->name('suspension.edit')
+            ->middleware('permission:edit_suspension');
+        Route::post('suspension/update', 'SuspensionController@update')
+            ->name('suspension.update')
+            ->middleware('permission:edit_suspension');
+        Route::post('suspension/destroy', 'SuspensionController@destroy')
+            ->name('suspension.destroy')
+            ->middleware('permission:delete_suspension');
+
         // JORNADAS (WORKING_DAYS)
         Route::get('/registrar/jornadas/trabajo/', 'WorkingDayController@create')
             ->name('workingDay.create');
