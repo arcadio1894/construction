@@ -26,5 +26,10 @@ class PercentageWorkerSeeder extends Seeder
             'name' => 'rmv',
             'value' => 1025,
         ]);
+
+        PercentageWorker::create([
+            'name' => 'time_break',
+            'value' => 1,
+        ]);
     }
 }

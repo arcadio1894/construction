@@ -8,6 +8,7 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-save]', saveAssistance);
+    $(document).on('click', '[data-delete]', deleteAssistance);
 
     $('.datestart').on('timechanged', function(e){
         var card = $(this).parent().next().next().next().next().children();
@@ -29,7 +30,15 @@ $(document).ready(function () {
     });
 
     $(document).on('select2:select', '.workingDays', function (e) {
-        var card = $(this).parent().next().next().next().next().next().children();
+        var cboWorkingDays = $(this);
+        var data = cboWorkingDays.select2('data');
+        var time_start = data[0].element.dataset.time_start;
+        var time_fin = data[0].element.dataset.time_fin;
+
+        var inputDateStart = cboWorkingDays.parent().next().children().children().mdtimepicker('setValue',time_start);
+        var inputDateFin = cboWorkingDays.parent().next().next().children().children().mdtimepicker('setValue',time_fin);
+
+        var card = cboWorkingDays.parent().next().next().next().next().next().children();
         card.removeClass('btn-outline-success');
         card.addClass('btn-outline-warning');
     });
@@ -230,5 +239,105 @@ function saveAssistance() {
             }
         });
     }
+}
+
+function deleteAssistance() {
+    event.preventDefault();
+    var button = $(this);
+    var assistanceDetail = $(this).attr('data-assistancedetail');
+    var worker_id = $(this).attr('data-worker');
+    var assistance_id = $('#assistance_id').val();
+
+    // Datos a guardar
+    var name_worker = button.parent().prev().prev().prev().prev().prev().prev().children().val();
+    var working_day = button.parent().prev().prev().prev().prev().prev().children().val();
+    var time_entry = button.parent().prev().prev().prev().prev().children().children().attr('data-time');
+    var time_out = button.parent().prev().prev().prev().children().children().attr('data-time');
+    var status = button.parent().prev().prev().children().val();
+    var hours_discount = button.parent().prev().children().val();
+
+    /*console.log(name_worker);
+    console.log(working_day);
+    console.log(time_entry);
+    console.log(time_out);
+    console.log(status);
+    console.log(obs_justification);
+    console.log(assistanceDetail);
+    console.log(worker_id);
+    console.log(assistance_id);*/
+
+    vdialog({
+            type:'alert',// alert, success, error, confirm
+            title: '¿Esta seguro de eliminar la asistencia de este trabsjador?',
+            content: 'Se eliminará la asistencia',
+            okValue:'Aceptar',
+            modal:true,
+            cancelValue:'Cancelar',
+            ok: function(){
+
+                $.ajax({
+                    url: '/dashboard/destroy/assistance/detail/'+assistanceDetail,
+                    method: 'POST',
+                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, hours_discount:hours_discount }),
+                    processData:false,
+                    contentType:'application/json; charset=utf-8',
+                    success: function (data) {
+                        console.log(data);
+                        button.parent().parent().remove();
+                        vdialog.success(data.message);
+                    },
+                    error: function (data) {
+                        if( data.responseJSON.message && !data.responseJSON.errors )
+                        {
+                            toastr.error(data.responseJSON.message, 'Error',
+                                {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "newestOnTop": false,
+                                    "progressBar": true,
+                                    "positionClass": "toast-top-right",
+                                    "preventDuplicates": false,
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "2000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                });
+                        }
+                        for ( var property in data.responseJSON.errors ) {
+                            toastr.error(data.responseJSON.errors[property], 'Error',
+                                {
+                                    "closeButton": true,
+                                    "debug": false,
+                                    "newestOnTop": false,
+                                    "progressBar": true,
+                                    "positionClass": "toast-top-right",
+                                    "preventDuplicates": false,
+                                    "onclick": null,
+                                    "showDuration": "300",
+                                    "hideDuration": "1000",
+                                    "timeOut": "2000",
+                                    "extendedTimeOut": "1000",
+                                    "showEasing": "swing",
+                                    "hideEasing": "linear",
+                                    "showMethod": "fadeIn",
+                                    "hideMethod": "fadeOut"
+                                });
+                        }
+                    },
+                });
+
+            },
+            cancel: function(){
+                vdialog.alert('Asistencia no eliminada');
+
+            }
+        });
+
 }
 

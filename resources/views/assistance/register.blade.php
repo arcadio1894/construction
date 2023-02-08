@@ -200,7 +200,7 @@
                             <select data-workingDay class="workingDays form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $workingDays as $workingDay )
-                                    <option value="{{ $workingDay->id }}" {{ ($workingDay->id == $arrayAssistances[$i]['working_day']) ? 'selected':'' }}>{{ $workingDay->description}}</option>
+                                    <option value="{{ $workingDay->id }}" data-time_fin="{{ $workingDay->time_fin }}" data-time_start="{{ $workingDay->time_start }}" {{ ($workingDay->id == $arrayAssistances[$i]['working_day']) ? 'selected':'' }}>{{ $workingDay->description}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -239,6 +239,9 @@
                         </div>
                         <div class="col-md-1">
                             <button type="button" data-save data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
+                            @if($arrayAssistances[$i]['assistance_detail_id'] != '')
+                            <button type="button" data-delete data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar asistencia"><i class="fas fa-trash"></i> </button>
+                            @endif
                         </div>
                     </div>
                     <hr>
@@ -268,12 +271,13 @@
         $(function () {
 
             $('.timepicker').mdtimepicker({
-                format:'h:mm tt',
+                timeFormat: 'hh:mm:ss.000',
+                format:'hh:mm tt',
                 theme:'blue',
                 readOnly:true,
-                hourPadding:false,
-                clearBtn:false
-
+                hourPadding:true,
+                clearBtn:false,
+                is24hour: false,
             });
 
             //Initialize Select2 Elements

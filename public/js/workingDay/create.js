@@ -1,68 +1,9 @@
 let $value_assign_family;
 let $value_essalud;
+let $permissions;
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-
-    $value_assign_family = parseFloat($("#value_assign_family").val());
-    $value_essalud = parseFloat($("#essalud").val());
-
-    $(document).on('input', '[id=num_children]', function() {
-        var children = parseInt($(this).val());
-        var assign_family = 0;
-        if (children > 0)
-        {
-            // Seteamos la asignacion familiar
-            assign_family = $value_assign_family/30;
-        }
-        $("#assign_family").val(assign_family.toFixed(2));
-
-        // Verificamos el salario diario
-        var salario_diario = parseFloat($("#daily_salary").val());
-
-        var pago_diario = (assign_family + salario_diario).toFixed(2);
-
-        $("#pay_daily").val(pago_diario);
-
-        // Verificamos el salario mensual
-        var salario_mensual = parseFloat(pago_diario*30).toFixed(2);
-
-        $("#monthly_salary").val(salario_mensual);
-    });
-
-    $(document).on('input', '[id=daily_salary]', function() {
-        var children = parseInt($("#num_children").val());
-        var assign_family = 0;
-        if (children > 0)
-        {
-            // Seteamos la asignacion familiar
-            assign_family = $value_assign_family/30;
-        }
-        $("#assign_family").val(assign_family.toFixed(2));
-
-        // Verificamos el salario diario
-        var salario_diario = parseFloat($(this).val());
-
-        var pago_diario = (assign_family + salario_diario).toFixed(2);
-
-        $("#pay_daily").val(pago_diario);
-
-        // Verificamos el salario mensual
-        var salario_mensual = parseFloat(pago_diario*30).toFixed(2);
-
-        $("#monthly_salary").val(salario_mensual);
-    });
-
-    $(document).on('select2:select', '.pension_system', function (e) {
-        // Do something
-        $("#percentage_system_pension").val('');
-        var data = $(this).select2('data');
-        console.log( data[0].element.dataset.percentage );
-        var percentage = data[0].element.dataset.percentage;
-        $("#percentage_system_pension").val(percentage);
-
-    });
-
 
     $('#newWorkingDay').on('click', addWorkingDay);
 
@@ -85,10 +26,12 @@ function saveWorkingDay() {
     var id_workingDay = $(this).data('save');
 
     var description = $(this).parent().parent().children().children().children().next().val();
-    var time_start = $(this).parent().parent().children().next().children().children().data('time');
-    var time_fin = $(this).parent().parent().children().next().next().children().children().data('time');
+    var time_start = $(this).parent().parent().children().next().children().children().attr('data-time');
+    var time_fin = $(this).parent().parent().children().next().next().children().children().attr('data-time');
     var div_enable = $(this).parent().prev().children().children();
 
+    console.log(time_start);
+    console.log(time_fin);
     //console.log(div_enable.find('[data-enable]').bootstrapSwitch('state'));
 
     var enable = div_enable.find('[data-enable]').bootstrapSwitch('state');

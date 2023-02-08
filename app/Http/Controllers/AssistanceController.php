@@ -766,8 +766,20 @@ class AssistanceController extends Controller
 
     }
 
-    public function destroy(Assistance $assistance)
+    public function destroy(Request $request, $assistanceDetail_id)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $assistanceDetail = AssistanceDetail::find($assistanceDetail_id);
+            $assistanceDetail->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Asistencia eliminada con éxito.', 'assistanceDetail' => $assistanceDetail], 200);
+
     }
 }

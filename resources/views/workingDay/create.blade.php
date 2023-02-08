@@ -90,7 +90,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="input-group date" id="timepicker" data-target-input="nearest">
-                                        <input type="text" data-dateStart class="form-control timepicker" value="{{$workingDay->time_start}}" />
+                                        <input type="text" data-dateStart class="form-control timepicker" value="{{$workingDay->time_start}}" data-time2="{{$workingDay->time_start}}" />
                                         <div class="input-group-append">
                                             <div class="input-group-text"><i class="far fa-clock"></i></div>
                                         </div>
@@ -98,7 +98,7 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="input-group date" id="timepicker2" data-target-input="nearest">
-                                        <input type="text" data-dateEnd class="form-control timepicker" value="{{$workingDay->time_fin}}" />
+                                        <input type="text" data-dateEnd class="form-control timepicker" value="{{ $workingDay->time_fin }}" data-time="12:00:00.000" />
                                         <div class="input-group-append" >
                                             <div class="input-group-text"><i class="far fa-clock"></i></div>
                                         </div>
@@ -186,13 +186,15 @@
         $(function () {
             //$('#datemask').inputmask()
             $('.timepicker').mdtimepicker({
-                format:'h:mm tt',
+                timeFormat: 'hh:mm:ss.000',
+                format:'hh:mm tt',
                 theme:'blue',
                 readOnly:true,
-                hourPadding:false,
-                clearBtn:false
-
+                hourPadding:true,
+                clearBtn:false,
+                is24hour: false,
             });
+
             $('#admission_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#birthplace').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
