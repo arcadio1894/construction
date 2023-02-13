@@ -46,9 +46,9 @@ function downloadExcelAssistance() {
 
                     $.alert('Descargando archivo ...');
 
-                    var url = "/dashboard/download/excel/assistance/?" + $.param(query);
+                    //var url = "/dashboard/download/excel/assistance/?" + $.param(query);
 
-                    window.location = url;
+                    //window.location = url;
 
                 },
             },
@@ -80,17 +80,18 @@ function changePrevYear() {
     var year = $('#yearCurrent').val();
 
     $.ajax({
-        url: "/dashboard/get/assistance/"+month+"/"+year,
+        url: "/dashboard/get/hour/diary/"+month+"/"+year,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
+            var arrayDays = json.arrayDays;
+            var arrayHeaders = json.arrayHeaders;
             var arrayAssistances = json.arrayAssistances;
-            var arrayWeekWithDays = json.arrayWeekWithDays;
-            var arraySummary = json.arraySummary;
+            console.log(arrayDays);
+            console.log(arrayHeaders);
             console.log(arrayAssistances);
-            console.log(arrayWeekWithDays);
 
-            renderTemplateAssistances(arrayAssistances, arrayWeekWithDays, id_tab, arraySummary);
+            renderTemplateAssistances(arrayDays, arrayHeaders, arrayAssistances, id_tab);
 
         }
     });
@@ -110,17 +111,18 @@ function changeNextYear() {
     var year = $('#yearCurrent').val();
 
     $.ajax({
-        url: "/dashboard/get/assistance/"+month+"/"+year,
+        url: "/dashboard/get/hour/diary/"+month+"/"+year,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
+            var arrayDays = json.arrayDays;
+            var arrayHeaders = json.arrayHeaders;
             var arrayAssistances = json.arrayAssistances;
-            var arrayWeekWithDays = json.arrayWeekWithDays;
-            var arraySummary = json.arraySummary;
+            console.log(arrayDays);
+            console.log(arrayHeaders);
             console.log(arrayAssistances);
-            console.log(arrayWeekWithDays);
 
-            renderTemplateAssistances(arrayAssistances, arrayWeekWithDays, id_tab, arraySummary);
+            renderTemplateAssistances(arrayDays, arrayHeaders, arrayAssistances, id_tab);
 
         }
     });
@@ -136,80 +138,65 @@ function changeTab() {
     var year = $('#yearCurrent').val();
 
     $.ajax({
-        url: "/dashboard/get/assistance/"+month+"/"+year,
+        url: "/dashboard/get/hour/diary/"+month+"/"+year,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
+            var arrayDays = json.arrayDays;
+            var arrayHeaders = json.arrayHeaders;
             var arrayAssistances = json.arrayAssistances;
-            var arrayWeekWithDays = json.arrayWeekWithDays;
-            var arraySummary = json.arraySummary;
+            console.log(arrayDays);
+            console.log(arrayHeaders);
             console.log(arrayAssistances);
-            console.log(arrayWeekWithDays);
-            console.log(arraySummary);
-            renderTemplateAssistances(arrayAssistances, arrayWeekWithDays, id_tab, arraySummary);
+
+            renderTemplateAssistances(arrayDays, arrayHeaders, arrayAssistances, id_tab);
 
         }
     });
 
 }
 
-function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab, arraySummary ) {
+function renderTemplateAssistances( arrayDays, arrayHeaders, arrayAssistances, id_tab ) {
 
     $('#'+id_tab).html('');
 
     var clone = activateTemplate('#template-complete');
-    var bodyWeeks = clone.querySelector("[data-bodyweeks]");
     var titulos = clone.querySelector("[data-bodytitles]");
+    var encabezados = clone.querySelector("[data-bodyheader]");
     var bodyAssistances = clone.querySelector("[data-bodyassists]");
-    var bodySummary = clone.querySelector("[data-bodySummary]");
     $('#'+id_tab).append(clone);
-
-    for (var i = 0; i < arrayWeekWithDays.length; i++) {
-        var clone2 = activateTemplate('#template-week');
-        clone2.querySelector("[data-week]").innerHTML = arrayWeekWithDays[i]['week'];
-        var days = '';
-        for (var j = 0; j < arrayWeekWithDays[i]['days'].length ; j++) {
-            days = days + '<span class="bg-gradient-success p-1">'+ arrayWeekWithDays[i]['days'][j] +'</span> ';
-        }
-        clone2.querySelector("[data-days]").innerHTML = days;
-        bodyWeeks.append(clone2);
-    }
-
     console.log(titulos);
 
-    var titles = '<th class="col-md-3" >Trabajador</th>';
-    for (var k = 0; k < arrayAssistances[0]['assistances'].length; k++) {
-        titles = titles + '<th style="width:35px;background-color:'+arrayAssistances[0]['assistances'][k]['bg_color'] +'">'+arrayAssistances[0]['assistances'][k]['number_day']+'</th>'
+    var titles = '<th style="background-color:#203764; color: #ffffff;" >DATOS</th>';
+    for (var k = 0; k < arrayDays.length; k++) {
+        titles = titles + '<th colspan="'+arrayDays[k]['colspan']+'" style="background-color:'+arrayDays[k]['color'] +'">'+arrayDays[k]['nameDay']+'</th>';
     }
     titulos.innerHTML = titles;
+    console.log(titles);
 
-    for (var l = 0; l < arrayAssistances.length ; l++) {
+    var headers = '<th style="background-color:#203764; color: #ffffff;" >APELLIDOS Y NOMBRES</th>';
+    for (var i = 0; i < arrayHeaders.length; i++) {
+        for (var j = 0; j < (arrayHeaders[i].length - 1); j++) {
+            headers = headers + '<th style="background-color:' + ( (j == arrayHeaders[i].length - 2) ? '#FFC000' : arrayHeaders[i][arrayHeaders[i].length - 1] ) + '">' + arrayHeaders[i][j] + '</th>';
+        }
+    }
+
+    encabezados.innerHTML = headers;
+    console.log(headers);
+
+    for (var k = 0; k < arrayAssistances.length ; k++) {
         var clone3 = activateTemplate('#template-assistance');
-        var assistances = '<td class="col-md-3" >' + arrayAssistances[l]['worker'] +'</td>';
-        for (var m = 0; m < arrayAssistances[l]['assistances'].length; m++) {
-            var color = (arrayAssistances[l]["assistances"][m]["status"] === "N") ? "color:black":"color:white";
-            var background = arrayAssistances[l]['assistances'][m]['color'];
-            var td_background = arrayAssistances[l]['assistances'][m]['bg_color'];
-            assistances = assistances + '<td style="width:35px; ' + color +';background-color: '+ td_background + '"><span style="display:block; text-align:center; margin:0 auto;padding: 1px;background-color:'+background+' ">'+arrayAssistances[l]['assistances'][m]['status']+'</span></td>'
+        var assistances = '<td style="background-color:#203764; color: #ffffff;" >' + arrayAssistances[k]['worker'] +'</td>';
+        for (var l = 0; l < arrayAssistances[k]['assistances'].length; l++) {
+            for (var m = 0; m < arrayAssistances[k]['assistances'][l].length-1; m++) {
+
+                assistances = assistances + '<td style="background-color:'+ ( (m === arrayAssistances[k]['assistances'][l].length-2) ? '#FFC000': arrayAssistances[k]['assistances'][l][arrayAssistances[k]['assistances'][l].length-1] ) + '">'+arrayAssistances[k]['assistances'][l][m]+'</td>';
+            }
         }
         clone3.querySelector("[data-bodyassistances]").innerHTML = assistances;
         bodyAssistances.append(clone3);
     }
-    bodySummary.innerHTML = '';
-    for (var t = 0; t < arraySummary.length ; t++) {
-        console.log(arraySummary[t]['cantA']);
-        var clone4 = activateTemplate('#template-summary');
-        clone4.querySelector("[data-summaryworker]").innerHTML = arraySummary[t]['worker'];
-        clone4.querySelector("[data-canta]").innerHTML = arraySummary[t]['cantA'];
-        clone4.querySelector("[data-cantf]").innerHTML = arraySummary[t]['cantF'];
-        clone4.querySelector("[data-cantt]").innerHTML = arraySummary[t]['cantT'];
-        clone4.querySelector("[data-cantm]").innerHTML = arraySummary[t]['cantM'];
-        clone4.querySelector("[data-cantj]").innerHTML = arraySummary[t]['cantJ'];
-        clone4.querySelector("[data-cantv]").innerHTML = arraySummary[t]['cantV'];
-        clone4.querySelector("[data-cantp]").innerHTML = arraySummary[t]['cantP'];
-        clone4.querySelector("[data-cants]").innerHTML = arraySummary[t]['cantS'];
-        bodySummary.append(clone4);
-    }
+
 }
 
 function activateTemplate(id) {

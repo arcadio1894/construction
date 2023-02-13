@@ -1480,6 +1480,10 @@ Route::middleware('auth')->group(function (){
         Route::post('/destroy/assistance/detail/{assistanceDetail_id}', 'AssistanceController@destroy')
             ->name('assistance.destroy');
 
+        Route::get('/ver/horas/diarias', 'AssistanceController@showHourDiary')
+            ->name('assistance.show.hour.diary');
+        Route::get('/get/hour/diary/{month}/{year}', 'AssistanceController@getHourDiaryMonthYear');
+
         Route::get('/download/excel/assistance/', 'AssistanceController@exportAssistancesMonthYear')
             ->name('download.excel.assistance');
 

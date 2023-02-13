@@ -1575,40 +1575,24 @@
     <script src="{{ asset('admin/plugins/MDtimepicker/js/mdtimepicker.js') }}"></script>
     <!-- Vdialog -->
     <script src="{{ asset('admin/plugins/vdialog/js/lib/vdialog.js') }}"></script>
+    <!-- FixedHeaderTable -->
+    <script src="{{ asset('admin/plugins/fixedheadertable/jquery.fixedheadertable.js') }}"></script>
 @endsection
 
 @section('scripts')
     <script>
         $(function () {
 
-            $('.timepicker').mdtimepicker({
-                format:'h:mm tt',
-                theme:'blue',
-                readOnly:true,
-                hourPadding:false,
-                clearBtn:false
-
+            $('.fixedheadertable').fixedHeaderTable({
+                footer: true,
+                fixedColumns: 1
             });
-            //$('#datemask').inputmask()
-            $('#admission_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#birthplace').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-
-            $('#termination_date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#phone').inputmask('(99) 999-999-999', { 'placeholder': '(99) 999-999-999' });
-            $('#dni').inputmask('99999999', { 'placeholder': '99999999' });
-
-            //Initialize Select2 Elements
-            $('.workingDays').select2({
-                placeholder: "Selecione una jornada",
-            });
-            $('.state').select2({
-                placeholder: "Selecione un estado",
-            });
-
 
             $("input[data-bootstrap-switch]").each(function(){
                 $(this).bootstrapSwitch();
             });
+
+
         })
     </script>
     <script src="{{ asset('js/assistance/show.js') }}"></script>

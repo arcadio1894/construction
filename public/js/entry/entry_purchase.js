@@ -337,9 +337,9 @@ function addItems() {
         for (var i = 0; i<material_quantity; i++)
         {
             renderTemplateItem();
-            $('.select2').select2();
-        }
 
+        }
+        $('.select2').select2();
         $('.locations').typeahead({
                 hint: true,
                 highlight: true, /* Enable substring highlighting */

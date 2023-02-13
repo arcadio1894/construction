@@ -267,77 +267,77 @@ function deleteAssistance() {
     console.log(assistance_id);*/
 
     vdialog({
-            type:'alert',// alert, success, error, confirm
-            title: '¿Esta seguro de eliminar la asistencia de este trabsjador?',
-            content: 'Se eliminará la asistencia',
-            okValue:'Aceptar',
-            modal:true,
-            cancelValue:'Cancelar',
-            ok: function(){
+        type:'alert',// alert, success, error, confirm
+        title: '¿Esta seguro de eliminar la asistencia de este trabsjador?',
+        content: 'Se eliminará la asistencia',
+        okValue:'Aceptar',
+        modal:true,
+        cancelValue:'Cancelar',
+        ok: function(){
 
-                $.ajax({
-                    url: '/dashboard/destroy/assistance/detail/'+assistanceDetail,
-                    method: 'POST',
-                    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                    data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, hours_discount:hours_discount }),
-                    processData:false,
-                    contentType:'application/json; charset=utf-8',
-                    success: function (data) {
-                        console.log(data);
-                        button.parent().parent().remove();
-                        vdialog.success(data.message);
-                    },
-                    error: function (data) {
-                        if( data.responseJSON.message && !data.responseJSON.errors )
-                        {
-                            toastr.error(data.responseJSON.message, 'Error',
-                                {
-                                    "closeButton": true,
-                                    "debug": false,
-                                    "newestOnTop": false,
-                                    "progressBar": true,
-                                    "positionClass": "toast-top-right",
-                                    "preventDuplicates": false,
-                                    "onclick": null,
-                                    "showDuration": "300",
-                                    "hideDuration": "1000",
-                                    "timeOut": "2000",
-                                    "extendedTimeOut": "1000",
-                                    "showEasing": "swing",
-                                    "hideEasing": "linear",
-                                    "showMethod": "fadeIn",
-                                    "hideMethod": "fadeOut"
-                                });
-                        }
-                        for ( var property in data.responseJSON.errors ) {
-                            toastr.error(data.responseJSON.errors[property], 'Error',
-                                {
-                                    "closeButton": true,
-                                    "debug": false,
-                                    "newestOnTop": false,
-                                    "progressBar": true,
-                                    "positionClass": "toast-top-right",
-                                    "preventDuplicates": false,
-                                    "onclick": null,
-                                    "showDuration": "300",
-                                    "hideDuration": "1000",
-                                    "timeOut": "2000",
-                                    "extendedTimeOut": "1000",
-                                    "showEasing": "swing",
-                                    "hideEasing": "linear",
-                                    "showMethod": "fadeIn",
-                                    "hideMethod": "fadeOut"
-                                });
-                        }
-                    },
-                });
+            $.ajax({
+                url: '/dashboard/destroy/assistance/detail/'+assistanceDetail,
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: JSON.stringify({ name_worker: name_worker, working_day:working_day, time_entry:time_entry, time_out:time_out, status:status, hours_discount:hours_discount }),
+                processData:false,
+                contentType:'application/json; charset=utf-8',
+                success: function (data) {
+                    console.log(data);
+                    button.parent().parent().remove();
+                    vdialog.success(data.message);
+                },
+                error: function (data) {
+                    if( data.responseJSON.message && !data.responseJSON.errors )
+                    {
+                        toastr.error(data.responseJSON.message, 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                    for ( var property in data.responseJSON.errors ) {
+                        toastr.error(data.responseJSON.errors[property], 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                },
+            });
 
-            },
-            cancel: function(){
-                vdialog.alert('Asistencia no eliminada');
+        },
+        cancel: function(){
+            vdialog.alert('Asistencia no eliminada');
 
-            }
-        });
+        }
+    });
 
 }
 
