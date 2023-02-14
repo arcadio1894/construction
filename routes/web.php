@@ -1708,6 +1708,10 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/test/server/side', 'OutputController@getOutputRequestServerSide')->name('test.server.side');
         Route::get('solicitudes/server/side', 'OutputController@indexOutputRequestServerside');
+
+        Route::get('/test/merge/pdfs', 'PdfsController@mergePdfs')->name('merge.pdfs');
+        Route::get('/test/save/pdfs', 'PdfsController@printQuote')->name('print.pdfs');
+
     });
 });
 

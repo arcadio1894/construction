@@ -130,11 +130,11 @@
                                         <div class="row form-group">
                                             <div class="col-md-6">
                                                 <label for="description">Altura (25cm max) </label>
-                                                <input type="number" data-height name="heights[]" step="0.1" min="0" value="{{ $image->height }}" class="form-control" />
+                                                <input type="number" data-height step="0.1" min="0" value="{{ $image->height }}" class="form-control" />
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="description">Ancho (19cm max) </label>
-                                                <input type="number" data-width name="widths[]" step="0.1" value="{{ $image->width }}" min="0" class="form-control" />
+                                                <input type="number" data-width step="0.1" value="{{ $image->width }}" min="0" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -146,9 +146,9 @@
                                             </div>--}}
                                             <br>
                                             @if ( $image->type == 'pdf' )
-                                                <a href="{{ asset('images/planos/'.$image->image) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
+                                                <a href="{{ asset('images/planos/'.$image->image) }}" target="_blank" class="btn btn-outline-success ">Ver PDF</a>
                                             @else
-                                                <button type="button" data-image="{{ asset('images/planos/'.$image->image) }}" data-alt="{{ $image->image }}" class="btn btn-outline-primary">Ver Imagen</button>
+                                                <button type="button" data-image="{{ asset('images/planos/'.$image->image) }}" data-alt="{{ $image->image }}" class="btn btn-outline-primary ">Ver Imagen</button>
                                             @endif
                                             {{--<img height="150px" width="100%" class="center" src="{{ asset('images/planos/'.$image->image) }}" />--}}
 
@@ -182,23 +182,23 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="description">Orden presentación <span class="right badge badge-danger">(*)</span></label>
-                                            <input type="number" data-order name="orderplanos[]" step="1" min="1" class="form-control" />
+                                            <input type="number" name="orderplanos[]" step="1" min="1" class="form-control" />
                                         </div>
                                         <div class="row form-group">
                                             <div class="col-md-6">
                                                 <label for="description">Altura (25cm max) </label>
-                                                <input type="number" data-height name="heights[]" step="0.1" value="0" min="0" class="form-control" />
+                                                <input type="number" name="heights[]" step="0.1" value="0" min="0" class="form-control" />
                                             </div>
                                             <div class="col-md-6">
                                                 <label for="description">Ancho (18cm max) </label>
-                                                <input type="number" data-width name="widths[]" step="0.1" value="0" min="0" class="form-control" />
+                                                <input type="number" name="widths[]" step="0.1" value="0" min="0" class="form-control" />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
                                             <div class="input-group">
                                                 <div class="custom-file">
-                                                    <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
+                                                    <input type="file" name="planos[]" accept="image/*,application/pdf" class="form-control" onchange="previewFile(this)">
                                                 </div>
                                             </div>
                                             <img height="100px" width="100%" />

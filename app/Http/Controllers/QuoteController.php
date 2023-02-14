@@ -27,6 +27,7 @@ use App\UnitMeasure;
 use App\User;
 use App\Workforce;
 use Barryvdh\DomPDF\Facade as PDF;
+use Webklex\PDFMerger\Facades\PDFMergerFacade as PDFMerger;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -636,7 +637,7 @@ class QuoteController extends Controller
                         ]);
                     } else {
                         $filename = 'pdf'.$quote_id .'_'. $this->generateRandomString(20) . '.' .$extension;
-                        $request->file('image')->move($path, $filename);
+                        $img->move($path, $filename);
 
                         ImagesQuote::create([
                             'quote_id' => $quote_id,
@@ -1054,6 +1055,13 @@ class QuoteController extends Controller
 
     public function printQuoteToCustomer($id)
     {
+        // Eliminamos elos archivos
+        $files = glob(public_path().'/pdfs/*');
+        foreach($files as $file){
+            if(is_file($file))
+                unlink($file);
+        }
+
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
@@ -1062,6 +1070,7 @@ class QuoteController extends Controller
             }])->first();
 
         $images = ImagesQuote::where('quote_id', $quote->id)
+            ->where('type', 'img')
             ->orderBy('order', 'ASC')->get();
 
         $view = view('exports.quoteCustomer', compact('quote', 'images'));
@@ -1070,11 +1079,45 @@ class QuoteController extends Controller
 
         $name = $quote->code . ' '. $quote->description_quote . '.pdf';
 
-        return $pdf->stream($name);
+        $image_path = public_path().'/pdfs/'.$name;
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+
+        $output = $pdf->output();
+        file_put_contents(public_path().'/pdfs/'.$name, $output);
+
+        $pdfPrincipal = public_path().'/pdfs/'.$name;
+
+        $oMerger = PDFMerger::init();
+
+        $oMerger->addPDF($pdfPrincipal, 'all');
+
+        $pdfs = ImagesQuote::where('quote_id', $quote->id)
+            ->where('type', 'pdf')->get();
+
+        foreach ( $pdfs as $pdf )
+        {
+            $namePdf = public_path().'/images/planos/'.$pdf->image;
+            $oMerger->addPDF($namePdf, 'all');
+        }
+
+        $oMerger->merge();
+        $oMerger->setFileName($name);
+        $oMerger->stream();
+
+        //return $pdf->stream($name);
     }
 
     public function printQuoteToInternal($id)
     {
+        // Eliminamos elos archivos
+        $files = glob(public_path().'/pdfs/*');
+        foreach($files as $file){
+            if(is_file($file))
+                unlink($file);
+        }
+
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
@@ -1083,6 +1126,7 @@ class QuoteController extends Controller
             }])->first();
 
         $images = ImagesQuote::where('quote_id', $quote->id)
+            ->where('type', 'img')
             ->orderBy('order', 'ASC')->get();
 
         $view = view('exports.quoteInternal', compact('quote', 'images'));
@@ -1091,7 +1135,34 @@ class QuoteController extends Controller
 
         $name = $quote->code . ' '. $quote->description_quote . '.pdf';
 
-        return $pdf->stream($name);
+        $image_path = public_path().'/pdfs/'.$name;
+        if (file_exists($image_path)) {
+            unlink($image_path);
+        }
+
+        $output = $pdf->output();
+        file_put_contents(public_path().'/pdfs/'.$name, $output);
+
+        $pdfPrincipal = public_path().'/pdfs/'.$name;
+
+        $oMerger = PDFMerger::init();
+
+        $oMerger->addPDF($pdfPrincipal, 'all');
+
+        $pdfs = ImagesQuote::where('quote_id', $quote->id)
+            ->where('type', 'pdf')->get();
+
+        foreach ( $pdfs as $pdf )
+        {
+            $namePdf = public_path().'/images/planos/'.$pdf->image;
+            $oMerger->addPDF($namePdf, 'all');
+        }
+
+        $oMerger->merge();
+        $oMerger->setFileName($name);
+        $oMerger->stream();
+
+        //return $pdf->stream($name);
     }
 
     public function destroyEquipmentOfQuote($id_equipment, $id_quote)
