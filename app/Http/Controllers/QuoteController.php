@@ -513,9 +513,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
-            ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
-            }])->first();
+            ->first();
 
         $images = [];
 
@@ -546,10 +544,14 @@ class QuoteController extends Controller
             $id = $request->get('image_id');
             $description = $request->get('image_description');
             $order = $request->get('image_order');
+            $height = $request->get('image_height');
+            $width = $request->get('image_width');
 
             $image = ImagesQuote::find($id);
             $image->description = $description;
             $image->order = $order;
+            $image->height = $height;
+            $image->width = $width;
             $image->save();
 
             $end = microtime(true) - $begin;
@@ -604,25 +606,48 @@ class QuoteController extends Controller
             $images = $request->planos;
             $descriptions = $request->descplanos;
             $orders = $request->orderplanos;
+            $heights = $request->heights;
+            $widths = $request->widths;
 
-            if ( count($images) != 0 && count($descriptions) )
+            if ( count($images) != 0 && count($descriptions) != 0 )
             {
                 foreach ( $images as $key => $image )
                 {
                     $path = public_path().'/images/planos/';
                     $img = $image;
 
-                    $filename = $quote_id .'_'. $this->generateRandomString(20). '.JPG';
-                    $imgQuote = Image::make($img);
-                    $imgQuote->orientate();
-                    $imgQuote->save($path.$filename, 80, 'JPG');
+                    $extension = $img->getClientOriginalExtension();
+                    //$filename = $entry->id . '.' . $extension;
+                    if ( strtoupper($extension) != "PDF" )
+                    {
+                        $filename = $quote_id .'_'. $this->generateRandomString(20). '.JPG';
+                        $imgQuote = Image::make($img);
+                        $imgQuote->orientate();
+                        $imgQuote->save($path.$filename, 80, 'JPG');
 
-                    ImagesQuote::create([
-                        'quote_id' => $quote_id,
-                        'description' => $descriptions[$key],
-                        'image' => $filename,
-                        'order' => $orders[$key],
-                    ]);
+                        ImagesQuote::create([
+                            'quote_id' => $quote_id,
+                            'description' => $descriptions[$key],
+                            'image' => $filename,
+                            'order' => $orders[$key],
+                            'type' => 'img',
+                            'height' => $heights[$key],
+                            'width' => $widths[$key]
+                        ]);
+                    } else {
+                        $filename = 'pdf'.$quote_id .'_'. $this->generateRandomString(20) . '.' .$extension;
+                        $request->file('image')->move($path, $filename);
+
+                        ImagesQuote::create([
+                            'quote_id' => $quote_id,
+                            'description' => $descriptions[$key],
+                            'image' => $filename,
+                            'order' => $orders[$key],
+                            'type' => 'pdf',
+                            'height' => $heights[$key],
+                            'width' => $widths[$key]
+                        ]);
+                    }
 
                 }
             }
@@ -639,7 +664,7 @@ class QuoteController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Imagenes guardadas con éxito'], 200);
+        return response()->json(['message' => 'Imágenes guardadas con éxito'], 200);
 
     }
 

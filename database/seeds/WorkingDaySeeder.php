@@ -13,25 +13,25 @@ class WorkingDaySeeder extends Seeder
     public function run()
     {
         WorkingDay::create([
-            'description' => 'HORARIO LUN-JUE',
-            'time_start' => '08:00:00.000',
-            'time_fin' => '18:00:00.000',
-            'enable' => true,
-        ]);
-        WorkingDay::create([
-            'description' => 'HORARIO VIERNES',
+            'description' => 'H. REGULAR',
             'time_start' => '08:00:00.000',
             'time_fin' => '17:00:00.000',
             'enable' => true,
         ]);
         WorkingDay::create([
-            'description' => 'HORARIO SABADO',
+            'description' => 'H. ADMINISTRATIVO',
+            'time_start' => '08:00:00.000',
+            'time_fin' => '18:00:00.000',
+            'enable' => true,
+        ]);
+        WorkingDay::create([
+            'description' => 'H. SABADO',
             'time_start' => '08:00:00.000',
             'time_fin' => '12:00:00.000',
             'enable' => true,
         ]);
         WorkingDay::create([
-            'description' => 'HORARIO NOCTURNO',
+            'description' => 'H. NOCTURNO',
             'time_start' => '21:00:00.000',
             'time_fin' => '06:00:00.000',
             'enable' => true,

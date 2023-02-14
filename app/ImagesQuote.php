@@ -10,7 +10,10 @@ class ImagesQuote extends Model
         'quote_id',
         'description',
         'image',
-        'order'
+        'order',
+        'type',
+        'height',
+        'width'
     ];
 
     public function quote()

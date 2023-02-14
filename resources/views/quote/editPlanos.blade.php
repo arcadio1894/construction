@@ -27,13 +27,22 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
     <!-- summernote -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/summernote/summernote-bs4.css') }}">
-
 @endsection
 
 @section('styles')
     <style>
         .select2-search__field{
             width: 100% !important;
+        }
+        .item {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 25px;
+        }
+        .item .zoo-item {
+            border: 1px solid #EEEEEE;
+            margin: 10px;
         }
     </style>
 @endsection
@@ -118,6 +127,16 @@
                                             <label for="description">Orden presentación <span class="right badge badge-danger">(*)</span></label>
                                             <input type="number" data-order step="1" min="1" class="form-control" value="{{ $image->order }}" />
                                         </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-6">
+                                                <label for="description">Altura (25cm max) </label>
+                                                <input type="number" data-height name="heights[]" step="0.1" min="0" value="{{ $image->height }}" class="form-control" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="description">Ancho (19cm max) </label>
+                                                <input type="number" data-width name="widths[]" step="0.1" value="{{ $image->width }}" min="0" class="form-control" />
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
                                             {{--<div class="input-group">
@@ -126,7 +145,12 @@
                                                 </div>
                                             </div>--}}
                                             <br>
-                                            <img height="150px" width="100%" class="center" src="{{ asset('images/planos/'.$image->image) }}" />
+                                            @if ( $image->type == 'pdf' )
+                                                <a href="{{ asset('images/planos/'.$image->image) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
+                                            @else
+                                                <button type="button" data-image="{{ asset('images/planos/'.$image->image) }}" data-alt="{{ $image->image }}" class="btn btn-outline-primary">Ver Imagen</button>
+                                            @endif
+                                            {{--<img height="150px" width="100%" class="center" src="{{ asset('images/planos/'.$image->image) }}" />--}}
 
                                         </div>
                                     </div>
@@ -158,7 +182,17 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="description">Orden presentación <span class="right badge badge-danger">(*)</span></label>
-                                            <input type="number" name="orderplanos[]" step="1" min="1" class="form-control" />
+                                            <input type="number" data-order name="orderplanos[]" step="1" min="1" class="form-control" />
+                                        </div>
+                                        <div class="row form-group">
+                                            <div class="col-md-6">
+                                                <label for="description">Altura (25cm max) </label>
+                                                <input type="number" data-height name="heights[]" step="0.1" value="0" min="0" class="form-control" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="description">Ancho (18cm max) </label>
+                                                <input type="number" data-width name="widths[]" step="0.1" value="0" min="0" class="form-control" />
+                                            </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
@@ -290,6 +324,26 @@
         <!-- /.card-footer -->
     </form>
 
+    <div id="modalImage" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver imagen</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" >
+                    <div id="zoom">
+                        <img id="imagePreview" src="" class="img-fluid" alt="">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -306,94 +360,12 @@
     <script src="{{asset('admin/plugins/summernote/summernote-bs4.min.js')}}"></script>
     <script src="{{asset('admin/plugins/summernote/lang/summernote-es-ES.js')}}"></script>
     <script src="{{ asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
-
-    <script>
-        $(function () {
-            //Initialize Select2 Elements
-            $('.textarea_edit').summernote({
-                lang: 'es-ES',
-                placeholder: 'Ingrese los detalles',
-                tabsize: 2,
-                height: 120,
-                toolbar: [
-                    ['style', ['bold', 'italic', 'underline', 'clear']],
-                    ['fontname', ['fontname']],
-                    ['para', ['ul', 'ol']],
-                    ['insert', ['link']],
-                    ['view', ['codeview', 'help']]
-                ]
-            });
-
-            $('#customer_id').select2({
-                placeholder: "Selecione cliente",
-            });
-            $('#contact_id').select2({
-                placeholder: "Selecione contacto",
-            });
-
-            $('#paymentQuote').select2({
-                placeholder: "Selecione forma de pago",
-            });
-
-            $('.unitMeasure').select2({
-                placeholder: "Seleccione unidad",
-            });
-
-            $('.material_search').select2({
-                placeholder: 'Selecciona un material',
-                ajax: {
-                    url: '/dashboard/select/materials',
-                    dataType: 'json',
-                    type: 'GET',
-                    processResults(data) {
-                        //console.log(data);
-                        return {
-                            results: $.map(data, function (item) {
-                                //console.log(item.full_description);
-                                return {
-                                    text: item.full_description,
-                                    id: item.id,
-                                }
-                            })
-                        }
-                    }
-                }
-            });
-
-            $('.consumable_search').select2({
-                placeholder: 'Selecciona un consumible',
-                ajax: {
-                    url: '/dashboard/select/consumables',
-                    dataType: 'json',
-                    type: 'GET',
-                    processResults(data) {
-                        //console.log(data);
-                        return {
-                            results: $.map(data, function (item) {
-                                //console.log(item.full_description);
-                                return {
-                                    text: item.full_description,
-                                    id: item.id,
-                                }
-                            })
-                        }
-                    }
-                }
-            });
-
-
-            $('#sandbox-container .input-daterange').datepicker({
-                todayBtn: "linked",
-                clearBtn: true,
-                language: "es",
-                multidate: false,
-                autoclose: true
-            });
-            $("input[data-bootstrap-switch]").each(function(){
-                $(this).bootstrapSwitch();
-            });
-        })
-    </script>
-
+    <script src="{{ asset('admin/plugins/zoom/jquery.zoom.js')}}"></script>
     <script src="{{ asset('js/quote/editPlanos.js') }}"></script>
+    <script>
+        $(document).ready(function(){
+
+
+        });
+    </script>
 @endsection

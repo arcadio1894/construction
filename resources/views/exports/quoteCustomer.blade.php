@@ -336,8 +336,11 @@
 
         <div class="notice">
             <div class="notice"><em><u>{{ $image->description }}</u></em></div><br>
-            <img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
-            </div><br>
+            {{--<img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
+            <img src="{{ asset('/images/planos/'.$image->image) }}" style="width:500px; height:500px" ><br>
+--}}
+            <img src="{{ asset('/images/planos/'.$image->image) }}" {{ ($image->height == 0 && $image->width == 0) ? 'class="plano contain"':'width='.(37*$image->width).'px height='.(37*$image->height).'px' }} ><br>
+        </div><br>
     @endforeach
 </div>
 <footer>
