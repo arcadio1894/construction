@@ -1724,6 +1724,22 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('hourDiary_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show.hour.diary') }}" class="nav-link @yield('activeReportHoursDiary')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Horas Diarias</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('totalHours_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show.total.hours') }}" class="nav-link @yield('activeReportTotalHours')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Total Horas</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
 

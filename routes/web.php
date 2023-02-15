@@ -1484,6 +1484,11 @@ Route::middleware('auth')->group(function (){
             ->name('assistance.show.hour.diary');
         Route::get('/get/hour/diary/{month}/{year}', 'AssistanceController@getHourDiaryMonthYear');
 
+        Route::get('/get/total/hours/by/worker/{id}', 'AssistanceController@getTotalHoursByWorker');
+
+        Route::get('/ver/total/horas', 'AssistanceController@showTotalHours')
+            ->name('assistance.show.total.hours');
+
         Route::get('/download/excel/assistance/', 'AssistanceController@exportAssistancesMonthYear')
             ->name('download.excel.assistance');
 
@@ -1700,6 +1705,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_requestSimple');
         Route::get('/get/json/outputs/simple/of/material/{id_material}', 'OutputController@getJsonOutputsSimpleOfMaterial')
             ->middleware('permission:report_requestSimple');
+
+        // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
+        Route::get('/populate/date/dimension', 'DateDimensionController@populateDateDimension');
+
 
         // TODO: Ruta para hacer pruebas en produccion para resolver las cantidades
         Route::get('/prueba/cantidades/', 'OrderPurchaseController@pruebaCantidades');

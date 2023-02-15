@@ -8,12 +8,12 @@
     active
 @endsection
 
-@section('activeReportAttendance')
+@section('activeReportHoursDiary')
     active
 @endsection
 
 @section('title')
-    Visualizar Asistencias
+    Reporte Horas Diarias
 @endsection
 
 @section('styles-plugins')
@@ -116,11 +116,11 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Reporte de asistencias</h1>
+    <h1 class="page-title">Reporte de Horas Diarias</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Asistencias</h5>
+    <h5 class="card-title">Horas Diarias</h5>
     <a href="{{ route('assistance.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar al calendario</a>
 
 @endsection
@@ -133,7 +133,7 @@
         <li class="breadcrumb-item">
             <a href="#"><i class="fa fa-archive"></i> Asistencias</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Reporte</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Horas Diarias</li>
     </ol>
 @endsection
 
