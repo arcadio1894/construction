@@ -20,7 +20,7 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     return (item.state_item === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
-                        (item.state_item === 'scrapped') ? '<span class="badge bg-warning">Retazo</span>' :
+                        (item.state_item === 'scraped') ? '<span class="badge bg-warning">Retazo</span>' :
                             (item.state_item === 'reserved') ? '<span class="badge bg-secondary">Reservado</span>' :
                                 '<span class="badge bg-danger">Indefinido</span>';
                 }
