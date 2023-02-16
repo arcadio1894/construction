@@ -46,8 +46,9 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de items en la ubicación</h5>
-    <a href="{{ route('location.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
+    <h5 class="card-title">Listado de items del material {{ $material->full_description }}</h5>
+    <input type="hidden" id="id-material" value="{{$material->id}}">
+    <a href="{{ route('location.getMaterialsLocation', $location->id) }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
 @endsection
 
 @section('content')
@@ -55,14 +56,11 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th></th>
-                <th>Material</th>
-                <th>Código</th>
+                <th>Item</th>
                 <th>Largo</th>
                 <th>Ancho</th>
-                <th>Peso</th>
-                <th>Precio</th>
                 <th>Porcentaje</th>
+                <th>Estado</th>
             </tr>
             </thead>
             <tbody>

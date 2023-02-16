@@ -1,20 +1,25 @@
 
 $(document).ready(function () {
     var idLocation = $("#id-location").val();
-    var idMaterial = $("#id-material").val();
 
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/view/location/all/items/material/"+idMaterial+"/"+idLocation,
+            url: "/dashboard/view/location/all/materials/"+idLocation,
             dataSrc: 'data'
         },
         bAutoWidth: false,
         "aoColumns": [
             { data: 'code' },
-            { data: 'length' },
-            { data: 'width' },
-            { data: 'percentage' },
-            { data: 'state_item' },
+            { data: 'description' },
+            { data: 'quantity' },
+            { data: null,
+                title: 'Acciones',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<a href="'+document.location.origin+ '/dashboard/ver/items/material/'+item.material_id+'/ubicacion/'+idLocation+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-eye"></i> Ver items</a> ';
+                }
+            },
         ],
         "aaSorting": [],
 

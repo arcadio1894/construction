@@ -520,8 +520,10 @@ Route::middleware('auth')->group(function (){
         Route::get('ubicaciones', 'LocationController@index')->name('location.index')
             ->middleware('permission:list_location');
         Route::get('/all/locations', 'LocationController@getLocations');
-        Route::get('/ver/materiales/ubicacion/{location_id}', 'LocationController@getMaterialsByLocation');
-        Route::get('/view/location/all/items/{id}', 'LocationController@getItemsLocation')->name('material.getItemsMaterial');
+        Route::get('/ver/materiales/ubicacion/{location_id}', 'LocationController@getMaterialsByLocation')->name('location.getMaterialsLocation');
+        Route::get('/view/location/all/materials/{idLocation}', 'LocationController@getMaterialsLocation');
+        Route::get('/ver/items/material/{material_id}/ubicacion/{location_id}', 'LocationController@viewItemsMaterialLocation')->name('location.getItemsMaterial');
+        Route::get('/view/location/all/items/material/{idMaterial}/{idLocation}', 'LocationController@getItemsMaterialLocation');
 
         // ENTRY
         Route::get('entradas/retaceria', 'EntryController@indexEntryScraps')->name('entry.scrap.index')

@@ -32,13 +32,17 @@ $(document).ready(function () {
                             '|AN:'+item.shelf.name+
                             '|NIV:'+item.level.name+
                             '|CON:'+item.container.name+
-                            '</p> ' } },
+                            '</p> ';
+                    }
+                },
                 { data: null,
                     title: 'Acciones',
                     wrap: true,
                     "render": function (item)
                     {
-                        return '<a href="'+document.location.origin+ '/dashboard/ver/materiales/ubicacion/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-eye"></i> Ver materiales</a> ' } },
+                        return '<a href="'+document.location.origin+ '/dashboard/ver/materiales/ubicacion/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-eye"></i> Ver materiales</a> ';
+                    }
+                },
 
             ],
             "aaSorting": [],

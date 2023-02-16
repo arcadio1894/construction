@@ -13,7 +13,7 @@
 @endsection
 
 @section('title')
-    Ubicaciones
+    Materiales en la ubicación
 @endsection
 
 @section('styles-plugins')
@@ -41,22 +41,13 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Ubicaciones</h1>
+    <h1 class="page-title">Materiales de la ubicación AR:{{ $location->area->name }}|AL:{{ $location->warehouse->name }}|ES:{{ $location->shelf->name }}|F:{{ $location->level->name }}|C:{{ $location->container->name }}|P:{{ $location->position->name }}</h1>
+    <input type="hidden" id="id-location" value="{{$location->id}}">
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de ubicaciones</h5>
-    {{--<a href="{{ route('material.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo material </a>
-    --}}
-@endsection
-
-@section('page-breadcrumb')
-    <ol class="breadcrumb float-sm-right">
-        <li class="breadcrumb-item">
-            <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
-        </li>
-        <li class="breadcrumb-item"><i class="fa fa-key"></i> Ubicaciones </li>
-    </ol>
+    <h5 class="card-title">Listado de materiales en la ubicación</h5>
+    <a href="{{ route('location.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
 @endsection
 
 @section('content')
@@ -64,9 +55,9 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
-                <th></th>
                 <th>Código</th>
-                <th>Descripcion</th>
+                <th>Material</th>
+                <th>Cantidad</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -75,6 +66,7 @@
             </tbody>
         </table>
     </div>
+
 @endsection
 
 @section('plugins')
@@ -88,5 +80,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/location/index.js') }}"></script>
+    <script src="{{ asset('js/location/materials.js') }}"></script>
 @endsection
