@@ -14,7 +14,18 @@ $(document).ready(function () {
             { data: 'length' },
             { data: 'width' },
             { data: 'percentage' },
-            { data: 'state_item' },
+            { data: null,
+                title: 'Estado',
+                wrap: true,
+                "render": function (item)
+                {
+                    return (item.state_item === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
+                        (item.state_item === 'scrapped') ? '<span class="badge bg-warning">Retazo</span>' :
+                            (item.state_item === 'reserved') ? '<span class="badge bg-secondary">Reservado</span>' :
+                                '<span class="badge bg-danger">Indefinido</span>';
+                }
+            },
+            /*{ data: 'state_item' },*/
         ],
         "aaSorting": [],
 
