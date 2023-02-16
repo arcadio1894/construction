@@ -8,14 +8,16 @@ use Maatwebsite\Excel\Concerns\FromView;
 class DatabaseMaterialsExport implements FromView
 {
     public $materials;
+    public $title;
 
-    public function __construct(array $materials)
+    public function __construct(array $materials, $title)
     {
         $this->materials = $materials;
+        $this->title = $title;
     }
 
     public function view(): View
     {
-        return view('exports.excelDataBase', ['materials'=>$this->materials]);
+        return view('exports.excelDataBase', ['materials'=>$this->materials, 'title'=>$this->title]);
     }
 }

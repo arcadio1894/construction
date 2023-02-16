@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 
 @endsection
 
@@ -229,6 +231,23 @@
                 <!-- /.info-box-content -->
             </div>
             <!-- /.info-box -->
+            <div class="info-box" id="box">
+                <span class="info-box-icon bg-success elevation-1">
+                    <a href="{{ route('report.excel.materials') }}">
+                        <i class="fas fa-database"></i>
+                    </a>
+                </span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">BASE DE DATOS POR ALMACEN</span>
+                    <button id="btn-download" class="btn btn-sm btn-outline-success">
+                        <span class="info-box-number">
+                            Descargar <i class="fas fa-cloud-download-alt"></i>
+                        </span>
+                    </button>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
         </div>
     </div>
     @endhasanyrole
@@ -1087,9 +1106,37 @@
             </div>
         </div>
     </div>--}}
+
+    <div id="modalLocations" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar ubicación para realizar la descarga</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+                    <select id="location" name="location" class="form-control select2" style="width: 100%;">
+                        <option></option>
+                        @for( $i=0; $i<count($locations); $i++ )
+                            <option value="{{ $locations[$i]['id'] }}">{{ $locations[$i]['location'] }}</option>
+                        @endfor
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-submitDownload" class="btn btn-primary" >Descargar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
+    <!-- Select2 -->
+    <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
@@ -1099,4 +1146,12 @@
     <script src="{{ asset('js/report/reportAmount.js') }}"></script>
     {{--<script src="{{ asset('js/report/viewReport.js') }}"></script>--}}
     {{--<script src="{{ asset('js/report/charts.js') }}"></script>--}}
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $('#location').select2({
+                placeholder: "Selecione una ubicación",
+            });
+        })
+    </script>
 @endsection

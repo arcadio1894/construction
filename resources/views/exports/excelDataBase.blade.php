@@ -67,7 +67,7 @@
 
 </head>
 <body>
-<h1>BASE DE MATERIALES EN ALMACÉN</h1>
+<h1>{{ $title }}</h1>
 <table id="table">
     <thead>
         <tr>

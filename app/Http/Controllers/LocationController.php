@@ -60,7 +60,7 @@ class LocationController extends Controller
         $locations = Location::with(['area', 'warehouse', 'shelf', 'level', 'container', 'position'])->get();
         foreach ( $locations as $location )
         {
-            $l = 'AR:'.$location->area->name.'|AL:'.$location->warehouse->name.'|AN:'.$location->shelf->name.'|NIV:'.$location->level->name.'|CON:'.$location->container->name.'|CON:'.$location->position->name;
+            $l = 'AR:'.$location->area->name.'|AL:'.$location->warehouse->name.'|AN:'.$location->shelf->name.'|NIV:'.$location->level->name.'|CON:'.$location->container->name.'|POS:'.$location->position->name;
             array_push($array, ['id'=> $location->id, 'location' => $l]);
         }
         //dd($array);
