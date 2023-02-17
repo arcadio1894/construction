@@ -395,6 +395,10 @@ function selectItem() {
 }
 
 function addItems() {
+
+    $itemsComplete = [];
+    $itemsSelected = [];
+
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 
@@ -595,7 +599,7 @@ function requestItemsQuantity() {
             for (var i=0; i<json.length; i++)
             {
                 //$users.push(json[i].name);
-                $itemsComplete.push(json[i]);
+                //$itemsComplete.push(json[i]);
                 if (iterator <= material_quantity)
                 {
                     renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
@@ -677,7 +681,7 @@ function requestItemsQuantity2(event) {
                 for (var i=0; i<json.length; i++)
                 {
                     //$users.push(json[i].name);
-                    $itemsComplete.push(json[i]);
+                    //$itemsComplete.push(json[i]);
                     if (iterator <= material_quantity)
                     {
                         renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
@@ -696,6 +700,9 @@ function requestItemsQuantity2(event) {
 }
 
 function addItemsScrap() {
+    $itemsComplete = [];
+    $itemsSelected = [];
+
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 
@@ -856,6 +863,9 @@ function addItemsScrap() {
 
 // TODO: agregamos item custom
 function addItemsCustom() {
+    $itemsComplete = [];
+    $itemsSelected = [];
+
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 

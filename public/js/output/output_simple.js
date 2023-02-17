@@ -216,6 +216,8 @@ function selectItem() {
 }
 
 function addItems() {
+    $itemsComplete = [];
+    $itemsSelected = [];
     if( $('#material_search').val().trim() === '' )
     {
         toastr.error('Debe elegir un material', 'Error',
@@ -384,7 +386,7 @@ function requestItemsQuantity() {
             for (var i=0; i<json.length; i++)
             {
                 //$users.push(json[i].name);
-                $itemsComplete.push(json[i]);
+                //$itemsComplete.push(json[i]);
                 if (iterator <= material_quantity)
                 {
                     renderTemplateItemSelected(i+1, json[i].code, json[i].id);
@@ -464,7 +466,7 @@ function requestItemsQuantity2(event) {
                 for (var i=0; i<json.length; i++)
                 {
                     //$users.push(json[i].name);
-                    $itemsComplete.push(json[i]);
+                    //$itemsComplete.push(json[i]);
                     if (iterator <= material_quantity)
                     {
                         renderTemplateItemSelected(i+1, json[i].code, json[i].id);
@@ -483,6 +485,8 @@ function requestItemsQuantity2(event) {
 }
 
 function addItemsScrap() {
+    $itemsComplete = [];
+    $itemsSelected = [];
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 

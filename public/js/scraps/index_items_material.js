@@ -427,7 +427,7 @@ function saveNewScrap() {
     }
 
     // TODO: Agregamos tubos pequeños
-    if ( typescrap_nuevo == 3 || typescrap_nuevo == 4 )
+    if ( typescrap_nuevo == 3 || typescrap_nuevo == 4 || typescrap_nuevo == 5 )
     {
         if( $('#length_new_nuevo').val().trim() === '' || $('#length_new_nuevo').val()<0 )
         {
@@ -484,8 +484,10 @@ function saveNewScrap() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+            $modalCreateNewScrap.modal('hide');
             setTimeout( function () {
                 $("#btn-submit-new").attr("disabled", false);
+
                 location.reload();
             }, 2000 )
         },
@@ -563,7 +565,7 @@ function showModalNewScrap() {
             }
 
             // TODO: Agregamos tubos pequeños
-            if ( json.type_scrap.id == 3 || json.type_scrap.id == 4 )
+            if ( json.type_scrap.id == 3 || json.type_scrap.id == 4 || json.type_scrap.id == 5 )
             {
                 $('#length_item_nuevo').show();
                 $('#width_item_nuevo').hide();
@@ -722,7 +724,7 @@ function saveScrap() {
     }
 
     // TODO: Agregamos tubos pequeños
-    if ( typescrap == 3 || typescrap == 4 )
+    if ( typescrap == 3 || typescrap == 4 || typescrap == 5 )
     {
         if( $('#length_new').val().trim() === '' || $('#length_new').val()<0 )
         {
@@ -765,6 +767,7 @@ function saveScrap() {
         contentType:false,
         success: function (data) {
             console.log(data);
+            $modalCreateScrap.modal('hide');
             toastr.success(data.message, 'Éxito',
                 {
                     "closeButton": true,
@@ -783,9 +786,11 @@ function saveScrap() {
                     "showMethod": "fadeIn",
                     "hideMethod": "fadeOut"
                 });
+
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
                 location.reload();
+
             }, 2000 )
         },
         error: function (data) {
@@ -865,7 +870,7 @@ function showModalCreateScrap() {
     }
 
     // TODO: Agregamos tubos pequeños
-    if ( typescrap == 3 || typescrap == 4 )
+    if ( typescrap == 3 || typescrap == 4 || typescrap == 5 )
     {
         $('#length_item').show();
         $('#width_item').hide();
