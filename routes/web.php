@@ -549,6 +549,7 @@ Route::middleware('auth')->group(function (){
         Route::post('entry_scrap/store', 'EntryController@storeEntryScrap')->name('entry.scrap.store')
             ->middleware('permission:create_entryScrap');
         Route::get('/get/materials', 'MaterialController@getJsonMaterials');
+        Route::get('/get/materials/transfer', 'MaterialController@getJsonMaterialsTransfer');
         Route::get('/get/materials/quote', 'MaterialController@getJsonMaterialsQuote');
         Route::get('/get/materials/scrap', 'MaterialController@getJsonMaterialsScrap');
         Route::get('/get/locations', 'LocationController@getJsonLocations');
@@ -616,6 +617,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/items/output/{id_material}', 'ItemController@getJsonItemsOutput');
         Route::get('/get/items/output/complete/{id_material}', 'ItemController@getJsonItemsOutputComplete');
         Route::get('/get/items/output/scraped/{id_material}', 'ItemController@getJsonItemsOutputScraped');
+        Route::get('/get/items/transfer/{id_material}', 'ItemController@getJsonItemsTransfer');
         Route::post('output_request/store', 'OutputController@storeOutputRequest')
             ->name('output.request.store')
             ->middleware('permission:create_request');
@@ -672,6 +674,10 @@ Route::middleware('auth')->group(function (){
         Route::post('transfer/cancel', 'TransferController@cancel')
             ->name('transfer.cancel')
             ->middleware('permission:destroy_transfer');
+        Route::get('ver/detalle/transferencia/{id}', 'TransferController@show')
+            ->middleware('permission:list_transfer');
+        Route::get('/get/json/show/transfer/{id}', 'TransferController@getShowTransfer');
+
 
         Route::get('get/warehouse/area/{area_id}', 'TransferController@getWarehouse')
             ->middleware('permission:create_transfer');

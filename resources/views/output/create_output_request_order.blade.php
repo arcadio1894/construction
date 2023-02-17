@@ -537,7 +537,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive p-0" style="height: 300px;">
+                    <div id="body-items-load" class="table-responsive p-0" style="height: 300px;">
                         <table class="card-body table table-head-fixed text-nowrap">
                             <thead>
                             <tr>

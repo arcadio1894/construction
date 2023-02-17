@@ -116,6 +116,44 @@ class ItemController extends Controller
 
     }
 
+    public function getJsonItemsTransfer($id_material)
+    {
+        $array = [];
+        $items = Item::select([
+            'id',
+            'material_id',
+            'code',
+            'length',
+            'width',
+            'percentage',
+            'state_item',
+            'location_id'
+        ])
+            ->with('location')
+            ->where('material_id', $id_material)
+            ->where('state_item', '<>', 'exited')->get();
+
+        foreach ( $items as $item )
+        {
+            $l = 'AR:'.$item->location->area->name.'|AL:'.$item->location->warehouse->name.'|AN:'.$item->location->shelf->name.'|NIV:'.$item->location->level->name.'|CON:'.$item->location->container->name.'|POS:'.$item->location->position->name;
+            array_push($array,
+                [
+                    'id'=> $item->id,
+                    'location' => substr($l,0,30).'...',
+                    'material_id' => $id_material,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'state_item' => $item->state_item,
+                    'percentage' => $item->percentage,
+                ]);
+        }
+
+        //dump($array[0]);
+        return json_encode($array);
+
+    }
+
     public function getJsonItemsOutput($id_material)
     {
         $array = [];

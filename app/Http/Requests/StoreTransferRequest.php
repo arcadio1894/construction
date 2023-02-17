@@ -47,9 +47,9 @@ class StoreTransferRequest extends FormRequest
         return [
             'area_id' => 'área',
             'warehouse_id' => 'almacén',
-            'shelf_id' => 'estante',
-            'level_id' => 'fila',
-            'container_id' => 'columna',
+            'shelf_id' => 'anaquel',
+            'level_id' => 'nivel',
+            'container_id' => 'contenedor',
             'position_id' => 'posición',
         ];
     }

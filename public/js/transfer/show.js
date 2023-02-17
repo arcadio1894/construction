@@ -1,40 +1,31 @@
 
 $(document).ready(function () {
+    var transfer_id = $('#transfer_id').val();
     var table = $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/get/json/transfer",
+            url: "/dashboard/get/json/show/transfer/"+transfer_id,
             dataSrc: 'data'
         },
         bAutoWidth: false,
         "aoColumns": [
-
+            { data: 'material' },
             { data: 'code' },
+            { data: 'length' },
+            { data: 'width' },
+            { data: 'percentage' },
+            { data: 'locationOrigin' },
+            { data: 'locationDestination' },
             { data: null,
-                title: 'Fecha de traslado',
+                title: 'Estado',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.created_at).format('DD-MM-YYYY') +'</p>';
+                    return (item.state_item === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
+                        (item.state_item === 'scraped') ? '<span class="badge bg-warning">Retazo</span>' :
+                            (item.state_item === 'reserved') ? '<span class="badge bg-secondary">Reservado</span>' :
+                                '<span class="badge bg-danger">Indefinido</span>';
                 }
             },
-            { data: null,
-                title: 'Ubicación Destino',
-                wrap: true,
-                "render": function (item)
-                {
-                    //console.log(item.destination_location.area.name);
-                    var location = 'AR:'+item.destination_location.area.name +'|AL:'+item.destination_location.warehouse.name+'|AN:'+item.destination_location.shelf.name+'|NIV:'+item.destination_location.level.name+'|CON:'+item.destination_location.container.name+'|POS:'+item.destination_location.position.name;
-                    return '<p> '+ location +'</p>';
-                }
-            },
-            { data: null,
-                title: 'Acciones',
-                wrap: true,
-                "render": function (item)
-                {
-                    return '<a href="'+document.location.origin+ '/dashboard/ver/detalle/transferencia/'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fas fa-search-location"></i> Ver detalle </a>';
-                }
-            }
 
         ],
         "aaSorting": [],
@@ -177,11 +168,6 @@ $(document).ready(function () {
         },
 
     } );
-
-    $formDelete = $('#formDelete');
-    $formDelete.on('submit', destroyMaterial);
-    $modalDelete = $('#modalDelete');
-    $(document).on('click', '[data-delete]', openModalDelete);
 
 });
 

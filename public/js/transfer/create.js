@@ -5,6 +5,24 @@ let $items=[];
 let $itemsComplete=[];
 let $itemsSelected=[];
 $(document).ready(function () {
+
+    $.ajax({
+        url: "/dashboard/get/materials/transfer",
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //console.log(json[0]);
+            for (var i=0; i<json.length; i++)
+            {
+                //console.log(json[i].full_description);
+                $('#material_search').append($("<option>", {
+                    value: json[i].id,
+                    text: json[i].code+' '+json[i].material
+                }));
+            }
+
+        }
+    });
     $.ajax({
         url: "/dashboard/get/materials",
         type: 'GET',
@@ -12,7 +30,6 @@ $(document).ready(function () {
         success: function (json) {
             for (var i=0; i<json.length; i++)
             {
-                $materials.push(json[i].material);
                 $materialsComplete.push(json[i]);
             }
 
@@ -39,7 +56,8 @@ $(document).ready(function () {
     //$(document).on('click', '[data-delete]', deleteItem);
 
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeTransfer);
+    //$formCreate.on('submit', storeTransfer);
+    $('#btn-submit').on('click', storeTransfer);
 
     $(document).on('click', '[data-deleteItem]', deleteItem);
 
@@ -157,6 +175,9 @@ $(document).ready(function () {
         });
 
     });
+
+    $('#btn-request-quantity').on('click', requestItemsQuantity);
+    $('#material_selected_quantity').on('keyup', requestItemsQuantity2);
 });
 
 var $formCreate;
@@ -191,12 +212,15 @@ var substringMatcher = function(strs) {
 };
 
 function saveTableItems() {
+
     console.log($itemsSelected);
+    let material_name = $('#material_selected').val();
+    let material_id = $('#material_selected_id').val();
 
     for ( var i=0; i<$itemsSelected.length; i++ )
     {
         $items.push({'item': $itemsSelected[i].id, 'code': $itemsSelected[i].code});
-        renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
+        renderTemplateMaterial(material_name, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].length, $itemsSelected[i].width, $itemsSelected[i].state_item, $itemsSelected[i].id);
     }
 
     $('#material_search').val('');
@@ -228,8 +252,188 @@ function selectItem() {
     }
 }
 
+function requestItemsQuantity() {
+    let material_name = $('#material_selected').val();
+    let material_id = $('#material_selected_id').val();
+    let material_quantity = $('#material_selected_quantity').val();
+    const result = $materialsComplete.find( material => material.id == material_id );
+    let material_stock = result.stock_current;
+    if( material_name.trim() === '' )
+    {
+        toastr.error('Debe elegir un material', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+    if( parseFloat(material_quantity) > parseFloat(material_stock) )
+    {
+        toastr.error('No hay stock suficiente en el almacén', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    $("#body-items-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+
+    $('#body-items').html('');
+
+    $.ajax({
+        url: "/dashboard/get/items/transfer/"+result.id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json){
+            console.log(json);
+            let iterator = 1;
+            for (var i=0; i<json.length; i++)
+            {
+                //$users.push(json[i].name);
+                /*$itemsComplete.push(json[i]);*/
+                //console.log($itemsComplete);
+                if (iterator <= material_quantity)
+                {
+                    renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].id);
+                    const result = $itemsComplete.find( item => item.id === json[i].id );
+                    $itemsSelected.push(result);
+                    iterator+=1;
+                } else {
+                    renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].id);
+                    iterator+=1;
+                }
+            }
+            $("#body-items-load").LoadingOverlay("hide", true);
+        }
+    });
+
+
+
+}
+
+function requestItemsQuantity2(event) {
+    if (event.keyCode === 13) {
+        let material_name = $('#material_selected').val();
+        let material_id = $('#material_selected_id').val();
+        let material_quantity = $('#material_selected_quantity').val();
+        const result = $materialsComplete.find( material => material.id == material_id );
+        let material_stock = result.stock_current;
+        if( material_name.trim() === '' )
+        {
+            toastr.error('Debe elegir un material', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+        if( parseFloat(material_quantity) > parseFloat(material_stock) )
+        {
+            toastr.error('No hay stock suficiente en el almacén', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        $('#body-items').html('');
+
+        $("#body-items-load").LoadingOverlay("show", {
+            background  : "rgba(236, 91, 23, 0.5)"
+        });
+
+        $.ajax({
+            url: "/dashboard/get/items/transfer/"+material_id,
+            type: 'GET',
+            dataType: 'json',
+            success: function (json){
+                let iterator = 1;
+                for (var i=0; i<json.length; i++)
+                {
+                    //$users.push(json[i].name);
+                    /*$itemsComplete.push(json[i]);*/
+                    //console.log($itemsComplete);
+                    if (iterator <= material_quantity)
+                    {
+                        renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].id);
+                        const result = $itemsComplete.find( item => item.id === json[i].id );
+                        $itemsSelected.push(result);
+                        iterator+=1;
+                    } else {
+                        renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].id);
+                        iterator+=1;
+                    }
+                }
+                $("#body-items-load").LoadingOverlay("hide", true);
+            }
+        });
+    }
+}
+
 function addItems() {
-    if( $('#material_search').val().trim() === '' )
+    $itemsComplete = [];
+    $itemsSelected = [];
+    var data = $('#material_search').select2('data');
+
+    console.log(data[0].text);
+
+    if( $('#material_search').val() == '' )
     {
         toastr.error('Debe elegir un material', 'Error',
             {
@@ -252,16 +456,25 @@ function addItems() {
         return;
     }
 
-    let material_name = $('#material_search').val();
+    let material_name = data[0].text.trim();
+    let material_id = data[0].id.trim();
+
     $modalAddItems.find('[id=material_selected]').val(material_name);
+    $modalAddItems.find('[id=material_selected_id]').val(material_id);
     $modalAddItems.find('[id=material_selected]').prop('disabled', true);
+
+    $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', false);
 
     $('#body-items').html('');
 
-    const result = $materialsComplete.find( material => material.material === material_name );
+    //const result = $materialsComplete.find( material => material.material === material_name );
+
+    $("#body-items-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
 
     $.ajax({
-        url: "/dashboard/get/items/output/"+result.id,
+        url: "/dashboard/get/items/transfer/"+material_id,
         type: 'GET',
         dataType: 'json',
         success: function (json) {
@@ -269,29 +482,25 @@ function addItems() {
             {
                 //$users.push(json[i].name);
                 $itemsComplete.push(json[i]);
-                renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
+                renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].id);
             }
-
+            $("#body-items-load").LoadingOverlay("hide", true);
         }
     });
 
     console.log($itemsComplete);
+    $('#material_selected_quantity').val('');
 
     $modalAddItems.modal('show');
-
-    /*$items.push({
-        "productId" : sku,
-        "qty" : qty,
-        "price" : price
-    });*/
 }
 
 function storeTransfer() {
     event.preventDefault();
     // Obtener la URL
+    $("#btn-submit").attr("disabled", true);
     var createUrl = $formCreate.data('url');
     var items = JSON.stringify($items);
-    var form = new FormData(this);
+    var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
     $.ajax({
         url: createUrl,
@@ -320,10 +529,33 @@ function storeTransfer() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 4000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -345,6 +577,7 @@ function storeTransfer() {
                     });
             }
 
+            $("#btn-submit").attr("disabled", false);
 
         },
     });
@@ -361,26 +594,43 @@ function deleteItem() {
     console.log($items);
 }
 
-function renderTemplateMaterial(material, item, location, state, price, id) {
+function renderTemplateMaterial(material, item, location, length, width, status, id) {
+    var state = (status === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
+        (status === 'scraped') ? '<span class="badge bg-warning">Retazo</span>' :
+            (status === 'reserved') ? '<span class="badge bg-secondary">Reservado</span>' :
+                '<span class="badge bg-danger">Indefinido</span>';
     var clone = activateTemplate('#item-selected');
     clone.querySelector("[data-description]").innerHTML = material;
     clone.querySelector("[data-item]").innerHTML = item;
     clone.querySelector("[data-location]").innerHTML = location;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
     clone.querySelector("[data-state]").innerHTML = state;
-    clone.querySelector("[data-price]").innerHTML = price;
     clone.querySelector("[data-deleteitem]").setAttribute('data-deleteitem', id);
     $('#body-materials').append(clone);
 }
 
-function renderTemplateItem(i, code, location, length, width, weight, price, id) {
+function renderTemplateItemSelected(i, code, location, length, width, id) {
     var clone = activateTemplate('#template-item');
     clone.querySelector("[data-id]").innerHTML = i;
     clone.querySelector("[data-serie]").innerHTML = code;
     clone.querySelector("[data-location]").innerHTML = location;
     clone.querySelector("[data-length]").innerHTML = length;
     clone.querySelector("[data-width]").innerHTML = width;
-    clone.querySelector("[data-weight]").innerHTML = weight;
-    clone.querySelector("[data-price]").innerHTML = price;
+    clone.querySelector("[data-selected]").setAttribute('data-selected', id);
+    clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
+    clone.querySelector("[data-selected]").setAttribute('checked', 'checked');
+    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);
+    $('#body-items').append(clone);
+}
+
+function renderTemplateItem(i, code, location, length, width, id) {
+    var clone = activateTemplate('#template-item');
+    clone.querySelector("[data-id]").innerHTML = i;
+    clone.querySelector("[data-serie]").innerHTML = code;
+    clone.querySelector("[data-location]").innerHTML = location;
+    clone.querySelector("[data-length]").innerHTML = length;
+    clone.querySelector("[data-width]").innerHTML = width;
     clone.querySelector("[data-selected]").setAttribute('data-selected', id);
     clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+id);
     clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+id);

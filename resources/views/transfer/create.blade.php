@@ -45,7 +45,9 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nuevo transferencias</h5>
+    <h5 class="card-title">Crear nueva transferencia</h5>
+    <a href="{{ route('transfer.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
+
 @endsection
 
 @section('page-breadcrumb')
@@ -93,7 +95,7 @@
                             </div>
 
                             <div class="col-md-4">
-                                <label for="shelf">Estante <span class="right badge badge-danger">(*)</span></label>
+                                <label for="shelf">Anaquel <span class="right badge badge-danger">(*)</span></label>
                                 <select id="shelf" name="shelf_id" class="form-control select2" style="width: 100%;">
                                     <option></option>
                                 </select>
@@ -102,13 +104,13 @@
 
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="level">Fila <span class="right badge badge-danger">(*)</span></label>
+                                <label for="level">Nivel <span class="right badge badge-danger">(*)</span></label>
                                 <select id="level" name="level_id" class="form-control select2" style="width: 100%;">
                                     <option></option>
                                 </select>
                             </div>
                             <div class="col-md-4">
-                                <label for="container">Columna <span class="right badge badge-danger">(*)</span></label>
+                                <label for="container">Contenedor <span class="right badge badge-danger">(*)</span></label>
                                 <select id="container" name="container_id" class="form-control select2" style="width: 100%;">
                                     <option></option>
                                 </select>
@@ -145,10 +147,14 @@
                             <div class="col-md-10">
                                 <div class="form-group">
                                     <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="text" id="material_search" class="form-control rounded-0 typeahead">
+                                    {{--<input type="text" id="material_search" class="form-control rounded-0 typeahead">--}}
+                                    <select id="material_search" name="material_search" class="form-control select2" style="width: 100%;">
+                                        <option></option>
 
+                                    </select>
                                 </div>
                             </div>
+
                             <div class="col-md-2">
                                 <label for="btn-add"> &nbsp; </label>
                                 <button type="button" id="btn-addItems" class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
@@ -171,9 +177,10 @@
                                             <tr>
                                                 <th>Material</th>
                                                 <th>Item</th>
+                                                <th>Largo</th>
+                                                <th>Ancho</th>
                                                 <th>Ubicación</th>
                                                 <th>Estado</th>
-                                                <th>Precio</th>
                                                 <th>Acciones</th>
                                             </tr>
                                             </thead>
@@ -183,11 +190,12 @@
                                             </tbody>
                                             <template id="item-selected">
                                                 <tr>
-                                                    <td data-description>183</td>
-                                                    <td data-item>John Doe</td>
-                                                    <td data-location>John Doe</td>
-                                                    <td data-state>John Doe</td>
-                                                    <td data-price>John Doe</td>
+                                                    <td data-description></td>
+                                                    <td data-item></td>
+                                                    <td data-length></td>
+                                                    <td data-width></td>
+                                                    <td data-location></td>
+                                                    <td data-state></td>
                                                     <td>
                                                         <button data-deleteItem="" class="btn btn-danger">Eliminar</button>
                                                     </td>
@@ -209,7 +217,7 @@
         <div class="row">
             <div class="col-12">
                 <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
-                <button type="submit" class="btn btn-outline-success float-right">Guardar material</button>
+                <button type="button" id="btn-submit" class="btn btn-outline-success float-right">Guardar transferencia</button>
             </div>
         </div>
         <!-- /.card-footer -->
@@ -224,11 +232,26 @@
                 </div>
                 <div class="modal-body">
                     <div class="row">
-                        <div class="col-md-12">
+                        <div class="col-md-8">
                             <label class="col-sm-12 control-label" for="material_selected"> Material </label>
 
                             <div class="col-sm-12">
                                 <input type="text" id="material_selected" name="material_selected" class="form-control" />
+                                <input type="hidden" id="material_selected_id" name="material_selected_id" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> Cantidad </label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="material_selected_quantity" name="material_selected_quantity" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2" id="show_btn_request_quantity">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> &nbsp;&nbsp;&nbsp; </label>
+
+                            <div class="col-sm-12">
+                                <button type="button" id="btn-request-quantity" class="btn btn-outline-primary">Pedir <i class="fas fa-arrow-circle-right"></i></button>
                             </div>
                         </div>
                     </div>
@@ -239,7 +262,7 @@
                         </div>
                     </div>
 
-                    <div class="table-responsive p-0" style="height: 300px;">
+                    <div id="body-items-load" class="table-responsive p-0" style="height: 300px;">
                         <table class="card-body table table-head-fixed text-nowrap">
                             <thead>
                             <tr>
@@ -248,8 +271,6 @@
                                 <th>Ubicación</th>
                                 <th>Largo</th>
                                 <th>Ancho</th>
-                                <th>Peso</th>
-                                <th>Precio</th>
                                 <th>Selección</th>
                             </tr>
                             </thead>
@@ -259,13 +280,11 @@
                             </tbody>
                             <template id="template-item">
                                 <tr>
-                                    <td data-id>John Doe</td>
-                                    <td data-serie>John Doe</td>
-                                    <td data-location>John Doe</td>
-                                    <td data-length>11-7-2014</td>
-                                    <td data-width>11-7-2014</td>
-                                    <td data-weight>11-7-2014</td>
-                                    <td data-price>11-7-2014</td>
+                                    <td data-id></td>
+                                    <td data-serie></td>
+                                    <td data-location></td>
+                                    <td data-length></td>
+                                    <td data-width></td>
                                     <td>
                                         <div class="icheck-success d-inline">
                                             <input type="checkbox" data-selected id="checkboxSuccess1">
@@ -295,6 +314,7 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
+    <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
 
     <script>
         $(function () {
@@ -316,6 +336,9 @@
             });
             $('#position').select2({
                 placeholder: "Selecione una posición",
+            });
+            $('#material_search').select2({
+                placeholder: "Selecione un material",
             })
         })
     </script>

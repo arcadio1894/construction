@@ -9,6 +9,7 @@ use App\Http\Requests\StoreTransferRequest;
 use App\Item;
 use App\Level;
 use App\Location;
+use App\Material;
 use App\Position;
 use App\Shelf;
 use App\Transfer;
@@ -67,12 +68,11 @@ class TransferController extends Controller
             foreach ( $items as $item )
             {
                 $item_selected = Item::find($item->item);
-                $location_origin = $item_selected->location;
 
                 TransferDetail::create([
                     'transfer_id' => $transfer->id,
                     'item_id' => $item->item,
-                    'origin_location' => $location_origin->id
+                    'origin_location' => $item_selected->location_id
                 ]);
 
                 // MOdificar la localización
@@ -88,9 +88,46 @@ class TransferController extends Controller
         return response()->json(['message' => 'Transferencia guardada con éxito.'], 200);
     }
 
-    public function show(Transfer $transfer)
+    public function show($transfer_id)
     {
-        //
+        $transfer = Transfer::find($transfer_id);
+
+        return view('transfer.show', compact('transfer'));
+
+    }
+
+    public function getShowTransfer($transfer_id)
+    {
+        $transfer = Transfer::find($transfer_id);
+
+        $details = TransferDetail::where('transfer_id', $transfer_id)->get();
+
+        $lD = 'AR:'.$transfer->destinationLocation->area->name.'|AL:'.$transfer->destinationLocation->warehouse->name.'|AN:'.$transfer->destinationLocation->shelf->name.'|NIV:'.$transfer->destinationLocation->level->name.'|CON:'.$transfer->destinationLocation->container->name.'|POS:'.$transfer->destinationLocation->position->name;
+
+        $array = [];
+
+        foreach ( $details as $detail )
+        {
+            $l = 'AR:'.$detail->originLocation->area->name.'|AL:'.$detail->originLocation->warehouse->name.'|AN:'.$detail->originLocation->shelf->name.'|NIV:'.$detail->originLocation->level->name.'|CON:'.$detail->originLocation->container->name.'|POS:'.$detail->originLocation->position->name;
+
+            $item = Item::find($detail->item_id);
+            $material = Material::find($item->material_id);
+            array_push($array,
+                [
+                    'id'=> $detail->id,
+                    'locationOrigin' => substr($l,0,30).'...',
+                    'locationDestination' => substr($lD,0,30).'...',
+                    'material_id' => $material->id,
+                    'material' => $material->full_description,
+                    'code' => $item->code,
+                    'length' => $item->length,
+                    'width' => $item->width,
+                    'state_item' => $item->state_item,
+                    'percentage' => (float)$item->percentage,
+                ]);
+        }
+
+        return datatables($array)->toJson();
     }
 
     public function edit(Transfer $transfer)

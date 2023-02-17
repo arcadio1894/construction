@@ -565,6 +565,7 @@ function selectItem() {
 }
 
 function addItems() {
+    $itemsSelected = [];
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 
@@ -896,6 +897,7 @@ function requestItemsQuantity2(event) {
 }
 
 function addItemsScrap() {
+    $itemsSelected = [];
     $('#show-btn-follow').hide();
     $('#show-btn-unfollow').hide();
 
@@ -1084,6 +1086,7 @@ function addItemsScrap() {
 
 // TODO: agregamos item custom
 function addItemsCustom() {
+    $itemsSelected = [];
     $('#show-btn-follow2').hide();
     $('#show-btn-unfollow2').hide();
     //$("#material_unit").val('').trigger('change');

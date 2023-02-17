@@ -254,6 +254,20 @@ class MaterialController extends Controller
         return datatables($materials)->toJson();
     }
 
+    public function getJsonMaterialsTransfer()
+    {
+        $materials = Material::where('enable_status', 1)->get();
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, ['id'=> $material->id, 'material' => $material->full_description, 'code' => $material->code, ]);
+        }
+
+        //dd($materials);
+        return $array;
+    }
+
     public function getJsonMaterials()
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')

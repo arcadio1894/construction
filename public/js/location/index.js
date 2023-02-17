@@ -32,6 +32,7 @@ $(document).ready(function () {
                             '|AN:'+item.shelf.name+
                             '|NIV:'+item.level.name+
                             '|CON:'+item.container.name+
+                            '|POS:'+item.position.name+
                             '</p> ';
                     }
                 },

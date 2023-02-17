@@ -45,10 +45,10 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de transferencias</h5>
-    @can('create_transfer')
-    <a href="{{ route('transfer.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo traslado </a>
-    @endcan
+    <h5 class="card-title">Detalle de la transferencia {{ $transfer->code }}</h5>
+    <a href="{{ route('transfer.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
+
+    <input type="hidden" id="transfer_id" value="{{ $transfer->id }}">
 @endsection
 
 @section('page-breadcrumb')
@@ -56,7 +56,10 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-archive"></i> Transferencias </li>
+        <li class="breadcrumb-item">
+            <a href="{{ route('transfer.index') }}"><i class="fa fa-archive"></i> Transferencias</a>
+        </li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Detalle </li>
     </ol>
 @endsection
 
@@ -65,10 +68,14 @@
         <table class="table table-bordered table-hover" id="dynamic-table">
             <thead>
             <tr>
+                <th>Material</th>
                 <th>Código</th>
-                <th>Fecha de traslado</th>
-                <th>Ubicación Destino</th>
-                <th>Acciones</th>
+                <th>Largo</th>
+                <th>Ancho</th>
+                <th>Porcentaje</th>
+                <th>Origen</th>
+                <th>Destino</th>
+                <th>Estado</th>
             </tr>
             </thead>
             <tbody>
@@ -76,7 +83,7 @@
             </tbody>
         </table>
     </div>
-    @can('destroy_transfer')
+    {{--@can('destroy_transfer')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -99,7 +106,7 @@
             </div>
         </div>
     </div>
-    @endcan
+    @endcan--}}
 @endsection
 
 @section('plugins')
@@ -114,5 +121,5 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('js/transfer/index.js') }}"></script>
+    <script src="{{ asset('js/transfer/show.js') }}"></script>
 @endsection
