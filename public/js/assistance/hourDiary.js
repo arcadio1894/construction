@@ -29,8 +29,8 @@ function downloadExcelAssistance() {
         closeIcon: true,
         animation: 'zoom',
         type: 'green',
-        title: 'Descargar asistencias de '+meses[monthCurrent-1]+' del año '+yearCurrent,
-        content: 'Se descargará las asistencias del mes y año indicados en la pantalla',
+        title: 'Descargar horas diarias de '+meses[monthCurrent-1]+' del año '+yearCurrent,
+        content: 'Se descargará las horas diarias del mes y año indicados en la pantalla',
         buttons: {
             confirm: {
                 text: 'DESCARGAR',
@@ -46,9 +46,9 @@ function downloadExcelAssistance() {
 
                     $.alert('Descargando archivo ...');
 
-                    //var url = "/dashboard/download/excel/assistance/?" + $.param(query);
+                    var url = "/dashboard/download/excel/hours/diary/?" + $.param(query);
 
-                    //window.location = url;
+                    window.location = url;
 
                 },
             },

@@ -1117,6 +1117,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_output');
         Route::get('/get/json/outputs/of/material/{id_material}', 'OutputController@getJsonOutputsOfMaterial')
             ->middleware('permission:report_output');
+        Route::get('/get/json/outputs/of/material/optimize/{id_material}', 'OutputController@getJsonOutputsOfMaterialOp')
+            ->middleware('permission:report_output');
+        Route::get('/get/json/outputs/of/material/sin/optimize/{id_material}', 'OutputController@getJsonOutputsOfMaterialSinOp')
+            ->middleware('permission:report_output');
 
         // REPORTE DE MATERIALES Y SUS ENTRADAS
         Route::get('/reporte/material/ingresos', 'EntryController@reportMaterialEntries')
@@ -1500,6 +1504,12 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/download/excel/assistance/', 'AssistanceController@exportAssistancesMonthYear')
             ->name('download.excel.assistance');
+
+        Route::get('/download/excel/hours/diary/', 'AssistanceController@exportHourDiaryMonthYear')
+            ->name('download.excel.hours.diary');
+
+        Route::get('/download/excel/total/hours/', 'AssistanceController@exportTotalHoursWorker')
+            ->name('download.excel.total.hours');
 
         // CRUD Descanso Medico
         Route::get('/all/medical/rests', 'MedicalRestController@getAllMedicalRest')

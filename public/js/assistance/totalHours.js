@@ -12,7 +12,227 @@ $(document).ready(function () {
     $('#btn-hours').on('click', fillTotalHoursTable);
     //fillTotalHoursTable();
 
+    $('#btn-download').on('click', downloadExcelTotalDiary);
+
 });
+
+function downloadExcelTotalDiary() {
+    var worker  = $('#worker').val();
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    if ( worker == '' || worker == null )
+    {
+        toastr.error('Seleccione un trabajador', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargarán el total de horas de todo el año',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        $("#hours-total").LoadingOverlay("show", {
+                            background  : "rgba(236, 91, 23, 0.5)"
+                        });
+
+                        $("#summary-hours").LoadingOverlay("show", {
+                            background  : "rgba(236, 91, 23, 0.5)"
+                        });
+
+                        var query = {
+                            start: start,
+                            end: end
+                        };
+
+                        $.ajax({
+                            url: "/dashboard/get/total/hours/by/worker/"+ worker +"/?"  + $.param(query),
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (json) {
+                                $('#body-totalHours').html('');
+                                $('#body-summaryHours').html('');
+
+                                for (var i=0; i<json.arrayByDates.length; i++)
+                                {
+                                    console.log(json.arrayByDates[i].week);
+                                    renderTemplateTotalHours(
+                                        i+1,
+                                        json.arrayByDates[i].week,
+                                        json.arrayByDates[i].date,
+                                        json.arrayByDates[i].assistances
+                                    );
+                                }
+
+                                for (var j=0; j<json.arrayByWeek.length; j++)
+                                {
+                                    renderTemplateSummaryTotalHours(
+                                        j+1,
+                                        json.arrayByWeek[j].week,
+                                        json.arrayByWeek[j].month,
+                                        json.arrayByWeek[j].date,
+                                        json.arrayByWeek[j].h_ord,
+                                        json.arrayByWeek[j].h_25,
+                                        json.arrayByWeek[j].h_35,
+                                        json.arrayByWeek[j].h_100,
+                                        json.arrayByWeek[j].h_esp
+                                    );
+                                }
+
+                                $("#hours-total").LoadingOverlay("hide", true);
+
+                                $("#summary-hours").LoadingOverlay("hide", true);
+
+                                var query2 = {
+                                    start: start,
+                                    end: end,
+                                    worker: worker
+                                };
+
+                                var url = "/dashboard/download/excel/total/hours/?" + $.param(query2);
+
+                                window.location = url;
+                            }
+                        });
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Descarga cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        $.confirm({
+            icon: 'fas fa-search',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'Descargar total horas desde '+start+' hasta '+end,
+            content: 'Se descargarán el total de horas desde la fecha indicada',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        $("#hours-total").LoadingOverlay("show", {
+                            background  : "rgba(236, 91, 23, 0.5)"
+                        });
+
+                        $("#summary-hours").LoadingOverlay("show", {
+                            background  : "rgba(236, 91, 23, 0.5)"
+                        });
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end
+                        };
+
+                        $.ajax({
+                            url: "/dashboard/get/total/hours/by/worker/"+ worker +"/?"  + $.param(query),
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function (json) {
+                                $('#body-totalHours').html('');
+                                $('#body-summaryHours').html('');
+
+                                for (var i=0; i<json.arrayByDates.length; i++)
+                                {
+                                    console.log(json.arrayByDates[i].week);
+                                    renderTemplateTotalHours(
+                                        i+1,
+                                        json.arrayByDates[i].week,
+                                        json.arrayByDates[i].date,
+                                        json.arrayByDates[i].assistances
+                                    );
+                                }
+
+                                for (var j=0; j<json.arrayByWeek.length; j++)
+                                {
+                                    renderTemplateSummaryTotalHours(
+                                        j+1,
+                                        json.arrayByWeek[j].week,
+                                        json.arrayByWeek[j].month,
+                                        json.arrayByWeek[j].date,
+                                        json.arrayByWeek[j].h_ord,
+                                        json.arrayByWeek[j].h_25,
+                                        json.arrayByWeek[j].h_35,
+                                        json.arrayByWeek[j].h_100,
+                                        json.arrayByWeek[j].h_esp
+                                    );
+                                }
+
+                                $("#hours-total").LoadingOverlay("hide", true);
+
+                                $("#summary-hours").LoadingOverlay("hide", true);
+
+                            }
+                        });
+
+                        var query2 = {
+                            start: start,
+                            end: end,
+                            worker: worker
+                        };
+
+                        var url = "/dashboard/download/excel/total/hours/?" + $.param(query2);
+
+                        window.location = url;
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Descarga cancelada.");
+                    },
+                },
+            },
+        });
+
+    }
+
+}
 
 function fillTotalHoursTable() {
     var worker  = $('#worker').val();
