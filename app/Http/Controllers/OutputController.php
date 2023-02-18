@@ -1368,36 +1368,18 @@ class OutputController extends Controller
                 /*if ( $outputDetail->items->material_id == $id_material )
                 {*/
 
-                $output = Output::with(['quote', 'responsibleUser', 'requestingUser'])
-                    ->where('indicator' , '<>', 'ors')
+                $output = Output::where('indicator' , '<>', 'ors')
                     ->find($outputDetail->output_id);
                 //dump($output);
                 if (isset( $output ))
                 {
                     $item_original = Item::find($outputDetail->item_id);
-                    /*$after_item = Item::where('code', $item_original->code)
-                        ->where('id', '<>', $item_original->id)
-                        ->orderBy('created_at', 'asc')
-                        ->first();
-
-                    if ( $after_item )
-                    {
-                        $quantity = ($item_original->percentage == 0) ? (1-(float)$after_item->percentage) : (float)$item_original->percentage-(float)$after_item->percentage;
-                    } else {
-                        $quantity = (float)$item_original->percentage;
-                    }*/
 
                     $quantity = (float)$item_original->percentage;
                     array_push($outputs, [
                         'output' => $output->id,
-                        'order_execution' => $output->execution_order,
-                        'description' => ($output->quote == null) ? 'Sin datos':$output->quote->description_quote,
-                        'date' => $output->request_date,
-                        'user_responsible' => ($output->responsibleUser == null) ? 'Sin responsable':$output->responsibleUser->name,
-                        'user_request' => ($output->requestingUser == null) ? 'Sin solicitante':$output->requestingUser->name,
                         'quantity' => $quantity
                     ]);
-                    /*}*/
                 }
             }
 
@@ -1417,6 +1399,28 @@ class OutputController extends Controller
         //dump($outputs);
         //$result = array_values( array_unique($outputs) );
 
+        $final_outputs = [];
+
+        for ( $i=0; $i<count($coutputs_final); $i++ )
+        {
+            $output_id = $coutputs_final[$i]['output'];
+            $output = Output::find($output_id);
+            $responsible = User::find($output->responsible_user);
+            $requesting = User::find($output->requesting_user);
+
+            $quote = Quote::where('order_execution', $output->execution_order)->first();
+
+            array_push($final_outputs, [
+                'output' => $coutputs_final[$i]['output'],
+                'order_execution' => $output->execution_order,
+                'description' => ($quote == null) ? 'Sin datos':$quote->description_quote,
+                'date' => $output->request_date,
+                'user_responsible' => ($output->responsible_user == null) ? 'Sin responsable':$responsible->name,
+                'user_request' => ($output->requesting_user == null) ? 'Sin solicitante':$requesting->name,
+                'quantity' => $coutputs_final[$i]['quantity']
+            ]);
+        }
+
         $end = microtime(true) - $begin;
 
         Audit::create([
@@ -1424,7 +1428,7 @@ class OutputController extends Controller
             'action' => 'Reporte de Materiales en salida',
             'time' => $end
         ]);
-        return $coutputs_final;
+        return $final_outputs;
     }
 
     public function getJsonOutputsOfMaterialSinOp( $id_material )
