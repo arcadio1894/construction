@@ -406,6 +406,84 @@ class OutputController extends Controller
         return datatables($array)->toJson();
     }
 
+    public function getOutputRequestSinOp()
+    {
+        $begin = microtime(true);
+        $outputs = Output::with('requestingUser')
+            ->with('responsibleUser')
+            ->with('quote')
+            ->where('indicator', '<>', 'ors')
+            ->where('state', '<>', 'confirmed')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $output->requestingUser->name,
+                'responsible_user' => $output->responsibleUser->name,
+                'state' => $output->state,
+                'custom' => ($itemsNull > 0) ? true: false,
+            ]);
+        }
+
+        $end = microtime(true) - $begin;
+
+        dump($end . ' segundos');
+        dd($array);
+        //return datatables($array)->toJson();
+    }
+
+    public function getOutputRequestOp()
+    {
+        $begin = microtime(true);
+        $outputs = Output::where('indicator', '<>', 'ors')
+            ->where('state', '<>', 'confirmed')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+            $requestingUser = User::find($output->requesting_user);
+            $responsibleUser = User::find($output->responsible_user);
+            $quote = '';
+            if ( $output->execution_order != null ||$output->execution_order != '' )
+            {
+                $quote = Quote::where('order_execution', $output->execution_order)->first();
+            }
+
+            array_push($array, [
+                'id' => $output->id,
+                'execution_order' => $output->execution_order,
+                'description_quote' => ($quote == '') ? 'No hay datos': $quote->description_quote,
+                'request_date' => $output->request_date,
+                'requesting_user' => $requestingUser->name,
+                'responsible_user' => $responsibleUser->name,
+                'state' => $output->state,
+                'custom' => ($itemsNull > 0) ? true: false,
+            ]);
+        }
+
+        $end = microtime(true) - $begin;
+
+        dump($end . ' segundos');
+        dd($array);
+        //dd($outputs);
+        //return datatables($array)->toJson();
+    }
+
     public function getJsonItemsOutputRequest( $output_id )
     {
         $begin = microtime(true);

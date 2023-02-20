@@ -622,6 +622,10 @@ Route::middleware('auth')->group(function (){
             ->name('output.request.store')
             ->middleware('permission:create_request');
         Route::get('/get/json/output/request', 'OutputController@getOutputRequest');
+
+        Route::get('/get/json/output/request/sin/optimize', 'OutputController@getOutputRequestSinOp');
+        Route::get('/get/json/output/request/optimize', 'OutputController@getOutputRequestOp');
+
         Route::get('/get/json/output/confirmed', 'OutputController@getOutputConfirmed');
         Route::get('/get/json/outputs/filters/confirmed', 'OutputController@getOutputsFilterConfirmed');
         Route::get('/get/json/items/output/{output_id}', 'OutputController@getJsonItemsOutputRequest');
