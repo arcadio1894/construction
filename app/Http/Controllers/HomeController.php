@@ -9,6 +9,7 @@ use App\Location;
 use App\Material;
 use App\Output;
 use App\Supplier;
+use App\Warehouse;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -45,6 +46,15 @@ class HomeController extends Controller
 
         $locations = [];
         $locations2 = Location::with(['area', 'warehouse', 'shelf', 'level', 'container', 'position'])->get();
+
+        $almacenes = [];
+        $warehouses = Warehouse::all();
+
+        foreach ($warehouses as $warehouse) {
+            array_push($almacenes, ['id'=> $warehouse->id, 'warehouse' => $warehouse->name]);
+
+        }
+
         foreach ( $locations2 as $location )
         {
             $l = 'AR:'.$location->area->name.'|AL:'.$location->warehouse->name.'|AN:'.$location->shelf->name.'|NIV:'.$location->level->name.'|CON:'.$location->container->name.'|POS:'.$location->position->name;
@@ -58,6 +68,7 @@ class HomeController extends Controller
                 'entriesCount',
                 'invoiceCount',
                 'outputCount',
-                'locations'));
+                'locations',
+                'almacenes'));
     }
 }

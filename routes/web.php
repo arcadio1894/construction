@@ -961,6 +961,7 @@ Route::middleware('auth')->group(function (){
         Route::get('report/excel/amount/stock', 'ReportController@excelAmountStock')->name('report.excel.amount');
         Route::get('report/excel/bd/materials', 'ReportController@excelBDMaterials')->name('report.excel.materials');
         Route::get('report/excel/bd/materials/location/{id}', 'ReportController@excelBDMaterialsByLocation')->name('report.excel.materials.location');
+        Route::get('report/excel/bd/materials/warehouse/{id}', 'ReportController@excelBDMaterialsByWarehouse')->name('report.excel.materials.warehouse');
         Route::get('report/chart/quote/raised', 'ReportController@chartQuotesDollarsSoles')->name('report.chart.quote.raised');
         Route::get('report/chart/quote/view/{date_start}/{date_end}', 'ReportController@chartQuotesDollarsSolesView')->name('report.chart.quote.raised.view');
         Route::get('report/chart/expense/income', 'ReportController@chartExpensesIncomeDollarsSoles')->name('report.chart.income.expense');

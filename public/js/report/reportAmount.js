@@ -82,7 +82,7 @@ function getReportByLocation() {
         background  : "rgba(61, 215, 239, 0.4)"
     });
 
-    var url = "/dashboard/report/excel/bd/materials/location/"+location_id;
+    var url = "/dashboard/report/excel/bd/materials/warehouse/"+location_id;
 
     window.location = url;
 

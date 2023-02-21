@@ -1111,15 +1111,15 @@
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Seleccionar ubicación para realizar la descarga</h4>
+                    <h4 class="modal-title">Seleccionar un almacén para realizar la descarga</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
 
                 <div class="modal-body">
                     <select id="location" name="location" class="form-control select2" style="width: 100%;">
                         <option></option>
-                        @for( $i=0; $i<count($locations); $i++ )
-                            <option value="{{ $locations[$i]['id'] }}">{{ $locations[$i]['location'] }}</option>
+                        @for( $i=0; $i<count($almacenes); $i++ )
+                            <option value="{{ $almacenes[$i]['id'] }}">{{ $almacenes[$i]['warehouse'] }}</option>
                         @endfor
                     </select>
                 </div>
@@ -1150,7 +1150,7 @@
         $(function () {
             //Initialize Select2 Elements
             $('#location').select2({
-                placeholder: "Selecione una ubicación",
+                placeholder: "Selecione un almacén",
             });
         })
     </script>

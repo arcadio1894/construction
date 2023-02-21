@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Area;
 use App\Container;
+use App\Contract;
 use App\Http\Requests\DeletePositionRequest;
 use App\Http\Requests\StorePositionRequest;
 use App\Http\Requests\UpdatePositionRequest;
@@ -23,7 +24,7 @@ class PositionController extends Controller
         $warehouse = Warehouse::find($warehouse);
         $shelf = Shelf::find($anaquel);
         $level = Level::find($nivel);
-        $container = Level::find($container);
+        $container = Container::find($container);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 

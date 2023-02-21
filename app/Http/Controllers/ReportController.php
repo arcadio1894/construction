@@ -14,6 +14,7 @@ use App\Material;
 use App\Output;
 use App\OutputDetail;
 use App\Quote;
+use App\Warehouse;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
 use Illuminate\Http\Request;
@@ -255,6 +256,73 @@ class ReportController extends Controller
         if ( !is_null($location) )
         {
             $title = 'BASE DE MATERIALES EN AREA: ' . $location->area->name . ' - ALMACEN: ' . $location->warehouse->name;
+        }
+
+        return Excel::download(new DatabaseMaterialsExport($materials_array, $title), 'reporte_base_materiales.xlsx');
+    }
+
+    public function excelBDMaterialsByWarehouse($warehouse_id)
+    {
+        $warehouse = Warehouse::find($warehouse_id);
+        $locations = Location::where('warehouse_id', $warehouse_id)->pluck('id')->toArray();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('description', 'not like', '%EDESCE%')
+            ->where('enable_status', 1)
+            ->get();
+
+        $materials_array = [];
+
+        foreach ( $materials as $material )
+        {
+            $priority = '';
+            if ( $material->stock_current > $material->stock_max ){
+                $priority = 'Completo';
+            } else if ( $material->stock_current = $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current = $material->stock_min ){
+                $priority = 'Por agotarse';
+            } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
+                $priority = 'Agotado';
+            }
+
+            $itemsCount = Item::where('material_id', $material->id)
+                ->whereIn('location_id', $locations)
+                ->where('state_item', '<>', 'exited')
+                ->count();
+
+            if ( $itemsCount > 0 )
+            {
+                array_push($materials_array, [
+                    'code' => $material->code,
+                    'material' => $material->full_description,
+                    'measure' => $material->measure,
+                    'unit' => ($material->unitMeasure == null) ? '':$material->unitMeasure->name,
+                    'stock_max' => $material->stock_max,
+                    'stock_min' => $material->stock_min,
+                    'stock_current' => $itemsCount,
+                    'priority'=> $priority,
+                    'price'=> $material->unit_price,
+                    'category'=> ($material->category == null) ? '': $material->category->name,
+                    'subcategory'=> ($material->subcategory == null) ? '': $material->subcategory->name,
+                    'type'=> ($material->materialType == null) ? '': $material->materialType->name,
+                    'subtype'=> ($material->subType == null) ? '': $material->subType->name,
+                    'brand'=> ($material->brand == null) ? '': $material->brand->name,
+                    'exampler'=> ($material->exampler == null) ? '': $material->exampler->name,
+                    'quality'=> ($material->quality == null) ? '': $material->quality->name,
+                    'warrant'=> ($material->warrant == null) ? '':$material->warrant->name,
+                    'scrap'=> ($material->typeScrap == null) ? '':$material->typeScrap->name,
+                ]);
+
+            }
+
+        }
+        //dump($materials_array);
+        $title = '';
+        if ( !is_null($warehouse) )
+        {
+            $title = 'BASE DE MATERIALES EN EL ALMACÉN: ' . $warehouse->name;
         }
 
         return Excel::download(new DatabaseMaterialsExport($materials_array, $title), 'reporte_base_materiales.xlsx');
