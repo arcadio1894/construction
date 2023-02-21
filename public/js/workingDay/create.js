@@ -15,6 +15,30 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
 
+    $('.datestart').on('timechanged', function(e){
+        var card = $(this).parent().next().next().next().children();
+        console.log(card);
+        card.removeClass('btn-outline-success');
+        card.addClass('btn-outline-warning');
+    });
+    $('.dateend').on('timechanged', function(e){
+        var card = $(this).parent().next().next().children();
+        console.log(card);
+        card.removeClass('btn-outline-success');
+        card.addClass('btn-outline-warning');
+    });
+    $(document).on('input', '[data-description]', function() {
+        var card = $(this).parent().parent().next().next().next().next().children();
+        card.removeClass('btn-outline-success');
+        card.addClass('btn-outline-warning');
+    });
+    $('.checkbox').on('switchChange.bootstrapSwitch', function (event, state) {
+        console.log($(this));
+        var card = $(this).parent().parent().parent().parent().next().children();
+        card.removeClass('btn-outline-success');
+        card.addClass('btn-outline-warning');
+    });
+
 });
 
 function mayus(e) {
@@ -23,6 +47,7 @@ function mayus(e) {
 
 function saveWorkingDay() {
     event.preventDefault();
+    var button = $(this);
     var id_workingDay = $(this).data('save');
 
     var description = $(this).parent().parent().children().children().children().next().val();
@@ -55,7 +80,10 @@ function saveWorkingDay() {
                 success: function (data) {
                     console.log(data);
                     vdialog.success(data.message);
-                    // Aqui se renderizará y se colocará los datos de la actividad
+                    button.tooltip('hide');
+                    button.attr("disabled", false);
+                    button.removeClass('btn-outline-warning');
+                    button.addClass('btn-outline-success');
                 },
                 error: function (data) {
                     if( data.responseJSON.message && !data.responseJSON.errors )
@@ -99,19 +127,24 @@ function saveWorkingDay() {
                                 "hideMethod": "fadeOut"
                             });
                     }
+                    button.tooltip('hide');
+                    button.attr("disabled", false);
                 },
             });
 
         },
         cancel: function(){
             vdialog.alert('Jornada no guardada');
-
+            button.tooltip('hide');
+            button.attr("disabled", false);
         }
     });
 }
 
 function deleteWorkingDay() {
     event.preventDefault();
+    var button = $(this);
+    button.attr("disabled", true);
     var id_workingDay = $(this).data('delete');
 
     var card = $(this).parent().parent().parent();
@@ -134,6 +167,8 @@ function deleteWorkingDay() {
                 success: function (data) {
                     console.log(data);
                     vdialog.success(data.message);
+                    button.attr("disabled", false);
+                    button.tooltip('hide');
                     card.remove();
                 },
                 error: function (data) {
@@ -178,13 +213,16 @@ function deleteWorkingDay() {
                                 "hideMethod": "fadeOut"
                             });
                     }
+                    button.tooltip('hide');
+                    button.attr("disabled", false);
                 },
             });
 
         },
         cancel: function(){
             vdialog.alert('Jornada no eliminada');
-
+            button.tooltip('hide');
+            button.attr("disabled", false);
         }
     });
 }
@@ -229,12 +267,13 @@ function addWorkingDay() {
             });
 
             $('.timepicker').mdtimepicker({
-                format:'h:mm tt',
+                timeFormat: 'hh:mm:ss.000',
+                format:'hh:mm tt',
                 theme:'blue',
                 readOnly:true,
-                hourPadding:false,
-                clearBtn:false
-
+                hourPadding:true,
+                clearBtn:false,
+                is24hour: false,
             });
             button.attr("disabled", false);
         },

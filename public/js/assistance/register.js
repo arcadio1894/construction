@@ -64,6 +64,7 @@ function mayus(e) {
 function saveAssistance() {
     event.preventDefault();
     var button = $(this);
+    button.attr("disabled", true);
     var assistanceDetail = $(this).attr('data-assistancedetail');
     var worker_id = $(this).attr('data-worker');
     var assistance_id = $('#assistance_id').val();
@@ -112,6 +113,7 @@ function saveAssistance() {
                         button.attr('data-assistancedetail', data.assistanceDetail.id);
                         button.removeClass('btn-outline-warning');
                         button.addClass('btn-outline-success');
+                        button.attr("disabled", false);
                     },
                     error: function (data) {
                         if( data.responseJSON.message && !data.responseJSON.errors )
@@ -155,13 +157,15 @@ function saveAssistance() {
                                     "hideMethod": "fadeOut"
                                 });
                         }
+
+                        button.attr("disabled", false);
                     },
                 });
 
             },
             cancel: function(){
                 vdialog.alert('Asistencia no guardada');
-
+                button.attr("disabled", false);
             }
         });
     } else {
@@ -184,6 +188,7 @@ function saveAssistance() {
                     success: function (data) {
                         console.log(data);
                         vdialog.success(data.message);
+                        button.attr("disabled", false);
                         button.removeClass('btn-outline-warning');
                         button.addClass('btn-outline-success');
                     },
@@ -229,13 +234,14 @@ function saveAssistance() {
                                     "hideMethod": "fadeOut"
                                 });
                         }
+                        button.attr("disabled", false);
                     },
                 });
 
             },
             cancel: function(){
                 vdialog.alert('Asistencia no actualizada');
-
+                button.attr("disabled", false);
             }
         });
     }
@@ -244,6 +250,7 @@ function saveAssistance() {
 function deleteAssistance() {
     event.preventDefault();
     var button = $(this);
+    button.attr("disabled", true);
     var assistanceDetail = $(this).attr('data-assistancedetail');
     var worker_id = $(this).attr('data-worker');
     var assistance_id = $('#assistance_id').val();
@@ -284,6 +291,7 @@ function deleteAssistance() {
                 contentType:'application/json; charset=utf-8',
                 success: function (data) {
                     console.log(data);
+                    button.attr("disabled", false);
                     button.parent().parent().remove();
                     vdialog.success(data.message);
                 },
@@ -329,13 +337,15 @@ function deleteAssistance() {
                                 "hideMethod": "fadeOut"
                             });
                     }
+
+                    button.attr("disabled", false);
                 },
             });
 
         },
         cancel: function(){
             vdialog.alert('Asistencia no eliminada');
-
+            button.attr("disabled", false);
         }
     });
 

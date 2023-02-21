@@ -89,16 +89,16 @@
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="input-group date" id="timepicker" data-target-input="nearest">
-                                        <input type="text" data-dateStart class="form-control timepicker" value="{{$workingDay->time_start}}" data-time2="{{$workingDay->time_start}}" />
+                                    <div class="input-group date datestart" data-target-input="nearest">
+                                        <input type="text" data-dateStart class="form-control timepicker " value="{{$workingDay->time_start}}" data-time2="{{$workingDay->time_start}}" />
                                         <div class="input-group-append">
                                             <div class="input-group-text"><i class="far fa-clock"></i></div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-2">
-                                    <div class="input-group date" id="timepicker2" data-target-input="nearest">
-                                        <input type="text" data-dateEnd class="form-control timepicker" value="{{ $workingDay->time_fin }}" data-time="12:00:00.000" />
+                                    <div class="input-group date dateend" data-target-input="nearest">
+                                        <input type="text" data-dateEnd class="form-control timepicker " value="{{ $workingDay->time_fin }}" data-time="12:00:00.000" />
                                         <div class="input-group-append" >
                                             <div class="input-group-text"><i class="far fa-clock"></i></div>
                                         </div>
@@ -106,7 +106,7 @@
                                 </div>
                                 <div class="col-md-3">
                                     <div class="form-group">
-                                        <input data-enable class="form-control" type="checkbox" {{ ($workingDay->enable) ? 'checked':'' }} name="enable" data-bootstrap-switch data-off-color="danger" data-on-text=" ACTIVO " data-off-text="INACTIVO" data-on-color="success">
+                                        <input data-enable class="form-control checkbox" type="checkbox" {{ ($workingDay->enable) ? 'checked':'' }} name="enable" data-bootstrap-switch data-off-color="danger" data-on-text=" ACTIVO " data-off-text="INACTIVO" data-on-color="success">
                                     </div>
                                 </div>
                                 <div class="col-md-1">
@@ -134,7 +134,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="input-group date" id="timepicker" data-target-input="nearest">
+                    <div class="input-group date datestart" data-target-input="nearest">
                         <input type="text" data-dateStart class="form-control timepicker" />
                         <div class="input-group-append">
                             <div class="input-group-text"><i class="far fa-clock"></i></div>
@@ -142,7 +142,7 @@
                     </div>
                 </div>
                 <div class="col-md-2">
-                    <div class="input-group date" id="timepicker2" data-target-input="nearest">
+                    <div class="input-group date dateend" data-target-input="nearest">
                         <input type="text" data-dateEnd class="form-control timepicker"/>
                         <div class="input-group-append" >
                             <div class="input-group-text"><i class="far fa-clock"></i></div>
