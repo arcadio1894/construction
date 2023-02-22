@@ -217,13 +217,39 @@ function saveTableItems() {
     let material_name = $('#material_selected').val();
     let material_id = $('#material_selected_id').val();
 
+    for ( var j=0; j<$itemsSelected.length; j++ )
+    {
+        if ( $items.find(x => x.item === $itemsSelected[j].id ) )
+        {
+            toastr.error('Hay items repetios. Elija otro', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    }
+
     for ( var i=0; i<$itemsSelected.length; i++ )
     {
         $items.push({'item': $itemsSelected[i].id, 'code': $itemsSelected[i].code});
         renderTemplateMaterial(material_name, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].length, $itemsSelected[i].width, $itemsSelected[i].state_item, $itemsSelected[i].id);
     }
 
-    $('#material_search').val('');
+    $('#material_search').val('').trigger('change');
     $('#material_selected').val('');
     $('#body-items').html('');
 

@@ -504,14 +504,11 @@ function saveTableItems() {
     var equipment_id = $modalAddItems.find('[id=equipment]').val();
     var equipment_name = $modalAddItems.find('[id=equipment_name]').val();
 
-    for ( var i=0; i<$itemsSelected.length; i++ )
+    for ( let j=0; j<$itemsSelected.length; j++ )
     {
-        if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
+        if ( $items.find(x => x.item === $itemsSelected[j].id ) )
         {
-            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
-            renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
-        } else {
-            toastr.error('Este item ya fue ingresado. Elija otro', 'Error',
+            toastr.error('Hay items repetios. Elija otro', 'Error',
                 {
                     "closeButton": true,
                     "debug": false,
@@ -531,6 +528,12 @@ function saveTableItems() {
                 });
             return;
         }
+    }
+
+    for ( let i=0; i<$itemsSelected.length; i++ )
+    {
+        $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
+        renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
     }
 
     $('#material_search').val('');

@@ -153,16 +153,10 @@ let $longitud = 20;
 function saveTableItems() {
     console.log($itemsSelected);
 
-    for ( var i=0; i<$itemsSelected.length; i++ )
+    for ( let j=0; j<$itemsSelected.length; j++ )
     {
-        //$items.push({'item': $itemsSelected[i].id});
-        //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
-        if ( !$items.find(x => x.item === $itemsSelected[i].id ) )
+        if ( $items.find(x => x.item === $itemsSelected[j].id ) )
         {
-            //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
-            $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':'','equipment_id': '','item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
-            renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].state, $itemsSelected[i].id);
-        } else {
             toastr.error('Este item ya fue ingresado. Elija otro', 'Error',
                 {
                     "closeButton": true,
@@ -182,7 +176,18 @@ function saveTableItems() {
                     "hideMethod": "fadeOut"
                 });
             return;
+
         }
+    }
+
+    for ( let i=0; i<$itemsSelected.length; i++ )
+    {
+        //$items.push({'item': $itemsSelected[i].id});
+        //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
+        //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
+        $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':'','equipment_id': '','item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
+        renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].state, $itemsSelected[i].id);
+
     }
 
     $('#material_search').val('');
