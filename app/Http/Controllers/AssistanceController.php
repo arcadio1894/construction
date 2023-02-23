@@ -861,6 +861,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1188,6 +1189,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1497,6 +1499,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1773,6 +1776,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2107,6 +2111,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2464,6 +2469,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2803,6 +2809,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )

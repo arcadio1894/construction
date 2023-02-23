@@ -206,6 +206,10 @@
                                             switch ( json.res ) {
                                                 case 1:
                                                     // Si es 1 redireccionamos al manage
+                                                    setTimeout( function () {
+                                                        location.href = json.url;
+                                                        $("#element_loader").LoadingOverlay("hide", true);
+                                                    }, 1000 );
                                                     toastr.success(json.message, 'Éxito',
                                                         {
                                                             "closeButton": true,
@@ -224,12 +228,12 @@
                                                             "showMethod": "fadeIn",
                                                             "hideMethod": "fadeOut"
                                                         });
-                                                    setTimeout( function () {
-                                                        location.href = json.url;
-                                                        $("#element_loader").LoadingOverlay("hide", true);
-                                                    }, 2000 );
                                                     break;
                                                 case 2:
+                                                    setTimeout( function () {
+                                                        location.href = json.url;
+                                                        $("#element_loader").LoadingOverlay("hide", true);
+                                                    }, 1000 );
                                                     toastr.success(json.message, 'Éxito',
                                                         {
                                                             "closeButton": true,
@@ -248,10 +252,6 @@
                                                             "showMethod": "fadeIn",
                                                             "hideMethod": "fadeOut"
                                                         });
-                                                    setTimeout( function () {
-                                                        location.href = json.url;
-                                                        $("#element_loader").LoadingOverlay("hide", true);
-                                                    }, 2000 );
                                                     break;
                                                 default:
                                                     toastr.error('Ocurrió un error inesperado.', 'Error',
