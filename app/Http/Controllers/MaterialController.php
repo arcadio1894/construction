@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Brand;
 use App\Category;
+use App\CategoryInvoice;
 use App\Exampler;
 use App\Http\Requests\DeleteMaterialRequest;
 use App\Http\Requests\StoreMaterialRequest;
@@ -14,6 +15,8 @@ use App\Quality;
 use App\Specification;
 use App\Item;
 use APP\DetailEntry;
+use App\Subcategory;
+use App\Subtype;
 use App\Typescrap;
 use App\UnitMeasure;
 use App\Warrant;
@@ -245,6 +248,7 @@ class MaterialController extends Controller
     {
         $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
             ->where('enable_status', 1)
+            ->where('category_id', '<>', 8)
             ->get();
             //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
 
@@ -252,6 +256,95 @@ class MaterialController extends Controller
         //dd($materials);
         //dd(datatables($materials)->toJson());
         return datatables($materials)->toJson();
+    }
+
+    public function indexMaterialsActivos()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('material.indexActivosFijos', compact('permissions'));
+    }
+
+    public function getAllMaterialsActivosFijos()
+    {
+        $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
+            ->where('enable_status', 1)
+            ->where('category_id', '=', 8)
+            ->get();
+        //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
+
+
+        //dd($materials);
+        //dd(datatables($materials)->toJson());
+        return datatables($materials)->toJson();
+    }
+
+    public function getAllMaterialsSinOp()
+    {
+        $begin = microtime(true);
+        $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
+            ->where('enable_status', 1)
+            ->get();
+        //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
+
+        $end = microtime(true) - $begin;
+
+        dump($end. ' segundos');
+        dd();
+        //dd(datatables($materials)->toJson());
+        //return datatables($materials)->toJson();
+    }
+
+    public function getAllMaterialsOp()
+    {
+        $begin = microtime(true);
+        $materials = Material::where('enable_status', 1)
+            ->get();
+
+        $array = [];
+
+        foreach ($materials as $material) {
+            $unit = UnitMeasure::find($material->unit_measure_id);
+            $category = Category::find($material->category_id);
+            $subcategory = Subcategory::find($material->subcategory_id);
+            $material_type = MaterialType::find($material->material_type_id);
+            $sub_type = Subtype::find($material->sub_type_id);
+            $warrant = Warrant::find($material->warrant_id);
+            $quality = Quality::find($material->quality_id);
+            $brand = Brand::find($material->brand_id);
+            $exampler = Exampler::find($material->exampler_id);
+            $type_scrap = Typescrap::find($material->type_scrap_id);
+            array_push($array, [
+                'id'=> $material->id,
+                'description' => $material->full_description,
+                'measure' => $material->measure,
+                'unit_measure' => ($material->unit_measure_id == null) ? '': $unit->name,
+                'stock_max' => $material->stock_max,
+                'stock_min'=>$material->stock_min,
+                'stock_current'=>$material->stock_current,
+                'unit_price'=>$material->unit_price,
+                'image'=>$material->image,
+                'category' => ($material->category_id == null) ? '': $category->name,
+                'subcategory' => ($material->subcategory_id == null) ? '': $subcategory->name,
+                'material_type' => ($material->material_type_id == null) ? '': $material_type->name,
+                'sub_type' => ($material->sub_type_id == null) ? '': $sub_type->name,
+                'warrant' => ($material->warrant_id == null) ? '': $warrant->name,
+                'quality' => ($material->quality_id == null) ? '': $quality->name,
+                'brand' => ($material->brand_id == null) ? '': $brand->name,
+                'exampler' => ($material->exampler_id == null) ? '': $exampler->name,
+                'type_scrap' => ($material->type_scrap_id == null) ? '': $type_scrap->name,
+            ]);
+
+        }
+        //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
+
+        $end = microtime(true) - $begin;
+
+        dump($end. ' segundos');
+        dd();
+        //dd(datatables($materials)->toJson());
+        //return datatables($materials)->toJson();
     }
 
     public function getJsonMaterialsTransfer()
@@ -287,6 +380,7 @@ class MaterialController extends Controller
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
             ->whereNotIn('category_id', [2])
+            ->where('category_id', '<>', 8)
             ->where('enable_status', 1)->get();
 
         $array = [];
@@ -389,6 +483,7 @@ class MaterialController extends Controller
     {
         $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
             ->where('enable_status', 0)
+            ->where('category_id', '<>', 8)
             ->get();
         //->get(['id', 'code', 'measure', 'stock_max', 'stock_min', 'stock_current', 'priority', 'unit_price', 'image', 'description'])->toArray();
 

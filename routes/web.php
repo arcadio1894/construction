@@ -439,6 +439,13 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_material');
         Route::get('/all/materials', 'MaterialController@getAllMaterials')->name('all.materials')
             ->middleware('permission:list_material');
+
+        Route::get('materiales/activos/fijos', 'MaterialController@indexMaterialsActivos')
+            ->name('invoice.materials.fijos')
+            ->middleware('permission:list_invoice');
+        Route::get('/all/materials/activos', 'MaterialController@getAllMaterialsActivosFijos')
+            ->middleware('permission:list_invoice');
+
         Route::get('view/material/items/{id}', 'MaterialController@getItems')->name('material.getItems');
         Route::get('view/material/all/items/{id}', 'MaterialController@getItemsMaterial')->name('material.getItemsMaterial');
         Route::post('material/enable', 'MaterialController@enableMaterial')->name('material.enable')
@@ -1729,6 +1736,96 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_requestSimple');
         Route::get('/get/json/outputs/simple/of/material/{id_material}', 'OutputController@getJsonOutputsSimpleOfMaterial')
             ->middleware('permission:report_requestSimple');
+
+        // Descuentos
+        Route::get('/all/discounts', 'DiscountController@getAllDiscount')
+            ->middleware('permission:list_discount');
+        Route::get('descuentos', 'DiscountController@index')
+            ->name('suspension.index')
+            ->middleware('permission:list_discount');
+        Route::get('crear/descuento', 'DiscountController@create')
+            ->name('discount.create')
+            ->middleware('permission:create_discount');
+        Route::post('discount/store', 'DiscountController@store')
+            ->name('discount.store')
+            ->middleware('permission:create_discount');
+        Route::get('/editar/descuento/{id}', 'DiscountController@edit')
+            ->name('discount.edit')
+            ->middleware('permission:edit_discount');
+        Route::post('discount/update', 'DiscountController@update')
+            ->name('discount.update')
+            ->middleware('permission:edit_discount');
+        Route::post('discount/destroy', 'DiscountController@destroy')
+            ->name('discount.destroy')
+            ->middleware('permission:delete_discount');
+
+        // Reembolso
+        Route::get('/all/refunds', 'RefundController@getAllRefund')
+            ->middleware('permission:list_refund');
+        Route::get('reembolsos', 'RefundController@index')
+            ->name('refund.index')
+            ->middleware('permission:list_refund');
+        Route::get('crear/reembolso', 'RefundController@create')
+            ->name('refund.create')
+            ->middleware('permission:create_refund');
+        Route::post('refund/store', 'RefundController@store')
+            ->name('refund.store')
+            ->middleware('permission:create_refund');
+        Route::get('/editar/reembolso/{id}', 'RefundController@edit')
+            ->name('refund.edit')
+            ->middleware('permission:edit_refund');
+        Route::post('refund/update', 'RefundController@update')
+            ->name('refund.update')
+            ->middleware('permission:edit_refund');
+        Route::post('refund/destroy', 'RefundController@destroy')
+            ->name('refund.destroy')
+            ->middleware('permission:delete_refund');
+
+        // Préstamos
+        Route::get('/all/loans', 'LoanController@getAllLoan')
+            ->middleware('permission:list_loan');
+        Route::get('/all/dues/loan/{id}', 'LoanController@getAllDuesLoan')
+            ->middleware('permission:listDues_loan');
+        Route::get('prestamos', 'LoanController@index')
+            ->name('loan.index')
+            ->middleware('permission:list_loan');
+        Route::get('crear/prestamo', 'LoanController@create')
+            ->name('loan.create')
+            ->middleware('permission:create_loan');
+        Route::post('loan/store', 'LoanController@store')
+            ->name('loan.store')
+            ->middleware('permission:create_loan');
+        Route::get('/editar/prestamo/{id}', 'LoanController@edit')
+            ->name('loan.edit')
+            ->middleware('permission:edit_loan');
+        Route::post('loan/update', 'LoanController@update')
+            ->name('loan.update')
+            ->middleware('permission:edit_loan');
+        Route::post('loan/destroy', 'LoanController@destroy')
+            ->name('loan.destroy')
+            ->middleware('permission:delete_loan');
+
+        // Gratificaciones
+        Route::get('/all/gratification', 'GratificationController@getAllGratifications')
+            ->middleware('permission:list_gratification');
+        Route::get('gratificaciones', 'GratificationController@index')
+            ->name('gratification.index')
+            ->middleware('permission:list_gratification');
+        Route::get('crear/gratificacion', 'GratificationController@create')
+            ->name('gratification.create')
+            ->middleware('permission:create_gratification');
+        Route::post('gratification/store', 'GratificationController@store')
+            ->name('gratification.store')
+            ->middleware('permission:create_gratification');
+        Route::get('/editar/gratificacion/{id}', 'GratificationController@edit')
+            ->name('gratification.edit')
+            ->middleware('permission:edit_gratification');
+        Route::post('gratification/update', 'GratificationController@update')
+            ->name('gratification.update')
+            ->middleware('permission:edit_gratification');
+        Route::post('gratification/destroy', 'GratificationController@destroy')
+            ->name('gratification.destroy')
+            ->middleware('permission:delete_gratification');
 
         // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
         Route::get('/populate/date/dimension', 'DateDimensionController@populateDateDimension');

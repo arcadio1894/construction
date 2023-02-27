@@ -1909,6 +1909,137 @@
                     </li>
                     @endcan
 
+                    {{--@can('enable_discountContribution')
+                        <li class="nav-item has-treeview @yield('openDiscountContribution')">
+                            <a href="#" class="nav-link @yield('activeDiscountContribution')">
+                                <i class="fas fa-hand-holding-usd"></i>
+                                <p>
+                                    Descuentos/Contribuciones
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+
+                            <ul class="nav nav-treeview">
+                                @can('enable_discount')
+                                    <li class="nav-item has-treeview @yield('openDiscounts')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Descuentos
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_discount')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('discount.index') }}" class="nav-link @yield('activeListDiscount')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar descuentos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_discount')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('discount.create') }}" class="nav-link @yield('activeCreateDiscount')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Registrar descuento</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('enable_refund')
+                                    <li class="nav-item has-treeview @yield('openRefunds')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Reembolsos
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_refund')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('refund.index') }}" class="nav-link @yield('activeListRefund')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar reembolsos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_refund')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('refund.create') }}" class="nav-link @yield('activeCreateRefund')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Registrar reembolso</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('enable_loan')
+                                    <li class="nav-item has-treeview @yield('openLoans')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Préstamos
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_loan')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('loan.index') }}" class="nav-link @yield('activeListLoan')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar préstamos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_loan')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('loan.create') }}" class="nav-link @yield('activeCreateLoan')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Registrar préstamos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('enable_gratification')
+                                    <li class="nav-item has-treeview @yield('openGratifications')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Gratificaciones
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_gratification')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('gratification.index') }}" class="nav-link @yield('activeListGratification')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar gratificación</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_gratification')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('gratification.create') }}" class="nav-link @yield('activeCreateGratification')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Crear gratificación</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan--}}
+
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>
                     @endcanany
@@ -1969,6 +2100,28 @@
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany
+
+                    @can('list_invoice')
+                        <li class="nav-item has-treeview @yield('openMaterialsActivos')">
+                            <a href="#" class="nav-link @yield('activeMaterialsActivos')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Activos Fijos
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_invoice')
+                                    <li class="nav-item">
+                                        <a href="{{route('invoice.materials.fijos')}}" class="nav-link @yield('activeListMaterialsActivos')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar Activos fijos</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
 
                     @can('list_categoryInvoice')
                         <li class="nav-item has-treeview @yield('openCategoryInvoice')">
