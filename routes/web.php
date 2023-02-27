@@ -440,6 +440,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/materials', 'MaterialController@getAllMaterials')->name('all.materials')
             ->middleware('permission:list_material');
 
+        Route::get('all/materials/sin/op', 'MaterialController@getAllMaterialsSinOp');
+        Route::get('all/materials/op', 'MaterialController@getAllMaterialsOp');
+
         Route::get('materiales/activos/fijos', 'MaterialController@indexMaterialsActivos')
             ->name('invoice.materials.fijos')
             ->middleware('permission:list_invoice');

@@ -1386,7 +1386,8 @@ class OutputController extends Controller
     public function getJsonMaterialsInOutput()
     {
         $begin = microtime(true);
-        $materials = Material::where('enable_status', 1)->get();
+        $materials = Material::where('enable_status', 1)
+            ->where('category_id', '<>', 8)->get();
 
         $array = [];
         foreach ( $materials as $material )
@@ -2925,6 +2926,7 @@ class OutputController extends Controller
         $begin = microtime(true);
         $materials = Material::where('enable_status', 1)
             ->where('typescrap_id', null)
+            ->where('category_id', '<>', 8)
             ->get();
 
         $array = [];

@@ -299,7 +299,28 @@ class MaterialController extends Controller
     public function getAllMaterialsOp()
     {
         $begin = microtime(true);
-        $materials = Material::where('enable_status', 1)
+        $materials = Material::select([
+            'id',
+            'description',
+            'measure',
+            'unit_measure_id',
+            'stock_max',
+            'stock_min',
+            'stock_current',
+            'unit_price',
+            'image',
+            'category_id',
+            'subcategory_id',
+            'material_type_id',
+            'subtype_id',
+            'warrant_id',
+            'quality_id',
+            'brand_id',
+            'exampler_id',
+            'typescrap_id',
+            'enable_status'
+        ])
+            ->where('enable_status', 1)
             ->get();
 
         $array = [];
@@ -364,7 +385,8 @@ class MaterialController extends Controller
     public function getJsonMaterials()
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
-            ->where('enable_status', 1)->get();
+            ->where('enable_status', 1)
+            ->where('category_id', '<>', 8)->get();
 
         $array = [];
         foreach ( $materials as $material )
