@@ -68,7 +68,7 @@ class Material extends Model
 
         if (isset( $this->subcategory ))
         {
-            if($this->category_id == 2 && trim($this->subcategory->name) == 'MIXTO' )
+            if( ($this->category_id == 2 && trim($this->subcategory->name) == 'MIXTO') || $this->category_id == 8 )
             {
                 $subcategory = '';
             }

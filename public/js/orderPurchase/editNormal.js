@@ -11,7 +11,7 @@ $(document).ready(function () {
         background  : "rgba(236, 91, 23, 0.5)"
     });
     $.ajax({
-        url: "/dashboard/get/materials",
+        url: "/dashboard/get/materials/entry",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
