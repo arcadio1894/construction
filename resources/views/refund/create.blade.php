@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openDiscounts')
+@section('openRefunds')
     menu-open
 @endsection
 
-@section('activeListDiscount')
+@section('activeCreateRefund')
     active
 @endsection
 
 @section('title')
-    Descuentos
+    Reembolso
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Descuento de {{ $discount->worker->first_name .' '.$discount->worker->last_name }}</h1>
+    <h1 class="page-title">Nuevo reembolso</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar permiso</h5>
-    <a href="{{ route('discount.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Descuentos</a>
+    <h5 class="card-title">Crear nuevo reembolso</h5>
+    <a href="{{ route('refund.index') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Reembolsos</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,7 +52,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('discount.index') }}"><i class="fa fa-archive"></i> Descuentos</a>
+            <a href="{{ route('refund.index') }}"><i class="fa fa-archive"></i> Reembolsos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
@@ -60,19 +60,36 @@
 
 @section('content')
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('discount.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('refund.store') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="discount_id" value="{{ $discount->id }}">
+        <div class="form-group row">
+            <div class="col-md-6">
+                <label for="worker_id">Trabajador: </label>
+                <select id="worker_id" name="worker_id" class="form-control select2" style="width: 100%;">
+                    <option></option>
+                    @foreach( $workers as $worker )
+                        <option value="{{ $worker->id }}" data-supervisor="{{  $worker->first_name . ' ' . $worker->last_name }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label for="reason">Motivo </label>
+
+                <textarea name="reason" id="reason" class="form-control"></textarea>
+
+            </div>
+
+        </div>
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="date">Fecha Descuento</label>
+                <label for="date">Fecha Reembolso</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date" value="{{ ($discount->date == null) ? '': $discount->date->format('d/m/Y') }}" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-
+                    <input type="text" id="date" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
             </div>
             <div class="col-md-6">
@@ -81,17 +98,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                     </div>
-                    <input type="number" id="amount" min="0" step="0.01" name="amount" class="form-control" value="{{ $discount->amount }}">
+                    <input type="number" id="amount" min="0" step="0.01" name="amount" class="form-control">
                 </div>
-            </div>
-        </div>
-
-        <div class="form-group row">
-            <div class="col-md-6">
-                <label for="reason">Motivo </label>
-
-                <textarea name="reason" id="reason" class="form-control">{{$discount->reason}}</textarea>
-
             </div>
         </div>
 
@@ -121,8 +129,11 @@
         $(function () {
             //$('#datemask').inputmask()
             $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#worker_id').select2({
+                placeholder: "Selecione trabajador",
+            });
 
         })
     </script>
-    <script src="{{ asset('js/discount/edit.js') }}"></script>
+    <script src="{{ asset('js/refund/create.js') }}"></script>
 @endsection

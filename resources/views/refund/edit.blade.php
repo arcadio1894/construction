@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openDiscounts')
+@section('openRefunds')
     menu-open
 @endsection
 
-@section('activeListDiscount')
+@section('activeListRefund')
     active
 @endsection
 
 @section('title')
-    Descuentos
+    Reembolsos
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Descuento de {{ $discount->worker->first_name .' '.$discount->worker->last_name }}</h1>
+    <h1 class="page-title">Reembolso de {{ $refund->worker->first_name .' '.$refund->worker->last_name }}</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar permiso</h5>
-    <a href="{{ route('discount.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Descuentos</a>
+    <h5 class="card-title">Modificar reembolso</h5>
+    <a href="{{ route('refund.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Reembolsos</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,7 +52,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('discount.index') }}"><i class="fa fa-archive"></i> Descuentos</a>
+            <a href="{{ route('refund.index') }}"><i class="fa fa-archive"></i> Reembolsos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
@@ -60,18 +60,18 @@
 
 @section('content')
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('discount.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('refund.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="discount_id" value="{{ $discount->id }}">
+        <input type="hidden" name="refund_id" value="{{ $refund->id }}">
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="date">Fecha Descuento</label>
+                <label for="date">Fecha Reembolso</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date" value="{{ ($discount->date == null) ? '': $discount->date->format('d/m/Y') }}" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="text" id="date" value="{{ ($refund->date == null) ? '': $refund->date->format('d/m/Y') }}" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
 
                 </div>
             </div>
@@ -81,7 +81,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                     </div>
-                    <input type="number" id="amount" min="0" step="0.01" name="amount" class="form-control" value="{{ $discount->amount }}">
+                    <input type="number" id="amount" min="0" step="0.01" name="amount" class="form-control" value="{{ $refund->amount }}">
                 </div>
             </div>
         </div>
@@ -90,7 +90,7 @@
             <div class="col-md-6">
                 <label for="reason">Motivo </label>
 
-                <textarea name="reason" id="reason" class="form-control">{{$discount->reason}}</textarea>
+                <textarea name="reason" id="reason" class="form-control">{{$refund->reason}}</textarea>
 
             </div>
         </div>
@@ -124,5 +124,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/discount/edit.js') }}"></script>
+    <script src="{{ asset('js/refund/edit.js') }}"></script>
 @endsection

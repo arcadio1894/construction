@@ -1783,7 +1783,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:edit_refund');
         Route::post('refund/destroy', 'RefundController@destroy')
             ->name('refund.destroy')
-            ->middleware('permission:delete_refund');
+            ->middleware('permission:destroy_refund');
 
         // Préstamos
         Route::get('/all/loans', 'LoanController@getAllLoan')
