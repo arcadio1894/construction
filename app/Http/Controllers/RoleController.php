@@ -71,7 +71,11 @@ class RoleController extends Controller
         'vacation' => 'VACACIONES',
         'license' => 'LICENCIAS',
         'permit' => 'PERMISOS TRABAJADORES',
-        'suspension' => 'SUSPENSIONES'
+        'suspension' => 'SUSPENSIONES',
+        'discountContribution' => 'DESCUENTOS Y APORTES',
+        'discount' => 'DESCUENTOS',
+        'loan' => 'PRÉSTAMOS',
+        'gratification' => 'GRATIFICACIÓN'
     ];
 
     public function index()

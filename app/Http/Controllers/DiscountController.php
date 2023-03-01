@@ -90,7 +90,7 @@ class DiscountController extends Controller
         DB::beginTransaction();
         try {
 
-            $discount = Discount::find($request->get('permit_id'));
+            $discount = Discount::find($request->get('discount_id'));
 
             $discount->reason = $request->get('reason');
             $discount->date = ($request->get('date') != null || $request->get('date') != '') ? Carbon::createFromFormat('d/m/Y', $request->get('date')) : null;
@@ -174,7 +174,7 @@ class DiscountController extends Controller
 
     }
 
-    public function getAllPermits()
+    public function getAllDiscounts()
     {
         $discounts = Discount::select('id', 'date', 'reason', 'amount', 'worker_id', 'created_at')
             ->with('worker')

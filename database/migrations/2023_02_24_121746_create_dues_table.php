@@ -15,6 +15,14 @@ class CreateDuesTable extends Migration
     {
         Schema::create('dues', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('loan_id')->nullable()
+                ->constrained('loans')->nullOnDelete();
+            $table->date('date')->nullable();
+            $table->integer('num_due')->nullable()->default(0);
+            $table->float('amount')->nullable()->default(0);
+            $table->foreignId('worker_id')->nullable()
+                ->constrained('workers')->nullOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

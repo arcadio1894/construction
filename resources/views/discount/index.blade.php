@@ -1,23 +1,23 @@
 @extends('layouts.appAdmin2')
 
-@section('openHourSpecial')
+@section('openDiscountContribution')
     menu-open
 @endsection
 
-@section('activeHourSpecial')
+@section('activeDiscountContribution')
     active
 @endsection
 
-@section('openPermit')
+@section('openDiscounts')
     menu-open
 @endsection
 
-@section('activeListPermit')
+@section('activeListDiscount')
     active
 @endsection
 
 @section('title')
-    Permisos
+    Descuentos
 @endsection
 
 @section('styles-plugins')
@@ -38,8 +38,8 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado de permisos</h5>
-    <a href="{{ route('permit.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo permiso </a>
+    <h5 class="card-title">Listado de descuentos</h5>
+    <a href="{{ route('discount.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Descuento </a>
 
 @endsection
 
@@ -49,7 +49,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('permit.index') }}"><i class="fa fa-archive"></i> Permisos</a>
+            <a href="{{ route('discount.index') }}"><i class="fa fa-archive"></i> Descuentos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -65,8 +65,8 @@
                 <th>Código</th>
                 <th>Colaborador</th>
                 <th>Motivo</th>
-                <th>Fecha Inicio</th>
-                <th>Fecha Término</th>
+                <th>Fecha Descuento</th>
+                <th>Monto</th>
                 <th>Acciones</th>
             </tr>
             </thead>
@@ -83,12 +83,11 @@
                     <h4 class="modal-title">Confirmar eliminación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('permit.destroy') }}">
+                <form id="formDelete" data-url="{{ route('discount.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="permit_id" name="permit_id">
-                        <strong> ¿Desea eliminar este permiso? </strong>
-                        <p> Deberá verificar las asistencias en las fechas del descanso </p>
+                        <input type="hidden" id="discount_id" name="discount_id">
+                        <strong> ¿Desea eliminar este descuento? </strong>
                         <p id="code"></p>
                     </div>
                     <div class="modal-footer">
@@ -115,5 +114,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/permit/index.js') }}"></script>
+    <script src="{{ asset('js/discount/index.js') }}"></script>
 @endsection

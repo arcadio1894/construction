@@ -1,23 +1,23 @@
 @extends('layouts.appAdmin2')
 
-@section('openHourSpecial')
+@section('openDiscountContribution')
     menu-open
 @endsection
 
-@section('activeHourSpecial')
+@section('activeDiscountContribution')
     active
 @endsection
 
-@section('openLicenses')
+@section('openDiscounts')
     menu-open
 @endsection
 
-@section('activeCreatePermit')
+@section('activeCreateDiscount')
     active
 @endsection
 
 @section('title')
-    Permisos
+    Descuentos
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Nuevo permiso</h1>
+    <h1 class="page-title">Nuevo descuento</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nueva permiso</h5>
-    <a href="{{ route('permit.index') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Permisos</a>
+    <h5 class="card-title">Crear nuevo descuento</h5>
+    <a href="{{ route('discount.index') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Descuentos</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,32 +52,20 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('permit.index') }}"><i class="fa fa-archive"></i> Permisos</a>
+            <a href="{{ route('discount.index') }}"><i class="fa fa-archive"></i> Descuentos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
     </ol>
 @endsection
 
 @section('content')
-    <div class="row">
-        <div class="col-md-12">
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Importante!</strong> Al crear un permiso se modificarán las asistencias de los días colocados.
-                <br>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-        </div>
-    </div>
-    <br>
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('permit.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('discount.store') }}" enctype="multipart/form-data">
         @csrf
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="worker_id">Trabajador: </label>
-                <select id="worker_id" name="worker_id" class="form-control form-control-sm select2" style="width: 100%;">
+                <select id="worker_id" name="worker_id" class="form-control select2" style="width: 100%;">
                     <option></option>
                     @foreach( $workers as $worker )
                         <option value="{{ $worker->id }}" data-supervisor="{{  $worker->first_name . ' ' . $worker->last_name }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
@@ -96,21 +84,21 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="date_start">Fecha Inicio</label>
+                <label for="date">Fecha Descuento</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date_start" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="text" id="date" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="date_end">Fecha Fin</label>
+                <label for="amount">Monto</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                        <span class="input-group-text"><i class="fas fa-dollar-sign"></i></span>
                     </div>
-                    <input type="text" id="date_end" name="date_end" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="number" id="amount" min="0" step="0.01" name="amount" class="form-control">
                 </div>
             </div>
         </div>
@@ -140,13 +128,12 @@
     <script>
         $(function () {
             //$('#datemask').inputmask()
-            $('#date_start').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#date_end').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#worker_id').select2({
                 placeholder: "Selecione trabajador",
             });
 
         })
     </script>
-    <script src="{{ asset('js/permit/create.js') }}"></script>
+    <script src="{{ asset('js/discount/create.js') }}"></script>
 @endsection

@@ -15,6 +15,12 @@ class CreateRefundsTable extends Migration
     {
         Schema::create('refunds', function (Blueprint $table) {
             $table->id();
+            $table->text('reason')->nullable();
+            $table->date('date')->nullable();
+            $table->float('amount')->nullable()->default(0);
+            $table->foreignId('worker_id')->nullable()
+                ->constrained('workers')->nullOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

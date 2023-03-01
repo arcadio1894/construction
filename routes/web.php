@@ -1742,10 +1742,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_requestSimple');
 
         // Descuentos
-        Route::get('/all/discounts', 'DiscountController@getAllDiscount')
+        Route::get('/all/discounts', 'DiscountController@getAllDiscounts')
             ->middleware('permission:list_discount');
         Route::get('descuentos', 'DiscountController@index')
-            ->name('suspension.index')
+            ->name('discount.index')
             ->middleware('permission:list_discount');
         Route::get('crear/descuento', 'DiscountController@create')
             ->name('discount.create')
@@ -1761,7 +1761,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:edit_discount');
         Route::post('discount/destroy', 'DiscountController@destroy')
             ->name('discount.destroy')
-            ->middleware('permission:delete_discount');
+            ->middleware('permission:destroy_discount');
 
         // Reembolso
         Route::get('/all/refunds', 'RefundController@getAllRefund')

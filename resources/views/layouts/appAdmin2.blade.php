@@ -1909,12 +1909,12 @@
                     </li>
                     @endcan
 
-                    {{--@can('enable_discountContribution')
+                    @can('enable_discountContribution')
                         <li class="nav-item has-treeview @yield('openDiscountContribution')">
                             <a href="#" class="nav-link @yield('activeDiscountContribution')">
                                 <i class="fas fa-hand-holding-usd"></i>
                                 <p>
-                                    Descuentos/Contribuciones
+                                    Desc./Contrib.
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -2038,7 +2038,7 @@
                                 @endcan
                             </ul>
                         </li>
-                    @endcan--}}
+                    @endcan
 
                     @canany('enable_orderService')
                         <li class="nav-header">ORDENES DE SERVICIO</li>

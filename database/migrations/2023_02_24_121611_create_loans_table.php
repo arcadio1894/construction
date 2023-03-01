@@ -15,6 +15,15 @@ class CreateLoansTable extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
+            $table->text('reason')->nullable();
+            $table->date('date')->nullable();
+            $table->integer('num_dues')->nullable()->default(0);
+            $table->float('rate')->nullable()->default(0);
+            $table->integer('time_pay')->nullable()->default(0);
+            $table->float('amount_total')->nullable()->default(0);
+            $table->foreignId('worker_id')->nullable()
+                ->constrained('workers')->nullOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
