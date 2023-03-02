@@ -1789,7 +1789,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/loans', 'LoanController@getAllLoan')
             ->middleware('permission:list_loan');
         Route::get('/all/dues/loan/{id}', 'LoanController@getAllDuesLoan')
-            ->middleware('permission:listDues_loan');
+            ->middleware('permission:list_loan');
         Route::get('prestamos', 'LoanController@index')
             ->name('loan.index')
             ->middleware('permission:list_loan');
@@ -1807,7 +1807,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:edit_loan');
         Route::post('loan/destroy', 'LoanController@destroy')
             ->name('loan.destroy')
-            ->middleware('permission:delete_loan');
+            ->middleware('permission:destroy_loan');
 
         // Gratificaciones
         Route::get('/all/gratification', 'GratificationController@getAllGratifications')
