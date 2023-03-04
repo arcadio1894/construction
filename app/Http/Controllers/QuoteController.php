@@ -1077,7 +1077,7 @@ class QuoteController extends Controller
 
         $pdf = PDF::loadHTML($view);
 
-        $description = str_replace(array('"', "'"),'',$quote->description_quote);
+        $description = str_replace(array('"', "'", "/"),'',$quote->description_quote);
 
         $name = $quote->code . ' '. ltrim(rtrim($description)) . '.pdf';
 
