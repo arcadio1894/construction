@@ -1077,7 +1077,9 @@ class QuoteController extends Controller
 
         $pdf = PDF::loadHTML($view);
 
-        $name = $quote->code . ' '. $quote->description_quote . '.pdf';
+        $description = str_replace(array('"', "'"),'',$quote->description_quote);
+
+        $name = $quote->code . ' '. ltrim(rtrim($description)) . '.pdf';
 
         $image_path = public_path().'/pdfs/'.$name;
         if (file_exists($image_path)) {
@@ -1085,6 +1087,7 @@ class QuoteController extends Controller
         }
 
         $output = $pdf->output();
+
         file_put_contents(public_path().'/pdfs/'.$name, $output);
 
         $pdfPrincipal = public_path().'/pdfs/'.$name;
