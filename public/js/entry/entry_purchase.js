@@ -5,7 +5,7 @@ let $locationsComplete=[];
 let $items=[];
 $(document).ready(function () {
     $.ajax({
-        url: "/dashboard/get/materials",
+        url: "/dashboard/get/materials/entry",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
