@@ -14,7 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome2');
+    //return view('welcome');
 });
 
 //LANDING
@@ -450,7 +451,9 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_invoice');
 
         Route::get('view/material/items/{id}', 'MaterialController@getItems')->name('material.getItems');
+        Route::get('view/material/activo/items/{id}', 'MaterialController@getItemsMaterialActivo')->name('material.getItems.active');
         Route::get('view/material/all/items/{id}', 'MaterialController@getItemsMaterial')->name('material.getItemsMaterial');
+        Route::get('view/material/activo/all/items/{id}', 'MaterialController@getItemsMaterialAllActivos')->name('material.getItemsMaterial.activos');
         Route::post('material/enable', 'MaterialController@enableMaterial')->name('material.enable')
             ->middleware('permission:enable_material');
         Route::post('material/disable', 'MaterialController@disableMaterial')->name('material.disable')
@@ -646,10 +649,10 @@ Route::middleware('auth')->group(function (){
 
         Route::post('output_request/attend', 'OutputController@attendOutputRequest')
             ->name('output.attend')
-            ->middleware('permission:attend_request');
+            ->middleware('permission:attend_request|attend_requestSimple');
         Route::post('output_request/confirm', 'OutputController@confirmOutputRequest')
             ->name('output.confirmed')
-            ->middleware('permission:confirm_output');
+            ->middleware('permission:confirm_output|confirm_requestSimple');
         Route::post('output_request/delete/total', 'OutputController@destroyTotalOutputRequest')
             ->name('output.request.destroy')
             ->middleware('permission:confirm_output');
@@ -1702,6 +1705,9 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/solicitud/area', 'OutputController@createOutputSimple')
             ->name('output.simple.create')
             ->middleware('permission:create_requestSimple');
+        Route::get('crear/solicitud/area/activos', 'OutputController@createOutputSimpleActivo')
+            //->name('output.simple.create.')
+            ->middleware('permission:create_requestSimple');
         Route::post('output/area/store', 'OutputController@storeOutputSimple')
             ->name('output.simple.store')
             ->middleware('permission:create_requestSimple');
@@ -1830,6 +1836,8 @@ Route::middleware('auth')->group(function (){
         Route::post('gratification/destroy', 'GratificationController@destroy')
             ->name('gratification.destroy')
             ->middleware('permission:delete_gratification');
+
+
 
         // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
         Route::get('/populate/date/dimension', 'DateDimensionController@populateDateDimension');

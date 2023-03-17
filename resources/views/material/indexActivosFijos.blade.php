@@ -154,7 +154,7 @@
                 <th>Unidad Medida</th>
                 <th>Stock Max</th>
                 <th>Stock Min</th>
-                <th>Stock Actual</th>
+                <th>Stock Activo</th>
                 <th>Prioridad</th>
                 <th>Precio Unitario</th>
                 <th>Imagen</th>

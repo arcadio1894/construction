@@ -16,7 +16,8 @@ class OutputDetail extends Model
         'material_id',
         'equipment_id',
         'quote_id',
-        'custom'
+        'custom',
+        'activo'
     ];
 
     public function output()

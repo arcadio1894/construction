@@ -18,7 +18,9 @@ class Item extends Model
         'typescrap_id',
         'location_id',
         'state',
-        'state_item'
+        'state_item',
+        'type',
+        'usage'
     ];
 
     public function detailEntry()

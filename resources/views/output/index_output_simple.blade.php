@@ -203,7 +203,7 @@
         </div>
     </div>
 
-    @can('attend_request')
+    @can('attend_requestSimple')
     <div id="modalAttend" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -211,7 +211,7 @@
                     <h4 class="modal-title">Atender solicitud</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formAttend" data-url="{{ route('output.attend') }}">
+                <form id="formAttend" data-url="{{ route('output.simple.attend') }}">
                     @csrf
                     <div class="modal-body">
                         <input type="hidden" id="output_id" name="output_id">
@@ -228,6 +228,33 @@
             </div>
         </div>
     </div>
+    @endcan
+
+    @can('confirm_requestSimple')
+        <div id="modalConfirm" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Confirmar salida</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form id="formConfirm" data-url="{{ route('output.confirmed') }}">
+                        @csrf
+                        <div class="modal-body">
+                            <input type="hidden" id="output_id" name="output_id">
+                            <strong>
+                                ¿Está seguro de confirmar esta solicitud de salida?
+                            </strong>
+                            <p id="descriptionAttend"></p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" >Confirmar</button>
+                            <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     @endcan
     <div id="modalItems" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">

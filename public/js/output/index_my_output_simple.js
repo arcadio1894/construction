@@ -88,9 +88,9 @@ $(document).ready(function () {
                     var text = '';
                     if (item.state === 'attended' || item.state === 'confirmed')
                     {
-                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
+                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> '; /*+
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
-                            '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';
+                            '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';*/
                     } else {
                         text = text + '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+item.id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ' +
                             '<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+item.id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
@@ -318,6 +318,12 @@ $(document).ready(function () {
     $modalItemsMaterials = $('#modalItemsMaterials');
     $modalReturnMaterials = $('#modalReturnMaterials');
 
+    $modalConfirm = $('#modalConfirm');
+    $formConfirm = $('#formConfirm');
+
+    $formConfirm.on('submit', confirmOutput);
+    $(document).on('click', '[data-confirm]', openModalConfirm);
+
     /*$('body').tooltip({
         selector: '[data-toggle]'
     });
@@ -355,6 +361,103 @@ let $longitud = 20;
 let $modalItemsMaterials;
 
 let $modalReturnMaterials;
+
+var $formConfirm;
+
+let $modalConfirm;
+
+function openModalConfirm() {
+    var output_id = $(this).data('confirm');
+
+    $modalConfirm.find('[id=output_id]').val(output_id);
+    $modalConfirm.find('[id=descriptionAttend]').html('Solicitud-'+output_id);
+
+    $modalConfirm.modal('show');
+}
+
+function confirmOutput() {
+    //console.log('Llegue');
+    event.preventDefault();
+    // Obtener la URL
+    var attendUrl = $formConfirm.data('url');
+    $.ajax({
+        url: attendUrl,
+        method: 'POST',
+        data: new FormData(this),
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            $modalConfirm.modal('hide');
+            setTimeout( function () {
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "4000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+
+        },
+    });
+}
 
 function confirmAllOutputs() {
     var url = $(this).data('url');

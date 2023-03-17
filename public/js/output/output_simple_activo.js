@@ -51,21 +51,25 @@ $(document).ready(function () {
             "firstDay": 1
         }
     });
-
     $.ajax({
-        //url: "/dashboard/get/materials",
         url: "/dashboard/get/materials/entry",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
+            //console.log(json[0]);
             for (var i=0; i<json.length; i++)
             {
-                $materials.push(json[i].material);
+                console.log(json[i].full_description);
+                $('#material').append($("<option>", {
+                    value: json[i].id,
+                    text: json[i].code+' '+json[i].material
+                }));
                 $materialsComplete.push(json[i]);
             }
             $("#element_loader").LoadingOverlay("hide", true);
         }
     });
+
     $.ajax({
         url: "/dashboard/get/users",
         type: 'GET',
@@ -116,6 +120,47 @@ $(document).ready(function () {
     //$formCreate.on('submit', storeOutputRequest);
     $('#btn-submit').on('click', storeOutputRequest);
 
+    $selectMaterial = $('#material');
+
+    $selectMaterial.change(function () {
+        var material_id =  $selectMaterial.val();
+
+        const result = $materialsComplete.find( material => material.id == material_id );
+
+        if ( result.category != 8 )
+        {
+            console.log('No es Activo');
+            // Activar el switch con
+            $('#div-btn-type').hide();
+            $('#div-btn-type').show();
+            if ( $('#btn-type').bootstrapSwitch('state') == true) { //check if is not checked
+                console.log('Estado SI');
+                if ($('#btn-type').bootstrapSwitch('disabled'))
+                {
+                    $('#btn-type').bootstrapSwitch('disabled',false);
+                }
+                $("#btn-type").bootstrapSwitch('state', false);
+                $('#btn-type').bootstrapSwitch('disabled',false);
+
+            } else {
+                console.log('Estado NO');
+                $('#btn-type').bootstrapSwitch('disabled',false);
+            }
+        } else {
+            console.log('Es Activo');
+            $('#div-btn-type').hide();
+            $('#div-btn-type').show();
+            if ( $('#btn-type').bootstrapSwitch('state') == false) { //check if is not checked
+                console.log('Estado NO');
+                $("#btn-type").bootstrapSwitch('state', true);
+                $('#btn-type').bootstrapSwitch('disabled',true);
+            } else {
+                console.log('Estado SI');
+                $('#btn-type').bootstrapSwitch('disabled',true);
+            }
+        }
+    });
+
 });
 
 // Initializing the typeahead
@@ -143,6 +188,8 @@ var substringMatcher = function(strs) {
 
 let $formCreate;
 
+let $selectMaterial;
+
 let $modalAddItems;
 
 let $modalAddItemsCustom;
@@ -153,6 +200,8 @@ let $longitud = 20;
 
 function saveTableItems() {
     console.log($itemsSelected);
+
+    var state = $('#btn-type').bootstrapSwitch('state');
 
     for ( let j=0; j<$itemsSelected.length; j++ )
     {
@@ -186,7 +235,7 @@ function saveTableItems() {
         //$items.push({'item': $itemsSelected[i].id});
         //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id);
         //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
-        $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':'','equipment_id': '','item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price});
+        $items.push({'material_id':$itemsSelected[i].material_id,'equipment_name':'','equipment_id': '','item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage, 'length':$itemsSelected[i].length, 'width':$itemsSelected[i].width, 'price':$itemsSelected[i].price, 'type':state});
         renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].state, $itemsSelected[i].id);
 
     }
@@ -224,7 +273,10 @@ function selectItem() {
 function addItems() {
     $itemsComplete = [];
     $itemsSelected = [];
-    if( $('#material_search').val().trim() === '' )
+
+    var data = $('#material').select2('data');
+
+    if( $('#material').val() === '' )
     {
         toastr.error('Debe elegir un material', 'Error',
             {
@@ -246,9 +298,9 @@ function addItems() {
             });
         return;
     } else {
-        let result2 = $materialsComplete.find( material => material.material.trim() === $('#material_search').val().trim() );
+        let result2 = $materialsComplete.find( material => material.id == data[0].id );
         if ( !result2  ){
-            toastr.error('No hay coincidencias de lo escrito con algún material', 'Error',
+            toastr.error('No hay coincidencias de algún material', 'Error',
                 {
                     "closeButton": true,
                     "debug": false,
@@ -293,14 +345,14 @@ function addItems() {
         }
     }
 
-    let material_name = $('#material_search').val();
+    let material_name = data[0].text;
     $modalAddItems.find('[id=material_selected]').val(material_name);
     $modalAddItems.find('[id=material_selected]').prop('disabled', true);
     $modalAddItems.find('[id=material_selected_quantity]').prop('disabled', false);
 
     $('#body-items').html('');
 
-    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+    const result = $materialsComplete.find( material => material.id == data[0].id );
 
     $("#body-items-load").LoadingOverlay("show", {
         background  : "rgba(236, 91, 23, 0.5)"
@@ -332,9 +384,10 @@ function addItems() {
 }
 
 function requestItemsQuantity() {
-    let material_name = $('#material_selected').val();
+    var data = $('#material').select2('data');
+    let material_name = data[0].text;
     let material_quantity = $('#material_selected_quantity').val();
-    const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+    const result = $materialsComplete.find( material => material.id == data[0].id );
     let material_stock = result.stock_current;
     if( material_name.trim() === '' )
     {
@@ -412,9 +465,10 @@ function requestItemsQuantity() {
 
 function requestItemsQuantity2(event) {
     if (event.keyCode === 13) {
-        let material_name = $('#material_selected').val();
+        var data = $('#material').select2('data');
+        let material_name = data[0].text;
         let material_quantity = $('#material_selected_quantity').val();
-        const result = $materialsComplete.find( material => material.material.trim() === material_name.trim() );
+        const result = $materialsComplete.find( material => material.id === data[0].id );
         let material_stock = result.stock_current;
         if( material_name.trim() === '' )
         {

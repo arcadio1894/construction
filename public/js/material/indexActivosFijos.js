@@ -35,13 +35,12 @@ $(document).ready(function () {
         bAutoWidth: false,
         "aoColumns": [
             { data: 'code' },
-            { data: 'full_description' },
+            { data: 'description' },
             { data: 'measure' },
-            { data: 'unit_measure.name' },
+            { data: 'unit_measure' },
             { data: 'stock_max' },
             { data: 'stock_min' },
             { data: 'stock_current' },
-
             { data: 'priority' },
             //{ data: 'unit_price' },
             { data: null,
@@ -66,15 +65,15 @@ $(document).ready(function () {
                     //return '<img src="'+document.location.origin+ '/images/material/'+item.image+'" alt="'+item.name+'" width="50px" height="50px">'
                 }
             },
-            { data: 'category.name' },
+            { data: 'category' },
             { data: null,
                 title: 'Subcategoría',
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.subcategory === null )
+                    if ( item.subcategory == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.subcategory.name +'</p>';
+                    return '<p>'+ item.subcategory +'</p>';
                 }
             },
             { data: null,
@@ -82,9 +81,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.material_type === null )
+                    if ( item.material_type == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.material_type.name +'</p>';
+                    return '<p>'+ item.material_type +'</p>';
                 }
             },
             { data: null,
@@ -92,9 +91,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.sub_type === null )
+                    if ( item.sub_type == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.sub_type.name +'</p>';
+                    return '<p>'+ item.sub_type +'</p>';
                 }
             },
             { data: null,
@@ -102,9 +101,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.warrant === null )
+                    if ( item.warrant == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.warrant.name +'</p>';
+                    return '<p>'+ item.warrant +'</p>';
                 }
             },
             { data: null,
@@ -112,9 +111,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.quality === null )
+                    if ( item.quality == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.quality.name +'</p>';
+                    return '<p>'+ item.quality +'</p>';
                 }
             },
             { data: null,
@@ -122,9 +121,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.brand === null )
+                    if ( item.brand == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.brand.name +'</p>';
+                    return '<p>'+ item.brand +'</p>';
                 }
             },
             { data: null,
@@ -132,9 +131,9 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.exampler === null )
+                    if ( item.exampler == '' )
                         return '<p>Ninguno</p>';
-                    return '<p>'+ item.exampler.name +'</p>';
+                    return '<p>'+ item.exampler +'</p>';
                 }
             },
             { data: null,
@@ -142,7 +141,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    if ( item.type_scrap === null )
+                    if ( item.type_scrap == '' )
                         return '<p>Ninguno</p>';
                     return '<p>'+ item.type_scrap.name +'</p>';
                 }
@@ -159,7 +158,7 @@ $(document).ready(function () {
                     if ( $.inArray('enable_material', $permissions) !== -1 ) {
                         text = text + '<button data-delete="'+item.id+'" data-description="'+item.full_description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-bell-slash"></i> </button>  ';
                     }
-                    return text + '<a href="'+document.location.origin+ '/dashboard/view/material/items/'+item.id+'" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Ver items"><i class="fa fa-eye"></i> </a>';
+                    return text + '<a href="'+document.location.origin+ '/dashboard/view/material/activo/items/'+item.id+'" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Ver items"><i class="fa fa-eye"></i> </a>';
                 }
             },
 

@@ -1,38 +1,67 @@
-@extends('layouts.appLanding')
+@extends('layouts.appLanding2')
 
 @section('title')
     Inicio de sesión
 @endsection
 
-@section('data-background')
-    {{ asset('landing/img/hero/about2.jpg') }}
-@endsection
-
-@section('header-page')
-    <div class="hero-cap pt-100">
-        <h2>Inicio de sesión</h2>
-        <nav aria-label="breadcrumb ">
-            <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{ url('/') }}">Inicio</a></li>
-                <li class="breadcrumb-item"><a href="#">Accede a tu cuenta</a></li>
-            </ol>
-        </nav>
-    </div>
-@endsection
-
-@section('title-page')
-
-@endsection
-
-@section('data-background')
-    {{ asset('landing/img/hero/about.jpg') }}
-@endsection
 
 @section('content')
+    <div class="card">
+        <div class="card-body login-card-body">
+            <p class="login-box-msg">Inicie sesión para ingresar</p>
 
+            <form method="POST" action="{{ route('login') }}">
+                @csrf
+                <div class="input-group mb-3">
+                    <input id="email" type="email" class="form-control @error('email') is-invalid @enderror" name="email" value="{{ old('email') }}" required autocomplete="email" placeholder="Email">
+
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-envelope"></span>
+                        </div>
+                    </div>
+                    @error('email')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+                <div class="input-group mb-3">
+                    <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" required autocomplete="current-password" placeholder="Password">
+                    <div class="input-group-append">
+                        <div class="input-group-text">
+                            <span class="fas fa-lock"></span>
+                        </div>
+                    </div>
+                    @error('password')
+                    <span class="invalid-feedback" role="alert">
+                        <strong>{{ $message }}</strong>
+                    </span>
+                    @enderror
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="icheck-primary">
+                            <input type="checkbox" id="remember" {{ old('remember') ? 'checked' : '' }}>
+                            <label for="remember">
+                                Remember Me
+                            </label>
+                        </div>
+                    </div>
+                    <!-- /.col -->
+                    <div class="col-6">
+                        <button type="submit" class="btn btn-primary btn-block">{{ __('Iniciar Sesión') }}</button>
+                    </div>
+                    <!-- /.col -->
+                </div>
+
+            </form>
+        </div>
+        <!-- /.login-card-body -->
+    </div>
 <!-- Page de register y de login -->
     <!-- Content Page Start-->
-    <div class="services-area1 section-padding">
+    {{--<div class="services-area1 section-padding">
         <div class="container">
             <!-- section tittle -->
             <div class="row">
@@ -111,7 +140,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>--}}
     <!-- Content Page End-->
 
 @endsection

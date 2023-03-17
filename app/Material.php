@@ -44,6 +44,18 @@ class Material extends Model
         return $query->where($column, 'like', $value.'%');
     }
 
+    public function getQuantityItemsAttribute()
+    {
+        $items = Item::where('material_id', $this->id)
+            ->where('usage', '<>', 'finished')
+            ->get();
+        $quantity = 0;
+        if ( isset($items) )
+        {
+            $quantity = count($items);
+        }
+        return $quantity;
+    }
 
     public function getFullDescriptionAttribute()
     {

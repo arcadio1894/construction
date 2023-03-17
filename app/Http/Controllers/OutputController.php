@@ -1860,7 +1860,9 @@ class OutputController extends Controller
         $begin = microtime(true);
         DB::beginTransaction();
         try {
-            $outputs = Output::where('state', 'attended')->get();
+            $outputs = Output::where('state', 'attended')
+                ->where('indicator', '<>', 'ors')
+                ->get();
 
             //dd($outputs);
             foreach ( $outputs as $output )
@@ -2130,6 +2132,193 @@ class OutputController extends Controller
         return view('output.create_output_simple', compact('permissions', 'users'));
     }
 
+    public function createOutputSimpleActivo()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $users = User::where('enable', 1)->get();
+        return view('output.create_output_simple_activos', compact('permissions', 'users'));
+
+    }
+
+    public function storeOutputSimpleActivos(StoreSimpleOutputRequest $request)
+    {
+        $begin = microtime(true);
+        //dd($request);
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            // TODO: Hacer la validacion de la cotizacion si ya cumplio la cantidad
+
+            $requesting_user = User::where('name', $request->get('requesting_user'))->first();
+            $responsible_user = User::where('id', $request->get('responsible_user'))->first();
+            $output = Output::create([
+                'execution_order' => ($request->get('execution_order') == '' || $request->get('execution_order') == null ) ? '': $request->get('execution_order'),
+                'request_date' => Carbon::createFromFormat( 'd/m/Y', ($request->get('request_date')) ),
+                'requesting_user' => $requesting_user->id,
+                'responsible_user' => $responsible_user->id,
+                'state' => 'created',
+                'indicator' => $request->get('indicator'),
+            ]);
+            //dump($output->id);
+            $items = json_decode($request->get('items'));
+            //dd('asdasd');
+
+            // TODO: 1° Sacamos los equipos y materiales
+            //$arregloEquipMaterials = [];
+            /*foreach ( $items as $item )
+            {
+                array_push($arregloEquipMaterials, ['equipment'=>$item->equipment_id, 'material'=>$item->material_id]);
+            }*/
+
+            //$arregloEquipoMateriales = array_unique($arregloEquipMaterials, SORT_REGULAR);
+
+            /*foreach ( $arregloEquipoMateriales as $item )
+            {
+                // TODO: 2° Sacar los equipment_materials de ese equipo
+                $equipment_id = $item->equipment;
+                $material_id = $item->material;
+                $cant_equipment = EquipmentMaterial::where('equipment_id', $equipment_id)
+                    ->where('material_id', $material_id)->sum('quantity');
+                if( $cant_equipment == 0 )
+                {
+                    $cant_equipment = EquipmentConsumable::where('equipment_id', $equipment_id)
+                        ->where('material_id', $material_id)->sum('quantity');
+                } else {
+                    $cant_equipment = 0;
+                }
+                $equipment = Equipment::find($equipment_id);
+
+                $cant_equipment_material = (float)$cant_equipment * (float)$equipment->quantity;
+
+                // TODO: 3° Sacar las salidas de ese equipment y material
+                $cant_equipment_material_salidas = OutputDetail::where('equipment_id', $equipment_id)
+                    ->where('material_id', $material_id)->sum('percentage');
+
+                // TODO: 4° Recorremos los item sumando los porcentajes de equip mat
+                $cant_equipment_material_solicitado = 0;
+                foreach ( $items as $item2 )
+                {
+                    if ( $item2->equipment_id == $equipment_id && $item2->material_id == $material_id )
+                    {
+                        $cant_equipment_material_solicitado += $item2->percentage;
+                    }
+                }
+
+                // TODO: 5°
+                if ( ($cant_equipment_material_solicitado + $cant_equipment_material_salidas) > $cant_equipment_material )
+                {
+                    return response()->json(['message' => 'Lo sentimos, un material ya sobrepasó la cantidad pedida en cotización.'], 422);
+                }
+
+            }*/
+
+            /*foreach ( $arregloResumen as $item )
+            {
+                // Obtener la suma de las cantidades de ese material (L)
+                // Obtener las salidas de esa cotizacion
+                // Sumar las salidas de ese material
+                // Luego sumar la cantidad de los items de ese material
+                // Por ultimo sumar ambas cantidades
+                // Finalmente comparar las salidas de ese material con la cant de cot
+                if ( isset($quote) )
+                {
+                    $quantity = 0;
+                    foreach ( $quote->equipments as $equipment )
+                    {
+                        if ( !$equipment->finished && $equipment->id == $item->equipment_id)
+                        {
+                            foreach ( $equipment->materials as $material )
+                            {
+                                // TODO: Reemplazo de materiales
+                                if ( $material->replacement == 0 && $material->material_id == $item->material_id )
+                                {
+                                    $quantity += (float)$material->quantity*(float)$equipment->quantity;
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    $outputs_details = OutputDetail::where('quote_id', $quote->id)
+                        ->where('equipment_id', $item->equipment_id)
+                        ->where()
+                }
+            }*/
+
+            foreach ( $items as $item )
+            {
+                if ( $item->type )
+                {
+                    $item_selected = Item::find($item->item);
+                    if ( $item_selected->state_item === 'reserved' )
+                    {
+                        return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                    } else {
+                        $item_selected->state_item = 'reserved';
+                        $item_selected->save();
+
+                        // TODO: Esto va a cambiar
+                        $detail_output = OutputDetail::create([
+                            'output_id' => $output->id,
+                            'item_id' => $item_selected->id,
+                            'length' => $item_selected->length,
+                            'width' => $item_selected->width,
+                            'price' => $item_selected->price,
+                            'percentage' => $item_selected->percentage,
+                            'material_id' => $item->material_id,
+                            'equipment_id' => null,
+                            'quote_id' => null,
+                            'custom' => 0,
+                            'activo' => true
+                        ]);
+                    }
+                } else {
+                    $item_selected = Item::find($item->item);
+                    if ( $item_selected->state_item === 'reserved' )
+                    {
+                        return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                    } else {
+                        $item_selected->state_item = 'reserved';
+                        $item_selected->save();
+
+                        // TODO: Esto va a cambiar
+                        $detail_output = OutputDetail::create([
+                            'output_id' => $output->id,
+                            'item_id' => $item_selected->id,
+                            'length' => $item_selected->length,
+                            'width' => $item_selected->width,
+                            'price' => $item_selected->price,
+                            'percentage' => $item_selected->percentage,
+                            'material_id' => $item->material_id,
+                            'equipment_id' => null,
+                            'quote_id' => null,
+                            'custom' => 0
+                        ]);
+                    }
+                }
+
+            }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar solicitud simple de area',
+                'time' => $end
+            ]);
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Solicitud de área guardada con éxito.'], 200);
+
+    }
+
     public function storeOutputSimple(StoreSimpleOutputRequest $request)
     {
         $begin = microtime(true);
@@ -2239,27 +2428,54 @@ class OutputController extends Controller
 
             foreach ( $items as $item )
             {
-                $item_selected = Item::find($item->item);
-                if ( $item_selected->state_item === 'reserved' )
+                if ( $item->type )
                 {
-                    return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
-                } else {
-                    $item_selected->state_item = 'reserved';
-                    $item_selected->save();
+                    $item_selected = Item::find($item->item);
+                    if ( $item_selected->state_item === 'reserved' )
+                    {
+                        return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                    } else {
+                        $item_selected->state_item = 'reserved';
+                        $item_selected->save();
 
-                    // TODO: Esto va a cambiar
-                    $detail_output = OutputDetail::create([
-                        'output_id' => $output->id,
-                        'item_id' => $item_selected->id,
-                        'length' => $item_selected->length,
-                        'width' => $item_selected->width,
-                        'price' => $item_selected->price,
-                        'percentage' => $item_selected->percentage,
-                        'material_id' => $item->material_id,
-                        'equipment_id' => null,
-                        'quote_id' => null,
-                        'custom' => 0
-                    ]);
+                        // TODO: Esto va a cambiar
+                        $detail_output = OutputDetail::create([
+                            'output_id' => $output->id,
+                            'item_id' => $item_selected->id,
+                            'length' => $item_selected->length,
+                            'width' => $item_selected->width,
+                            'price' => $item_selected->price,
+                            'percentage' => $item_selected->percentage,
+                            'material_id' => $item->material_id,
+                            'equipment_id' => null,
+                            'quote_id' => null,
+                            'custom' => 0,
+                            'activo' => true
+                        ]);
+                    }
+                } else {
+                    $item_selected = Item::find($item->item);
+                    if ( $item_selected->state_item === 'reserved' )
+                    {
+                        return response()->json(['message' => 'Lo sentimos, un item seleccionado ya estaba reservado para otra solicitud.'], 422);
+                    } else {
+                        $item_selected->state_item = 'reserved';
+                        $item_selected->save();
+
+                        // TODO: Esto va a cambiar
+                        $detail_output = OutputDetail::create([
+                            'output_id' => $output->id,
+                            'item_id' => $item_selected->id,
+                            'length' => $item_selected->length,
+                            'width' => $item_selected->width,
+                            'price' => $item_selected->price,
+                            'percentage' => $item_selected->percentage,
+                            'material_id' => $item->material_id,
+                            'equipment_id' => null,
+                            'quote_id' => null,
+                            'custom' => 0
+                        ]);
+                    }
                 }
             }
 
@@ -2509,13 +2725,27 @@ class OutputController extends Controller
             $outputDetails = OutputDetail::where('output_id', $output->id)->get();
             foreach ( $outputDetails as $outputDetail )
             {
-                $item = Item::find($outputDetail->item_id);
-                $item->state_item = 'exited';
-                $item->save();
-                // TODO: Dismunir el stock del material
-                $material = Material::find($item->material_id);
-                $material->stock_current = $material->stock_current - $item->percentage;
-                $material->save();
+                if ( $outputDetail->activo )
+                {
+                    $item = Item::find($outputDetail->item_id);
+                    $item->state_item = 'exited';
+                    $item->type = true;
+                    $item->usage = 'in_use';
+                    $item->save();
+                    // TODO: Dismunir el stock del material
+                    $material = Material::find($item->material_id);
+                    $material->stock_current = $material->stock_current - $item->percentage;
+                    $material->save();
+                } else {
+                    $item = Item::find($outputDetail->item_id);
+                    $item->state_item = 'exited';
+                    $item->save();
+                    // TODO: Dismunir el stock del material
+                    $material = Material::find($item->material_id);
+                    $material->stock_current = $material->stock_current - $item->percentage;
+                    $material->save();
+                }
+
             }
 
             $end = microtime(true) - $begin;
@@ -2570,6 +2800,7 @@ class OutputController extends Controller
         DB::beginTransaction();
         try {
             $outputs = Output::where('state', 'attended')
+                ->where('indicator', 'ors')
                 ->where('responsible_user', $user->id)
                 ->get();
 
@@ -2621,12 +2852,16 @@ class OutputController extends Controller
                     if ( $this->esCompleto($item->id) )
                     {
                         $item->state_item = 'entered';
+                        $item->type = false;
+                        $item->usage = 'new';
                         $item->save();
                         $material = Material::find($item->material_id);
                         $material->stock_current = $material->stock_current + $item->percentage;
                         $material->save();
                     } else {
                         $item->state_item = 'scraped';
+                        $item->type = false;
+                        $item->usage = 'new';
                         $item->save();
                         $material = Material::find($item->material_id);
                         $material->stock_current = $material->stock_current + $item->percentage;
