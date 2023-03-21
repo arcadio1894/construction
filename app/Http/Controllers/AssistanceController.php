@@ -1746,8 +1746,6 @@ class AssistanceController extends Controller
         $start = $_GET['start'];
         $end = $_GET['end'];
 
-
-
         if ( $start != '' || $end != '' )
         {
             $date_start = Carbon::createFromFormat('d/m/Y', $start);
@@ -2030,18 +2028,57 @@ class AssistanceController extends Controller
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
-                    $fecha = $fecha . 'DEL '. $dayStart .' AL ';
-                    $week = $week . $arrayByDates[$i]['week'];
-                    $month = $month . $arrayByDates[$i]['month'];
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
 
-                    $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
-                    $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
-                    $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
-                    $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
-                    $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
-                    $first = false;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
+
                 } else {
                     if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
                     {
@@ -2365,18 +2402,56 @@ class AssistanceController extends Controller
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
-                    $fecha = $fecha . 'DEL '. $dayStart .' AL ';
-                    $week = $week . $arrayByDates[$i]['week'];
-                    $month = $month . $arrayByDates[$i]['month'];
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
 
-                    $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
-                    $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
-                    $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
-                    $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
-                    $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
-                    $first = false;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
                 } else {
                     if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
                     {
@@ -2723,18 +2798,56 @@ class AssistanceController extends Controller
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
-                    $fecha = $fecha . 'DEL '. $dayStart .' AL ';
-                    $week = $week . $arrayByDates[$i]['week'];
-                    $month = $month . $arrayByDates[$i]['month'];
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
 
-                    $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
-                    $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
-                    $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
-                    $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
-                    $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
-                    $first = false;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
                 } else {
                     if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
                     {
@@ -3063,18 +3176,56 @@ class AssistanceController extends Controller
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
-                    $fecha = $fecha . 'DEL '. $dayStart .' AL ';
-                    $week = $week . $arrayByDates[$i]['week'];
-                    $month = $month . $arrayByDates[$i]['month'];
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
 
-                    $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
-                    $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
-                    $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
-                    $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
-                    $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
-                    $first = false;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
                 } else {
                     if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
                     {

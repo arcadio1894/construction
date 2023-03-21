@@ -90,7 +90,7 @@
                 <select id="reason_id" name="reason_id" class="form-control form-control-sm select2" style="width: 100%;">
                     <option></option>
                     @foreach( $reasons as $reason )
-                        <option value="{{ $reason->id }}" data-days="{{ $reason->id }}" >{{ $reason->reason .' ('.$reason->days.')'}}</option>
+                        <option value="{{ $reason->id }}" data-days="{{ $reason->days }}" >{{ $reason->reason .' ('.$reason->days.')'}}</option>
                     @endforeach
                 </select>
             </div>
@@ -107,7 +107,7 @@
                     <input type="text" id="date_start" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
             </div>
-            <div class="col-md-6">
+            {{--<div class="col-md-6">
                 <label for="date_end">Fecha Fin</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -115,7 +115,7 @@
                     </div>
                     <input type="text" id="date_end" name="date_end" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
-            </div>
+            </div>--}}
         </div>
 
         <div class="text-center">

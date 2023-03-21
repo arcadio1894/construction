@@ -38,11 +38,15 @@ class SuspensionController extends Controller
     {
         DB::beginTransaction();
         try {
-
+            $current = Carbon::now('America/Lima');
+            $fecha = $current->year.'/'.$current->month.'/'.$current->day;
+            $reason = ReasonSuspension::find($request->get('reason_id'));
+            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : Carbon::createFromFormat('d/m/Y', $fecha);
+            $date_end = $date_start->addDays($reason->days-1);
             $suspension = Suspension::create([
-                'reason_suspension_id' => $request->get('reason_id'),
-                'date_start' => ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null,
-                'date_end' => ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null,
+                'reason_suspension_id' => $reason->id,
+                'date_start' => $date_start,
+                'date_end' => $date_end,
                 'worker_id' => $request->get('worker_id'),
             ]);
 
@@ -101,12 +105,17 @@ class SuspensionController extends Controller
     {
         DB::beginTransaction();
         try {
+            $current = Carbon::now('America/Lima');
+            $fecha = $current->year.'/'.$current->month.'/'.$current->day;
+            $reason = ReasonSuspension::find($request->get('reason_id'));
+            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : Carbon::createFromFormat('d/m/Y', $fecha);
+            $date_end = $date_start->addDays($reason->days-1);
 
             $suspension = Suspension::find($request->get('suspension_id'));
 
             $suspension->reason_suspension_id = $request->get('reason_id');
-            $suspension->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
-            $suspension->date_end = ($request->get('date_end') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_end')) : null;
+            $suspension->date_start = $date_start;
+            $suspension->date_end = $date_end;
             $suspension->save();
 
             // TODO: Logica para verificar las fechas de las asistencias

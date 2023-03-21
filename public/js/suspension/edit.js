@@ -12,12 +12,11 @@ var $formCreate;
 function storeMedicalRest() {
     event.preventDefault();
 
-
     var date_start  = $('#date_start').val();
-    var date_end  = $('#date_end').val();
+    //var date_end  = $('#date_end').val();
     var startDate   = moment(date_start, "DD/MM/YYYY");
-    var endDate     = moment(date_end, "DD/MM/YYYY");
-    let totalDays = endDate.diff(startDate, 'days')+1;
+    //var endDate     = moment(date_end, "DD/MM/YYYY");
+    //let totalDays = endDate.diff(startDate, 'days')+1;
 
     if ( $('#reason_id').val() == '' )
     {
@@ -42,7 +41,7 @@ function storeMedicalRest() {
         return;
     }
 
-    if ( date_start == '' || date_end == '' )
+    if ( date_start == '' )
     {
         toastr.error('Ingrese fechas válidas', 'Error',
             {
@@ -65,13 +64,13 @@ function storeMedicalRest() {
         return;
     }
 
-    var data = $('#reason_id').select2('data');
+    //var data = $('#reason_id').select2('data');
     //console.log( data[0].element.dataset.quote );
-    var days = data[0].element.dataset.days;
+    //var days = data[0].element.dataset.days;
 
-    console.log(totalDays);
+    //console.log(totalDays);
 
-    if (totalDays > days)
+    /*if (totalDays > days)
     {
         toastr.error('Los días de suspensión no coinciden con la cantidad de la razon de suspensión', 'Error',
             {
@@ -115,7 +114,7 @@ function storeMedicalRest() {
                 "hideMethod": "fadeOut"
             });
         return;
-    }
+    }*/
 
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);

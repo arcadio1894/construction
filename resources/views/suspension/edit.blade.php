@@ -99,7 +99,7 @@
 
                 </div>
             </div>
-            <div class="col-md-6">
+            {{--<div class="col-md-6">
                 <label for="date_end">Fecha Fin</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -107,7 +107,7 @@
                     </div>
                     <input type="text" id="date_end" name="date_end" value="{{ ($suspension->date_end == null) ? '': $suspension->date_end->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
                 </div>
-            </div>
+            </div>--}}
         </div>
 
         <div class="text-center">
