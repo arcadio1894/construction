@@ -316,12 +316,16 @@ class UserController extends Controller
             {
                 foreach ( $user_actives as $user_active )
                 {
-                    $worker = Worker::create([
-                        'first_name' => $user_active->name,
-                        'email' => $user_active->email,
-                        'image' => $user_active->image,
-                        'user_id' => $user_active->id
-                    ]);
+                    $worker = Worker::where('user_id', $user_active->id)->first();
+                    if ( !isset($worker) )
+                    {
+                        $worker = Worker::create([
+                            'first_name' => $user_active->name,
+                            'email' => $user_active->email,
+                            'image' => $user_active->image,
+                            'user_id' => $user_active->id
+                        ]);
+                    }
                 }
             }
 

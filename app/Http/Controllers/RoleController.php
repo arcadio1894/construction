@@ -75,7 +75,8 @@ class RoleController extends Controller
         'discountContribution' => 'DESCUENTOS Y APORTES',
         'discount' => 'DESCUENTOS',
         'loan' => 'PRÉSTAMOS',
-        'gratification' => 'GRATIFICACIÓN'
+        'gratification' => 'GRATIFICACIÓN',
+        'refund' => 'REEMBOLSOS',
     ];
 
     public function index()

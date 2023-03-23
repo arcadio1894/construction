@@ -1745,6 +1745,8 @@ class AssistanceController extends Controller
     {
         $start = $_GET['start'];
         $end = $_GET['end'];
+        /*$start = '01/01/2022';
+        $end = '31/01/2022';*/
 
         if ( $start != '' || $end != '' )
         {
@@ -1765,6 +1767,8 @@ class AssistanceController extends Controller
                 ->whereDate('date', '<=',$end_start)
                 ->orderBy('date', 'ASC')
                 ->get();
+
+            //dump($dates);
 
             foreach ( $dates as $date )
             {
@@ -2024,11 +2028,16 @@ class AssistanceController extends Controller
             $week = '';
             $month = '';
 
+            //dump($arrayByDates);
+
             for ( $i=0; $i<count($arrayByDates); $i++ )
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    //dump( 'Sem Act '.$arrayByDates[$i]['week'] .' - Sem Sig '. $arrayByDates[$i+1]['week'] );
+                    $week2 = ($i == count($arrayByDates)-1) ? 0:$arrayByDates[$i+1]['week'] ;
+                    //dump($week);
+                    if ( $arrayByDates[$i]['week'] != $week2 )
                     {
                         $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
@@ -2052,6 +2061,7 @@ class AssistanceController extends Controller
                             'h_100' => $h_100,
                             'h_esp' => $h_esp,
                         ]);
+                        //dump($arrayByWeek);
 
                         $fecha = '';
                         $week = '';
@@ -2079,7 +2089,8 @@ class AssistanceController extends Controller
 
                     }
 
-                } else {
+                }
+                else {
                     if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
                     {
                         $dayEnd = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
@@ -2101,6 +2112,7 @@ class AssistanceController extends Controller
                             'h_100' => $h_100,
                             'h_esp' => $h_esp,
                         ]);
+                        //dump($arrayByWeek);
 
                         $fecha = '';
                         $week = '';
@@ -2124,7 +2136,8 @@ class AssistanceController extends Controller
                 }
 
             }
-        } else {
+        }
+        else {
 
             $worker = Worker::find($worker_id);
             $dateCurrent = Carbon::now();
@@ -2402,7 +2415,9 @@ class AssistanceController extends Controller
             {
                 //dump($arrayByDates[$i]['date']);
                 if ( $first ) {
-                    if ( $arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week'] )
+                    $week2 = ($i == count($arrayByDates)-1) ? 0:$arrayByDates[$i+1]['week'] ;
+                    //dump($week);
+                    if ( $arrayByDates[$i]['week'] != $week2 )
                     {
                         $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
 
@@ -2501,6 +2516,7 @@ class AssistanceController extends Controller
         }
 
         //dump($arrayByWeek);
+        //dump($arrayByDates);
         //dd();
 
         return json_encode([

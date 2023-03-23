@@ -1073,7 +1073,7 @@
                                 @endcan
                                 @can('create_requestSimple')
                                     <li class="nav-item">
-                                        <a href="{{ route('output.simple.create') }}" class="nav-link @yield('activeCreateOutputSimple')">
+                                        <a href="{{ route('output.simple.create.activos') }}" class="nav-link @yield('activeCreateOutputSimple')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Crear solicitudes</p>
                                         </a>

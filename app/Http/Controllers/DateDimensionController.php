@@ -62,6 +62,28 @@ class DateDimensionController extends Controller
         }
     }
 
+    public function getMonthsOfYear($year)
+    {
+        $months = DateDimension::where('year', $year)->distinct()->get(['month', 'month_name']);
+
+        return $months;
+    }
+
+    public function getWeeksOfMonthsOfYear($month, $year)
+    {
+        $weeks = DateDimension::where('year', $year)
+            ->where('month', $month)
+            ->distinct()->get(['week']);
+
+        return $weeks;
+    }
+
+    public function getYearsOfSystem()
+    {
+        $years = DateDimension::distinct()->get(['year']);
+        return $years;
+    }
+
     /**
      * Get Quarter details
      * @OTE - Depending on your companies quarter update the map and logic below

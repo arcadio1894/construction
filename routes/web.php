@@ -1706,7 +1706,7 @@ Route::middleware('auth')->group(function (){
             ->name('output.simple.create')
             ->middleware('permission:create_requestSimple');
         Route::get('crear/solicitud/area/activos', 'OutputController@createOutputSimpleActivo')
-            //->name('output.simple.create.')
+            ->name('output.simple.create.activos')
             ->middleware('permission:create_requestSimple');
         Route::post('output/area/store', 'OutputController@storeOutputSimple')
             ->name('output.simple.store')
@@ -1837,6 +1837,17 @@ Route::middleware('auth')->group(function (){
             ->name('gratification.destroy')
             ->middleware('permission:delete_gratification');
 
+
+        // TODO: Rutas para generar boletas
+        Route::get('/generar/boleta/trabajadores/', 'BoletaController@createBoletaByWorker')
+            ->name('boleta.create.worker')/*
+            ->middleware('permission:edit_gratification')*/;
+        Route::get('/generate/boleta/worker', 'BoletaController@generateBoletaWorker')
+            ->name('boleta.generate.worker')/*
+            ->middleware('permission:edit_gratification')*/;
+        Route::get('/get/years/of/system/', 'DateDimensionController@getYearsOfSystem');
+        Route::get('/get/months/of/year/{year}', 'DateDimensionController@getMonthsOfYear');
+        Route::get('/get/weeks/of/month/{month}/year/{year}', 'DateDimensionController@getWeeksOfMonthsOfYear');
 
 
         // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
