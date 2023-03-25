@@ -22,7 +22,7 @@
 <body class="hold-transition login-page">
 <div class="login-box">
     <div class="login-logo">
-        <img src="{{ asset('admin/dist/img/Logo.svg') }}" alt="" width="350px">
+        <img src="{{ asset('landing/img/logo_pdf.png') }}" alt="" width="350px">
     </div>
     <!-- /.login-logo -->
     @yield('content')
