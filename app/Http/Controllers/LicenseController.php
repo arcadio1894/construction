@@ -84,10 +84,11 @@ class LicenseController extends Controller
 
                     if ( count( $assistancesDetails ) > 0 )
                     {
-                        $workingDay = WorkingDay::where('enable', 1)
-                            ->orderBy('created_at', 'ASC')->first();
+                        /*$workingDay = WorkingDay::where('enable', 1)
+                            ->orderBy('created_at', 'ASC')->first();*/
                         foreach ( $assistancesDetails as $assistanceDetail )
                         {
+                            $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
                             $assistanceDetail->hour_entry = $workingDay->time_start;
                             $assistanceDetail->hour_out = $workingDay->time_fin;
                             $assistanceDetail->status = 'P';
@@ -187,10 +188,11 @@ class LicenseController extends Controller
 
                     if ( count( $assistancesDetails ) > 0 )
                     {
-                        $workingDay = WorkingDay::where('enable', 1)
-                            ->orderBy('created_at', 'ASC')->first();
+                        /*$workingDay = WorkingDay::where('enable', 1)
+                            ->orderBy('created_at', 'ASC')->first();*/
                         foreach ( $assistancesDetails as $assistanceDetail )
                         {
+                            $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
                             $assistanceDetail->hour_entry = $workingDay->time_start;
                             $assistanceDetail->hour_out = $workingDay->time_fin;
                             $assistanceDetail->status = 'P';
