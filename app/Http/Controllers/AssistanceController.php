@@ -13,6 +13,8 @@ use App\License;
 use App\MedicalRest;
 use App\PercentageWorker;
 use App\Permit;
+use App\Regime;
+use App\RegimeDetail;
 use App\Suspension;
 use App\Vacation;
 use App\Worker;
@@ -114,7 +116,15 @@ class AssistanceController extends Controller
 
                 /*if ( $date_assistance->dayOfWeek != Carbon::FRIDAY )
                 {*/
-                $workingDay = WorkingDay::where('enable', true)->first();
+                // TODO: Se selecciona el regimen luego el dia y por ultimo el horario
+                $regime = Regime::where('active', true)->first();
+                $dayNum = $assistance2->date_assistance->dayOfWeek;
+
+                $regimeDetail = RegimeDetail::where('regime_id', $regime->id)
+                    ->where('dayNumber', $dayNum)->first();
+
+                //$workingDay = WorkingDay::where('enable', true)->first();
+                $workingDay = WorkingDay::find($regimeDetail->working_day_id);
                 /*} else {
                     $workingDay = WorkingDay::where('enable', true)->skip(1)->take(1)->first();
                 }*/
@@ -861,7 +871,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -912,10 +922,17 @@ class AssistanceController extends Controller
                             //dump('Entré porque no hay Horas especiales');
                             // TODO: Sin H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                            // Pregunta si es sabado
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -929,6 +946,7 @@ class AssistanceController extends Controller
                                 //dump('Entre porqe detectamos horas extras');
                                 // TODO: Detectamos horas extras
                                 $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                //if ( $workingDay->id == $wD->id ) $fecha->isSunday()
                                 if ( $workingDay->id == $wD->id )
                                 {
                                     $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount , 2);
@@ -951,6 +969,7 @@ class AssistanceController extends Controller
                             } else {
                                 //dump('Entre porqe no detectamos horas extras');
                                 $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                //if ( $workingDay->id == $wD->id )
                                 if ( $workingDay->id == $wD->id )
                                 {
                                     $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount ;
@@ -1189,7 +1208,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1244,7 +1263,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -1499,7 +1524,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1554,7 +1579,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -1778,7 +1809,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1831,7 +1862,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -2161,7 +2198,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2214,7 +2251,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -2613,7 +2656,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -2938,7 +2987,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotInt('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2991,7 +3040,13 @@ class AssistanceController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
