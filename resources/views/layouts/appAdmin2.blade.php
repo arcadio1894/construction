@@ -1710,6 +1710,12 @@
                                 </a>
                             </li>
                             <li class="nav-item">
+                                <a href="{{ route('regime.create') }}" class="nav-link @yield('activeListRegime')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Régimen de Trabajo</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
                                 <a href="{{ route('assistance.index') }}" class="nav-link @yield('activeListAttendance')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar asistencia</p>

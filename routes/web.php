@@ -1837,6 +1837,18 @@ Route::middleware('auth')->group(function (){
             ->name('gratification.destroy')
             ->middleware('permission:delete_gratification');
 
+        // TODO: Rutas para los regimenes de trabajo
+        Route::get('/registrar/regimenes/trabajo/', 'RegimeController@create')
+            ->name('regime.create');
+        Route::post('/create/regime', 'RegimeController@store')
+            ->name('regime.store');
+        Route::post('/update/regime/{id}', 'RegimeController@update')
+            ->name('regime.update');
+        Route::post('/destroy/regime/{id}', 'RegimeController@destroy')
+            ->name('regime.destroy');
+        Route::get('/get/workings/day/by/regime/{id_regime}', 'RegimeController@getWorkingsDayByRegime');
+        Route::post('/update/details/regime/{id}', 'RegimeController@updateDetailsRegime');
+
 
         // TODO: Rutas para generar boletas
         Route::get('/generar/boleta/trabajadores/', 'BoletaController@createBoletaByWorker')
@@ -1848,7 +1860,6 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/years/of/system/', 'DateDimensionController@getYearsOfSystem');
         Route::get('/get/months/of/year/{year}', 'DateDimensionController@getMonthsOfYear');
         Route::get('/get/weeks/of/month/{month}/year/{year}', 'DateDimensionController@getWeeksOfMonthsOfYear');
-
 
         // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
         Route::get('/populate/date/dimension', 'DateDimensionController@populateDateDimension');

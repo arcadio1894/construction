@@ -15,6 +15,10 @@ class CreateRegimesTable extends Migration
     {
         Schema::create('regimes', function (Blueprint $table) {
             $table->id();
+            $table->string('name')->nullable();
+            $table->text('description')->nullable();
+            $table->boolean('active')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
