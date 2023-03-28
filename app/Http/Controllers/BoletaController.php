@@ -5,14 +5,20 @@ namespace App\Http\Controllers;
 use App\AssistanceDetail;
 use App\Boleta;
 use App\DateDimension;
+use App\Due;
+use App\Gratification;
 use App\Holiday;
 use App\License;
+use App\Loan;
 use App\MedicalRest;
+use App\PensionSystem;
 use App\PercentageWorker;
+use App\Refund;
 use App\Vacation;
 use App\Worker;
 use App\WorkingDay;
 use Carbon\Carbon;
+use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -95,53 +101,7 @@ class BoletaController extends Controller
 
         $worker = Worker::find($worker_id);
 
-        $ruc = '20540001384';
-        $empleador = 'SERMEIND FABRICACIONES INDUSTRIALES S.A.C.';
-        $tipoDocumento = 'DNI';
-        $dni = $worker->dni;
-        $mombreApellidos = $worker->first_name . ' ' . $worker->last_name;
-        $cargo = ( $worker->work_function_id == null ) ? '': $worker->work_function->description;
-        $situacion = 'ACTIVO O SUBSIDIADO';
-        $fechaIngreso = ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y');
-        $tipoTrabajador = 'Empleado';
-        $regimenPensionario = ($worker->pension_system == null) ? '':$worker->pension_system->description;
-        $CUSPP = '';
-        $diasLaborados = 0; // Dias Trabajados
-        $diasNoLaborados = 0;
-        $diasSubsidiados = 0;
-        $condicion = 0;
-        $totalHorasOrdinarias = 0;
-        $totalHorasSobretiempo = 0;
-        $suspensiones = [];
-
-        $trabajoSobretiempo25 = 0;
-        $trabajoSobretiempo35 = 0;
-        $trabajoEnFeriadoODiaDescanso = 0;
-        $remuneracionOJornalBasico = 0;
-        $bonificacionExtraordinariaTemporal = 0;
-        $gratificacion = 0;
-
-        $comisionAfpPorcentual = 0;
-        $rentaQuintaCategoria = 0;
-        $primaDeSeguroAFP = 0;
-        $SPPAportacionObligatoria = 0;
-
-        $ESSALUD = 0;
-
-        $pagoXDia = $worker->daily_salary;
-        // TODO: Usar el porcentageWorker
-        $asignacionFamiliar = $worker->assign_family;
-        // TODO: Crear el porcentageWorker HoursDiary = 8
-        $horasXDia = 8;
-        $pagoXHora = $worker->daily_salary/$horasXDia;
-        $dominical = 0;
-        $vacaciones = 0;
-        $reintegro = 0;
-
-        $pensionAlimentos = 0;
-        $prestamos = 0;
-
-
+        $daysOfWeek = 7;
 
         if ( $type == 1 )
         {
@@ -197,7 +157,153 @@ class BoletaController extends Controller
             $h_esp += $arrayByWeek[$i]['h_esp'];
         }
 
-        dump($ruc);
+        // Datos para la boleta Semanal
+        if ( $type == 1 )
+        {
+            // Empleador y empleado
+            $empresa = 'SERMEIND FABRICACIONES INDUSTRIALES S.A.C.';
+            $ruc = '20540001384';
+            $codigo = $worker->id;
+            $mombre = $worker->first_name . ' ' . $worker->last_name;
+            $cargo = ( $worker->work_function_id == null ) ? '': $worker->work_function->description;
+
+            // Ingresos
+            $pagoXDia = $worker->daily_salary;
+            $horasXDia = 8;
+            $diasMes = 30;
+            $horasSemanales = 48;
+            $pagoXHora = round($worker->daily_salary/$horasXDia,2);
+            $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
+            // TODO: Usar el porcentageWorker
+            $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+            $rmv = PercentageWorker::where('name', 'rmv')->first();
+            $asignacionFamiliarDiaria = round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
+            $asignacionFamiliarSemanal = round((($rmv->value*($assign_family->value/100))/$diasMes)*$daysOfWeek, 2);
+            $horasOrdinarias = round(($h_ord + $h_esp), 2);
+            $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
+            $horasAl25 = round($h_25, 2);
+            $montoHorasAl25 = round($h_25*($worker->daily_salary/$horasXDia), 2);
+            $horasAl35 = round($h_35, 2);
+            $montoHorasAl35 = round($h_35*($worker->daily_salary/$horasXDia), 2);
+            $horasAl100 = round($h_100, 2);
+            $montoHorasAl100 = round($h_100*($worker->daily_salary/$horasXDia), 2);
+            $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
+            $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
+
+            $daysVacation = $this->getVacationByWorker($worker_id, $start, $end);
+            $vacaciones = $daysVacation*$horasXDia;
+            $montoVacaciones = round($daysVacation*$horasXDia*$pagoXHora, 2);
+
+            $amountRefund = $this->getRefundByWorker($worker_id, $start, $end);
+            $reintegro = round($amountRefund, 2);
+
+            $amountGratification = $this->getGratificationByWorker($worker_id, $start, $end);
+            $gratificaciones = round($amountGratification, 2);
+
+            $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones, 2);
+
+            // Descuento
+            $systemPension = PensionSystem::find($worker->pension_system_id);
+            $sistemaPension = $systemPension->description;
+            $montoSistemaPension = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+
+            $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker_id, $start, $end);
+            $rentaQuintaCat = round($amountRentaQuintaCat, 2);
+
+            $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones)*($worker->pension/100) , 2);
+
+            $amountLoan = $this->getLoanByWorker($worker_id, $start, $end);
+            $prestamo = round($amountLoan, 2);
+
+            $totalDescuentos = round($montoSistemaPension + $rentaQuintaCat + $pensionDeAlimentos + $prestamo, 2);
+
+            // Aporte
+            $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
+            $essalud = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones)*($percentageEssalud->value/100), 2);
+
+            $totalNetoPagar = round($totalIngresos - $totalDescuentos, 2) ;
+
+            // TODO: Crear el porcentageWorker HoursDiary = 8
+
+            return response()->json([
+                'empresa' => $empresa,
+                'ruc' => $ruc,
+                'codigo' => $codigo,
+                'mombre' => $mombre,
+                'cargo' => $cargo,
+                'semana' => $semana,
+                'fecha' => $periodo,
+                'pagoXDia' => $pagoXDia,
+                'pagoXHora' => $pagoXHora,
+                'diasTrabajados' => $diasTrabajados,
+                'asignacionFamiliarDiaria' => $asignacionFamiliarDiaria,
+                'asignacionFamiliarSemanal' => $asignacionFamiliarSemanal,
+                'horasOrdinarias' => $horasOrdinarias,
+                'montoHorasOrdinarias' => $montoHorasOrdinarias,
+                'horasAl25' => $horasAl25,
+                'montoHorasAl25' => $montoHorasAl25,
+                'horasAl35' => $horasAl35,
+                'montoHorasAl35' => $montoHorasAl35,
+                'horasAl100' => $horasAl100,
+                'montoHorasAl100' => $montoHorasAl100,
+                'dominical' => $dominical,
+                'montoDominical' => $montoDominical,
+                'vacaciones' => $vacaciones,
+                'montoVacaciones' => $montoVacaciones,
+                'reintegro' => $reintegro,
+                'gratificaciones' => $gratificaciones,
+                'totalIngresos' => $totalIngresos,
+                'sistemaPension' => $sistemaPension,
+                'montoSistemaPension' => $montoSistemaPension,
+                'rentaQuintaCat' => $rentaQuintaCat,
+                'pensionDeAlimentos' => $pensionDeAlimentos,
+                'prestamo' => $prestamo,
+                'totalDescuentos' => $totalDescuentos,
+                'essalud' => $essalud,
+                'totalNetoPagar' => $totalNetoPagar
+            ], 200);
+
+        } else {
+
+            $ruc = '20540001384';
+            $empleador = 'SERMEIND FABRICACIONES INDUSTRIALES S.A.C.';
+            $tipoDocumento = 'DNI';
+            $dni = $worker->dni;
+            $mombreApellidos = $worker->first_name . ' ' . $worker->last_name;
+            $cargo = ( $worker->work_function_id == null ) ? '': $worker->work_function->description;
+            $situacion = 'ACTIVO O SUBSIDIADO';
+            $fechaIngreso = ($worker->admission_date == null) ? '': $worker->admission_date->format('d/m/Y');
+            $tipoTrabajador = 'Empleado';
+            $regimenPensionario = ($worker->pension_system == null) ? '':$worker->pension_system->description;
+            $CUSPP = '';
+            $diasLaborados = 0; // Dias Trabajados
+            $diasNoLaborados = 0;
+            $diasSubsidiados = 0;
+            $condicion = 0;
+            $totalHorasOrdinarias = 0;
+            $totalHorasSobretiempo = 0;
+            $suspensiones = [];
+
+            $trabajoSobretiempo25 = 0;
+            $trabajoSobretiempo35 = 0;
+            $trabajoEnFeriadoODiaDescanso = 0;
+            $remuneracionOJornalBasico = 0;
+            $bonificacionExtraordinariaTemporal = 0;
+            $gratificacion = 0;
+
+            $comisionAfpPorcentual = 0;
+            $rentaQuintaCategoria = 0;
+            $primaDeSeguroAFP = 0;
+            $SPPAportacionObligatoria = 0;
+
+            $ESSALUD = 0;
+
+            return response()->json([
+
+            ], 200);
+        }
+
+        /*dump($ruc);
         dump($empleador);
         dump($periodo);
         dump($tipoDocumento);
@@ -214,7 +320,155 @@ class BoletaController extends Controller
         dump($h_100);
         dump($h_esp);
 
-        dd();
+        dd();*/
+    }
+
+    public function getLoanByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountLoan = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $dues = Due::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($dues) )
+            {
+                foreach ( $dues as $due )
+                {
+                    $amountLoan+=$due->amount;
+                }
+
+            }
+        }
+
+        return $amountLoan;
+    }
+
+    public function getRentaQuintaByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountRentaQuintaCat = 0;
+        /*foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $gratification = Gratification::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->first();
+            if ( !empty($refund) )
+            {
+                $amountRentaQuintaCat+=$gratification->amount;
+            }
+        }*/
+
+        return $amountRentaQuintaCat;
+    }
+
+    public function getGratificationByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountGratification = 0;
+        /*foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $gratification = Gratification::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->first();
+            if ( !empty($refund) )
+            {
+                $amountGratification+=$gratification->amount;
+            }
+        }*/
+
+        return $amountGratification;
+    }
+
+    public function getRefundByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountRefund = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $refunds = Refund::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($refunds) )
+            {
+                foreach ( $refunds as $refund )
+                {
+                    $amountRefund+=$refund->amount;
+                }
+            }
+        }
+
+        return $amountRefund;
+    }
+
+    public function getVacationByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $daysVacation = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->where('status', 'V')
+                ->first();
+            if ( !empty($assistance_detail) )
+            {
+                $daysVacation+=1;
+            }
+        }
+
+        return $daysVacation;
     }
 
     public function getTotalHoursByWorker($worker_id, $start, $end)
@@ -250,7 +504,7 @@ class BoletaController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotIn('status', ['S', 'F'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -262,10 +516,10 @@ class BoletaController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($medicalRests);
-                    $vacations = Vacation::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                    /*$vacations = Vacation::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
                         ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
                         ->where('worker_id', $worker->id)
-                        ->get();
+                        ->get();*/
                     //dump($vacations);
                     $licenses = License::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
                         ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
@@ -280,7 +534,7 @@ class BoletaController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
                         {
                             ///dump('Entré porque hay Horas especiales');
                             // TODO: Con H-ESP
@@ -303,7 +557,13 @@ class BoletaController extends Controller
                             $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
                             if ( $workingDay->id == $wD->id )
                             {
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
                             } else {
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                             }
@@ -361,7 +621,7 @@ class BoletaController extends Controller
 
                     } elseif ( !$this->isHoliday($fecha) && $fecha->isSunday() ) {
                         // TODO: No feriado - Domingo
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
                         {
                             // TODO: Con H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
@@ -389,7 +649,7 @@ class BoletaController extends Controller
 
                     } elseif ( $this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         // TODO: Feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
                         {
                             // TODO: Con H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
@@ -428,7 +688,7 @@ class BoletaController extends Controller
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
                         // TODO: Feriado - Domingo
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
                         {
                             // TODO: Con H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);

@@ -146,6 +146,42 @@ function generateBoletaWorker() {
         $.get( "/dashboard/generate/boleta/worker?" + $.param(query), function( data ) {
             console.log( data );
         }).done(function(data) {
+            $("#empresa").html('EMPRESA: '+data.empresa);
+            $("#ruc").html('RUC: '+data.ruc);
+            $("#codigo").html('CÓDIGO: '+data.codigo);
+            $("#semana").html('SEMANA: '+data.semana);
+            $("#nombre").html('NOMBRE: '+data.nombre);
+            $("#fecha").html('FECHA: '+data.fecha);
+            $("#cargo").html('CARGO: '+data.cargo);
+            $("#pagoxdia").html(data.pagoXDia);
+            $("#sistemaPension").html(data.sistemaPension);
+            $("#montoSistemaPension").html(data.montoSistemaPension);
+            $("#essalud").html(data.essalud);
+            $("#pagoXHora").html(data.pagoXHora);
+            $("#rentaQuintaCat").html(data.rentaQuintaCat);
+            $("#pensionDeAlimentos").html(data.pensionDeAlimentos);
+            $("#asignacionFamiliarDiaria").html(data.asignacionFamiliarDiaria);
+            $("#asignacionFamiliarSemanal").html(data.asignacionFamiliarSemanal);
+            $("#prestamo").html(data.prestamo);
+            $("#horasOrdinarias").html(data.horasOrdinarias);
+            $("#montoHorasOrdinarias").html(data.montoHorasOrdinarias);
+            $("#horasAl25").html(data.horasAl25);
+            $("#montoHorasAl25").html(data.montoHorasAl25);
+            $("#totalDescuentos").html(data.totalDescuentos);
+            $("#totalDescuentos1").html(data.totalDescuentos);
+            $("#horasAl35").html(data.horasAl35);
+            $("#montoHorasAl35").html(data.montoHorasAl35);
+            $("#horasAl100").html(data.horasAl100);
+            $("#montoHorasAl100").html(data.montoHorasAl100);
+            $("#dominical").html(data.dominical);
+            $("#montoDominical").html(data.montoDominical);
+            $("#vacaciones").html(data.vacaciones);
+            $("#montoVacaciones").html(data.montoVacaciones);
+            $("#totalIngresos1").html(data.totalIngresos);
+            $("#reintegro").html(data.reintegro);
+            $("#gratificaciones").html(data.gratificaciones);
+            $("#totalIngresos").html('TOTAL INGRESOS: '+data.totalIngresos);
+            $("#totalNetoPagar").html(data.totalNetoPagar);
             console.log( data );
         }).fail(function(data) {
             console.log( data );

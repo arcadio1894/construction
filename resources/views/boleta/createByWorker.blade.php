@@ -106,6 +106,12 @@
         .datepicker {
             z-index: 10000 !important;
         }
+        .tg  {border-collapse:collapse;border-spacing:0;}
+        .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:12px;
+            overflow:hidden;padding:5px 5px;word-break:normal;}
+        .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:12px;
+            font-weight:normal;overflow:hidden;padding:5px 5px;word-break:normal;}
+        .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
     </style>
 @endsection
 
@@ -194,120 +200,229 @@
 
     </div>
     <br>
-    <div class="row">
-        <div class="col-md-6">
-            <div class="card card-primary">
+    <div class="row" id="boleta-semanal">
+        <div class="col-md-10 offset-1">
+            <div class="card card-outline card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">REPORTE DE HORAS TOTALES</h3>
+                    <h3 class="card-title">Boleta Semanal</h3>
 
                     <div class="card-tools">
-
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i></button>
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                        </button>
                     </div>
+                    <!-- /.card-tools -->
                 </div>
-                <div class="card-body" id="hours-total">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12 ">
-                                <div class="table-responsive table-wrapper">
-                                    <table class="table table-hover table-bordered table-sm table-striped">
-                                        <thead class="sticky-top">
-                                        <tr>
-                                            <th style="background-color:#001028; color: #ffffff;">SEM.</th>
-                                            <th style="background-color:#001028; color: #ffffff;">FECHA</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. ORD.</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 25%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 35%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 100%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. ESP</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="body-totalHours">
-
-
-                                        </tbody>
-
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table class="tg" style="table-layout: fixed; width: 764px">
+                        <colgroup>
+                            <col style="width: 121px">
+                            <col style="width: 95px">
+                            <col style="width: 101px">
+                            <col style="width: 22px">
+                            <col style="width: 101px">
+                            <col style="width: 101px">
+                            <col style="width: 21px">
+                            <col style="width: 101px">
+                            <col style="width: 101px">
+                        </colgroup>
+                        <tbody>
+                        <tr>
+                            <td class="tg-0pky" colspan="6"></td>
+                            <td class="tg-0pky" colspan="3" rowspan="4"><br></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="6" id="empresa">Empresa: </td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="6" id="ruc">RUC: </td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="6"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3" id="codigo">Código: </td>
+                            <td class="tg-0pky" colspan="6" id="semana">Semana: </td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3" id="nombre">Nombre: </td>
+                            <td class="tg-0pky" colspan="6" id="fecha">Fecha: </td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3" id="cargo">Cargo: </td>
+                            <td class="tg-0pky" colspan="6"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3"></td>
+                            <td class="tg-0pky" colspan="6"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3">INGRESOS</td>
+                            <td class="tg-0pky" rowspan="7"></td>
+                            <td class="tg-0pky">DESCUENTOS</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky" rowspan="2"></td>
+                            <td class="tg-0pky">APORTE</td>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">PAGO x DIA</td>
+                            <td class="tg-0pky" id="pagoxdia">0.00</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky" id="sistemaPension">0.00</td>
+                            <td class="tg-0pky" id="montoSistemaPension">0.00</td>
+                            <td class="tg-0pky">ESSALUD</td>
+                            <td class="tg-0pky" id="essalud">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">PAGO x HORA</td>
+                            <td class="tg-0pky" id="pagoXHora">0.00</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky">RENTA 5° CAT</td>
+                            <td class="tg-0pky" id="rentaQuintaCat">0.00</td>
+                            <td class="tg-0pky" colspan="3" rowspan="5"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">DIAS TRAB.</td>
+                            <td class="tg-0pky" id="diasTrabajados">0.00</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky">PENSION</td>
+                            <td class="tg-0pky" id="pensionDeAlimentos">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">ASIG. FAMILIAR</td>
+                            <td class="tg-0pky" id="asignacionFamiliarDiaria">0.00</td>
+                            <td class="tg-0pky" id="asignacionFamiliarSemanal">0.00</td>
+                            <td class="tg-0pky">PRÉSTAMOS</td>
+                            <td class="tg-0pky" id="prestamo">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">H. ORDINAR</td>
+                            <td class="tg-0pky" id="horasOrdinarias">0.00</td>
+                            <td class="tg-0pky" id="montoHorasOrdinarias">0.00</td>
+                            <td class="tg-0pky">OTROS</td>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">H. AL 25%</td>
+                            <td class="tg-0pky" id="horasAl25">0.00</td>
+                            <td class="tg-0pky" id="montoHorasAl25">0.00</td>
+                            <td class="tg-0pky">TOTAL DESC</td>
+                            <td class="tg-0pky" id="totalDescuentos">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">H. AL 35%</td>
+                            <td class="tg-0pky" id="horasAl35">0.00</td>
+                            <td class="tg-0pky" id="montoHorasAl35">0.00</td>
+                            <td class="tg-0pky" colspan="6" rowspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">H. AL 100%</td>
+                            <td class="tg-0pky" id="horasAl100">0.00</td>
+                            <td class="tg-0pky" id="montoHorasAl100">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">DOMINICAL</td>
+                            <td class="tg-0pky" id="dominical">0.00</td>
+                            <td class="tg-0pky" id="montoDominical">0.00</td>
+                            <td class="tg-0pky" rowspan="8"></td>
+                            <td class="tg-0pky" colspan="4">RESUMEN</td>
+                            <td class="tg-0pky" rowspan="8"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">VACACIONES</td>
+                            <td class="tg-0pky" id="vacaciones">0.00</td>
+                            <td class="tg-0pky" id="montoVacaciones">0.00</td>
+                            <td class="tg-0pky" colspan="2">TOTAL INGRESOS</td>
+                            <td class="tg-0pky" colspan="2" id="totalIngresos1">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">REINTEGRO</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky" id="reintegro">0.00</td>
+                            <td class="tg-0pky" colspan="2">TOTAL DESCUENTOS</td>
+                            <td class="tg-0pky" colspan="2" id="totalDescuentos1">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky">GRATIFICACIÓN</td>
+                            <td class="tg-0pky"></td>
+                            <td class="tg-0pky" id="gratificaciones">0.00</td>
+                            <td class="tg-0pky" colspan="4" rowspan="4"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3" id="totalIngresos">TOTAL INGRESOS: 0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="3" rowspan="2"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="2">NETO A  PAGAR</td>
+                            <td class="tg-0pky" colspan="2" id="totalNetoPagar">0.00</td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky" colspan="9" rowspan="11"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        <tr>
+                            <td class="tg-0pky"></td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div class="card card-primary">
-                <div class="card-header">
-                    <h3 class="card-title">RESUMEN DE HORAS TOTALES</h3>
-
-                    <div class="card-tools">
-
-                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                            <i class="fas fa-minus"></i></button>
-                    </div>
-                </div>
-                <div class="card-body" id="summary-hours">
-                    <div class="container">
-                        <div class="row">
-                            <div class="col-md-12 ">
-                                <div class="table-responsive table-wrapper">
-                                    <table class="table table-hover table-bordered table-sm table-striped">
-                                        <thead class="sticky-top">
-                                        <tr>
-                                            <th style="background-color:#001028; color: #ffffff;">SEM.</th>
-                                            <th style="background-color:#001028; color: #ffffff;">MES</th>
-                                            <th style="background-color:#001028; color: #ffffff;">FECHA</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. ORD.</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 25%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 35%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. 100%</th>
-                                            <th style="background-color:#001028; color: #ffffff;">H. ESP</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody id="body-summaryHours">
-
-                                        </tbody>
-                                    </table>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
+                <!-- /.card-body -->
             </div>
         </div>
     </div>
 
-    <template id="template-totalHours">
-        <tr data-color>
-            <td data-week></td>
-            <td data-date></td>
-            <td data-h_ord></td>
-            <td data-h_25></td>
-            <td data-h_35></td>
-            <td data-h_100></td>
-            <td data-h_esp></td>
-        </tr>
-    </template>
+    <div class="row" id="boleta-mensual">
+        <div class="col-md-10 offset-1">
+            <div class="card card-outline card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Boleta Semanal</h3>
 
-    <template id="template-summaryHours">
-        <tr data-color>
-            <td data-week></td>
-            <td data-month></td>
-            <td data-date></td>
-            <td data-h_ord></td>
-            <td data-h_25></td>
-            <td data-h_35></td>
-            <td data-h_100></td>
-            <td data-h_esp></td>
-        </tr>
-
-    </template>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                    <!-- /.card-tools -->
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    The body of the card
+                </div>
+                <!-- /.card-body -->
+            </div>
+        </div>
+    </div>
 
 @endsection
 
