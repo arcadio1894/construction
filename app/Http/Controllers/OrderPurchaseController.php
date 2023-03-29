@@ -169,7 +169,8 @@ class OrderPurchaseController extends Controller
             //dump('orden  ' . $amount);
             $tengoReal = $stockReal + $amount;
             //dump('TR  ' . $tengoReal);
-            //dump('taken  ' . $materials_taken);            $materials_taken = $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+            $materials_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+            //dump('taken  ' . $materials_taken);
             $faltaReal = $cantidadEnCotizaciones - $materials_taken;
             //dump('FR  ' . $faltaReal);
             $balance = $faltaReal - $tengoReal;
@@ -686,7 +687,7 @@ class OrderPurchaseController extends Controller
             //dump('orden  ' . $amount);
             $tengoReal = $stockReal + $amount;
             //dump('TR  ' . $tengoReal);
-            $materials_taken = $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+            $materials_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
             //dump('taken  ' . $materials_taken);
             $faltaReal = $cantidadEnCotizaciones - $materials_taken;
             //dump('FR  ' . $faltaReal);
