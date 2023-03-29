@@ -2026,7 +2026,7 @@ class OrderPurchaseController extends Controller
 
         foreach ( $materials_quantity as $item )
         {
-            if ($item['material_id'] == 822)
+            if ($item['material_id'] == 3079)
             {
                 dump('Logica  ' . $item['material_id'] );
                 $cantidadEnCotizaciones = $item['quantity'];

@@ -106,12 +106,35 @@
         .datepicker {
             z-index: 10000 !important;
         }
-        .tg  {border-collapse:collapse;border-spacing:0;}
-        .tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:12px;
-            overflow:hidden;padding:5px 5px;word-break:normal;}
-        .tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:12px;
-            font-weight:normal;overflow:hidden;padding:5px 5px;word-break:normal;}
-        .tg .tg-0pky{border-color:inherit;text-align:left;vertical-align:top}
+        .tg  {
+            border-collapse: separate;
+            border-spacing:0;
+        }
+        .tg td{
+            border-color:black;
+            border-style:solid;
+            border-width:0.5px;
+            font-family:Arial, sans-serif;
+            font-size:12px;
+            padding:5px 5px;
+            word-break:normal;
+        }
+        .tg th{
+            border-color:black;
+            border-style:solid;
+            border-width:1px;
+            font-family:Arial, sans-serif;
+            font-size:12px;
+            font-weight:normal;
+            padding:5px 5px;
+            word-break:normal;
+            border-collapse: separate;
+        }
+        .tg .tg-0pky{
+            text-align:left;
+            vertical-align:top;
+            border-collapse: separate;
+        }
     </style>
 @endsection
 
@@ -229,7 +252,7 @@
                         <tbody>
                         <tr>
                             <td class="tg-0pky" colspan="6"></td>
-                            <td class="tg-0pky" colspan="3" rowspan="4"><br></td>
+                            <td class="tg-0pky" colspan="3" rowspan="4"><br><img src="{{ asset('admin/dist/img/Logo.svg') }}" alt=""></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky" colspan="6" id="empresa">Empresa: </td>
@@ -254,14 +277,14 @@
                         </tr>
                         <tr>
                             <td class="tg-0pky" colspan="3"></td>
-                            <td class="tg-0pky" colspan="6"></td>
+                            <td class="tg-0pky" colspan="6" style="border-bottom-color: #ffffff"></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky" colspan="3">INGRESOS</td>
-                            <td class="tg-0pky" rowspan="7"></td>
+                            <td class="tg-0pky" rowspan="7" style="border-color: #ffffff"></td>
                             <td class="tg-0pky">DESCUENTOS</td>
                             <td class="tg-0pky"></td>
-                            <td class="tg-0pky" rowspan="2"></td>
+                            <td class="tg-0pky" rowspan="2" style="border-color: #ffffff"></td>
                             <td class="tg-0pky">APORTE</td>
                             <td class="tg-0pky"></td>
                         </tr>
@@ -280,7 +303,7 @@
                             <td class="tg-0pky"></td>
                             <td class="tg-0pky">RENTA 5° CAT</td>
                             <td class="tg-0pky" id="rentaQuintaCat">0.00</td>
-                            <td class="tg-0pky" colspan="3" rowspan="5"></td>
+                            <td class="tg-0pky" colspan="3" rowspan="5" style="border-bottom-color: #ffffff;border-top-color: #ffffff;border-left-color: #ffffff"></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky">DIAS TRAB.</td>
@@ -314,7 +337,7 @@
                             <td class="tg-0pky">H. AL 35%</td>
                             <td class="tg-0pky" id="horasAl35">0.00</td>
                             <td class="tg-0pky" id="montoHorasAl35">0.00</td>
-                            <td class="tg-0pky" colspan="6" rowspan="2"></td>
+                            <td class="tg-0pky" colspan="6" rowspan="2" style="border-top-color: #ffffff;border-left-color: #ffffff;border-bottom-color: #ffffff"></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky">H. AL 100%</td>
@@ -325,9 +348,9 @@
                             <td class="tg-0pky">DOMINICAL</td>
                             <td class="tg-0pky" id="dominical">0.00</td>
                             <td class="tg-0pky" id="montoDominical">0.00</td>
-                            <td class="tg-0pky" rowspan="8"></td>
-                            <td class="tg-0pky" colspan="4">RESUMEN</td>
-                            <td class="tg-0pky" rowspan="8"></td>
+                            <td class="tg-0pky" rowspan="8" style="border-color: #ffffff"></td>
+                            <td class="tg-0pky" colspan="4" style="border: 1px solid black;">RESUMEN</td>
+                            <td class="tg-0pky" rowspan="8" style="border-top-color: #ffffff;border-bottom-color: #ffffff;border-left-color: #ffffff"></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky">VACACIONES</td>
@@ -363,7 +386,7 @@
                             <td class="tg-0pky" colspan="2" id="totalNetoPagar">0.00</td>
                         </tr>
                         <tr>
-                            <td class="tg-0pky" colspan="9" rowspan="11"></td>
+                            <td class="tg-0pky" colspan="9" rowspan="11" style="border-top-color: #ffffff"></td>
                         </tr>
                         <tr>
                             <td class="tg-0pky"></td>

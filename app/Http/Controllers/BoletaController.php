@@ -116,8 +116,8 @@ class BoletaController extends Controller
                 ->orderBy('date', 'desc')
                 ->first();
 
-            $start = $dateFirst->day.'/'.$dateFirst->month.'/'.$dateFirst->year;
-            $end = $dateLast->day.'/'.$dateLast->month.'/'.$dateLast->year;
+            $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
+            $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
 
             $periodo = $start .' al '.$end;
 
@@ -164,7 +164,7 @@ class BoletaController extends Controller
             $empresa = 'SERMEIND FABRICACIONES INDUSTRIALES S.A.C.';
             $ruc = '20540001384';
             $codigo = $worker->id;
-            $mombre = $worker->first_name . ' ' . $worker->last_name;
+            $nombre = $worker->first_name . ' ' . $worker->last_name;
             $cargo = ( $worker->work_function_id == null ) ? '': $worker->work_function->description;
 
             // Ingresos
@@ -229,7 +229,7 @@ class BoletaController extends Controller
                 'empresa' => $empresa,
                 'ruc' => $ruc,
                 'codigo' => $codigo,
-                'mombre' => $mombre,
+                'nombre' => $nombre,
                 'cargo' => $cargo,
                 'semana' => $semana,
                 'fecha' => $periodo,
