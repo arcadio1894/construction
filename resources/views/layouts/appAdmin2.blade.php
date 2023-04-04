@@ -942,14 +942,16 @@
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
-
+                            @endcan
+                            @can('listOrder_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar órdenes</p>
                                 </a>
                             </li>
-
+                            @endcan
+                            @can('reportMaterialEntries_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('report.materials.entries') }}" class="nav-link @yield('activeReportMaterialEntry')">
                                     <i class="far fa-circle nav-icon"></i>
