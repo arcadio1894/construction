@@ -97,33 +97,65 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var select = '';
-                    if ( item.status_order === 'stand_by' )
-                    {
-                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
-                            '       <option></option>' +
-                            '       <option value="stand_by" selected>Pendiente</option>' +
-                            '       <option value="send">Enviado</option>' +
-                            '       <option value="pick_up">Recogido</option>' +
-                            '</select>';
+                    if ( $.inArray('update_orderPurchaseExpress', $permissions) !== -1 ) {
+
+                        if ( item.status_order === 'stand_by' )
+                        {
+                            select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" selected>Pendiente</option>' +
+                                '       <option value="send">Enviado</option>' +
+                                '       <option value="pick_up">Recogido</option>' +
+                                '</select>';
+                        }
+                        if ( item.status_order === 'send' )
+                        {
+                            select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" >Pendiente</option>' +
+                                '       <option value="send" selected>Enviado</option>' +
+                                '       <option value="pick_up">Recogido</option>' +
+                                '</select>';
+                        }
+                        if ( item.status_order === 'pick_up' )
+                        {
+                            select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" >Pendiente</option>' +
+                                '       <option value="send">Enviado</option>' +
+                                '       <option value="pick_up" selected>Recogido</option>' +
+                                '</select>';
+                        }
+                    } else {
+                        if ( item.status_order === 'stand_by' )
+                        {
+                            select += '<select disabled data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" selected>Pendiente</option>' +
+                                '       <option value="send">Enviado</option>' +
+                                '       <option value="pick_up">Recogido</option>' +
+                                '</select>';
+                        }
+                        if ( item.status_order === 'send' )
+                        {
+                            select += '<select disabled data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" >Pendiente</option>' +
+                                '       <option value="send" selected>Enviado</option>' +
+                                '       <option value="pick_up">Recogido</option>' +
+                                '</select>';
+                        }
+                        if ( item.status_order === 'pick_up' )
+                        {
+                            select += '<select disabled data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
+                                '       <option></option>' +
+                                '       <option value="stand_by" >Pendiente</option>' +
+                                '       <option value="send">Enviado</option>' +
+                                '       <option value="pick_up" selected>Recogido</option>' +
+                                '</select>';
+                        }
                     }
-                    if ( item.status_order === 'send' )
-                    {
-                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
-                            '       <option></option>' +
-                            '       <option value="stand_by" >Pendiente</option>' +
-                            '       <option value="send" selected>Enviado</option>' +
-                            '       <option value="pick_up">Recogido</option>' +
-                            '</select>';
-                    }
-                    if ( item.status_order === 'pick_up' )
-                    {
-                        select += '<select data-id="'+ item.id +'" name="state_order" class="form-control select2 state_order" style="width: 115px;">' +
-                            '       <option></option>' +
-                            '       <option value="stand_by" >Pendiente</option>' +
-                            '       <option value="send">Enviado</option>' +
-                            '       <option value="pick_up" selected>Recogido</option>' +
-                            '</select>';
-                    }
+
                     return select;
 
                 }
