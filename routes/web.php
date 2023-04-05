@@ -546,7 +546,7 @@ Route::middleware('auth')->group(function (){
         Route::get('crear/entrada/compra', 'EntryController@createEntryPurchase')->name('entry.purchase.create')
             ->middleware('permission:create_entryPurchase');
         Route::get('entradas/compra/ordenes', 'EntryController@listOrderPurchase')->name('order.purchase.list')
-            ->middleware('permission:create_entryPurchase');
+            ->middleware('permission:listOrder_entryPurchase');
         Route::get('crear/entrada/compra/orden/{id}', 'EntryController@createEntryOrder')->name('order.purchase.create')
             ->middleware('permission:create_entryPurchase');
         Route::get('/get/all/orders/entries', 'EntryController@getAllOrders');
