@@ -120,16 +120,19 @@ $(document).ready(function () {
                                     '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
                             }
                         }
-                        if (item.regularize === 'nr') {
-                            if (data == 1) {
-                                text = text + '';
 
-                            } else if ( data == 0 ) {
-                                text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
-                                    '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
-                            } else if (data == 2) {
-                                text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
-                                    '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                        if ( $.inArray('create_entryPurchase', $permissions) !== -1 ) {
+                            if (item.regularize === 'nr') {
+                                if (data == 1) {
+                                    text = text + '';
+
+                                } else if ( data == 0 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                        '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                                } else if (data == 2) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                        '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                                }
                             }
                         }
 
