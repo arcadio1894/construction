@@ -1816,12 +1816,14 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:destroy_loan');
 
         // Gratificaciones
-        Route::get('/all/gratification', 'GratificationController@getAllGratifications')
+        Route::get('/all/period/gratifications/', 'GratificationController@getAllPeriodGratifications')
+            ->middleware('permission:list_gratification');
+        Route::get('/all/gratifications/by/period/{period}', 'GratificationController@getAllGratificationsByPeriod')
             ->middleware('permission:list_gratification');
         Route::get('gratificaciones', 'GratificationController@index')
             ->name('gratification.index')
             ->middleware('permission:list_gratification');
-        Route::get('crear/gratificacion', 'GratificationController@create')
+        Route::get('crear/gratificacion/{period}', 'GratificationController@create')
             ->name('gratification.create')
             ->middleware('permission:create_gratification');
         Route::post('gratification/store', 'GratificationController@store')

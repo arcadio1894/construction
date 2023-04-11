@@ -3,81 +3,92 @@
 namespace App\Http\Controllers;
 
 use App\Gratification;
+use App\GratiPeriod;
+use App\Worker;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GratificationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        return view('gratification.index');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create($period_id)
     {
-        //
+        $period = GratiPeriod::find($period_id);
+        return view('gratification.create', compact('period'));
+
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
+    public function getAllPeriodGratifications()
+    {
+        $periods = GratiPeriod::with('gratifications')->get();
+
+        $numWorkers = Worker::all()->count()-1;
+
+        return response()->json([
+            'periods' => $periods,
+            'numWorkers' => $numWorkers
+        ], 200);
+    }
+
+    public function getAllGratificationsByPeriod( $period_id )
+    {
+        $period = GratiPeriod::find($period_id);
+        $period2 = GratiPeriod::with('gratifications')->find($period_id);
+
+        $workers_id_registered =[];
+        $array_gratifications = [];
+
+        foreach ( $period2->gratifications as $gratification )
+        {
+            array_push($array_gratifications, [
+                'worker_id' => $gratification->worker_id,
+                'worker_name' => $gratification->worker->first_name . ' ' . $gratification->worker->last_name,
+                'period' => $period2->description,
+                'date' => $gratification->date,
+                'amount' => $gratification->amount,
+                'period_id' => $period2->id,
+                'gratification_id' => $gratification->id,
+
+            ]);
+            array_push($workers_id_registered, $gratification->worker_id);
+        }
+
+        $workersNotRegisterd = Worker::where('id', '<>', 1)
+            ->whereNotIn('id', $workers_id_registered)
+            ->get();
+
+        return response()->json([
+            'period' => $period,
+            'gratifications' => $array_gratifications,
+            'workersNotRegistered' => $workersNotRegisterd
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Gratification  $gratification
-     * @return \Illuminate\Http\Response
-     */
     public function show(Gratification $gratification)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Gratification  $gratification
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Gratification $gratification)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Gratification  $gratification
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, Gratification $gratification)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Gratification  $gratification
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(Gratification $gratification)
     {
         //
