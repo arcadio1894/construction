@@ -2033,14 +2033,14 @@
                                                     </a>
                                                 </li>
                                             @endcan
-                                            @can('create_gratification')
+                                            {{--@can('create_gratification')
                                                 <li class="nav-item">
                                                     <a href="{{ route('gratification.create') }}" class="nav-link @yield('activeCreateGratification')">
                                                         <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                         <p>Crear gratificación</p>
                                                     </a>
                                                 </li>
-                                            @endcan
+                                            @endcan--}}
                                         </ul>
                                     </li>
                                 @endcan
@@ -2310,7 +2310,7 @@
                     @yield('page-title')
                     {{--<h5 class="card-title">Card header</h5>--}}
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="content-body">
                     @yield('content')
                     {{--<h5 class="card-title">Card title</h5>--}}
                 </div>

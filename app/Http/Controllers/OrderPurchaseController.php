@@ -169,9 +169,10 @@ class OrderPurchaseController extends Controller
             //dump('orden  ' . $amount);
             $tengoReal = $stockReal + $amount;
             //dump('TR  ' . $tengoReal);
-            $materials_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
             //dump('taken  ' . $materials_taken);
-            $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+            $material_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+            $faltaReal = $cantidadEnCotizaciones - $material_taken;
+
             //dump('FR  ' . $faltaReal);
             $balance = $faltaReal - $tengoReal;
             //dump('bal  ' . $balance);
@@ -687,9 +688,13 @@ class OrderPurchaseController extends Controller
             //dump('orden  ' . $amount);
             $tengoReal = $stockReal + $amount;
             //dump('TR  ' . $tengoReal);
+<<<<<<< HEAD
             $materials_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+=======
+            $material_taken = (array_search($item['material_id'], array_column($materials_takens, 'material_id')) == null) ? 0: $materials_takens[array_search($item['material_id'], array_column($materials_takens, 'material_id'))]['quantity'];
+>>>>>>> f87e432c51f2e3de29906d86209ab2e32cb07821
             //dump('taken  ' . $materials_taken);
-            $faltaReal = $cantidadEnCotizaciones - $materials_taken;
+            $faltaReal = $cantidadEnCotizaciones - $material_taken;
             //dump('FR  ' . $faltaReal);
             $balance = $faltaReal - $tengoReal;
             //dump('bal  ' . $balance);
