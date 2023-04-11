@@ -702,9 +702,13 @@ class EntryController extends Controller
     {
         $begin = microtime(true);
 
+        $dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(4);
+
         $entries = Entry::with('supplier')
             ->where('entry_type', 'Por compra')
             ->where('finance', false)
+            ->where('created_at', '>=', $date4MonthAgo)
             ->orderBy('created_at', 'desc')
             ->get();
         /*$entries = Entry::with('supplier')->with(['details' => function ($query) {

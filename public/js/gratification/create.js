@@ -1,6 +1,6 @@
 $(document).ready(function () {
 
-    fillGratifications();
+    //fillGratifications();
 
     $formCreate = $('#formCreate');
 
@@ -32,11 +32,14 @@ function fillGratifications() {
             $("#content-body").LoadingOverlay("hide", true);
         }
     });
+
+
 }
 
 function renderTemplateGratification(period, gratifications, workersNotRegistered) {
 
     for (let i = 0; i < workersNotRegistered.length; i++) {
+
         var clone1 = activateTemplate('#template-user');
 
         clone1.querySelector("[data-id]").innerHTML = workersNotRegistered[i].id;
@@ -69,7 +72,6 @@ function renderTemplateGratification(period, gratifications, workersNotRegistere
 
         $('#body-gratifications').append(clone);
     }
-
 }
 
 function activateTemplate(id) {

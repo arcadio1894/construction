@@ -19,7 +19,30 @@ class GratificationController extends Controller
     public function create($period_id)
     {
         $period = GratiPeriod::find($period_id);
-        return view('gratification.create', compact('period'));
+        $period2 = GratiPeriod::with('gratifications')->find($period_id);
+
+        $workers_id_registered =[];
+        $gratifications = [];
+
+        foreach ( $period2->gratifications as $gratification )
+        {
+            array_push($gratifications, [
+                'worker_id' => $gratification->worker_id,
+                'worker_name' => $gratification->worker->first_name . ' ' . $gratification->worker->last_name,
+                'period' => $period2->description,
+                'date' => $gratification->date,
+                'amount' => $gratification->amount,
+                'period_id' => $period2->id,
+                'gratification_id' => $gratification->id,
+
+            ]);
+            array_push($workers_id_registered, $gratification->worker_id);
+        }
+
+        $workersNotRegisterd = Worker::where('id', '<>', 1)
+            ->whereNotIn('id', $workers_id_registered)
+            ->get();
+        return view('gratification.create', compact('period', 'gratifications', 'workersNotRegisterd'));
 
     }
 

@@ -21,6 +21,9 @@
 @endsection
 
 @section('styles-plugins')
+    <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
+
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
@@ -37,7 +40,6 @@
 @section('page-title')
     <h5 class="card-title">Listado</h5>
     <a href="{{ route('loan.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Periodo </a>
-    <button type="button" class="btn btn-outline-warning btn-sm float-right ml-2 mr-2" > <i class="fas fa-sync-alt font-20"></i> Refrescar  </button>
 
 @endsection
 
@@ -59,40 +61,98 @@
 
 @section('content')
     <input type="hidden" id="period" value="{{ $period->id }}">
-    <div class="table-responsive">
-        <table class="table table-hover" id="user-table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Nombre</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody id="body-users">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Usuarios sin gratificación</h3>
 
-            </tbody>
-        </table>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover table-sm" id="user-table">
+                            <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-users">
+                            @foreach( $workersNotRegisterd as $worker )
+                                <tr>
+                                    <td>{{ $worker->id }}</td>
+                                    <td>{{ $worker->first_name . ' '. $worker->last_name }}</td>
+                                    <td>
+                                        <button type="button" data-action data-worker_id="{{ $worker->id }}" data-worker="{{ $worker->first_name . ' '. $worker->last_name }}" data-period="{{ $period->id }}" data-period_name="{{ $period->description }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
+                                    </td>
+                                </tr>
+                            @endforeach
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
     </div>
 
-    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card card-primary">
+                <div class="card-header">
+                    <h3 class="card-title">Usuarios con gratificaciones</h3>
 
-    <div class="table-responsive">
-        <table class="table table-hover" id="gratification-table">
-            <thead>
-            <tr>
-                <th>ID</th>
-                <th>Trabajador</th>
-                <th>Periodo</th>
-                <th>Fecha Pago</th>
-                <th>Monto</th>
-                <th>Acciones</th>
-            </tr>
-            </thead>
-            <tbody id="body-gratifications">
-            </tbody>
-        </table>
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <div class="table-responsive">
+                            <table class="table table-hover table-sm" id="gratification-table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Trabajador</th>
+                                    <th>Periodo</th>
+                                    <th>Fecha Pago</th>
+                                    <th>Monto</th>
+                                    <th>Acciones</th>
+                                </tr>
+                                </thead>
+                                <tbody id="body-gratifications">
+                                @for( $i = 0; $i<count($gratifications); $i++ )
+                                    <tr>
+                                        <td data-worker>{{ $gratifications[$i]['worker_name'] }}</td>
+                                        <td data-period>{{ $gratifications[$i]['period'] }}</td>
+                                        <td data-date>{{ $gratifications[$i]['date'] }}</td>
+                                        <td data-amount>{{ $gratifications[$i]['amount'] }}</td>
+                                        <td>
+                                            <button type="button" data-edit data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-date="{{ $gratifications[$i]['date'] }}" data-amount="{{ $gratifications[$i]['amount'] }}" data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-worker="{{ $gratifications[$i]['worker_name'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" data-description_period="{{ $gratifications[$i]['period'] }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
+                                            <button type="button" data-delete data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
+
+                                        </td>
+                                    </tr>
+                                @endfor
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
     </div>
-
 
 
     <div id="modalDelete" class="modal fade" tabindex="-1">
@@ -157,6 +217,7 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+
     <script>
         $(function () {
             $('body').tooltip({
@@ -173,7 +234,6 @@
                 todayHighlight: true,
                 defaultViewDate: moment().format('L')
             });
-
 
             $('#user-table').DataTable( {
                 bAutoWidth: false,
