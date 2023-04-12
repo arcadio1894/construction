@@ -703,7 +703,7 @@ class EntryController extends Controller
         $begin = microtime(true);
 
         $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(4);
+        $date4MonthAgo = $dateCurrent->subMonths(2);
 
         $entries = Entry::with('supplier')
             ->where('entry_type', 'Por compra')
@@ -764,6 +764,9 @@ class EntryController extends Controller
     {
         $begin = microtime(true);
 
+        $dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(2);
+
         $entries = Entry::with('supplier')->with(['details' => function ($query) {
             $query->with('material')->with(['items' => function ($query) {
                 $query->where('state_item', 'entered')
@@ -775,6 +778,7 @@ class EntryController extends Controller
         }])
             ->where('entry_type', 'Por compra')
             ->where('finance', false)
+            ->where('created_at', '>=', $date4MonthAgo)
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -996,7 +1000,12 @@ class EntryController extends Controller
     public function getAllOrders()
     {
         $begin = microtime(true);
+
+        $dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(2);
+
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
+            ->where('created_at', '>=', $date4MonthAgo)
             ->orderBy('created_at', 'desc')
             ->get();
         $end = microtime(true) - $begin;

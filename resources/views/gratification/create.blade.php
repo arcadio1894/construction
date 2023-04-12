@@ -89,7 +89,7 @@
                                     <td>{{ $worker->id }}</td>
                                     <td>{{ $worker->first_name . ' '. $worker->last_name }}</td>
                                     <td>
-                                        <button type="button" data-action data-worker_id="{{ $worker->id }}" data-worker="{{ $worker->first_name . ' '. $worker->last_name }}" data-period="{{ $period->id }}" data-period_name="{{ $period->description }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
+                                        <button type="button" data-toggle="tooltip" data-placement="top" title="Registrar gratificación" data-action data-worker_id="{{ $worker->id }}" data-worker="{{ $worker->first_name . ' '. $worker->last_name }}" data-period="{{ $period->id }}" data-period_name="{{ $period->description }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -155,19 +155,61 @@
     </div>
 
 
-    <div id="modalDelete" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
+    <div id="modalCreate" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Confirmar eliminación</h4>
+                    <h4 class="modal-title">Registrar gratificación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDelete" data-url="{{ route('loan.destroy') }}">
+                <form id="formCreate" data-url="{{ route('gratification.store') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="loan_id" name="loan_id">
-                        <strong> ¿Desea eliminar este descuento? </strong>
-                        <p id="code"></p>
+                        <input type="hidden" id="period_id" name="period_id">
+                        <input type="hidden" id="worker_id" name="worker_id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="period_name"> Periodo <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="period_name" name="period_name" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="number" id="amount" name="amount" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" id="date" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
@@ -217,13 +259,12 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+    <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
 
     <script>
         $(function () {
-            $('body').tooltip({
-                selector: '[data-toggle="tooltip"]'
-            });
-            //Initialize Select2 Elements
+
+            $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",

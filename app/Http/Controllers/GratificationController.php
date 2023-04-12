@@ -92,9 +92,9 @@ class GratificationController extends Controller
         ], 200);
     }
 
-    public function store(Request $request)
+    public function store(GratificationStoreRequest $request)
     {
-        //
+
     }
 
     public function show(Gratification $gratification)

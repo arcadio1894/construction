@@ -1345,6 +1345,9 @@ function saveEquipment() {
                 confirm: {
                     text: 'CONFIRMAR',
                     action: function (e) {
+                        $("#element_loader").LoadingOverlay("show", {
+                            background  : "rgba(61, 215, 239, 0.4)"
+                        });
                         var modifiedEquipment = [];
                         var equipmentId = parseInt(button2.attr('data-saveequipment')); // pos in array js
                         var idEquipment = button2.attr('data-idequipment'); // id del equipo en BD
@@ -1618,9 +1621,9 @@ function saveEquipment() {
                                 var quote = data.quote;
                                 button2.parent().prev().html('EQUIPO: '+description);
                                 button2.attr('data-quote', quote.id);
-                                button2.attr('data-idEquipment', equipment.id);
+                                button2.attr('data-idequipment', equipment.id);
                                 button2.next().attr('data-quote', quote.id);
-                                button2.next().attr('data-idEquipment', equipment.id);
+                                button2.next().attr('data-idequipment', equipment.id);
                                 $equipments.push({'id':equipmentDeleted.id, 'quote':quote.id, 'equipment':equipment.id, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment2, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                                 if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
                                     renderTemplateSummary($equipments);
@@ -1678,7 +1681,7 @@ function saveEquipment() {
                         var card = button2.parent().parent().parent();
                         card.removeClass('card-gray-dark');
                         card.addClass('card-success');
-
+                        $("#element_loader").LoadingOverlay("hide", true);
                         console.log($total);
                     },
                 },

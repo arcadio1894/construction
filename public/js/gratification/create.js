@@ -1,14 +1,33 @@
 $(document).ready(function () {
-
+    $('body').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
     //fillGratifications();
+    $(document).on('click', '[data-action]', showModalGratification);
 
     $formCreate = $('#formCreate');
+    $modalCreate = $('#modalCreate');
 
-    $('#btn-submit').on('click', storeLoan);
+    //$('#btn-submit').on('click', storeLoan);
 
 });
 
 var $formCreate;
+var $modalCreate;
+
+function showModalGratification() {
+    var worker_id = $(this).attr('data-worker_id');
+    var name_worker = $(this).attr('data-worker');
+    var period_id = $(this).attr('data-period');
+    var period_name = $(this).attr('data-period_name');
+
+    $modalCreate.find('[id=period_id]').val(period_id);
+    $modalCreate.find('[id=worker_id]').val(worker_id);
+    $modalCreate.find('[id=name_worker]').val(name_worker);
+    $modalCreate.find('[id=period_name]').val(period_name);
+
+    $modalCreate.modal('show');
+}
 
 function fillGratifications() {
     var period_id = $('#period').val();
