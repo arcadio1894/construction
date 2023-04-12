@@ -38,8 +38,8 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Listado</h5>
-    <a href="{{ route('loan.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Periodo </a>
+    <h5 class="card-title">{{ $period->description }}</h5>
+    <a href="{{ route('gratification.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-alt-circle-left font-20"></i> Regresar a los periodos de gratificación </a>
 
 @endsection
 
@@ -53,7 +53,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('loan.index') }}"><i class="fa fa-archive"></i> Periodos de Gratificaciones</a>
+            <a href="{{ route('gratification.index') }}"><i class="fa fa-archive"></i> Periodos de Gratificaciones</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -61,6 +61,7 @@
 
 @section('content')
     <input type="hidden" id="period" value="{{ $period->id }}">
+
     <div class="row">
         <div class="col-md-12">
             <div class="card card-primary">
@@ -132,14 +133,14 @@
                                 <tbody id="body-gratifications">
                                 @for( $i = 0; $i<count($gratifications); $i++ )
                                     <tr>
+                                        <td data-id>{{ $gratifications[$i]['worker_id'] }}</td>
                                         <td data-worker>{{ $gratifications[$i]['worker_name'] }}</td>
                                         <td data-period>{{ $gratifications[$i]['period'] }}</td>
                                         <td data-date>{{ $gratifications[$i]['date'] }}</td>
                                         <td data-amount>{{ $gratifications[$i]['amount'] }}</td>
                                         <td>
-                                            <button type="button" data-edit data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-date="{{ $gratifications[$i]['date'] }}" data-amount="{{ $gratifications[$i]['amount'] }}" data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-worker="{{ $gratifications[$i]['worker_name'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" data-description_period="{{ $gratifications[$i]['period'] }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
-                                            <button type="button" data-delete data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
-
+                                            <button type="button" data-edit data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-date="{{ $gratifications[$i]['date'] }}" data-amount="{{ $gratifications[$i]['amount'] }}" data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-worker="{{ $gratifications[$i]['worker_name'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" data-description_period="{{ $gratifications[$i]['period'] }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-pen"></i> </button>
+                                            <button type="button" data-delete data-gratification_id="{{ $gratifications[$i]['gratification_id'] }}" data-date="{{ $gratifications[$i]['date'] }}" data-amount="{{ $gratifications[$i]['amount'] }}" data-worker_id="{{ $gratifications[$i]['worker_id'] }}" data-worker="{{ $gratifications[$i]['worker_name'] }}" data-period="{{ $gratifications[$i]['period_id'] }}" data-description_period="{{ $gratifications[$i]['period'] }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                         </td>
                                     </tr>
                                 @endfor
@@ -213,7 +214,139 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-submit" class="btn btn-danger">Eliminar</button>
+                        <button type="button" id="btn-submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEdit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Editar gratificación</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formEdit" data-url="{{ route('gratification.update') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="gratification_id" name="gratification_id">
+                        <input type="hidden" id="period_id" name="period_id">
+                        <input type="hidden" id="worker_id" name="worker_id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="period_name"> Periodo <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="period_name" name="period_name" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="number" id="amount" name="amount" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" id="dateEdit" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-submitEdit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDelete" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Eliminar gratificación</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formDelete" data-url="{{ route('gratification.destroy') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="gratification_id" name="gratification_id">
+                        <input type="hidden" id="period_id" name="period_id">
+                        <input type="hidden" id="worker_id" name="worker_id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="period_name"> Periodo <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="period_name" name="period_name" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="number" readonly id="amount" name="amount" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" readonly id="dateDelete" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-submitDelete" class="btn btn-danger">Eliminar</button>
                     </div>
                 </form>
             </div>
@@ -265,6 +398,8 @@
         $(function () {
 
             $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#dateEdit').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#dateDelete').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",

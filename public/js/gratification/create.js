@@ -4,16 +4,28 @@ $(document).ready(function () {
     });
     //fillGratifications();
     $(document).on('click', '[data-action]', showModalGratification);
+    $(document).on('click', '[data-edit]', showModalEditGratification);
+    $(document).on('click', '[data-delete]', showModalDeleteGratification);
 
     $formCreate = $('#formCreate');
     $modalCreate = $('#modalCreate');
+    $formEdit = $('#formEdit');
+    $modalEdit = $('#modalEdit');
+    $formDelete = $('#formDelete');
+    $modalDelete = $('#modalDelete');
 
-    //$('#btn-submit').on('click', storeLoan);
+    $('#btn-submit').on('click', storeGratification);
+    $('#btn-submitEdit').on('click', updateGratification);
+    $('#btn-submitDelete').on('click', deleteGratification);
 
 });
 
 var $formCreate;
 var $modalCreate;
+var $formEdit;
+var $modalEdit;
+var $formDelete;
+var $modalDelete;
 
 function showModalGratification() {
     var worker_id = $(this).attr('data-worker_id');
@@ -27,6 +39,46 @@ function showModalGratification() {
     $modalCreate.find('[id=period_name]').val(period_name);
 
     $modalCreate.modal('show');
+}
+
+function showModalEditGratification() {
+    var description_period = $(this).data('description_period');
+    var period = $(this).data('period');
+    var worker = $(this).data('worker');
+    var worker_id = $(this).data('worker_id');
+    var amount = $(this).data('amount');
+    var date = $(this).data('date');
+    var gratification_id = $(this).data('gratification_id');
+
+    $modalEdit.find('[id=period_id]').val(period);
+    $modalEdit.find('[id=worker_id]').val(worker_id);
+    $modalEdit.find('[id=name_worker]').val(worker);
+    $modalEdit.find('[id=period_name]').val(description_period);
+    $modalEdit.find('[id=gratification_id]').val(gratification_id);
+    $modalEdit.find('[id=amount]').val(amount);
+    $modalEdit.find('[id=dateEdit]').val(date);
+
+    $modalEdit.modal('show');
+}
+
+function showModalDeleteGratification() {
+    var description_period = $(this).data('description_period');
+    var period = $(this).data('period');
+    var worker = $(this).data('worker');
+    var worker_id = $(this).data('worker_id');
+    var amount = $(this).data('amount');
+    var date = $(this).data('date');
+    var gratification_id = $(this).data('gratification_id');
+
+    $modalDelete.find('[id=period_id]').val(period);
+    $modalDelete.find('[id=worker_id]').val(worker_id);
+    $modalDelete.find('[id=name_worker]').val(worker);
+    $modalDelete.find('[id=period_name]').val(description_period);
+    $modalDelete.find('[id=gratification_id]').val(gratification_id);
+    $modalDelete.find('[id=amount]').val(amount);
+    $modalDelete.find('[id=dateDelete]').val(date);
+
+    $modalDelete.modal('show');
 }
 
 function fillGratifications() {
@@ -98,7 +150,7 @@ function activateTemplate(id) {
     return document.importNode(t.content, true);
 }
 
-function storeLoan() {
+function storeGratification() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);
@@ -113,6 +165,7 @@ function storeLoan() {
         contentType:false,
         success: function (data) {
             console.log(data);
+            $modalCreate.modal('hide');
             toastr.success(data.message, 'Éxito',
                 {
                     "closeButton": true,
@@ -134,7 +187,7 @@ function storeLoan() {
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
                 location.reload();
-            }, 2000 )
+            }, 1500 )
         },
         error: function (data) {
             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -180,6 +233,180 @@ function storeLoan() {
             }
 
             $("#btn-submit").attr("disabled", false);
+        },
+    });
+}
+
+function updateGratification() {
+    event.preventDefault();
+    // Obtener la URL
+    $("#btn-submitEdit").attr("disabled", true);
+    var formulario = $('#formEdit')[0];
+    var form = new FormData(formulario);
+    var editUrl = $formEdit.data('url');
+    $.ajax({
+        url: editUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            $modalEdit.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-submitEdit").attr("disabled", false);
+                location.reload();
+            }, 1500 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+            $("#btn-submitEdit").attr("disabled", false);
+        },
+    });
+}
+
+function deleteGratification() {
+    event.preventDefault();
+    // Obtener la URL
+    $("#btn-submitDelete").attr("disabled", true);
+    var formulario = $('#formDelete')[0];
+    var form = new FormData(formulario);
+    var deleteUrl = $formDelete.data('url');
+    $.ajax({
+        url: deleteUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            $modalDelete.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-submitDelete").attr("disabled", false);
+                location.reload();
+            }, 1500 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+            $("#btn-submitDelete").attr("disabled", false);
         },
     });
 }

@@ -31,6 +31,9 @@
         .select2-search__field{
             width: 100% !important;
         }
+        .liga {
+            cursor: pointer;
+        }
     </style>
 @endsection
 
@@ -62,29 +65,6 @@
 
     </div>
 
-    <div id="modalDelete" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Confirmar eliminación</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <form id="formDelete" data-url="{{ route('loan.destroy') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" id="loan_id" name="loan_id">
-                        <strong> ¿Desea eliminar este descuento? </strong>
-                        <p id="code"></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-submit" class="btn btn-danger">Eliminar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
     <template id="template-period">
         <div class="col-lg-3 col-6">
             <!-- small card -->
@@ -104,13 +84,131 @@
                 <div class="icon">
                     <i class="fas fa-calendar-alt"></i>
                 </div>
-                <a data-link href="#" class="small-box-footer">
+                <a data-link href="#" class="bg-gradient-success small-box-footer">
                     Registrar <i class="fas fa-external-link-alt"></i>
+                </a>
+                <a data-edit data-description data-month data-year class="bg-gradient-orange small-box-footer liga">
+                    Editar <i class="fas fa-external-link-alt"></i>
+                </a>
+                <a data-delete data-description class="bg-gradient-danger small-box-footer liga">
+                    Eliminar <i class="fas fa-external-link-alt"></i>
                 </a>
             </div>
         </div>
     </template>
 
+    <div id="modalCreate" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Registrar periodo de gratificación</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formCreate" data-url="{{ route('gratification.period.store') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="month"> Mes <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <select id="month" name="month" class="form-control select2" style="width: 100%;">
+                                            <option></option>
+                                            <option value="7">JULIO</option>
+                                            <option value="12">DICIEMBRE</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="year"> Año <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" id="year" name="year" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-submit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalEdit" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Modificar periodo <strong id="description_edit"></strong></h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formEdit" data-url="{{ route('gratification.period.update') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="period_id_edit" name="period_id">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="month"> Mes <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <select id="month_edit" name="month" class="form-control select2" style="width: 100%;">
+                                            <option></option>
+                                            <option value="7">JULIO</option>
+                                            <option value="12">DICIEMBRE</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="col-sm-6 control-label" for="year"> Año <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="text" id="year_edit" name="year" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-submitEdit" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalDelete" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Confirmar eliminación</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formDelete" data-url="{{ route('gratification.period.destroy') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="period_id_delete" name="period_id">
+                        <strong> ¿Desea eliminar este periodo? </strong>
+                        <p id="descriptionDelete"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-submitDelete" class="btn btn-danger">Eliminar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -127,6 +225,19 @@
 
 @section('scripts')
     <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+    <script>
+        $(function () {
 
+            $('#month').select2({
+                placeholder: "Selecione un mes",
+            });
+
+            $('#month_edit').select2({
+                placeholder: "Selecione un mes",
+            });
+
+
+        })
+    </script>
     <script src="{{ asset('js/gratification/index.js') }}"></script>
 @endsection

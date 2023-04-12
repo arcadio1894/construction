@@ -1829,6 +1829,15 @@ Route::middleware('auth')->group(function (){
         Route::post('gratification/store', 'GratificationController@store')
             ->name('gratification.store')
             ->middleware('permission:create_gratification');
+        Route::post('gratification/period/store', 'GratificationController@storePeriod')
+            ->name('gratification.period.store')
+            ->middleware('permission:create_gratification');
+        Route::post('gratification/period/update', 'GratificationController@updatePeriod')
+            ->name('gratification.period.update')
+            ->middleware('permission:edit_gratification');
+        Route::post('gratification/period/destroy', 'GratificationController@destroyPeriod')
+            ->name('gratification.period.destroy')
+            ->middleware('permission:destroy_gratification');
         Route::get('/editar/gratificacion/{id}', 'GratificationController@edit')
             ->name('gratification.edit')
             ->middleware('permission:edit_gratification');
@@ -1837,7 +1846,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:edit_gratification');
         Route::post('gratification/destroy', 'GratificationController@destroy')
             ->name('gratification.destroy')
-            ->middleware('permission:delete_gratification');
+            ->middleware('permission:destroy_gratification');
 
         // TODO: Rutas para los regimenes de trabajo
         Route::get('/registrar/regimenes/trabajo/', 'RegimeController@create')

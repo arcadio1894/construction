@@ -17,7 +17,7 @@ class Gratification extends Model
         'grati_period_id'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date'];
 
     public function worker()
     {
