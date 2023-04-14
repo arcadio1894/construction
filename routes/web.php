@@ -1848,6 +1848,36 @@ Route::middleware('auth')->group(function (){
             ->name('gratification.destroy')
             ->middleware('permission:destroy_gratification');
 
+        // Renta de Quinta Categoria
+        Route::get('/all/workers/not/fifthCategory', 'FifthCategoryController@getWorkers')
+            ->middleware('permission:list_fifthCategory');
+        Route::get('/all/workers/fifthCategory/', 'FifthCategoryController@getWorkersFifthCategory')
+            ->middleware('permission:list_fifthCategory');
+        Route::get('/all/fifthCategory/by/worker/{worker}', 'FifthCategoryController@getAllFifthCategoryByWorkers')
+            ->middleware('permission:list_fifthCategory');
+        Route::get('/renta/quinta/categoria', 'FifthCategoryController@index')
+            ->name('fifthCategory.index')
+            ->middleware('permission:list_fifthCategory');
+        Route::get('crear/renta/quinta/categoria/{worker}', 'FifthCategoryController@create')
+            ->name('fifthCategory.create')
+            ->middleware('permission:create_fifthCategory');
+        Route::post('fifthCategory/store', 'FifthCategoryController@storeWorkerFifthCategory')
+            ->name('fifthCategory.store')
+            ->middleware('permission:create_fifthCategory');
+        Route::post('fifthCategory/destroy', 'FifthCategoryController@destroyWorkerFifthCategory')
+            ->name('fifthCategory.destroy')
+            ->middleware('permission:destroy_fifthCategory');
+
+        Route::post('fifthCategory/worker/store', 'FifthCategoryController@store')
+            ->name('fifthCategory.worker.store')
+            ->middleware('permission:create_fifthCategory');
+        Route::post('fifthCategory/worker/update', 'FifthCategoryController@update')
+            ->name('fifthCategory.worker.update')
+            ->middleware('permission:edit_fifthCategory');
+        Route::post('fifthCategory/worker/destroy', 'FifthCategoryController@destroy')
+            ->name('fifthCategory.worker.destroy')
+            ->middleware('permission:destroy_fifthCategory');
+
         // TODO: Rutas para los regimenes de trabajo
         Route::get('/registrar/regimenes/trabajo/', 'RegimeController@create')
             ->name('regime.create');

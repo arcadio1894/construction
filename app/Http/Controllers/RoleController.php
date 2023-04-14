@@ -77,6 +77,7 @@ class RoleController extends Controller
         'loan' => 'PRÉSTAMOS',
         'gratification' => 'GRATIFICACIÓN',
         'refund' => 'REEMBOLSOS',
+        'fifthCategory' => 'RENTA QUINTA CATEGORIA'
     ];
 
     public function index()

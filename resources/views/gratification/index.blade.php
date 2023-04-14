@@ -8,11 +8,11 @@
     active
 @endsection
 
-@section('openLoans')
+@section('openGratifications')
     menu-open
 @endsection
 
-@section('activeListLoan')
+@section('activeListGratification')
     active
 @endsection
 
@@ -54,7 +54,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('loan.index') }}"><i class="fa fa-archive"></i> Periodos de Gratificaciones</a>
+            <a href="{{ route('gratification.index') }}"><i class="fa fa-archive"></i> Periodos de Gratificaciones</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>

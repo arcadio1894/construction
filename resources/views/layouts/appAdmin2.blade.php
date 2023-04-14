@@ -2044,6 +2044,36 @@
                                         </ul>
                                     </li>
                                 @endcan
+
+                                @can('enable_fifthCategory')
+                                    <li class="nav-item has-treeview @yield('openFifthCategory')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Quinta Categoría
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_fifthCategory')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('fifthCategory.index') }}" class="nav-link @yield('activeFifthCategory')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar Usuarios</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            {{--@can('create_gratification')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('gratification.create') }}" class="nav-link @yield('activeCreateGratification')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Crear gratificación</p>
+                                                    </a>
+                                                </li>
+                                            @endcan--}}
+                                        </ul>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan
