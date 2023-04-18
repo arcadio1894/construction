@@ -54,7 +54,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('loan.index') }}"><i class="fa fa-archive"></i> Renta de Quinta Categoría</a>
+            <a href="{{ route('fifthCategory.index') }}"><i class="fa fa-archive"></i> Renta de Quinta Categoría</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Trabajadores</li>
     </ol>

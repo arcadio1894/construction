@@ -1888,6 +1888,25 @@ Route::middleware('auth')->group(function (){
             ->name('fifthCategory.worker.destroy')
             ->middleware('permission:destroy_fifthCategory');
 
+        // Pension de Alimentos
+        Route::get('/all/workers/alimony/', 'AlimonyController@getWorkersAlimony')
+            ->middleware('permission:list_alimony');
+        Route::get('/pension/alimentos/', 'AlimonyController@index')
+            ->name('alimony.index')
+            ->middleware('permission:list_alimony');
+        Route::get('ver/pension/alimentos/{worker}', 'AlimonyController@create')
+            ->name('alimony.create')
+            ->middleware('permission:create_alimony');
+        Route::post('alimony/worker/store', 'AlimonyController@store')
+            ->name('alimony.worker.store')
+            ->middleware('permission:create_alimony');
+        Route::post('alimony/worker/update', 'AlimonyController@update')
+            ->name('alimony.worker.update')
+            ->middleware('permission:edit_alimony');
+        Route::post('alimony/worker/destroy', 'AlimonyController@destroy')
+            ->name('alimony.worker.destroy')
+            ->middleware('permission:destroy_alimony');
+
         // TODO: Rutas para los regimenes de trabajo
         Route::get('/registrar/regimenes/trabajo/', 'RegimeController@create')
             ->name('regime.create');

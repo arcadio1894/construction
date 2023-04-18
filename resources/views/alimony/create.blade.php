@@ -8,16 +8,16 @@
     active
 @endsection
 
-@section('openFifthCategory')
+@section('openAlimony')
     menu-open
 @endsection
 
-@section('activeFifthCategory')
+@section('activeAlimony')
     active
 @endsection
 
 @section('title')
-    Renta de Quinta Categoría
+    Pensión de alimentos
 @endsection
 
 @section('styles-plugins')
@@ -39,7 +39,7 @@
 
 @section('page-title')
     <h5 class="card-title">{{ $worker->first_name.' '.$worker->last_name }}</h5>
-    <a href="{{ route('fifthCategory.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-alt-circle-left font-20"></i> Regresar a los trabajadores </a>
+    <a href="{{ route('alimony.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-alt-circle-left font-20"></i> Regresar a los trabajadores </a>
 
 @endsection
 
@@ -53,7 +53,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('fifthCategory.index') }}"><i class="fa fa-archive"></i> Trabajadores en quinta categoría</a>
+            <a href="{{ route('alimony.index') }}"><i class="fa fa-archive"></i> Trabajadores en quinta categoría</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Pagos registrados</li>
     </ol>
@@ -66,39 +66,44 @@
         <div class="col-md-12">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Pagos de renta de quinta categoría</h3>
+                    <h3 class="card-title">Pensiones de alimentos</h3>
 
                     <div class="card-tools">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i>
                         </button>
-                        <button type="button" id="btn-new" data-worker_id="{{ $worker->id }}" data-worker_name="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-success btn-sm float-left">Nuevo pago</button>
                     </div>
                 </div>
                 <div class="card-body">
                     <div class="table-responsive">
                         <div class="table-responsive">
-                            <table class="table table-hover table-sm" id="fifthCategory-table">
+                            <table class="table table-hover table-sm" id="alimony-table">
                                 <thead>
                                 <tr>
                                     <th>ID</th>
                                     <th>Trabajador</th>
                                     <th>Fecha Pago</th>
+                                    <th>Semana</th>
+                                    <th>Mes</th>
+                                    <th>Año</th>
                                     <th>Monto</th>
-                                    <th>Acciones</th>
+                                    {{--<th>Acciones</th>--}}
                                 </tr>
                                 </thead>
                                 <tbody id="body-gratifications">
-                                @foreach( $fifthCategories as $fifthCategory )
+                                @foreach( $alimony_pensions as $alimony )
                                     <tr>
-                                        <td data-id>{{ $worker->id }}</td>
-                                        <td data-worker>{{ $worker->first_name.' '.$worker->last_name }}</td>
-                                        <td data-date>{{ $fifthCategory->date->format('d/m/Y') }}</td>
-                                        <td data-amount>{{ $fifthCategory->amount }}</td>
-                                        <td>
+                                        <td>{{ $worker->id }}</td>
+                                        <td>{{ $worker->first_name.' '.$worker->last_name }}</td>
+                                        <td>{{ $alimony->date->format('d/m/Y') }}</td>
+                                        <td>{{ $alimony->week }}</td>
+                                        <td>{{ $alimony->name_month }}</td>
+                                        <td>{{ $alimony->year }}</td>
+                                        <td>{{ $alimony->amount }}</td>
+                                        {{--<td>
                                             <button type="button" data-edit data-fifthCategory_id="{{ $fifthCategory->id }}" data-date="{{ $fifthCategory->date->format('d/m/Y') }}" data-amount="{{ $fifthCategory->amount }}" data-worker_id="{{ $fifthCategory->worker_id }}" data-worker="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-pen"></i> </button>
                                             <button type="button" data-delete data-fifthCategory_id="{{ $fifthCategory->id }}" data-date="{{ $fifthCategory->date->format('d/m/Y') }}" data-amount="{{ $fifthCategory->amount }}" data-worker_id="{{ $fifthCategory->worker_id }}" data-worker="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                                        </td>
+                                        </td>--}}
                                     </tr>
                                 @endforeach
                                 </tbody>
@@ -109,162 +114,6 @@
                 <!-- /.card-body -->
             </div>
             <!-- /.card -->
-        </div>
-    </div>
-
-
-    <div id="modalCreate" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Registrar pago</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <form id="formCreate" data-url="{{ route('fifthCategory.worker.store') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" id="worker_id" name="worker_id">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="number" id="amount" name="amount" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" id="date" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-submit" class="btn btn-success">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalEdit" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Editar pago</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <form id="formEdit" data-url="{{ route('fifthCategory.worker.update') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" id="fifthCategory_id" name="fifthCategory_id">
-                        <input type="hidden" id="worker_id" name="worker_id">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="number" id="amount" name="amount" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-3">
-                                <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" id="dateEdit" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-submitEdit" class="btn btn-success">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalDelete" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Eliminar pago</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <form id="formDelete" data-url="{{ route('fifthCategory.worker.destroy') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" id="fifthCategory_id" name="fifthCategory_id">
-                        <input type="hidden" id="worker_id" name="worker_id">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" readonly id="name_worker" name="name_worker" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="number" readonly id="amount" name="amount" class="form-control" required />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-sm-6 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
-
-                                    <div class="col-sm-12">
-                                        <input type="text" readonly id="dateDelete" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-submitDelete" class="btn btn-danger">Eliminar</button>
-                    </div>
-                </form>
-            </div>
         </div>
     </div>
 
@@ -288,11 +137,6 @@
 
     <script>
         $(function () {
-
-            $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#dateEdit').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#dateDelete').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",
                 clearBtn: true,
@@ -303,7 +147,7 @@
                 defaultViewDate: moment().format('L')
             });
 
-            $('#fifthCategory-table').DataTable( {
+            $('#alimony-table').DataTable( {
                 bAutoWidth: false,
                 "aaSorting": [],
 
@@ -448,5 +292,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/fifthCategory/create.js') }}"></script>
+    <script src="{{ asset('js/alimony/create.js') }}"></script>
 @endsection

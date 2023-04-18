@@ -2074,6 +2074,29 @@
                                         </ul>
                                     </li>
                                 @endcan
+
+                                @can('enable_alimony')
+                                    <li class="nav-item has-treeview @yield('openAlimony')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Pensión Alimentos
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_alimony')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('alimony.index') }}" class="nav-link @yield('activeAlimony')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar Usuarios</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+
+                                        </ul>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan
