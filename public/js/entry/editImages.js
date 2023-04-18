@@ -19,7 +19,7 @@ $(document).ready(function () {
     });
 
     $formCreate = $('#formEdit');
-    $("#btn-submit").on("click", storeQuote);
+    $("#btn-submit").on("click", storeImages);
     //$formCreate.on('submit', storeQuote);
 
     $(document).on('input', '[data-imgold]', function() {
@@ -28,25 +28,10 @@ $(document).ready(function () {
         card.addClass('card-gray-dark');
     });
 
-    $(document).on('input', '[data-order]', function() {
-        var card = $(this).parent().parent().parent();
-        card.removeClass('card-outline card-primary');
-        card.addClass('card-gray-dark');
-    });
+    $('#addImageInvoice').on('click', addImageInvoice);
+    $('#addImageGuide').on('click', addImageGuide);
+    $('#addImageObservation').on('click', addImageObservation);
 
-    $(document).on('input', '[data-width]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-outline card-primary');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-height]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-outline card-primary');
-        card.addClass('card-gray-dark');
-    });
-
-    $('#addImage').on('click', addImage);
     $(document).on('click', '[data-imagedelete]', imageDelete);
 
     $(document).on('click', '[data-imageeditold]', editImageOld);
@@ -68,7 +53,7 @@ function showImagePreview() {
     $('#zoom').zoom({
         url: url,
         on:'click',
-        magnify: 0.35
+        magnify: 1
     });
 
     $modalImage.modal('show');
@@ -80,14 +65,9 @@ function editImageOld() {
     var card = $(this).parent().parent().parent();
     var id = $(this).parent().parent().next().children();
     var description = $(this).parent().parent().next().children().next().children().next();
-    var order = $(this).parent().parent().next().children().next().next().children().next();
-    var height = $(this).parent().parent().next().children().next().next().next().children().children().next();
-    var width = $(this).parent().parent().next().children().next().next().next().children().next().children().next();
+
     var image_id = id.val();
-    var image_description = description.val();
-    var image_order = order.val();
-    var image_height = height.val();
-    var image_width = width.val();
+    var image_code = description.val();
 
     $.confirm({
         icon: 'fas fa-save',
@@ -96,18 +76,18 @@ function editImageOld() {
         animation: 'zoom',
         type: 'green',
         columnClass: 'small',
-        title: '¿Está seguro de guardar la descripción y el orden de la imagen?',
-        content: 'Se va a modificar solo la descripción y el orden.',
+        title: '¿Está seguro de guardar el código de la imagen?',
+        content: 'Se va a modificar solo el código.',
         buttons: {
             confirm: {
                 text: 'CONFIRMAR',
                 btnClass: 'btn-blue',
                 action: function () {
                     $.ajax({
-                        url: '/dashboard/modificar/planos/cotizacion/'+image_id,
+                        url: '/dashboard/modificar/image/ingreso/compra/'+image_id,
                         method: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        data:{'image_id':image_id, 'image_description':image_description, 'image_order':image_order, 'image_height':image_height, 'image_width':image_width},
+                        data:{'image_id':image_id, 'image_code':image_code},
                         success: function (data) {
                             console.log(data);
                             $.alert(data.message);
@@ -139,8 +119,9 @@ function deleteImageOld() {
     var card = $(this).parent().parent().parent();
     var id = $(this).parent().parent().next().children();
     var description = $(this).parent().parent().next().children().next().children().next();
+
     var image_id = id.val();
-    var image_description = description.val();
+    var image_code = description.val();
 
     $.confirm({
         icon: 'fas fa-trash',
@@ -150,14 +131,14 @@ function deleteImageOld() {
         type: 'red',
         columnClass: 'small',
         title: '¿Está seguro de eliminar la imagen?',
-        content: image_description,
+        content: image_code,
         buttons: {
             confirm: {
                 text: 'CONFIRMAR',
                 btnClass: 'btn-blue',
                 action: function () {
                     $.ajax({
-                        url: '/dashboard/eliminar/planos/cotizacion/'+image_id,
+                        url: '/dashboard/eliminar/image/ingreso/compra/'+image_id,
                         method: 'POST',
                         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
                         data:{'image_id':image_id},
@@ -191,18 +172,39 @@ function imageDelete() {
     element.remove();
 }
 
-function addImage() {
-
-    var order = $(document).find("[data-img]").length +1;
-
-    renderTemplateImage(order);
+function addImageInvoice() {
+    var type = 'i';
+    renderTemplateImage(type);
 
 }
 
-function renderTemplateImage(order) {
+function addImageGuide() {
+    var type = 'g';
+    renderTemplateImage(type);
+
+}
+
+function addImageObservation() {
+    var type = 'o';
+    renderTemplateImage(type);
+
+}
+
+function renderTemplateImage(type) {
     var clone = activateTemplate('#template-image');
-    clone.querySelector("[name='orderplanos[]']").setAttribute('value', order);
-    $('#body-images').append(clone);
+    clone.querySelector("[name='types[]']").setAttribute('value', type);
+    if ( type === 'i' )
+    {
+        $('#body-imagesInvoice').append(clone);
+    } else {
+        if ( type === 'g' )
+        {
+            $('#body-imagesGuide').append(clone);
+        } else {
+            $('#body-imagesObservation').append(clone);
+        }
+    }
+
 }
 
 function previewFile(input) {
@@ -223,13 +225,13 @@ function previewFile(input) {
 
 function imagesIncomplete() {
     var flag = false;
-    var descripciones = $(document).find("[name='descplanos[]']").length;
-    var planos = $("input[type='file'][name='planos[]']").filter(function (){
+    var codes = $(document).find("[name='codeimages[]']").length;
+    var images = $("input[type='file'][name='images[]']").filter(function (){
         return this.value
     }).length;
-    console.log(descripciones);
-    console.log(planos);
-    if ( descripciones != planos )
+    console.log(codes);
+    console.log(images);
+    if ( codes != images )
     {
         flag = true;
     }
@@ -237,15 +239,15 @@ function imagesIncomplete() {
     return flag;
 }
 
-function storeQuote() {
+function storeImages() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
 
-    var planos = $("input[type='file'][name='planos[]']").filter(function (){
+    var images = $("input[type='file'][name='images[]']").filter(function (){
         return this.value
     }).length;
 
-    if ( planos == 0 )
+    if ( images == 0 )
     {
         toastr.error('No se puede guardar porque no hay nuevas imagenes.', 'Error',
             {
@@ -270,7 +272,7 @@ function storeQuote() {
     }
     if ( imagesIncomplete() )
     {
-        toastr.error('No se puede guardar porque faltan imagenes o descripciones.', 'Error',
+        toastr.error('No se puede guardar porque faltan imágenes o códigos.', 'Error',
             {
                 "closeButton": true,
                 "debug": false,

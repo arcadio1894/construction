@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Audit;
 use App\DetailEntry;
 use App\Entry;
+use App\EntryImage;
 use App\FollowMaterial;
 use App\Http\Requests\StoreEntryPurchaseOrderRequest;
 use App\Http\Requests\StoreEntryPurchaseRequest;
@@ -1751,5 +1752,169 @@ class EntryController extends Controller
             'time' => $end
         ]);
         return $centries_final;
+    }
+
+    public function showExtraDocumentEntryPurchase( $entry_id )
+    {
+        $begin = microtime(true);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $entry = Entry::find($entry_id);
+
+        $imagesInvoices = [];
+        $imagesGuides = [];
+        $imagesObservations = [];
+
+        $imagenesFactura = EntryImage::where('entry_id', $entry->id)
+            ->where('type', 'i')->get();
+        $imagenesGuias = EntryImage::where('entry_id', $entry->id)
+            ->where('type', 'g')->get();
+        $imagenesObs = EntryImage::where('entry_id', $entry->id)
+            ->where('type', 'o')->get();
+
+        if ($imagenesFactura->count() > 0)
+        {
+            $imagesInvoices = $imagenesFactura;
+        }
+        if ($imagenesGuias->count() > 0)
+        {
+            $imagesGuides = $imagenesGuias;
+        }
+        if ($imagenesObs->count() > 0)
+        {
+            $imagesObservations = $imagenesObs;
+        }
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver imagenes extras de entradas',
+            'time' => $end
+        ]);
+        //dump($quote);
+        return view('entry.editImages', compact('entry','permissions', 'imagesInvoices', 'imagesGuides', 'imagesObservations'));
+
+    }
+
+    public function updateImage(Request $request, $image)
+    {
+        $begin = microtime(true);
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            $id = $request->get('image_id');
+            $code = $request->get('image_code');
+
+            $image = EntryImage::find($id);
+            $image->code = $code;
+            $image->save();
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Imagen Entrada modificada ',
+                'time' => $end
+            ]);
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imagen modificada con éxito'], 200);
+
+    }
+
+    public function deleteImage(Request $request, $image)
+    {
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            $id = $request->get('image_id');
+
+            $imagen = EntryImage::find($id);
+
+            $image_path = public_path().'/images/entries/extras/'.$imagen->image;
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
+
+            $imagen->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imagen eliminada con éxito'], 200);
+
+    }
+
+    public function saveImages(Request $request, $entry_id)
+    {
+        $begin = microtime(true);
+        //dd($request->get('image_id'));
+        DB::beginTransaction();
+        try {
+            // TODO: Tratamiento de las imagenes de las entradas
+
+            $images = $request->images;
+            $descriptions = $request->codeimages;
+            $types = $request->types;
+
+            if ( count($images) != 0 && count($descriptions) != 0 )
+            {
+                foreach ( $images as $key => $image )
+                {
+                    $path = public_path().'/images/entries/extras/';
+                    $img = $image;
+
+                    $extension = $img->getClientOriginalExtension();
+                    //$filename = $entry->id . '.' . $extension;
+                    if ( strtoupper($extension) != "PDF" )
+                    {
+                        $filename = $entry_id .'_'. $this->generateRandomString(20). '.JPG';
+                        $imgQuote = Image::make($img);
+                        $imgQuote->orientate();
+                        $imgQuote->save($path.$filename, 80, 'JPG');
+
+                        EntryImage::create([
+                            'entry_id' => $entry_id,
+                            'code' => $descriptions[$key],
+                            'image' => $filename,
+                            'type' => $types[$key],
+                            'type_file' => 'img',
+                        ]);
+                    } else {
+                        $filename = 'pdf'.$entry_id .'_'. $this->generateRandomString(20) . '.' .$extension;
+                        $img->move($path, $filename);
+
+                        EntryImage::create([
+                            'entry_id' => $entry_id,
+                            'code' => $descriptions[$key],
+                            'image' => $filename,
+                            'type' => $types[$key],
+                            'type_file' => 'pdf'
+                        ]);
+                    }
+
+                }
+            }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar images entries POST',
+                'time' => $end
+            ]);
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Imágenes guardadas con éxito'], 200);
+
     }
 }

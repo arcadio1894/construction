@@ -584,6 +584,16 @@ Route::middleware('auth')->group(function (){
         Route::post('/add/materials/entry/{id_entry}', 'EntryController@addDetailOfEntry')
             ->middleware('permission:destroy_entryPurchase');
 
+        Route::get('agregar/documentos/extras/entrada/{entry}', 'EntryController@showExtraDocumentEntryPurchase')
+            ->middleware('permission:update_entryPurchase');
+        Route::post('/modificar/image/ingreso/compra/{image}', 'EntryController@updateImage')
+            ->middleware('permission:update_entryPurchase');
+        Route::post('/eliminar/image/ingreso/compra/{image}', 'EntryController@deleteImage')
+            ->middleware('permission:update_entryPurchase');
+        Route::post('/guardar/images/ingreso/compra/{entry}', 'EntryController@saveImages')
+            ->name('save.images.entry')
+            ->middleware('permission:update_entryPurchase');
+
         // Reporte de ordenes de compra
         Route::get('exportar/reporte/ordenes/compra', 'OrderPurchaseController@reportOrderPurchase')
             ->name('report.order.purchase')

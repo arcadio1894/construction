@@ -119,6 +119,10 @@ $(document).ready(function () {
                         text = text + ' <button data-delete="'+item.id+'" '+
                             ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                     }
+                    if ( $.inArray('update_entryPurchase', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/agregar/documentos/extras/entrada/'+item.id+
+                            '" class="btn bg-lime color-palette btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar Facturas y Guias extras"><i class="fas fa-images"></i></a> ';
+                    }
                     /*if ( $.inArray('regularizeOrder_entryPurchase', $permissions) !== -1 ) {
                         if (item.purchase_order == '' || item.purchase_order == null)
                         {
