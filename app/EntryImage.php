@@ -10,7 +10,8 @@ class EntryImage extends Model
         'entry_id',
         'code',
         'image',
-        'type'
+        'type',
+        'type_file'
     ];
 
     public function entry()
