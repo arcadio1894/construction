@@ -1921,9 +1921,12 @@ Route::middleware('auth')->group(function (){
 
 
         // TODO: Rutas para generar boletas
+        Route::get('/boletas/pago/trabajadores/', 'PaySlipController@indexPaySlip')
+            ->name('paySlip.index')
+            ->middleware('permission:list_paySlip');
         Route::get('/generar/boleta/trabajadores/', 'BoletaController@createBoletaByWorker')
-            ->name('boleta.create.worker')/*
-            ->middleware('permission:edit_gratification')*/;
+            ->name('paySlip.create')
+            ->middleware('permission:list_paySlip');
         Route::get('/generate/boleta/worker', 'BoletaController@generateBoletaWorker')
             ->name('boleta.generate.worker')/*
             ->middleware('permission:edit_gratification')*/;

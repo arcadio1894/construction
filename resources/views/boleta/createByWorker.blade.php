@@ -1,14 +1,14 @@
 @extends('layouts.appAdmin2')
 
-@section('openAttendance')
+@section('openPaySlips')
     menu-open
 @endsection
 
-@section('activeAttendance')
+@section('activePaySlips')
     active
 @endsection
 
-@section('activeReportTotalHours')
+@section('activeListPaySlip')
     active
 @endsection
 

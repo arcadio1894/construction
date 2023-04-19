@@ -1920,7 +1920,7 @@
                     @can('enable_discountContribution')
                         <li class="nav-item has-treeview @yield('openDiscountContribution')">
                             <a href="#" class="nav-link @yield('activeDiscountContribution')">
-                                <i class="fas fa-hand-holding-usd"></i>
+                                <i class="fas fa-hand-holding-usd nav-icon"></i>
                                 <p>
                                     Desc./Contrib.
                                     <i class="right fas fa-angle-left"></i>
@@ -2097,6 +2097,39 @@
                                         </ul>
                                     </li>
                                 @endcan
+                            </ul>
+                        </li>
+                    @endcan
+
+                    @can('enable_paySlip')
+                        <li class="nav-item has-treeview @yield('openPaySlips')">
+                            @can('enable_paySlip')
+                            <a href="#" class="nav-link @yield('activePaySlips')">
+                                <i class="far fa-clipboard nav-icon"></i>
+                                <p>
+                                    Boletas de Pago
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            @endcan
+                            <ul class="nav nav-treeview">
+                                @can('list_paySlip')
+                                    <li class="nav-item">
+                                        <a href="{{route('paySlip.index')}}" class="nav-link @yield('activeListPaySlip')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar boletas</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_paySlip')
+                                    <li class="nav-item">
+                                        <a href="{{route('paySlip.create')}}" class="nav-link @yield('activeCreatePaySlip')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear boletas</p>
+                                        </a>
+                                    </li>
+                                @endcan
+
                             </ul>
                         </li>
                     @endcan
