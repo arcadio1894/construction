@@ -8,6 +8,9 @@ $(document).ready(function () {
     $selectWorker = $('#worker');
 
     $selectType.change(function () {
+        $('#boleta-semanal').hide();
+        $('#boleta-mensual').hide();
+
         var type =  $selectType.val();
         $selectWeek.empty();
         $selectWeek.val('');
@@ -43,6 +46,9 @@ $(document).ready(function () {
     });
 
     $selectYear.change(function () {
+        $('#boleta-semanal').hide();
+        $('#boleta-mensual').hide();
+
         var type =  $selectType.val();
         if ( type == 1 ) {
             $('#cboWeeks').show();
@@ -79,6 +85,9 @@ $(document).ready(function () {
     });
 
     $selectMonth.change(function () {
+        $('#boleta-semanal').hide();
+        $('#boleta-mensual').hide();
+
         var type =  $selectType.val();
         if ( type == 1 ) {
             $('#cboWeeks').show();
@@ -114,8 +123,19 @@ $(document).ready(function () {
         }
 
     });
+
+    $selectWeek.change(function () {
+        $('#boleta-semanal').hide();
+        $('#boleta-mensual').hide();
+
+    });
     
     $('#btn-generate').on('click', generateBoletaWorker);
+
+    $('#btn-save-month').on('click', saveBoletaWorkerMonthly);
+
+    $('#btn-save-week').on('click', saveBoletaWorkerWeekly);
+
 });
 
 let $selectType;
@@ -123,6 +143,118 @@ let $selectYear;
 let $selectMonth;
 let $selectWeek;
 let $selectWorker;
+
+let $dataBoleta;
+
+function saveBoletaWorkerMonthly() {
+    let worker = $selectWorker.val();
+    let type = $selectType.val();
+    let year = $selectYear.val();
+    let month = $selectMonth.val();
+    let week = $selectWeek.val();
+
+    var query = {
+        worker: worker,
+        type: type,
+        year: year,
+        month: month,
+        week: week,
+        info: $dataBoleta
+    };
+
+    $.get( "/dashboard/save/boleta/worker/month?" + $.param(query), function( data ) {
+        console.log( data );
+    }).done(function(data) {
+        console.log( data );
+    }).fail(function(data) {
+        console.log( data );
+    });
+
+}
+
+function saveBoletaWorkerWeekly() {
+    let worker = $selectWorker.val();
+    let type = $selectType.val();
+    let year = $selectYear.val();
+    let month = $selectMonth.val();
+    let week = $selectWeek.val();
+
+    var query = {
+        worker: worker,
+        type: type,
+        year: year,
+        month: month,
+        week: week,
+        info: $dataBoleta
+    };
+
+    $.get( "/dashboard/save/boleta/worker/week?" + $.param(query), function( data ) {
+        console.log( data );
+    }).done(function(data) {
+        toastr.success(data.message, 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+    }).fail(function(data) {
+        if( data.responseJSON.message && !data.responseJSON.errors )
+        {
+            toastr.error(data.responseJSON.message, 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        }
+        for ( var property in data.responseJSON.errors ) {
+            toastr.error(data.responseJSON.errors[property], 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        }
+
+    });
+}
 
 function generateBoletaWorker() {
 
@@ -132,8 +264,100 @@ function generateBoletaWorker() {
     let month = $selectMonth.val();
     let week = $selectWeek.val();
 
+    // TODO: Validaciones
+    if ( worker == '' || worker == null )
+    {
+        toastr.error('Seleccione un trabajador', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( year == '' || year == null )
+    {
+        toastr.error('Seleccione un año de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( month == '' || month == null )
+    {
+        toastr.error('Seleccione un mes de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
     if ( type == 1 )
     {
+        if ( week == '' || week == null )
+        {
+            toastr.error('Seleccione una semana de la lista', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
         // Si es semanal
         var query = {
             worker: worker,
@@ -146,6 +370,7 @@ function generateBoletaWorker() {
         $.get( "/dashboard/generate/boleta/worker?" + $.param(query), function( data ) {
             console.log( data );
         }).done(function(data) {
+            $dataBoleta = data;
             $("#empresa").html('EMPRESA: '+data.empresa);
             $("#ruc").html('RUC: '+data.ruc);
             $("#codigo").html('CÓDIGO: '+data.codigo);
@@ -158,11 +383,13 @@ function generateBoletaWorker() {
             $("#montoSistemaPension").html(data.montoSistemaPension);
             $("#essalud").html(data.essalud);
             $("#pagoXHora").html(data.pagoXHora);
+            $("#diasTrabajados").html(data.diasTrabajados);
             $("#rentaQuintaCat").html(data.rentaQuintaCat);
             $("#pensionDeAlimentos").html(data.pensionDeAlimentos);
             $("#asignacionFamiliarDiaria").html(data.asignacionFamiliarDiaria);
             $("#asignacionFamiliarSemanal").html(data.asignacionFamiliarSemanal);
             $("#prestamo").html(data.prestamo);
+            $("#otros").html(data.otros);
             $("#horasOrdinarias").html(data.horasOrdinarias);
             $("#montoHorasOrdinarias").html(data.montoHorasOrdinarias);
             $("#horasAl25").html(data.horasAl25);
@@ -182,9 +409,53 @@ function generateBoletaWorker() {
             $("#gratificaciones").html(data.gratificaciones);
             $("#totalIngresos").html('TOTAL INGRESOS: '+data.totalIngresos);
             $("#totalNetoPagar").html(data.totalNetoPagar);
+
+            $('#boleta-semanal').show();
+            $('#boleta-mensual').hide();
             console.log( data );
         }).fail(function(data) {
-            console.log( data );
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
         });
     } else {
         // Si es mensual
@@ -198,8 +469,41 @@ function generateBoletaWorker() {
 
         $.get( "/dashboard/generate/boleta/worker?" + $.param(query2), function( data ) {
             console.log( data );
+
         }).done(function(data) {
-            console.log( data );
+            $dataBoleta = data;
+            $("#ruc_m").html(data.ruc_m);
+            $("#empleador_m").html(data.empleador_m);
+            $("#periodo_m").html(data.periodo_m);
+            $("#tipo_m").html(data.tipo_m);
+            $("#dni_m").html(data.dni_m);
+            $("#empleado_m").html(data.empleado_m);
+            $("#situacion_m").html(data.situacion_m);
+            $("#fecha_ingreso_m").html(data.fecha_ingreso_m);
+            $("#tipo_trabajador_m").html(data.tipo_trabajador_m);
+            $("#sistema_pensionario_m").html(data.sistema_pensionario_m);
+            $("#cuspp_m").html(data.cuspp_m);
+            $("#dias_laborados_m").html(data.dias_laborados_m);
+            $("#dias_no_laborados_m").html(data.dias_no_laborados_m);
+            $("#dias_subsidiados_m").html(data.dias_subsidiados_m);
+            $("#condicion_m").html(data.condicion_m);
+            $("#jornada_ordinaria_m").html(data.jornada_ordinaria_m);
+            $("#sobretiempo_m").html(data.sobretiempo_m);
+            $("#trabajo_sobretiempo_25_m").html(data.trabajo_sobretiempo_25_m);
+            $("#trabajo_sobretiempo_35_m").html(data.trabajo_sobretiempo_35_m);
+            $("#trabajo_en_feriado_m").html(data.trabajo_en_feriado_m);
+            $("#remuneracion_jornal_basico_m").html(data.remuneracion_jornal_basico_m);
+            $("#bonificacion_extraordinaria_temporal_m").html(data.bonificacion_extraordinaria_temporal_m);
+            $("#gratificacion_m").html(data.gratificacion_m);
+            $("#comision_afp_porcentual_m").html(data.comision_afp_porcentual_m);
+            $("#renta_quinta_categoria_m").html(data.renta_quinta_categoria_m);
+            $("#prima_seguro_afp_m").html(data.prima_seguro_afp_m);
+            $("#aportacion_obligatoria_m").html(data.aportacion_obligatoria_m);
+            $("#neto_pagar_m").html(data.neto_pagar_m);
+            $("#essalud_m").html(data.essalud_m);
+
+            $('#boleta-semanal').hide();
+            $('#boleta-mensual').show();
         }).fail(function(data) {
             console.log( data );
         });

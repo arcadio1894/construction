@@ -822,7 +822,7 @@
             </div>
         </div>
 
-        <div class="row" >
+        {{--<div class="row" >
             <div class="col-md-12">
                 <div class="card card-success">
                     <div class="card-header">
@@ -838,7 +838,7 @@
                     </div>
                     <div class="card-body" >
                         <div class="row" id="body-images">
-                            {{--<div class="col-md-4">
+                            --}}{{--<div class="col-md-4">
                                 <div class="card card-outline card-success">
                                     <div class="card-header">
                                         <h3 class="card-title">Imagen Seleccionada</h3>
@@ -870,7 +870,7 @@
                                     <!-- /.card-body -->
                                 </div>
                                 <!-- /.card -->
-                            </div>--}}
+                            </div>--}}{{--
                         </div>
 
                         <template id="template-image">
@@ -913,7 +913,7 @@
                 </div>
                 <!-- /.card -->
             </div>
-        </div>
+        </div>--}}
 
         @can('showPrices_quote')
         <div class="row">

@@ -2,18 +2,22 @@
 
 namespace App\Http\Controllers;
 
+use App\Alimony;
 use App\AssistanceDetail;
 use App\Boleta;
 use App\DateDimension;
+use App\Discount;
 use App\Due;
 use App\Gratification;
 use App\Holiday;
 use App\License;
 use App\Loan;
 use App\MedicalRest;
+use App\PaySlip;
 use App\PensionSystem;
 use App\PercentageWorker;
 use App\Refund;
+use App\Suspension;
 use App\Vacation;
 use App\Worker;
 use App\WorkingDay;
@@ -21,12 +25,17 @@ use Carbon\Carbon;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Barryvdh\DomPDF\Facade as PDF;
+use Illuminate\Support\Facades\DB;
 
 class BoletaController extends Controller
 {
-    public function index()
+    public function indexPaySlip()
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('boleta.index', compact('permissions'));
     }
 
     public function create()
@@ -73,11 +82,11 @@ class BoletaController extends Controller
             [
                 'id' => 1,
                 'name' => 'Semanal'
-            ],
+            ]/*,
             [
                 'id' => 2,
                 'name' => 'Mensual'
-            ]
+            ]*/
         ]);
 
         /*foreach ( $types as $type )
@@ -88,6 +97,264 @@ class BoletaController extends Controller
         dump($years);
         dump($types);*/
         return view('boleta.createByWorker', compact( 'permissions', 'workers', 'years', 'types'));
+
+    }
+
+    public function saveBoletaWorkerWeekly()
+    {
+        $type = $_GET['type'];
+        $year = $_GET['year'];
+        $month = $_GET['month'];
+        $week = $_GET['week'];
+        $worker_id = $_GET['worker'];
+        $info = $_GET['info'];
+
+        /*dump($info['pensionDeAlimentos']);
+        dd();*/
+        $tipo = ($type == 1) ? 'w':'m' ;
+
+        DB::beginTransaction();
+        try {
+            $pension = Alimony::where('week', $week)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->where('type', $tipo)
+                ->where('worker_id', $worker_id)
+                ->first();
+
+            if ( isset($pension) )
+            {
+                $pension->delete();
+                // Guardamos la pension de alimentos
+                $alimony = Alimony::create([
+                    'week' => $week,
+                    'month' => $month,
+                    'year' => $year,
+                    'date' => Carbon::now('America/Lima'),
+                    'amount' => (float) $info['pensionDeAlimentos'],
+                    'worker_id' => $worker_id,
+                    'type' => $type
+                ]);
+            } else {
+                // Guardamos la pension de alimentos
+                $alimony = Alimony::create([
+                    'week' => $week,
+                    'month' => $month,
+                    'year' => $year,
+                    'date' => Carbon::now('America/Lima'),
+                    'amount' => (float) $info['pensionDeAlimentos'],
+                    'worker_id' => $worker_id,
+                    'type' => $type
+                ]);
+            }
+
+            $worker = Worker::find($worker_id);
+
+            $paySlipLast = PaySlip::where('codigo', $info['codigo'])
+                ->where('semana', $info['semana'])
+                ->where('fecha', $info['fecha'])->first();
+
+            if ( isset($paySlipLast) )
+            {
+                $paySlipLast->delete();
+                // TODO: Guardar la boleta y sus detalles
+                $paySlip = PaySlip::create([
+                    'empresa' => $info['empresa'],
+                    'ruc' => $info['ruc'],
+                    'codigo' => $info['codigo'],
+                    'nombre' => $info['nombre'],
+                    'cargo' => $info['cargo'],
+                    'semana' => $info['semana'],
+                    'fecha' => $info['fecha'],
+                    'pagoxdia' => $info['pagoXDia'],
+                    'pagoXHora' => $info['pagoXHora'],
+                    'diasTrabajados' => $info['diasTrabajados'],
+                    'asignacionFamiliarDiaria' => $info['asignacionFamiliarDiaria'],
+                    'asignacionFamiliarSemanal' => $info['asignacionFamiliarSemanal'],
+                    'horasOrdinarias' => $info['horasOrdinarias'],
+                    'montoHorasOrdinarias' => $info['montoHorasOrdinarias'],
+                    'horasAl25' => $info['horasAl25'],
+                    'montoHorasAl25' => $info['montoHorasAl25'],
+                    'horasAl35' => $info['horasAl35'],
+                    'montoHorasAl35' => $info['montoHorasAl35'],
+                    'horasAl100' => $info['horasAl100'],
+                    'montoHorasAl100' => $info['montoHorasAl100'],
+                    'dominical' => $info['dominical'],
+                    'montoDominical' => $info['montoDominical'],
+                    'vacaciones' => $info['vacaciones'],
+                    'montoVacaciones' => $info['montoVacaciones'],
+                    'reintegro' => $info['reintegro'],
+                    'gratificaciones' => $info['gratificaciones'],
+                    'totalIngresos' => $info['totalIngresos'],
+                    'sistemaPension' => $info['sistemaPension'],
+                    'montoSistemaPension' => $info['montoSistemaPension'],
+                    'rentaQuintaCat' => $info['rentaQuintaCat'],
+                    'pensionDeAlimentos' => $info['pensionDeAlimentos'],
+                    'prestamo' => $info['prestamo'],
+                    'otros' => $info['otros'],
+                    'totalDescuentos' => $info['totalDescuentos'],
+                    'essalud' => $info['essalud'],
+                    'totalNetoPagar' => $info['totalNetoPagar']
+                ]);
+
+            } else {
+                // TODO: Guardar la boleta y sus detalles
+                $paySlip = PaySlip::create([
+                    'empresa' => $info['empresa'],
+                    'ruc' => $info['ruc'],
+                    'codigo' => $info['codigo'],
+                    'nombre' => $info['nombre'],
+                    'cargo' => $info['cargo'],
+                    'semana' => $info['semana'],
+                    'fecha' => $info['fecha'],
+                    'pagoxdia' => $info['pagoXDia'],
+                    'pagoXHora' => $info['pagoXHora'],
+                    'diasTrabajados' => $info['diasTrabajados'],
+                    'asignacionFamiliarDiaria' => $info['asignacionFamiliarDiaria'],
+                    'asignacionFamiliarSemanal' => $info['asignacionFamiliarSemanal'],
+                    'horasOrdinarias' => $info['horasOrdinarias'],
+                    'montoHorasOrdinarias' => $info['montoHorasOrdinarias'],
+                    'horasAl25' => $info['horasAl25'],
+                    'montoHorasAl25' => $info['montoHorasAl25'],
+                    'horasAl35' => $info['horasAl35'],
+                    'montoHorasAl35' => $info['montoHorasAl35'],
+                    'horasAl100' => $info['horasAl100'],
+                    'montoHorasAl100' => $info['montoHorasAl100'],
+                    'dominical' => $info['dominical'],
+                    'montoDominical' => $info['montoDominical'],
+                    'vacaciones' => $info['vacaciones'],
+                    'montoVacaciones' => $info['montoVacaciones'],
+                    'reintegro' => $info['reintegro'],
+                    'gratificaciones' => $info['gratificaciones'],
+                    'totalIngresos' => $info['totalIngresos'],
+                    'sistemaPension' => $info['sistemaPension'],
+                    'montoSistemaPension' => $info['montoSistemaPension'],
+                    'rentaQuintaCat' => $info['rentaQuintaCat'],
+                    'pensionDeAlimentos' => $info['pensionDeAlimentos'],
+                    'prestamo' => $info['prestamo'],
+                    'otros' => $info['otros'],
+                    'totalDescuentos' => $info['totalDescuentos'],
+                    'essalud' => $info['essalud'],
+                    'totalNetoPagar' => $info['totalNetoPagar']
+                ]);
+
+            }
+
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Boleta generada con éxito. Vaya al listado de boletas para descargar'], 200);
+
+
+    }
+
+    public function indexBoletasSemanales( $worker_id )
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $worker = Worker::find($worker_id);
+
+        return view('boleta.indexBoletaWorker', compact('permissions', 'worker'));
+    }
+
+    public function getBoletaworker( $worker_id )
+    {
+        $boletas = PaySlip::where('codigo', $worker_id)
+            ->orderBy('created_at', 'desc')->get();
+
+        return datatables($boletas)->toJson();
+    }
+
+    public function imprimirBoletaSemanal( $boleta_id )
+    {
+        $boleta = PaySlip::find($boleta_id);
+        $worker = Worker::find($boleta->codigo);
+        $fecha = $boleta->fecha;
+        $fechaCorrecta = str_replace("/", "-", $fecha);
+
+        $view = view('exports.boletaSemanal', compact('boleta'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $name = 'Boleta_'.$fechaCorrecta.' '.$worker->last_name.' '.$worker->first_name.'.pdf';
+
+        return $pdf->stream($name);
+    }
+
+    public function verBoletaSemanal( $boleta_id )
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $boleta = PaySlip::find($boleta_id);
+        $worker = Worker::find($boleta->codigo);
+
+        return view('boleta.showBoleta', compact('permissions','worker', 'boleta'));
+
+    }
+
+    public function saveBoletaWorkerMonthly()
+    {
+        $type = $_GET['type'];
+        $year = $_GET['year'];
+        $month = $_GET['month'];
+        $week = $_GET['week'];
+        $worker_id = $_GET['worker'];
+        $info = $_GET['info'];
+
+        /*dump($info['empresa']);
+        dd();*/
+
+        $tipo = ($type == 1) ? 'w':'m' ;
+
+        DB::beginTransaction();
+        try {
+            $pension = Alimony::where('week', $week)
+                ->where('month', $month)
+                ->where('year', $year)
+                ->where('type', $type)
+                ->where('worker_id', $worker_id)
+                ->first();
+            if ( isset($pension) )
+            {
+                $pension->delete();
+                // Guardamos la pension de alimentos
+                $alimony = Alimony::create([
+                    'week' => $week,
+                    'month' => $month,
+                    'year' => $year,
+                    'date' => Carbon::now('America/Lima'),
+                    'amount' => 0,
+                    'worker_id' => $worker_id,
+                    'type' => $type
+                ]);
+            } else {
+                // Guardamos la pension de alimentos
+                $alimony = Alimony::create([
+                    'week' => $week,
+                    'month' => $month,
+                    'year' => $year,
+                    'date' => Carbon::now('America/Lima'),
+                    'amount' => 0,
+                    'worker_id' => $worker_id,
+                    'type' => $type
+                ]);
+            }
+
+
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Boleta generada con éxito. Vaya al listado de boletas para descargar'], 200);
 
     }
 
@@ -133,8 +400,8 @@ class BoletaController extends Controller
                 ->orderBy('date', 'desc')
                 ->first();
 
-            $start = $dateFirst->day.'/'.$dateFirst->month.'/'.$dateFirst->year;
-            $end = $dateLast->day.'/'.$dateLast->month.'/'.$dateLast->year;
+            $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
+            $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
 
             $periodo = (($month < 10) ? '0'.$month : $month).'/'.$year;
             $semana = '';
@@ -165,7 +432,7 @@ class BoletaController extends Controller
             $ruc = '20540001384';
             $codigo = $worker->id;
             $nombre = $worker->first_name . ' ' . $worker->last_name;
-            $cargo = ( $worker->work_function_id == null ) ? '': $worker->work_function->description;
+            $cargo = ( $worker->work_function_id == null ) ? 'Sin cargo': $worker->work_function->description;
 
             // Ingresos
             $pagoXDia = $worker->daily_salary;
@@ -174,19 +441,20 @@ class BoletaController extends Controller
             $horasSemanales = 48;
             $pagoXHora = round($worker->daily_salary/$horasXDia,2);
             $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
+            //dd($diasTrabajados);
             // TODO: Usar el porcentageWorker
             $assign_family = PercentageWorker::where('name', 'assign_family')->first();
             $rmv = PercentageWorker::where('name', 'rmv')->first();
-            $asignacionFamiliarDiaria = round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
-            $asignacionFamiliarSemanal = round((($rmv->value*($assign_family->value/100))/$diasMes)*$daysOfWeek, 2);
+            $asignacionFamiliarDiaria = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
+            $asignacionFamiliarSemanal = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round((($rmv->value*($assign_family->value/100))/$diasMes)*$daysOfWeek, 2);
             $horasOrdinarias = round(($h_ord + $h_esp), 2);
             $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
             $horasAl25 = round($h_25, 2);
-            $montoHorasAl25 = round($h_25*($worker->daily_salary/$horasXDia), 2);
+            $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
             $horasAl35 = round($h_35, 2);
-            $montoHorasAl35 = round($h_35*($worker->daily_salary/$horasXDia), 2);
+            $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
             $horasAl100 = round($h_100, 2);
-            $montoHorasAl100 = round($h_100*($worker->daily_salary/$horasXDia), 2);
+            $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
             $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
             $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
 
@@ -203,9 +471,9 @@ class BoletaController extends Controller
             $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones, 2);
 
             // Descuento
-            $systemPension = PensionSystem::find($worker->pension_system_id);
-            $sistemaPension = $systemPension->description;
-            $montoSistemaPension = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+            $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
+            $sistemaPension = ($worker->pension_system_id == null) ? 'No tiene': $systemPension->description;
+            $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
 
             $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker_id, $start, $end);
             $rentaQuintaCat = round($amountRentaQuintaCat, 2);
@@ -215,7 +483,10 @@ class BoletaController extends Controller
             $amountLoan = $this->getLoanByWorker($worker_id, $start, $end);
             $prestamo = round($amountLoan, 2);
 
-            $totalDescuentos = round($montoSistemaPension + $rentaQuintaCat + $pensionDeAlimentos + $prestamo, 2);
+            $amountOtros = $this->getDiscountByWorker($worker_id, $start, $end);
+            $otros = round($amountOtros, 2);
+
+            $totalDescuentos = round($montoSistemaPension + $rentaQuintaCat + $pensionDeAlimentos + $prestamo + $otros, 2);
 
             // Aporte
             $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
@@ -258,6 +529,7 @@ class BoletaController extends Controller
                 'rentaQuintaCat' => $rentaQuintaCat,
                 'pensionDeAlimentos' => $pensionDeAlimentos,
                 'prestamo' => $prestamo,
+                'otros' => $otros,
                 'totalDescuentos' => $totalDescuentos,
                 'essalud' => $essalud,
                 'totalNetoPagar' => $totalNetoPagar
@@ -276,51 +548,149 @@ class BoletaController extends Controller
             $tipoTrabajador = 'Empleado';
             $regimenPensionario = ($worker->pension_system == null) ? '':$worker->pension_system->description;
             $CUSPP = '';
-            $diasLaborados = 0; // Dias Trabajados
-            $diasNoLaborados = 0;
-            $diasSubsidiados = 0;
-            $condicion = 0;
-            $totalHorasOrdinarias = 0;
-            $totalHorasSobretiempo = 0;
-            $suspensiones = [];
+            $horasXDia = 8;
+            $numberDays = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+            $diasLaborados = round(($h_ord + $h_esp)/$horasXDia, 2); // Dias Trabajados
+            $diasNoLaborados = $numberDays - $diasLaborados;
+            $diasSubsidiados = 0; // Preguntar
+            $condicion = 'Domiciliado';
+            $totalHorasOrdinarias = $h_ord+$h_esp;
+            $totalHorasSobretiempo = $h_25+$h_35;
+            $suspensiones = $this->getSuspensionsWorker($worker_id, $start, $end);
+            $pagoXHora = round($worker->daily_salary/$horasXDia,2);
+            $trabajoSobretiempo25 = round($h_25*($pagoXHora*1.25), 2);
+            $trabajoSobretiempo35 = round($h_35*($pagoXHora*1.35), 2);
 
-            $trabajoSobretiempo25 = 0;
-            $trabajoSobretiempo35 = 0;
-            $trabajoEnFeriadoODiaDescanso = 0;
-            $remuneracionOJornalBasico = 0;
-            $bonificacionExtraordinariaTemporal = 0;
-            $gratificacion = 0;
+            $trabajoEnFeriadoODiaDescanso = round($h_100*($pagoXHora*2), 2);
+
+            $remuneracionOJornalBasico = round(($h_ord+$h_esp)*$pagoXHora, 2);
+            $bonificacionExtraordinariaTemporal = 125.89; // Preguntar
+
+            $amountGratification = $this->getGratificationByWorker($worker_id, $start, $end);
+            $gratificacion = round($amountGratification, 2);
 
             $comisionAfpPorcentual = 0;
-            $rentaQuintaCategoria = 0;
-            $primaDeSeguroAFP = 0;
-            $SPPAportacionObligatoria = 0;
 
-            $ESSALUD = 0;
+            $amountQuinta = $this->getRentaQuintaByWorker($worker_id, $start, $end);
+            $rentaQuintaCategoria = round($amountQuinta, 2);
 
+            $primaDeSeguroAFP = 50.02; // Preguntar
+
+            $pagoXDia = $worker->daily_salary;
+            $horasSemanales = 48;
+            $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+            $rmv = PercentageWorker::where('name', 'rmv')->first();
+            $horasOrdinarias = round(($h_ord + $h_esp), 2);
+            $montoHorasOrdinarias = round(($h_ord + $h_esp)*(($worker->daily_salary/$horasXDia)*1), 2);
+            $horasAl25 = round($h_25, 2);
+            $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+            $horasAl35 = round($h_35, 2);
+            $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+            $horasAl100 = round($h_100, 2);
+            $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+            $dominical = round((($h_ord + $h_esp)/$horasSemanales)*4, 2);
+            $montoDominical = round(((($h_ord + $h_esp)/$horasSemanales)*4)*($pagoXDia), 2);
+            $asignacionFamiliarSemanal = round((($rmv->value*($assign_family->value/100))/$numberDays)*$numberDays, 2);
+
+            $daysVacation = $this->getVacationByWorker($worker_id, $start, $end);
+            $vacaciones = $daysVacation*$horasXDia;
+            $montoVacaciones = round($daysVacation*$horasXDia*$pagoXHora, 2);
+
+            $amountRefund = $this->getRefundByWorker($worker_id, $start, $end);
+            $reintegro = round($amountRefund, 2);
+
+
+            $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
+            $SPPAportacionObligatoria = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+
+            $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
+            $ESSALUD = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificacion)*($percentageEssalud->value/100), 2);
+
+            $totalDeIngresos = round($trabajoSobretiempo25 + $trabajoSobretiempo35 + $trabajoEnFeriadoODiaDescanso + $remuneracionOJornalBasico + $bonificacionExtraordinariaTemporal + $gratificacion, 2);
+
+            $totalDeDescuentos = round($comisionAfpPorcentual + $rentaQuintaCategoria + $primaDeSeguroAFP + $SPPAportacionObligatoria, 2);
+
+            $netoAPagar = round($totalDeIngresos - $totalDeDescuentos, 2);
             return response()->json([
-
+                'ruc_m' => 'RUC: '.$ruc,
+                'empleador_m' => 'Empleador: '.$empleador,
+                'periodo_m' => 'Periodo: '.$periodo,
+                'tipo_m' => $tipoDocumento,
+                'dni_m' => $dni,
+                'empleado_m' => $mombreApellidos,
+                'situacion_m' => $situacion,
+                'fecha_ingreso_m' => $fechaIngreso,
+                'tipo_trabajador_m' => $tipoTrabajador,
+                'sistema_pensionario_m' => $regimenPensionario,
+                'cuspp_m' => $CUSPP,
+                'dias_laborados_m' => $diasLaborados,
+                'dias_no_laborados_m' => $diasNoLaborados,
+                'dias_subsidiados_m' => $diasSubsidiados,
+                'condicion_m' => $condicion,
+                'jornada_ordinaria_m' => $totalHorasOrdinarias,
+                'sobretiempo_m' => $totalHorasSobretiempo,
+                'trabajo_sobretiempo_25_m' => $trabajoSobretiempo25,
+                'trabajo_sobretiempo_35_m' => $trabajoSobretiempo35,
+                'trabajo_en_feriado_m' => $trabajoEnFeriadoODiaDescanso,
+                'remuneracion_jornal_basico_m' => $remuneracionOJornalBasico,
+                'bonificacion_extraordinaria_temporal_m' => $bonificacionExtraordinariaTemporal,
+                'gratificacion_m' => $gratificacion,
+                'comision_afp_porcentual_m' => $comisionAfpPorcentual,
+                'renta_quinta_categoria_m' => $rentaQuintaCategoria,
+                'prima_seguro_afp_m' => $primaDeSeguroAFP,
+                'aportacion_obligatoria_m' => $SPPAportacionObligatoria,
+                'neto_pagar_m' => $netoAPagar,
+                'essalud_m' => $ESSALUD,
             ], 200);
         }
+    }
 
-        /*dump($ruc);
-        dump($empleador);
-        dump($periodo);
-        dump($tipoDocumento);
-        dump($dni);
-        dump($mombreApellidos);
-        dump($situacion);
-        dump($fechaIngreso);
-        dump($tipoTrabajador);
-        dump($regimenPensionario);
-        dump($CUSPP);
-        dump($h_ord);
-        dump($h_25);
-        dump($h_35);
-        dump($h_100);
-        dump($h_esp);
+    public function getDiscountByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
 
-        dd();*/
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountDiscount = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $discounts = Discount::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($discounts) )
+            {
+                foreach ( $discounts as $discount )
+                {
+                    $amountDiscount+=$discount->amount;
+                }
+            }
+        }
+
+        return $amountDiscount;
+    }
+
+    public function getSuspensionsWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $duesArray = [];
+
+        $suspensions = Suspension::whereDate('date_start','>=',$date_start)
+            ->whereDate('date_end', '<=',$end_start)
+            ->where('worker_id', $worker->id)
+            ->get();
+
+        return $suspensions;
     }
 
     public function getLoanByWorker($worker_id, $start, $end)

@@ -1921,18 +1921,34 @@ Route::middleware('auth')->group(function (){
 
 
         // TODO: Rutas para generar boletas
-        Route::get('/boletas/pago/trabajadores/', 'PaySlipController@indexPaySlip')
+        Route::get('/boletas/pago/trabajadores/', 'BoletaController@indexPaySlip')
             ->name('paySlip.index')
+            ->middleware('permission:list_paySlip');
+        Route::get('/ver/boletas/semanales/{worker_id}', 'BoletaController@indexBoletasSemanales')
+            ->name('paySlip.boletas.semanales')
+            ->middleware('permission:list_paySlip');
+        Route::get('/get/boletas/worker/{boleta_id}', 'BoletaController@getBoletaworker')
+            ->middleware('permission:list_paySlip');
+        Route::get('/imprimir/boleta/semanal/{boleta_id}', 'BoletaController@imprimirBoletaSemanal')
+            ->name('paySlip.print.semanal')
+            ->middleware('permission:list_paySlip');
+        Route::get('/ver/boleta/semanal/{boleta_id}', 'BoletaController@verBoletaSemanal')
+            ->name('paySlip.show.semanal')
             ->middleware('permission:list_paySlip');
         Route::get('/generar/boleta/trabajadores/', 'BoletaController@createBoletaByWorker')
             ->name('paySlip.create')
-            ->middleware('permission:list_paySlip');
+            ->middleware('permission:create_paySlip');
         Route::get('/generate/boleta/worker', 'BoletaController@generateBoletaWorker')
             ->name('boleta.generate.worker')/*
             ->middleware('permission:edit_gratification')*/;
         Route::get('/get/years/of/system/', 'DateDimensionController@getYearsOfSystem');
         Route::get('/get/months/of/year/{year}', 'DateDimensionController@getMonthsOfYear');
         Route::get('/get/weeks/of/month/{month}/year/{year}', 'DateDimensionController@getWeeksOfMonthsOfYear');
+        Route::get('/save/boleta/worker/month', 'BoletaController@saveBoletaWorkerMonthly')
+            ->middleware('permission:create_paySlip');
+        Route::get('/save/boleta/worker/week', 'BoletaController@saveBoletaWorkerWeekly')
+            ->middleware('permission:create_paySlip');
+        Route::get('/get/workers/boletas/', 'WorkerController@getWorkersBoleta');
 
         // TODO: Ruta para poblar la dimension tiempo, solo usarse una vez
         Route::get('/populate/date/dimension', 'DateDimensionController@populateDateDimension');

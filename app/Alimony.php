@@ -15,14 +15,17 @@ class Alimony extends Model
         'date',
         'amount',
         'worker_id',
+        'type'
     ];
 
     protected $dates = ['date'];
 
     public function getNameMonthAttribute()
     {
-        $fecha = DateDimension::where('date', $this->date)->first();
-        $nombre_mes = $fecha->month_name;
+        $months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Setiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+
+        $mes = $this->month;
+        $nombre_mes = $months[$mes-1];
         return $nombre_mes;
     }
 

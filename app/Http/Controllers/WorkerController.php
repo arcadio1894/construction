@@ -76,6 +76,27 @@ class WorkerController extends Controller
         return datatables($arrayWorkers)->toJson();
     }
 
+    public function getWorkersBoleta()
+    {
+        $workers = Worker::where('enable', 1)
+            ->orderBy('last_name')->get();
+        $arrayWorkers = [];
+
+        foreach ( $workers as $worker )
+        {
+            array_push( $arrayWorkers, [
+                'id' => $worker->id,
+                'first_name' => $worker->first_name,
+                'last_name' => $worker->last_name,
+                'dni' => $worker->dni,
+                'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
+                'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
+            ] );
+        }
+
+        return datatables($arrayWorkers)->toJson();
+    }
+
     public function create()
     {
         $user = Auth::user();
