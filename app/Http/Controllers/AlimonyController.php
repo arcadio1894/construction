@@ -16,7 +16,8 @@ class AlimonyController extends Controller
     public function getWorkersAlimony()
     {
         $arrayWorkers = [];
-        $alimonyWorkers = Worker::whereNotNull('pension')->get();
+        $alimonyWorkers = Worker::whereNotNull('pension')
+            ->where('pension', '>', 0)->get();
 
         foreach ( $alimonyWorkers as $alimonyWorker )
         {

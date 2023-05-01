@@ -18,20 +18,23 @@ class FifthCategoryController extends Controller
 {
     public function index()
     {
-        $workers = Worker::whereNull('five_category')->get();
+        $workers = Worker::whereNull('five_category')
+            ->orWhere('five_category', 0)->get();
         return view('fifthCategory.index', compact('workers'));
     }
 
     public function getWorkers()
     {
-        $workers = Worker::whereNull('five_category')->get();
+        $workers = Worker::whereNull('five_category')
+            ->orWhere('five_category', 0)->get();
         return $workers;
     }
 
     public function getWorkersFifthCategory()
     {
         $arrayWorkers = [];
-        $fifthWorkers = Worker::whereNotNull('five_category')->get();
+        $fifthWorkers = Worker::whereNotNull('five_category')
+            ->where('five_category', '>', 0)->get();
 
         foreach ( $fifthWorkers as $fifthWorker )
         {
