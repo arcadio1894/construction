@@ -35,6 +35,14 @@ class MaterialController extends Controller
         return view('material.index', compact('permissions'));
     }
 
+    public function listarActivosFijos()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('material.listarActivosIndex', compact('permissions'));
+    }
+
     public function create()
     {
         $categories = Category::all();
