@@ -8,6 +8,7 @@ use App\Boleta;
 use App\DateDimension;
 use App\Discount;
 use App\Due;
+use App\FifthCategory;
 use App\Gratification;
 use App\Holiday;
 use App\License;
@@ -725,6 +726,7 @@ class BoletaController extends Controller
         return $amountLoan;
     }
 
+
     public function getRentaQuintaByWorker($worker_id, $start, $end)
     {
         $date_start = Carbon::createFromFormat('d/m/Y', $start);
@@ -732,23 +734,17 @@ class BoletaController extends Controller
 
         $worker = Worker::find($worker_id);
 
-        $dates = DateDimension::whereDate('date', '>=',$date_start)
-            ->whereDate('date', '<=',$end_start)
-            ->orderBy('date', 'ASC')
-            ->get();
-
         $amountRentaQuintaCat = 0;
-        /*foreach ( $dates as $date )
+
+        $fifthCategory = FifthCategory::whereDate('date', '>=', $date_start)
+            ->whereDate('date', '<=', $end_start)
+            ->where('worker_id', $worker->id)
+            ->first();
+
+        if ( !empty($fifthCategory) )
         {
-            $fecha = Carbon::create($date->year, $date->month, $date->day);
-            $gratification = Gratification::whereDate('date',$fecha->format('Y-m-d'))
-                ->where('worker_id', $worker->id)
-                ->first();
-            if ( !empty($refund) )
-            {
-                $amountRentaQuintaCat+=$gratification->amount;
-            }
-        }*/
+            $amountRentaQuintaCat+=$fifthCategory->amount;
+        }
 
         return $amountRentaQuintaCat;
     }
@@ -760,26 +756,21 @@ class BoletaController extends Controller
 
         $worker = Worker::find($worker_id);
 
-        $dates = DateDimension::whereDate('date', '>=',$date_start)
-            ->whereDate('date', '<=',$end_start)
-            ->orderBy('date', 'ASC')
-            ->get();
+        $amountRentaQuintaCat = 0;
 
-        $amountGratification = 0;
-        /*foreach ( $dates as $date )
+        $gratification = Gratification::whereDate('date', '>=', $date_start)
+            ->whereDate('date', '<=', $end_start)
+            ->where('worker_id', $worker->id)
+            ->first();
+
+        if ( !empty($fifthCategory) )
         {
-            $fecha = Carbon::create($date->year, $date->month, $date->day);
-            $gratification = Gratification::whereDate('date',$fecha->format('Y-m-d'))
-                ->where('worker_id', $worker->id)
-                ->first();
-            if ( !empty($refund) )
-            {
-                $amountGratification+=$gratification->amount;
-            }
-        }*/
+            $amountRentaQuintaCat+=$gratification->amount;
+        }
 
-        return $amountGratification;
+        return $amountRentaQuintaCat;
     }
+
 
     public function getRefundByWorker($worker_id, $start, $end)
     {

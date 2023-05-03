@@ -1965,6 +1965,62 @@ Route::middleware('auth')->group(function (){
         Route::get('/test/merge/pdfs', 'PdfsController@mergePdfs')->name('merge.pdfs');
         Route::get('/test/save/pdfs', 'PdfsController@printQuote')->name('print.pdfs');
 
+        // TODO: Rutas para OrderPurchaseInvoices
+        Route::get('ordenes/compra/finanzas', 'OrderPurchaseFinanceController@indexOrderPurchaseFinance')
+            ->name('order.purchase.finance.index')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::get('crear/orden/compra/finanzas', 'OrderPurchaseFinanceController@createOrderPurchaseFinance')
+            ->name('order.purchase.finance.create')
+            ->middleware('permission:create_orderPurchaseFinance');
+        Route::post('store/order/purchase/finance', 'OrderPurchaseFinanceController@storeOrderPurchaseFinance')
+            ->name('order.purchase.finance.store')
+            ->middleware('permission:create_orderPurchaseFinance');
+        Route::get('/all/order/finance', 'OrderPurchaseFinanceController@getAllOrderFinance');
+        Route::get('editar/orden/compra/finance/{id}', 'OrderPurchaseFinanceController@editOrderPurchaseFinance')
+            ->middleware('permission:update_orderPurchaseFinance');
+        Route::post('update/order/purchase/finance', 'OrderPurchaseFinanceController@updateOrderPurchaseFinance')
+            ->name('order.purchase.normal.finance')
+            ->middleware('permission:update_orderPurchaseFinance');
+        Route::post('/destroy/detail/order/purchase/finance/{idDetail}/material/{materialId}', 'OrderPurchaseFinanceController@destroyFinanceDetail')
+            ->middleware('permission:destroy_orderPurchaseFinance');
+        Route::post('/update/detail/order/purchase/finance/{idDetail}', 'OrderPurchaseFinanceController@updateFinanceDetail')
+            ->middleware('permission:update_orderPurchaseFinance');
+        Route::get('ver/orden/compra/finanzas/{id}', 'OrderPurchaseFinanceController@showOrderPurchaseFinance')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::post('destroy/order/purchase/finance/{id}', 'OrderPurchaseFinanceController@destroyOrderPurchaseFinance')
+            ->middleware('permission:destroy_orderPurchaseFinance');
+
+        Route::post('order_purchase/finance/change/status/{order_id}/{status}', 'OrderPurchaseFinanceController@changeStatusOrderPurchaseFinance')
+            ->middleware('permission:update_orderPurchaseFinance');
+
+        Route::get('ordenes/compra/finanzas/eliminadas', 'OrderPurchaseFinanceController@indexOrderPurchaseFinanceDelete')
+            ->name('order.purchase.finance.delete')
+            ->middleware('permission:destroy_orderPurchaseFinance');
+        Route::get('/all/order/finance/delete', 'OrderPurchaseFinanceController@getOrderDeleteFinance');
+        Route::get('ver/orden/compra/finanzas/eliminada/{id}', 'OrderPurchaseFinanceController@showOrderPurchaseFinanceDelete')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::get('imprimir/orden/compra/finanza/{id}', 'OrderPurchaseFinanceController@printOrderPurchaseFinance')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('imprimir/orden/compra/finanza/eliminada/{id}', 'OrderPurchaseFinanceController@printOrderPurchaseFinanceDelete')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::post('/restore/order/purchase/finance/delete/{id}', 'OrderPurchaseFinanceController@restoreOrderPurchaseFinanceDelete')
+            ->middleware('permission:destroy_orderPurchaseFinance');
+
+        Route::get('ordenes/compra/finanzas/regularizadas', 'OrderPurchaseFinanceController@indexOrderPurchaseFinanceRegularize')
+            ->name('order.purchase.finance.list.regularize')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::get('/all/order/purchase/finance/regularize', 'OrderPurchaseFinanceController@getAllOrderRegularizeFinance');
+
+        Route::get('ordenes/compra/finanzas/perdidas', 'OrderPurchaseFinanceController@indexOrderPurchaseFinanceLost')
+            ->name('order.purchase.list.lost')
+            ->middleware('permission:list_orderPurchaseFinance');
+        Route::get('/all/order/purchase/finance/lost', 'OrderPurchaseFinanceController@getAllOrderPurchaseFinanceLost');
+
+        Route::get('/regularizar/automaticamente/entrada/compra/finance/{entry_id}', 'OrderPurchaseFinanceController@regularizeAutoOrderEntryPurchaseFinance')
+            ->middleware('permission:create_orderPurchaseFinance');
+        Route::post('store/regularize/order/purchase/finance', 'OrderPurchaseFinanceController@regularizeEntryToOrderPurchaseFinance')
+            ->name('order.purchase.finance.regularize.store')
+            ->middleware('permission:create_orderPurchaseFinance');
     });
 });
 
