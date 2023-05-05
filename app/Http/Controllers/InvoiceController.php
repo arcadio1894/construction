@@ -505,9 +505,6 @@ class InvoiceController extends Controller
     {
         $begin = microtime(true);
         $entries = Entry::with('supplier')
-            ->with(['details' => function ($query) {
-                $query->with('material');
-            }])
             ->with('category_invoice')
             ->where('finance', 1)
             ->orderBy('created_at', 'desc')
@@ -534,6 +531,36 @@ class InvoiceController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         return view('invoice.report_invoice', compact('permissions'));
+    }
+
+    public function reportInvoiceFinanceSinOrden()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('invoice.report_invoice_sin_orden', compact('permissions'));
+    }
+
+    public function getJsonInvoicesFinanceSinOrden()
+    {
+        $begin = microtime(true);
+        $entries = Entry::with('supplier')
+            ->with('category_invoice')
+            ->where('finance', 1)
+            ->where('purchase_order', '=',null)
+            ->whereIn('type_order', ['purchase', 'service'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        //dd(datatables($entries)->toJson());
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener facturas finanzas',
+            'time' => $end
+        ]);
+        return datatables($entries)->toJson();
     }
 
     public function exportInvoices()

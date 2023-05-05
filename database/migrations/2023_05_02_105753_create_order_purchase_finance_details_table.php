@@ -15,6 +15,14 @@ class CreateOrderPurchaseFinanceDetailsTable extends Migration
     {
         Schema::create('order_purchase_finance_details', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('order_purchase_finance_id')->constrained('order_purchase_finances');
+            $table->string('material')->nullable();
+            $table->string('unit')->nullable();
+            $table->decimal('quantity',9,2)->default(0);
+            $table->decimal('price',9,2)->default(0);
+            $table->decimal('igv',9,2)->default(0);
+            $table->decimal('total_detail',9,2)->default(0);
+            $table->softDeletes();
             $table->timestamps();
         });
     }

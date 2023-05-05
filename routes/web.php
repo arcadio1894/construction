@@ -1214,6 +1214,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_invoice');
         Route::get('/get/json/invoices/finance', 'InvoiceController@getJsonInvoicesFinance');
 
+        Route::get('/reporte/faturas/finanzas/sin/orden', 'InvoiceController@reportInvoiceFinanceSinOrden')
+            ->name('report.invoice.finance.sin.orden')
+            ->middleware('permission:list_invoice');
+        Route::get('/get/json/invoices/finance/sin/orden', 'InvoiceController@getJsonInvoicesFinanceSinOrden');
+
+
         // CRONOGRAMAS DE CONTROL DE HORAS
         Route::get('/cronogramas', 'TimelineController@showTimelines')
             ->name('index.timelines')
@@ -1979,12 +1985,12 @@ Route::middleware('auth')->group(function (){
             ->name('order.purchase.finance.store')
             ->middleware('permission:create_orderPurchaseFinance');
         Route::get('/all/order/finance', 'OrderPurchaseFinanceController@getAllOrderFinance');
-        Route::get('editar/orden/compra/finance/{id}', 'OrderPurchaseFinanceController@editOrderPurchaseFinance')
+        Route::get('editar/orden/compra/finanza/{id}', 'OrderPurchaseFinanceController@editOrderPurchaseFinance')
             ->middleware('permission:update_orderPurchaseFinance');
         Route::post('update/order/purchase/finance', 'OrderPurchaseFinanceController@updateOrderPurchaseFinance')
-            ->name('order.purchase.normal.finance')
+            ->name('order.purchase.finance.update')
             ->middleware('permission:update_orderPurchaseFinance');
-        Route::post('/destroy/detail/order/purchase/finance/{idDetail}/material/{materialId}', 'OrderPurchaseFinanceController@destroyFinanceDetail')
+        Route::post('/destroy/detail/order/purchase/finance/{idDetail}', 'OrderPurchaseFinanceController@destroyFinanceDetail')
             ->middleware('permission:destroy_orderPurchaseFinance');
         Route::post('/update/detail/order/purchase/finance/{idDetail}', 'OrderPurchaseFinanceController@updateFinanceDetail')
             ->middleware('permission:update_orderPurchaseFinance');
@@ -2015,11 +2021,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/all/order/purchase/finance/regularize', 'OrderPurchaseFinanceController@getAllOrderRegularizeFinance');
 
         Route::get('ordenes/compra/finanzas/perdidas', 'OrderPurchaseFinanceController@indexOrderPurchaseFinanceLost')
-            ->name('order.purchase.list.lost')
+            ->name('order.purchase.finance.list.lost')
             ->middleware('permission:list_orderPurchaseFinance');
         Route::get('/all/order/purchase/finance/lost', 'OrderPurchaseFinanceController@getAllOrderPurchaseFinanceLost');
 
-        Route::get('/regularizar/automaticamente/entrada/compra/finance/{entry_id}', 'OrderPurchaseFinanceController@regularizeAutoOrderEntryPurchaseFinance')
+        Route::get('/regularizar/automaticamente/entrada/compra/finanzas/{entry_id}', 'OrderPurchaseFinanceController@regularizeAutoOrderEntryPurchaseFinance')
             ->middleware('permission:create_orderPurchaseFinance');
         Route::post('store/regularize/order/purchase/finance', 'OrderPurchaseFinanceController@regularizeEntryToOrderPurchaseFinance')
             ->name('order.purchase.finance.regularize.store')

@@ -26,7 +26,7 @@ class OrderPurchaseFinanceController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('orderPurchase.indexFinance', compact('permissions'));
+        return view('orderPurchaseFinance.indexOrderFinance', compact('permissions'));
     }
 
     public function createOrderPurchaseFinance()
@@ -41,9 +41,11 @@ class OrderPurchaseFinanceController extends Controller
         //$maxCode = OrderPurchase::max('code');
         //$maxId = (int)substr($maxCode,3) + 1;
         $length = 5;
-        $codeOrder = 'OC-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+        $codeOrder = 'OCF-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
+
+        $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
 
         $end = microtime(true) - $begin;
 
@@ -52,11 +54,11 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Crear Orden compra Normal VISTA',
             'time' => $end
         ]);
-        return view('orderPurchase.createFinance', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines'));
+        return view('orderPurchaseFinance.createOrderFinance', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines', 'unitMeasures'));
 
     }
 
-    public function storeOrderPurchaseNormal(StoreOrderPurchaseFinanceRequest $request)
+    public function storeOrderPurchaseFinance(StoreOrderPurchaseFinanceRequest $request)
     {
         $begin = microtime(true);
         $validated = $request->validated();
@@ -95,55 +97,54 @@ class OrderPurchaseFinanceController extends Controller
         try {
             $maxId = OrderPurchaseFinance::withTrashed()->max('id')+1;
             $length = 5;
-            //$codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-            $orderService = OrderPurchaseFinance::create([
+            $orderPurchaseFinance = OrderPurchaseFinance::create([
                 'code' => '',
-                'quote_supplier' => $request->get('quote_supplier'),
-                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
                 'supplier_id' => ($request->has('supplier_id')) ? $request->get('supplier_id') : null,
                 'date_delivery' => ($request->has('date_delivery')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : Carbon::now(),
                 'date_order' => ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now(),
                 'approved_by' => ($request->has('approved_by')) ? $request->get('approved_by') : null,
                 'payment_condition' => ($request->has('service_condition')) ? $request->get('service_condition') : '',
-                'currency_order' => ($request->get('state') === 'true') ? 'PEN': 'USD',
+                'currency_order' => ($request->get('currency') === 'true') ? 'PEN': 'USD',
                 'currency_compra' => $tipoCambioSunat->compra,
                 'currency_venta' => $tipoCambioSunat->venta,
-                'observation' => $request->get('observation'),
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
+                'observation' => $request->get('observation'),
+                'quote_supplier' => $request->get('quote_supplier'),
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
+                'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
             ]);
 
             $codeOrder = '';
-            if ( $maxId < $orderService->id ){
-                $codeOrder = 'OS-'.str_pad($orderService->id,$length,"0", STR_PAD_LEFT);
-                $orderService->code = $codeOrder;
-                $orderService->save();
+            if ( $maxId < $orderPurchaseFinance->id ){
+                $codeOrder = 'OCF-'.str_pad($orderPurchaseFinance->id,$length,"0", STR_PAD_LEFT);
+                $orderPurchaseFinance->code = $codeOrder;
+                $orderPurchaseFinance->save();
             } else {
-                $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
-                $orderService->code = $codeOrder;
-                $orderService->save();
+                $codeOrder = 'OCF-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderPurchaseFinance->code = $codeOrder;
+                $orderPurchaseFinance->save();
             }
 
             $items = json_decode($request->get('items'));
 
             for ( $i=0; $i<sizeof($items); $i++ )
             {
-                $orderServiceDetail = OrderPurchaseFinanceDetail::create([
-                    'order_service_id' => $orderService->id,
-                    'service' => $items[$i]->service,
+                $orderPurchaseFinanceDetail = OrderPurchaseFinanceDetail::create([
+                    'order_purchase_finance_id' => $orderPurchaseFinance->id,
+                    'material' => $items[$i]->service,
                     'unit' => $items[$i]->unit,
                     'quantity' => (float) $items[$i]->quantity,
                     'price' => (float) $items[$i]->price,
                     'total_detail' => (float) $items[$i]->total,
                 ]);
 
-                $total = $orderServiceDetail->total_detail;
+                $total = $orderPurchaseFinanceDetail->total_detail;
                 $subtotal = $total / 1.18;
                 $igv = $total - $subtotal;
-                $orderServiceDetail->igv = $igv;
-                $orderServiceDetail->save();
+                $orderPurchaseFinanceDetail->igv = $igv;
+                $orderPurchaseFinanceDetail->save();
 
             }
 
@@ -178,7 +179,7 @@ class OrderPurchaseFinanceController extends Controller
 
             Audit::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Guardar Orden Servicio',
+                'action' => 'Guardar Orden Purchase Finance',
                 'time' => $end
             ]);
             DB::commit();
@@ -207,7 +208,7 @@ class OrderPurchaseFinanceController extends Controller
         $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
 
         $order = OrderPurchaseFinance::with(['supplier', 'approved_user'])->find($id);
-        $details = OrderPurchaseFinanceDetail::where('order_service_id', $order->id)->get();
+        $details = OrderPurchaseFinanceDetail::where('order_purchase_finance_id', $order->id)->get();
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
@@ -218,11 +219,11 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Editar Orden de compra finance VISTA',
             'time' => $end
         ]);
-        return view('orderPurchase.editOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines'));
+        return view('orderPurchaseFinance.editOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines'));
 
     }
 
-    public function updateOrderPurchaseFinance(UpdateOrderPurchaseFinanceRequest $request)
+    public function updateOrderPurchaseFinance(StoreOrderPurchaseFinanceRequest $request)
     {
         $begin = microtime(true);
         $validated = $request->validated();
@@ -231,17 +232,17 @@ class OrderPurchaseFinanceController extends Controller
         try {
             $orderFinance = OrderPurchaseFinance::find($request->get('order_id'));
             $orderFinance->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
-            $orderFinance->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderFinance->date_delivery = ($request->has('date_delivery')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : Carbon::now();
             $orderFinance->date_order = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
             $orderFinance->approved_by = ($request->has('approved_by')) ? $request->get('approved_by') : null;
             $orderFinance->payment_condition = ($request->has('service_condition')) ? $request->get('service_condition') : '';
             $orderFinance->currency_order = ($request->get('state') === 'true') ? 'PEN': 'USD';
-            $orderFinance->regularize = ($request->get('regularize') === 'true') ? 'r': 'nr';
-            $orderFinance->observation = $request->get('observation');
-            $orderFinance->quote_supplier = $request->get('quote_supplier');
             $orderFinance->igv = (float) $request->get('taxes_send');
             $orderFinance->total = (float) $request->get('total_send');
+            $orderFinance->observation = $request->get('observation');
+            $orderFinance->quote_supplier = $request->get('quote_supplier');
+            $orderFinance->regularize = ($request->get('regularize') === 'true') ? 'r': 'nr';
+            $orderFinance->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderFinance->save();
 
             $items = json_decode($request->get('items'));
@@ -251,14 +252,15 @@ class OrderPurchaseFinanceController extends Controller
                 if ($items[$i]->detail_id === '')
                 {
                     $orderFinanceDetail = OrderPurchaseFinanceDetail::create([
-                        'order_service_id' => $orderFinance->id,
-                        'service' => $items[$i]->service,
+                        'order_purchase_finance_id' => $orderFinance->id,
+                        'material' => $items[$i]->service,
                         'unit' => $items[$i]->unit,
                         'quantity' => (float) $items[$i]->quantity,
                         'price' => (float) $items[$i]->price,
+                        'total_detail' => (float) $items[$i]->total,
                     ]);
 
-                    $total = round($orderFinanceDetail->quantity*$orderFinanceDetail->price, 2);
+                    $total = round($orderFinanceDetail->total_detail, 2);
                     $subtotal = round($total / 1.18, 2);
                     $igv = round($total - $subtotal, 2);
                     $orderFinanceDetail->igv = $igv;
@@ -309,9 +311,9 @@ class OrderPurchaseFinanceController extends Controller
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseFinanceDetail::find($idDetail);
-            $orderPurchaseFinance = OrderPurchaseFinance::find($detail->order_service_id);
+            $orderPurchaseFinance = OrderPurchaseFinance::find($detail->order_purchase_finance_id);
             $orderPurchaseFinance->igv = $orderPurchaseFinance->igv - $detail->igv;
-            $orderPurchaseFinance->total = $orderPurchaseFinance->total - ($detail->quantity*$detail->price);
+            $orderPurchaseFinance->total = $orderPurchaseFinance->total - ($detail->total_detail);
             $orderPurchaseFinance->save();
 
             // Si la orden de compra express se modifica, el credito tambien se modificara
@@ -349,36 +351,38 @@ class OrderPurchaseFinanceController extends Controller
         DB::beginTransaction();
         try {
             $detail = OrderPurchaseFinanceDetail::find($detail_id);
-            $orderService = OrderPurchaseFinance::find($detail->order_service_id);
+            $orderPurchase = OrderPurchaseFinance::find($detail->order_purchase_finance_id);
 
             $items = json_decode($request->get('items'));
 
             for ( $i=0; $i<sizeof($items); $i++ )
             {
 
-                $total_last = $detail->price*$detail->quantity;
+                $total_last = $detail->total_detail;
                 $igv_last = $detail->igv;
 
                 $quantity = (float) $items[$i]->quantity;
                 $price = (float) $items[$i]->price;
+                $totalD = (float) $items[$i]->total;
 
-                $total = round($quantity*$price, 2);
+                $total = round($totalD, 2);
                 $subtotal = round($total / 1.18, 2);
                 $igv = $total - $subtotal;
 
                 $detail->quantity = round($quantity, 2);
                 $detail->price = round($price, 2);
                 $detail->igv = round($igv,2);
+                $detail->total_detail = round($totalD,2);
                 $detail->save();
 
-                $orderService->igv = round(($orderService->igv - $igv_last),2);
-                $orderService->total = round(($orderService->total - $total_last),2);
-                $orderService->save();
+                $orderPurchase->igv = round(($orderPurchase->igv - $igv_last),2);
+                $orderPurchase->total = round(($orderPurchase->total - $total_last),2);
+                $orderPurchase->save();
 
-                $orderService->igv = round(($orderService->igv + $igv),2);
-                $orderService->total = round(($orderService->total + $total),2);
+                $orderPurchase->igv = round(($orderPurchase->igv + $igv),2);
+                $orderPurchase->total = round(($orderPurchase->total + $total),2);
 
-                $orderService->save();
+                $orderPurchase->save();
 
                 // Si la orden de compra express se modifica, el credito tambien se modificara
                 /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
@@ -424,7 +428,7 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Ver Orden de compra finanzass',
             'time' => $end
         ]);
-        return view('orderPurchase.showOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users'));
+        return view('orderPurchaseFinance.showOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
@@ -482,7 +486,7 @@ class OrderPurchaseFinanceController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('orderPurchase.indexFinanceDeleted', compact('permissions'));
+        return view('orderPurchaseFinance.indexFinanceDeleted', compact('permissions'));
     }
 
     public function getOrderDeleteFinance()
@@ -503,16 +507,16 @@ class OrderPurchaseFinanceController extends Controller
             ->with(['supplier', 'approved_user', 'deadline'])->find($id);
         $details = OrderPurchaseFinanceDetail::withTrashed()
             ->where('order_purchase_finance_id', $order->id)
-            ->with(['material'])->get();
+            ->get();
 
-        return view('orderPurchase.showDeleteFinance', compact('order', 'details', 'suppliers', 'users'));
+        return view('orderPurchaseFinance.showOrderPurchaseDeleteFinance', compact('order', 'details', 'suppliers', 'users'));
 
     }
 
     public function printOrderPurchaseFinanceDelete($id)
     {
-        $purchase_order = null;
-        $purchase_order = OrderPurchaseFinance::withTrashed()
+        $service_order = null;
+        $service_order = OrderPurchaseFinance::withTrashed()
             ->with('approved_user')
             ->with('deadline')
             ->with(['details'])
@@ -521,11 +525,11 @@ class OrderPurchaseFinanceController extends Controller
         $length = 5;
         $codeOrder = ''.str_pad($id,$length,"0", STR_PAD_LEFT);
 
-        $view = view('exports.entryPurchaseFinance', compact('purchase_order','codeOrder'));
+        $view = view('exports.orderFinance', compact('service_order','codeOrder'));
 
         $pdf = PDF::loadHTML($view);
 
-        $name = 'Orden_de_compra_finanzas_ ' . $purchase_order->id . '.pdf';
+        $name = 'Orden_de_compra_finanzas_ ' . $service_order->id . '.pdf';
 
         return $pdf->stream($name);
     }
@@ -533,7 +537,7 @@ class OrderPurchaseFinanceController extends Controller
     public function printOrderPurchaseFinance($id)
     {
         $purchase_order = null;
-        $purchase_order = OrderPurchaseFinance::with('approved_user')
+        $service_order = OrderPurchaseFinance::with('approved_user')
             ->with('deadline')
             ->with(['details'])
             ->where('id', $id)->first();
@@ -541,11 +545,11 @@ class OrderPurchaseFinanceController extends Controller
         $length = 5;
         $codeOrder = ''.str_pad($id,$length,"0", STR_PAD_LEFT);
 
-        $view = view('exports.entryPurchaseFinance', compact('purchase_order','codeOrder'));
+        $view = view('exports.orderFinance', compact('service_order','codeOrder'));
 
         $pdf = PDF::loadHTML($view);
 
-        $name = 'Orden_de_compra_finanzas_ ' . $purchase_order->id . '.pdf';
+        $name = 'Orden_de_compra_finanzas_ ' . $service_order->id . '.pdf';
 
         return $pdf->stream($name);
     }
@@ -556,7 +560,7 @@ class OrderPurchaseFinanceController extends Controller
         $orderPurchase = OrderPurchaseFinance::onlyTrashed()->find($id);
 
         $details = OrderPurchaseFinanceDetail::onlyTrashed()
-            ->where('order_purchase_id', $id)->get();
+            ->where('order_purchase_finance_id', $id)->get();
         foreach ( $details as $detail )
         {
             $detail->restore();
@@ -579,7 +583,7 @@ class OrderPurchaseFinanceController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('orderPurchase.indexRegularizeFinanze', compact('permissions'));
+        return view('orderPurchaseFinance.indexRegularizeFinance', compact('permissions'));
     }
 
     public function getAllOrderRegularizeFinance()
@@ -597,7 +601,7 @@ class OrderPurchaseFinanceController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('orderPurchase.indexFinanceLost', compact('permissions'));
+        return view('orderPurchaseFinance.indexFinanceLost', compact('permissions'));
     }
 
     public function getAllOrderPurchaseFinanceLost()
@@ -619,7 +623,7 @@ class OrderPurchaseFinanceController extends Controller
         {
             while( $iterator < $ids[$j] )
             {
-                $codeOrder = 'OS-'.str_pad($iterator,5,"0", STR_PAD_LEFT);
+                $codeOrder = 'OCF-'.str_pad($iterator,5,"0", STR_PAD_LEFT);
                 array_push($lost, ['code'=>$codeOrder]);
                 $iterator++;
             }
@@ -631,7 +635,7 @@ class OrderPurchaseFinanceController extends Controller
 
         Audit::create([
             'user_id' => Auth::user()->id,
-            'action' => 'Obtener Orden Servicio Perdidas',
+            'action' => 'Obtener Orden de compras finanzas Perdidas',
             'time' => $end
         ]);
         return datatables($lost)->toJson();
@@ -648,7 +652,7 @@ class OrderPurchaseFinanceController extends Controller
 
         $maxId = OrderPurchaseFinance::withTrashed()->max('id')+1;
         $length = 5;
-        $codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+        $codeOrder = 'OCF-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
@@ -662,7 +666,7 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Regularizar Orden de compra de finanzas VISTA',
             'time' => $end
         ]);
-        return view('orderService.regularizeAutoEntryService', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines'));
+        return view('orderPurchaseFinance.regularizeAutoEntryPurchaseFinance', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines'));
     }
 
     public function regularizeEntryToOrderPurchaseFinance(Request $request)
@@ -704,7 +708,7 @@ class OrderPurchaseFinanceController extends Controller
             $length = 5;
             //$codeOrder = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
 
-            $orderService = OrderPurchaseFinance::create([
+            $orderPurchaseFinance = OrderPurchaseFinance::create([
                 'code' => '',
                 'quote_supplier' => $request->get('quote_supplier'),
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
@@ -722,50 +726,50 @@ class OrderPurchaseFinanceController extends Controller
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
             ]);
 
-            if ( $maxId < $orderService->id ){
-                $codeOrder = 'OS-'.str_pad($orderService->id,$length,"0", STR_PAD_LEFT);
-                $orderService->code = $codeOrder;
-                $orderService->save();
+            if ( $maxId < $orderPurchaseFinance->id ){
+                $codeOrder = 'OCF-'.str_pad($orderPurchaseFinance->id,$length,"0", STR_PAD_LEFT);
+                $orderPurchaseFinance->code = $codeOrder;
+                $orderPurchaseFinance->save();
             } else {
-                $codeOrder2 = 'OS-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
-                $orderService->code = $codeOrder2;
-                $orderService->save();
+                $codeOrder2 = 'OCF-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $orderPurchaseFinance->code = $codeOrder2;
+                $orderPurchaseFinance->save();
             }
 
             $items = json_decode($request->get('items'));
 
             for ( $i=0; $i<sizeof($items); $i++ )
             {
-                $orderServiceDetail = OrderPurchaseFinanceDetail::create([
-                    'order_service_id' => $orderService->id,
-                    'service' => $items[$i]->service,
+                $orderPurchaseFinanceDetail = OrderPurchaseFinanceDetail::create([
+                    'order_purchase_finance_id' => $orderPurchaseFinance->id,
+                    'material' => $items[$i]->service,
                     'unit' => $items[$i]->unit,
                     'quantity' => (float) $items[$i]->quantity,
                     'price' => (float) $items[$i]->price,
                     'total_detail' => (float) $items[$i]->total,
                 ]);
 
-                $total = $orderServiceDetail->total_detail;
+                $total = $orderPurchaseFinanceDetail->total_detail;
                 $subtotal = $total / 1.18;
                 $igv = $total - $subtotal;
-                $orderServiceDetail->igv = $igv;
-                $orderServiceDetail->save();
+                $orderPurchaseFinanceDetail->igv = $igv;
+                $orderPurchaseFinanceDetail->save();
 
             }
 
             // TODO: Modificamos la orden de servicio
             $entry = Entry::find($request->get('entry_id'));
 
-            $orderService->invoice = $entry->invoice;
-            $orderService->referral_guide = $entry->referral_guide;
-            $orderService->date_invoice = $entry->date_entry;
-            $orderService->save();
+            $orderPurchaseFinance->invoice = $entry->invoice;
+            $orderPurchaseFinance->referral_guide = $entry->referral_guide;
+            $orderPurchaseFinance->date_invoice = $entry->date_entry;
+            $orderPurchaseFinance->save();
 
-            $entry->purchase_order = $orderService->code;
+            $entry->purchase_order = $orderPurchaseFinance->code;
             $entry->save();
 
             // TODO: Tratamiento de imagenes
-            if ($entry->image != null)
+            /*if ($entry->image != null)
             {
                 if ( $entry->image != 'no_image.png' )
                 {
@@ -827,7 +831,7 @@ class OrderPurchaseFinanceController extends Controller
                     }
                 }
 
-            }
+            }*/
 
 
             // Si el plazo indica credito, se crea el credito
@@ -869,7 +873,7 @@ class OrderPurchaseFinanceController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Orden de compra finanzas '.$orderService->code.' guardada con éxito.', 'url' => route('invoice.index')], 200);
+        return response()->json(['message' => 'Orden de compra finanzas '.$orderPurchaseFinance->code.' guardada con éxito.', 'url' => route('report.invoice.finance.sin.orden')], 200);
 
     }
 

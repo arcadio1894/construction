@@ -1229,7 +1229,7 @@
                     @endcan
 
 
-                    @canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal')
+                    @canany('list_orderPurchaseExpress', 'list_orderPurchaseNormal', 'list_orderPurchaseFinance')
                     <li class="nav-header">ORDENES DE COMPRA</li>
                     @endcanany
                     @canany('list_orderPurchaseNormal','list_orderPurchaseExpress')
@@ -1266,6 +1266,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('list_orderPurchaseFinance')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.finance.index')}}" class="nav-link @yield('activeListOrderPurchaseFinance')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar Ord. finanzas</p>
+                                        </a>
+                                    </li>
+                                @endcan
                                 @can('create_orderPurchaseExpress')
                                     <li class="nav-item">
                                         <a href="{{ route('order.purchase.express.create') }}" class="nav-link @yield('activeCreateOrderPurchaseExpress')">
@@ -1279,6 +1287,14 @@
                                         <a href="{{ route('order.purchase.normal.create') }}" class="nav-link @yield('activeCreateOrderPurchaseNormal')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Crear Normal</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_orderPurchaseFinance')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.finance.create') }}" class="nav-link @yield('activeCreateOrderPurchaseFinance')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear Ord. Finanza</p>
                                         </a>
                                     </li>
                                 @endcan
@@ -1306,6 +1322,32 @@
                                         </a>
                                     </li>
                                 @endcanany
+
+                                @canany('list_orderPurchaseFinance')
+                                    <li class="nav-item">
+                                        <a href="{{ route('order.purchase.finance.list.regularize') }}" class="nav-link @yield('activeListOrderPurchaseFinanceRegularize')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ord. Finanzas Regularizada</p>
+                                        </a>
+                                    </li>
+                                @endcanany
+                                @canany('destroy_orderPurchaseFinance')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.finance.delete')}}" class="nav-link @yield('activeListOrderPurchaseFinanceDelete')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ord. Finanzas Eliminadas</p>
+                                        </a>
+                                    </li>
+                                @endcanany
+                                @canany('list_orderPurchaseFinance')
+                                    <li class="nav-item">
+                                        <a href="{{route('order.purchase.finance.list.lost')}}" class="nav-link @yield('activeListOrderPurchaseFinanceLost')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ord. Finanzas perdidas</p>
+                                        </a>
+                                    </li>
+                                @endcanany
+
                             </ul>
                         </li>
                     @endcanany
@@ -2276,6 +2318,12 @@
                                         <a href="{{route('report.invoice.finance')}}" class="nav-link @yield('activeReportInvoice')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Facturas finanzas</p>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="{{route('report.invoice.finance.sin.orden')}}" class="nav-link @yield('activeReportInvoiceSinOrden')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Facturas finanzas Sin Orden</p>
                                         </a>
                                     </li>
                                 @endcan
