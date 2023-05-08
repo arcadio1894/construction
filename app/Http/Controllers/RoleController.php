@@ -79,7 +79,8 @@ class RoleController extends Controller
         'refund' => 'REEMBOLSOS',
         'fifthCategory' => 'RENTA QUINTA CATEGORIA',
         'alimony' => 'PENSIÓN ALIMENTOS',
-        'paySlip' => 'BOLETAS DE PAGO'
+        'paySlip' => 'BOLETAS DE PAGO',
+        'orderPurchaseFinance' => 'ORDENES DE COMPRA FINANZAS'
     ];
 
     public function index()
