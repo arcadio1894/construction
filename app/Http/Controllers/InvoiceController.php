@@ -278,15 +278,18 @@ class InvoiceController extends Controller
     public function getJsonInvoices()
     {
         $begin = microtime(true);
+        $dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(5);
         $entries = Entry::with('supplier')->with('category_invoice')
-            ->with(['details' => function ($query) {
+            /*->with(['details' => function ($query) {
                 $query->with('material');
-            }])
+            }])*/
+            ->where('date_entry', '>=', $date4MonthAgo)
             ->where('entry_type', 'Por compra')
             ->orderBy('created_at', 'desc')
             ->get();
         $orderServices = OrderService::with('supplier')
-            ->with(['details'])
+            /*->with(['details'])*/
             ->where('regularize', 'r')
             ->orderBy('created_at', 'desc')
             ->get();
