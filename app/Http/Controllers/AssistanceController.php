@@ -179,14 +179,29 @@ class AssistanceController extends Controller
                         'status' => 'S'
                     ]);
                 } else {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id
-                    ]);
+                    if ( $this->isHoliday($assistance2->date_assistance) )
+                    {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'H'
+                        ]);
+                    } else {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'A'
+                        ]);
+                    }
+
                 }
 
             }
@@ -315,6 +330,7 @@ class AssistanceController extends Controller
         $cantV = 0;
         $cantP = 0;
         $cantT = 0;
+        $cantH = 0;
         foreach ( $workers as $worker)
         {
             $arrayDayAssistances = [];
@@ -326,6 +342,7 @@ class AssistanceController extends Controller
             $cantV = 0;
             $cantP = 0;
             $cantT = 0;
+            $cantH = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -369,6 +386,10 @@ class AssistanceController extends Controller
                         $color = '#007bff';
                         $estado = 'P';
                         $cantP = $cantP + 1;
+                    } elseif ( $assistance_detail->status == 'H' ){
+                        $color = '#001f3f';
+                        $estado = 'H';
+                        $cantH = $cantH + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
@@ -413,7 +434,8 @@ class AssistanceController extends Controller
                 'cantJ' => $cantJ,
                 'cantV' => $cantV,
                 'cantP' => $cantP,
-                'cantT' => $cantT
+                'cantT' => $cantT,
+                'cantH' => $cantH
             ]);
         }
 
@@ -480,6 +502,7 @@ class AssistanceController extends Controller
         $cantV = 0;
         $cantP = 0;
         $cantT = 0;
+        $cantH = 0;
 
         foreach ( $workers as $worker)
         {
@@ -492,6 +515,7 @@ class AssistanceController extends Controller
             $cantV = 0;
             $cantP = 0;
             $cantT = 0;
+            $cantH = 0;
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -534,6 +558,10 @@ class AssistanceController extends Controller
                         $color = '#007bff';
                         $estado = 'P';
                         $cantP = $cantP + 1;
+                    } elseif ( $assistance_detail->status == 'H' ){
+                        $color = '#001f3f';
+                        $estado = 'H';
+                        $cantH = $cantH + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
@@ -578,7 +606,8 @@ class AssistanceController extends Controller
                 'cantJ' => $cantJ,
                 'cantV' => $cantV,
                 'cantP' => $cantP,
-                'cantT' => $cantT
+                'cantT' => $cantT,
+                'cantH' => $cantH
             ]);
         }
 
@@ -615,6 +644,7 @@ class AssistanceController extends Controller
         $cantV = 0;
         $cantP = 0;
         $cantT = 0;
+        $cantH = 0;
 
         foreach ( $workers as $worker)
         {
@@ -627,6 +657,8 @@ class AssistanceController extends Controller
             $cantV = 0;
             $cantP = 0;
             $cantT = 0;
+            $cantH = 0;
+
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -673,6 +705,10 @@ class AssistanceController extends Controller
                         $color = '#6610f2';
                         $estado = 'T';
                         $cantT = $cantT + 1;
+                    } elseif ( $assistance_detail->status == 'H' ){
+                        $color = '#6610f2';
+                        $estado = 'H';
+                        $cantH = $cantH + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -713,7 +749,8 @@ class AssistanceController extends Controller
                 'cantJ' => $cantJ,
                 'cantV' => $cantV,
                 'cantP' => $cantP,
-                'cantT' => $cantT
+                'cantT' => $cantT,
+                'cantH' => $cantH
             ]);
         }
 
@@ -1032,28 +1069,55 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -1366,28 +1430,55 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -1682,28 +1773,55 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -1968,27 +2086,53 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -2357,27 +2501,53 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                ]);
+                            } elseif ( $assistance_detail->status == 'F' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -2762,27 +2932,53 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
@@ -3146,27 +3342,53 @@ class AssistanceController extends Controller
                             ]);
                         } else {
                             // TODO: Sin H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            $hoursOrdinary = 0;
-                            $hours100 = 0;
-                            if ( $assistance_detail->hour_out > $workingDay->time_fin ){
-                                // TODO: Detectamos horas extras
-                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
 
-                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
-                                $hours100 = $hoursExtrasTotals;
-                            } else {
-                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary,
+                                    0,
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
                             }
 
-                            array_push($arrayDayAssistances, [
-                                $hoursOrdinary,
-                                0,
-                                0,
-                                $hours100+$hoursOrdinary,
-                                0,
-                            ]);
                         }
 
                     } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {

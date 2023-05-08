@@ -140,7 +140,16 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-navy elevation-1">H</span>
 
+                <div class="info-box-content">
+                    <span class="info-box-number">FERIADO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -231,6 +240,7 @@
                                 <option value="V" {{ ($arrayAssistances[$i]['status'] == 'V') ? 'selected':'' }}>V</option>
                                 <option value="P" {{ ($arrayAssistances[$i]['status'] == 'P') ? 'selected':'' }}>P</option>
                                 <option value="T" {{ ($arrayAssistances[$i]['status'] == 'T') ? 'selected':'' }}>T</option>
+                                <option value="H" {{ ($arrayAssistances[$i]['status'] == 'H') ? 'selected':'' }}>H</option>
                             </select>
                         </div>
                         <div class="col-md-1">
