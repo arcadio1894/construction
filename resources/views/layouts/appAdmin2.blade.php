@@ -1673,6 +1673,35 @@
                                     </ul>
                                 </li>
                             @endcan
+                            @can('enable_bill')
+                                <li class="nav-item has-treeview @yield('openBill')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Tipos de Gastos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('list_bill')
+                                            <li class="nav-item">
+                                                <a href="{{ route('bill.index') }}" class="nav-link @yield('activeListBill')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Listar Tipos</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                        @can('create_bill')
+                                            <li class="nav-item">
+                                                <a href="{{ route('bill.create') }}" class="nav-link @yield('activeCreateBill')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Crear Tipos</p>
+                                                </a>
+                                            </li>
+                                        @endcan
+                                    </ul>
+                                </li>
+                            @endcan
                             @can('list_percentageWorker')
                                 <li class="nav-item has-treeview @yield('openPercentageWorker')">
                                     <a href="#" class="nav-link">
@@ -2030,6 +2059,35 @@
                                                     <a href="{{ route('refund.create') }}" class="nav-link @yield('activeCreateRefund')">
                                                         <i class="far fa-dot-circle nav-icon text-warning"></i>
                                                         <p>Registrar reembolso</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
+                                @can('enable_expense')
+                                    <li class="nav-item has-treeview @yield('openExpense')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Rendición de gastos
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_expense')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('expense.index') }}" class="nav-link @yield('activeListExpense')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listado de gastos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_expense')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('expense.create') }}" class="nav-link @yield('activeCreateExpense')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Registrar gasto</p>
                                                     </a>
                                                 </li>
                                             @endcan

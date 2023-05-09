@@ -2030,6 +2030,56 @@ Route::middleware('auth')->group(function (){
         Route::post('store/regularize/order/purchase/finance', 'OrderPurchaseFinanceController@regularizeEntryToOrderPurchaseFinance')
             ->name('order.purchase.finance.regularize.store')
             ->middleware('permission:create_orderPurchaseFinance');
+
+        // TODO: Bills
+        Route::get('/all/bills', 'BillController@getAllBills')
+            ->middleware('permission:list_bill');
+        Route::get('tipos/gastos', 'BillController@index')
+            ->name('bill.index')
+            ->middleware('permission:list_bill');
+        Route::get('crear/tipo/gasto', 'BillController@create')
+            ->name('bill.create')
+            ->middleware('permission:create_bill');
+        Route::post('bill/store', 'BillController@store')
+            ->name('bill.store')
+            ->middleware('permission:create_bill');
+        Route::get('/editar/tipo/gasto/{id}', 'BillController@edit')
+            ->name('bill.edit')
+            ->middleware('permission:update_bill');
+        Route::post('bill/update', 'BillController@update')
+            ->name('bill.update')
+            ->middleware('permission:update_bill');
+        Route::post('bill/destroy', 'BillController@destroy')
+            ->name('bill.destroy')
+            ->middleware('permission:destroy_bill');
+
+        // TODO: Expenses
+        Route::get('/all/expenses', 'ExpenseController@getAllExpenses')
+            ->middleware('permission:list_expense');
+        Route::get('/rendicion/gastos/general', 'ExpenseController@index')
+            ->name('expense.index')
+            ->middleware('permission:list_expense');
+        Route::get('crear/gasto', 'ExpenseController@create')
+            ->name('expense.create')
+            ->middleware('permission:create_expense');
+        Route::post('expense/store', 'ExpenseController@store')
+            ->name('expense.store')
+            ->middleware('permission:create_expense');
+        Route::get('/editar/gasto/{id}', 'ExpenseController@edit')
+            ->name('expense.edit')
+            ->middleware('permission:update_expense');
+        Route::post('expense/update', 'ExpenseController@update')
+            ->name('expense.update')
+            ->middleware('permission:update_expense');
+        Route::post('expense/destroy', 'ExpenseController@destroy')
+            ->name('expense.destroy')
+            ->middleware('permission:destroy_expense');
+        Route::get('/reporte/rendicion/gastos/', 'ExpenseController@report')
+            ->name('expense.report')
+            ->middleware('permission:report_expense');
+        Route::get('/descargar/excel/rendicion/gastos/', 'ExpenseController@download')
+            ->name('expense.report')
+            ->middleware('permission:report_expense');
     });
 });
 
