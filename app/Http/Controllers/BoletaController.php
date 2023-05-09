@@ -479,7 +479,7 @@ class BoletaController extends Controller
             $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker_id, $start, $end);
             $rentaQuintaCat = round($amountRentaQuintaCat, 2);
 
-            $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones)*($worker->pension/100) , 2);
+            $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones - $montoSistemaPension - $rentaQuintaCat)*($worker->pension/100) , 2);
 
             $amountLoan = $this->getLoanByWorker($worker_id, $start, $end);
             $prestamo = round($amountLoan, 2);
