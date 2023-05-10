@@ -1003,7 +1003,7 @@ class EntryController extends Controller
         $begin = microtime(true);
 
         $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(2);
+        $date4MonthAgo = $dateCurrent->subMonths(5);
 
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
             ->where('created_at', '>=', $date4MonthAgo)

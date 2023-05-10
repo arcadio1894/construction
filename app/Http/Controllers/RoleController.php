@@ -80,7 +80,9 @@ class RoleController extends Controller
         'fifthCategory' => 'RENTA QUINTA CATEGORIA',
         'alimony' => 'PENSIÓN ALIMENTOS',
         'paySlip' => 'BOLETAS DE PAGO',
-        'orderPurchaseFinance' => 'ORDENES DE COMPRA FINANZAS'
+        'orderPurchaseFinance' => 'ORDENES DE COMPRA FINANZAS',
+        'bill' => 'TIPOS DE PAGO',
+        'expense' => 'RENDICIÓN DE CUENTAS'
     ];
 
     public function index()

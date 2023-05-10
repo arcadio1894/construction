@@ -68,7 +68,7 @@
             <div class="col-md-6">
                 <label for="reason">Tipo de gastos </label>
 
-                <textarea name="description" id="description" class="form-control">{{$bill->description}}</textarea>
+                <textarea name="description" onkeyup="mayus(this);" id="description" class="form-control">{{$bill->description}}</textarea>
 
             </div>
         </div>
