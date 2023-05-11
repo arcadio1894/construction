@@ -2091,6 +2091,14 @@
                                                     </a>
                                                 </li>
                                             @endcan
+                                            @can('report_expense')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('expense.report') }}" class="nav-link @yield('activeReportExpense')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Reporte de gastos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
                                         </ul>
                                     </li>
                                 @endcan

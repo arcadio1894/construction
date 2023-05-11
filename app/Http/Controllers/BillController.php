@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Bill;
+use App\Expense;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -72,6 +73,13 @@ class BillController extends Controller
 
     public function destroy(Request $request)
     {
+        $expenses = Expense::where('bill_id', $request->get('bill_id'))->get();
+
+        if ( count($expenses) > 0 )
+        {
+            return response()->json(['message' => 'No se puede eliminar porque hay gastos con este tipo'], 422);
+        }
+
         DB::beginTransaction();
         try {
 

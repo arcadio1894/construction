@@ -14,6 +14,8 @@ class Expense extends Model
         'total',
     ];
 
+    protected $dates = ['date_expense'];
+
     public function bill()
     {
         return $this->belongsTo('App\Bill');

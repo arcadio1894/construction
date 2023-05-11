@@ -2077,8 +2077,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/reporte/rendicion/gastos/', 'ExpenseController@report')
             ->name('expense.report')
             ->middleware('permission:report_expense');
-        Route::get('/descargar/excel/rendicion/gastos/', 'ExpenseController@download')
-            ->name('expense.report')
+        Route::get('/generate/report/expense/', 'ExpenseController@reportExpenses')
+            ->middleware('permission:report_expense');
+        Route::get('/descargar/excel/rendicion/gastos/', 'ExpenseController@downloadExpenses')
             ->middleware('permission:report_expense');
     });
 });
