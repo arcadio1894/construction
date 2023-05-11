@@ -270,6 +270,7 @@ class ExpenseController extends Controller
             array_push($expenses_array, [
                 'trabajador' => $expense->worker->first_name.' '.$expense->worker->last_name,
                 'fecha' => $expense->date_expense->format('d/m/Y'),
+                'week' => 'SEMANA '.$expense->week,
                 'tipo' => $expense->bill->description,
                 'total' => $expense->total,
             ]);

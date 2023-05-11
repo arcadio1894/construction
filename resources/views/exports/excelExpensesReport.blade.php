@@ -73,6 +73,7 @@
         <tr>
             <th width="250px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Trabajador</th>
             <th width="90px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Fecha</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Semana</th>
             <th width="180px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Tipo de gasto</th>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Total</th>
         </tr>
@@ -83,6 +84,7 @@
             <tr>
                 <th width="250px">{{ $expenses[$i]['trabajador'] }}</th>
                 <th width="90px">{{ $expenses[$i]['fecha'] }}</th>
+                <th width="100px" style="word-wrap: break-word">{{ $expenses[$i]['week'] }}</th>
                 <th width="200px" style="word-wrap: break-word">{{ $expenses[$i]['tipo'] }}</th>
                 <th width="80px" style="text-align: right">{{ $expenses[$i]['total'] }}</th>
             </tr>
@@ -90,6 +92,7 @@
             <tr>
                 <th width="520px">{{ $expenses[$i]['trabajador'] }}</th>
                 <th width="90px">{{ $expenses[$i]['fecha'] }}</th>
+                <th width="100px" style="word-wrap: break-word">{{ $expenses[$i]['week'] }}</th>
                 <th width="200px" style="word-wrap: break-word">{{ $expenses[$i]['tipo'] }}</th>
                 <th width="80px" style="text-align: right">{{ $expenses[$i]['total'] }}</th>
             </tr>
