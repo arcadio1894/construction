@@ -25,7 +25,7 @@ class ExpenseUpdateRequest extends FormRequest
     {
         return [
             'bill_id' => 'required|exists:bills,id',
-            'date_expense' => 'required|date|date_format:d/m/Y',
+            'date_expense' => 'required|date_format:d/m/Y',
             'total' => 'required|numeric|min:0',
         ];
     }
@@ -36,7 +36,6 @@ class ExpenseUpdateRequest extends FormRequest
             'bill_id.required' => 'El :attribute es obligatorio.',
             'bill_id.exists' => 'El :attribute no existe en la base de datos.',
             'date_expense.required' => 'La :attribute es obligatorio.',
-            'date_expense.date' => 'La :attribute debe ser una fecha.',
             'date_expense.date_format' => 'La :attribute debe tener el formato d/m/Y.',
             'total.required' => 'El :attribute es obligatorio.',
             'total.numeric' => 'El :attribute debe ser numérico.',
