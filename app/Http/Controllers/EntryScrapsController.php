@@ -42,7 +42,7 @@ class EntryScrapsController extends Controller
                 $query->with(['entry']);
             }])
             ->where('material_id', $material_id)
-            ->whereNotIn('state_item', ['exited'])
+            ->whereNotIn('state_item', ['exited', 'reserved'])
             ->orderBy('created_at', 'DESC')
             ->orderBy('state_item', 'ASC')
             ->get();
