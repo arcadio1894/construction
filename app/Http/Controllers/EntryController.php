@@ -1397,7 +1397,7 @@ class EntryController extends Controller
     public function getOrderPurchaseComplete($order)
     {
         $entry = Entry::where('purchase_order', $order)
-            ->first();
+            ->get();
 
         $order_purchase = OrderPurchase::where('code', $order)->first();
 
@@ -1411,10 +1411,16 @@ class EntryController extends Controller
                 {
                     $material = $detail->material_id;
                     // TODO: obtener las entradas de esa orden y material
-                    $entry_details_sum = DetailEntry::where('entry_id', $entry->id)
-                        ->where('material_id', $material)->sum('entered_quantity');
+                    $cant_material = 0;
+                    foreach ( $entry as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
 
-                    if ($entry_details_sum < $detail->quantity)
+
+                    if ($cant_material < $detail->quantity)
                     {
                         // TODO: Esto significa que esta incompleta
                         return 0;

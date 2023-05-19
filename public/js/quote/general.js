@@ -58,6 +58,17 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Orden Servicio',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code_customer !== null )
+                        return '<p> '+ item.code_customer +'</p>';
+                    else
+                        return '<p> Sin código </p>'
+                }
+            },
+            { data: null,
                 title: 'Total Sin IGV',
                 wrap: true,
                 "render": function (item)
@@ -111,19 +122,19 @@ $(document).ready(function () {
                         }
                     }
 
-                    if (item.state === 'confirmed' && item.raise_status === 0){
-                        return '<span class="badge bg-success">Confirmada</span>';
+                    if (item.state_active === 'close'){
+                        return '<span class="badge bg-danger">Finalizada</span>';
+                    } else {
+                        if (item.state === 'confirmed' && item.raise_status === 1){
+                            return '<span class="badge bg-success">Elevada</span>';
+                        }
+                        if (item.state === 'confirmed' && item.raise_status === 0){
+                            return '<span class="badge bg-success">Confirmada</span>';
+                        }
+                        if (item.state === 'canceled'){
+                            return '<span class="badge bg-danger">Cancelada</span>';
+                        }
                     }
-
-                    if (item.state === 'confirmed' && item.raise_status === 1){
-                        return '<span class="badge bg-success">Elevada</span>';
-                    }
-
-                    if (item.state === 'canceled'){
-                        return '<span class="badge bg-danger">Cancelada</span>';
-                    }
-
-
 
                 }
             },

@@ -51,6 +51,17 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Orden Servicio',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.code_customer !== null )
+                        return '<p> '+ item.code_customer +'</p>';
+                    else
+                        return '<p> Sin código </p>'
+                }
+            },
+            { data: null,
                 title: 'Total Sin IGV',
                 wrap: true,
                 "render": function (item)
