@@ -582,7 +582,7 @@ function renewQuote() {
     $.confirm({
         icon: 'fas fa-sync',
         theme: 'modern',
-        closeIcon: true,
+        closeIcon: false,
         animation: 'zoom',
         type: 'green',
         columnClass: 'medium',
@@ -622,15 +622,7 @@ function renewQuote() {
                     $.alert("Cotización no elevada.");
                 },
             },
-        },
-        onOpen: function () {
-            // after the modal is displayed.
-            button.attr("disabled", true);
-        },
-        onClose: function () {
-            // before the modal is hidden.
-            button.attr("disabled", false);
-        },
+        }
     });
 
 }
