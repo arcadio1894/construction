@@ -577,7 +577,8 @@ function exportQuotes() {
 
 function renewQuote() {
     var quote_id = $(this).data('renew');
-
+    var button = $(this);
+    button.attr("disabled", true);
     $.confirm({
         icon: 'fas fa-sync',
         theme: 'modern',
@@ -602,10 +603,12 @@ function renewQuote() {
                             console.log(data);
                             $.alert(data.message);
                             setTimeout( function () {
+                                button.attr("disabled", false);
                                 location.href = data.url;
                             }, 2000 )
                         },
                         error: function (data) {
+                            button.attr("disabled", false);
                             $.alert("Sucedió un error en el servidor. Intente nuevamente.");
                         },
                     });
@@ -615,10 +618,19 @@ function renewQuote() {
             cancel: {
                 text: 'CANCELAR',
                 action: function (e) {
+                    button.attr("disabled", false);
                     $.alert("Cotización no elevada.");
                 },
             },
-        }
+        },
+        onOpen: function () {
+            // after the modal is displayed.
+            button.attr("disabled", true);
+        },
+        onClose: function () {
+            // before the modal is hidden.
+            button.attr("disabled", false);
+        },
     });
 
 }
