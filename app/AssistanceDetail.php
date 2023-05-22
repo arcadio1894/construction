@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 class AssistanceDetail extends Model
@@ -34,6 +35,20 @@ class AssistanceDetail extends Model
     public function working_day()
     {
         return $this->belongsTo('App\WorkingDay');
+    }
+
+    public function getHourOutNewAttribute($value)
+    {
+        $hourOutSend = $this->hour_out;
+        $hourOut = Carbon::parse($this->hour_out);
+
+        // Si la hora de salida es "00:00", sumamos 24 horas
+        if ($hourOut->format('H:i') == '00:00') {
+            $hourOut->addDay();
+            $hourOutSend = $hourOut;
+        }
+
+        return $hourOutSend;
     }
 
 }
