@@ -2,7 +2,7 @@ $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     console.log($permissions);
     $('#dynamic-table')
-        .on( 'init.dt', function() {
+        .on( 'draw.dt', function() {
             //show nothing
             //console.log('no access to: ' + $('.dataTables_scroll') );
             setTimeout(function(){

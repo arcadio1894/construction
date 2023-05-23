@@ -2,7 +2,7 @@ $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
     $('#dynamic-table')
-        .on( 'init.dt', function() {
+        .on( 'draw.dt', function() {
             //show nothing
             //console.log('no access to: ' + $('.dataTables_scroll') );
             setTimeout(function(){
@@ -120,6 +120,7 @@ $(document).ready(function () {
                                 '       <option value="send">Enviado</option>' +
                                 '       <option value="pick_up">Recogido</option>' +
                                 '</select>';
+                            //$('.state_order').select2();
                         }
                         if ( item.status_order === 'send' )
                         {
@@ -129,6 +130,7 @@ $(document).ready(function () {
                                 '       <option value="send" selected>Enviado</option>' +
                                 '       <option value="pick_up">Recogido</option>' +
                                 '</select>';
+                            //$('.state_order').select2();
                         }
                         if ( item.status_order === 'pick_up' )
                         {
@@ -138,6 +140,7 @@ $(document).ready(function () {
                                 '       <option value="send">Enviado</option>' +
                                 '       <option value="pick_up" selected>Recogido</option>' +
                                 '</select>';
+                            //$('.state_order').select2();
                         }
                     } else {
                         if ( item.status_order === 'stand_by' )
@@ -148,6 +151,7 @@ $(document).ready(function () {
                                 '       <option value="send">Enviado</option>' +
                                 '       <option value="pick_up">Recogido</option>' +
                                 '</select>';
+                            $('.state_order').select2();
                         }
                         if ( item.status_order === 'send' )
                         {
@@ -157,6 +161,7 @@ $(document).ready(function () {
                                 '       <option value="send" selected>Enviado</option>' +
                                 '       <option value="pick_up">Recogido</option>' +
                                 '</select>';
+                            //$('.state_order').select2();
                         }
                         if ( item.status_order === 'pick_up' )
                         {
@@ -166,6 +171,7 @@ $(document).ready(function () {
                                 '       <option value="send">Enviado</option>' +
                                 '       <option value="pick_up" selected>Recogido</option>' +
                                 '</select>';
+                            //$('.state_order').select2();
                         }
                     }
 
