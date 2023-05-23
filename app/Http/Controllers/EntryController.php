@@ -1004,11 +1004,13 @@ class EntryController extends Controller
 
         $dateCurrent = Carbon::now('America/Lima');
         $date4MonthAgo = $dateCurrent->subMonths(5);
-
+        $estado = 1;
         $orders = OrderPurchase::with(['supplier', 'approved_user'])
-            ->where('created_at', '>=', $date4MonthAgo)
             ->orderBy('created_at', 'desc')
             ->get();
+            /*->filter(function ($orden) use ($estado) {
+                return $orden->getStatusAttribute() != $estado;
+            });*/
         $end = microtime(true) - $begin;
 
         Audit::create([
@@ -1401,7 +1403,7 @@ class EntryController extends Controller
 
         $order_purchase = OrderPurchase::where('code', $order)->first();
 
-        if ( isset($entry) )
+        if ( count($entry) > 0 )
         {
             $details = OrderPurchaseDetail::where('order_purchase_id', $order_purchase->id)->get();
 

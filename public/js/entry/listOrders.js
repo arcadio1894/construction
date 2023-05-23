@@ -81,21 +81,30 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item, type, full, meta)
                 {
-                    var currentCell = $("#dynamic-table").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
+                    var text = '';
+                    if (item.status == 1) {
+                        text = text + 'Completa';
+                    } else if (item.status == 0) {
+                        text = text + 'Incompleta';
+                    } else if (item.status == 2) {
+                        text = text + 'Por ingresar';
+                    }
+                    return '<p> '+ text +'</p>';
+                    /*var currentCell = $("#dynamic-table").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
                     $.ajax({
                         url: '/dashboard/get/order/complete/'+item.code
                     }).done(function (data) {
                         var text = '';
-                        if (data == 1) {
+                        if (item.status == 1) {
                             text = text + 'Completa';
-                        } else if (data == 0) {
+                        } else if (item.status == 0) {
                             text = text + 'Incompleta';
-                        } else if (data == 2) {
+                        } else if (item.status == 2) {
                             text = text + 'Por ingresar';
                         }
                         $(currentCell).text(text);
                     });
-                    return null;
+                    return null;*/
                 }
             },
             { data: null,
@@ -104,8 +113,31 @@ $(document).ready(function () {
                 sortable:false,
                 "render": function (item, type, full, meta)
                 {
+                    var text = '';
+                    if ( $.inArray('list_orderPurchaseNormal', $permissions) !== -1 ) {
+                        if (item.type === 'e')
+                        {
+                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/express/'+item.id+
+                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
+                        } else {
+                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/ver/orden/compra/normal/'+item.id+
+                                '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a> ';
+                        }
+                    }
 
-                    var currentCell = $("#dynamic-table").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
+                    if (item.regularize === 'nr') {
+                        if (item.status == 1) {
+                            text = text + '';
+
+                        } else if ( item.status == 0 ) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                        } else if (item.status == 2) {
+                            text = text + '<a href="'+document.location.origin+ '/dashboard/crear/entrada/compra/orden/'+item.id+
+                                '" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Crear entrada"><i class="fa fa-share"></i></a> ';
+                        }
+                    }
+                    /*var currentCell = $("#dynamic-table").DataTable().cells({"row":meta.row, "column":meta.col}).nodes(0);
                     $.ajax({
                         url: '/dashboard/get/order/complete/'+item.code
                     }).done(function (data) {
@@ -137,8 +169,8 @@ $(document).ready(function () {
                         }
 
                         $(currentCell).html(text);
-                    });
-                    return null;
+                    });*/
+                    return text;
 
 
                     /*if ( $.inArray('create_entryPurchase', $permissions) !== -1 ) {

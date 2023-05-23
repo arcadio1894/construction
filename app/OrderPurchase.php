@@ -9,6 +9,8 @@ class OrderPurchase extends Model
 {
     use SoftDeletes;
 
+    protected $appends = ['status'];
+
     public $fillable = [
         'code',
         'supplier_id',
@@ -50,4 +52,49 @@ class OrderPurchase extends Model
     {
         return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
+
+    public function getStatusAttribute()
+    {
+        $entry = Entry::where('purchase_order', $this->code)
+            ->get();
+
+        $order_purchase = OrderPurchase::where('code', $this->code)->first();
+
+        if ( count($entry) > 0 )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $order_purchase->id)->get();
+
+            if (isset($details))
+            {
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $cant_material = 0;
+                    foreach ( $entry as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
+
+
+                    if ($cant_material < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        return 0;
+                    }
+                }
+                // TODO: Esto significa que esta completa
+                return 1;
+            }
+            // TODO: Esto significa que esta por ingresar
+            return 2;
+        }
+        // TODO: Esto significa que esta por ingresar
+        return 2;
+        //$number = ($this->entered_quantity * $this->unit_price)/1.18;
+        //return number_format($subtotal, 2, '.', '');
+    }
+
 }
