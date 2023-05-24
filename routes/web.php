@@ -1087,6 +1087,8 @@ Route::middleware('auth')->group(function (){
         // Facturas Pendientes
         Route::get('/faturas/proveedores/pendientes', 'SupplierCreditController@indexInvoicesPending')
             ->name('index.invoices.pending');
+        Route::get('/get/invoices/pending', 'SupplierCreditController@getInvoicesPending');
+
 
         // PAYMENT DEADLINES
         Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')

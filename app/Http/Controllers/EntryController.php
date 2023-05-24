@@ -1718,7 +1718,7 @@ class EntryController extends Controller
         $date4MonthAgo = $dateCurrent->subMonths(4);
 
         $entryDetails = DetailEntry::where('material_id', '=', $id_material)
-            ->where('created_at', '>=', $date4MonthAgo)
+            //->where('created_at', '>=', $date4MonthAgo)
             //->where('entry_type', 'Por compra')
             ->get();
         $entries = [];
