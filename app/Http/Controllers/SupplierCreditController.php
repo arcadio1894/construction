@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Entry;
+use App\OrderPurchase;
 use App\SupplierCredit;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -293,6 +294,16 @@ class SupplierCreditController extends Controller
         }
 
         return response()->json(['message' => 'Pago cancelado correctamente'], 200);
+
+    }
+
+    public function indexInvoicesPending()
+    {
+        $entries = OrderPurchase::with(['supplier', 'deadline'])
+            ->whereNotIn('payment_deadline_id', [1,2])
+            ->orderby('date_order', 'DESC')
+            ->get();
+
 
     }
 }

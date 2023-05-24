@@ -1084,6 +1084,10 @@ Route::middleware('auth')->group(function (){
             ->name('credit.control.paid');
         Route::post('/cancel/pay/credit/{idCredit}', 'SupplierCreditController@cancelPayCredit');
 
+        // Facturas Pendientes
+        Route::get('/faturas/proveedores/pendientes', 'SupplierCreditController@indexInvoicesPending')
+            ->name('index.invoices.pending');
+
         // PAYMENT DEADLINES
         Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')
             ->middleware('permission:list_paymentDeadline');

@@ -2433,7 +2433,7 @@
                             </ul>
                         </li>
                     @endcan
-                    {{--@can('enable_credit')
+                    @can('enable_credit')
                     <li class="nav-header">CRÉDITOS</li>
                     <li class="nav-item has-treeview @yield('openCredit')">
                         <a href="#" class="nav-link @yield('activeCreditSupplier')">
@@ -2446,15 +2446,15 @@
                         @can('control_credit')
                         <ul class="nav nav-treeview">
                             <li class="nav-item">
-                                <a href="{{route('index.credit.supplier')}}" class="nav-link @yield('activeListCreditSupplier')">
+                                <a href="{{route('index.invoices.pending')}}" class="nav-link @yield('activeListCreditSupplier')">
                                     <i class="far fa-circle nav-icon"></i>
-                                    <p>Listar créditos</p>
+                                    <p>Facturas pendientes</p>
                                 </a>
                             </li>
                         </ul>
                         @endcan
                     </li>
-                    @endcan--}}
+                    @endcan
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany
