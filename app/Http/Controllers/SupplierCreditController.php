@@ -340,7 +340,7 @@ class SupplierCreditController extends Controller
                     $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
                     array_push($arrayOrders, [
                         "order" => substr(trim($orderPurchase->code), 0, 2),
-                        "correlativo" => substr(trim($orderPurchase->code), 2),
+                        "correlativo" => substr(trim($orderPurchase->code), 3),
                         "proveedor" => ($orderPurchase->supplier_id == null) ? 'Sin proveedor':$orderPurchase->supplier->business_name,
                         "moneda" => ($orderPurchase->currency_order == 'PEN') ? 'Soles':'Dólares',
                         "condicion" => ($orderPurchase->payment_deadline_id == null) ? 'Sin condición':$orderPurchase->deadline->description,
@@ -358,7 +358,7 @@ class SupplierCreditController extends Controller
             } else {
                 array_push($arrayOrders, [
                     "order" => substr(trim($orderPurchase->code), 0, 2),
-                    "correlativo" => substr(trim($orderPurchase->code), 2),
+                    "correlativo" => substr(trim($orderPurchase->code), 3),
                     "proveedor" => ($orderPurchase->supplier_id == null) ? 'Sin proveedor':$orderPurchase->supplier->business_name,
                     "moneda" => ($orderPurchase->currency_order == 'PEN') ? 'Soles':'Dólares',
                     "condicion" => ($orderPurchase->payment_deadline_id == null) ? 'Sin condición':$orderPurchase->deadline->description,
@@ -388,7 +388,7 @@ class SupplierCreditController extends Controller
                     $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
                     array_push($arrayOrders, [
                         "order" => substr(trim($orderService->code), 0, 2),
-                        "correlativo" => substr(trim($orderService->code), 2),
+                        "correlativo" => substr(trim($orderService->code), 3),
                         "proveedor" => ($orderService->supplier_id == null) ? 'Sin proveedor':$orderService->supplier->business_name,
                         "moneda" => ($orderService->currency_order == 'PEN') ? 'Soles':'Dólares',
                         "condicion" => ($orderService->payment_deadline_id == null) ? 'Sin condición':$orderService->deadline->description,
@@ -406,7 +406,7 @@ class SupplierCreditController extends Controller
             } else {
                 array_push($arrayOrders, [
                     "order" => substr(trim($orderService->code), 0, 2),
-                    "correlativo" => substr(trim($orderService->code), 2),
+                    "correlativo" => substr(trim($orderService->code), 3),
                     "proveedor" => ($orderService->supplier_id == null) ? 'Sin proveedor':$orderService->supplier->business_name,
                     "moneda" => ($orderService->currency_order == 'PEN') ? 'Soles':'Dólares',
                     "condicion" => ($orderService->payment_deadline_id == null) ? 'Sin condición':$orderService->deadline->description,
@@ -436,7 +436,7 @@ class SupplierCreditController extends Controller
                     $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
                     array_push($arrayOrders, [
                         "order" => substr(trim($orderPurchaseFinance->code), 0, 2),
-                        "correlativo" => substr(trim($orderPurchaseFinance->code), 2),
+                        "correlativo" => substr(trim($orderPurchaseFinance->code), 3),
                         "proveedor" => ($orderPurchaseFinance->supplier_id == null) ? 'Sin proveedor':$orderPurchaseFinance->supplier->business_name,
                         "moneda" => ($orderPurchaseFinance->currency_order == 'PEN') ? 'Soles':'Dólares',
                         "condicion" => ($orderPurchaseFinance->payment_deadline_id == null) ? 'Sin condición':$orderPurchaseFinance->deadline->description,
@@ -454,7 +454,7 @@ class SupplierCreditController extends Controller
             } else {
                 array_push($arrayOrders, [
                     "order" => substr(trim($orderPurchaseFinance->code), 0, 2),
-                    "correlativo" => substr(trim($orderPurchaseFinance->code), 2),
+                    "correlativo" => substr(trim($orderPurchaseFinance->code), 3),
                     "proveedor" => ($orderPurchaseFinance->supplier_id == null) ? 'Sin proveedor':$orderPurchaseFinance->supplier->business_name,
                     "moneda" => ($orderPurchaseFinance->currency_order == 'PEN') ? 'Soles':'Dólares',
                     "condicion" => ($orderPurchaseFinance->payment_deadline_id == null) ? 'Sin condición':$orderPurchaseFinance->deadline->description,
@@ -471,6 +471,6 @@ class SupplierCreditController extends Controller
 
         }
 
-
+        return datatables($arrayOrders)->toJson();
     }
 }

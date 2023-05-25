@@ -2433,7 +2433,7 @@
                             </ul>
                         </li>
                     @endcan
-                    {{--@can('enable_credit')
+                    @can('enable_credit')
                     <li class="nav-header">CRÉDITOS</li>
                     <li class="nav-item has-treeview @yield('openCredit')">
                         <a href="#" class="nav-link @yield('activeCreditSupplier')">
@@ -2454,7 +2454,7 @@
                         </ul>
                         @endcan
                     </li>
-                    @endcan--}}
+                    @endcan
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

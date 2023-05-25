@@ -473,16 +473,16 @@ function showOutputs(){
                                     var text = '';
 
                                     text = text + '<button data-toggle="tooltip" data-placement="top" title="Materiales en la cotización" data-materials="'+json[i].execution_order+'" class="btn btn-outline-info btn-sm"><i class="fas fa-hammer"></i> </button> ' +
-                                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+json[0].id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ';
+                                        '<button data-toggle="tooltip" data-placement="top" title="Ver materiales pedidos" data-details="'+json[i].id+'" class="btn btn-outline-primary btn-sm"><i class="fa fa-plus-square"></i> </button> ';
                                         /*'<button data-toggle="tooltip" data-placement="top" title="Anular total" data-deleteTotal="'+json[0].id+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>  '+
                                         '<button data-toggle="tooltip" data-placement="top" title="Anular parcial" data-deletePartial="'+json[0].id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-trash"></i> </button>';*/
 
-                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Unidad" data-return="'+json[0].id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
-                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Cantidad" data-returnQuantity="'+json[0].id+'" class="btn btn-warning btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Unidad" data-return="'+json[i].id+'" class="btn btn-outline-dark btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
+                                    text = text + '<button data-toggle="tooltip" data-placement="top" title="Devolver por Cantidad" data-returnQuantity="'+json[i].id+'" class="btn btn-warning btn-sm"><i class="fas fa-exchange-alt"></i> </button> ';
 
                                     if ( json[i].description_quote == 'No hay datos' )
                                     {
-                                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + json[0].id + '" data-execution_order="' + json[i].execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
+                                        text = text + '<button data-toggle="tooltip" data-placement="top" title="Editar orden de ejecución" data-edit="' + json[i].id + '" data-execution_order="' + json[i].execution_order + '" class="btn btn-outline-secondary btn-sm"><i class="fas fa-edit"></i> </button>  ';
                                     }
 
                                     table.row.add( [
