@@ -283,7 +283,18 @@ $(document).ready(function () {
 
     } );*/
 
-    var table2 = $('#dynamic-table2').DataTable( {
+    var table2 = $('#dynamic-table2')
+        .on( 'draw.dt', function() {
+            //show nothing
+            //console.log('no access to: ' + $('.dataTables_scroll') );
+            setTimeout(function(){
+                //show element
+                //console.log('access to: ' + $('.dataTables_scroll') );
+                $(document).find('.state_paid').select2({
+                    placeholder: "Seleccione",
+                });
+            }, 0);
+        }).DataTable( {
         ajax: {
             url: "/dashboard/get/invoices/pending",
             dataSrc: 'data'
@@ -347,11 +358,48 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Deuda Actual Dólares',
+                wrap: true,
+                "render": function (item)
+                {
+                    if (item.deudaActualDolares == "" && item.deudaActualSoles != "")
+                    {
+                        return '<p> </p>';
+                    } else {
+                        return '<p> USD '+ item.deudaActualDolares +'</p>';
+                    }
+
+                }
+            },
+            { data: null,
+                title: 'Deuda Actual Soles',
+                wrap: true,
+                "render": function (item)
+                {
+                    if (item.deudaActualSoles == "" && item.deudaActualDolares != "")
+                    {
+                        return '<p> </p>';
+                    } else {
+                        return '<p> PEN '+ item.deudaActualSoles +'</p>';
+                    }
+                }
+            },
+            { data: null,
+                title: 'Adelanto',
+                wrap: true,
+                "render": function (item)
+                {
+                    var moneda = (item.moneda == "Soles") ? 'PEN':'USD';
+                    return '<p> '+ moneda+ ' ' +item.adelanto +'</p>';
+                }
+            },
+            { data: null,
                 title: 'Deuda Actual',
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ item.deudaActual +'</p>';
+                    var moneda = (item.moneda == "soles") ? 'PEN':'USD';
+                    return '<p> '+ moneda+ ' ' +item.deudaActual +'</p>';
                 }
             },
             { data: null,
@@ -391,7 +439,35 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ item.estadoPago +'</p>';
+                    var select = '';
+                    if ( item.estadoPago === 'pending' )
+                    {
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="pending" selected>PENDIENTE</option>' +
+                            '       <option value="pending50">CANC./PEND.50%</option>' +
+                            '       <option value="canceled">CANCELADO</option>' +
+                            '</select>';
+                    }
+                    if ( item.estadoPago === 'pending50' )
+                    {
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="pending">PENDIENTE</option>' +
+                            '       <option value="pending50" selected>CANC./PEND.50%</option>' +
+                            '       <option value="canceled">CANCELADO</option>' +
+                            '</select>';
+                    }
+                    if ( item.estadoPago === 'canceled' )
+                    {
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                            '       <option></option>' +
+                            '       <option value="pending">PENDIENTE</option>' +
+                            '       <option value="pending50">CANC./PEND.50%</option>' +
+                            '       <option value="canceled" selected>CANCELADO</option>' +
+                            '</select>';
+                    }
+                    return select;
                 }
             },
             { data: null,
@@ -399,7 +475,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> No tiene</p>';
+                    return '<p>'+item.fechaPago+'</p>';
 
                 }
             },
@@ -408,7 +484,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> No tiene</p>';
+                    return '<p>'+item.observaciones+'</p>';
                 }
             },
             { data: null,
@@ -418,6 +494,11 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
+
+                    //if ( $.inArray('destroy_orderPurchaseNormal', $permissions) !== -1 ) {
+                        text = text + ' <button data-edit="'+item.id+'" data-name="'+item.code+'" '+
+                            ' class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i></button>';
+                    //}
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
                 }
@@ -619,7 +700,7 @@ $(document).ready(function () {
                 //console.log(min);
                 var max  = $('#end').val();
                 //console.log(max);
-                var createdAt = data[9]; // Our date column in the table
+                var createdAt = data[12]; // Our date column in the table
                 var startDate   = moment(min, "DD/MM/YYYY");
                 var endDate     = moment(max, "DD/MM/YYYY");
                 var diffDate = moment(createdAt, "DD/MM/YYYY");
@@ -642,7 +723,7 @@ $(document).ready(function () {
                     //console.log(min2);
                     var max2  = $('#end2').val();
                     //console.log(max2);
-                    var createdAt2 = data[9]; // Our date column in the table
+                    var createdAt2 = data[12]; // Our date column in the table
                     var startDate2   = moment(min2, "DD/MM/YYYY");
                     var endDate2     = moment(max2, "DD/MM/YYYY");
                     var diffDate2 = moment(createdAt2, "DD/MM/YYYY");

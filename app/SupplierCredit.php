@@ -23,8 +23,12 @@ class SupplierCredit extends Model
         'code_order',
         'payment_deadline_id',
         'image_credit',
-        'date_paid'
+        'date_paid',
+        'state_pay',
+        'advance'
     ];
+
+    protected $dates=['date_issue', 'date_expiration', 'date_paid'];
 
     public function supplier()
     {

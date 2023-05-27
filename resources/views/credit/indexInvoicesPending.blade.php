@@ -130,6 +130,9 @@
                 <th>Condición</th>
                 <th>Monto Dólares</th>
                 <th>Monto Soles</th>
+                <th>Deuda Actual Dólares</th>
+                <th>Deuda Actual Soles</th>
+                <th>Adelanto</th>
                 <th>Deuda Actual</th>
                 <th>Factura</th>
                 <th>Fecha Emisión</th>

@@ -1082,6 +1082,7 @@ class QuoteController extends Controller
         $name = $quote->code . ' '. ltrim(rtrim($description)) . '.pdf';
 
         $image_path = public_path().'/pdfs/'.$name;
+        //$image_path = 'C:/wamp64/www/construction/public/pdfs/'.$name;
         if (file_exists($image_path)) {
             unlink($image_path);
         }
@@ -1089,9 +1090,9 @@ class QuoteController extends Controller
         $output = $pdf->output();
 
         file_put_contents(public_path().'/pdfs/'.$name, $output);
-
+        //file_put_contents('C:/wamp64/www/construction/public/pdfs/'.$name, $output);
         $pdfPrincipal = public_path().'/pdfs/'.$name;
-
+        //$pdfPrincipal = 'C:/wamp64/www/construction/public/pdfs/'.$name;
         $oMerger = PDFMerger::init();
 
         $oMerger->addPDF($pdfPrincipal, 'all');
@@ -1102,6 +1103,7 @@ class QuoteController extends Controller
         foreach ( $pdfs as $pdf )
         {
             $namePdf = public_path().'/images/planos/'.$pdf->image;
+            //$namePdf ='C:/wamp64/www/construction/public/images/planos/'.$pdf->image;
             $oMerger->addPDF($namePdf, 'all');
         }
 
@@ -2166,6 +2168,7 @@ class QuoteController extends Controller
             $totalEquipmentRNew = $totalEquipmentLNew*(($letter/100)+1);
 
             $quote->total = $quote->total + $totalEquipmentRNew;
+            $quote->total_soles = $quote->total*$quote->currency_venta;
             $quote->save();
 
             $equipment_quote->utility = $request->input('utility');

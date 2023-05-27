@@ -41,23 +41,19 @@ class SupplierCreditController extends Controller
             ->with('deadline')
             ->orderBy('created_at', 'desc')
             ->get();
-        foreach( $credits as $credit )
-        {
-            if ( isset($credit->date_expiration) && $credit->state_credit != 'paid_out' )
-            {
+        foreach ($credits as $credit) {
+            if (isset($credit->date_expiration) && $credit->state_credit != 'paid_out') {
                 $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
                 $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
                 $credit->days_to_expiration = (int)$dias_to_expire;
                 $credit->save();
 
-                if ( (int)$dias_to_expire < 4 && (int)$dias_to_expire > 0 )
-                {
+                if ((int)$dias_to_expire < 4 && (int)$dias_to_expire > 0) {
                     $credit->state_credit = 'by_expire';
                     $credit->save();
                 }
 
-                if ( $dias_to_expire == 0 )
-                {
+                if ($dias_to_expire == 0) {
                     $credit->state_credit = 'expired';
                     $credit->save();
                 }
@@ -107,21 +103,6 @@ class SupplierCreditController extends Controller
             ->find($credit_id);
 
         return response()->json(['credit' => $credit], 200);
-    }
-
-    public function create()
-    {
-        //
-    }
-
-    public function store(Request $request)
-    {
-        //
-    }
-
-    public function show(Credit $credit)
-    {
-        //
     }
 
     public function edit(Credit $credit)
@@ -310,7 +291,7 @@ class SupplierCreditController extends Controller
 
     public function getInvoicesPending()
     {
-        $orderPurchases = OrderPurchase::with(['supplier', 'deadline'])
+        /*$orderPurchases = OrderPurchase::with(['supplier', 'deadline'])
             ->whereNotIn('payment_deadline_id', [1,2])
             ->orderby('date_order', 'DESC')
             ->get();
@@ -470,6 +451,72 @@ class SupplierCreditController extends Controller
             }
 
         }
+
+        return datatables($arrayOrders)->toJson();*/
+        $credits = SupplierCredit::with('supplier')
+            ->with('purchase')
+            ->with('service')
+            ->with('deadline')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        foreach( $credits as $credit )
+        {
+            if ( isset($credit->date_expiration) && $credit->state_credit != 'paid_out' )
+            {
+                $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
+                $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
+                $credit->days_to_expiration = (int)$dias_to_expire;
+                $credit->save();
+
+                if ( (int)$dias_to_expire < 4 && (int)$dias_to_expire > 0 )
+                {
+                    $credit->state_credit = 'by_expire';
+                    $credit->save();
+                }
+
+                if ( $dias_to_expire == 0 )
+                {
+                    $credit->state_credit = 'expired';
+                    $credit->save();
+                }
+            }
+
+        }
+
+        $credits = SupplierCredit::with('supplier')
+            ->with('purchase')
+            ->with('service')
+            ->with('deadline')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        $arrayOrders = [];
+
+        foreach ( $credits as $credit )
+        {
+            array_push($arrayOrders, [
+                "order" => substr(trim($credit->code_order), 0, 2),
+                "correlativo" => substr(trim($credit->code_order), 3),
+                "proveedor" => ($credit->supplier_id == null) ? 'Sin proveedor':$credit->supplier->business_name,
+                "moneda" => ($credit->total_soles != null) ? 'Soles':'Dólares',
+                "condicion" => ($credit->payment_deadline_id == null) ? 'Sin condición':$credit->deadline->description,
+                "montoDolares" => ($credit->total_dollars == null) ? '':$credit->total_dollars,
+                "montoSoles" => ($credit->total_soles == null) ? '':$credit->total_soles,
+                "adelanto" =>  $credit->advance,
+                "deudaActualDolares" => ($credit->total_dollars != null) ? $credit->total_dollars-$credit->advance:'',
+                "deudaActualSoles" => ($credit->total_soles != null) ? $credit->total_soles-$credit->advance:'',
+                "deudaActual" => ($credit->total_soles != null) ? $credit->total_soles:$credit->total_dollars,
+                "factura" => ($credit->invoice == null) ? 'PENDIENTE':$credit->invoice,
+                "fechaEmision" => ($credit->date_issue == null) ? '': $credit->date_issue->format('d/m/Y'),
+                "fechaVencimiento" => ($credit->date_expiration == null) ? '': $credit->date_expiration->format('d/m/Y'),
+                "estado" => ($credit->days_to_expiration == null) ? "": "FALTAN ".$credit->days_to_expiration." DÍAS PARA VENCER",
+                "estadoPago" => $credit->state_pay,
+                "fechaPago" => ($credit->date_paid == null) ? '': $credit->date_paid->format('d/m/Y'),
+                "observaciones" => ($credit->observation == null) ? "": $credit->observation
+            ]);
+        }
+
 
         return datatables($arrayOrders)->toJson();
     }

@@ -151,7 +151,7 @@ $(document).ready(function () {
                                 '       <option value="send">Enviado</option>' +
                                 '       <option value="pick_up">Recogido</option>' +
                                 '</select>';
-                            $('.state_order').select2();
+                            //$('.state_order').select2();
                         }
                         if ( item.status_order === 'send' )
                         {
