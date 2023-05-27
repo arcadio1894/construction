@@ -2168,7 +2168,7 @@ class QuoteController extends Controller
             $totalEquipmentRNew = $totalEquipmentLNew*(($letter/100)+1);
 
             $quote->total = $quote->total + $totalEquipmentRNew;
-            $quote->total_soles = $quote->total*$quote->currency_venta;
+            $quote->total_soles = ($quote->total_soles != null || $quote->total_soles != 0) ? $quote->total*$quote->currency_venta:0;
             $quote->save();
 
             $equipment_quote->utility = $request->input('utility');
