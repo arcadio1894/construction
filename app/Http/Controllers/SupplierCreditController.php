@@ -717,4 +717,21 @@ class SupplierCreditController extends Controller
         }
         return $randomString;
     }
+
+    public function changeStatusCredit($credit_id, $status)
+    {
+        DB::beginTransaction();
+        try {
+
+            $supplierCredit = SupplierCredit::find($credit_id);
+            $supplierCredit->state_pay = $status;
+            $supplierCredit->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Estado modificado.'], 200);
+    }
 }

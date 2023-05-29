@@ -1095,6 +1095,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/save/pay/credit/{credit_id}', 'SupplierCreditController@savePaysCredit');
         Route::post('/delete/pay/credit/{credit_pay_id}', 'SupplierCreditController@deletePayCredit');
         Route::post('/add/days/credit/{credit_id}', 'SupplierCreditController@addDaysCredit');
+        Route::post('/change/status/credit/{credit_id}/{status}', 'SupplierCreditController@changeStatusCredit');
 
         // PAYMENT DEADLINES
         Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')
