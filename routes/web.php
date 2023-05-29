@@ -1088,7 +1088,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/faturas/proveedores/pendientes', 'SupplierCreditController@indexInvoicesPending')
             ->name('index.invoices.pending');
         Route::get('/get/invoices/pending', 'SupplierCreditController@getInvoicesPending');
-
+        Route::get('/get/summary/deuda/pending', 'SupplierCreditController@getSummaryDeudaPending')
+            ->name('get.summary.deuda.pending');
+        Route::get('/get/pays/credit/{credit_id}', 'SupplierCreditController@getPaysCredit')
+            ->name('get.pays.credit');
+        Route::post('/save/pay/credit/{credit_id}', 'SupplierCreditController@savePaysCredit');
+        Route::post('/delete/pay/credit/{credit_pay_id}', 'SupplierCreditController@deletePayCredit');
+        Route::post('/add/days/credit/{credit_id}', 'SupplierCreditController@addDaysCredit');
 
         // PAYMENT DEADLINES
         Route::get('/all/paymentDeadlines', 'PaymentDeadlineController@getPaymentDeadlines')

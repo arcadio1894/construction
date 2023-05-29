@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\CreditPay;
 use App\Entry;
 use App\OrderPurchase;
 use App\OrderPurchaseFinance;
@@ -464,18 +465,22 @@ class SupplierCreditController extends Controller
         {
             if ( isset($credit->date_expiration) && $credit->state_credit != 'paid_out' )
             {
+                $ahora = Carbon::now('America/Lima');
                 $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
-                $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
-                $credit->days_to_expiration = (int)$dias_to_expire;
+                $dias_to_expire = $fecha->diffInDays($ahora);
+                if ($fecha->timestamp < $ahora->timestamp) {
+                    $dias_to_expire *= -1; // Aplica el signo negativo si la primera fecha es anterior a la segunda
+                }
+                $credit->days_to_expiration = $dias_to_expire;
                 $credit->save();
 
-                if ( (int)$dias_to_expire < 4 && (int)$dias_to_expire > 0 )
+                if ( $dias_to_expire < 4 && $dias_to_expire > 0 )
                 {
                     $credit->state_credit = 'by_expire';
                     $credit->save();
                 }
 
-                if ( $dias_to_expire == 0 )
+                if ( $dias_to_expire <= 0 )
                 {
                     $credit->state_credit = 'expired';
                     $credit->save();
@@ -495,22 +500,26 @@ class SupplierCreditController extends Controller
 
         foreach ( $credits as $credit )
         {
+            $pagos = CreditPay::where('supplier_credit_id', $credit->id)->sum('amount');
+
             array_push($arrayOrders, [
+                "id" => $credit->id,
+                "stateCredit" => $credit->state_credit,
                 "order" => substr(trim($credit->code_order), 0, 2),
-                "correlativo" => substr(trim($credit->code_order), 3),
+                "correlativo" => trim($credit->code_order),
                 "proveedor" => ($credit->supplier_id == null) ? 'Sin proveedor':$credit->supplier->business_name,
                 "moneda" => ($credit->total_soles != null) ? 'Soles':'Dólares',
                 "condicion" => ($credit->payment_deadline_id == null) ? 'Sin condición':$credit->deadline->description,
                 "montoDolares" => ($credit->total_dollars == null) ? '':$credit->total_dollars,
                 "montoSoles" => ($credit->total_soles == null) ? '':$credit->total_soles,
-                "adelanto" =>  $credit->advance,
-                "deudaActualDolares" => ($credit->total_dollars != null) ? $credit->total_dollars-$credit->advance:'',
-                "deudaActualSoles" => ($credit->total_soles != null) ? $credit->total_soles-$credit->advance:'',
-                "deudaActual" => ($credit->total_soles != null) ? $credit->total_soles:$credit->total_dollars,
+                "adelanto" =>  $pagos,
+                "deudaActualDolares" => ($credit->total_dollars != null) ? $credit->total_dollars-$pagos:'',
+                "deudaActualSoles" => ($credit->total_soles != null) ? $credit->total_soles-$pagos:'',
+                "deudaActual" => ($credit->total_soles != null) ? $credit->total_soles-$pagos:$credit->total_dollars-$pagos,
                 "factura" => ($credit->invoice == null) ? 'PENDIENTE':$credit->invoice,
                 "fechaEmision" => ($credit->date_issue == null) ? '': $credit->date_issue->format('d/m/Y'),
                 "fechaVencimiento" => ($credit->date_expiration == null) ? '': $credit->date_expiration->format('d/m/Y'),
-                "estado" => ($credit->days_to_expiration == null) ? "": "FALTAN ".$credit->days_to_expiration." DÍAS PARA VENCER",
+                "estado" => ($credit->days_to_expiration == null) ? "": $credit->days_to_expiration." DÍAS",
                 "estadoPago" => $credit->state_pay,
                 "fechaPago" => ($credit->date_paid == null) ? '': $credit->date_paid->format('d/m/Y'),
                 "observaciones" => ($credit->observation == null) ? "": $credit->observation
@@ -519,5 +528,193 @@ class SupplierCreditController extends Controller
 
 
         return datatables($arrayOrders)->toJson();
+    }
+
+    public function getPaysCredit( $credit_id )
+    {
+        $pays = CreditPay::where('supplier_credit_id', $credit_id)
+            ->orderBy('date_pay', 'DESC')
+            ->get();
+
+        $arrayPays = [];
+        foreach ( $pays as $pay )
+        {
+            array_push($arrayPays, [
+                "id" => $pay->id,
+                "type" => ($pay->image == null) ? 'img':substr($pay->image,  -3),
+                "monto" => $pay->amount,
+                "fecha" => ($pay->date_pay == null) ? '':$pay->date_pay->format('d/m/Y'),
+                "comprobante" => ($pay->image == null) ? 'no_image.png':$pay->image
+            ]);
+        }
+
+        return response()->json([
+            "pays" => $arrayPays
+        ]);
+    }
+
+    public function savePaysCredit(Request $request, $credit_id)
+    {
+        DB::beginTransaction();
+        try {
+            $credit = SupplierCredit::find($credit_id);
+
+            $creditPay = CreditPay::create([
+                'supplier_credit_id' => $credit->id,
+                'amount' => $request->get('montoPago'),
+                'date_pay' => ($request->get('fechaPago') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('fechaPago')) : null,
+            ]);
+
+            if ($request->hasFile('comprobantePago')) {
+                $image = $request->file('comprobantePago');
+                $path = public_path().'/images/credits/pays/';
+                $extension = $request->file('comprobantePago')->getClientOriginalExtension();
+                //$filename = $entry->id . '.' . $extension;
+                if ( strtoupper($extension) != "PDF" )
+                {
+                    $filename = $creditPay->id.'_' . $this->generateRandomString(20).'.JPG';
+                    $img = Image::make($image);
+                    $img->orientate();
+                    $img->save($path.$filename, 80, 'JPG');
+                    //$request->file('image')->move($path, $filename);
+                    $creditPay->image = $filename;
+                    $creditPay->save();
+                } else {
+                    $filename = 'pdf'.$creditPay->id . $this->generateRandomString(20) . '.' .$extension;
+                    $request->file('comprobantePago')->move($path, $filename);
+                    $creditPay->image = $filename;
+                    $creditPay->save();
+                }
+            }
+
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Pago registrado con exito.',
+            'credit' => $credit],
+            200);
+
+    }
+
+    public function deletePayCredit(Request $request, $credit_pay_id)
+    {
+        DB::beginTransaction();
+        try {
+
+            $creditPay = CreditPay::find($credit_pay_id);
+
+            $credit = SupplierCredit::find($creditPay->supplier_credit_id);
+
+            $creditPay->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Pago eliminado con exito.',
+            'credit' => $credit],
+            200);
+
+    }
+
+    public function addDaysCredit(Request $request, $credit_id)
+    {
+        $credit = SupplierCredit::find($credit_id);
+
+        if ( !isset($credit->date_expiration) || $credit->state_credit == 'paid_out' ) {
+            return response()->json([
+                'message' => "No se puede agregar dias porque la fecha de expiración no existe o el estado del crédito ya esta pagado"],
+                422);
+        }
+
+        DB::beginTransaction();
+        try {
+            $newDate = $credit->date_expiration->addDays(7);
+
+            $credit->date_expiration = $newDate;
+
+            $credit->save();
+
+            $ahora = Carbon::now('America/Lima');
+            $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
+            $dias_to_expire = $fecha->diffInDays($ahora);
+            if ($fecha->timestamp < $ahora->timestamp) {
+                $dias_to_expire *= -1; // Aplica el signo negativo si la primera fecha es anterior a la segunda
+            }
+            $credit->days_to_expiration = $dias_to_expire;
+            $credit->save();
+
+            if ( $dias_to_expire >= 4 )
+            {
+                $credit->state_credit = 'outstanding';
+                $credit->save();
+            }
+
+            if ( $dias_to_expire < 4 && $dias_to_expire > 0 )
+            {
+                $credit->state_credit = 'by_expire';
+                $credit->save();
+            }
+
+            if ( $dias_to_expire <= 0 )
+            {
+                $credit->state_credit = 'expired';
+                $credit->save();
+            }
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Se agregaron 7 días más a la fecha de expiración.',
+            'credit' => $credit],
+            200);
+    }
+
+    public function getSummaryDeudaPending()
+    {
+        $credits = SupplierCredit::where('state_pay', '<>', 'canceled')->get();
+
+        $deudaSoles = 0;
+        $deudaDolares = 0;
+        foreach ( $credits as $credit )
+        {
+            if ( $credit->total_soles != null )
+            {
+                $deudaSoles = $deudaSoles + ($credit->total_soles-$credit->advance );
+            }
+
+            if ( $credit->total_dollars != null )
+            {
+                $deudaDolares = $deudaDolares + ( $credit->total_dollars-$credit->advance );
+            }
+
+        }
+
+        return response()->json([
+            "deudaSoles" => $deudaSoles,
+            "deudaDolares" => $deudaDolares
+        ], 200);
+    }
+
+    public function generateRandomString($length = 25) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
     }
 }

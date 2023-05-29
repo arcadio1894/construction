@@ -74,12 +74,16 @@ class UpdateExpirationCredits extends Command
         {
             if ( isset($credit->date_issue) && $credit->state_credit != 'paid_out' )
             {
+                $ahora = Carbon::now('America/Lima');
                 $fecha = Carbon::parse($credit->date_expiration, 'America/Lima');
-                $dias_to_expire = $fecha->diffInDays(Carbon::now('America/Lima'));
-                $credit->days_to_expiration = (int)$dias_to_expire;
+                $dias_to_expire = $fecha->diffInDays($ahora);
+                if ($fecha->timestamp < $ahora->timestamp) {
+                    $dias_to_expire *= -1; // Aplica el signo negativo si la primera fecha es anterior a la segunda
+                }
+                $credit->days_to_expiration = $dias_to_expire;
                 $credit->save();
 
-                if ( (int)$dias_to_expire < 4 && (int)$dias_to_expire > 0 )
+                if ( (int)$dias_to_expire < 4 && $dias_to_expire > 0 )
                 {
                     $crear_notif_credits_by_expire = true;
                     $credit->state_credit = 'by_expire';

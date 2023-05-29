@@ -23,6 +23,8 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class AssistanceController extends Controller
 {
@@ -77,110 +79,66 @@ class AssistanceController extends Controller
             ], 200);
 
         } else {
-            // Si no hay cronograma, creamos y redireccionamos
-            $assistance2 = Assistance::create([
-                'date_assistance' => $date_assistance
-            ]);
+            if ( Auth::user()->hasRole('contabilidad') )
+            {
+                return response()->json([
+                    'message' => 'Lo sentimos. No tiene los permisos de crear asistencias.',
+                    'url' => "",
+                    'res' => 3
+                ], 200);
+            } else {
+                // Si no hay cronograma, creamos y redireccionamos
+                $assistance2 = Assistance::create([
+                    'date_assistance' => $date_assistance
+                ]);
 
-            // Creamos los detalles de la asistencia
-            $workers = Worker::where('enable', true)
-                ->get();
-
-            //$workingDay = WorkingDay::where('enable', true)->first();
-
-            foreach ( $workers as $worker) {
-                // TODO: Revisamos si hay Descansos Medicos
-                //dump($worker->first_name .' '. $worker->last_name);
-                $medicalRests = MedicalRest::whereDate('date_start', '<=',$assistance2->date_assistance)
-                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
-                    ->where('worker_id', $worker->id)
+                // Creamos los detalles de la asistencia
+                $workers = Worker::where('enable', true)
                     ->get();
-                $vacations = Vacation::whereDate('date_start', '<=',$assistance2->date_assistance)
-                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
-                    ->where('worker_id', $worker->id)
-                    ->get();
-                $licenses = License::whereDate('date_start', '<=',$assistance2->date_assistance)
-                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
-                    ->where('worker_id', $worker->id)
-                    ->get();
-                $permits = Permit::whereDate('date_start', '<=',$assistance2->date_assistance)
-                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
-                    ->where('worker_id', $worker->id)
-                    ->get();
-                $suspensions = Suspension::whereDate('date_start', '<=',$assistance2->date_assistance)
-                    ->whereDate('date_end', '>=',$assistance2->date_assistance)
-                    ->where('worker_id', $worker->id)
-                    ->get();
-                // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
-                // TODO: Si es VIE la jornada 2
-
-                /*if ( $date_assistance->dayOfWeek != Carbon::FRIDAY )
-                {*/
-                // TODO: Se selecciona el regimen luego el dia y por ultimo el horario
-                $regime = Regime::where('active', true)->first();
-                $dayNum = $assistance2->date_assistance->dayOfWeek;
-
-                $regimeDetail = RegimeDetail::where('regime_id', $regime->id)
-                    ->where('dayNumber', $dayNum)->first();
 
                 //$workingDay = WorkingDay::where('enable', true)->first();
-                $workingDay = WorkingDay::find($regimeDetail->working_day_id);
-                /*} else {
-                    $workingDay = WorkingDay::where('enable', true)->skip(1)->take(1)->first();
-                }*/
-                if ( count($medicalRests) > 0 ) {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id,
-                        'status' => 'M'
-                    ]);
-                } elseif ( count($vacations) > 0 ) {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id,
-                        'status' => 'V'
-                    ]);
-                } elseif ( count($licenses) > 0 ) {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id,
-                        'status' => 'P'
-                    ]);
-                } elseif ( count($permits) > 0 ) {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id,
-                        'status' => 'P'
-                    ]);
-                } elseif ( count($suspensions) > 0 ) {
-                    AssistanceDetail::create([
-                        'date_assistance' => $assistance2->date_assistance,
-                        'hour_entry' => $workingDay->time_start,
-                        'hour_out' => $workingDay->time_fin,
-                        'worker_id' => $worker->id,
-                        'assistance_id' => $assistance2->id,
-                        'working_day_id' => $workingDay->id,
-                        'status' => 'S'
-                    ]);
-                } else {
-                    if ( $this->isHoliday($assistance2->date_assistance) )
-                    {
+
+                foreach ( $workers as $worker) {
+                    // TODO: Revisamos si hay Descansos Medicos
+                    //dump($worker->first_name .' '. $worker->last_name);
+                    $medicalRests = MedicalRest::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    $vacations = Vacation::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    $licenses = License::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    $permits = Permit::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    $suspensions = Suspension::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
+                    // TODO: Si es VIE la jornada 2
+
+                    /*if ( $date_assistance->dayOfWeek != Carbon::FRIDAY )
+                    {*/
+                    // TODO: Se selecciona el regimen luego el dia y por ultimo el horario
+                    $regime = Regime::where('active', true)->first();
+                    $dayNum = $assistance2->date_assistance->dayOfWeek;
+
+                    $regimeDetail = RegimeDetail::where('regime_id', $regime->id)
+                        ->where('dayNumber', $dayNum)->first();
+
+                    //$workingDay = WorkingDay::where('enable', true)->first();
+                    $workingDay = WorkingDay::find($regimeDetail->working_day_id);
+                    /*} else {
+                        $workingDay = WorkingDay::where('enable', true)->skip(1)->take(1)->first();
+                    }*/
+                    if ( count($medicalRests) > 0 ) {
                         AssistanceDetail::create([
                             'date_assistance' => $assistance2->date_assistance,
                             'hour_entry' => $workingDay->time_start,
@@ -188,30 +146,84 @@ class AssistanceController extends Controller
                             'worker_id' => $worker->id,
                             'assistance_id' => $assistance2->id,
                             'working_day_id' => $workingDay->id,
-                            'status' => 'H'
+                            'status' => 'M'
+                        ]);
+                    } elseif ( count($vacations) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'V'
+                        ]);
+                    } elseif ( count($licenses) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'P'
+                        ]);
+                    } elseif ( count($permits) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'P'
+                        ]);
+                    } elseif ( count($suspensions) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'S'
                         ]);
                     } else {
-                        AssistanceDetail::create([
-                            'date_assistance' => $assistance2->date_assistance,
-                            'hour_entry' => $workingDay->time_start,
-                            'hour_out' => $workingDay->time_fin,
-                            'worker_id' => $worker->id,
-                            'assistance_id' => $assistance2->id,
-                            'working_day_id' => $workingDay->id,
-                            'status' => 'A'
-                        ]);
+                        if ( $this->isHoliday($assistance2->date_assistance) )
+                        {
+                            AssistanceDetail::create([
+                                'date_assistance' => $assistance2->date_assistance,
+                                'hour_entry' => $workingDay->time_start,
+                                'hour_out' => $workingDay->time_fin,
+                                'worker_id' => $worker->id,
+                                'assistance_id' => $assistance2->id,
+                                'working_day_id' => $workingDay->id,
+                                'status' => 'H'
+                            ]);
+                        } else {
+                            AssistanceDetail::create([
+                                'date_assistance' => $assistance2->date_assistance,
+                                'hour_entry' => $workingDay->time_start,
+                                'hour_out' => $workingDay->time_fin,
+                                'worker_id' => $worker->id,
+                                'assistance_id' => $assistance2->id,
+                                'working_day_id' => $workingDay->id,
+                                'status' => 'A'
+                            ]);
+                        }
+
                     }
 
                 }
 
+                //dd();
+                return response()->json([
+                    'message' => 'Se ha creado la asistencia y redireccionando ... ',
+                    'url' => route('assistance.register', $assistance2->id),
+                    'res' => 2
+                ], 200);
             }
 
-            //dd();
-            return response()->json([
-                'message' => 'Se ha creado la asistencia y redireccionando ... ',
-                'url' => route('assistance.register', $assistance2->id),
-                'res' => 2
-            ], 200);
         }
     }
 

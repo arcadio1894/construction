@@ -206,7 +206,7 @@
                             <textarea name="" style="font-size: 15px" data-worker cols="30" readonly class="form-control">{{ $arrayAssistances[$i]['worker'] }}</textarea>
                         </div>
                         <div class="col-md-2">
-                            <select data-workingDay class="workingDays form-control form-control-sm select2" style="width: 100%;">
+                            <select data-workingDay @cannot('register_assistance') disabled @endcannot class="workingDays form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 @foreach( $workingDays as $workingDay )
                                     <option value="{{ $workingDay->id }}" data-time_fin="{{ $workingDay->time_fin }}" data-time_start="{{ $workingDay->time_start }}" {{ ($workingDay->id == $arrayAssistances[$i]['working_day']) ? 'selected':'' }}>{{ $workingDay->description}}</option>
@@ -215,7 +215,7 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group date input-group-sm datestart" data-target-input="nearest">
-                                <input type="text" data-dateStart value="{{ $arrayAssistances[$i]['hour_entry'] }}" class="form-control timepicker" />
+                                <input type="text" @cannot('register_assistance') disabled @endcannot data-dateStart value="{{ $arrayAssistances[$i]['hour_entry'] }}" class="form-control timepicker" />
                                 <div class="input-group-append">
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>
                                 </div>
@@ -223,14 +223,14 @@
                         </div>
                         <div class="col-md-2">
                             <div class="input-group date input-group-sm dateend" data-target-input="nearest">
-                                <input type="text" data-dateEnd value="{{ $arrayAssistances[$i]['hour_out'] }}" class="form-control timepicker" />
+                                <input type="text" @cannot('register_assistance') disabled @endcannot data-dateEnd value="{{ $arrayAssistances[$i]['hour_out'] }}" class="form-control timepicker" />
                                 <div class="input-group-append" >
                                     <div class="input-group-text"><i class="far fa-clock"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-1">
-                            <select data-status class="state form-control form-control-sm select2" style="width: 100%;">
+                            <select data-status @cannot('register_assistance') disabled @endcannot class="state form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 <option value="A" {{ ($arrayAssistances[$i]['status'] == 'A') ? 'selected':'' }}>A</option>
                                 <option value="F" {{ ($arrayAssistances[$i]['status'] == 'F') ? 'selected':'' }}>F</option>
@@ -245,13 +245,15 @@
                         </div>
                         <div class="col-md-1">
                             {{--<textarea name="" data-observacion cols="30" class="form-control form-control-sm">{{ $arrayAssistances[$i]['obs_justification'] }}</textarea>--}}
-                            <input type="number" name="hours_discount" id="hours_discount" data-hours_discount class="form-control form-control-sm" step="0.1" min="0" value="{{ $arrayAssistances[$i]['hours_discount'] }}">
+                            <input type="number" @cannot('register_assistance') readonly @endcannot name="hours_discount" id="hours_discount" data-hours_discount class="form-control form-control-sm" step="0.1" min="0" value="{{ $arrayAssistances[$i]['hours_discount'] }}">
                         </div>
                         <div class="col-md-1">
-                            <button type="button" data-save data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
-                            @if($arrayAssistances[$i]['assistance_detail_id'] != '')
-                            <button type="button" data-delete data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar asistencia"><i class="fas fa-trash"></i> </button>
-                            @endif
+                            @can('register_assistance')
+                                <button type="button" data-save data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Guardar asistencia"><i class="fas fa-save"></i> </button>
+                                @if($arrayAssistances[$i]['assistance_detail_id'] != '')
+                                <button type="button" data-delete data-worker="{{ $arrayAssistances[$i]['worker_id'] }}" data-assistancedetail="{{ $arrayAssistances[$i]['assistance_detail_id'] }}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar asistencia"><i class="fas fa-trash"></i> </button>
+                                @endif
+                            @endcan
                         </div>
                     </div>
                     <hr>

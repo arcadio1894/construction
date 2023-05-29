@@ -1783,26 +1783,30 @@
                         </a>
                         @endcan
                         <ul class="nav nav-treeview">
-                            @can('register_assistance')
+                            @can('workingDay_assistance')
                             <li class="nav-item">
                                 <a href="{{ route('workingDay.create') }}" class="nav-link @yield('activeListWorkingDay')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Jornadas Trabajo</p>
                                 </a>
                             </li>
+                            @endcan
+                            @can('regime_assistance')
                             <li class="nav-item">
                                 <a href="{{ route('regime.create') }}" class="nav-link @yield('activeListRegime')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Régimen de Trabajo</p>
                                 </a>
                             </li>
+                            @endcan
+                            @canany(['register_assistance', 'report_assistance'])
                             <li class="nav-item">
                                 <a href="{{ route('assistance.index') }}" class="nav-link @yield('activeListAttendance')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar asistencia</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcanany
                             @can('report_assistance')
                                 <li class="nav-item">
                                     <a href="{{ route('assistance.show') }}" class="nav-link @yield('activeReportAttendance')">

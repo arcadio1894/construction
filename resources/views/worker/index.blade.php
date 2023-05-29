@@ -38,9 +38,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de los colaboradores</h5>
-
+    @can( 'create_worker' )
     <a href="{{ route('worker.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo colaborador </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

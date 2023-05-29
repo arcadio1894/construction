@@ -346,7 +346,12 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ item.montoDolares +'</p>';
+                    if (item.deudaActualDolares == "" && item.deudaActualSoles != "")
+                    {
+                        return '<p> </p>';
+                    } else {
+                        return '<p> USD '+ item.montoDolares +'</p>';
+                    }
                 }
             },
             { data: null,
@@ -354,7 +359,12 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ item.montoSoles +'</p>';
+                    if (item.deudaActualSoles == "" && item.deudaActualDolares != "")
+                    {
+                        return '<p> </p>';
+                    } else {
+                        return '<p> PEN '+ item.montoSoles +'</p>';
+                    }
                 }
             },
             { data: null,
@@ -385,7 +395,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Adelanto',
+                title: 'Pago',
                 wrap: true,
                 "render": function (item)
                 {
@@ -427,7 +437,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Estado',
+                title: 'Vence en',
                 wrap: true,
                 "render": function (item)
                 {
@@ -442,7 +452,7 @@ $(document).ready(function () {
                     var select = '';
                     if ( item.estadoPago === 'pending' )
                     {
-                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control form-control-sm select2 state_paid" style="width: 115px;">' +
                             '       <option></option>' +
                             '       <option value="pending" selected>PENDIENTE</option>' +
                             '       <option value="pending50">CANC./PEND.50%</option>' +
@@ -451,7 +461,7 @@ $(document).ready(function () {
                     }
                     if ( item.estadoPago === 'pending50' )
                     {
-                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control form-control-sm select2 state_paid" style="width: 115px;">' +
                             '       <option></option>' +
                             '       <option value="pending">PENDIENTE</option>' +
                             '       <option value="pending50" selected>CANC./PEND.50%</option>' +
@@ -460,7 +470,7 @@ $(document).ready(function () {
                     }
                     if ( item.estadoPago === 'canceled' )
                     {
-                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control select2 state_paid" style="width: 115px;">' +
+                        select += '<select data-id="' + item.id + '" name="state_paid" class="form-control form-control-sm select2 state_paid" style="width: 115px;">' +
                             '       <option></option>' +
                             '       <option value="pending">PENDIENTE</option>' +
                             '       <option value="pending50">CANC./PEND.50%</option>' +
@@ -496,8 +506,10 @@ $(document).ready(function () {
                     var text = '';
 
                     //if ( $.inArray('destroy_orderPurchaseNormal', $permissions) !== -1 ) {
-                        text = text + ' <button data-edit="'+item.id+'" data-name="'+item.code+'" '+
-                            ' class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar crédito"><i class="fa fa-pen"></i></button>';
+                        text = text + ' <button data-pays="'+item.id+'" '+
+                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar créditos"><i class="fas fa-file-invoice-dollar"></i></button>';
+                        text = text + ' <button data-add_days="'+item.id+'" data-fecha="'+item.fechaVencimiento+'"'+
+                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar 7 días"><i class="fas fa-plus-circle"></i></button>';
                     //}
 
                     return text; /*'<a href="'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'" class="btn btn-outline-warning btn-sm"><i class="fa fa-pen"></i> </a>  <button data-delete="'+item.id+'" data-description="'+item.description+'" data-measure="'+item.measure+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> </button>' */
@@ -506,7 +518,11 @@ $(document).ready(function () {
 
         ],
         "aaSorting": [],
-
+        "columnDefs": [
+            {
+                "visible": false,
+                "targets": [ 0, 5, 6, 7, 8, 16, 17 ]
+            }],
         select: {
             style: 'single'
         },
@@ -643,14 +659,31 @@ $(document).ready(function () {
                 "hours": "Horas"
             }
         },
+        "createdRow": function(row, data, dataIndex) {
+            var valor = data.stateCredit; // Supongamos que el valor de interés está en la tercera columna (índice 2)
 
+            if (valor == "outstanding") {
+                $(row).find('td:eq(9)').css('background-color', '#28a745'); // Cambiar el color de fondo de la tercera celda de la fila a rojo
+            } else {
+                if (valor == "by_expire") {
+                    $(row).find('td:eq(9)').css('background-color', '#ffc107'); // Cambiar el color de fondo de la tercera celda de la fila a rojo
+                } else {
+                    if (valor == "expired") {
+                        $(row).find('td:eq(9)').css('background-color', '#dc3545'); // Cambiar el color de fondo de la tercera celda de la fila a rojo
+                    } else {
+                        $(row).find('td:eq(9)').css('background-color', '#007bff'); // Cambiar el color de fondo de la tercera celda de la fila a rojo
+
+                    }
+                }
+            }
+        }
     } );
 
     $(document).on('click', '[data-column]', function (e) {
         //e.preventDefault();
 
         // Get the column API object
-        var column = table.column( $(this).attr('data-column') );
+        var column = table2.column( $(this).attr('data-column') );
 
         // Toggle the visibility
         column.visible( ! column.visible() );
@@ -659,6 +692,10 @@ $(document).ready(function () {
     $modalAddItems = $('#modalAddItems');
 
     //$(document).on('click', '[data-delete]', deleteItem);
+
+    $modalPays = $('#modalPays');
+
+    $modalSummary = $('#modalSummary');
 
     $modalItems = $('#modalItems');
 
@@ -765,8 +802,34 @@ $(document).ready(function () {
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
+    
+    $("#btn-summary").on('click', showModalSummary);
+
+    $(document).on('click', '[data-pays]',showModalPays);
+
+    $(document).on('click', '[data-add_days]',showModalAddDays);
+
+    /*$modalPays.on('hidden.bs.modal', function () {
+        $("#credito_id").val('');
+        $("#montoPago").val('');
+        $("#fechaPago").val('');
+        $('#comprobantePago').val(null);
+    });*/
+
+    $("#btn-save-pay").on('click', savePayCredit);
+
+    $modalImageComprobante = $('#modalImageComprobante');
+    $(document).on('click', '[data-image_comprobante]', showImagePreview);
+
+    $(document).on('click', '[data-delete]', deleteCredit);
 
 });
+
+let $modalImageComprobante;
+
+let $modalPays;
+
+let $modalSummary;
 
 let $modalItems;
 
@@ -787,6 +850,439 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function showModalAddDays() {
+    var credit_id = $(this).data('add_days');
+    var fecha = $(this).data('fecha');
+    var formatoEntrada = "DD/MM/YYYY";
+    var fechaMoment = moment(fecha, formatoEntrada);
+    var fechaSumada = fechaMoment.add(7, 'days');
+    var fechaFormateada = fechaSumada.format('DD/MM/YYYY');
+
+    vdialog({
+        type:'alert',// alert, success, error, confirm
+        title: '¿Esta seguro de agregar 7 días más a la fecha de expiración?',
+        content: 'La nueva fecha de expiración será: '+fechaFormateada,
+        okValue:'Aceptar',
+        modal:true,
+        cancelValue:'Cancelar',
+        ok: function(){
+            $.ajax({
+                url: '/dashboard/add/days/credit/'+credit_id,
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                    toastr.success(data.message, 'Éxito',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                    setTimeout(function() {
+                        // Aquí va el código que deseas ejecutar después de 2 segundos
+                        location.reload();
+                    }, 2000);
+
+                },
+                error: function (data) {
+                    if( data.responseJSON.message && !data.responseJSON.errors )
+                    {
+                        toastr.error(data.responseJSON.message, 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                    for ( var property in data.responseJSON.errors ) {
+                        toastr.error(data.responseJSON.errors[property], 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                },
+            });
+
+        },
+        cancel: function(){
+            vdialog.alert('Asistencia no guardada');
+        }
+    });
+}
+function deleteCredit() {
+    $modalPays.modal('hide');
+    var credit_pay_id = $(this).data('delete');
+    vdialog({
+        type:'alert',// alert, success, error, confirm
+        title: '¿Esta seguro de eliminar este pago?',
+        content: 'Se eliminará todos los datos de este pago',
+        okValue:'Aceptar',
+        modal:true,
+        cancelValue:'Cancelar',
+        ok: function(){
+            $.ajax({
+                url: '/dashboard/delete/pay/credit/'+credit_pay_id,
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                    toastr.success(data.message, 'Éxito',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                    // Actualizar la assitanceDetail
+                    getPaysUpdated(data.credit.id);
+
+                    $("#montoPago").val('');
+                    $("#fechaPago").val('');
+                    $('#comprobantePago').val(null);
+
+                    $modalPays.modal('show');
+                },
+                error: function (data) {
+                    if( data.responseJSON.message && !data.responseJSON.errors )
+                    {
+                        toastr.error(data.responseJSON.message, 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                    for ( var property in data.responseJSON.errors ) {
+                        toastr.error(data.responseJSON.errors[property], 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                },
+            });
+
+        },
+        cancel: function(){
+            vdialog.alert('Asistencia no guardada');
+        }
+    });
+}
+
+function showImagePreview() {
+    var image = $(this).attr('data-image_comprobante');
+    console.log(image);
+
+    var url = document.location.origin+ '/images/credits/pays/'+image;
+
+    $('#imagePreview').attr('src', url);
+    $('#zoom').trigger('zoom.destroy');
+    $('#zoom').zoom({
+        url: url,
+        on:'click',
+        magnify: 0.35
+    });
+
+    $modalImageComprobante.modal('show');
+}
+
+function savePayCredit() {
+    $modalPays.modal('hide');
+    // Obtenemos los datos
+    var credit_id = $("#credito_id").val();
+    var montoPago = $("#montoPago").val();
+    var fechaPago = $("#fechaPago").val();
+
+    console.log(credit_id);
+    console.log(montoPago);
+    console.log(fechaPago);
+    //var comprobantePago = $('#comprobantePago').val();
+
+    var fileInput = $('#comprobantePago')[0].files[0];
+    var formData = new FormData();
+
+    formData.append('credit_id', credit_id);
+    formData.append('montoPago', montoPago);
+    formData.append('fechaPago', fechaPago);
+    formData.append('comprobantePago', fileInput);
+
+    vdialog({
+        type:'alert',// alert, success, error, confirm
+        title: '¿Esta seguro de guardar este pago?',
+        content: 'Se guardará todos los datos de este pago',
+        okValue:'Aceptar',
+        modal:true,
+        cancelValue:'Cancelar',
+        ok: function(){
+            $.ajax({
+                url: '/dashboard/save/pay/credit/'+credit_id,
+                method: 'POST',
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    console.log(data);
+                    toastr.success(data.message, 'Éxito',
+                        {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                    // Actualizar la assitanceDetail
+                    getPaysUpdated(data.credit.id);
+
+                    $("#montoPago").val('');
+                    $("#fechaPago").val('');
+                    $('#comprobantePago').val(null);
+
+                    $modalPays.modal('show');
+                },
+                error: function (data) {
+                    if( data.responseJSON.message && !data.responseJSON.errors )
+                    {
+                        toastr.error(data.responseJSON.message, 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                    for ( var property in data.responseJSON.errors ) {
+                        toastr.error(data.responseJSON.errors[property], 'Error',
+                            {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                    }
+                },
+            });
+
+        },
+        cancel: function(){
+            vdialog.alert('Asistencia no guardada');
+        }
+    });
+}
+
+function getPaysUpdated(credit_id) {
+    $('#body-pays').html('');
+    $("#body-items-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+
+    $.ajax({
+        url: "/dashboard/get/pays/credit/"+credit_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //console.log(json.consumables.length);
+            for (var i=0; i<json.pays.length; i++)
+            {
+                renderTemplatePay(i+1, json.pays[i].id, json.pays[i].type,json.pays[i].monto, json.pays[i].fecha, json.pays[i].comprobante);
+            }
+            $("#body-items-load").LoadingOverlay("hide", true);
+        }
+    });
+}
+
+function showModalPays() {
+    $('#body-pays').html('');
+    $("#body-items-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+
+    var credit_id = $(this).data('pays');
+
+    $("#montoPago").val('');
+    $("#fechaPago").val('');
+    $('#comprobantePago').val(null);
+
+    $("#credito_id").val(credit_id);
+
+    $.ajax({
+        url: "/dashboard/get/pays/credit/"+credit_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            //console.log(json.consumables.length);
+            for (var i=0; i<json.pays.length; i++)
+            {
+                renderTemplatePay(i+1, json.pays[i].id, json.pays[i].type, json.pays[i].monto, json.pays[i].fecha, json.pays[i].comprobante);
+            }
+            $("#body-items-load").LoadingOverlay("hide", true);
+        }
+    });
+    $modalPays.modal('show');
+
+}
+
+function renderTemplatePay(i, id, type,amount, datePay, image) {
+
+    if ( type == "pdf" )
+    {
+        var clone2 = activateTemplate('#template-pay2');
+
+        clone2.querySelector("[data-id]").innerHTML = i;
+        clone2.querySelector("[data-monto]").innerHTML = amount;
+        clone2.querySelector("[data-fecha]").innerHTML = datePay;
+        clone2.querySelector("[data-comprobante]").setAttribute('href', document.location.origin+ '/images/credits/pays/'+image);
+        clone2.querySelector("[data-delete]").setAttribute('data-delete', id);
+
+        $('#body-pays').append(clone2);
+    } else {
+        var clone = activateTemplate('#template-pay');
+
+        clone.querySelector("[data-id]").innerHTML = i;
+        clone.querySelector("[data-monto]").innerHTML = amount;
+        clone.querySelector("[data-fecha]").innerHTML = datePay;
+        clone.querySelector("[data-comprobante]").setAttribute('data-image_comprobante', image);
+        clone.querySelector("[data-delete]").setAttribute('data-delete', id);
+
+        $('#body-pays').append(clone);
+    }
+
+
+}
+
+
+function showModalSummary() {
+    var url = $(this).data('url');
+    $.get(url, function(data) {
+        // Manipula los datos recibidos aquí
+        console.log(data);
+        var deudaSoles = parseFloat(data.deudaSoles);
+        var formattedValueSoles = deudaSoles.toLocaleString(undefined, { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
+        $("#deudaSoles").html("S/. "+formattedValueSoles);
+
+        var deudaDolares = parseFloat(data.deudaDolares);
+        var formattedValueDolares = deudaDolares.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+        $("#deudaDolares").html("$. "+formattedValueDolares);
+
+        $modalSummary.modal('show');
+    }).done(function() {
+        console.log("La solicitud se completó correctamente.");
+    }).fail(function() {
+        console.log("Ocurrió un error en la solicitud.");
+    });
+
+}
 
 function cancelPayCredit() {
     var id_credit = $(this).attr('data-nopay');

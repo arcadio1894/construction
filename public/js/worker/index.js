@@ -150,12 +150,12 @@ $(document).ready(function () {
                 "render": function (item)
                 {
                     var text = '';
-                    //if ( $.inArray('update_material', $permissions) !== -1 ) {
+                    if ( $.inArray('edit_worker', $permissions) !== -1 ) {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/editar/colaborador/'+item.id+'" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>  ';
-                    //}
-                    //if ( $.inArray('contract_worker', $permissions) !== -1 ) {
+                    }
+                    if ( $.inArray('destroy_worker', $permissions) !== -1 ) {
                         text = text + '<button data-delete="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-window-close"></i> </button>  ';
-                    //}
+                    }
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
                         if ( item.have_contract == 0 )
                         {

@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/bootstrap-datepicker/css/bootstrap-datepicker3.standalone.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/vdialog/css/vdialog.css') }}">
 
 @endsection
 
@@ -51,9 +52,8 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de créditos de proveedores</h5>
-    {{--@can('create_invoice')
-    <a href="{{ route('invoice.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo ingreso </a>
-    @endcan--}}
+    <button id="btn-summary" data-url="{{ route('get.summary.deuda.pending') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Ver resumen de deuda </button>
+
 @endsection
 
 @section('page-breadcrumb')
@@ -119,12 +119,89 @@
 
         <br><br>
     </div>
+    <div>
+        <div class="row">
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="0" class="custom-control-input" id="customSwitch1">
+                <label class="custom-control-label" for="customSwitch1">Orden</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="1" class="custom-control-input" id="customSwitch2">
+                <label class="custom-control-label" for="customSwitch2">Código</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch3">
+                <label class="custom-control-label" for="customSwitch3">Proveedor</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch4">
+                <label class="custom-control-label" for="customSwitch4">Moneda</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="4" class="custom-control-input" id="customSwitch5">
+                <label class="custom-control-label" for="customSwitch5">Condición</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="5" class="custom-control-input" id="customSwitch6">
+                <label class="custom-control-label" for="customSwitch6">Monto Dólares</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="6" class="custom-control-input" id="customSwitch7">
+                <label class="custom-control-label" for="customSwitch7">Monto Soles</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="7" class="custom-control-input" id="customSwitch8">
+                <label class="custom-control-label" for="customSwitch8">Deuda Actual Dólares</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="8" class="custom-control-input" id="customSwitch9">
+                <label class="custom-control-label" for="customSwitch9">Deuda Actual Soles</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="9" class="custom-control-input" id="customSwitch10">
+                <label class="custom-control-label" for="customSwitch10">Adelanto</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="10" class="custom-control-input" id="customSwitch11">
+                <label class="custom-control-label" for="customSwitch11">Deuda Actual</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="11" class="custom-control-input" id="customSwitch12">
+                <label class="custom-control-label" for="customSwitch12">Factura</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="12" class="custom-control-input" id="customSwitch13">
+                <label class="custom-control-label" for="customSwitch13">Fecha Emisión</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="13" class="custom-control-input" id="customSwitch14">
+                <label class="custom-control-label" for="customSwitch14">Fecha Vencimiento</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="14" class="custom-control-input" id="customSwitch15">
+                <label class="custom-control-label" for="customSwitch15">Estado</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" checked data-column="15" class="custom-control-input" id="customSwitch16">
+                <label class="custom-control-label" for="customSwitch16">Estado Pago</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="16" class="custom-control-input" id="customSwitch17">
+                <label class="custom-control-label" for="customSwitch17">Fecha Pago</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="17" class="custom-control-input" id="customSwitch18">
+                <label class="custom-control-label" for="customSwitch18">Observación</label>
+            </div>
+        </div>
+
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm" id="dynamic-table2">
             <thead>
             <tr>
                 <th>Orden</th>
-                <th>Correlativo</th>
+                <th>Codigo</th>
                 <th>Proveedor</th>
                 <th>Moneda</th>
                 <th>Condición</th>
@@ -132,12 +209,12 @@
                 <th>Monto Soles</th>
                 <th>Deuda Actual Dólares</th>
                 <th>Deuda Actual Soles</th>
-                <th>Adelanto</th>
+                <th>Pago</th>
                 <th>Deuda Actual</th>
                 <th>Factura</th>
                 <th>Fecha Emisión</th>
                 <th>Fecha Vencimiento</th>
-                <th>Estado</th>
+                <th>Vence en</th>
                 <th>Estado Pago</th>
                 <th>Fecha Pago</th>
                 <th>Observación</th>
@@ -363,6 +440,169 @@
         </div>
     </div>
 
+    <div id="modalSummary" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-sm">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Deuda Actual</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="col-md-12 col-sm-12 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-gradient-success">S/.</span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">SOLES</span>
+                                <span class="info-box-number" id="deudaSoles">1,410</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                    <div class="col-md-12 col-sm-12 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-gradient-info">$</span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">DÓLARES</span>
+                                <span class="info-box-number" id="deudaDolares">1,410</span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalPays" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Información de pagos</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" id="credito_id" value="">
+                        <div class="col-md-3">
+                            <label class="col-sm-12 control-label" for="montoPago"> Monto <span class="right badge badge-danger">(*)</span></label>
+
+                            <div class="col-sm-12">
+                                <input type="number" min="0" step="0.01" id="montoPago" name="montoPago" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="col-sm-12 control-label" for="fechaPago"> Fecha <span class="right badge badge-danger">(*)</span></label>
+
+                            <div class="col-sm-12">
+                                <input type="text" id="fechaPago" name="fechaPago" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask/>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="col-sm-12 control-label" for="comprobantePago"> Comprobante </label>
+
+                            <div class="col-sm-12">
+                                <input type="file" id="comprobantePago" name="comprobantePago" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <label class="col-sm-12 control-label" for="material_selected_quantity"> &nbsp;&nbsp;&nbsp; </label>
+
+                            <div class="col-sm-12">
+                                <button type="button" id="btn-save-pay" class="btn btn-outline-primary">Guardar <i class="fas fa-arrow-circle-right"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <label class="col-sm-12 control-label"> Pagos registrados </label>
+                        </div>
+                    </div>
+
+                    <div id="body-items-load" class="table-responsive p-0" style="height: 300px;">
+                        <table class="card-body table table-head-fixed">
+                            <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                                <th>Comprobante</th>
+                                <th>Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-pays">
+
+                            </tbody>
+                            <template id="template-pay">
+                                <tr>
+                                    <td data-id></td>
+                                    <td data-monto></td>
+                                    <td data-fecha></td>
+                                    <td>
+
+                                        <button type="button" class="btn btn-outline-primary btn-sm" data-comprobante data-image_comprobante=""><i class="far fa-image"></i></button>
+
+                                    </td>
+                                    <td>
+
+                                        <button type="button" class="btn btn-outline-danger btn-sm" data-delete=""><i class="fas fa-trash-alt"></i></button>
+
+                                    </td>
+                                </tr>
+                            </template>
+                            <template id="template-pay2">
+                                <tr>
+                                    <td data-id></td>
+                                    <td data-monto></td>
+                                    <td data-fecha></td>
+                                    <td>
+                                        <a target="_blank" href="" class="btn btn-outline-primary btn-sm" data-comprobante><i class="fas fa-file-pdf"></i></a>
+                                    </td>
+                                    <td>
+
+                                        <button type="button" class="btn btn-outline-danger btn-sm" data-delete=""><i class="fas fa-trash-alt"></i></button>
+
+                                    </td>
+                                </tr>
+                            </template>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalImageComprobante" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver imagen</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body" >
+                    <div id="zoom">
+                        <img id="imagePreview" src="" class="img-fluid" alt="">
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <div id="modalImage" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -380,85 +620,6 @@
         </div>
     </div>
 
-    <div id="modalItems" class="modal fade" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Listado de detalles</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-
-                <div class="modal-body table-responsive">
-                    <div class="card-body table-responsive p-0" >
-                        <table class="table table-head-fixed text-nowrap">
-                            <thead>
-                            <tr>
-                                <th>Material</th>
-                                <th>Cantidad</th>
-                                <th>Und</th>
-                                <th>Precio Unit.</th>
-                                <th>Total sin Imp.</th>
-                                <th>Total Imp.</th>
-                                <th>Importe</th>
-                            </tr>
-                            </thead>
-                            <tbody id="body-materials">
-
-
-                            </tbody>
-
-                        </table>
-                        <template id="template-item">
-                            <tr>
-                                <td data-description></td>
-                                <td data-quantity></td>
-                                <td data-unit></td>
-                                <td data-price></td>
-                                <td data-subtotal></td>
-                                <td data-taxes></td>
-                                <td data-total></td>
-                            </tr>
-                        </template>
-                    </div>
-                    <!-- /.card-body -->
-                    <div class="row">
-                        <!-- accepted payments column -->
-                        <div class="col-6">
-
-                        </div>
-                        <!-- /.col -->
-                        <div class="col-6">
-                            <p class="lead">Resumen de factura</p>
-
-                            <div class="table-responsive" id="body-summary">
-
-                            </div>
-                            <template id="template-summary">
-                                <table class="table">
-                                    <tr>
-                                        <th style="width:50%">Subtotal: </th>
-                                        <td data-subtotal="subtotal"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Igv: </th>
-                                        <td data-taxes="taxes"></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Total: </th>
-                                        <td data-total="total"></td>
-                                    </tr>
-                                </table>
-                            </template>
-                        </div>
-                        <!-- /.col -->
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                </div>
-            </div>
-        </div>
-    </div>
 @endsection
 
 @section('plugins')
@@ -469,14 +630,21 @@
     <script src="{{ asset('admin/plugins/datatables-responsive/js/responsive.bootstrap4.min.js') }}"></script>
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <!-- Vdialog -->
+    <script src="{{ asset('admin/plugins/vdialog/js/lib/vdialog.js') }}"></script>
+    <script src="{{ asset('admin/plugins/zoom/jquery.zoom.js')}}"></script>
 @endsection
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
-    <script src="{{ asset('js/credit/index_invoicesPending.js') }}"></script>
+    <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
+    <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
+
     <script>
+        $('#fechaPago').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+
         $('#date_picker_issue .date_picker_issue').datepicker({
             todayBtn: "linked",
             clearBtn: true,
@@ -505,4 +673,5 @@
             defaultViewDate: moment().format('L')
         });
     </script>
+    <script src="{{ asset('js/credit/index_invoicesPending.js') }}"></script>
 @endsection
