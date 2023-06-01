@@ -326,12 +326,12 @@ class OrderServiceController extends Controller
         }
 
         // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
-        $credit = SupplierCredit::where('order_service_id', $orderService->id)
+        /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
             ->where('state_credit', 'outstanding')->first();
         if ( isset($credit) )
         {
             $credit->delete();
-        }
+        }*/
 
         $orderService->delete();
         $end = microtime(true) - $begin;

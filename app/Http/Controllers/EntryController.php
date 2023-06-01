@@ -362,22 +362,43 @@ class EntryController extends Controller
 
                     if ( isset($credit) )
                     {
-                        //$credit->delete();
-                        $deadline = PaymentDeadline::find($credit->deadline->id);
-                        $fecha_issue = Carbon::parse($entry->date_entry);
-                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
-                        // TODO: Poner dias
-                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
-                        $credit->supplier_id = $entry->supplier_id;
-                        $credit->invoice = $entry->invoice;
-                        $credit->image_invoice = $entry->image;
-                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
-                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
-                        $credit->date_issue = $entry->date_entry;
-                        $credit->date_expiration = $fecha_expiration;
-                        $credit->days_to_expiration = $dias_to_expire;
-                        $credit->code_order = $entry->purchase_order;
-                        $credit->save();
+                        if ( $credit->invoice != "" || $credit->invoice != null )
+                        {
+                            //$credit->delete();
+                            $deadline = PaymentDeadline::find($credit->deadline->id);
+                            $fecha_issue = Carbon::parse($entry->date_entry);
+                            $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                            // TODO: Poner dias
+                            $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                            $credit->supplier_id = $entry->supplier_id;
+                            $credit->invoice = $credit->invoice.' | '.$entry->invoice;
+                            $credit->image_invoice = $entry->image;
+                            $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                            $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                            $credit->date_issue = $entry->date_entry;
+                            $credit->date_expiration = $fecha_expiration;
+                            $credit->days_to_expiration = $dias_to_expire;
+                            $credit->code_order = $entry->purchase_order;
+                            $credit->save();
+                        } else {
+                            //$credit->delete();
+                            $deadline = PaymentDeadline::find($credit->deadline->id);
+                            $fecha_issue = Carbon::parse($entry->date_entry);
+                            $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                            // TODO: Poner dias
+                            $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                            $credit->supplier_id = $entry->supplier_id;
+                            $credit->invoice = $entry->invoice;
+                            $credit->image_invoice = $entry->image;
+                            $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                            $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                            $credit->date_issue = $entry->date_entry;
+                            $credit->date_expiration = $fecha_expiration;
+                            $credit->days_to_expiration = $dias_to_expire;
+                            $credit->code_order = $entry->purchase_order;
+                            $credit->save();
+                        }
+
 
                     }
                 }
@@ -578,14 +599,26 @@ class EntryController extends Controller
 
                     if ( isset($credit) )
                     {
+                        // TODO: Analizar lo de editar de facturas
                         //$credit->delete();
+
+                        $string = $credit->invoice;
+                        $parts = explode(" | ", $string);
+                        $key = array_search($entry->invoice, $parts);
+
+                        if ($key !== true)
+                        {
+                            // no se encuentra
+                            $credit->invoice = $credit->invoice . ' | '.$entry->invoice;
+                        }
+
                         $deadline = PaymentDeadline::find($credit->deadline->id);
                         $fecha_issue = Carbon::parse($entry->date_entry);
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         // TODO:poner dias
                         $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
                         $credit->supplier_id = $entry->supplier_id;
-                        $credit->invoice = $entry->invoice;
+
                         $credit->image_invoice = $entry->image;
                         $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
                         $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
@@ -681,8 +714,30 @@ class EntryController extends Controller
 
                 }
 
+                $credit = SupplierCredit::with('deadline')
+                    ->where('code_order', $entry->purchase_order)
+                    ->where('state_credit', 'outstanding')->first();
+
+                if ( isset($credit) )
+                {
+                    $string = $credit->invoice;
+                    $parts = explode(" | ", $string);
+                    $key = array_search($entry->invoice, $parts);
+
+                    if ($key !== false)
+                    {
+                        // se encuentra, eliminamos
+                        unset($parts[$key]);
+                        $newString = implode(" | ", $parts);
+                        $credit->invoice = $newString;
+                    }
+                }
+
                 $entry->delete();
             }
+
+
+
             $end = microtime(true) - $begin;
 
             Audit::create([
@@ -1350,12 +1405,22 @@ class EntryController extends Controller
                         //$credit->delete();
                         //dump($credit->deadline->id);
                         //dd($credit->deadline);
+                        $string = $credit->invoice;
+                        $parts = explode(" | ", $string);
+                        $key = array_search($entry->invoice, $parts);
+
+                        if ($key !== true)
+                        {
+                            // no se encuentra
+                            $credit->invoice = $credit->invoice . ' | '.$entry->invoice;
+                        }
+
                         $deadline = PaymentDeadline::find($credit->deadline->id);
                         $fecha_issue = Carbon::parse($entry->date_entry);
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
                         $credit->supplier_id = $entry->supplier_id;
-                        $credit->invoice = $entry->invoice;
+                        //$credit->invoice = $entry->invoice;
                         $credit->image_invoice = $entry->image;
                         $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
                         $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;

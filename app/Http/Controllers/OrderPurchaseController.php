@@ -976,12 +976,13 @@ class OrderPurchaseController extends Controller
         }
 
         // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
-        $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+        // TODO: Evitar eliminar el credito porque en el restore no se esta restaurando el credito
+        /*$credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
             ->where('state_credit', 'outstanding')->first();
         if ( isset($credit) )
         {
             $credit->delete();
-        }
+        }*/
 
         $orderPurchase->delete();
 
@@ -1329,12 +1330,12 @@ class OrderPurchaseController extends Controller
         }
 
         // Si la orden de servicio se elimina, y el credito es pendiente se debe eliminar
-        $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+        /*$credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
             ->where('state_credit', 'outstanding')->first();
         if ( isset($credit) )
         {
             $credit->delete();
-        }
+        }*/
 
         $orderPurchase->delete();
 

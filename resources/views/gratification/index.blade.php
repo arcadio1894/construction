@@ -39,9 +39,10 @@
 
 @section('page-title')
     <h5 class="card-title">Listado</h5>
+    @can('create_gratification')
     <button type="button" id="btn-newPeriod" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Periodo </button>
     <button type="button" id="btn-refresh" class="btn btn-outline-warning btn-sm float-right ml-2 mr-2" > <i class="fas fa-sync-alt font-20"></i> Refrescar  </button>
-
+    @endcan
 @endsection
 
 @section('page-header')

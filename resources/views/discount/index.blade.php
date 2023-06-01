@@ -39,8 +39,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de descuentos</h5>
+    @can('create_discount')
     <a href="{{ route('discount.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Descuento </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

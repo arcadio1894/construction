@@ -11,6 +11,7 @@ use App\OrderPurchaseFinance;
 use App\OrderPurchaseFinanceDetail;
 use App\PaymentDeadline;
 use App\Supplier;
+use App\SupplierCredit;
 use App\UnitMeasure;
 use App\User;
 use Carbon\Carbon;
@@ -149,31 +150,32 @@ class OrderPurchaseFinanceController extends Controller
             }
 
             // Si el plazo indica credito, se crea el credito
-            /*if ( isset($orderService->deadline) )
+            if ( isset($orderPurchaseFinance->deadline) )
             {
-                if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
+                if ( $orderPurchaseFinance->deadline->credit == 1 || $orderPurchaseFinance->deadline->credit == true )
                 {
-                    $deadline = PaymentDeadline::find($orderService->deadline->id);
+                    $deadline = PaymentDeadline::find($orderPurchaseFinance->deadline->id);
                     //$fecha_issue = Carbon::parse($orderService->date_order);
                     //$fecha_expiration = $fecha_issue->addDays($deadline->days);
                     // TODO: Poner dias
                     //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
                     $credit = SupplierCredit::create([
-                        'supplier_id' => $orderService->supplier->id,
-                        'total_soles' => ($orderService->currency_order == 'PEN') ? $orderService->total:null,
-                        'total_dollars' => ($orderService->currency_order == 'USD') ? $orderService->total:null,
+                        'supplier_id' => $orderPurchaseFinance->supplier->id,
+                        'total_soles' => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:null,
+                        'total_dollars' => ($orderPurchaseFinance->currency_order == 'USD') ? $orderPurchaseFinance->total:null,
                         //'date_issue' => $orderService->date_order,
                         'order_purchase_id' => null,
                         'state_credit' => 'outstanding',
-                        'order_service_id' => $orderService->id,
+                        'order_service_id' => null,
+                        'order_purchase_finance_id' => $orderPurchaseFinance->id,
                         //'date_expiration' => $fecha_expiration,
                         //'days_to_expiration' => $dias_to_expire,
-                        'code_order' => $orderService->code,
-                        'payment_deadline_id' => $orderService->payment_deadline_id
+                        'code_order' => $orderPurchaseFinance->code,
+                        'payment_deadline_id' => $orderPurchaseFinance->payment_deadline_id
                     ]);
                 }
-            }*/
+            }
 
             $end = microtime(true) - $begin;
 
@@ -269,7 +271,7 @@ class OrderPurchaseFinanceController extends Controller
 
             }
             // Si la orden de servicio se modifica, el credito tambien se modificara
-            /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
+            $credit = SupplierCredit::where('order_purchase_finance_id', $orderFinance->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
@@ -278,16 +280,16 @@ class OrderPurchaseFinanceController extends Controller
                 //$fecha_expiration = $fecha_issue->addDays($deadline->days);
                 //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
-                $credit->supplier_id = $orderService->supplier->id;
-                $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
-                $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
+                $credit->supplier_id = $orderFinance->supplier->id;
+                $credit->total_soles = ($orderFinance->currency_order == 'PEN') ? $orderFinance->total:null;
+                $credit->total_dollars = ($orderFinance->currency_order == 'USD') ? $orderFinance->total:null;
                 //$credit->date_issue = $orderService->date_order;
-                $credit->code_order = $orderService->code;
+                $credit->code_order = $orderFinance->code;
                 //$credit->date_expiration = $fecha_expiration;
                 //$credit->days_to_expiration = $dias_to_expire;
-                $credit->payment_deadline_id = $orderService->payment_deadline_id;
+                $credit->payment_deadline_id = $orderFinance->payment_deadline_id;
                 $credit->save();
-            }*/
+            }
 
             $end = microtime(true) - $begin;
 
@@ -835,31 +837,32 @@ class OrderPurchaseFinanceController extends Controller
 
 
             // Si el plazo indica credito, se crea el credito
-            /*if ( isset($orderService->deadline) )
+            if ( isset($orderPurchaseFinance->deadline) )
             {
-                if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
+                if ( $orderPurchaseFinance->deadline->credit == 1 || $orderPurchaseFinance->deadline->credit == true )
                 {
-                    $deadline = PaymentDeadline::find($orderService->deadline->id);
+                    $deadline = PaymentDeadline::find($orderPurchaseFinance->deadline->id);
                     //$fecha_issue = Carbon::parse($orderService->date_order);
                     //$fecha_expiration = $fecha_issue->addDays($deadline->days);
                     // TODO: Poner dias
                     //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
                     $credit = SupplierCredit::create([
-                        'supplier_id' => $orderService->supplier->id,
-                        'total_soles' => ($orderService->currency_order == 'PEN') ? $orderService->total:null,
-                        'total_dollars' => ($orderService->currency_order == 'USD') ? $orderService->total:null,
+                        'supplier_id' => $orderPurchaseFinance->supplier->id,
+                        'total_soles' => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:null,
+                        'total_dollars' => ($orderPurchaseFinance->currency_order == 'USD') ? $orderPurchaseFinance->total:null,
                         //'date_issue' => $orderService->date_order,
                         'order_purchase_id' => null,
                         'state_credit' => 'outstanding',
-                        'order_service_id' => $orderService->id,
+                        'order_service_id' => null,
+                        'order_purchase_finance_id' => $orderPurchaseFinance->id,
                         //'date_expiration' => $fecha_expiration,
                         //'days_to_expiration' => $dias_to_expire,
-                        'code_order' => $orderService->code,
-                        'payment_deadline_id' => $orderService->payment_deadline_id
+                        'code_order' => $orderPurchaseFinance->code,
+                        'payment_deadline_id' => $orderPurchaseFinance->payment_deadline_id
                     ]);
                 }
-            }*/
+            }
 
             $end = microtime(true) - $begin;
 

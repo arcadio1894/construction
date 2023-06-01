@@ -39,8 +39,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de reembolsos</h5>
+    @can('create_refund')
     <a href="{{ route('refund.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Reembolso </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

@@ -39,6 +39,7 @@
 
 @section('page-title')
     <h5 class="card-title">{{ $worker->first_name.' '.$worker->last_name }}</h5>
+
     <a href="{{ route('fifthCategory.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-alt-circle-left font-20"></i> Regresar a los trabajadores </a>
 
 @endsection
@@ -72,7 +73,9 @@
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i>
                         </button>
+                        @can('edit_fifthCategory')
                         <button type="button" id="btn-new" data-worker_id="{{ $worker->id }}" data-worker_name="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-success btn-sm float-left">Nuevo pago</button>
+                        @endcan
                     </div>
                 </div>
                 <div class="card-body">
@@ -96,8 +99,12 @@
                                         <td data-date>{{ $fifthCategory->date->format('d/m/Y') }}</td>
                                         <td data-amount>{{ $fifthCategory->amount }}</td>
                                         <td>
+                                            @can('edit_fifthCategory')
                                             <button type="button" data-edit data-fifthCategory_id="{{ $fifthCategory->id }}" data-date="{{ $fifthCategory->date->format('d/m/Y') }}" data-amount="{{ $fifthCategory->amount }}" data-worker_id="{{ $fifthCategory->worker_id }}" data-worker="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-pen"></i> </button>
+                                            @endcan
+                                            @can('destroy_fifthCategory')
                                             <button type="button" data-delete data-fifthCategory_id="{{ $fifthCategory->id }}" data-date="{{ $fifthCategory->date->format('d/m/Y') }}" data-amount="{{ $fifthCategory->amount }}" data-worker_id="{{ $fifthCategory->worker_id }}" data-worker="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

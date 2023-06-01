@@ -39,8 +39,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de préstamos</h5>
+    @can('create_loan')
     <a href="{{ route('loan.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Préstamo </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

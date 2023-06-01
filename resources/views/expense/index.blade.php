@@ -39,8 +39,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de rendición de gastos de los últimos 4 meses</h5>
+    @can('create_expense')
     <a href="{{ route('expense.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Gasto </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
