@@ -252,12 +252,12 @@
                     <div class="card-header">
                         <h3 class="card-title">Datos para RR.HH.</h3>
 
-                        @can('contract_worker')
+                        @role('resources_humans|contabilidad')
                             <div class="card-tools">
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                        @endcan
+                        @endrole
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
@@ -324,14 +324,14 @@
                     <div class="card-header">
                         <h3 class="card-title">Contactos de Emergencia</h3>
 
-                        @can('contract_worker')
+                        @role('resources_humans|contabilidad')
                             <div class="card-tools">
                                 <button type="button" id="newContact" class="btn btn-xs btn-warning" > <i class="fas fa-phone-volume"></i> Agregar Contacto </button>
 
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                        @endcan
+                        @endrol
                     </div>
                     <div class="card-body" id="body-contacts">
                         @foreach( $worker->emergency_contacts as $emergency_contact )
