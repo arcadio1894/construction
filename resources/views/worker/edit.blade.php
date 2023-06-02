@@ -331,7 +331,7 @@
                                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
                                 </button>
                             </div>
-                        @endrol
+                        @endrole
                     </div>
                     <div class="card-body" id="body-contacts">
                         @foreach( $worker->emergency_contacts as $emergency_contact )
