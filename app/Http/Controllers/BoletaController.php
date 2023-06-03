@@ -375,11 +375,11 @@ class BoletaController extends Controller
         {
             // Es semanal
             $dateFirst = DateDimension::where('year', $year)
-                ->where('month', $month)
+                //->where('month', $month)
                 ->where('week', $week)
                 ->first();
             $dateLast = DateDimension::where('year', $year)
-                ->where('month', $month)
+                //->where('month', $month)
                 ->where('week', $week)
                 ->orderBy('date', 'desc')
                 ->first();
