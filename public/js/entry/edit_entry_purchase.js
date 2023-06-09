@@ -683,7 +683,7 @@ function updateOrderPurchase() {
                 });
             setTimeout( function () {
                 $("#btn-submitForm").attr("disabled", false);
-                //location.reload();
+                location.reload();
             }, 2000 )
         },
         error: function (data) {
