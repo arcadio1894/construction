@@ -647,7 +647,7 @@ class EntryController extends Controller
                         ->where('invoice', $entry->invoice)
                         ->where('state_credit', 'outstanding')->first();
 
-                    if ( isset($credit) || isset($credit2) )
+                    if ( isset($credit) )
                     {
                         // TODO: Analizar lo de editar de facturas
                         //$credit->delete();
@@ -669,6 +669,23 @@ class EntryController extends Controller
                         $credit->entry_id = $entry->id;
                         $credit->save();
 
+                    } elseif( isset($credit2) ) {
+                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $fecha_issue = Carbon::parse($entry->date_entry);
+                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                        // TODO:poner dias
+                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                        $credit->supplier_id = $entry->supplier_id;
+                        $credit->invoice = ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice;
+                        $credit->image_invoice = $entry->image;
+                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->date_issue = $entry->date_entry;
+                        $credit->date_expiration = $fecha_expiration;
+                        $credit->days_to_expiration = $dias_to_expire;
+                        $credit->code_order = $entry->purchase_order;
+                        $credit->entry_id = $entry->id;
+                        $credit->save();
                     } else {
                         $order_purchase = OrderPurchase::where('code', $entry->purchase_order)->first();
 
