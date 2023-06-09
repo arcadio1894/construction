@@ -670,7 +670,7 @@ class EntryController extends Controller
                         $credit->save();
 
                     } elseif( isset($credit2) ) {
-                        $deadline = PaymentDeadline::find($credit->deadline->id);
+                        $deadline = PaymentDeadline::find($credit2->deadline->id);
                         $fecha_issue = Carbon::parse($entry->date_entry);
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         // TODO:poner dias
@@ -678,8 +678,8 @@ class EntryController extends Controller
                         $credit->supplier_id = $entry->supplier_id;
                         $credit->invoice = ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice;
                         $credit->image_invoice = $entry->image;
-                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
-                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                        $credit->total_soles = ((float)$credit2->total_soles>0) ? $entry->total:null;
+                        $credit->total_dollars = ((float)$credit2->total_dollars>0) ? $entry->total:null;
                         $credit->date_issue = $entry->date_entry;
                         $credit->date_expiration = $fecha_expiration;
                         $credit->days_to_expiration = $dias_to_expire;
