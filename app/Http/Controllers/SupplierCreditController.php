@@ -296,168 +296,6 @@ class SupplierCreditController extends Controller
 
     public function getInvoicesPending()
     {
-        /*$orderPurchases = OrderPurchase::with(['supplier', 'deadline'])
-            ->whereNotIn('payment_deadline_id', [1,2])
-            ->orderby('date_order', 'DESC')
-            ->get();
-
-        $orderServices = OrderService::with(['supplier', 'deadline'])
-            ->whereNotIn('payment_deadline_id', [1,2])
-            ->orderby('date_order', 'DESC')
-            ->get();
-
-        $orderPurchaseFinances = OrderPurchaseFinance::with(['supplier', 'deadline'])
-            ->whereNotIn('payment_deadline_id', [1,2])
-            ->orderby('date_order', 'DESC')
-            ->get();
-
-        $arrayOrders = [];
-
-        foreach ( $orderPurchases as $orderPurchase )
-        {
-            $entries = Entry::where('purchase_order', $orderPurchase->code)->get();
-
-            if ( count($entries) > 0 )
-            {
-                foreach ( $entries as $entry )
-                {
-                    $hoy = Carbon::now('America/Lima');
-                    $fechaVencimiento = ($orderPurchase->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderPurchase->deadline->days);
-                    $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
-                    array_push($arrayOrders, [
-                        "order" => substr(trim($orderPurchase->code), 0, 2),
-                        "correlativo" => substr(trim($orderPurchase->code), 3),
-                        "proveedor" => ($orderPurchase->supplier_id == null) ? 'Sin proveedor':$orderPurchase->supplier->business_name,
-                        "moneda" => ($orderPurchase->currency_order == 'PEN') ? 'Soles':'Dólares',
-                        "condicion" => ($orderPurchase->payment_deadline_id == null) ? 'Sin condición':$orderPurchase->deadline->description,
-                        "montoDolares" => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:0,
-                        "montoSoles" => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:0,
-                        "deudaActual" => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:0,
-                        "factura" => $entry->invoice,
-                        "fechaEmision" => $entry->date_entry->format('d/m/Y'),
-                        "fechaVencimiento" => ($orderPurchase->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderPurchase->deadline->days)->format('d/m/Y'),
-                        "estado" => "FALTAN ".$diasParaVencer." DÍAS PARA VENCER",
-                        "estadoPago" => "PENDIENTE"
-                    ]);
-                }
-
-            } else {
-                array_push($arrayOrders, [
-                    "order" => substr(trim($orderPurchase->code), 0, 2),
-                    "correlativo" => substr(trim($orderPurchase->code), 3),
-                    "proveedor" => ($orderPurchase->supplier_id == null) ? 'Sin proveedor':$orderPurchase->supplier->business_name,
-                    "moneda" => ($orderPurchase->currency_order == 'PEN') ? 'Soles':'Dólares',
-                    "condicion" => ($orderPurchase->payment_deadline_id == null) ? 'Sin condición':$orderPurchase->deadline->description,
-                    "montoDolares" => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:0,
-                    "montoSoles" => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:0,
-                    "deudaActual" => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:0,
-                    "factura" => "PENDIENTE",
-                    "fechaEmision" => "",
-                    "fechaVencimiento" => "",
-                    "estado" => "",
-                    "estadoPago" => "PENDIENTE"
-                ]);
-            }
-
-        }
-
-        foreach ( $orderServices as $orderService )
-        {
-            $entries = Entry::where('purchase_order', $orderService->code)->get();
-
-            if ( count($entries) > 0 )
-            {
-                foreach ( $entries as $entry )
-                {
-                    $hoy = Carbon::now('America/Lima');
-                    $fechaVencimiento = ($orderService->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderService->deadline->days);
-                    $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
-                    array_push($arrayOrders, [
-                        "order" => substr(trim($orderService->code), 0, 2),
-                        "correlativo" => substr(trim($orderService->code), 3),
-                        "proveedor" => ($orderService->supplier_id == null) ? 'Sin proveedor':$orderService->supplier->business_name,
-                        "moneda" => ($orderService->currency_order == 'PEN') ? 'Soles':'Dólares',
-                        "condicion" => ($orderService->payment_deadline_id == null) ? 'Sin condición':$orderService->deadline->description,
-                        "montoDolares" => ($orderService->currency_order == 'USD') ? $orderService->total:0,
-                        "montoSoles" => ($orderService->currency_order == 'PEN') ? $orderService->total:0,
-                        "deudaActual" => ($orderService->currency_order == 'PEN') ? $orderService->total:0,
-                        "factura" => $entry->invoice,
-                        "fechaEmision" => $entry->date_entry->format('d/m/Y'),
-                        "fechaVencimiento" => ($orderService->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderService->deadline->days)->format('d/m/Y'),
-                        "estado" => "FALTAN ".$diasParaVencer." DÍAS PARA VENCER",
-                        "estadoPago" => "PENDIENTE"
-                    ]);
-                }
-
-            } else {
-                array_push($arrayOrders, [
-                    "order" => substr(trim($orderService->code), 0, 2),
-                    "correlativo" => substr(trim($orderService->code), 3),
-                    "proveedor" => ($orderService->supplier_id == null) ? 'Sin proveedor':$orderService->supplier->business_name,
-                    "moneda" => ($orderService->currency_order == 'PEN') ? 'Soles':'Dólares',
-                    "condicion" => ($orderService->payment_deadline_id == null) ? 'Sin condición':$orderService->deadline->description,
-                    "montoDolares" => ($orderService->currency_order == 'USD') ? $orderService->total:0,
-                    "montoSoles" => ($orderService->currency_order == 'PEN') ? $orderService->total:0,
-                    "deudaActual" => ($orderService->currency_order == 'PEN') ? $orderService->total:0,
-                    "factura" => "PENDIENTE",
-                    "fechaEmision" => "",
-                    "fechaVencimiento" => "",
-                    "estado" => "",
-                    "estadoPago" => "PENDIENTE"
-                ]);
-            }
-
-        }
-
-        foreach ( $orderPurchaseFinances as $orderPurchaseFinance )
-        {
-            $entries = Entry::where('purchase_order', $orderPurchaseFinance->code)->get();
-
-            if ( count($entries) > 0 )
-            {
-                foreach ( $entries as $entry )
-                {
-                    $hoy = Carbon::now('America/Lima');
-                    $fechaVencimiento = ($orderPurchaseFinance->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderPurchaseFinance->deadline->days);
-                    $diasParaVencer = $fechaVencimiento->diffInDays($hoy);
-                    array_push($arrayOrders, [
-                        "order" => substr(trim($orderPurchaseFinance->code), 0, 2),
-                        "correlativo" => substr(trim($orderPurchaseFinance->code), 3),
-                        "proveedor" => ($orderPurchaseFinance->supplier_id == null) ? 'Sin proveedor':$orderPurchaseFinance->supplier->business_name,
-                        "moneda" => ($orderPurchaseFinance->currency_order == 'PEN') ? 'Soles':'Dólares',
-                        "condicion" => ($orderPurchaseFinance->payment_deadline_id == null) ? 'Sin condición':$orderPurchaseFinance->deadline->description,
-                        "montoDolares" => ($orderPurchaseFinance->currency_order == 'USD') ? $orderPurchaseFinance->total:0,
-                        "montoSoles" => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:0,
-                        "deudaActual" => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:0,
-                        "factura" => $entry->invoice,
-                        "fechaEmision" => $entry->date_entry->format('d/m/Y'),
-                        "fechaVencimiento" => ($orderPurchaseFinance->payment_deadline_id == null) ? $entry->date_entry: $entry->date_entry->addDays($orderPurchaseFinance->deadline->days)->format('d/m/Y'),
-                        "estado" => "FALTAN ".$diasParaVencer." DÍAS PARA VENCER",
-                        "estadoPago" => "PENDIENTE"
-                    ]);
-                }
-
-            } else {
-                array_push($arrayOrders, [
-                    "order" => substr(trim($orderPurchaseFinance->code), 0, 2),
-                    "correlativo" => substr(trim($orderPurchaseFinance->code), 3),
-                    "proveedor" => ($orderPurchaseFinance->supplier_id == null) ? 'Sin proveedor':$orderPurchaseFinance->supplier->business_name,
-                    "moneda" => ($orderPurchaseFinance->currency_order == 'PEN') ? 'Soles':'Dólares',
-                    "condicion" => ($orderPurchaseFinance->payment_deadline_id == null) ? 'Sin condición':$orderPurchaseFinance->deadline->description,
-                    "montoDolares" => ($orderPurchaseFinance->currency_order == 'USD') ? $orderPurchaseFinance->total:0,
-                    "montoSoles" => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:0,
-                    "deudaActual" => ($orderPurchaseFinance->currency_order == 'PEN') ? $orderPurchaseFinance->total:0,
-                    "factura" => "PENDIENTE",
-                    "fechaEmision" => "",
-                    "fechaVencimiento" => "",
-                    "estado" => "",
-                    "estadoPago" => "PENDIENTE"
-                ]);
-            }
-
-        }
-
-        return datatables($arrayOrders)->toJson();*/
         $credits = SupplierCredit::with('supplier')
             ->with('purchase')
             ->with('service')
@@ -509,10 +347,23 @@ class SupplierCreditController extends Controller
             {
                 if ( $credit->invoice != null || $this->onlyZeros($credit->invoice) == false )
                 {
-                    $entry = Entry::where('invoice', $credit->invoice )->first();
+                    if ( $credit->order_purchase_id != null ) {
+                        $entry = Entry::where('invoice', $credit->invoice )->first();
+                    } elseif ( $credit->order_service_id != null ) {
+                        $entry = OrderService::where('invoice', $credit->invoice )->first();
+                    }
+
                     if (isset( $entry ))
                     {
-                        $url = route('entry.purchase.show', [$entry->id]);
+                        if ( $credit->order_purchase_id != null )
+                        {
+                            $url = route('entry.purchase.show', [$entry->id]);
+                        } elseif ( $credit->order_service_id != null ) {
+                            $url = route('show.order.service', [$credit->order_service_id]);
+                        } else {
+                            $url = route('show.order.purchase.finance', [$credit->order_purchase_finance_id]);
+                        }
+
                     } else {
                         $url = "";
                     }

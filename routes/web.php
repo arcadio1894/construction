@@ -1048,6 +1048,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/destroy/detail/order/service/{idDetail}', 'OrderServiceController@destroyDetail')
             ->middleware('permission:delete_orderService');
         Route::get('ingresar/orden/servicio/{id}', 'OrderServiceController@regularizeOrderService')
+            ->name('show.order.service')
             ->middleware('permission:regularize_orderService');
         Route::post('order/service/regularize', 'OrderServiceController@regularizePostOrderService')
             ->name('order.service.regularize')
@@ -2018,6 +2019,7 @@ Route::middleware('auth')->group(function (){
         Route::post('/update/detail/order/purchase/finance/{idDetail}', 'OrderPurchaseFinanceController@updateFinanceDetail')
             ->middleware('permission:update_orderPurchaseFinance');
         Route::get('ver/orden/compra/finanzas/{id}', 'OrderPurchaseFinanceController@showOrderPurchaseFinance')
+            ->name('show.order.purchase.finance')
             ->middleware('permission:list_orderPurchaseFinance');
         Route::post('destroy/order/purchase/finance/{id}', 'OrderPurchaseFinanceController@destroyOrderPurchaseFinance')
             ->middleware('permission:destroy_orderPurchaseFinance');
