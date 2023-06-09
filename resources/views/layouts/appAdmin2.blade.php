@@ -943,14 +943,14 @@
                                 </a>
                             </li>
                             @endcan
-                            @can('create_entryPurchase')
+                            {{--@can('create_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('entry.purchase.create') }}" class="nav-link @yield('activeCreateEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Crear entrada</p>
                                 </a>
                             </li>
-                            @endcan
+                            @endcan--}}
                             @can('listOrder_entryPurchase')
                             <li class="nav-item">
                                 <a href="{{ route('order.purchase.list') }}" class="nav-link @yield('activeListOrdersInEntries')">
