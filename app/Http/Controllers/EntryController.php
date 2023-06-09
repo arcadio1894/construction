@@ -662,6 +662,7 @@ class EntryController extends Controller
                         $credit->date_expiration = $fecha_expiration;
                         $credit->days_to_expiration = $dias_to_expire;
                         $credit->code_order = $entry->purchase_order;
+                        $credit->entry_id = $entry->id;
                         $credit->save();
 
                     } else {
