@@ -643,7 +643,11 @@ class EntryController extends Controller
                         ->where('entry_id', $entry->id)
                         ->where('state_credit', 'outstanding')->first();
 
-                    if ( isset($credit) )
+                    $credit2 = SupplierCredit::with('deadline')
+                        ->where('invoice', $entry->invoice)
+                        ->where('state_credit', 'outstanding')->first();
+
+                    if ( isset($credit) || isset($credit2) )
                     {
                         // TODO: Analizar lo de editar de facturas
                         //$credit->delete();
