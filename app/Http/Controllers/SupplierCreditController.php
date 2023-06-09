@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\CreditPay;
+use App\DataGeneral;
+use App\DateDimension;
 use App\Entry;
+use App\Exports\CreditsReportExcelExport;
 use App\OrderPurchase;
 use App\OrderPurchaseFinance;
 use App\OrderService;
@@ -285,8 +288,9 @@ class SupplierCreditController extends Controller
     {
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $years = DateDimension::distinct()->get(['year']);
 
-        return view('credit.indexInvoicesPending', compact('permissions'));
+        return view('credit.indexInvoicesPending', compact('permissions', 'years'));
 
     }
 
@@ -458,7 +462,7 @@ class SupplierCreditController extends Controller
             ->with('purchase')
             ->with('service')
             ->with('deadline')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('date_issue', 'desc')
             ->get();
 
         foreach( $credits as $credit )
@@ -493,7 +497,7 @@ class SupplierCreditController extends Controller
             ->with('purchase')
             ->with('service')
             ->with('deadline')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('date_issue', 'desc')
             ->get();
 
         $arrayOrders = [];
@@ -501,9 +505,29 @@ class SupplierCreditController extends Controller
         foreach ( $credits as $credit )
         {
             $pagos = CreditPay::where('supplier_credit_id', $credit->id)->sum('amount');
+            if ( $credit->entry_id == null )
+            {
+                if ( $credit->invoice != null || $this->onlyZeros($credit->invoice) == false )
+                {
+                    $entry = Entry::where('invoice', $credit->invoice )->first();
+                    if (isset( $entry ))
+                    {
+                        $url = route('entry.purchase.show', [$entry->id]);
+                    } else {
+                        $url = "";
+                    }
+
+                } else {
+                    $url = "";
+                }
+
+            } else {
+                $url = route('entry.purchase.show', [$credit->entry_id]);
+            }
 
             array_push($arrayOrders, [
                 "id" => $credit->id,
+                'url' => $url,
                 "stateCredit" => $credit->state_credit,
                 "order" => substr(trim($credit->code_order), 0, 2),
                 "correlativo" => trim($credit->code_order),
@@ -519,7 +543,7 @@ class SupplierCreditController extends Controller
                 "factura" => ($credit->invoice == null) ? 'PENDIENTE':$credit->invoice,
                 "fechaEmision" => ($credit->date_issue == null) ? '': $credit->date_issue->format('d/m/Y'),
                 "fechaVencimiento" => ($credit->date_expiration == null) ? '': $credit->date_expiration->format('d/m/Y'),
-                "estado" => ($credit->days_to_expiration == null) ? "": $credit->days_to_expiration." DÍAS",
+                "estado" => ($credit->days_to_expiration === null) ? "": $credit->days_to_expiration ." DÍAS",
                 "estadoPago" => $credit->state_pay,
                 "fechaPago" => ($credit->date_paid == null) ? '': $credit->date_paid->format('d/m/Y'),
                 "observaciones" => ($credit->observation == null) ? "": $credit->observation
@@ -733,5 +757,165 @@ class SupplierCreditController extends Controller
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Estado modificado.'], 200);
+    }
+
+    public function onlyZeros($cadena) {
+        $cadenaSinGuiones = str_replace('-', '', $cadena); // Eliminar los guiones
+
+        if (!ctype_digit($cadenaSinGuiones)) {
+            return false; // La cadena contiene caracteres que no son dígitos
+        }
+
+        if ($cadenaSinGuiones !== str_repeat('0', strlen($cadenaSinGuiones))) {
+            return false; // La cadena no está formada solo por ceros
+        }
+
+        return true; // La cadena está formada solo por ceros
+    }
+
+    public function getInvoiceForExpire()
+    {
+        $diasMinTOExpire = DataGeneral::where('name', 'daysToExpireMin')->first();
+
+        // TODO: Esto mostrará las facturas por vencer
+        $supplier_credits = SupplierCredit::where('days_to_expiration', '<', $diasMinTOExpire->valueNumber)
+            ->where('days_to_expiration', '>=', 0)
+            ->get();
+
+        $array = [];
+
+        foreach ($supplier_credits as $credit)
+        {
+            array_push($array, [
+                "orden" => $credit->code_order,
+                "proveedor" => ($credit->supplier == null) ? "No tiene": $credit->supplier->business_name,
+                "factura" => ($credit->invoice == null) ? "No tiene": $credit->invoice,
+                "fecha_vencimiento" => ($credit->date_expiration == null) ? '': $credit->date_expiration->format('d/m/Y'),
+                "vence_en" => ($credit->days_to_expiration === null) ? "": $credit->days_to_expiration ." DÍAS"
+            ]);
+        }
+
+        return response()->json([
+            "credits" => $array
+        ]);
+
+    }
+
+    public function getAmountInvoiceCurrentMonth()
+    {
+        $fecha_actual = Carbon::now("America/Lima");
+        $currentYear = $fecha_actual->year;
+        $currentMonth = $fecha_actual->month;
+
+        $supplier_credits = SupplierCredit::whereYear('date_issue', $currentYear)
+            ->whereMonth('date_issue', $currentMonth)
+            ->get();
+
+        $amountSoles = 0;
+        $amountDollars = 0;
+
+        foreach ($supplier_credits as $credit)
+        {
+            $amountSoles = $amountSoles + (($credit->total_soles == null) ? 0: $credit->total_soles);
+            $amountDollars = $amountDollars + (($credit->total_dollars == null) ? 0: $credit->total_dollars);
+        }
+
+        return response()->json([
+            "amountSoles" => $amountSoles,
+            "amountDolares" => $amountDollars
+        ]);
+
+    }
+
+    public function getAmountInvoiceGeneral()
+    {
+        $year = $_GET['year'];
+        $month = $_GET['month'];
+
+        $supplier_credits = SupplierCredit::whereYear('date_issue', $year)
+            ->whereMonth('date_issue', $month)
+            ->get();
+
+        $amountSoles = 0;
+        $amountDollars = 0;
+
+        foreach ($supplier_credits as $credit)
+        {
+            $amountSoles = $amountSoles + (($credit->total_soles == null) ? 0: $credit->total_soles);
+            $amountDollars = $amountDollars + (($credit->total_dollars == null) ? 0: $credit->total_dollars);
+        }
+
+        return response()->json([
+            "amountSoles" => $amountSoles,
+            "amountDolares" => $amountDollars
+        ]);
+
+    }
+
+    public function exportCreditsExcel()
+    {
+        //dd($request);
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $dates = 'CREDITOS DEL '. $start .' AL '. $end;
+        $arrayOrders = [];
+
+        $credits = SupplierCredit::with('supplier')
+            ->with('purchase')
+            ->with('service')
+            ->with('finance')
+            ->with('deadline')
+            ->whereDate('date_issue', '>=',$date_start)
+            ->whereDate('date_issue', '<=',$end_start)
+            ->orderBy('date_issue', 'desc')
+            ->get();
+
+
+        foreach ( $credits as $credit )
+        {
+            $pagos = CreditPay::where('supplier_credit_id', $credit->id)->sum('amount');
+
+            if ( $credit->state_pay == 'pending' )
+            {
+                $estadopago = "PENDIENTE";
+            } elseif ($credit->state_pay == 'pending50') {
+                $estadopago = "PENDIENTE/CANCELADO 50%";
+            } else {
+                $estadopago = "CANCELADO";
+            }
+            array_push($arrayOrders, [
+                "id" => $credit->id,
+                "stateCredit" => $credit->state_credit,
+                "order" => substr(trim($credit->code_order), 0, 2),
+                "correlativo" => trim($credit->code_order),
+                "proveedor" => ($credit->supplier_id == null) ? 'Sin proveedor':$credit->supplier->business_name,
+                "moneda" => ($credit->total_soles != null) ? 'Soles':'Dólares',
+                "condicion" => ($credit->payment_deadline_id == null) ? 'Sin condición':$credit->deadline->description,
+                "montoDolares" => ($credit->total_dollars == null) ? '':$credit->total_dollars,
+                "montoSoles" => ($credit->total_soles == null) ? '':$credit->total_soles,
+                "adelanto" =>  $pagos,
+                "deudaActualDolares" => ($credit->total_dollars != null) ? $credit->total_dollars-$pagos:'',
+                "deudaActualSoles" => ($credit->total_soles != null) ? $credit->total_soles-$pagos:'',
+                "deudaActual" => ($credit->total_soles != null) ? $credit->total_soles-$pagos:$credit->total_dollars-$pagos,
+                "factura" => ($credit->invoice == null) ? 'PENDIENTE':$credit->invoice,
+                "fechaEmision" => ($credit->date_issue == null) ? '': $credit->date_issue->format('d/m/Y'),
+                "fechaVencimiento" => ($credit->date_expiration == null) ? '': $credit->date_expiration->format('d/m/Y'),
+                "estado" => ($credit->days_to_expiration === null) ? "": $credit->days_to_expiration ." DÍAS",
+                "estadoPago" => $estadopago,
+                "fechaPago" => ($credit->date_paid == null) ? '': $credit->date_paid->format('d/m/Y'),
+                "observaciones" => ($credit->observation == null) ? "": $credit->observation
+            ]);
+        }
+
+        //dump($invoices_array);
+        //dd('Fechas');
+        //return response()->json(['message' => 'Reporte descargado correctamente.'], 200);
+        //(new UsersExport)->download('users.xlsx');
+        return (new CreditsReportExcelExport($arrayOrders, $dates))->download('reporteCreditos.xlsx');
+
     }
 }

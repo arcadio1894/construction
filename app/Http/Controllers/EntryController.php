@@ -92,6 +92,18 @@ class EntryController extends Controller
 
         $tipoCambioSunat = json_decode($response);
 
+        if ( $request->get('purchase_order') != '' || $request->get('purchase_order') != null )
+        {
+            $order_purchase1 = OrderPurchase::where('code', $request->get('purchase_order'))->first();
+
+            if ( isset($order_purchase1) )
+            {
+                return response()->json([
+                    'message' => "No se encontró la orden de compra indicada"
+                ], 422);
+            }
+        }
+
         DB::beginTransaction();
         try {
             //dump($tipoCambioSunat->compra);
@@ -352,17 +364,18 @@ class EntryController extends Controller
                 SI ( Existe en la tabla creditos ) ENTONCES
                 actualiza la factura en la tabla de creditos
             */
-            if ( $entry->invoice != '' || $entry->invoice != null )
+            if ( ($entry->invoice != '' || $entry->invoice != null) )
             {
                 if ( $entry->purchase_order != '' || $entry->purchase_order != null )
                 {
-                    $credit = SupplierCredit::with('deadline')
+                    $order_purchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+                    /*$credit = SupplierCredit::with('deadline')
                         ->where('code_order', $entry->purchase_order)
-                        ->where('state_credit', 'outstanding')->first();
+                        ->where('state_credit', 'outstanding')->first();*/
 
-                    if ( isset($credit) )
+                    if ( isset($order_purchase) )
                     {
-                        if ( $credit->invoice != "" || $credit->invoice != null )
+                        /*if ( $credit->invoice != "" || $credit->invoice != null )
                         {
                             //$credit->delete();
                             $deadline = PaymentDeadline::find($credit->deadline->id);
@@ -397,8 +410,35 @@ class EntryController extends Controller
                             $credit->days_to_expiration = $dias_to_expire;
                             $credit->code_order = $entry->purchase_order;
                             $credit->save();
-                        }
+                        }*/
+                        if ( isset($order_purchase->deadline) )
+                        {
+                            if ( $order_purchase->deadline->credit == 1 || $order_purchase->deadline->credit == true )
+                            {
+                                $deadline = PaymentDeadline::find($order_purchase->deadline->id);
+                                $fecha_issue = Carbon::parse($entry->date_entry);
+                                $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                                // TODO: Poner dias
+                                $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
+                                $credit = SupplierCredit::create([
+                                    'supplier_id' => $order_purchase->supplier->id,
+                                    'invoice' => ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice,
+                                    'image_invoice' => $entry->image,
+                                    'total_soles' => ($order_purchase->currency_order == 'PEN') ? (float)$entry->total:null,
+                                    'total_dollars' => ($order_purchase->currency_order == 'USD') ? (float)$entry->total:null,
+                                    'date_issue' => Carbon::parse($entry->date_entry),
+                                    'order_purchase_id' => $order_purchase->id,
+                                    'state_credit' => 'outstanding',
+                                    'order_service_id' => null,
+                                    'date_expiration' => $fecha_expiration,
+                                    'days_to_expiration' => $dias_to_expire,
+                                    'code_order' => $order_purchase->code,
+                                    'payment_deadline_id' => $order_purchase->payment_deadline_id,
+                                    'entry_id' => $entry->id
+                                ]);
+                            }
+                        }
 
                     }
                 }
@@ -500,6 +540,12 @@ class EntryController extends Controller
         return view('entry.edit_entry_purchase', compact('entry', 'suppliers'));
     }
 
+    public function showEntryPurchase(Entry $entry)
+    {
+        $suppliers = Supplier::all();
+        return view('entry.show_entry_purchase', compact('entry', 'suppliers'));
+    }
+
     public function updateEntryPurchase(UpdateEntryPurchaseRequest $request)
     {
         $begin = microtime(true);
@@ -594,7 +640,7 @@ class EntryController extends Controller
                 if ( $entry->purchase_order != '' || $entry->purchase_order != null )
                 {
                     $credit = SupplierCredit::with('deadline')
-                        ->where('code_order', $entry->purchase_order)
+                        ->where('entry_id', $entry->id)
                         ->where('state_credit', 'outstanding')->first();
 
                     if ( isset($credit) )
@@ -602,23 +648,13 @@ class EntryController extends Controller
                         // TODO: Analizar lo de editar de facturas
                         //$credit->delete();
 
-                        $string = $credit->invoice;
-                        $parts = explode(" | ", $string);
-                        $key = array_search($entry->invoice, $parts);
-
-                        if ($key !== true)
-                        {
-                            // no se encuentra
-                            $credit->invoice = $credit->invoice . ' | '.$entry->invoice;
-                        }
-
                         $deadline = PaymentDeadline::find($credit->deadline->id);
                         $fecha_issue = Carbon::parse($entry->date_entry);
                         $fecha_expiration = $fecha_issue->addDays($deadline->days);
                         // TODO:poner dias
                         $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
                         $credit->supplier_id = $entry->supplier_id;
-
+                        $credit->invoice = ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice;
                         $credit->image_invoice = $entry->image;
                         $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
                         $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
@@ -628,6 +664,77 @@ class EntryController extends Controller
                         $credit->code_order = $entry->purchase_order;
                         $credit->save();
 
+                    } else {
+                        $order_purchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+
+                        if ( isset($order_purchase) )
+                        {
+                            /*if ( $credit->invoice != "" || $credit->invoice != null )
+                            {
+                                //$credit->delete();
+                                $deadline = PaymentDeadline::find($credit->deadline->id);
+                                $fecha_issue = Carbon::parse($entry->date_entry);
+                                $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                                // TODO: Poner dias
+                                $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                                $credit->supplier_id = $entry->supplier_id;
+                                $credit->invoice = $credit->invoice.' | '.$entry->invoice;
+                                $credit->image_invoice = $entry->image;
+                                $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                                $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                                $credit->date_issue = $entry->date_entry;
+                                $credit->date_expiration = $fecha_expiration;
+                                $credit->days_to_expiration = $dias_to_expire;
+                                $credit->code_order = $entry->purchase_order;
+                                $credit->save();
+                            } else {
+                                //$credit->delete();
+                                $deadline = PaymentDeadline::find($credit->deadline->id);
+                                $fecha_issue = Carbon::parse($entry->date_entry);
+                                $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                                // TODO: Poner dias
+                                $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                                $credit->supplier_id = $entry->supplier_id;
+                                $credit->invoice = $entry->invoice;
+                                $credit->image_invoice = $entry->image;
+                                $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                                $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                                $credit->date_issue = $entry->date_entry;
+                                $credit->date_expiration = $fecha_expiration;
+                                $credit->days_to_expiration = $dias_to_expire;
+                                $credit->code_order = $entry->purchase_order;
+                                $credit->save();
+                            }*/
+                            if ( isset($order_purchase->deadline) )
+                            {
+                                if ( $order_purchase->deadline->credit == 1 || $order_purchase->deadline->credit == true )
+                                {
+                                    $deadline = PaymentDeadline::find($order_purchase->deadline->id);
+                                    $fecha_issue = Carbon::parse($entry->date_entry);
+                                    $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                                    // TODO: Poner dias
+                                    $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                                    $credit = SupplierCredit::create([
+                                        'supplier_id' => $order_purchase->supplier->id,
+                                        'invoice' => ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice,
+                                        'image_invoice' => $entry->image,
+                                        'total_soles' => ($order_purchase->currency_order == 'PEN') ? (float)$entry->total:null,
+                                        'total_dollars' => ($order_purchase->currency_order == 'USD') ? (float)$entry->total:null,
+                                        'date_issue' => Carbon::parse($entry->date_entry),
+                                        'order_purchase_id' => $order_purchase->id,
+                                        'state_credit' => 'outstanding',
+                                        'order_service_id' => null,
+                                        'date_expiration' => $fecha_expiration,
+                                        'days_to_expiration' => $dias_to_expire,
+                                        'code_order' => $order_purchase->code,
+                                        'payment_deadline_id' => $order_purchase->payment_deadline_id,
+                                        'entry_id' => $entry->id
+                                    ]);
+                                }
+                            }
+
+                        }
                     }
                 }
             }
@@ -715,22 +822,12 @@ class EntryController extends Controller
                 }
 
                 $credit = SupplierCredit::with('deadline')
-                    ->where('code_order', $entry->purchase_order)
+                    ->where('entry_id', $entry->id)
                     ->where('state_credit', 'outstanding')->first();
 
                 if ( isset($credit) )
                 {
-                    $string = $credit->invoice;
-                    $parts = explode(" | ", $string);
-                    $key = array_search($entry->invoice, $parts);
-
-                    if ($key !== false)
-                    {
-                        // se encuentra, eliminamos
-                        unset($parts[$key]);
-                        $newString = implode(" | ", $parts);
-                        $credit->invoice = $newString;
-                    }
+                    $credit->delete();
                 }
 
                 $entry->delete();
@@ -876,6 +973,16 @@ class EntryController extends Controller
             }
 
             $detail->delete();
+
+            // TODO: Modificar el total del credito
+            $credit = SupplierCredit::where('entry_id', $entry->id)->first();
+
+            if( isset($credit) )
+            {
+                $credit->total_soles = ($entry->currency_invoice == 'PEN') ? (float)$entry->total:null;
+                $credit->total_dollars = ($entry->currency_invoice == 'USD') ? (float)$entry->total:null;
+                $credit->save();
+            }
 
             $end = microtime(true) - $begin;
 
@@ -1036,6 +1143,15 @@ class EntryController extends Controller
                 }
                 $detail_entry->total_detail = round($total_detail,2);
                 $detail_entry->save();
+            }
+
+            $credit = SupplierCredit::where('entry_id', $entry->id)->first();
+
+            if( isset($credit) )
+            {
+                $credit->total_soles = ($entry->currency_invoice == 'PEN') ? (float)$entry->total:null;
+                $credit->total_dollars = ($entry->currency_invoice == 'USD') ? (float)$entry->total:null;
+                $credit->save();
             }
 
             $end = microtime(true) - $begin;
@@ -1391,44 +1507,79 @@ class EntryController extends Controller
                 actualiza la factura en la tabla de creditos
             */
             //dd($entry->invoice);
-            if ( $entry->invoice != '' || $entry->invoice != null )
+            if ( ($entry->invoice != '' || $entry->invoice != null) )
             {
                 //dd($entry->purchase_order);
                 if ( $entry->purchase_order != '' || $entry->purchase_order != null )
                 {
-                    $credit = SupplierCredit::with('deadline')
-                        ->where('code_order', $entry->purchase_order)
-                        ->where('state_credit', 'outstanding')->first();
-                    //dd($credit);
-                    if ( isset($credit) )
+                    $order_purchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+
+                    if ( isset($order_purchase) )
                     {
-                        //$credit->delete();
-                        //dump($credit->deadline->id);
-                        //dd($credit->deadline);
-                        $string = $credit->invoice;
-                        $parts = explode(" | ", $string);
-                        $key = array_search($entry->invoice, $parts);
-
-                        if ($key !== true)
+                        /*if ( $credit->invoice != "" || $credit->invoice != null )
                         {
-                            // no se encuentra
-                            $credit->invoice = $credit->invoice . ' | '.$entry->invoice;
-                        }
+                            //$credit->delete();
+                            $deadline = PaymentDeadline::find($credit->deadline->id);
+                            $fecha_issue = Carbon::parse($entry->date_entry);
+                            $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                            // TODO: Poner dias
+                            $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                            $credit->supplier_id = $entry->supplier_id;
+                            $credit->invoice = $credit->invoice.' | '.$entry->invoice;
+                            $credit->image_invoice = $entry->image;
+                            $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                            $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                            $credit->date_issue = $entry->date_entry;
+                            $credit->date_expiration = $fecha_expiration;
+                            $credit->days_to_expiration = $dias_to_expire;
+                            $credit->code_order = $entry->purchase_order;
+                            $credit->save();
+                        } else {
+                            //$credit->delete();
+                            $deadline = PaymentDeadline::find($credit->deadline->id);
+                            $fecha_issue = Carbon::parse($entry->date_entry);
+                            $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                            // TODO: Poner dias
+                            $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                            $credit->supplier_id = $entry->supplier_id;
+                            $credit->invoice = $entry->invoice;
+                            $credit->image_invoice = $entry->image;
+                            $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
+                            $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
+                            $credit->date_issue = $entry->date_entry;
+                            $credit->date_expiration = $fecha_expiration;
+                            $credit->days_to_expiration = $dias_to_expire;
+                            $credit->code_order = $entry->purchase_order;
+                            $credit->save();
+                        }*/
+                        if ( isset($order_purchase->deadline) )
+                        {
+                            if ( $order_purchase->deadline->credit == 1 || $order_purchase->deadline->credit == true )
+                            {
+                                $deadline = PaymentDeadline::find($order_purchase->deadline->id);
+                                $fecha_issue = Carbon::parse($entry->date_entry);
+                                $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                                // TODO: Poner dias
+                                $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
-                        $deadline = PaymentDeadline::find($credit->deadline->id);
-                        $fecha_issue = Carbon::parse($entry->date_entry);
-                        $fecha_expiration = $fecha_issue->addDays($deadline->days);
-                        $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
-                        $credit->supplier_id = $entry->supplier_id;
-                        //$credit->invoice = $entry->invoice;
-                        $credit->image_invoice = $entry->image;
-                        $credit->total_soles = ((float)$credit->total_soles>0) ? $entry->total:null;
-                        $credit->total_dollars = ((float)$credit->total_dollars>0) ? $entry->total:null;
-                        $credit->date_issue = $entry->date_entry;
-                        $credit->days_to_expiration = $dias_to_expire;
-                        $credit->date_expiration = $fecha_expiration;
-                        $credit->code_order = $entry->purchase_order;
-                        $credit->save();
+                                $credit = SupplierCredit::create([
+                                    'supplier_id' => $order_purchase->supplier->id,
+                                    'invoice' => ($this->onlyZeros($entry->invoice) == true ) ? null:$entry->invoice,
+                                    'image_invoice' => $entry->image,
+                                    'total_soles' => ($order_purchase->currency_order == 'PEN') ? (float)$entry->total:null,
+                                    'total_dollars' => ($order_purchase->currency_order == 'USD') ? (float)$entry->total:null,
+                                    'date_issue' => Carbon::parse($entry->date_entry),
+                                    'order_purchase_id' => $order_purchase->id,
+                                    'state_credit' => 'outstanding',
+                                    'order_service_id' => null,
+                                    'date_expiration' => $fecha_expiration,
+                                    'days_to_expiration' => $dias_to_expire,
+                                    'code_order' => $order_purchase->code,
+                                    'payment_deadline_id' => $order_purchase->payment_deadline_id,
+                                    'entry_id' => $entry->id
+                                ]);
+                            }
+                        }
 
                     }
                 }
@@ -1698,36 +1849,40 @@ class EntryController extends Controller
             }
 
             // Si el plazo indica credito, se crea el credito
-            if ( isset($orderPurchase->deadline) )
-            {
-                if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
-                {
-                    $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
-                    //$fecha_issue = Carbon::parse($orderPurchase->date_order);
-                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
-                    // TODO: Poner dias
-                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
-                    $credit = SupplierCredit::create([
-                        'supplier_id' => $orderPurchase->supplier->id,
-                        'total_soles' => ($orderPurchase->currency_order == 'PEN') ? $orderPurchase->total:null,
-                        'total_dollars' => ($orderPurchase->currency_order == 'USD') ? $orderPurchase->total:null,
-                        //'date_issue' => $orderPurchase->date_order,
-                        'order_purchase_id' => $orderPurchase->id,
-                        'state_credit' => 'outstanding',
-                        'order_service_id' => null,
-                        //'date_expiration' => $fecha_expiration,
-                        //'days_to_expiration' => $dias_to_expire,
-                        'code_order' => $orderPurchase->code,
-                        'payment_deadline_id' => $orderPurchase->payment_deadline_id
-                    ]);
-                }
-            }
 
             // TODO: Actualizamos la entrada
             $entry = Entry::find($request->get('entry_id'));
             $entry->purchase_order = $orderPurchase->code;
             $entry->save();
+
+            if ( isset($orderPurchase->deadline) )
+            {
+                if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
+                {
+                    $deadline = PaymentDeadline::find($orderPurchase->deadline->id);
+                    $fecha_issue = Carbon::parse($entry->date_entry);
+                    $fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    // TODO: Poner dias
+                    $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+
+                    $credit = SupplierCredit::create([
+                        'supplier_id' => $orderPurchase->supplier->id,
+                        'invoice' => ($this->onlyZeros($entry->invoice)) ? null:$entry->invoice,
+                        'image_invoice' => $entry->image,
+                        'total_soles' => ($orderPurchase->currency_order == 'PEN') ? $entry->total:null,
+                        'total_dollars' => ($orderPurchase->currency_order == 'USD') ? $entry->total:null,
+                        'date_issue' => $entry->date_entry,
+                        'order_purchase_id' => $orderPurchase->id,
+                        'state_credit' => 'outstanding',
+                        'order_service_id' => null,
+                        'date_expiration' => $fecha_expiration,
+                        'days_to_expiration' => $dias_to_expire,
+                        'code_order' => $orderPurchase->code,
+                        'payment_deadline_id' => $orderPurchase->payment_deadline_id
+                    ]);
+                }
+            }
 
             $end = microtime(true) - $begin;
 
@@ -1989,5 +2144,19 @@ class EntryController extends Controller
         }
         return response()->json(['message' => 'Imágenes guardadas con éxito'], 200);
 
+    }
+
+    public function onlyZeros($cadena) {
+        $cadenaSinGuiones = str_replace('-', '', $cadena); // Eliminar los guiones
+
+        if (!ctype_digit($cadenaSinGuiones)) {
+            return false; // La cadena contiene caracteres que no son dígitos
+        }
+
+        if ($cadenaSinGuiones !== str_repeat('0', strlen($cadenaSinGuiones))) {
+            return false; // La cadena no está formada solo por ceros
+        }
+
+        return true; // La cadena está formada solo por ceros
     }
 }

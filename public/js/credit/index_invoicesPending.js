@@ -408,7 +408,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    var moneda = (item.moneda == "soles") ? 'PEN':'USD';
+                    var moneda = (item.moneda == "Soles") ? 'PEN':'USD';
                     return '<p> '+ moneda+ ' ' +item.deudaActual +'</p>';
                 }
             },
@@ -417,7 +417,13 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ item.factura +'</p>';
+                    if ( item.factura !== 'PENDIENTE' )
+                    {
+                        return '<a target="_blank" href="'+item.url+'" class="btn btn-sm btn-outline-primary"> '+ item.factura +'</a>';
+                    } else {
+                        return '<p> '+ item.factura +'</p>';
+                    }
+
                 }
             },
             { data: null,
@@ -507,7 +513,7 @@ $(document).ready(function () {
 
                     //if ( $.inArray('destroy_orderPurchaseNormal', $permissions) !== -1 ) {
                         text = text + ' <button data-pays="'+item.id+'" '+
-                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar créditos"><i class="fas fa-file-invoice-dollar"></i></button>';
+                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar pagos"><i class="fas fa-file-invoice-dollar"></i></button>';
                         text = text + ' <button data-add_days="'+item.id+'" data-fecha="'+item.fechaVencimiento+'"'+
                         ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar 7 días"><i class="fas fa-plus-circle"></i></button>';
                     //}
@@ -825,7 +831,56 @@ $(document).ready(function () {
 
     $(document).on('select2:select', '.state_paid', changeStatusPaid);
 
+    $("#btn-expire").on('click', showModalExpire);
+
+    $("#btn-amount").on('click', showModalAmount);
+
+    $modalExpire = $('#modalExpire');
+
+    $modalAmount = $('#modalAmount');
+
+    $selectYear = $('#year');
+
+    $selectMonth = $('#month');
+
+    $selectYear.change(function () {
+        $selectMonth.empty();
+        $selectMonth.val('');
+        $selectMonth.trigger('change');
+
+        let year =  $selectYear.val();
+        console.log(year);
+        if ( year != null || year != undefined )
+        {
+            $.get( "/dashboard/get/months/of/year/"+year, function( data ) {
+                $selectMonth.append($("<option>", {
+                    value: '',
+                    text: ''
+                }));
+                for ( var i=0; i<data.length; i++ )
+                {
+                    $selectMonth.append($("<option>", {
+                        value: data[i].month,
+                        text: data[i].month_name
+                    }));
+                }
+            });
+        }
+
+    });
+
+    $("#btn-get_amount").on("click", getAmountInvoices);
+
+    $('#btn-export').on('click', exportCredits);
 });
+
+let $selectYear;
+
+let $selectMonth;
+
+let $modalExpire;
+
+let $modalAmount;
 
 let $modalImageComprobante;
 
@@ -852,6 +907,209 @@ let $caracteres = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXY
 let $longitud = 20;
 
 var $permissions;
+
+function exportCredits() {
+    var start  = $('#start2').val();
+    var end  = $('#end2').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    if ( start == '' || end == '' )
+    {
+        toastr.error('Debe elegir fechas para hacer la búsqueda', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/reporte/creditos/?" + $.param(query);
+
+        window.location = url;
+
+    }
+
+}
+
+function getAmountInvoices() {
+    var url = $(this).data('url');
+    $("#body-amount-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+
+    let year = $selectYear.val();
+    let month = $selectMonth.val();
+
+    if ( year == '' || year == null )
+    {
+        toastr.error('Seleccione un año de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( month == '' || month == null )
+    {
+        toastr.error('Seleccione un mes de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    var query = {
+        year: year,
+        month: month,
+    };
+
+    $.get(url+"?"+ $.param(query), function(data) {
+        // Manipula los datos recibidos aquí
+        var amountSoles = parseFloat(data.amountSoles);
+        var formattedValueSoles = amountSoles.toLocaleString(undefined, { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
+        $("#amountSoles").html("S/. "+formattedValueSoles);
+
+        var amountDolares = parseFloat(data.amountDolares);
+        var formattedValueDolares = amountDolares.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+        $("#amountDolares").html("$. "+formattedValueDolares);
+
+        $("#body-amount-load").LoadingOverlay("hide", true);
+    }).done(function() {
+        console.log("La solicitud se completó correctamente.");
+    }).fail(function() {
+        console.log("Ocurrió un error en la solicitud.");
+    });
+
+}
+
+function showModalAmount() {
+    var url = $(this).data('url');
+    $("#body-amount-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+    $.get(url, function(data) {
+        // Manipula los datos recibidos aquí
+        var amountSoles = parseFloat(data.amountSoles);
+        var formattedValueSoles = amountSoles.toLocaleString(undefined, { style: 'currency', currency: 'PEN', minimumFractionDigits: 2 });
+        $("#amountSoles").html("S/. "+formattedValueSoles);
+
+        var amountDolares = parseFloat(data.amountDolares);
+        var formattedValueDolares = amountDolares.toLocaleString(undefined, { style: 'currency', currency: 'USD', minimumFractionDigits: 2 });
+        $("#amountDolares").html("$. "+formattedValueDolares);
+        $("#body-amount-load").LoadingOverlay("hide", true);
+        $modalAmount.modal('show');
+    }).done(function() {
+        console.log("La solicitud se completó correctamente.");
+    }).fail(function() {
+        console.log("Ocurrió un error en la solicitud.");
+    });
+}
+
+function showModalExpire() {
+    var url = $(this).data('url');
+    $('#body-expires').html('');
+    $("#body-expire-load").LoadingOverlay("show", {
+        background  : "rgba(236, 91, 23, 0.5)"
+    });
+    $.get(url, function(json) {
+        // Manipula los datos recibidos aquí
+        for (var i=0; i<json.credits.length; i++)
+        {
+            renderTemplateExpire(json.credits[i].orden, json.credits[i].proveedor, json.credits[i].factura, json.credits[i].fecha_vencimiento, json.credits[i].vence_en);
+        }
+        $("#body-expire-load").LoadingOverlay("hide", true);
+        $modalExpire.modal('show');
+    }).done(function() {
+        console.log("La solicitud se completó correctamente.");
+    }).fail(function() {
+        console.log("Ocurrió un error en la solicitud.");
+    });
+
+}
+
+function renderTemplateExpire(orden, proveedor, factura, fecha_vencimiento, vence_en) {
+
+    var clone = activateTemplate('#template-expire');
+
+    clone.querySelector("[data-orden]").innerHTML = orden;
+    clone.querySelector("[data-proveedor]").innerHTML = proveedor;
+    clone.querySelector("[data-factura]").innerHTML = factura;
+    clone.querySelector("[data-fecha]").innerHTML = fecha_vencimiento;
+    clone.querySelector("[data-vence]").innerHTML = vence_en;
+
+    $('#body-expires').append(clone);
+
+
+}
 
 function changeStatusPaid() {
     event.preventDefault();
@@ -1030,6 +1288,7 @@ function showModalAddDays() {
         }
     });
 }
+
 function deleteCredit() {
     $modalPays.modal('hide');
     var credit_pay_id = $(this).data('delete');
@@ -1340,7 +1599,6 @@ function renderTemplatePay(i, id, type,amount, datePay, image) {
 
 
 }
-
 
 function showModalSummary() {
     var url = $(this).data('url');

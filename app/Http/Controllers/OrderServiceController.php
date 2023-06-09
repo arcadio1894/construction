@@ -149,7 +149,7 @@ class OrderServiceController extends Controller
             }
 
             // Si el plazo indica credito, se crea el credito
-            if ( isset($orderService->deadline) )
+            /*if ( isset($orderService->deadline) )
             {
                 if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
                 {
@@ -173,7 +173,7 @@ class OrderServiceController extends Controller
                         'payment_deadline_id' => $orderService->payment_deadline_id
                     ]);
                 }
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -279,7 +279,7 @@ class OrderServiceController extends Controller
 
             }
             // Si la orden de servicio se modifica, el credito tambien se modificara
-            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+            /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
@@ -297,7 +297,7 @@ class OrderServiceController extends Controller
                 //$credit->days_to_expiration = $dias_to_expire;
                 $credit->payment_deadline_id = $orderService->payment_deadline_id;
                 $credit->save();
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -412,14 +412,14 @@ class OrderServiceController extends Controller
                 $orderService->save();
 
                 // Si la orden de compra express se modifica, el credito tambien se modificara
-                $credit = SupplierCredit::where('order_service_id', $orderService->id)
+                /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
                     ->where('state_credit', 'outstanding')->first();
                 if ( isset($credit) )
                 {
                     $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
                     $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
                     $credit->save();
-                }
+                }*/
             }
 
             $end = microtime(true) - $begin;
@@ -451,14 +451,14 @@ class OrderServiceController extends Controller
             $orderService->save();
 
             // Si la orden de compra express se modifica, el credito tambien se modificara
-            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+            /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
                 $credit->total_soles = ($orderService->currency_order == 'PEN') ? $orderService->total:null;
                 $credit->total_dollars = ($orderService->currency_order == 'USD') ? $orderService->total:null;
                 $credit->save();
-            }
+            }*/
 
             $detail->delete();
 
@@ -576,7 +576,7 @@ class OrderServiceController extends Controller
                 //$orderService->save();
             }
 
-            $credit = SupplierCredit::where('order_service_id', $orderService->id)
+            /*$credit = SupplierCredit::where('order_service_id', $orderService->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
@@ -596,7 +596,7 @@ class OrderServiceController extends Controller
                 $credit->invoice = $orderService->invoice;
                 $credit->image_invoice = $orderService->image_invoice ;
                 $credit->save();
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -831,23 +831,26 @@ class OrderServiceController extends Controller
                 if ( $orderService->deadline->credit == 1 || $orderService->deadline->credit == true )
                 {
                     $deadline = PaymentDeadline::find($orderService->deadline->id);
-                    //$fecha_issue = Carbon::parse($orderService->date_order);
-                    //$fecha_expiration = $fecha_issue->addDays($deadline->days);
+                    $fecha_issue = Carbon::parse($entry->date_entry);
+                    $fecha_expiration = $fecha_issue->addDays($deadline->days);
                     // TODO: Poner dias
-                    //$dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
+                    $dias_to_expire = $fecha_expiration->diffInDays(Carbon::now('America/Lima'));
 
                     $credit = SupplierCredit::create([
                         'supplier_id' => $orderService->supplier->id,
+                        'invoice' => ($this->onlyZeros($entry->invoice) == true) ? null:$entry->invoice,
+                        'image_invoice' => $entry->image,
                         'total_soles' => ($orderService->currency_order == 'PEN') ? $orderService->total:null,
                         'total_dollars' => ($orderService->currency_order == 'USD') ? $orderService->total:null,
-                        //'date_issue' => $orderService->date_order,
+                        'date_issue' => $entry->date_entry,
                         'order_purchase_id' => null,
                         'state_credit' => 'outstanding',
                         'order_service_id' => $orderService->id,
-                        //'date_expiration' => $fecha_expiration,
-                        //'days_to_expiration' => $dias_to_expire,
+                        'date_expiration' => $fecha_expiration,
+                        'days_to_expiration' => $dias_to_expire,
                         'code_order' => $orderService->code,
-                        'payment_deadline_id' => $orderService->payment_deadline_id
+                        'payment_deadline_id' => $orderService->payment_deadline_id,
+                        'entry_id' => $entry->id
                     ]);
                 }
             }
@@ -948,5 +951,19 @@ class OrderServiceController extends Controller
             'time' => $end
         ]);
         return datatables($lost)->toJson();
+    }
+
+    public function onlyZeros($cadena) {
+        $cadenaSinGuiones = str_replace('-', '', $cadena); // Eliminar los guiones
+
+        if (!ctype_digit($cadenaSinGuiones)) {
+            return false; // La cadena contiene caracteres que no son dígitos
+        }
+
+        if ($cadenaSinGuiones !== str_repeat('0', strlen($cadenaSinGuiones))) {
+            return false; // La cadena no está formada solo por ceros
+        }
+
+        return true; // La cadena está formada solo por ceros
     }
 }

@@ -578,6 +578,8 @@ Route::middleware('auth')->group(function (){
 
         Route::get('entrada/compra/editar/{entry}', 'EntryController@editEntryPurchase')->name('entry.purchase.edit')
             ->middleware('permission:update_entryPurchase');
+        Route::get('entrada/compra/visualizar/{entry}', 'EntryController@showEntryPurchase')->name('entry.purchase.show')
+            ->middleware('permission:list_entryPurchase');
         Route::post('entry_purchase/update', 'EntryController@updateEntryPurchase')->name('entry.purchase.update')
             ->middleware('permission:update_entryPurchase');
         Route::post('entry_purchase/destroy/{entry}', 'EntryController@destroyEntryPurchase')->name('entry.purchase.destroy')
@@ -1090,6 +1092,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/invoices/pending', 'SupplierCreditController@getInvoicesPending');
         Route::get('/get/summary/deuda/pending', 'SupplierCreditController@getSummaryDeudaPending')
             ->name('get.summary.deuda.pending');
+        Route::get('/get/invoices/for/expire', 'SupplierCreditController@getInvoiceForExpire')
+            ->name('get.invoices.for.expire');
+        Route::get('/get/amount/invoice/current/month', 'SupplierCreditController@getAmountInvoiceCurrentMonth')
+            ->name('get.amount.invoice.current.month');
+        Route::get('/get/amount/invoice/general', 'SupplierCreditController@getAmountInvoiceGeneral')
+            ->name('get.amount.invoice.general');
+        Route::get('exportar/reporte/creditos/', 'SupplierCreditController@exportCreditsExcel');
+            //->middleware('permission:quoteTotal_report');
         Route::get('/get/pays/credit/{credit_id}', 'SupplierCreditController@getPaysCredit')
             ->name('get.pays.credit');
         Route::post('/save/pay/credit/{credit_id}', 'SupplierCreditController@savePaysCredit');

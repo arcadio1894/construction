@@ -411,7 +411,7 @@ class OrderPurchaseController extends Controller
             }
 
             // Si el plazo indica credito, se crea el credito
-            if ( isset($orderPurchase->deadline) )
+            /*if ( isset($orderPurchase->deadline) )
             {
                 if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
                 {
@@ -435,7 +435,7 @@ class OrderPurchaseController extends Controller
                         'payment_deadline_id' => $orderPurchase->payment_deadline_id
                     ]);
                 }
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -548,7 +548,7 @@ class OrderPurchaseController extends Controller
             }
 
             // Si la orden de compra express se modifica, el credito tambien se modificara
-            $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+            /*$credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
@@ -567,7 +567,7 @@ class OrderPurchaseController extends Controller
                 $credit->code_order = $orderPurchase->code;
                 $credit->payment_deadline_id = $orderPurchase->payment_deadline_id;
                 $credit->save();
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -1211,7 +1211,7 @@ class OrderPurchaseController extends Controller
             }
 
             // Si el plazo indica credito, se crea el credito
-            if ( isset($orderPurchase->deadline) )
+            /*if ( isset($orderPurchase->deadline) )
             {
                 if ( $orderPurchase->deadline->credit == 1 || $orderPurchase->deadline->credit == true )
                 {
@@ -1235,7 +1235,7 @@ class OrderPurchaseController extends Controller
                         'payment_deadline_id' => $orderPurchase->payment_deadline_id
                     ]);
                 }
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -1599,7 +1599,7 @@ class OrderPurchaseController extends Controller
             }
 
             // Si la orden de compra express se modifica, el credito tambien se modificara
-            $credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
+            /*$credit = SupplierCredit::where('order_purchase_id', $orderPurchase->id)
                 ->where('state_credit', 'outstanding')->first();
             if ( isset($credit) )
             {
@@ -1618,7 +1618,7 @@ class OrderPurchaseController extends Controller
                 $credit->code_order = $orderPurchase->code;
                 $credit->payment_deadline_id = $orderPurchase->payment_deadline_id;
                 $credit->save();
-            }
+            }*/
 
             $end = microtime(true) - $begin;
 
@@ -2415,7 +2415,19 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function onlyZeros($cadena) {
+        $cadenaSinGuiones = str_replace('-', '', $cadena); // Eliminar los guiones
 
+        if (!ctype_digit($cadenaSinGuiones)) {
+            return false; // La cadena contiene caracteres que no son dígitos
+        }
+
+        if ($cadenaSinGuiones !== str_repeat('0', strlen($cadenaSinGuiones))) {
+            return false; // La cadena no está formada solo por ceros
+        }
+
+        return true; // La cadena está formada solo por ceros
+    }
     /*
      * crear una cotizacion con dos equi
      */

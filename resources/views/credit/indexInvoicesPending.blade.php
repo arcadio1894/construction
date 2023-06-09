@@ -52,7 +52,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de créditos de proveedores</h5>
-    <button id="btn-summary" data-url="{{ route('get.summary.deuda.pending') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Ver resumen de deuda </button>
+    <button id="btn-summary" data-url="{{ route('get.summary.deuda.pending') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fas fa-hand-holding-usd"></i> Ver resumen de deuda </button>
+    <button id="btn-expire" data-url="{{ route('get.invoices.for.expire') }}" class="btn btn-outline-danger btn-sm float-right" > <i class="fas fa-exclamation-triangle"></i> Ver facturas por vencer </button>
+    <button id="btn-amount" data-url="{{ route('get.amount.invoice.current.month') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fas fa-dollar-sign"></i> Ver monto facturas </button>
 
 @endsection
 
@@ -116,7 +118,9 @@
                 <input type="text" class="form-control form-control-sm date-range-filter2" id="end2" name="end">
             </div>
         </div>
-
+        {{--<div class="col-md-3">
+            <button type="button" id="btn-export" class="btn btn-block btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
+        </div>--}}
         <br><br>
     </div>
     <div>
@@ -480,6 +484,116 @@
         </div>
     </div>
 
+    <div id="modalExpire" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Facturas por vencer</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div id="body-expire-load" class="table-responsive p-0" style="height: 300px;">
+                        <table class="card-body table table-head-fixed">
+                            <thead>
+                            <tr>
+                                <th>Orden</th>
+                                <th>Proveedor</th>
+                                <th>Factura</th>
+                                <th>Fecha Vence</th>
+                                <th>Vence en</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-expires">
+
+                            </tbody>
+                            <template id="template-expire">
+                                <tr>
+                                    <td data-orden></td>
+                                    <td data-proveedor></td>
+                                    <td data-factura></td>
+                                    <td data-fecha></td>
+                                    <td data-vence></td>
+                                </tr>
+                            </template>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalAmount" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Monto de facturas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4" id="cboYears">
+                            <label for="year">Año <span class="right badge badge-danger">(*)</span></label>
+
+                            <select id="year" name="year" class="form-control select2" style="width: 100%;">
+                                <option></option>
+                                @foreach( $years as $year )
+                                    <option value="{{ $year->year }}">{{ $year->year}}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="col-md-4" id="cboMonths">
+                            <label for="month">Mes <span class="right badge badge-danger">(*)</span></label>
+
+                            <select id="month" name="month" class="form-control select2" style="width: 100%;">
+                                <option></option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="btn-get_amount">&nbsp;</label><br>
+                            <button type="button" id="btn-get_amount" data-url="{{ route('get.amount.invoice.general') }}" class="btn btn-outline-success btn-block"> <i class="fas fa-arrow-circle-right"></i> Obtener</button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div id="body-amount-load" class="table-responsive p-0" style="height: 300px;">
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-gradient-success">S/.</span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">SOLES</span>
+                                    <span class="info-box-number" id="amountSoles">1,410</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-12">
+                            <div class="info-box">
+                                <span class="info-box-icon bg-gradient-info">$</span>
+
+                                <div class="info-box-content">
+                                    <span class="info-box-text">DÓLARES</span>
+                                    <span class="info-box-number" id="amountDolares">1,410</span>
+                                </div>
+                                <!-- /.info-box-content -->
+                            </div>
+                            <!-- /.info-box -->
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div id="modalPays" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -643,6 +757,13 @@
     <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
 
     <script>
+        $('#year').select2({
+            placeholder: "Año",
+        });
+        $('#month').select2({
+            placeholder: "Mes",
+        });
+
         $('#fechaPago').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
         $('#date_picker_issue .date_picker_issue').datepicker({

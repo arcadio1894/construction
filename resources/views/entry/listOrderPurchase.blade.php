@@ -40,9 +40,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Ordenes de compras</h5>
-    @can('create_orderPurchaseExpress')
+    {{--@can('create_orderPurchaseExpress')
     <a href="{{ route('order.purchase.express.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden express </a>
-    @endcan
+    @endcan--}}
 @endsection
 
 @section('page-breadcrumb')
@@ -50,9 +50,9 @@
         <li class="breadcrumb-item">
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
-        <li class="breadcrumb-item">
+        {{--<li class="breadcrumb-item">
             <a href="{{route('order.purchase.express.index')}}"><i class="fa fa-archive"></i> Ordenes de compra</a>
-        </li>
+        </li>--}}
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
 @endsection

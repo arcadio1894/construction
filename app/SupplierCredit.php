@@ -25,7 +25,9 @@ class SupplierCredit extends Model
         'image_credit',
         'date_paid',
         'state_pay',
-        'advance'
+        'advance',
+        'entry_id',
+        'order_purchase_finance_id'
     ];
 
     protected $dates=['date_issue', 'date_expiration', 'date_paid'];
@@ -45,8 +47,18 @@ class SupplierCredit extends Model
         return $this->belongsTo('App\OrderService', 'order_service_id');
     }
 
+    public function finance()
+    {
+        return $this->belongsTo('App\OrderPurchaseFinance', 'order_purchase_finance_id');
+    }
+
     public function deadline()
     {
         return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id','id');
+    }
+
+    public function entry()
+    {
+        return $this->belongsTo('App\Entry', 'entry_id');
     }
 }
