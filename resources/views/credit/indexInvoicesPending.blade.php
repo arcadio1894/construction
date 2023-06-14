@@ -118,9 +118,9 @@
                 <input type="text" class="form-control form-control-sm date-range-filter2" id="end2" name="end">
             </div>
         </div>
-        {{--<div class="col-md-3">
+        <div class="col-md-3">
             <button type="button" id="btn-export" class="btn btn-block btn-sm btn-outline-success"> <i class="fas fa-file-excel"></i> Exportar</button>
-        </div>--}}
+        </div>
         <br><br>
     </div>
     <div>

@@ -296,6 +296,8 @@ class SupplierCreditController extends Controller
 
     public function getInvoicesPending()
     {
+        $diasMinTOExpire = DataGeneral::where('name', 'daysToExpireMin')->first();
+
         $credits = SupplierCredit::with('supplier')
             ->with('purchase')
             ->with('service')
@@ -316,13 +318,13 @@ class SupplierCreditController extends Controller
                 $credit->days_to_expiration = $dias_to_expire;
                 $credit->save();
 
-                if ( $dias_to_expire < 4 && $dias_to_expire > 0 )
+                if ( $dias_to_expire < $diasMinTOExpire->valueNumber && $dias_to_expire >= 0 )
                 {
                     $credit->state_credit = 'by_expire';
                     $credit->save();
                 }
 
-                if ( $dias_to_expire <= 0 )
+                if ( $dias_to_expire < 0 )
                 {
                     $credit->state_credit = 'expired';
                     $credit->save();
