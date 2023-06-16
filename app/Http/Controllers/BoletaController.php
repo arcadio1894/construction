@@ -195,7 +195,8 @@ class BoletaController extends Controller
                     'otros' => $info['otros'],
                     'totalDescuentos' => $info['totalDescuentos'],
                     'essalud' => $info['essalud'],
-                    'totalNetoPagar' => $info['totalNetoPagar']
+                    'totalNetoPagar' => $info['totalNetoPagar'],
+                    'year' => $year
                 ]);
 
             } else {
@@ -236,7 +237,8 @@ class BoletaController extends Controller
                     'otros' => $info['otros'],
                     'totalDescuentos' => $info['totalDescuentos'],
                     'essalud' => $info['essalud'],
-                    'totalNetoPagar' => $info['totalNetoPagar']
+                    'totalNetoPagar' => $info['totalNetoPagar'],
+                    'year' => $year
                 ]);
 
             }

@@ -1831,6 +1831,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('totalPays_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show.total.pays') }}" class="nav-link @yield('activeReportTotalPays')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Total a Pagar</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
 

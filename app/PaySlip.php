@@ -42,6 +42,7 @@ class PaySlip extends Model
         'otros',
         'totalDescuentos',
         'essalud',
-        'totalNetoPagar'
+        'totalNetoPagar',
+        'year'
     ];
 }

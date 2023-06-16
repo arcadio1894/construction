@@ -1573,6 +1573,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/download/excel/total/hours/', 'AssistanceController@exportTotalHoursWorker')
             ->name('download.excel.total.hours');
 
+        Route::get('/ver/total/pagar', 'AssistanceController@showTotalPays')
+            ->name('assistance.show.total.pays');
+
+        Route::get('/get/weeks/total/pays/{year}', 'AssistanceController@getWeeksTotalPaysByYear');
+
+        Route::get('/get/total/pays/by/year/week/', 'AssistanceController@getTotalPaysByYearWeek');
+
+
         // CRUD Descanso Medico
         Route::get('/all/medical/rests', 'MedicalRestController@getAllMedicalRest')
             ->middleware('permission:list_medicalRest');

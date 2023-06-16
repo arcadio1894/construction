@@ -11,6 +11,7 @@ use App\Exports\TotalHoursExcelMultipleSheet;
 use App\Holiday;
 use App\License;
 use App\MedicalRest;
+use App\PaySlip;
 use App\PercentageWorker;
 use App\Permit;
 use App\Regime;
@@ -3606,5 +3607,147 @@ class AssistanceController extends Controller
 
         return view('assistance.totalHours', compact( 'permissions', 'workers'));
 
+    }
+
+    public function showTotalPays()
+    {
+        Carbon::setLocale(config('app.locale'));
+
+        $fechaActual = Carbon::now('America/Lima');
+
+        $currentYear = $fechaActual->year;
+        $currentWeek = $fechaActual->week;
+
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $years = DateDimension::distinct()->get(['year']);
+
+        $semanas = DateDimension::distinct()->get(['week']);
+
+        $weeks = [];
+
+        foreach ( $semanas as $semana )
+        {
+            $fechaInicioSemana = Carbon::now()->setISODate(Carbon::now()->year, $semana->week)->startOfWeek();
+            $fechaFinSemana = Carbon::now()->setISODate(Carbon::now()->year, $semana->week)->endOfWeek();
+            $fechaInicioSemanaFormateada = $fechaInicioSemana->format('d/m');
+            $fechaFinSemanaFormateada = $fechaFinSemana->format('d/m');
+
+            array_push($weeks, [
+                "week" => $semana->week,
+                "dateStart" => $fechaInicioSemanaFormateada,
+                "dateEnd" => $fechaFinSemanaFormateada
+            ]);
+        }
+
+        return view('assistance.totalPays', compact( 'permissions', 'years', 'weeks', 'currentYear', 'currentWeek'));
+
+    }
+
+    public function getWeeksTotalPaysByYear( $year )
+    {
+        $weeks = [];
+        $semanas = DateDimension::distinct()->get(['week']);
+        foreach ( $semanas as $semana )
+        {
+            $fechaInicioSemana = Carbon::createFromDate($year, 1, 1)->setISODate($year, $semana->week)->startOfWeek();
+            $fechaFinSemana = Carbon::createFromDate($year, 1, 1)->setISODate($year, $semana->week)->endOfWeek();
+            $fechaInicioSemanaFormateada = $fechaInicioSemana->format('d/m');
+            $fechaFinSemanaFormateada = $fechaFinSemana->format('d/m');
+
+            array_push($weeks, [
+                "week" => $semana->week,
+                "dateStart" => $fechaInicioSemanaFormateada,
+                "dateEnd" => $fechaFinSemanaFormateada
+            ]);
+        }
+
+        return $weeks;
+    }
+
+    public function getTotalPaysByYearWeek()
+    {
+        $year = $_GET['year'];
+        $weekStart = $_GET['weekStart'];
+        $weekEnd = $_GET['weekEnd'];
+
+        if ( $weekStart != '' || $weekEnd != '' )
+        {
+            // TODO: Hay semanas especificadas
+            $weeks = [];
+            for ( $i=$weekStart; $i<=$weekEnd; $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boletas = PaySlip::where('year', $year)
+                    ->where('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'desc')
+                    ->get();
+                $paySlips = [];
+                foreach ( $boletas as $boleta )
+                {
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "monto" => $boleta->totalNetoPagar
+                    ]);
+                }
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+
+
+        } else {
+            // TODO: Hay semanas especificadas
+            $currentWeek = Carbon::now()->weekOfYear;
+            $weeks = [];
+            for ( $i=1; $i<=$currentWeek; $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boletas = PaySlip::where('year', $year)
+                    ->whereIn('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'desc')
+                    ->get();
+                $paySlips = [];
+                foreach ( $boletas as $boleta )
+                {
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "monto" => $boleta->totalNetoPagar
+                    ]);
+                }
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+        }
+
+        return response()->json([ "weeks" => $weeks ]);
+    }
+
+    public function getTitleWeek($year, $semana)
+    {
+        $fechaInicioSemana = Carbon::createFromDate($year, 1, 1)->setISODate($year, $semana)->startOfWeek();
+        $fechaFinSemana = Carbon::createFromDate($year, 1, 1)->setISODate($year, $semana)->endOfWeek();
+        $fechaInicioSemanaFormateada = $fechaInicioSemana->format('d/m/Y');
+        $fechaFinSemanaFormateada = $fechaFinSemana->format('d/m/Y');
+
+        $week = ($semana<10) ? '0'.$semana:$semana;
+
+        return "SEMANA ".$week." DEL ".$fechaInicioSemanaFormateada. " AL ". $fechaFinSemanaFormateada;
     }
 }
