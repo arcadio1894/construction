@@ -82,7 +82,8 @@ class RoleController extends Controller
         'paySlip' => 'BOLETAS DE PAGO',
         'orderPurchaseFinance' => 'ORDENES DE COMPRA FINANZAS',
         'bill' => 'TIPOS DE PAGO',
-        'expense' => 'RENDICIÓN DE CUENTAS'
+        'expense' => 'RENDICIÓN DE CUENTAS',
+        'bonusRis' => 'BONO DE RIESGOS'
     ];
 
     public function index()
