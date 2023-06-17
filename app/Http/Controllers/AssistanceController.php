@@ -3683,7 +3683,7 @@ class AssistanceController extends Controller
                 $boletas = PaySlip::where('year', $year)
                     ->where('semana', $i)
                     ->orderBy('semana', 'desc')
-                    ->orderBy('codigo', 'desc')
+                    ->orderBy('codigo', 'asc')
                     ->get();
                 $paySlips = [];
                 foreach ( $boletas as $boleta )
@@ -3715,7 +3715,7 @@ class AssistanceController extends Controller
                 $boletas = PaySlip::where('year', $year)
                     ->whereIn('semana', $i)
                     ->orderBy('semana', 'desc')
-                    ->orderBy('codigo', 'desc')
+                    ->orderBy('codigo', 'asc')
                     ->get();
                 $paySlips = [];
                 foreach ( $boletas as $boleta )
