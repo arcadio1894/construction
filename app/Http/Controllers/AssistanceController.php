@@ -3686,6 +3686,7 @@ class AssistanceController extends Controller
                     ->orderBy('codigo', 'asc')
                     ->get();
                 $paySlips = [];
+                $total=0;
                 foreach ( $boletas as $boleta )
                 {
                     array_push($paySlips, [
@@ -3693,7 +3694,14 @@ class AssistanceController extends Controller
                         "trabajador" => $boleta->nombre,
                         "monto" => $boleta->totalNetoPagar
                     ]);
+                    $total = $total + $boleta->totalNetoPagar;
                 }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
 
                 array_push($weeks, [
                     "week" => $i,
@@ -3718,6 +3726,7 @@ class AssistanceController extends Controller
                     ->orderBy('codigo', 'asc')
                     ->get();
                 $paySlips = [];
+                $total=0;
                 foreach ( $boletas as $boleta )
                 {
                     array_push($paySlips, [
@@ -3725,7 +3734,14 @@ class AssistanceController extends Controller
                         "trabajador" => $boleta->nombre,
                         "monto" => $boleta->totalNetoPagar
                     ]);
+                    $total = $total + $boleta->totalNetoPagar;
                 }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
 
                 array_push($weeks, [
                     "week" => $i,
