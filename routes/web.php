@@ -2114,6 +2114,35 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_expense');
         Route::get('/descargar/excel/rendicion/gastos/', 'ExpenseController@downloadExpenses')
             ->middleware('permission:report_expense');
+
+        // Bonos Especiales
+        Route::get('/all/bonus', 'SpecialBonusController@getAllBonus')
+            ->middleware('permission:list_bonusRisk');
+        Route::get('bonos/especiales', 'SpecialBonusController@index')
+            ->name('bonusRisk.index')
+            ->middleware('permission:list_bonusRisk');
+        Route::get('crear/bono/especial', 'SpecialBonusController@create')
+            ->name('bonusRisk.create')
+            ->middleware('permission:create_bonusRisk');
+        Route::post('bonusRisk/store', 'SpecialBonusController@store')
+            ->name('bonusRisk.store')
+            ->middleware('permission:create_bonusRisk');
+        Route::get('/editar/bono/especial/{id}', 'SpecialBonusController@edit')
+            ->name('bonusRisk.edit')
+            ->middleware('permission:edit_bonusRisk');
+        Route::post('bonusRisk/update', 'SpecialBonusController@update')
+            ->name('bonusRisk.update')
+            ->middleware('permission:edit_bonusRisk');
+        Route::post('bonusRisk/destroy', 'SpecialBonusController@destroy')
+            ->name('bonusRisk.destroy')
+            ->middleware('permission:destroy_bonusRisk');
+        Route::get('/reporte/bonos/especiales/', 'SpecialBonusController@report')
+            ->name('bonusRisk.report')
+            ->middleware('permission:report_bonusRisk');
+        Route::get('/generate/report/bonus/', 'SpecialBonusController@reportBonuses')
+            ->middleware('permission:report_bonusRisk');
+        Route::get('/descargar/excel/bonos/especiales/', 'SpecialBonusController@downloadBonuses')
+            ->middleware('permission:report_bonusRisk');
     });
 });
 

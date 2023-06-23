@@ -2225,6 +2225,44 @@
                                         </ul>
                                     </li>
                                 @endcan
+
+                                @can('enable_bonusRisk')
+                                    <li class="nav-item has-treeview @yield('openSpecialBonus')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Bonos especiales
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_bonusRisk')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('bonusRisk.index') }}" class="nav-link @yield('activeListBonus')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar bonos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_bonusRisk')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('bonusRisk.create') }}" class="nav-link @yield('activeCreateBonus')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Registrar bonos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('report_bonusRisk')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('bonusRisk.report') }}" class="nav-link @yield('activeReportBonus')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Reporte de bonos</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

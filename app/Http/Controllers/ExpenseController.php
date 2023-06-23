@@ -73,10 +73,12 @@ class ExpenseController extends Controller
         try {
 
             $expense = Expense::find($request->get('expense_id'));
+            $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_expense'));
 
             $expense->bill_id = $request->get('bill_id');
             $expense->date_expense = ($request->get('date_expense') != null || $request->get('date_expense') != '') ? Carbon::createFromFormat('d/m/Y', $request->get('date_expense')) : null;
             $expense->total =  ($request->get('total') == null || $request->get('total') == '') ? 0: $request->get('total');
+            $expense->week = $fecha->week;
             $expense->save();
 
             DB::commit();

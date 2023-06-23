@@ -406,7 +406,7 @@
                                 <td class="tg-0pky">H. AL 35%</td>
                                 <td class="tg-0pky" id="horasAl35">0.00</td>
                                 <td class="tg-0pky" id="montoHorasAl35">0.00</td>
-                                <td class="tg-0pky" colspan="6" rowspan="2" style="border-top-color: #ffffff;border-left-color: #ffffff;border-bottom-color: #ffffff"></td>
+                                <td class="tg-0pky" colspan="6" rowspan="3" style="border-top-color: #ffffff;border-left-color: #ffffff;border-bottom-color: #ffffff"></td>
                             </tr>
                             <tr>
                                 <td class="tg-0pky">H. AL 100%</td>
@@ -417,6 +417,11 @@
                                 <td class="tg-0pky">DOMINICAL</td>
                                 <td class="tg-0pky" id="dominical">0.00</td>
                                 <td class="tg-0pky" id="montoDominical">0.00</td>
+                            </tr>
+                            <tr>
+                                <td class="tg-0pky">BONO ESPECIAL</td>
+                                <td class="tg-0pky"></td>
+                                <td class="tg-0pky" id="montoBono">0.00</td>
                                 <td class="tg-0pky" rowspan="8" style="border-color: #ffffff"></td>
                                 <td class="tg-0pky" colspan="4" style="border: 1px solid black;">RESUMEN</td>
                                 <td class="tg-0pky" rowspan="8" style="border-top-color: #ffffff;border-bottom-color: #ffffff;border-left-color: #ffffff"></td>
