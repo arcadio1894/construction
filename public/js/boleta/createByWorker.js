@@ -402,6 +402,7 @@ function generateBoletaWorker() {
             $("#montoHorasAl100").html(data.montoHorasAl100);
             $("#dominical").html(data.dominical);
             $("#montoDominical").html(data.montoDominical);
+            $("#montoBono").html(data.montoBonus);
             $("#vacaciones").html(data.vacaciones);
             $("#montoVacaciones").html(data.montoVacaciones);
             $("#totalIngresos1").html(data.totalIngresos);

@@ -18,6 +18,7 @@ use App\PaySlip;
 use App\PensionSystem;
 use App\PercentageWorker;
 use App\Refund;
+use App\SpecialBonus;
 use App\Suspension;
 use App\Vacation;
 use App\Worker;
@@ -182,6 +183,7 @@ class BoletaController extends Controller
                     'montoHorasAl100' => $info['montoHorasAl100'],
                     'dominical' => $info['dominical'],
                     'montoDominical' => $info['montoDominical'],
+                    'montoBonus' => $info['montoBonus'],
                     'vacaciones' => $info['vacaciones'],
                     'montoVacaciones' => $info['montoVacaciones'],
                     'reintegro' => $info['reintegro'],
@@ -224,6 +226,7 @@ class BoletaController extends Controller
                     'montoHorasAl100' => $info['montoHorasAl100'],
                     'dominical' => $info['dominical'],
                     'montoDominical' => $info['montoDominical'],
+                    'montoBonus' => $info['montoBonus'],
                     'vacaciones' => $info['vacaciones'],
                     'montoVacaciones' => $info['montoVacaciones'],
                     'reintegro' => $info['reintegro'],
@@ -438,7 +441,7 @@ class BoletaController extends Controller
             $cargo = ( $worker->work_function_id == null ) ? 'Sin cargo': $worker->work_function->description;
 
             // Ingresos
-            $pagoXDia = $worker->daily_salary;
+            $pagoXDia = ($worker->daily_salary == null) ? 0 : $worker->daily_salary;
             $horasXDia = 8;
             $diasMes = 30;
             $horasSemanales = 48;
@@ -461,6 +464,8 @@ class BoletaController extends Controller
             $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
             $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
 
+            $amountBonus = $this->getBonusByWorker($worker_id, $start, $end);
+
             $daysVacation = $this->getVacationByWorker($worker_id, $start, $end);
             $vacaciones = $daysVacation*$horasXDia;
             $montoVacaciones = round($daysVacation*$horasXDia*$pagoXHora, 2);
@@ -471,17 +476,17 @@ class BoletaController extends Controller
             $amountGratification = $this->getGratificationByWorker($worker_id, $start, $end);
             $gratificaciones = round($amountGratification, 2);
 
-            $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones, 2);
+            $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones, 2);
 
             // Descuento
             $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
             $sistemaPension = ($worker->pension_system_id == null) ? 'No tiene': $systemPension->description;
-            $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+            $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
 
             $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker_id, $start, $end);
             $rentaQuintaCat = round($amountRentaQuintaCat, 2);
 
-            $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones - $montoSistemaPension - $rentaQuintaCat)*($worker->pension/100) , 2);
+            $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones - $montoSistemaPension - $rentaQuintaCat)*($worker->pension/100) , 2);
 
             $amountLoan = $this->getLoanByWorker($worker_id, $start, $end);
             $prestamo = round($amountLoan, 2);
@@ -493,7 +498,7 @@ class BoletaController extends Controller
 
             // Aporte
             $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
-            $essalud = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $montoVacaciones + $reintegro + $gratificaciones)*($percentageEssalud->value/100), 2);
+            $essalud = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones)*($percentageEssalud->value/100), 2);
 
             $totalNetoPagar = round($totalIngresos - $totalDescuentos, 2) ;
 
@@ -522,6 +527,7 @@ class BoletaController extends Controller
                 'montoHorasAl100' => $montoHorasAl100,
                 'dominical' => $dominical,
                 'montoDominical' => $montoDominical,
+                'montoBonus' => $amountBonus,
                 'vacaciones' => $vacaciones,
                 'montoVacaciones' => $montoVacaciones,
                 'reintegro' => $reintegro,
@@ -646,6 +652,37 @@ class BoletaController extends Controller
                 'essalud_m' => $ESSALUD,
             ], 200);
         }
+    }
+
+    public function getBonusByWorker($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountBonus = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $specialBonuses = SpecialBonus::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($specialBonuses) )
+            {
+                foreach ( $specialBonuses as $bonus )
+                {
+                    $amountBonus+=$bonus->amount;
+                }
+            }
+        }
+
+        return $amountBonus;
     }
 
     public function getDiscountByWorker($worker_id, $start, $end)

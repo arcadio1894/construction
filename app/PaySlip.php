@@ -29,6 +29,7 @@ class PaySlip extends Model
         'montoHorasAl100',
         'dominical',
         'montoDominical',
+        'montoBonus',
         'vacaciones',
         'montoVacaciones',
         'reintegro',

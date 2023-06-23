@@ -146,7 +146,7 @@
         <td class="tg-0pky">H. AL 35%</td>
         <td class="tg-0pky numbers" id="horasAl35">{{ $boleta->horasAl35 }}</td>
         <td class="tg-0pky numbers" id="montoHorasAl35">{{ $boleta->montoHorasAl35 }}</td>
-        <td class="tg-0pky" colspan="6" rowspan="2" style="border-top-color: #ffffff;border-left-color: #ffffff;border-bottom-color: #ffffff"></td>
+        <td class="tg-0pky" colspan="6" rowspan="3" style="border-top-color: #ffffff;border-left-color: #ffffff;border-bottom-color: #ffffff"></td>
     </tr>
     <tr>
         <td class="tg-0pky">H. AL 100%</td>
@@ -157,6 +157,14 @@
         <td class="tg-0pky">DOMINICAL</td>
         <td class="tg-0pky numbers" id="dominical">{{ $boleta->dominical }}</td>
         <td class="tg-0pky numbers" id="montoDominical">{{ $boleta->montoDominical }}</td>
+        {{--<td class="tg-0pky" rowspan="8" style="border-color: #ffffff"></td>
+        <td class="tg-0pky" colspan="4" style="border: 1px solid black;">RESUMEN</td>
+        <td class="tg-0pky" rowspan="8" style="border-top-color: #ffffff;border-bottom-color: #ffffff;border-left-color: #ffffff"></td>--}}
+    </tr>
+    <tr>
+        <td class="tg-0pky">BONO ESPECIAL</td>
+        <td class="tg-0pky"></td>
+        <td class="tg-0pky numbers" id="montoBono">{{ $boleta->montoBonus }}</td>
         <td class="tg-0pky" rowspan="8" style="border-color: #ffffff"></td>
         <td class="tg-0pky" colspan="4" style="border: 1px solid black;">RESUMEN</td>
         <td class="tg-0pky" rowspan="8" style="border-top-color: #ffffff;border-bottom-color: #ffffff;border-left-color: #ffffff"></td>
