@@ -904,7 +904,7 @@ class BoletaController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )

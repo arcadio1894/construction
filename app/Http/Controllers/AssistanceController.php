@@ -167,7 +167,7 @@ class AssistanceController extends Controller
                             'worker_id' => $worker->id,
                             'assistance_id' => $assistance2->id,
                             'working_day_id' => $workingDay->id,
-                            'status' => 'P'
+                            'status' => 'L'
                         ]);
                     } elseif ( count($permits) > 0 ) {
                         AssistanceDetail::create([
@@ -356,6 +356,7 @@ class AssistanceController extends Controller
             $cantP = 0;
             $cantT = 0;
             $cantH = 0;
+            $cantL = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -403,6 +404,10 @@ class AssistanceController extends Controller
                         $color = '#001f3f';
                         $estado = 'H';
                         $cantH = $cantH + 1;
+                    } elseif ( $assistance_detail->status == 'L' ){
+                        $color = '#42F1CC';
+                        $estado = 'L';
+                        $cantL = $cantL + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
@@ -448,7 +453,8 @@ class AssistanceController extends Controller
                 'cantV' => $cantV,
                 'cantP' => $cantP,
                 'cantT' => $cantT,
-                'cantH' => $cantH
+                'cantH' => $cantH,
+                'cantL' => $cantL
             ]);
         }
 
@@ -516,6 +522,7 @@ class AssistanceController extends Controller
         $cantP = 0;
         $cantT = 0;
         $cantH = 0;
+        $cantL = 0;
 
         foreach ( $workers as $worker)
         {
@@ -529,6 +536,7 @@ class AssistanceController extends Controller
             $cantP = 0;
             $cantT = 0;
             $cantH = 0;
+            $cantL = 0;
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -575,6 +583,10 @@ class AssistanceController extends Controller
                         $color = '#001f3f';
                         $estado = 'H';
                         $cantH = $cantH + 1;
+                    } elseif ( $assistance_detail->status == 'L' ){
+                        $color = '#42F1CC';
+                        $estado = 'L';
+                        $cantL = $cantL + 1;
                     } elseif ( $assistance_detail->status == 'T' ){
                         $color = '#6610f2';
                         $estado = 'T';
@@ -620,7 +632,8 @@ class AssistanceController extends Controller
                 'cantV' => $cantV,
                 'cantP' => $cantP,
                 'cantT' => $cantT,
-                'cantH' => $cantH
+                'cantH' => $cantH,
+                'cantL' => $cantL
             ]);
         }
 
@@ -658,6 +671,7 @@ class AssistanceController extends Controller
         $cantP = 0;
         $cantT = 0;
         $cantH = 0;
+        $cantL = 0;
 
         foreach ( $workers as $worker)
         {
@@ -671,6 +685,7 @@ class AssistanceController extends Controller
             $cantP = 0;
             $cantT = 0;
             $cantH = 0;
+            $cantL = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -722,6 +737,10 @@ class AssistanceController extends Controller
                         $color = '#6610f2';
                         $estado = 'H';
                         $cantH = $cantH + 1;
+                    } elseif ( $assistance_detail->status == 'L' ){
+                        $color = '#42F1CC';
+                        $estado = 'L';
+                        $cantL = $cantL + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -763,7 +782,8 @@ class AssistanceController extends Controller
                 'cantV' => $cantV,
                 'cantP' => $cantP,
                 'cantT' => $cantT,
-                'cantH' => $cantH
+                'cantH' => $cantH,
+                'cantL' => $cantL
             ]);
         }
 
@@ -921,7 +941,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1285,7 +1305,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1628,7 +1648,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1940,7 +1960,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2357,7 +2377,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F'])
+                    ->whereNotIn('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2539,7 +2559,7 @@ class AssistanceController extends Controller
                                     $hours100+$hoursOrdinary,
                                     0,
                                 ]);
-                            } elseif ( $assistance_detail->status == 'F' ) {
+                            } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
                                 $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                                 $hoursOrdinary = 0;
@@ -2788,7 +2808,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->where('status', '<>', 'S')
+                    ->whereNotInt('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -3198,7 +3218,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotInt('status', ['S', 'F'])
+                    ->whereNotInt('status', ['S', 'F', 'P'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )

@@ -208,6 +208,8 @@ function renderTemplateAssistances( arrayAssistances, arrayWeekWithDays, id_tab,
         clone4.querySelector("[data-cantv]").innerHTML = arraySummary[t]['cantV'];
         clone4.querySelector("[data-cantp]").innerHTML = arraySummary[t]['cantP'];
         clone4.querySelector("[data-cants]").innerHTML = arraySummary[t]['cantS'];
+        clone4.querySelector("[data-canth]").innerHTML = arraySummary[t]['cantH'];
+        clone4.querySelector("[data-cantl]").innerHTML = arraySummary[t]['cantL'];
         bodySummary.append(clone4);
     }
 }

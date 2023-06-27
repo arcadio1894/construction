@@ -220,7 +220,27 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-navy elevation-1">H</span>
 
+                <div class="info-box-content">
+                    <span class="info-box-number">FERIADO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon elevation-1" style="background-color: #42F1CC">L</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">LICENCIA</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
     </div>
     <div class="row">
 

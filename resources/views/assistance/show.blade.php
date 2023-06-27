@@ -182,7 +182,27 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-navy elevation-1">H</span>
 
+                <div class="info-box-content">
+                    <span class="info-box-number">FERIADO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon elevation-1" style="background-color: #42F1CC">L</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">LICENCIA</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
     </div>
     <div class="row">
         <div class="col-md-1">
@@ -311,6 +331,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIAS</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -327,6 +349,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -410,6 +434,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -426,6 +452,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -509,6 +537,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -525,6 +555,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -608,6 +640,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -624,6 +658,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -707,6 +743,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -723,6 +761,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -806,6 +846,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -822,6 +864,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -905,6 +949,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -921,6 +967,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -1004,6 +1052,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -1020,6 +1070,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -1103,6 +1155,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -1119,6 +1173,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -1202,6 +1258,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -1218,6 +1276,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -1301,6 +1361,8 @@
                                                             <th class="text-center">VACACIONES</th>
                                                             <th class="text-center">PERMISOS</th>
                                                             <th class="text-center">SUSPENSION</th>
+                                                            <th class="text-center">FERIADO</th>
+                                                            <th class="text-center">LICENCIA</th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -1317,6 +1379,8 @@
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                             </tr>
                                                         @endfor
                                                         </tbody>
@@ -1400,6 +1464,8 @@
                                                         <th class="text-center">VACACIONES</th>
                                                         <th class="text-center">PERMISOS</th>
                                                         <th class="text-center">SUSPENSION</th>
+                                                        <th class="text-center">FERIADO</th>
+                                                        <th class="text-center">LICENCIA</th>
                                                     </tr>
                                                     </thead>
                                                     <tbody>
@@ -1416,6 +1482,8 @@
                                                             <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                                             <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                                             <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                                            <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                                                         </tr>
                                                     @endfor
                                                     </tbody>
@@ -1496,6 +1564,8 @@
                             <th class="text-center">VACACIONES</th>
                             <th class="text-center">PERMISOS</th>
                             <th class="text-center">SUSPENSION</th>
+                            <th class="text-center">FERIADO</th>
+                            <th class="text-center">LICENCIA</th>
                         </tr>
                         </thead>
                         <tbody data-bodySummary>
@@ -1512,6 +1582,8 @@
                                 <td class="text-center">{{ $arraySummary[$t]['cantV'] }}</td>
                                 <td class="text-center">{{ $arraySummary[$t]['cantP'] }}</td>
                                 <td class="text-center">{{ $arraySummary[$t]['cantS'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantH'] }}</td>
+                                <td class="text-center">{{ $arraySummary[$t]['cantL'] }}</td>
                             </tr>
                         @endfor
                         </tbody>
@@ -1559,6 +1631,8 @@
             <td class="text-center" data-cantv></td>
             <td class="text-center" data-cantp></td>
             <td class="text-center" data-cants></td>
+            <td class="text-center" data-canth></td>
+            <td class="text-center" data-cantl></td>
         </tr>
     </template>
 

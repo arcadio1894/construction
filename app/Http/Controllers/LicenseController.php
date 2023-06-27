@@ -91,7 +91,7 @@ class LicenseController extends Controller
                             $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
                             $assistanceDetail->hour_entry = $workingDay->time_start;
                             $assistanceDetail->hour_out = $workingDay->time_fin;
-                            $assistanceDetail->status = 'P';
+                            $assistanceDetail->status = 'L';
                             $assistanceDetail->justification = null;
                             $assistanceDetail->obs_justification = null;
                             $assistanceDetail->working_day_id = $workingDay->id;
@@ -195,7 +195,7 @@ class LicenseController extends Controller
                             $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
                             $assistanceDetail->hour_entry = $workingDay->time_start;
                             $assistanceDetail->hour_out = $workingDay->time_fin;
-                            $assistanceDetail->status = 'P';
+                            $assistanceDetail->status = 'L';
                             $assistanceDetail->justification = null;
                             $assistanceDetail->obs_justification = null;
                             $assistanceDetail->working_day_id = $workingDay->id;
