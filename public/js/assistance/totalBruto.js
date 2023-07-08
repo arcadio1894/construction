@@ -19,7 +19,7 @@ $(document).ready(function () {
         console.log(year);
         if ( year != null || year != undefined )
         {
-            $.get( "/dashboard/get/weeks/total/pays/"+year, function( data ) {
+            $.get( "/dashboard/get/weeks/total/bruto/"+year, function( data ) {
                 $selectWeekStart.append($("<option>", {
                     value: '',
                     text: ''
@@ -107,7 +107,7 @@ function downloadExcelTotalDiary() {
             animation: 'zoom',
             type: 'green',
             title: 'No especificó fechas',
-            content: 'Si no hay fechas se descargarán el total a pagar de todo el año',
+            content: 'Si no hay fechas se descargarán el total de horas de todo el año',
             buttons: {
                 confirm: {
                     text: 'DESCARGAR',
@@ -197,8 +197,8 @@ function downloadExcelTotalDiary() {
             closeIcon: true,
             animation: 'zoom',
             type: 'green',
-            title: 'Descargar total a pagar desde '+start+' hasta '+end,
-            content: 'Se descargarán el total a pagar desde la fecha indicada',
+            title: 'Descargar total horas desde '+start+' hasta '+end,
+            content: 'Se descargarán el total de horas desde la fecha indicada',
             buttons: {
                 confirm: {
                     text: 'DESCARGAR',
@@ -369,7 +369,7 @@ function searchTotalPays() {
                         };
 
                         $.ajax({
-                            url: "/dashboard/get/total/pays/by/year/week/?"  + $.param(query),
+                            url: "/dashboard/get/total/bruto/by/year/week/?"  + $.param(query),
                             type: 'GET',
                             dataType: 'json',
                             success: function (json) {
@@ -409,7 +409,7 @@ function searchTotalPays() {
             closeIcon: true,
             animation: 'zoom',
             type: 'green',
-            title: 'Buscar pagos desde la SEM '+weekStart+' hasta la SEM'+weekEnd,
+            title: 'Buscar pagos desde la SEM '+weekStart+' hasta la SEM '+weekEnd,
             content: 'Se buscarán los pagos desde la semana indicada',
             buttons: {
                 confirm: {
@@ -427,7 +427,7 @@ function searchTotalPays() {
                         };
 
                         $.ajax({
-                            url: "/dashboard/get/total/pays/by/year/week/?"  + $.param(query),
+                            url: "/dashboard/get/total/bruto/by/year/week/?"  + $.param(query),
                             type: 'GET',
                             dataType: 'json',
                             success: function (json) {

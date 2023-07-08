@@ -1580,6 +1580,14 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/get/total/pays/by/year/week/', 'AssistanceController@getTotalPaysByYearWeek');
 
+        // TODO: Total Bruto
+        Route::get('/ver/total/bruto', 'AssistanceController@showTotalBruto')
+            ->name('assistance.show.total.bruto');
+
+        Route::get('/get/weeks/total/bruto/{year}', 'AssistanceController@getWeeksTotalBrutoByYear');
+
+        Route::get('/get/total/bruto/by/year/week/', 'AssistanceController@getTotalBrutoByYearWeek');
+
 
         // CRUD Descanso Medico
         Route::get('/all/medical/rests', 'MedicalRestController@getAllMedicalRest')

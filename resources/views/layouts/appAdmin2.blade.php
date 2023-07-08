@@ -1835,7 +1835,15 @@
                                 <li class="nav-item">
                                     <a href="{{ route('assistance.show.total.pays') }}" class="nav-link @yield('activeReportTotalPays')">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Total a Pagar</p>
+                                        <p>Total Neto</p>
+                                    </a>
+                                </li>
+                            @endcan
+                            @can('totalBruto_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show.total.bruto') }}" class="nav-link @yield('activeReportTotalBruto')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Total Bruto</p>
                                     </a>
                                 </li>
                             @endcan
