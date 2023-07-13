@@ -3712,9 +3712,9 @@ class AssistanceController extends Controller
                     array_push($paySlips, [
                         "codigo" => $boleta->codigo,
                         "trabajador" => $boleta->nombre,
-                        "monto" => $boleta->totalNetoPagar
+                        "monto" => round($boleta->totalNetoPagar, 2)
                     ]);
-                    $total = $total + $boleta->totalNetoPagar;
+                    $total = $total + round($boleta->totalNetoPagar, 2);
                 }
 
                 array_push($paySlips, [
@@ -3870,9 +3870,9 @@ class AssistanceController extends Controller
                     array_push($paySlips, [
                         "codigo" => $boleta->codigo,
                         "trabajador" => $boleta->nombre,
-                        "monto" => $boleta->totalIngresos+$boleta->totalDescuentos
+                        "monto" => round($boleta->totalIngresos+$boleta->totalDescuentos,2)
                     ]);
-                    $total = $total + $boleta->totalIngresos+$boleta->totalDescuentos;
+                    $total = $total + round($boleta->totalIngresos+$boleta->totalDescuentos,2);
                 }
 
                 array_push($paySlips, [
