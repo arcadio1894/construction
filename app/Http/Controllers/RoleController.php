@@ -83,7 +83,9 @@ class RoleController extends Controller
         'orderPurchaseFinance' => 'ORDENES DE COMPRA FINANZAS',
         'bill' => 'TIPOS DE PAGO',
         'expense' => 'RENDICIÓN DE CUENTAS',
-        'bonusRisk' => 'BONOS ESPECIALES'
+        'bonusRisk' => 'BONOS ESPECIALES',
+        'personalPayments' => 'PAGO AL PERSONAL',
+        'projection' => 'PROYECCION DE SUELDOS'
     ];
 
     public function index()
