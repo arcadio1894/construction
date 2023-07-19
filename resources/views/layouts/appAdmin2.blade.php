@@ -2491,6 +2491,27 @@
                             </ul>
                         </li>
                     @endcan
+                    @can('enable_personalPayments')
+                        <li class="nav-item has-treeview @yield('openPersonalPayments')">
+                            <a href="#" class="nav-link @yield('activePersonalPayments')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Pagos al Personal
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_personalPayments')
+                                    <li class="nav-item">
+                                        <a href="{{ route('personal.payments.index') }}" class="nav-link @yield('activeListPersonalPayments')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar pagos</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
                     @can('enable_credit')
                     <li class="nav-header">CRÉDITOS</li>
                     <li class="nav-item has-treeview @yield('openCredit')">
@@ -2513,6 +2534,7 @@
                         @endcan
                     </li>
                     @endcan
+
                     {{--@canany('list_report')
                         <li class="nav-header">REPORTES</li>
                     @endcanany

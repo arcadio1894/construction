@@ -2151,6 +2151,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_bonusRisk');
         Route::get('/descargar/excel/bonos/especiales/', 'SpecialBonusController@downloadBonuses')
             ->middleware('permission:report_bonusRisk');
+
+        // TODO: Rutas de pago al personal
+        Route::get('/personal/payments', 'PersonalPaymentController@getPersonalPaymentByMonth');
+        Route::get('/pagos/al/personal', 'PersonalPaymentController@index')
+            ->name('personal.payments.index')
+            ->middleware('permission:list_personalPayments');
     });
 });
 

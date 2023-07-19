@@ -3643,7 +3643,10 @@ class AssistanceController extends Controller
 
         $years = DateDimension::distinct()->get(['year']);
 
-        $semanas = DateDimension::distinct()->get(['week']);
+        $semanas = DateDimension::distinct()
+            ->where('year', $currentYear)
+            ->orderBy('week')
+            ->get(['week']);
 
         $weeks = [];
 
@@ -3801,7 +3804,10 @@ class AssistanceController extends Controller
 
         $years = DateDimension::distinct()->get(['year']);
 
-        $semanas = DateDimension::distinct()->get(['week']);
+        $semanas = DateDimension::distinct()
+            ->where('year', $currentYear)
+            ->orderBy('week')
+            ->get(['week']);
 
         $weeks = [];
 
