@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\DateDimension;
 use App\PaySlip;
+use App\Projection;
+use App\ProjectionDetail;
 use App\User;
 use App\Worker;
 use Carbon\Carbon;
@@ -237,7 +239,40 @@ class PersonalPaymentController extends Controller
 
         //dump($personalPayments);
 
-        return $personalPayments;
+        $projection = Projection::with('details')
+            ->where('year', $year)
+            ->where('month', $month)->first();
+
+        $personalProjections = [];
+        $projection_month_dollars = 0;
+        $projection_month_soles = 0;
+        $projection_week_dollars = 0;
+        $projection_week_soles = 0;
+        if ( isset($projection) )
+        {
+            $projection_month_dollars = $projection->projection_month_dollars;
+            $projection_month_soles = $projection->projection_month_soles;
+            $projection_week_dollars = $projection->projection_week_dollars;
+            $projection_week_soles = $projection->projection_week_soles;
+            foreach ( $projection->details as $detail )
+            {
+                array_push($personalProjections, [
+                    "codigo" => $detail->worker->id,
+                    "trabajador" => $detail->worker->first_name. " ". $detail->worker->last_name,
+                    "sueldo" => ($detail->salary == null) ? 0:$detail->salary
+                ]);
+            }
+        }
+
+
+        return response()->json([
+            'personalPayments' => $personalPayments,
+            'projections' => $personalProjections,
+            'projection_dollars' => $projection_month_dollars,
+            'projection_soles' => $projection_month_soles,
+            'projection_week_soles' => $projection_week_soles,
+            'projection_week_dollars' => $projection_week_dollars
+        ]);
 
     }
 

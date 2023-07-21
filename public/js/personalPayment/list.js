@@ -19,16 +19,27 @@ function reportPersonalPayment() {
         month: month
     };
 
-    var proyectadoDolares = 10000; // Valor proyectado en dólares
-    var proyectadoSoles = 30000; // Valor proyectado en soles
+
 
     // Realizar la petición $.get para obtener los datos del servidor
-    $.get("/dashboard/personal/payments", params, function(data) {
+    $.get("/dashboard/personal/payments", params, function(response) {
+        //console.log(data);
+        var data = response.personalPayments;
+        var data2 = response.projections;
+        var proyectadoDolares = response.projection_dollars; // Valor proyectado en dólares
+        var proyectadoSoles = response.projection_soles; // Valor proyectado en soles
+        var proyectadoSemanalDolares = response.projection_week_dollars; // Valor proyectado en dólares
+        var proyectadoSemanalSoles = response.projection_week_soles; // Valor proyectado en soles
+
         console.log(data);
+        console.log(parseFloat(proyectadoDolares).toFixed(2));
+        console.log(proyectadoSoles);
+
         $("#titleCard").html("<strong>PAGO DE PERSONAL - " + monthName.toUpperCase()+"<strong>");
         // data ya será un objeto JavaScript (no es necesario parsearlo)
         // Construir la tabla dinámica
         $("#tablaContainer").html("");
+        $("#tablaContainer2").html("");
         var tabla = $("<table>").addClass("table table-sm table-bordered table-striped letraTabla");
 
         var headerRow = $("<tr>").addClass("letraTablaGrande");
@@ -58,7 +69,7 @@ function reportPersonalPayment() {
                 row.append($("<td>").addClass("celdas").addClass("text-right").text(week.monto.toFixed(2)));
             });
 
-            row.append($("<td>").addClass("totalWorker").addClass("text-right").text(trabajador.total.toFixed(2)));
+            row.append($("<td>").addClass("totalWorker").addClass("text-right").text(parseFloat(trabajador.total).toFixed(2)));
             tabla.append(row);
         }
 
@@ -83,7 +94,7 @@ function reportPersonalPayment() {
         // Tercera fila: PROYECTADO EN DOLARES
         var terceraFila = $("<tr>").addClass("totales");
         terceraFila.append($("<td>").addClass("text-right").attr("colspan", data[0].weeks.length+2).text("PROYECTADO EN DOLARES"));
-        terceraFila.append($("<td>").addClass("titleTotal").addClass("text-right").text(proyectadoDolares.toFixed(2)));
+        terceraFila.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoDolares).toFixed(2)));
         tabla.append(terceraFila);
 
         // Cuarta fila: DIFERENCIA EN DOLARES
@@ -95,7 +106,7 @@ function reportPersonalPayment() {
         // Quinta fila: PROYECTADO EN SOLES
         var quintaFila = $("<tr>").addClass("totales");
         quintaFila.append($("<td>").addClass("text-right").attr("colspan", data[0].weeks.length + 2).text("PROYECTADO EN SOLES"));
-        quintaFila.append($("<td>").addClass("titleTotal").addClass("text-right").text(proyectadoSoles.toFixed(2)));
+        quintaFila.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoSoles).toFixed(2)));
         tabla.append(quintaFila);
 
         // Sexta fila: DIFERENCIA EN SOLES
@@ -104,9 +115,61 @@ function reportPersonalPayment() {
         sextaFila.append($("<td>").addClass("titleTotal").addClass("text-right").text((proyectadoSoles - data[data.length - 1].total).toFixed(2)));
         tabla.append(sextaFila);
 
-
         $("#tablaContainer").append(tabla);
 
+        // Llenamos la tabla de proyecciones
+
+        $("#titleCard2").html("<strong>PROYECCIÓN PARA EL MES - " + monthName.toUpperCase()+"<strong>");
+        // data ya será un objeto JavaScript (no es necesario parsearlo)
+        // Construir la tabla dinámica
+        var tabla2 = $("<table>").addClass("table table-sm table-bordered table-striped letraTabla");
+
+        var headerRow2 = $("<tr>").addClass("letraTablaGrande");
+
+        // Encabezados de las columnas
+        headerRow2.append($("<th>").addClass("titleHeader").addClass("text-center").text("Trabajador"));
+
+        headerRow2.append($("<th>").addClass("titleTotal").addClass("text-center").text("Sueldo"));
+        tabla2.append(headerRow2);
+
+        // Iterar sobre cada trabajador para agregarlos a la tabla
+        for (var j = 0; j < data2.length; j++) {
+            var trabajador2 = data2[j];
+            var row2 = $("<tr>");
+
+            row2.append($("<td>").addClass("celdas").text(trabajador2.trabajador.toUpperCase()));
+
+            row2.append($("<td>").addClass("totalWorker").addClass("text-right").text(parseFloat(trabajador2.sueldo).toFixed(2)));
+            tabla2.append(row2);
+        }
+
+        // Agregar la primera fila con los montos en la moneda original
+        var primeraFila2 = $("<tr>").addClass("totales");
+        primeraFila2.append($("<td>").addClass("text-right").text("TOTAL PROYECCIÓN SOLES"));
+
+        primeraFila2.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoSoles).toFixed(2)));
+        tabla2.append(primeraFila2);
+
+        // Agregar la segunda fila con los montos en dólares
+        var segundaFila2 = $("<tr>").addClass("totales");
+        segundaFila2.append($("<td>").addClass("text-right").text("TOTAL PROYECCIÓN DÓLARES"));
+
+        segundaFila2.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoDolares).toFixed(2)));
+        tabla2.append(segundaFila2);
+
+        // Tercera fila: PROYECTADO EN DOLARES
+        var terceraFila2 = $("<tr>").addClass("totales");
+        terceraFila2.append($("<td>").addClass("text-right").text("MONTO ESTIMADO SEMANAL EN SOLES"));
+        terceraFila2.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoSemanalSoles).toFixed(2)));
+        tabla2.append(terceraFila2);
+
+        // Cuarta fila: DIFERENCIA EN DOLARES
+        var cuartaFila2 = $("<tr>").addClass("totales");
+        cuartaFila2.append($("<td>").addClass("text-right").text("MONTO ESTIMADO SEMANAL EN DOLARES"));
+        cuartaFila2.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(proyectadoSemanalDolares).toFixed(2)));
+        tabla2.append(cuartaFila2);
+
+        $("#tablaContainer2").append(tabla2);
 
     });
 

@@ -136,9 +136,9 @@
         </div>
 
         <div class="col-md-6">
-            <div class="card card-primary">
+            <div class="card card-navy">
                 <div class="card-header">
-                    <h3 class="card-title">PROYECCIÓN PARA EL MES ACTUAL</h3>
+                    <h3 class="card-title" id="titleCard2"><strong>PROYECCIÓN PARA EL MES</strong></h3>
 
                     <div class="card-tools">
 
@@ -147,6 +147,9 @@
                     </div>
                 </div>
                 <div class="card-body" >
+                    <div class="table-responsive" id="tablaContainer2" >
+
+                    </div>
                 </div>
             </div>
         </div>
