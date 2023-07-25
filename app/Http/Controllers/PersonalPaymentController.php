@@ -307,6 +307,12 @@ class PersonalPaymentController extends Controller
             ->orderBy('month')
             ->get();
 
+        // Obtener la suma total del campo 'total'
+        $sumaTotal = $sueldosMensuales->sum('total');
+
+        // Obtener el promedio de la columna 'total'
+        $promedioTotal = $sueldosMensuales->avg('total');
+
         return response()->json([
             'personalPayments' => $personalPayments,
             'projections' => $personalProjections,
@@ -314,7 +320,9 @@ class PersonalPaymentController extends Controller
             'projection_soles' => $projection_month_soles,
             'projection_week_soles' => $projection_week_soles,
             'projection_week_dollars' => $projection_week_dollars,
-            'sueldosMensuales' => $sueldosMensuales
+            'sueldosMensuales' => $sueldosMensuales,
+            'sueldosMensualTotal' => $sumaTotal,
+            'sueldosMensualPromedio' => $promedioTotal
         ]);
 
     }

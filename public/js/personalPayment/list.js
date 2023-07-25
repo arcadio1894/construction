@@ -26,6 +26,7 @@ function reportPersonalPayment() {
         //console.log(data);
         var data = response.personalPayments;
         var data2 = response.projections;
+        var data3 = response.sueldosMensuales;
         var proyectadoDolares = response.projection_dollars; // Valor proyectado en dólares
         var proyectadoSoles = response.projection_soles; // Valor proyectado en soles
         var proyectadoSemanalDolares = response.projection_week_dollars; // Valor proyectado en dólares
@@ -40,6 +41,7 @@ function reportPersonalPayment() {
         // Construir la tabla dinámica
         $("#tablaContainer").html("");
         $("#tablaContainer2").html("");
+        $("#tablaContainer3").html("");
         var tabla = $("<table>").addClass("table table-sm table-bordered table-striped letraTabla");
 
         var headerRow = $("<tr>").addClass("letraTablaGrande");
@@ -170,6 +172,83 @@ function reportPersonalPayment() {
         tabla2.append(cuartaFila2);
 
         $("#tablaContainer2").append(tabla2);
+
+        // Llenamos la tabla resumen
+        // Construir la tabla dinámica
+        var tabla3 = $("<table>").addClass("table table-sm table-bordered table-striped letraTabla");
+
+        var headerRow3 = $("<tr>").addClass("letraTablaGrande");
+
+        // Encabezados de las columnas
+        headerRow3.append($("<th>").addClass("titleHeader").addClass("text-center").text("Mes"));
+
+        headerRow3.append($("<th>").addClass("titleTotal").addClass("text-center").text("Total"));
+        tabla3.append(headerRow3);
+
+        // Iterar sobre cada trabajador para agregarlos a la tabla
+        for (var k = 0; k < data3.length; k++) {
+            var trabajador3 = data3[k];
+            var row3 = $("<tr>");
+
+            row3.append($("<td>").addClass("celdas").text(trabajador3.nameMonth.toUpperCase()));
+
+            row3.append($("<td>").addClass("totalWorker").addClass("text-right").text(parseFloat(trabajador3.total).toFixed(2)));
+            tabla3.append(row3);
+        }
+
+        // Agregar la primera fila con los montos en la moneda original
+        var primeraFila3 = $("<tr>").addClass("totales");
+        primeraFila3.append($("<td>").addClass("text-right").text("TOTAL EN DOLARES"));
+
+        primeraFila3.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(response.sueldosMensualTotal).toFixed(2)));
+        tabla3.append(primeraFila3);
+
+        // Agregar la segunda fila con los montos en dólares
+        var segundaFila3 = $("<tr>").addClass("totales");
+        segundaFila3.append($("<td>").addClass("text-right").text("PROMEDIO EN DOLARES"));
+
+        segundaFila3.append($("<td>").addClass("titleTotal").addClass("text-right").text(parseFloat(response.sueldosMensualPromedio).toFixed(2)));
+        tabla3.append(segundaFila3);
+
+        $("#tablaContainer3").append(tabla3);
+
+        // Creamos el grafico
+        // Preparar los datos en el formato adecuado para el gráfico de líneas
+        var labels = response.sueldosMensuales.map(function(item) {
+            return item.shortName;
+        });
+
+        var datos = response.sueldosMensuales.map(function(item) {
+            return item.total;
+        });
+
+        // Configurar y dibujar el gráfico
+        var ctx = document.getElementById('lineChart').getContext('2d');
+        var lineChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Total',
+                    data: datos,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderWidth: 2,
+                    pointRadius: 5,
+                    pointHoverRadius: 7,
+                    fill: true,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
 
     });
 

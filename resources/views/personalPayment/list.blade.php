@@ -115,7 +115,7 @@
     </div>
     <br>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card card-navy">
                 <div class="card-header">
                     <h3 class="card-title" id="titleCard"><strong>PAGO DE PERSONAL</strong></h3>
@@ -135,7 +135,7 @@
             </div>
         </div>
 
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card card-navy">
                 <div class="card-header">
                     <h3 class="card-title" id="titleCard2"><strong>PROYECCIÓN PARA EL MES</strong></h3>
@@ -150,6 +150,33 @@
                     <div class="table-responsive" id="tablaContainer2" >
 
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="card card-navy">
+                <div class="card-header">
+                    <h3 class="card-title" id="titleCard2"><strong>RESUMEN SUELDOS MENSUALES</strong></h3>
+
+                    <div class="card-tools">
+
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i></button>
+                    </div>
+                </div>
+                <div class="card-body" >
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="table-responsive" id="tablaContainer3" >
+
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <canvas id="lineChart"></canvas>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -208,6 +235,7 @@
 
     <script src="{{asset('admin/plugins/jquery_loading/loadingoverlay.min.js')}}"></script>
 
+    <script src="{{ asset('admin/plugins/chart.js/Chart.min.js') }}"></script>
 @endsection
 
 @section('scripts')
