@@ -1105,7 +1105,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start);
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -1128,7 +1141,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -1466,7 +1492,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -1489,7 +1528,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -1809,7 +1861,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -1832,7 +1897,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -2124,7 +2202,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -2146,7 +2237,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -2539,7 +2643,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
@@ -2561,7 +2678,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
@@ -2970,7 +3100,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -2992,7 +3135,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -3380,7 +3536,20 @@ class AssistanceController extends Controller
                             if ( $assistance_detail->status == 'A' )
                             {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){
@@ -3402,7 +3571,20 @@ class AssistanceController extends Controller
                                 ]);
                             } elseif ( $assistance_detail->status == 'H' ) {
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 $hoursOrdinary = 0;
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new> $workingDay->time_fin ){

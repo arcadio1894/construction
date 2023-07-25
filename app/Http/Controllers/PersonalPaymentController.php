@@ -6,6 +6,7 @@ use App\DateDimension;
 use App\PaySlip;
 use App\Projection;
 use App\ProjectionDetail;
+use App\SueldoMensual;
 use App\User;
 use App\Worker;
 use Carbon\Carbon;
@@ -14,6 +15,21 @@ use Illuminate\Support\Facades\Auth;
 
 class PersonalPaymentController extends Controller
 {
+    protected $monthsOfYear = [
+        ['month' => 1, 'nameMonth' => 'Enero', 'shortName' => 'ENE'],
+        ['month' => 2, 'nameMonth' => 'Febrero', 'shortName' => 'FEB'],
+        ['month' => 3, 'nameMonth' => 'Marzo', 'shortName' => 'MAR'],
+        ['month' => 4, 'nameMonth' => 'Abril', 'shortName' => 'ABR'],
+        ['month' => 5, 'nameMonth' => 'Mayo', 'shortName' => 'MAY'],
+        ['month' => 6, 'nameMonth' => 'Junio', 'shortName' => 'JUN'],
+        ['month' => 7, 'nameMonth' => 'Julio', 'shortName' => 'JUL'],
+        ['month' => 8, 'nameMonth' => 'Agosto', 'shortName' => 'AGO'],
+        ['month' => 9, 'nameMonth' => 'Setiembre', 'shortName' => 'SET'],
+        ['month' => 10, 'nameMonth' => 'Octubre', 'shortName' => 'OCT'],
+        ['month' => 11, 'nameMonth' => 'Noviembre', 'shortName' => 'NOV'],
+        ['month' => 12, 'nameMonth' => 'Diciembre', 'shortName' => 'DIC'],
+    ];
+
     public function index()
     {
         Carbon::setLocale(config('app.locale'));
@@ -264,6 +280,32 @@ class PersonalPaymentController extends Controller
             }
         }
 
+        $lastRow = $personalPayments[count($personalPayments)-1];
+        $foundMonth = collect($this->monthsOfYear)->firstWhere('month', $month);
+
+        // Creacion/Actualizacion de sueldos mensuales para el grafico
+        $sueldoMensual = SueldoMensual::where('year', $year)
+            ->where('month', $month)->first();
+
+        if ( isset($sueldoMensual) )
+        {
+            // Actualizamos
+            $sueldoMensual->total = $lastRow['totalDolares'];
+            $sueldoMensual->save();
+        } else {
+            // Creamos
+            $sueldoMensual = SueldoMensual::create([
+                'year' => $year,
+                'month' => $month,
+                'nameMonth' => $foundMonth['nameMonth'],
+                'shortName' => $foundMonth['shortName'],
+                'total' => $lastRow['totalDolares'],
+            ]);
+        }
+
+        $sueldosMensuales = SueldoMensual::where('year', $year)
+            ->orderBy('month')
+            ->get();
 
         return response()->json([
             'personalPayments' => $personalPayments,
@@ -271,7 +313,8 @@ class PersonalPaymentController extends Controller
             'projection_dollars' => $projection_month_dollars,
             'projection_soles' => $projection_month_soles,
             'projection_week_soles' => $projection_week_soles,
-            'projection_week_dollars' => $projection_week_dollars
+            'projection_week_dollars' => $projection_week_dollars,
+            'sueldosMensuales' => $sueldosMensuales
         ]);
 
     }
@@ -313,5 +356,198 @@ class PersonalPaymentController extends Controller
         } else {
             return null;
         }
+    }
+
+    public function getPersonalPaymentByYear($year)
+    {
+        $array = [];
+        $personalPayments = [];
+        for ( $month = 1; $month<=12; $month++ )
+        {
+            //TODO: Primero obtenemos las fechas de ese mes y año
+            $dates = DateDimension::where('year', $year)
+                ->where('month', $month)
+                ->orderBy('date', 'ASC')
+                ->get();
+
+            // TODO: Ahora recorremos las fechas para obtener las semanas y su cantidad de dias
+            $semanas = [];
+
+            foreach ( $dates as $date )
+            {
+                // Convierte la fecha en un objeto Carbon
+                $carbonDate = Carbon::parse($date->date);
+
+                // Obtén el número de la semana y el día de la semana actual
+                $numeroSemana = $carbonDate->weekOfYear;
+
+                // Si la semana no existe en el array, agrégala
+                if (!isset($semanas[$numeroSemana])) {
+                    $semanas[$numeroSemana] = ['semana' => $numeroSemana, 'dias' => 0];
+                }
+
+                // Incrementa la cantidad de días de la semana actual
+                $semanas[$numeroSemana]['dias']++;
+            }
+
+            $semanas = array_values($semanas);
+
+            foreach ($semanas as &$element) {
+                $semana = $element['semana'];
+
+                $fechaPrimerDia = Carbon::now()->setISODate(date('Y'), $semana)->startOfWeek();
+
+                // Verificar si el primer día de la semana pertenece al mes dado
+                if ($fechaPrimerDia->month == $month) {
+                    $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
+                } else {
+                    // En caso de que pertenezca a otro mes, obtener el primer día del mes dado
+                    $fechaPrimerDia = Carbon::createFromDate(date('Y'), $month, 1);
+                    $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
+                }
+            }
+
+            unset($element);
+
+            /*foreach ($semanas as &$element) {
+                $firstDayWeek = $element['firstDayWeek'];
+
+                // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
+                $rate = $this->getExchange($firstDayWeek); // Reemplaza getExchange() con el nombre de tu propia función
+                //dd($rate);
+                $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;
+                $element['cambioVenta'] = (isset($rate)) ? (float)$rate->venta:1;
+            }
+
+            unset($element);*/
+
+            //dump($semanas);
+
+            //dd()
+
+            $total = 0;
+            for ( $i=0; $i<count($semanas); $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boleta = PaySlip::where('year', $year)
+                    ->where('semana', $semanas[$i]['semana'])
+                    ->first();
+                if ( isset( $boleta ) )
+                {
+                    $total = $total + round((($boleta->totalIngresos+$boleta->totalDescuentos)/7)*$semanas[$i]['dias'],2);
+                } else {
+                    $total = $total + 0;
+                }
+            }
+            array_push($personalPayments, [
+                "month" => $month,
+                "total" => $total
+            ]);
+            /*
+
+
+
+
+            // Obtener la lista de semanas
+            $weeks = [];
+            foreach ($personalPayments as $element) {
+                foreach ($element['weeks'] as $week) {
+                    $weeks[$week['semana']] = 0;
+                }
+            }
+
+            // Calcular la suma de montos por semana
+            foreach ($personalPayments as $element) {
+                foreach ($element['weeks'] as $week) {
+                    $weeks[$week['semana']] += $week['monto'];
+                }
+            }
+
+            // Agregar la fila adicional con la suma de montos
+            $sumaTotal = array_sum($weeks);
+            $nuevaFila = [
+                "codigo" => null,
+                "trabajador" => null,
+                "weeks" => [],
+                "total" => $sumaTotal,
+            ];
+
+            //dump($personalPayments);
+
+            // Realizamos la conversión
+            $ultimaFila = end($personalPayments);
+
+            //dump($ultimaFila);
+
+            //dump($semanas);
+
+            foreach ($ultimaFila['weeks'] as &$semana) {
+                // Obtener el número de semana
+                $numeroSemana = $semana['semana'];
+
+                // Buscar el tipo de cambio correspondiente a la semana actual
+                $tipoCambio = null;
+                foreach ($semanas as $cambio) {
+                    if ($cambio['semana'] == $numeroSemana) {
+                        $tipoCambio = $cambio;
+                        break;
+                    }
+                }
+
+                // Verificar si se encontró el tipo de cambio
+                if ($tipoCambio) {
+                    // Obtener el monto original en soles
+                    $montoEnSoles = $semana['monto'];
+
+                    // Realizar la conversión a dólares utilizando el tipo de cambio de compra
+                    $montoEnDolares = $montoEnSoles / $tipoCambio['cambioCompra'];
+
+                    // Agregar el monto convertido después de 'monto'
+                    $semana['montoEnDolares'] = $montoEnDolares;
+                }
+            }
+
+            // Resultado final
+            //dump($ultimaFila);
+
+            $personalPayments[count($personalPayments) - 1] = $ultimaFila;
+
+            unset($semana);
+
+            //dump($personalPayments);
+
+            // Obtén la última fila del arreglo $personalPayments
+            $ultimaFila = end($personalPayments);
+
+            // Inicializa la variable para el total en dólares
+            $totalDolares = 0;
+
+            // Calcula el total en dólares sumando los montos en dólares de cada semana
+            foreach ($ultimaFila['weeks'] as $semana) {
+                $montoEnDolares = $semana['montoEnDolares'];
+                $totalDolares += $montoEnDolares;
+            }
+
+            // Agrega el total en dólares después del campo "total"
+            $ultimaFila['totalDolares'] = $totalDolares;
+
+            // Reemplaza la última fila del arreglo original con la fila modificada
+            $personalPayments[count($personalPayments) - 1] = $ultimaFila;
+
+            //dump($personalPayments);
+
+            $lastRow = $personalPayments[count($personalPayments)-1];
+            $foundMonth = collect($this->monthsOfYear)->firstWhere('month', $month);
+
+            array_push($array, [
+                "month" => $month,
+                "nameMonth" => $foundMonth['nameMonth'],
+                "shortName" => $foundMonth['shortName'],
+                "total" => $lastRow['totalDolares'],
+            ]);*/
+        }
+        dump($personalPayments);
+        dd();
     }
 }

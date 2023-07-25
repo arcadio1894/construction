@@ -2154,6 +2154,7 @@ Route::middleware('auth')->group(function (){
 
         // TODO: Rutas de pago al personal
         Route::get('/personal/payments', 'PersonalPaymentController@getPersonalPaymentByMonth');
+        Route::get('/personal/payments/year/{year}', 'PersonalPaymentController@getPersonalPaymentByYear');
         Route::get('/create/projections', 'ProjectionController@createProjections');
         Route::get('/pagos/al/personal', 'PersonalPaymentController@index')
             ->name('personal.payments.index')
