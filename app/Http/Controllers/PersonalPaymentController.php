@@ -116,7 +116,8 @@ class PersonalPaymentController extends Controller
 
         unset($element);
 
-        //dump($semanas);
+        dump($semanas);
+        dd();
 
         $workers = Worker::where('enable', 1)->where('id', '<>', 1)->get();
         $personalPayments = [];
