@@ -342,8 +342,9 @@ class PersonalPaymentController extends Controller
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha,
+                CURLOPT_URL => 'https://api.apis.net.pe/v2/sunat/tipo-cambio?date='.$fecha,
                 CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => 0,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 2,
                 CURLOPT_TIMEOUT => 0,
