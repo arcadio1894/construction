@@ -330,13 +330,14 @@ class PersonalPaymentController extends Controller
 
     public function getExchange($fecha)
     {
-        //dump($fecha);
+        dump($fecha);
         $date = Carbon::createFromFormat('Y-m-d', $fecha);
-        //dump($date);
+        dump($date);
         $dateCurrent = Carbon::now('America/Lima');
-        //dump($dateCurrent);
+        dump($dateCurrent);
         if ( $date->lessThan($dateCurrent) )
         {
+            dump('Entre');
             $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
             $curl = curl_init();
 
@@ -363,6 +364,7 @@ class PersonalPaymentController extends Controller
 
             return $tipoCambioSunat;
         } else {
+            dump('No entre');
             return null;
         }
     }
