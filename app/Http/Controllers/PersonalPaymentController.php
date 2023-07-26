@@ -110,8 +110,8 @@ class PersonalPaymentController extends Controller
             // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
             $rate = $this->getExchange($firstDayWeek); // Reemplaza getExchange() con el nombre de tu propia función
             dump($rate);
-            $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;
-            $element['cambioVenta'] = (isset($rate)) ? (float)$rate->venta:1;
+            $element['cambioCompra'] = (isset($rate)) ? (float)$rate->tipo_cambio:1;
+            $element['cambioVenta'] = (isset($rate)) ? (float)$rate->tipo_cambio:1;
         }
 
         unset($element);
@@ -332,9 +332,9 @@ class PersonalPaymentController extends Controller
     {
         dump($fecha);
         $date = Carbon::createFromFormat('Y-m-d', $fecha);
-        dump($date);
+        //dump($date);
         $dateCurrent = Carbon::now('America/Lima');
-        dump($dateCurrent);
+        //dump($dateCurrent);
         if ( $date->lessThan($dateCurrent) )
         {
             dump('Entre');
@@ -342,8 +342,11 @@ class PersonalPaymentController extends Controller
             $curl = curl_init();
 
             curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha,
+                CURLOPT_URL => 'https://api.apis.net.pe/v2/sunat/tipo-cambio?date=' . $fecha,
+                // para usar la api versión 1
+                // CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha=' . $fecha,
                 CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_SSL_VERIFYPEER => 0,
                 CURLOPT_ENCODING => '',
                 CURLOPT_MAXREDIRS => 2,
                 CURLOPT_TIMEOUT => 0,
