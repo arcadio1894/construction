@@ -109,7 +109,7 @@ class PersonalPaymentController extends Controller
 
             // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
             $rate = $this->getExchange($firstDayWeek); // Reemplaza getExchange() con el nombre de tu propia función
-            //dd($rate);
+            dump($rate);
             $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;
             $element['cambioVenta'] = (isset($rate)) ? (float)$rate->venta:1;
         }
