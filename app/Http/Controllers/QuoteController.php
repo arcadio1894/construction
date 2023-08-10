@@ -11,6 +11,7 @@ use App\EquipmentMaterial;
 use App\EquipmentTurnstile;
 use App\EquipmentWorkday;
 use App\EquipmentWorkforce;
+use App\FinanceWork;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
 use App\ImagesQuote;
@@ -1657,6 +1658,31 @@ class QuoteController extends Controller
         $quote->raise_status = true;
         $quote->save();
 
+        $financeWork = FinanceWork::where('quote_id', $quote->id)->first();
+
+        if ( !isset($financeWork) )
+        {
+            $financeWork = FinanceWork::create([
+                'quote_id' => $quote->id,
+                'raise_date' => Carbon::now('America/Lima'), // Cuando se eleva la cotizacion debe guardarse este dato
+                'date_delivery' => null,
+                'act_of_acceptance' => 'pending',
+                'state_act_of_acceptance' => null,
+                'advancement' => 'n',
+                'amount_advancement' => 0,
+                'detraction' => null,
+                'invoiced' => 'n',
+                'number_invoice' => null,
+                'month_invoice' => null,
+                'date_issue' => null,
+                'date_admission' => null,
+                'bank_id' => null,
+                'state' => 'pending',
+                'date_paid' => null,
+                'observation' => null
+            ]);
+        }
+
         $end = microtime(true) - $begin;
 
         Audit::create([
@@ -1834,6 +1860,14 @@ class QuoteController extends Controller
 
         $quote->state_active = 'close';
         $quote->save();
+
+        $financeWork = FinanceWork::where('quote_id', $quote->id)->first();
+
+        if ( isset($financeWork) )
+        {
+            $financeWork->date_delivery = Carbon::now('America/Lima');
+            $financeWork->save();
+        }
 
         DB::beginTransaction();
         try {

@@ -2512,6 +2512,27 @@
                             </ul>
                         </li>
                     @endcan
+                    @can('enable_financeWorks')
+                        <li class="nav-item has-treeview @yield('openFinanceWorks')">
+                            <a href="#" class="nav-link @yield('activeFinanceWorks')">
+                                <i class="nav-icon fas fa-credit-card"></i>
+                                <p>
+                                    Trabajos
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_financeWorks')
+                                    <li class="nav-item">
+                                        <a href="{{ route('finance.works.index') }}" class="nav-link @yield('activeListFinanceWorks')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar trabajos</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
                     @can('enable_credit')
                     <li class="nav-header">CRÉDITOS</li>
                     <li class="nav-item has-treeview @yield('openCredit')">

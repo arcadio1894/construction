@@ -2159,6 +2159,25 @@ Route::middleware('auth')->group(function (){
         Route::get('/pagos/al/personal', 'PersonalPaymentController@index')
             ->name('personal.payments.index')
             ->middleware('permission:list_personalPayments');
+
+        // TODO: Rutas de trabajos de finanzas
+        Route::get('/create/finance/works', 'FinanceWorkController@createFinanceWorks')
+            ->middleware('permission:list_financeWorks');
+        Route::get('/get/finance/works', 'FinanceWorkController@getFinanceWorks')
+            ->middleware('permission:list_financeWorks');
+        Route::get('/trabajos/finanzas', 'FinanceWorkController@index')
+            ->name('finance.works.index')
+            ->middleware('permission:list_financeWorks');
+        Route::get('/get/info/trabajo/finance/work/{financeWork_id}', 'FinanceWorkController@getInfoTrabajoFinanceWork')
+            ->middleware('permission:update_financeWorks');
+        Route::post('finance/work/edit/trabajo', 'FinanceWorkController@financeWorkEditTrabajo')
+            ->name('finance.work.edit.trabajo')
+            ->middleware('permission:update_financeWorks');
+        Route::get('/get/info/facturacion/finance/work/{financeWork_id}', 'FinanceWorkController@getInfoFacturacionFinanceWork')
+            ->middleware('permission:update_financeWorks');
+        Route::post('finance/work/edit/facturacion', 'FinanceWorkController@financeWorkEditFacturacion')
+            ->name('finance.work.edit.facturacion')
+            ->middleware('permission:update_financeWorks');
     });
 });
 

@@ -85,7 +85,8 @@ class RoleController extends Controller
         'expense' => 'RENDICIÓN DE CUENTAS',
         'bonusRisk' => 'BONOS ESPECIALES',
         'personalPayments' => 'PAGO AL PERSONAL',
-        'projection' => 'PROYECCION DE SUELDOS'
+        'projection' => 'PROYECCION DE SUELDOS',
+        'financeWorks' => 'TRABAJOS EN FINANZAS'
     ];
 
     public function index()
