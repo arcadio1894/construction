@@ -26,7 +26,7 @@ class FinanceWork extends Model
         'observation'
     ];
 
-    protected $dates = ['raise_date', 'date_issue', 'date_admission', 'date_paid'];
+    protected $dates = ['raise_date', 'date_issue', 'date_admission', 'date_paid', 'date_delivery'];
 
     public function quote()
     {
