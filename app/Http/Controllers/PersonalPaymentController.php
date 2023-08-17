@@ -58,6 +58,9 @@ class PersonalPaymentController extends Controller
         $year = $_GET["year"];
         $month = $_GET["month"];
 
+        $tiposCambios = $this->getTypeExchange($year, $month);
+
+
         //TODO: Primero obtenemos las fechas de ese mes y año
         $dates = DateDimension::where('year', $year)
             ->where('month', $month)
@@ -108,16 +111,12 @@ class PersonalPaymentController extends Controller
             $firstDayWeek = $element['firstDayWeek'];
 
             // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
-            $rate = $this->getExchange($firstDayWeek); // Reemplaza getExchange() con el nombre de tu propia función
-            //dd($rate);
+            $rate = $this->getExchange($firstDayWeek, $tiposCambios); // Reemplaza getExchange() con el nombre de tu propia función
             $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;
             $element['cambioVenta'] = (isset($rate)) ? (float)$rate->venta:1;
         }
 
         unset($element);
-
-        dump($semanas);
-        dd();
 
         $workers = Worker::where('enable', 1)->where('id', '<>', 1)->get();
         $personalPayments = [];
@@ -328,43 +327,67 @@ class PersonalPaymentController extends Controller
 
     }
 
-    public function getExchange($fecha)
+    public function getExchange($fecha, $tiposCambios)
     {
-        //dump($fecha);
         $date = Carbon::createFromFormat('Y-m-d', $fecha);
-        //dump($date);
         $dateCurrent = Carbon::now('America/Lima');
-        //dump($dateCurrent);
+
         if ( $date->lessThan($dateCurrent) )
         {
-            $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
-            $curl = curl_init();
+            // Buscar el elemento en la data que tenga la fecha indicada
+            $elementoEncontrado = null;
+            $elementoEncontrado = null;
+            foreach ($tiposCambios as $elemento) {
+                if ($elemento->fecha === $fecha) {
+                    $elementoEncontrado = $elemento;
+                    break; // Rompemos el loop si encontramos el elemento
+                }
+            }
 
-            curl_setopt_array($curl, array(
-                CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 2,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => 'GET',
-                CURLOPT_HTTPHEADER => array(
-                    'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
-                    'Authorization: Bearer ' . $token
-                ),
-            ));
-
-            $response = curl_exec($curl);
-
-            curl_close($curl);
-
-            $tipoCambioSunat = json_decode($response);
+            // Verificar si se encontró el elemento y hacer lo que necesites con él
+            if ($elementoEncontrado) {
+                // Aquí tienes el elemento que corresponde a la fecha buscada
+                // Puedes imprimirlo o acceder a sus valores individuales
+                $tipoCambioSunat = $elementoEncontrado;
+            } else {
+                // El elemento no fue encontrado
+                $tipoCambioSunat = [];
+            }
 
             return $tipoCambioSunat;
         } else {
+            //dump('No entre');
             return null;
         }
+    }
+
+    public function getTypeExchange($year, $month)
+    {
+        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?year='.$year.'&month='.$month,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+
+        $tipoCambioSunat = json_decode($response);
+
+        return $tipoCambioSunat;
     }
 
     public function getPersonalPaymentByYear($year)

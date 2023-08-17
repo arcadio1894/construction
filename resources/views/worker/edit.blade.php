@@ -353,7 +353,7 @@
                                             <select name="relations[]" class="relation form-control form-control-sm select2" style="width: 100%;">
                                                 <option></option>
                                                 @foreach( $relationships as $relationship )
-                                                    <option value="{{ $relationship->id }}" {{ ($relationship->id == $emergency_contact->relationship->id) ? 'selected':'' }}>{{ $relationship->description }}</option>
+                                                    <option value="{{ $relationship->id }}" {{ (optional($relationship)->id == optional($emergency_contact->relationship)->id) ? 'selected' : '' }}>{{ $relationship->description }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
