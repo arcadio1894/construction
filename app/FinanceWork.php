@@ -9,6 +9,7 @@ class FinanceWork extends Model
     protected $fillable = [
         'quote_id',
         'raise_date',
+        'date_initiation',
         'date_delivery',
         'act_of_acceptance',
         'state_act_of_acceptance',
@@ -26,7 +27,7 @@ class FinanceWork extends Model
         'observation'
     ];
 
-    protected $dates = ['raise_date', 'date_issue', 'date_admission', 'date_paid', 'date_delivery'];
+    protected $dates = ['raise_date', 'date_issue', 'date_initiation', 'date_admission', 'date_paid', 'date_delivery'];
 
     public function quote()
     {

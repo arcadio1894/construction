@@ -240,12 +240,43 @@ $(document).ready(function () {
             $('#bank_id').attr("disabled", true);
         }
     });
+
+    $selectCustomer = $('#customer_id');
+    $selectContact = $('#contact_id');
+
+    $selectCustomer.change(function (event, extraData) {
+        $selectContact.empty();
+        var customer =  $selectCustomer.val();
+        $.get( "/dashboard/get/contact/"+customer, function( data ) {
+            $selectContact.append($("<option>", {
+                value: '',
+                text: ''
+            }));
+            for ( var i=0; i<data.length; i++ )
+            {
+                if (data[i].id === parseInt(extraData.dato)) {
+                    var newOption = new Option(data[i].contact, data[i].id, false, true);
+                    // Append it to the select
+                    $selectContact.append(newOption).trigger('change');
+
+                } else {
+                    var newOption2 = new Option(data[i].contact, data[i].id, false, false);
+                    // Append it to the select
+                    $selectContact.append(newOption2);
+                }
+
+            }
+        });
+
+    });
 });
 
 var $formEditTrabajo;
 var $formEditFacturacion;
 var $modalEditTrabajo;
 var $modalEditFacturacion;
+var $selectCustomer;
+var $selectContact;
 
 var $permissions;
 
@@ -375,7 +406,7 @@ function submitFormEditFacturacion(event) {
             $modalEditFacturacion.modal('hide');
             setTimeout( function () {
                 button.attr("disabled", false);
-                //location.reload();
+                location.reload();
             }, 100 )
         },
         error: function(data) {
@@ -435,8 +466,18 @@ function showModalEditTrabajo() {
         console.log(data);
 
         $formEditTrabajo.find("[id=financeWork_id]").val(financeWork_id);
+        $('#detraction').val(data.detraction);
+        $('#detraction').trigger('change');
         $('#act_of_acceptance').val(data.act_of_acceptance);
         $('#act_of_acceptance').trigger('change');
+        $('#date_initiation').val(data.date_initiation);
+        $('#date_delivery').val(data.date_delivery);
+        $('#state_act_of_acceptance').val("");
+        $('#state_act_of_acceptance').trigger('change');
+        $('#customer_id').val(data.customer_id);
+        $('#customer_id').trigger('change', { dato: data.contact_id });
+        $('#state_work').val(data.state_work);
+        $('#state_work').trigger('change');
         if ( data.state_act_of_acceptance != null )
         {
             $('#state_act_of_acceptance').val(data.state_act_of_acceptance);

@@ -187,6 +187,10 @@ $(document).ready(function () {
                             text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
                         }
+                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fa fa-chart-line"></i></button>';
+                        }
                         if ( $.inArray('finish_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';

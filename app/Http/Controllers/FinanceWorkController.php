@@ -85,7 +85,7 @@ class FinanceWorkController extends Controller
 
     public function getFinanceWorks()
     {
-        $financeWorks = FinanceWork::all();
+        $financeWorks = FinanceWork::with('quote', 'bank')->get();
 
         $array = [];
         foreach ( $financeWorks as $work )
@@ -121,9 +121,9 @@ class FinanceWorkController extends Controller
                 $amount_detraction = $total * $detraction;
                 $detraction_text = 'O.S. 12%';
             } else {
-                $detraction = 1;
+                $detraction = 0;
                 $amount_detraction = $total * $detraction;
-                $detraction_text = 'N.N. 100%';
+                $detraction_text = 'N.N. 0%';
             }
 
             $act_of_acceptance = '';
@@ -145,6 +145,9 @@ class FinanceWorkController extends Controller
             } elseif ( $work->state_act_of_acceptance == 'signed' )
             {
                 $state_act_of_acceptance = 'FIRMADA';
+            } elseif ( $work->state_act_of_acceptance == 'not_signed' )
+            {
+                $state_act_of_acceptance = 'NO SE FIRMARÁ';
             }
 
             $state = '';
@@ -175,12 +178,20 @@ class FinanceWorkController extends Controller
             }
 
             $days =  ($work->quote->deadline == null) ? 0:$work->quote->deadline->days;
+
+            if ( $work->date_initiation == null )
+            {
+                $date_initiation = ($timeline == null) ? 'No iniciado': $timeline->date->format('d/m/Y');
+            } else {
+                $date_initiation = ($work->date_initiation == null) ? 'No iniciado':$work->date_initiation->format('d/m/Y');
+            }
+
             array_push($array, [
                 "id" => $work->id,
                 "year" => $work->raise_date->year,
                 "customer" => ($work->quote->customer == null) ? 'Sin contacto': $work->quote->customer->business_name,
                 "responsible" => ($work->quote->contact == null) ? 'Sin contacto': $work->quote->contact->name,
-                "initiation" => ($timeline == null) ? 'No iniciado': $timeline->date->format('d/m/Y'),
+                "initiation" => $date_initiation,
                 "delivery" => ($work->date_delivery == null) ? 'No entregado': $work->date_delivery->format('d/m/Y'),
                 "quote" => $work->quote->id . "-" . $work->raise_date->year,
                 "order_customer" => $work->quote->code_customer,
@@ -199,7 +210,7 @@ class FinanceWorkController extends Controller
                 "amount_include_detraction" => number_format($total - $amount_detraction, 2),
                 "invoiced" => $state_invoiced,
                 "number_invoice" => $work->number_invoice,
-                "month_invoice" => number_format($work->month_invoice, 2),
+                "month_invoice" => ($work->month_invoice == null) ? '': $this->obtenerNombreMes($work->month_invoice),
                 "date_issue" => ($work->date_issue == null) ? 'Sin fecha' : $work->date_issue->format('d/m/Y'),
                 "date_admission" => ($work->date_admission == null) ? 'Sin fecha' : $work->date_admission->format('d/m/Y'),
                 "days" => $days,
@@ -224,15 +235,59 @@ class FinanceWorkController extends Controller
 
         $outputs = OutputDetail::where('quote_id', $quote_id)->get();
 
-        if ( $quote->state_active == 'close' )
+        $finance_work = FinanceWork::where('quote_id', $quote_id)->first();
+
+        if ( $finance_work->state_work == null )
         {
-            $state_work = 'TERMINADO';
-        } elseif ( count($outputs) == 0 )
+            if ( $quote->state_active == 'close' )
+            {
+                $state_work = 'TERMINADO';
+            } elseif ( count($outputs) == 0 )
+            {
+                $state_work = 'POR INICIAR';
+            } elseif (  count($outputs) > 0 )
+            {
+                $state_work = 'EN PROCESO';
+            }
+        } else {
+            if ( $finance_work->state_work == 'finished' )
+            {
+                $state_work = 'TERMINADO';
+            } elseif ( $finance_work->state_work == 'to_start' )
+            {
+                $state_work = 'POR INICIAR';
+            } elseif (  $finance_work->state_work == 'in_progress' )
+            {
+                $state_work = 'EN PROCESO';
+            }
+        }
+
+        return $state_work;
+    }
+
+    public function getStateWorkCode($quote_id)
+    {
+        $state_work = '';
+        $quote = Quote::find($quote_id);
+
+        $outputs = OutputDetail::where('quote_id', $quote_id)->get();
+
+        $finance_work = FinanceWork::where('quote_id', $quote_id)->first();
+
+        if ( $finance_work->state_work == null )
         {
-            $state_work = 'POR INICIAR';
-        } elseif (  count($outputs) > 0 )
-        {
-            $state_work = 'EN PROCESO';
+            if ( $quote->state_active == 'close' )
+            {
+                $state_work = 'finished';
+            } elseif ( count($outputs) == 0 )
+            {
+                $state_work = 'to_start';
+            } elseif (  count($outputs) > 0 )
+            {
+                $state_work = 'in_progress';
+            }
+        } else {
+            $state_work = $finance_work->state_work;
         }
 
         return $state_work;
@@ -242,7 +297,29 @@ class FinanceWorkController extends Controller
     {
         $financeWork = FinanceWork::find($financeWork_id);
 
+        $firstWork = Work::where('quote_id', $financeWork->quote_id)->first();
+
+        $timeline = null;
+
+        if ( isset($firstWork) )
+        {
+            $timeline = Timeline::find($firstWork->timeline_id);
+        }
+
+        if ( $financeWork->date_initiation == null )
+        {
+            $date_initiation = ($timeline == null) ? '': $timeline->date->format('d/m/Y');
+        } else {
+            $date_initiation = ($financeWork->date_initiation == null) ? '':$financeWork->date_initiation->format('d/m/Y');
+        }
+
         return response()->json([
+            "state_work" => $this->getStateWorkCode($financeWork->quote->id),
+            "customer_id" => $financeWork->quote->customer_id,
+            "contact_id" => $financeWork->quote->contact_id,
+            "date_initiation" => $date_initiation,
+            "date_delivery" => ($financeWork->date_delivery == null) ? '': $financeWork->date_delivery->format('d/m/Y'),
+            "detraction" => $financeWork->detraction,
             "act_of_acceptance" => $financeWork->act_of_acceptance,
             "state_act_of_acceptance" => $financeWork->state_act_of_acceptance
         ]);
@@ -260,8 +337,18 @@ class FinanceWorkController extends Controller
                 return response()->json(['message' => "No se encuentra ID enviado"], 422);
             }
 
-            $financeWork->act_of_acceptance = $request->get('act_of_acceptance');
-            $financeWork->state_act_of_acceptance = $request->get('state_act_of_acceptance');
+            $quote = Quote::find($financeWork->quote_id);
+
+            $quote->customer_id = $request->get('customer_id');
+            $quote->contact_id = $request->get('contact_id');
+            $quote->save();
+
+            $financeWork->date_initiation = ($request->get('date_initiation') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_initiation')) : null;
+            $financeWork->date_delivery = ($request->get('date_delivery') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_delivery')) : null;
+            $financeWork->detraction = ($request->get('detraction') == 'nn' || $request->get('detraction') == '' ) ? null: $request->get('detraction');
+            $financeWork->act_of_acceptance = ($request->get('act_of_acceptance') == 'nn' || $request->get('act_of_acceptance') == '' ) ? 'pending': $request->get('act_of_acceptance');
+            $financeWork->state_act_of_acceptance = ($request->get('state_act_of_acceptance') == 'nn' || $request->get('state_act_of_acceptance') == '' ) ? null: $request->get('state_act_of_acceptance');
+            $financeWork->state_work = ($request->get('state_work') == 'nn' || $request->get('state_work') == '' ) ? null: $request->get('state_work');
             $financeWork->save();
 
             DB::commit();
@@ -285,12 +372,31 @@ class FinanceWorkController extends Controller
             "number_invoice" => $financeWork->number_invoice,
             "month_invoice" => $financeWork->month_invoice,
             "date_issue" => ($financeWork->date_issue == null) ? '': $financeWork->date_issue->format('d/m/Y'),
-            "date_admission" => ($financeWork->date_admission == null) ? '': $financeWork->date_admission,
+            "date_admission" => ($financeWork->date_admission == null) ? '': $financeWork->date_admission->format('d/m/Y'),
             "bank_id" => $financeWork->bank_id,
             "state" => $financeWork->state,
             "date_paid" => ($financeWork->date_paid == null) ? '': $financeWork->date_paid,
             "observation" => $financeWork->observation
         ]);
+    }
+
+    public function obtenerNombreMes($numeroMes) {
+        $meses = [
+            1 => 'Enero',
+            2 => 'Febrero',
+            3 => 'Marzo',
+            4 => 'Abril',
+            5 => 'Mayo',
+            6 => 'Junio',
+            7 => 'Julio',
+            8 => 'Agosto',
+            9 => 'Septiembre',
+            10 => 'Octubre',
+            11 => 'Noviembre',
+            12 => 'Diciembre',
+        ];
+
+        return isset($meses[$numeroMes]) ? $meses[$numeroMes] : 'Mes inválido';
     }
 
     public function financeWorkEditFacturacion( Request $request )

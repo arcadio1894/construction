@@ -186,9 +186,71 @@
 
                         <div class="row">
                             <div class="col-sm-6">
+                                <label for="customer_id">Cliente:</label>
+                                <select id="customer_id" name="customer_id" class="form-control select2" style="width: 100%;">
+                                    <option value=""></option>
+                                    @for ($i=0; $i<count($arrayCustomers); $i++)
+                                        <option value="{{ $arrayCustomers[$i]['id'] }}">{{ $arrayCustomers[$i]['business_name'] }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="contact_id">Contacto:</label>
+                                <select id="contact_id" name="contact_id" class="form-control select2" style="width: 100%;">
+                                    <option></option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="date_initiation">Fecha Inicio:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" id="date_initiation" name="date_initiation" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="date_delivery">Fecha Entrega:</label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" id="date_delivery" name="date_delivery" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <label for="detraction">Detracción:</label>
+                                <select id="detraction" name="detraction" class="form-control select2" style="width: 100%;">
+                                    <option value=""></option>
+                                    <option value="nn">Ninguno</option>
+                                    <option value="oc">Orden de Compra</option>
+                                    <option value="os">Orden de Servicio</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="state_work">Estado del Trabajo:</label>
+                                <select id="state_work" name="state_work" class="form-control select2" style="width: 100%;">
+                                    <option value=""></option>
+                                    <option value="nn">NINGUNO</option>
+                                    <option value="to_start">POR INICIAR</option>
+                                    <option value="in_progress">EN PROCESO</option>
+                                    <option value="finished">TERMINADO</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-6">
                                 <label for="act_of_acceptance">Acta de Aceptación:</label>
                                 <select id="act_of_acceptance" name="act_of_acceptance" class="form-control select2" style="width: 100%;">
                                     <option value=""></option>
+                                    <option value="nn">Ninguno</option>
                                     <option value="pending">Pendiente</option>
                                     <option value="generate">Generada</option>
                                     <option value="not_generate">No generada</option>
@@ -199,8 +261,10 @@
                                 <label for="state_act_of_acceptance">Estado Acta Aceptación:</label>
                                 <select id="state_act_of_acceptance" name="state_act_of_acceptance" class="form-control select2" style="width: 100%;">
                                     <option value=""></option>
+                                    <option value="nn">Ninguno</option>
                                     <option value="pending_signature">Pendiente de Firma</option>
                                     <option value="signed">Firmada</option>
+                                    <option value="not_signed">No se firmará</option>
                                 </select>
                             </div>
                         </div>
@@ -362,6 +426,8 @@
             $('#date_issue').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#date_admission').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#date_paid').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date_initiation').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date_delivery').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#advancement').select2({
                 placeholder: "Seleccione"
             });
@@ -375,6 +441,18 @@
                 placeholder: "Seleccione"
             });
             $('#month_invoice').select2({
+                placeholder: "Seleccione"
+            });
+            $('#detraction').select2({
+                placeholder: "Seleccione"
+            });
+            $('#customer_id').select2({
+                placeholder: "Seleccione"
+            });
+            $('#contact_id').select2({
+                placeholder: "Seleccione"
+            });
+            $('#state_work').select2({
                 placeholder: "Seleccione"
             });
 
