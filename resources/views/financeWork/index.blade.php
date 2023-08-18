@@ -77,7 +77,7 @@
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
 
-    {{--<div class="row">
+    <div class="row">
         <div class="col-sm-3">
             <label for="filterYear">Filtrar por Año:</label>
             <select id="filterYear" class="form-control select2" style="width: 100%;">
@@ -119,7 +119,7 @@
         </div>
     </div>
 
-    <hr>--}}
+    <hr>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm letraTabla" style="" id="dynamic-table">
