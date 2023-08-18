@@ -189,7 +189,7 @@ $(document).ready(function () {
                         }
                         if ( $.inArray('raise_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fa fa-chart-line"></i></button>';
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
                         }
                         if ( $.inArray('finish_quote', $permissions) !== -1 ) {
                             text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
@@ -368,8 +368,10 @@ $(document).ready(function () {
     });
 
     $formDelete = $('#formDelete');
+    $formDetraction = $('#formDetraction');
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
+    $modalDetraction = $('#modalDetraction');
     $(document).on('click', '[data-delete]', cancelQuote);
     $(document).on('click', '[data-finish]', finishQuote);
 
@@ -379,12 +381,89 @@ $(document).ready(function () {
     $(document).on('click', '[data-renew]', renewQuote);
 
     $(document).on('click', '[data-deselevar]', deselevarQuote);
+
+    $(document).on('click', '[data-detraction]', showModalDetraction);
+
+    $('#btn-change').on('click', saveDetraction);
 });
 
 var $formDelete;
 var $modalDelete;
 
 var $permissions;
+var $modalDetraction;
+
+var $formDetraction;
+
+function saveDetraction() {
+    var button = $(this);
+    button.attr("disabled", true);
+    var form = $formDetraction[0];
+    $.confirm({
+        icon: 'fas fa-donate',
+        theme: 'modern',
+        closeIcon: false,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de guardar el tipo de orden?',
+        content: 'Este cambio colocará la detracción en el módulo de finanzas.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/change/detraction/quote',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: new FormData(form),
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                button.attr("disabled", false);
+                                $modalDetraction.modal('hide');
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            button.attr("disabled", false);
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    button.attr("disabled", false);
+                    $.alert("No se guardó ninguún dato.");
+                },
+            },
+        }
+    });
+
+}
+
+function showModalDetraction() {
+    $('#detraction').val('');
+    $('#detraction').trigger('change');
+    var quote_id = $(this).data('detraction');
+    $.ajax({
+        url: "/dashboard/get/detraction/quote/"+quote_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $formDetraction.find("[id=quote_id]").val(quote_id);
+            $('#detraction').val(data.detraction);
+            $('#detraction').trigger('change');
+
+            $modalDetraction.modal('show');
+        }
+    });
+}
 
 function deselevarQuote() {
     var quote_id = $(this).data('deselevar');

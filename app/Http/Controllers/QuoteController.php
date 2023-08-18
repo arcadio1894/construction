@@ -2477,4 +2477,37 @@ class QuoteController extends Controller
         return response()->json(['message' => 'Cotización regresada a enviado con éxito.'], 200);
 
     }
+
+    public function getDetractionQuote($quote_id)
+    {
+        $financeWork = FinanceWork::where('quote_id', $quote_id)->first();
+
+        if (isset($financeWork))
+        {
+            $detraction = $financeWork->detraction;
+        } else {
+            $detraction = 'nn';
+        }
+
+        return response()->json(["detraction" => $detraction]);
+    }
+
+    public function changeDetractionQuote(Request $request)
+    {
+        $quote_id = $request->input('quote_id');
+        DB::beginTransaction();
+        try {
+            $financeWork = FinanceWork::where('quote_id', $quote_id)->first();
+            $financeWork->detraction = ($request->input('detraction') == 'nn' || $request->input('detraction') == '') ? null: $request->input('detraction');
+            $financeWork->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Guardado con éxito'], 200);
+    }
 }

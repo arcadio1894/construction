@@ -105,6 +105,34 @@
             </tbody>
         </table>
     </div>
+
+    <div id="modalDetraction" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar detracción</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formDetraction" data-url="{{ route('detraction.change') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="quote_id" name="quote_id">
+                        <strong>Cambie o Seleccione el tipo de orden</strong>
+                        <select id="detraction" name="detraction" class="form-control select2" style="width: 100%;">
+                            <option value=""></option>
+                            <option value="nn">Ninguno</option>
+                            <option value="oc">Orden de Compra</option>
+                            <option value="os">Orden de Servicio</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-change" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     @can('destroy_quote')
     <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
@@ -144,4 +172,14 @@
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('js/quote/raise.js') }}"></script>
+    <script>
+        $(function () {
+
+            $('#detraction').select2({
+                placeholder: "Seleccione"
+            });
+
+
+        })
+    </script>
 @endsection
