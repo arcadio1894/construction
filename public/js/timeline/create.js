@@ -628,18 +628,21 @@ function editPhase() {
     var id_timeline = $('#idtimeline').val();
     var card_quote1 = $(this).parent().prev().children().children().children().next();
     var card_quote3 = $(this).parent().prev().prev();
+    var card_quote4 = $(this).parent().prev().children().children().next().children().next();
 
     var phase_id = card_quote3.val();
     var phase_description = card_quote1.val();
+    var phase_equipment = card_quote4.val();
 
     console.log(phase_id);
     console.log(phase_description);
+    console.log(phase_equipment);
 
     $.ajax({
         url: '/dashboard/edit/phase/'+phase_id+'/timeline/'+id_timeline,
         method: 'POST',
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        data: JSON.stringify({ phase_id: phase_id, phase_description:phase_description }),
+        data: JSON.stringify({ phase_id: phase_id, phase_description:phase_description, phase_equipment:phase_equipment }),
         processData:false,
         contentType:'application/json; charset=utf-8',
         success: function (data) {
@@ -663,7 +666,8 @@ function editPhase() {
                     "hideMethod": "fadeOut"
                 });
             // Aqui se renderizará y se colocará los datos del trabajo
-            $(document).find('[data-phase="'+phase_id+'"]').html((phase_description=='') ? 'Etapa #':phase_description);
+            var equipo = (data.phase.equipment_id != null) ? data.phase.equipment.description : "";
+            $(document).find('[data-phase="'+phase_id+'"]').html(((phase_description=='') ? 'Etapa #':phase_description) + ' | ' + equipo);
             $(document).find('[data-phase="'+phase_id+'"]').attr('data-idphase', phase_id);
             $(document).find('[data-phase="'+phase_id+'"]').attr('data-description', (phase_description=='') ? '':phase_description);
 
@@ -727,6 +731,38 @@ function openModalPhases() {
     console.log(phase_id);
     $modalPhases.find('[id=phase_id]').val(phase_id);
     $modalPhases.find('[id=descriptionPhase]').val(description);
+
+    $("#equipmentPhase").html('');
+
+    $.get('/dashboard/get/equipments/work/phase/', { phase_id: phase_id }, function(data) {
+        // Esta función se ejecutará cuando la petición sea exitosa
+        //console.log('Datos recibidos:', data);
+        var equipments = data.equipments;
+        var equipmentSelected = data.equipmentSelected;
+        if ( data.equipments != null )
+        {
+            var newOption4 = new Option("", "", false, false);
+            $("#equipmentPhase").append(newOption4);
+            var newOption3 = new Option("Ninguno", 0, false, false);
+            $("#equipmentPhase").append(newOption3);
+            // Append it to the select
+            $("#equipmentPhase").append(newOption).trigger('change');
+            for ( var i=0; i<equipments.length; i++ )
+            {
+                if (equipments[i].id === parseInt(equipmentSelected)) {
+                    var newOption = new Option(equipments[i].description, equipments[i].id, false, true);
+                    // Append it to the select
+                    $("#equipmentPhase").append(newOption).trigger('change');
+
+                } else {
+                    var newOption2 = new Option(equipments[i].description, equipments[i].id, false, false);
+                    // Append it to the select
+                    $("#equipmentPhase").append(newOption2);
+                }
+            }
+        }
+    }, 'json');
+
     $modalPhases.modal('show');
 }
 

@@ -14,6 +14,7 @@ class Phase extends Model
         'timeline_id',
         'work_id',
         'description',
+        'equipment_id'
     ];
 
     public function timeline()
@@ -24,6 +25,11 @@ class Phase extends Model
     public function work()
     {
         return $this->belongsTo('App\Work');
+    }
+
+    public function equipment()
+    {
+        return $this->belongsTo('App\Equipment');
     }
 
     public function tasks()

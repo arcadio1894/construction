@@ -132,7 +132,7 @@
 
                                             <div class="accordion-group">
                                                 <div class="accordion-heading equipamento">
-                                                    <a class="accordion-toggle" data-idphase="{{ $phase->id }}" data-phase="{{ $phase->id }}" data-workid="{{ $phase->work_id }}" data-description="{{ $phase->description }}" data-toggle="collapse" href="#phase{{$phase->id}}">{{ ($phase->description == null || $phase->description == '') ? 'Etapa #':$phase->description }}</a>
+                                                    <a class="accordion-toggle" data-idphase="{{ $phase->id }}" data-phase="{{ $phase->id }}" data-workid="{{ $phase->work_id }}" data-description="{{ $phase->description }}" data-toggle="collapse" href="#phase{{$phase->id}}">{{ (($phase->description == null || $phase->description == '') ? 'Etapa #':$phase->description) .' | '. (($phase->equipment_id == null) ? "" : $phase->equipment->description)}}</a>
                                                     <div class="dropdown dropleft edit">
                                                         <button type="button" class="btn btn-primary dropdown-toggle btn-sm" data-toggle="dropdown" aria-expanded="false">
                                                             <i class="fas fa-edit"></i>
@@ -179,8 +179,8 @@
                                                                                     <label for="activity">Responsable: </label>
                                                                                     <select data-performer class="performers form-control form-control-sm select2" style="width: 100%;">
                                                                                         <option></option>
-                                                                                        @foreach( $workers as $worker )
-                                                                                            <option value="{{ $worker->id }}" {{ ($worker->id == $task->performer_id) ? 'selected':'' }}>{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                                                                                        @foreach( $supervisors as $supervisor )
+                                                                                            <option value="{{ $supervisor->id }}" {{ ($supervisor->id == $task->performer_id) ? 'selected':'' }}>{{ $supervisor->first_name . ' ' . $supervisor->last_name}}</option>
                                                                                         @endforeach
                                                                                     </select>
                                                                                 </div>
@@ -351,8 +351,8 @@
                             <select data-supervisor id="supervisor" class="supervisor form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
                                 <option value="0">Ninguno</option>
-                                @foreach( $workers as $worker )
-                                    <option value="{{ $worker->id }}" data-supervisor="{{  $worker->first_name . ' ' . $worker->last_name }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                                @foreach( $supervisors as $supervisor )
+                                    <option value="{{ $supervisor->id }}" data-supervisor="{{  $supervisor->first_name . ' ' . $supervisor->last_name }}">{{ $supervisor->first_name . ' ' . $supervisor->last_name}}</option>
                                 @endforeach
                             </select>
 
@@ -383,6 +383,14 @@
                         <div class="col-sm-12">
                             <label for="descriptionPhase">Etapa: </label>
                             <textarea name="" id="descriptionPhase" data-descriptionPhase cols="30" class="form-control form-control-sm"></textarea>
+
+                        </div>
+                        <div class="col-sm-12">
+                            <label for="equipmentPhase">Equipos: </label>
+                            <select data-equipmentPhase id="equipmentPhase" class="equipmentPhase form-control form-control-sm select2" style="width: 100%;">
+                                <option></option>
+                                <option value="0">Ninguno</option>
+                            </select>
 
                         </div>
                     </div>
@@ -493,8 +501,8 @@
                                 <label for="activity">Responsable: </label>
                                 <select data-performer class="performers form-control form-control-sm select2" style="width: 100%;">
                                     <option></option>
-                                    @foreach( $workers as $worker )
-                                        <option value="{{ $worker->id }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                                    @foreach( $supervisors as $supervisor )
+                                        <option value="{{ $supervisor->id }}">{{ $supervisor->first_name . ' ' . $supervisor->last_name}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -633,8 +641,8 @@
                             <label for="activity">Responsable: </label>
                             <select data-performer class="performers form-control form-control-sm select2" style="width: 100%;">
                                 <option></option>
-                                @foreach( $workers as $worker )
-                                    <option value="{{ $worker->id }}">{{ $worker->first_name . ' ' . $worker->last_name}}</option>
+                                @foreach( $supervisors as $supervisor )
+                                    <option value="{{ $supervisor->id }}">{{ $supervisor->first_name . ' ' . $supervisor->last_name}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -732,6 +740,10 @@
 
             $('.areas').select2({
                 placeholder: "Selecione una área",
+            });
+
+            $('.equipmentPhase').select2({
+                placeholder: "Selecione un equipo",
             });
         })
     </script>

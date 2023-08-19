@@ -1306,7 +1306,7 @@ Route::middleware('auth')->group(function (){
             ->name('excel.principal.timeline')
             ->middleware('permission:download_timeline');
         Route::get('/get/info/work/{id}', 'TimelineController@getInfoWork');
-
+        Route::get('/get/equipments/work/phase', 'TimelineController@getEquipmentsWorkPhase');
 
         // TRABAJADORES
         Route::get('/colaboradores', 'WorkerController@index')

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Activity;
 use App\ActivityWorker;
+use App\Equipment;
 use App\Exports\TimelinesExports;
 use App\Phase;
 use App\Quote;
@@ -111,13 +112,20 @@ class TimelineController extends Controller
             ->get();
 
         $workers = Worker::select('id', 'first_name', 'last_name')
+            ->where('area_worker_id', 4)
+            ->where('enable', 1)
+            ->get();
+
+        $supervisors = Worker::select('id', 'first_name', 'last_name')
+            ->whereIn('id', [2, 21])
             ->where('enable', 1)
             ->get();
 
         $timeline = Timeline::with(['works' => function ($query) {
                 $query->with('quote')
                     ->with(['phases' => function ($query) {
-                        $query->with(['tasks' => function ($query) {
+                        $query->with('equipment')
+                            ->with(['tasks' => function ($query) {
                             $query->with('performer');
                             $query->with(['task_workers' => function ($query) {
                                 $query->with('worker');
@@ -127,7 +135,7 @@ class TimelineController extends Controller
             }])
             ->find($timeline_id);
 
-        return view('timeline.create', compact( 'permissions', 'workers', 'timeline', 'quotes'));
+        return view('timeline.create', compact( 'permissions', 'workers', 'timeline', 'quotes', 'supervisors'));
 
     }
 
@@ -290,9 +298,10 @@ class TimelineController extends Controller
 
             $phase = Phase::find($phase_id);
             $phase->description = ($request->get('phase_description') == '')? null: $request->get('phase_description');
+            $phase->equipment_id = ($request->get('phase_equipment') == '' || $request->get('phase_equipment') == 0)? null: $request->get('phase_equipment');
             $phase->save();
 
-            $work_send = Phase::find($phase_id);
+            $work_send = Phase::with('equipment')->find($phase_id);
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -405,7 +414,7 @@ class TimelineController extends Controller
                 $activity_parent->save();
             }
 
-            $activity_workers = saveProgressTask::where('task_id', $activity->id)->get();
+            $activity_workers = TaskWorker::where('task_id', $activity->id)->get();
 
             if ( count($activity_workers) > 0 )
             {
@@ -578,6 +587,30 @@ class TimelineController extends Controller
 
     }
 
+    public function getEquipmentsWorkPhase(Request $request)
+    {
+        $phase_id = $request->get('phase_id');
+
+        $phase = Phase::find($phase_id);
+
+        $work = Work::find($phase->work_id);
+
+        $equipments = null;
+
+        $equipmentSelected = $phase->equipment_id;
+
+        if (isset($work->quote_id))
+        {
+            $equipments = Equipment::where('quote_id', $work->quote_id)->get();
+        }
+
+        return response()->json([
+            "equipments" => $equipments,
+            "equipmentSelected" => $equipmentSelected
+        ], 200);
+
+    }
+
     public function checkProgressTimeline($timeline_id)
     {
         $user = Auth::user();
@@ -643,6 +676,9 @@ class TimelineController extends Controller
                 {
                     return response()->json(['message' => 'No puede registrar progresos mas de 100%'], 422);
                 }
+
+                $tarea->progress = $progress;
+                $tarea->save();
 
             }
             DB::commit();
