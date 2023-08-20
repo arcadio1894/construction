@@ -249,7 +249,17 @@ class TimelineController extends Controller
                     return response()->json(['message' => 'Ya existe este trabajo registrado para este cronograma.'], 422);
                 }
             }
-            $work = Work::find($work_id);
+
+            $work = Work::with('phases')->find($work_id);
+
+            if ( count($work->phases) > 0 )
+            {
+                if ( $request->get('quote_id') != $work->quote_id )
+                {
+                    return response()->json(['message' => 'No puede modificar la Orden de Ejecución porque ya tiene fases y pueden ser de equipos que pertenecían a la cotizacion anterior.'], 422);
+                }
+            }
+
             $work->quote_id = ($request->get('quote_id') == 0 || $request->get('quote_id') == '') ? null: $request->get('quote_id');
             $work->description_quote = ($request->get('quote_description') == '')? null: $request->get('quote_description');
             $work->supervisor_id = ($request->get('supervisor_id') == '' || $request->get('supervisor_id') == 0)? null: $request->get('supervisor_id');
