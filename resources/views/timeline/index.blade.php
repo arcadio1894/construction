@@ -50,8 +50,8 @@
 @section('page-title')
     <h5 class="card-title">Calendario mensual</h5>
     @can('create_timeline')
-    <button id="newTimeline" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-clock"></i> Nuevo Cronograma para Mañana </button>
-    @endcan
+    {{--<button id="newTimeline" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-clock"></i> Nuevo Cronograma para Mañana </button>
+    --}}@endcan
 @endsection
 
 @section('content')

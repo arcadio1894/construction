@@ -6,6 +6,7 @@ use App\Activity;
 use App\ActivityWorker;
 use App\Equipment;
 use App\Exports\TimelinesExports;
+use App\Holiday;
 use App\Phase;
 use App\Quote;
 use App\Task;
@@ -29,6 +30,7 @@ class TimelineController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         $timelines = Timeline::select('id', 'date')->get();
+        $holidays = Holiday::select('id', 'date_complete', 'description')->get();
 
         $events = [];
         foreach ( $timelines as $timeline )
@@ -41,6 +43,17 @@ class TimelineController extends Controller
                 'allDay' => true
             ]);
 
+        }
+
+        foreach ( $holidays as $holiday )
+        {
+            array_push($events, [
+                'title' => $holiday->description,
+                'start' => $holiday->date_complete->format('Y-m-d'),
+                'backgroundColor' => '#117811', //red
+                'borderColor' => '#117811', //red
+                'allDay' => true
+            ]);
         }
 
         return view('timeline.index', compact( 'permissions', 'events'));
@@ -585,8 +598,8 @@ class TimelineController extends Controller
         $fecha_actual = Carbon::now('America/Lima');
         $fecha_max = $timeline->date->addHours(7);
         $fecha_min = $timeline->date->subHours(23);
-        $active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
-        //$active_edit = true;
+        //$active_edit = $fecha_actual->betweenIncluded($fecha_min, $fecha_max);
+        $active_edit = true;
         //dump('Actual -> '.$fecha_actual);
         //dump('Maxima -> '.$fecha_max);
         //dump('Minima -> '.$fecha_min);
@@ -1394,11 +1407,11 @@ class TimelineController extends Controller
                         ], 200);
 
                     } else {
-                        // NO se puede crear
+                        // Si permitimos poder crear cronogramas futuros
                         return response()->json([
-                            'message' => 'No se puede crear cronogramas futuros.',
+                            'message' => '¿Desea crear un cronograma con la fecha '.$date_show->format('d/m/Y').'?',
                             'url' => '',
-                            'res' => 6
+                            'res' => 4
                         ], 200);
                     }
 
