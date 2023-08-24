@@ -58,6 +58,21 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <div class="row">
+
+        <div class="col-sm-3">
+            <label for="filtroEstadoExterno">Filtrar por Estado:</label>
+            <select id="filtroEstadoExterno" class="form-control select2" style="width: 100%;">
+                <option value="">TODOS</option>
+                <option value="stand_by">PENDIENTE</option>
+                <option value="send">ENVIADO</option>
+                <option value="pick_up">RECOGIDO</option>
+            </select>
+        </div>
+
+    </div>
+
+    <hr>
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover" id="dynamic-table">
@@ -120,5 +135,13 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script>
+        $(function () {
+            $('#filtroEstadoExterno').select2({
+                placeholder: "Seleccione"
+            });
+
+        })
+    </script>
     <script src="{{ asset('js/orderPurchase/indexGeneral.js') }}"></script>
 @endsection

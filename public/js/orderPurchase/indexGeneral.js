@@ -1,7 +1,8 @@
+var $tabla;
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
-    $('#dynamic-table')
+    $tabla = $('#dynamic-table')
         .on( 'draw.dt', function() {
             //show nothing
             //console.log('no access to: ' + $('.dataTables_scroll') );
@@ -364,6 +365,25 @@ $(document).ready(function () {
 
     } );
     //$containerEl.find('[data-widget="select2"]').select2();
+
+    $('#filtroEstadoExterno').on('change', function() {
+        var selectedValue = $(this).val();
+        console.log("valor del filtro "+selectedValue);
+
+        // Iterar por cada fila y verificar el valor del select2
+        $tabla.rows().every(function() {
+            var cellContent = this.cell(this.index(), 10).node().innerHTML;
+            var cellContentDOM = $(cellContent);
+            var selectElement = cellContentDOM[0];
+            var estado = selectElement.value;
+            if (selectedValue === "" || estado === selectedValue) {
+                this.nodes().to$().show();
+            } else {
+                this.nodes().to$().hide();
+            }
+        });
+        $tabla.page(0).draw(false);
+    });
 
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
