@@ -28,7 +28,8 @@ class OrderPurchase extends Model
         'quote_supplier',
         'regularize',
         'payment_deadline_id',
-        'status_order'
+        'status_order',
+        'quote_id'
     ];
 
     protected $dates = ['deleted_at'];
@@ -36,6 +37,11 @@ class OrderPurchase extends Model
     public function supplier()
     {
         return $this->belongsTo('App\Supplier');
+    }
+
+    public function quote()
+    {
+        return $this->belongsTo('App\Quote');
     }
 
     public function approved_user()

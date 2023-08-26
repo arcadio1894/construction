@@ -121,6 +121,11 @@
                                     <label for="btn-currency"> Regularización </label> <br>
                                     <input id="btn-currency" name="currency_order" class="form-control" value="{{ ($order->regularize === 'nr') ? 'No se ha regularizado':'Regularizado' }}" readonly>
                                 </div>
+                                <div class="form-group">
+                                    <label for="quote_id">Cotización: </label>
+                                    <input type="text" id="quote_id" name="quote_id" class="form-control" value="{{ ($order->quote_id == null) ? 'Sin Trabajo':$order->quote->code.' '.$order->quote->description_quote }}" readonly>
+
+                                </div>
                             </div>
                         </div>
 

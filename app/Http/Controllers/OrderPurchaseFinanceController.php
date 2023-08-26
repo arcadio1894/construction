@@ -10,6 +10,7 @@ use App\Http\Requests\UpdateOrderPurchaseFinanceRequest;
 use App\OrderPurchaseFinance;
 use App\OrderPurchaseFinanceDetail;
 use App\PaymentDeadline;
+use App\Quote;
 use App\Supplier;
 use App\SupplierCredit;
 use App\UnitMeasure;
@@ -34,6 +35,8 @@ class OrderPurchaseFinanceController extends Controller
     {
         $begin = microtime(true);
         $suppliers = Supplier::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
         $users = User::all();
 
         // TODO: WITH TRASHED
@@ -55,7 +58,7 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Crear Orden compra Normal VISTA',
             'time' => $end
         ]);
-        return view('orderPurchaseFinance.createOrderFinance', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines', 'unitMeasures'));
+        return view('orderPurchaseFinance.createOrderFinance', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines', 'unitMeasures', 'quotesRaised'));
 
     }
 
@@ -115,6 +118,8 @@ class OrderPurchaseFinanceController extends Controller
                 'quote_supplier' => $request->get('quote_supplier'),
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
                 'payment_deadline_id' => ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null,
+                'quote_id' => ($request->has('quote_id')) ? $request->get('quote_id') : null,
+
             ]);
 
             $codeOrder = '';
@@ -206,6 +211,8 @@ class OrderPurchaseFinanceController extends Controller
     {
         $begin = microtime(true);
         $suppliers = Supplier::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
         $users = User::all();
         $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
 
@@ -221,7 +228,7 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Editar Orden de compra finance VISTA',
             'time' => $end
         ]);
-        return view('orderPurchaseFinance.editOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines'));
+        return view('orderPurchaseFinance.editOrderPurchaseFinance', compact('order', 'details', 'suppliers', 'users', 'unitMeasures', 'payment_deadlines', 'quotesRaised'));
 
     }
 
@@ -245,6 +252,7 @@ class OrderPurchaseFinanceController extends Controller
             $orderFinance->quote_supplier = $request->get('quote_supplier');
             $orderFinance->regularize = ($request->get('regularize') === 'true') ? 'r': 'nr';
             $orderFinance->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
+            $orderFinance->quote_id = ($request->has('quote_id')) ? $request->get('quote_id') : null;
             $orderFinance->save();
 
             $items = json_decode($request->get('items'));
@@ -648,6 +656,8 @@ class OrderPurchaseFinanceController extends Controller
         $begin = microtime(true);
         $entry = Entry::find($entry_id);
         $suppliers = Supplier::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
         $users = User::all();
 
         $unitMeasures = UnitMeasure::select(['id', 'description'])->get();
@@ -668,7 +678,7 @@ class OrderPurchaseFinanceController extends Controller
             'action' => 'Regularizar Orden de compra de finanzas VISTA',
             'time' => $end
         ]);
-        return view('orderPurchaseFinance.regularizeAutoEntryPurchaseFinance', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines'));
+        return view('orderPurchaseFinance.regularizeAutoEntryPurchaseFinance', compact('entry', 'details', 'suppliers', 'users', 'unitMeasures', 'codeOrder', 'payment_deadlines', 'quotesRaised'));
     }
 
     public function regularizeEntryToOrderPurchaseFinance(Request $request)
@@ -726,6 +736,8 @@ class OrderPurchaseFinanceController extends Controller
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
                 'regularize' => ($request->get('regularize') === 'true') ? 'r':'nr',
+                'quote_id' => ($request->has('quote_id')) ? $request->get('quote_id') : null,
+
             ]);
 
             if ( $maxId < $orderPurchaseFinance->id ){

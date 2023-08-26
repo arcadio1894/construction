@@ -19,6 +19,7 @@ use App\NotificationUser;
 use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
+use App\Quote;
 use App\Supplier;
 use App\SupplierCredit;
 use App\Typescrap;
@@ -1706,6 +1707,8 @@ class EntryController extends Controller
         //dd($entry);
 
         $suppliers = Supplier::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
 
         $users = User::all();
 
@@ -1726,7 +1729,7 @@ class EntryController extends Controller
             'action' => 'AutoRegularizar Vista de orden de compra',
             'time' => $end
         ]);
-        return view('orderPurchase.regularizeEntryPurchase', compact('entry', 'details', 'suppliers', 'users', 'codeOrder', 'payment_deadlines'));
+        return view('orderPurchase.regularizeEntryPurchase', compact('entry', 'details', 'suppliers', 'users', 'codeOrder', 'payment_deadlines', 'quotesRaised'));
 
     }
 
@@ -1790,7 +1793,9 @@ class EntryController extends Controller
                 'total' => $request->get('total_send'),
                 'type' => 'n',
                 'regularize' => ($request->get('regularize') === 'true') ? 'r': 'nr',
-                'status_order' => 'pick_up'
+                'status_order' => 'pick_up',
+                'quote_id' => ($request->has('quote_id')) ? $request->get('quote_id') : null,
+
             ]);
 
             $codeOrder = '';

@@ -62,7 +62,6 @@ class OrderPurchaseController extends Controller
         $quotesRaised = Quote::where('raise_status', 1)
             ->where('state_active', 'open')
             ->with('equipments')->get();
-
         $suppliers = Supplier::all();
         $users = User::all();
 
@@ -265,7 +264,7 @@ class OrderPurchaseController extends Controller
             'time' => $end
         ]);
 
-        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'arrayMaterialsFinal', 'payment_deadlines'));
+        return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'arrayMaterialsFinal', 'payment_deadlines', 'quotesRaised'));
     }
 
     public function storeOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
@@ -326,7 +325,9 @@ class OrderPurchaseController extends Controller
                 'igv' => $request->get('taxes_send'),
                 'total' => $request->get('total_send'),
                 'type' => 'e',
-                'status_order' => 'stand_by'
+                'status_order' => 'stand_by',
+                'quote_id' => ($request->has('quote_id')) ? $request->get('quote_id') : null,
+
             ]);
 
             $codeOrder = '';
@@ -515,6 +516,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');
             $orderPurchase->total = (float) $request->get('total_send');
+            $orderPurchase->quote_id = ($request->has('quote_id')) ? $request->get('quote_id') : null;
             $orderPurchase->save();
 
             $items = json_decode($request->get('items'));
@@ -777,7 +779,7 @@ class OrderPurchaseController extends Controller
             'time' => $end
         ]);
 
-        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'arrayMaterialsFinal', 'payment_deadlines'));
+        return view('orderPurchase.editExpress', compact('order', 'details', 'suppliers', 'users', 'arrayMaterialsFinal', 'payment_deadlines', 'quotesRaised'));
     }
 
     public function updateDetail(Request $request, $detail_id)
@@ -1045,6 +1047,8 @@ class OrderPurchaseController extends Controller
         $begin = microtime(true);
         $suppliers = Supplier::all();
         $users = User::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
 
         // TODO: WITH TRASHED
         $maxCode = OrderPurchase::withTrashed()->max('id');
@@ -1063,7 +1067,7 @@ class OrderPurchaseController extends Controller
             'action' => 'Crear Orden compra Normal VISTA',
             'time' => $end
         ]);
-        return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines'));
+        return view('orderPurchase.createNormal', compact('users', 'codeOrder', 'suppliers', 'payment_deadlines', 'quotesRaised'));
 
     }
 
@@ -1127,7 +1131,9 @@ class OrderPurchaseController extends Controller
                 'total' => $request->get('total_send'),
                 'type' => 'n',
                 'regularize' => ($request->has('regularize_order')) ? 'r':'nr',
-                'status_order' => 'stand_by'
+                'status_order' => 'stand_by',
+                'quote_id' => ($request->has('quote_id')) ? $request->get('quote_id') : null,
+
             ]);
             $codeOrder = '';
             if ( $maxId < $orderPurchase->id ){
@@ -1353,6 +1359,8 @@ class OrderPurchaseController extends Controller
     public function editOrderPurchaseNormal($id)
     {
         $suppliers = Supplier::all();
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')->get();
         $users = User::all();
 
         $order = OrderPurchase::with(['supplier', 'approved_user'])->find($id);
@@ -1361,7 +1369,7 @@ class OrderPurchaseController extends Controller
 
         $payment_deadlines = PaymentDeadline::where('type', 'purchases')->get();
 
-        return view('orderPurchase.editNormal', compact('order', 'details', 'suppliers', 'users', 'payment_deadlines'));
+        return view('orderPurchase.editNormal', compact('order', 'details', 'suppliers', 'users', 'payment_deadlines', 'quotesRaised'));
     }
 
     public function updateNormalDetail(Request $request, $detail_id)
@@ -1566,6 +1574,7 @@ class OrderPurchaseController extends Controller
             $orderPurchase->quote_supplier = $request->get('quote_supplier');
             $orderPurchase->igv = (float) $request->get('taxes_send');
             $orderPurchase->total = (float) $request->get('total_send');
+            $orderPurchase->quote_id = ($request->has('quote_id')) ? $request->get('quote_id') : null;
             $orderPurchase->save();
 
             $items = json_decode($request->get('items'));

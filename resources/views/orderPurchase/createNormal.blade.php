@@ -135,6 +135,15 @@
                                     <label for="btn-regularize"> Regularización <span class="right badge badge-danger">(*)</span></label> <br>
                                     <input id="btn-regularize" type="checkbox" name="regularize_order" data-bootstrap-switch data-off-color="primary" data-on-text="SI" data-off-text="NO" data-on-color="success">
                                 </div>
+                                <div class="form-group">
+                                    <label for="quote_id">Cotización </label>
+                                    <select id="quote_id" name="quote_id" class="form-control select2" style="width: 100%;">
+                                        <option></option>
+                                        @foreach( $quotesRaised as $quote )
+                                            <option value="{{ $quote->id }}">{{ $quote->code . ' ' . $quote->description_quote }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
                         </div>
 
@@ -386,6 +395,10 @@
 
             $('.unitMeasure').select2({
                 placeholder: "Seleccione unidad",
+            });
+            $('#quote_id').select2({
+                placeholder: "Selecione trabajo",
+                allowClear: true
             });
 
         })

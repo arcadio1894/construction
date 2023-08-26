@@ -30,7 +30,8 @@ class OrderPurchaseFinance extends Model
         'date_invoice',
         'referral_guide',
         'invoice',
-        'payment_deadline_id'
+        'payment_deadline_id',
+        'quote_id'
     ];
 
     protected $dates = ['deleted_at', 'date_invoice', 'date_order', 'date_delivery'];
@@ -38,6 +39,11 @@ class OrderPurchaseFinance extends Model
     public function supplier()
     {
         return $this->belongsTo('App\Supplier');
+    }
+
+    public function quote()
+    {
+        return $this->belongsTo('App\Quote');
     }
 
     public function approved_user()
