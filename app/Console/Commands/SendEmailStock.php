@@ -42,8 +42,11 @@ class SendEmailStock extends Command
         $array = [];
 
         // TODO: Solo categoria de estructuras
-        $materials = Material::where('category_id', 5)
+        /*$materials = Material::where('category_id', 5)
             ->where('stock_min', '>',0)
+            ->where('enable_status', 1)
+            ->get();*/
+        $materials = Material::where('stock_min', '>',0)
             ->where('enable_status', 1)
             ->get();
 
