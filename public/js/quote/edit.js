@@ -1315,6 +1315,8 @@ function saveEquipment() {
                         if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
                             renderTemplateSummary($equipments);
                         }
+                        updateTableTotalsEquipment(button, {'id':$equipments.length, 'quote':'', 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+
                         var card = button.parent().parent().parent();
                         card.removeClass('card-gray-dark');
                         card.addClass('card-success');
@@ -1628,6 +1630,8 @@ function saveEquipment() {
                                 if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
                                     renderTemplateSummary($equipments);
                                 }
+                                updateTableTotalsEquipment(button2, {'id':equipmentDeleted.id, 'quote':quote.id, 'equipment':equipment.id, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment2, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+
                                 $.alert(data.message);
 
                             },
@@ -2615,6 +2619,8 @@ function confirmEquipment() {
                     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
                         renderTemplateSummary($equipments);
                     }
+                    updateTableTotalsEquipment(button, {'id':$equipments.length, 'quote':'', 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -2633,6 +2639,67 @@ function confirmEquipment() {
         },
     });
 
+}
+
+function updateTableTotalsEquipment(button, data) {
+    var quantity = data.quantity;
+    var materiales = data.materials;
+    var consumibles = data.consumables;
+    var serviciosVarios = data.workforces;
+    var serviciosAdicionales = data.tornos;
+    var diasTrabajo = data.dias;
+
+    var totalMaterials = 0;
+
+    for (let i = 0; i < materiales.length; i++) {
+        totalMaterials += parseFloat(materiales[i].total);
+    }
+
+    var totalConsumables = 0;
+
+    for (let j = 0; j < consumibles.length; j++) {
+        totalConsumables += parseFloat(consumibles[j].total);
+    }
+
+    var totalWorkforces = 0;
+
+    for (let k = 0; k < serviciosVarios.length; k++) {
+        totalWorkforces += parseFloat(serviciosVarios[k].total);
+    }
+
+    var totalTornos = 0;
+
+    for (let l = 0; l < serviciosAdicionales.length; l++) {
+        totalTornos += parseFloat(serviciosAdicionales[l].total);
+    }
+
+    var totalDias = 0;
+
+    for (let m = 0; m < diasTrabajo.length; m++) {
+        totalDias += parseFloat(diasTrabajo[m].total);
+    }
+
+    var table = button.parent().parent().next().children().next().next().next().next().next().children().next().children();
+
+    var totalMaterialsElement = table.find('[data-total_materials]');
+    totalMaterialsElement.html((totalMaterials*quantity).toFixed(2));
+    totalMaterialsElement.css('text-align', 'right');
+
+    var totalConsumablesElement = table.find('[data-total_consumables]');
+    totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
+    totalConsumablesElement.css('text-align', 'right');
+
+    var totalWorkforcesElement = table.find('[data-total_workforces]');
+    totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
+    totalWorkforcesElement.css('text-align', 'right');
+
+    var totalTornosElement = table.find('[data-total_tornos]');
+    totalTornosElement.html((totalTornos*quantity).toFixed(2));
+    totalTornosElement.css('text-align', 'right');
+
+    var totalDiasElement = table.find('[data-total_dias]');
+    totalDiasElement.html((totalDias*quantity).toFixed(2));
+    totalDiasElement.css('text-align', 'right');
 }
 
 function mayus(e) {

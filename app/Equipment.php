@@ -120,4 +120,64 @@ class Equipment extends Model
     {
         return $this->hasMany('App\EquipmentWorkday');
     }
+
+    public function getTotalMaterialsAttribute()
+    {
+        $total = 0;
+        foreach ( $this->materials as $material )
+        {
+            $total += $material->total;
+        }
+
+        return $total*$this->quantity;
+
+    }
+
+    public function getTotalConsumablesAttribute()
+    {
+        $total = 0;
+        foreach ( $this->consumables as $consumable )
+        {
+            $total += $consumable->total;
+        }
+
+        return $total*$this->quantity;
+
+    }
+
+    public function getTotalWorkforcesAttribute()
+    {
+        $total = 0;
+        foreach ( $this->workforces as $workforce )
+        {
+            $total += $workforce->total;
+        }
+
+        return $total*$this->quantity;
+
+    }
+
+    public function getTotalTurnstilesAttribute()
+    {
+        $total = 0;
+        foreach ( $this->turnstiles as $turnstile )
+        {
+            $total += $turnstile->total;
+        }
+
+        return $total*$this->quantity;
+
+    }
+
+    public function getTotalWorkdaysAttribute()
+    {
+        $total = 0;
+        foreach ( $this->workdays as $workday )
+        {
+            $total += $workday->total;
+        }
+
+        return $total*$this->quantity;
+
+    }
 }
