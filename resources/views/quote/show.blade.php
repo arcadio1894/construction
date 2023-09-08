@@ -522,6 +522,53 @@
                         </div>
                     </div>
 
+                    @can('showPrices_quote')
+                        <div class="card col-md-6">
+                            <div class="card-header">
+                                <h3 class="card-title">Resumen de totales</h3>
+                            </div>
+                            <!-- /.card-header -->
+                            <div class="card-body table-responsive p-0">
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr>
+                                        <th style="width: 10px">#</th>
+                                        <th>Concepto</th>
+                                        <th>Total</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr>
+                                        <td>1.</td>
+                                        <td>MATERIALES</td>
+                                        <td data-total_materials>{{ $equipment->total_materials }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2.</td>
+                                        <td>CONSUMIBLES</td>
+                                        <td data-total_consumables>{{ $equipment->total_consumables }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>3.</td>
+                                        <td>SERVICIOS VARIOS</td>
+                                        <td data-total_workforces>{{ $equipment->total_workforces }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4.</td>
+                                        <td>SERVICIOS ADICIONALES</td>
+                                        <td data-total_tornos>{{ $equipment->total_turnstiles }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>5.</td>
+                                        <td>DÍAS DE TRABAJO</td>
+                                        <td data-total_dias>{{ $equipment->total_workdays }}</td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
+                    @endcan
                 </div>
                 <!-- /.card-body -->
             </div>

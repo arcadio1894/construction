@@ -1045,7 +1045,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @can('showPrices_quote')
                         <div class="card col-md-6">
                             <div class="card-header">
                                 <h3 class="card-title">Resumen de totales</h3>
@@ -1091,6 +1091,7 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
+                        @endcan
                     </div>
                     <!-- /.card-body -->
                 </div>
@@ -2693,7 +2694,7 @@
                                 </div>
                             </div>
                         </div>
-
+                        @can('showPrices_quote')
                         <div class="card col-md-6">
                             <div class="card-header">
                                 <h3 class="card-title">Resumen de totales</h3>
@@ -2739,6 +2740,7 @@
                             </div>
                             <!-- /.card-body -->
                         </div>
+                        @endcan
                     </div>
                     <!-- /.card-body -->
                 </div>
