@@ -32,7 +32,12 @@ class Quote extends Model
         'order_execution',
         'state_active',
         'contact_id',
-        'payment_deadline_id'
+        'payment_deadline_id',
+        'reason_separate',
+        'vb_finances',
+        'date_vb_finances',
+        'vb_operations',
+        'date_vb_operations'
     ];
 
     public function getTotalEquipmentsAttribute()

@@ -862,6 +862,22 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_quote');
         Route::get('/all/quotes/lost', 'QuoteController@getAllQuoteLost');
 
+        // TODO: Visto bueno de finanzas y operaciones
+        Route::post('/visto/bueno/finances/quote/{quote}', 'QuoteController@vistoBuenoFinancesQuote')
+            ->middleware('permission:VBFinances_quote');
+        Route::post('/visto/bueno/operations/quote/{quote}', 'QuoteController@vistoBuenoOperationsQuote')
+            ->middleware('permission:VBOperations_quote');
+        Route::get('modificar/lista/materiales/cotizacion/{quote}', 'QuoteController@modificarListaMateriales')
+            ->middleware('permission:replacement_quote');
+        Route::post('/update/list/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@updateListEquipmentOfQuote')
+            ->name('quote.update.list.equipment')
+            ->middleware('permission:update_quote');
+        Route::post('/destroy/list/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@destroyListEquipmentOfQuote')
+            ->name('quote.destroy.list.equipment')
+            ->middleware('permission:update_quote');
+        Route::post('update/list/quote', 'QuoteController@updateList')
+            ->name('quote.update.list')
+            ->middleware('permission:update_quote');
 
         // ORDER EXECUTION
         Route::get('ordenes/ejecución', 'OrderExecutionController@indexOrderExecution')

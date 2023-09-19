@@ -119,7 +119,20 @@ $(document).ready(function () {
                     }
 
                     if (item.state === 'confirmed' && item.raise_status === 1){
-                        return '<span class="badge bg-success">Elevada</span>';
+                        if ( item.vb_finances == 1 && item.vb_operations == null )
+                        {
+                            return '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br> '+moment(item.date_vb_finances).format('DD/MM/YYYY')+'</span>';
+                        } else {
+                            if ( item.vb_finances == 1 && item.vb_operations == 1 )
+                            {
+                                return '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '+moment(item.date_vb_operations).format('DD/MM/YYYY')+'</span>';
+                            } else {
+                                if ( item.vb_finances == null && item.vb_operations == null )
+                                {
+                                    return '<span class="badge bg-success">Elevada</span>';
+                                }
+                            }
+                        }
                     }
 
                     if (item.state === 'canceled'){
@@ -155,7 +168,7 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+
                             '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a> ';
                     }
-                    if ( item.state === 'confirmed' ) {
+                    /*if ( item.state === 'confirmed' ) {
                         if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
@@ -164,9 +177,17 @@ $(document).ready(function () {
                             text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
                         }
-                    }
+                    }*/
 
                     if ( item.state === 'confirmed' && item.raise_status === 0 ) {
+                        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                        }
+                        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                        }
                         if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
                             text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
@@ -179,43 +200,146 @@ $(document).ready(function () {
                             text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
                                 ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
                         }
-
+                        if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                            text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                        }
                     }
 
                     if ( item.state === 'confirmed' && item.raise_status === 1 ) {
-                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
-                        }
-                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
-                        }
-                        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
-                        }
-                        // TODO: Boton para reemplazar materiales
-                        if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
-                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
-                        }
-                        if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
-                            text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
-                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                        if ( item.vb_finances == 1 && item.vb_operations == null )
+                        {
+                            if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                            }
+                            if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                    '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                            }
+                            if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                            }
+                            if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                            }
+                            if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                            }
+                            if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                            }
+                            if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                            }
+                            /*return '<span class="badge bg-gradient-navy text-white">V.B. Finanzas - '+moment(item.date_vb_finances).format('DD/MM/YYYY')+'</span>';*/
+                            // TODO: Boton para dar visto bueno operaciones Cambiar el permiso
+                            if ( $.inArray('VBOperations_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-vb_operations="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Visto bueno de operaciones"><i class="fas fa-check-double"></i></button>';
+                            }
+                            if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                            }
+                        } else {
+                            if ( item.vb_finances == 1 && item.vb_operations == 1 )
+                            {
+                                if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                    text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                                }
+                                if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                        '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                                }
+                                if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                                }
+                                if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                                }
+                                if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                                }
+                                if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                                }
+                                if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                }
+                                /*return '<span class="badge bg-gradient-orange">V.B. Operaciones - '+moment(item.date_vb_operations).format('DD/MM/YYYY')+'</span>';*/
+                                // TODO: Boton para editar materiales Cambiar el permiso
+                                if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/modificar/lista/materiales/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar lista materiales"><i class="fas fa-edit"></i></a> ';
+                                }
+                                if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                                }
+                            } else {
+                                if ( item.vb_finances == null && item.vb_operations == null )
+                                {
+                                    if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                                    }
+                                    if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                            '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                                    }
+                                    if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                                    }
+                                    if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                                    }
+                                    if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                                    }
+                                    // TODO: Boton para reemplazar materiales
+                                    if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                        text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                            '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                                    }
+                                    if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                        text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                    }
+
+                                    //TODO: Boton de deselevar
+                                    if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-deselevar="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Regresar a enviado"><i class="fas fa-level-down-alt"></i></button>';
+                                    }
+
+                                    // TODO: Boton para dar visto bueno finanzas Cambiar el permiso
+                                    if ( $.inArray('VBFinances_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-vb_finances="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Visto bueno de finanzas"><i class="fas fa-check-double"></i></button>';
+                                    }
+
+                                }
+                            }
                         }
 
-                        //TODO: Boton de deselevar
-                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
-                            text = text + ' <button data-deselevar="'+item.id+'" data-name="'+item.description_quote+'" '+
-                                ' class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Regresar a enviado"><i class="fas fa-level-down-alt"></i></button>';
-                        }
                     }
 
-                    if ( $.inArray('renew_quote', $permissions) !== -1 ) {
-                        text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
-                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
-                    }
+
 
                     return text;
                 }
@@ -385,6 +509,10 @@ $(document).ready(function () {
     $(document).on('click', '[data-detraction]', showModalDetraction);
 
     $('#btn-change').on('click', saveDetraction);
+
+    $(document).on('click', '[data-vb_operations]', vbOpeationsQuote);
+
+    $(document).on('click', '[data-vb_finances]', vbFinancesQuote);
 });
 
 var $formDelete;
@@ -394,6 +522,102 @@ var $permissions;
 var $modalDetraction;
 
 var $formDetraction;
+
+function vbOpeationsQuote() {
+    var quote_id = $(this).data('vb_operations');
+
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de dar el visto bueno de operaciones?',
+        content: 'Se guardará la fecha de visto bueno y se podrá modificar la lista de materiales.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/visto/bueno/operations/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Se canceló el proceso.");
+                },
+            },
+        }
+    });
+
+}
+
+function vbFinancesQuote() {
+    var quote_id = $(this).data('vb_finances');
+
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'small',
+        title: '¿Está seguro de dar el visto bueno de finanzas?',
+        content: 'Se guardará la fecha de visto bueno. Por favor verifica si ya descargaste el pdf de cliente.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/visto/bueno/finances/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Se canceló el proceso.");
+                },
+            },
+        }
+    });
+
+}
 
 function saveDetraction() {
     var button = $(this);
