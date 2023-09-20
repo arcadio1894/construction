@@ -126,7 +126,20 @@ $(document).ready(function () {
                         return '<span class="badge bg-danger">Finalizada</span>';
                     } else {
                         if (item.state === 'confirmed' && item.raise_status === 1){
-                            return '<span class="badge bg-success">Elevada</span>';
+                            if ( item.vb_finances == 1 && item.vb_operations == null )
+                            {
+                                return '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br> '+moment(item.date_vb_finances).format('DD/MM/YYYY')+'</span>';
+                            } else {
+                                if ( item.vb_finances == 1 && item.vb_operations == 1 )
+                                {
+                                    return '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '+moment(item.date_vb_operations).format('DD/MM/YYYY')+'</span>';
+                                } else {
+                                    if ( item.vb_finances == null && item.vb_operations == null )
+                                    {
+                                        return '<span class="badge bg-success">Elevada</span>';
+                                    }
+                                }
+                            }
                         }
                         if (item.state === 'confirmed' && item.raise_status === 0){
                             return '<span class="badge bg-success">Confirmada</span>';
@@ -169,7 +182,7 @@ $(document).ready(function () {
                         text = text + '<a href="'+document.location.origin+ '/dashboard/editar/planos/cotizacion/'+item.id+
                             '" class="btn bg-lime color-palette btn-sm" data-toggle="tooltip" data-placement="top" title="Editar planos"><i class="fas fa-images"></i></a> ';
                     }
-                    if ( item.state === 'confirmed' ) {
+                    /*if ( item.state === 'confirmed' ) {
                         if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
                                 '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
@@ -178,7 +191,7 @@ $(document).ready(function () {
                             text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/interno/' + item.id +
                                 '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
                         }
-                    }
+                    }*/
 
                     if ( item.state === 'created' ) {
                         //if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
@@ -220,9 +233,39 @@ $(document).ready(function () {
                         }
                         if ( item.state === 'confirmed' && item.raise_status == 0 )
                         {
+                            /*if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
+                                text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
+                                    '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
+                            }*/
+                            if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                            }
+                            if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                    '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                            }
                             if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
                                 text = text + '<a href="'+document.location.origin+ '/dashboard/ajustar/cotizacion/'+item.id+
                                     '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Ajustar porcentajes"><i class="fas fa-percentage"></i></a> ';
+                            }
+                            if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-raise="' + item.id + '" data-code="' + item.code_customer + '" data-name="' + item.description_quote + '" ' +
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Elevar"><i class="fa fa-level-up-alt"></i></button>';
+                            }
+                            if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-delete="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>';
+                            }
+                            /*if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                    ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                            }*/
+                            if ( item.total_soles == 0 ) {
+                                if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+                                }
                             }
                         }
 
@@ -231,7 +274,7 @@ $(document).ready(function () {
                                 text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
                                     ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
                             }*/
-                            if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                            /*if ( $.inArray('finish_quote', $permissions) !== -1 ) {
                                 text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
                                     ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
                             }
@@ -248,15 +291,146 @@ $(document).ready(function () {
                             if ( $.inArray('raise_quote', $permissions) !== -1 ) {
                                 text = text + ' <button data-deselevar="'+item.id+'" data-name="'+item.description_quote+'" '+
                                     ' class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Regresar a enviado"><i class="fas fa-level-down-alt"></i></button>';
+                            }*/
+                            if ( item.vb_finances == 1 && item.vb_operations == null )
+                            {
+                                if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                    text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                                }
+                                if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                    text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                        '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                                }
+                                if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                                }
+                                /*if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                                }*/
+                                if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                                }
+                                if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                                }
+                                if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                    text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                        '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                }
+                                /*return '<span class="badge bg-gradient-navy text-white">V.B. Finanzas - '+moment(item.date_vb_finances).format('DD/MM/YYYY')+'</span>';*/
+                                // TODO: Boton para dar visto bueno operaciones Cambiar el permiso
+                                if ( $.inArray('VBOperations_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-vb_operations="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Visto bueno de operaciones"><i class="fas fa-check-double"></i></button>';
+                                }
+                                /*if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                    text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                        ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                                }*/
+                            } else {
+                                if ( item.vb_finances == 1 && item.vb_operations == 1 )
+                                {
+                                    if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                        text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                                    }
+                                    if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                        text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                            '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                                    }
+                                    if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                                    }
+                                    /*if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                                    }*/
+                                    if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                                    }
+                                    if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                        text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                            '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                                    }
+                                    if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                        text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                            '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                    }
+                                    /*return '<span class="badge bg-gradient-orange">V.B. Operaciones - '+moment(item.date_vb_operations).format('DD/MM/YYYY')+'</span>';*/
+                                    // TODO: Boton para editar materiales Cambiar el permiso
+                                    if ( $.inArray('update_quote', $permissions) !== -1 ) {
+                                        text = text + '<a href="'+document.location.origin+ '/dashboard/modificar/lista/materiales/cotizacion/'+item.id+
+                                            '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar lista materiales"><i class="fas fa-edit"></i></a> ';
+                                    }
+                                    /*if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                                    }*/
+                                } else {
+                                    if ( item.vb_finances == null && item.vb_operations == null )
+                                    {
+                                        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+                                            text = text + '<a target="_blank" href="' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +
+                                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a> ';
+                                        }
+                                        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+                                            text = text + '<a target="_blank" href="'+document.location.origin+ '/dashboard/imprimir/interno/'+item.id+
+                                                '" class="btn btn-outline-dark btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir interna"><i class="fa fa-print"></i></a> ';
+                                        }
+                                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                            text = text + ' <button data-raise2="'+item.id+'" data-code="'+item.code_customer+'" data-name="'+item.description_quote+'" '+
+                                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>';
+                                        }
+                                        /*if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                            text = text + ' <button data-detraction="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Seleccionar detracción"><i class="fas fa-donate"></i></button>';
+                                        }*/
+                                        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+                                            text = text + ' <button data-finish="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                                ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar"><i class="fas fa-window-close"></i></button>';
+                                        }
+                                        // TODO: Boton para reemplazar materiales
+                                        if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+                                            text = text + '<a href="'+document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+item.id+
+                                                '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reemplazar materiales"><i class="fas fa-recycle"></i></a> ';
+                                        }
+                                        if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+                                            text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
+                                                '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                        }
+
+                                        //TODO: Boton de deselevar
+                                        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+                                            text = text + ' <button data-deselevar="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                                ' class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Regresar a enviado"><i class="fas fa-level-down-alt"></i></button>';
+                                        }
+                                        if ( item.total_soles == 0 ) {
+                                            if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
+                                                text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
+                                                    '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
+                                            }
+                                        }
+
+
+                                        // TODO: Boton para dar visto bueno finanzas Cambiar el permiso
+                                        if ( $.inArray('VBFinances_quote', $permissions) !== -1 ) {
+                                            text = text + ' <button data-vb_finances="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                                ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Visto bueno de finanzas"><i class="fas fa-check-double"></i></button>';
+                                        }
+
+                                    }
+                                }
                             }
                         }
 
-                        if ( item.total_soles == 0 ) {
-                            if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
-                                text = text + '<a href="'+document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+item.id+
-                                    '" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Cotizar en soles"><i class="fa fa-dollar-sign"></i></a> ';
-                            }
-                        }
+
 
                     }
 
