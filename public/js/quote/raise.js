@@ -785,7 +785,7 @@ function renewQuote() {
                 text: 'CANCELAR',
                 action: function (e) {
                     button.attr("disabled", false);
-                    $.alert("Cotización no elevada.");
+                    $.alert("Cotización no recotizada.");
                 },
             },
         }
