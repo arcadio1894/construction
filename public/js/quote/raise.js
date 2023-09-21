@@ -332,6 +332,10 @@ $(document).ready(function () {
                                         text = text + ' <button data-vb_finances="'+item.id+'" data-name="'+item.description_quote+'" '+
                                             ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Visto bueno de finanzas"><i class="fas fa-check-double"></i></button>';
                                     }
+                                    if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+                                        text = text + ' <button data-renew="'+item.id+'" data-name="'+item.description_quote+'" '+
+                                            ' class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>';
+                                    }
 
                                 }
                             }
