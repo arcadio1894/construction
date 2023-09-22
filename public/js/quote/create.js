@@ -799,6 +799,7 @@ function saveEquipment() {
                     var totalEquipmentL = 0;
                     var totalEquipmentR = 0;
                     var totalEquipmentUtility = 0;
+                    var totalDias = 0;
                     for (let i = 0; i < materialsTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                     }
@@ -812,9 +813,9 @@ function saveEquipment() {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
                     for (let i = 0; i < diasTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                        totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
                     }
-                    totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+                    totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
                     totalEquipmentU = totalEquipment*((utility/100)+1);
                     totalEquipmentL = totalEquipmentU*((letter/100)+1);
                     totalEquipmentR = totalEquipmentL*((rent/100)+1);
@@ -1739,6 +1740,7 @@ function confirmEquipment() {
                     var totalEquipmentL = 0;
                     var totalEquipmentR = 0;
                     var totalEquipmentUtility = 0;
+                    var totalDias = 0;
                     for (let i = 0; i < materialsTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(materialsTotal[i]);
                     }
@@ -1752,9 +1754,9 @@ function confirmEquipment() {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
                     for (let i = 0; i < diasTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
+                        totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
                     }
-                    totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
+                    totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
 
                     totalEquipmentU = totalEquipment*((utility/100)+1);
                     totalEquipmentL = totalEquipmentU*((letter/100)+1);
@@ -1854,7 +1856,8 @@ function updateTableTotalsEquipment(button, data) {
     totalTornosElement.css('text-align', 'right');
 
     var totalDiasElement = table.find('[data-total_dias]');
-    totalDiasElement.html((totalDias*quantity).toFixed(2));
+    //totalDiasElement.html((totalDias*quantity).toFixed(2));
+    totalDiasElement.html((totalDias).toFixed(2));
     totalDiasElement.css('text-align', 'right');
 }
 

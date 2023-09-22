@@ -246,7 +246,7 @@ class QuoteController extends Controller
                     $totalDias += $equipmentdias->total;
                 }
 
-                $totalEquipo = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity)+$totalDias;
                 $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                 $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                 $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
@@ -463,7 +463,7 @@ class QuoteController extends Controller
                     $new_total_workday = $new_total_workday + $equipment_workday->total;
                 }
 
-                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile + $new_total_workday) * $equipment->quantity);
+                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile) * $equipment->quantity) + $new_total_workday;
                 $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                 $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                 $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
@@ -848,7 +848,7 @@ class QuoteController extends Controller
 
                     //$equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
-                    $totalEquipo = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity) + $totalDias;
                     $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                     $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                     $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
@@ -2055,9 +2055,9 @@ class QuoteController extends Controller
                     $totalDias += $renew_equipmentdias->total;
                 }
 
-                $totalQuote += ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$renew_equipment->quantity;;
+                $totalQuote += (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$renew_equipment->quantity)+ $totalDias;
 
-                $renew_equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$renew_equipment->quantity;
+                $renew_equipment->total = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos)* (float)$renew_equipment->quantity) + $totalDias;
 
                 $renew_equipment->save();
             }
@@ -2978,7 +2978,7 @@ class QuoteController extends Controller
 
                     //$equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
-                    $totalEquipo = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity;
+                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity) + $totalDias;
                     $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                     $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                     $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
