@@ -330,6 +330,22 @@ $(document).ready(function () {
         }
     });
 
+    $(document).on('input', '[data-materialLargo]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-materialAncho]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-materialQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+
     $(document).on('input', '[data-manoQuantity]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
@@ -3567,6 +3583,260 @@ function storeQuote() {
     });
 }
 
+function calculateTotalMaterialQuantity(e) {
+    var cantidad = e.value;
+    var material_id = e.getAttribute('material_id');
+    console.log(material_id);
+    var igvRate = 0.18;
+
+    var width = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
+    var length = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+
+    var material = $materials.find( mat=>mat.id === parseInt(material_id) );
+
+    if ( material.type_scrap == null )
+    {
+        var newPriceConIgv = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+        var newPriceSinIgv = parseFloat(newPriceConIgv / (1 + igvRate)).toFixed(2);
+
+        var newPriceConIgvTotal = parseFloat(material.unit_price).toFixed(2);
+
+        var newPriceSinIgvTotal = parseFloat(newPriceConIgvTotal / (1 + igvRate)).toFixed(2);
+
+        //var priceSinIgv =
+        e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotal;
+        //var priceConIgv =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotal;
+        //var priceSinIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgv ;
+        //var priceConIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgv ;
+
+    } else {
+
+        // TODO: Si es tubo
+        if (material && material.type_scrap && (material.type_scrap.id === 3 || material.type_scrap.id === 4 || material.type_scrap.id === 5))
+        {
+            if ( length == null || length == '' )
+            {
+                // TODO: Solo colocaron cantidad
+                var newPriceConIgvT = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+                var newPriceSinIgvT = parseFloat(newPriceConIgvT / (1 + igvRate)).toFixed(2);
+
+                var newPriceConIgvTotalT = parseFloat(material.unit_price).toFixed(2);
+
+                var newPriceSinIgvTotalT = parseFloat(newPriceConIgvTotalT / (1 + igvRate)).toFixed(2);
+
+                //var priceSinIgv =
+                e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalT;
+                //var priceConIgv =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalT;
+                //var priceSinIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvT ;
+                //var priceConIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvT ;
+
+            } else {
+                // TODO: Solo colocaron largo
+                var lengthOriginalMaterial = material.type_scrap.length;
+                var newLength = parseFloat(cantidad*lengthOriginalMaterial).toFixed(2);
+
+                // Actualizamos la cantidad automaticamente
+                e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value = newLength;
+
+                var newPriceConIgvT2 = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+                var newPriceSinIgvT2 = parseFloat(newPriceConIgvT2 / (1 + igvRate)).toFixed(2);
+
+                var newPriceConIgvTotalT2 = parseFloat(material.unit_price).toFixed(2);
+
+                var newPriceSinIgvTotalT2 = parseFloat(newPriceConIgvTotalT2 / (1 + igvRate)).toFixed(2);
+
+                //var priceSinIgv =
+                e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalT2;
+                //var priceConIgv =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalT2;
+                //var priceSinIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvT2 ;
+                //var priceConIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvT2 ;
+
+            }
+
+        } else {
+
+            // TODO: Si es plancha
+            if ( length == "" || width == "" )
+            {
+                // TODO: Solo colocaron cantidad
+                var newPriceConIgvP = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+                var newPriceSinIgvP = parseFloat(newPriceConIgvP / (1 + igvRate)).toFixed(2);
+
+                var newPriceConIgvTotalP = parseFloat(material.unit_price).toFixed(2);
+
+                var newPriceSinIgvTotalP = parseFloat(newPriceConIgvTotalP / (1 + igvRate)).toFixed(2);
+
+                //var priceSinIgv =
+                e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalP;
+                //var priceConIgv =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalP;
+                //var priceSinIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvP ;
+                //var priceConIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP ;
+
+            } else {
+                // TODO: Colocaron largo y ancho, no se puede asi que seteamos el largo y ancho a 0
+                var newLengthP = 0;
+
+                var newWidthP = 0;
+
+                // Actualizamos la cantidad automaticamente
+
+                e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value = newLengthP;
+                e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value = newWidthP;
+
+                var newPriceConIgvP2 = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+                var newPriceSinIgvP2 = parseFloat(newPriceConIgvP2 / (1 + igvRate)).toFixed(2);
+
+                var newPriceConIgvTotalP2 = parseFloat(material.unit_price).toFixed(2);
+
+                var newPriceSinIgvTotalP2 = parseFloat(newPriceConIgvTotalP2 / (1 + igvRate)).toFixed(2);
+
+                //var priceSinIgv =
+                e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalP2;
+                //var priceConIgv =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalP2;
+                //var priceSinIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvP2 ;
+                //var priceConIgvTotal =
+                e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP2 ;
+
+            }
+        }
+    }
+
+
+}
+
+function calculateTotalMaterialLargo(e) {
+    var largo = e.value;
+    var material_id = e.getAttribute('material_id');
+    console.log(material_id);
+    var igvRate = 0.18;
+
+    var width = e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value;
+    //var length = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+
+    var material = $materials.find( mat=>mat.id === parseInt(material_id) );
+
+    // TODO: Si es tubo
+    if (material && material.type_scrap && (material.type_scrap.id === 3 || material.type_scrap.id === 4 || material.type_scrap.id === 5))
+    {
+
+        // TODO: Solo colocaron cantidad
+        var lengthOriginalMaterial = material.type_scrap.length;
+        var cantidad = parseFloat(largo/lengthOriginalMaterial).toFixed(2);
+
+        var newPriceConIgvT = parseFloat(cantidad*material.unit_price).toFixed(2);
+
+        var newPriceSinIgvT = parseFloat(newPriceConIgvT / (1 + igvRate)).toFixed(2);
+
+        var newPriceConIgvTotalT = parseFloat(material.unit_price).toFixed(2);
+
+        var newPriceSinIgvTotalT = parseFloat(newPriceConIgvTotalT / (1 + igvRate)).toFixed(2);
+
+        //var cantidad =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = cantidad;
+        //var priceSinIgv =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalT;
+        //var priceConIgv =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalT;
+        //var priceSinIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvT ;
+        //var priceConIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvT ;
+
+    } else {
+
+        // TODO: Si es plancha falta
+        var lengthOriginalMaterialP = material.type_scrap.length;
+        var widthOriginalMaterialP = material.type_scrap.width;
+
+        var areaOriginal = lengthOriginalMaterialP*widthOriginalMaterialP;
+
+        var areaNew = largo*width;
+
+        var cantidadP = parseFloat(areaNew/areaOriginal).toFixed(2);
+
+        var newPriceConIgvP = parseFloat(cantidadP*material.unit_price).toFixed(2);
+
+        var newPriceSinIgvP = parseFloat(newPriceConIgvP / (1 + igvRate)).toFixed(2);
+
+        var newPriceConIgvTotalP = parseFloat(material.unit_price).toFixed(2);
+
+        var newPriceSinIgvTotalP = parseFloat(newPriceConIgvTotalP / (1 + igvRate)).toFixed(2);
+
+        //var cantidad =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = cantidadP;
+        //var priceSinIgv =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalP;
+        //var priceConIgv =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalP;
+        //var priceSinIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvP ;
+        //var priceConIgvTotal =
+        e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP ;
+
+    }
+}
+
+function calculateTotalMaterialAncho(e) {
+    var ancho = e.value;
+    var material_id = e.getAttribute('material_id');
+    console.log(material_id);
+    var igvRate = 0.18;
+
+    var length = e.parentElement.parentElement.previousElementSibling.firstElementChild.firstElementChild.value;
+    //var length = e.parentElement.parentElement.previousElementSibling.previousElementSibling.firstElementChild.firstElementChild.value;
+
+    var material = $materials.find( mat=>mat.id === parseInt(material_id) );
+
+    // TODO: Si es plancha falta
+    var lengthOriginalMaterialP = material.type_scrap.length;
+    var widthOriginalMaterialP = material.type_scrap.width;
+
+    var areaOriginal = lengthOriginalMaterialP*widthOriginalMaterialP;
+
+    var areaNew = length*ancho;
+
+    var cantidadP = parseFloat(areaNew/areaOriginal).toFixed(2);
+
+    var newPriceConIgvP = parseFloat(cantidadP*material.unit_price).toFixed(2);
+
+    var newPriceSinIgvP = parseFloat(newPriceConIgvP / (1 + igvRate)).toFixed(2);
+
+    var newPriceConIgvTotalP = parseFloat(material.unit_price).toFixed(2);
+
+    var newPriceSinIgvTotalP = parseFloat(newPriceConIgvTotalP / (1 + igvRate)).toFixed(2);
+
+    //var cantidad =
+    e.parentElement.parentElement.nextElementSibling.firstElementChild.firstElementChild.value = cantidadP;
+    //var priceSinIgv =
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvTotalP;
+    //var priceConIgv =
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvTotalP;
+    //var priceSinIgvTotal =
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceSinIgvP ;
+    //var priceConIgvTotal =
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP ;
+
+}
+
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {
     console.log(render);
     var card = render.parent().parent().parent().parent();
@@ -3583,9 +3853,50 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         }
         //clone.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
-        clone.querySelector("[data-materialLargo]").setAttribute('value', length);
-        clone.querySelector("[data-materialAncho]").setAttribute('value', width);
+
+        /*clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+        clone.querySelector("[data-materialAncho]").setAttribute('value', width);*/
+        if (material.type_scrap == null)
+        {
+            clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+            clone.querySelector("[data-materialAncho]").setAttribute('value', width);
+            clone.querySelector("[data-materialLargo]").setAttribute('readonly', 'readonly');
+            clone.querySelector("[data-materialAncho]").setAttribute('readonly', 'readonly');
+
+            clone.querySelector("[data-materialLargo]").setAttribute('material_id', material.id);
+            clone.querySelector("[data-materialAncho]").setAttribute('material_id', material.id);
+
+        } else {
+            if (material && material.type_scrap && (material.type_scrap.id === 3 || material.type_scrap.id === 4 || material.type_scrap.id === 5))
+            {
+                if ( length == null || length == '' )
+                {
+                    clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+                    clone.querySelector("[data-materialLargo]").setAttribute('readonly', 'readonly');
+                } else {
+                    clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+                }
+
+                clone.querySelector("[data-materialAncho]").setAttribute('readonly', 'readonly');
+
+                clone.querySelector("[data-materialLargo]").setAttribute('material_id', material.id);
+                clone.querySelector("[data-materialAncho]").setAttribute('material_id', material.id);
+            } else {
+                if ( length == null || width == null )
+                {
+                    clone.querySelector("[data-materialLargo]").setAttribute('readonly', 'readonly');
+                    clone.querySelector("[data-materialAncho]").setAttribute('readonly', 'readonly');
+                } else {
+                    clone.querySelector("[data-materialLargo]").setAttribute('value', length);
+                    clone.querySelector("[data-materialAncho]").setAttribute('value', width);
+                }
+                clone.querySelector("[data-materialLargo]").setAttribute('material_id', material.id);
+                clone.querySelector("[data-materialAncho]").setAttribute('material_id', material.id);
+            }
+        }
+
         clone.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-materialQuantity]").setAttribute('material_id', material.id);
         clone.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
         clone.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
         clone.querySelector("[data-materialPrice2]").setAttribute('value', (parseFloat(price)/1.18).toFixed(2));
@@ -3603,9 +3914,27 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         }
         //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
-        clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
-        clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
+        /*clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
+        clone2.querySelector("[data-materialAncho]").setAttribute('value', width);*/
+        if (material.type_scrap == null)
+        {
+            clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
+            clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
+            clone2.querySelector("[data-materialLargo]").setAttribute('readonly', 'readonly');
+            clone2.querySelector("[data-materialAncho]").setAttribute('readonly', 'readonly');
+
+            clone2.querySelector("[data-materialLargo]").setAttribute('material_id', material.id);
+            clone2.querySelector("[data-materialAncho]").setAttribute('material_id', material.id);
+
+        } else {
+            clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
+            clone2.querySelector("[data-materialAncho]").setAttribute('value', width);
+
+            clone2.querySelector("[data-materialLargo]").setAttribute('material_id', material.id);
+            clone2.querySelector("[data-materialAncho]").setAttribute('material_id', material.id);
+        }
         clone2.querySelector("[data-materialQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-materialQuantity]").setAttribute('material_id', material.id);
         clone2.querySelector("[data-materialPrice]").setAttribute('value', (parseFloat(price)).toFixed(2));
         clone2.querySelector("[data-materialTotal]").setAttribute( 'value', (parseFloat(total)).toFixed(2));
         clone2.querySelector("[data-materialPrice]").setAttribute("style","display:none;");

@@ -295,23 +295,23 @@
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialLargo step="0.01" value="{{ $material->length }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialLargo(this);" min="0" data-materialLargo material_id="{{ $material->material_id }}" step="0.01" value="{{ $material->length }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialAncho step="0.01" value="{{ $material->width }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialAncho(this);" min="0" data-materialAncho material_id="{{ $material->material_id }}" step="0.01" value="{{ $material->width }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialQuantity step="0.01" value="{{ $material->percentage }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialQuantity(this);" min="0" data-materialQuantity material_id="{{ $material->material_id }}" step="0.01" value="{{ $material->percentage }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -366,23 +366,23 @@
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialLargo step="0.01" value="{{ $material->length }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" material_id="{{ $material->material_id }}" oninput="calculateTotalMaterialLargo(this);" min="0" data-materialLargo step="0.01" value="{{ $material->length }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialAncho step="0.01" value="{{ $material->width }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" material_id="{{ $material->material_id }}" oninput="calculateTotalMaterialAncho(this);" min="0" data-materialAncho step="0.01" value="{{ $material->width }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialQuantity step="0.01" value="{{ $material->percentage }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" material_id="{{ $material->material_id }}" oninput="calculateTotalMaterialQuantity(this);" min="0" data-materialQuantity step="0.01" value="{{ $material->percentage }}" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                        " readonly>
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
@@ -1730,7 +1730,7 @@
                                         <th style="background-color: #92D050">Cantidad</th>
                                         <th style="background-color: #9BC2E6">Subtotal S/Igv</th>
                                         <th style="background-color: #9BC2E6">Utilidad</th>
-                                        <th style="background-color: #9BC2E6">Letra+Renta</th>
+                                        <th style="background-color: #9BC2E6">Gastos Varios</th>
                                         <th style="background-color: #9BC2E6">Precio Unit. S/Igv</th>
                                         <th style="background-color: #ED7D31">Total S/Igv</th>
                                         <th >Cambiar</th>
@@ -1832,23 +1832,23 @@
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialLargo step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialLargo(this);" min="0" data-materialLargo step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " >
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialAncho step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialAncho(this);" min="0" data-materialAncho step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            " >
                     </div>
                 </div>
                 <div class="col-md-1">
                     <div class="form-group">
-                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-materialQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalMaterialQuantity(this);" min="0" data-materialQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                            " readonly>
+                            ">
                     </div>
                 </div>
                 <div class="col-md-1">
