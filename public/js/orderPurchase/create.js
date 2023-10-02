@@ -7,6 +7,10 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-add]', addItem);
 
+    $(document).on('click', '[data-check]', checkItem);
+
+    $modalCheck = $("#modalCheck");
+
     $('#btn-submit').on('click', storeOrderPurchase);
 
     $(document).on('click', '[data-delete]', deleteItem);
@@ -98,6 +102,28 @@ var substringMatcher = function(strs) {
 };
 
 let $formCreate;
+let $modalCheck;
+
+function checkItem() {
+    var material_id = $(this).attr('data-check');
+
+    $.ajax({
+        url: "/dashboard/get/information/quantity/material/"+material_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (json) {
+            console.log(json);
+            $("#stockActual").html(parseFloat(json.stockActual).toFixed(2));
+            $("#cantidadOrdenes").html(parseFloat(json.cantidadOrdenes).toFixed(2));
+            $("#cantidadDisponibleReal").html(parseFloat(json.cantidadDisponibleReal).toFixed(2));
+            $("#cantidadCotizaciones").html(parseFloat(json.cantidadCotizaciones).toFixed(2));
+            $("#cantidadSolicitada").html(parseFloat(json.cantidadSolicitada).toFixed(2));
+            $("#cantidadNecesitadaReal").html(parseFloat(json.cantidadNecesitadaReal).toFixed(2));
+            $("#cantidadParaComprar").html(parseFloat(json.cantidadParaComprar).toFixed(2));
+            $modalCheck.modal('show');
+        }
+    });
+}
 
 function addItem() {
 

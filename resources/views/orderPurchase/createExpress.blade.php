@@ -189,6 +189,7 @@
                                         <td>{{ $material['material_complete']->unit_price }}</td>
                                         <td>
                                             <button type="button" data-add class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
+                                            <button type="button" data-check="{{ $material['material_id'] }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-search"></i> </button>
                                             {{--<div class="icheck-success d-inline">
                                                 <input type="checkbox" data-selected id="checkboxSuccess1">
                                                 <label for="checkboxSuccess1" data-label></label>
@@ -374,6 +375,62 @@
             </div>
         </div>
     </template>
+
+    <div id="modalCheck" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Ver Información de Cantidad</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <ul class="nav flex-column">
+
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Stock Actual <span class="float-right badge bg-success text-md" id="stockActual">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cantidad Ordenes Por Ingresar <span class="float-right badge bg-success text-md" id="cantidadOrdenes">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cant. Disponible (Stock + Ordenes Por Ingresar) <span class="float-right badge bg-success text-md" id="cantidadDisponibleReal">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cantidad en Cotizaciones <span class="float-right badge bg-warning text-md" id="cantidadCotizaciones">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cantidad En Solicitudes <span class="float-right badge bg-warning text-md" id="cantidadSolicitada">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cantidad Faltante (Cant. Cotizacion - Cant. Solicitud) <span class="float-right badge bg-warning text-md" id="cantidadNecesitadaReal">0</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#!" class="nav-link">
+                                Cantidad Para Comprar (Cant. Disponible - Cant. Faltante) <span class="float-right badge bg-danger text-md" id="cantidadParaComprar">0</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 @endsection
 

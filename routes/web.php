@@ -974,6 +974,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_orderPurchaseNormal');
         Route::get('/all/order/purchase/lost', 'OrderPurchaseController@getAllOrderPurchaseLost');
 
+        Route::get('/get/information/quantity/material/{material_id}', 'OrderPurchaseController@getInformationQuantityMaterial');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

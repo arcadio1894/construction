@@ -267,6 +267,79 @@ class OrderPurchaseController extends Controller
         return view('orderPurchase.createExpress', compact('users', 'codeOrder', 'suppliers', 'arrayMaterialsFinal', 'payment_deadlines', 'quotesRaised'));
     }
 
+    public function getInformationQuantityMaterial($material_id)
+    {
+        $materialComplete = Material::find($material_id);
+        //dd($material);
+        //dump('Logica  ' . $item['material_id'] );
+        $quotesRaised = Quote::where('raise_status', 1)
+            ->where('state_active', 'open')
+            ->with('equipments')->get();
+
+        $quoteQuantity = 0;
+        $takenQuantity = 0;
+
+        foreach ( $quotesRaised as $quote )
+        {
+            foreach ( $quote->equipments as $equipment )
+            {
+                if ( !$equipment->finished )
+                {
+                    foreach ( $equipment->materials as $material )
+                    {
+                        // TODO: Reemplazo de materiales
+                        if ( $material->replacement == 0 )
+                        {
+                            if ( $material->material_id == $material_id  ){
+                                $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
+                                    ->where('material_id', $material->material_id)
+                                    ->where('type_output', 'orn')
+                                    ->get();
+
+                                foreach ( $materials_taken as $item )
+                                {
+                                    $takenQuantity+=(float)$item->quantity_request;
+                                }
+
+                                $quoteQuantity+=((float)$material->quantity*(float)$equipment->quantity);
+
+                            }
+                        }
+
+                    }
+                }
+
+            }
+        }
+
+        $cantidadEnCotizaciones = $quoteQuantity;
+        //dump('CC  ' . $cantidadEnCotizaciones);
+        $stockReal = (float)$materialComplete->stock_current;
+        //dump('stock  ' . $stockReal);
+        $amount = MaterialOrder::where('material_id', $material_id)->sum('quantity_request') - MaterialOrder::where('material_id', $material_id)->sum('quantity_entered');
+        //dump('orden  ' . $amount);
+        $tengoReal = $stockReal + $amount;
+        //dump('TR  ' . $tengoReal);
+        //dump('taken  ' . $materials_taken);
+        $material_taken = $takenQuantity;
+        $faltaReal = $cantidadEnCotizaciones - $material_taken;
+
+        //dump('FR  ' . $faltaReal);
+        $balance = $faltaReal - $tengoReal;
+        //dump('bal  ' . $balance);
+
+        return response()->json([
+            "cantidadCotizaciones" => $cantidadEnCotizaciones,
+            "stockActual" => $stockReal,
+            "cantidadOrdenes" => $amount,
+            "cantidadDisponibleReal" => $tengoReal,
+            "cantidadSolicitada" => $material_taken,
+            "cantidadNecesitadaReal" => $faltaReal,
+            "cantidadParaComprar" => $balance
+        ]);
+
+    }
+
     public function storeOrderPurchaseExpress(StoreOrderPurchaseRequest $request)
     {
         $begin = microtime(true);
