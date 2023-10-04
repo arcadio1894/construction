@@ -189,8 +189,8 @@
                                         <td>{{ $material['material_complete']->unit_price }}</td>
                                         <td>
                                             <button type="button" data-add class="btn btn-outline-success btn-sm"><i class="fas fa-plus"></i> </button>
-                                            {{--<button type="button" data-check="{{ $material['material_id'] }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-search"></i> </button>
-                                            --}}{{--<div class="icheck-success d-inline">
+                                            <button type="button" data-check="{{ $material['material_id'] }}" class="btn btn-outline-primary btn-sm"><i class="fas fa-search"></i> </button>
+                                            {{--<div class="icheck-success d-inline">
                                                 <input type="checkbox" data-selected id="checkboxSuccess1">
                                                 <label for="checkboxSuccess1" data-label></label>
                                             </div>--}}
