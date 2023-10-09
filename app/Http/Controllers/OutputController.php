@@ -2498,6 +2498,7 @@ class OutputController extends Controller
     public function getJsonItemsOutputSimple($output_id)
     {
         $begin = microtime(true);
+        $array = [];
         $materials = [];
         $materials_quantity = [];
         $outputDetails = OutputDetail::where('output_id', $output_id)->get();
