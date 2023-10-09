@@ -2512,7 +2512,7 @@ class OutputController extends Controller
             {
                 if (isset($item)) {
                     $l = 'AR:' . $item->location->area->name . '|AL:' . $item->location->warehouse->name . '|AN:' . $item->location->shelf->name . '|NIV:' . $item->location->level->name . '|CON:' . $item->location->container->name;
-                    array_push($array,
+                    array_push($materials_quantity,
                         [
                             'id' => $key + 1,
                             'material' => $item->material->full_description,
@@ -2529,7 +2529,7 @@ class OutputController extends Controller
                         ]);
 
                 } else {
-                    array_push($array,
+                    array_push($materials_quantity,
                         [
                             'id' => $key + 1,
                             'material' => $outputDetail->material->full_description,
