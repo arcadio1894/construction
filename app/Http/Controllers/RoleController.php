@@ -86,7 +86,8 @@ class RoleController extends Controller
         'bonusRisk' => 'BONOS ESPECIALES',
         'personalPayments' => 'PAGO AL PERSONAL',
         'projection' => 'PROYECCION DE SUELDOS',
-        'financeWorks' => 'TRABAJOS EN FINANZAS'
+        'financeWorks' => 'TRABAJOS EN FINANZAS',
+        'workerAccount' => 'CUENTAS BANCARIAS TRABAJADORES'
     ];
 
     public function index()

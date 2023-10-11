@@ -2201,6 +2201,22 @@ Route::middleware('auth')->group(function (){
         Route::post('finance/work/edit/facturacion', 'FinanceWorkController@financeWorkEditFacturacion')
             ->name('finance.work.edit.facturacion')
             ->middleware('permission:update_financeWorks');
+
+        // TODO: Rutas de Worker Accounts
+        Route::get('/registrar/cuentas/trabajador/{worker_id}', 'WorkerAccountController@index')
+            ->name('worker.accounts.index')
+            ->middleware('permission:list_workerAccount');
+        Route::get('/get/worker/accounts/{worker_id}', 'WorkerAccountController@getWorkerAccounts')
+            ->middleware('permission:list_workerAccount');
+        Route::post('worker/account/store/{worker_id}', 'WorkerAccountController@store')
+            ->name('worker.account.store')
+            ->middleware('permission:create_workerAccount');
+        Route::post('worker/account/update/{account_id}', 'WorkerAccountController@update')
+            ->name('worker.account.update')
+            ->middleware('permission:edit_workerAccount');
+        Route::post('worker/account/destroy/{account_id}', 'WorkerAccountController@destroy')
+            ->name('worker.account.destroy')
+            ->middleware('permission:destroy_workerAccount');
     });
 });
 

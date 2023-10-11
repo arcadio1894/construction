@@ -156,6 +156,9 @@ $(document).ready(function () {
                     if ( $.inArray('destroy_worker', $permissions) !== -1 ) {
                         text = text + '<button data-delete="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-window-close"></i> </button>  ';
                     }
+                    if ( $.inArray('list_workerAccount', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/registrar/cuentas/trabajador/'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Registrar cuentas"><i class="fas fa-money-bill"></i> </a>  ';
+                    }
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
                         if ( item.have_contract == 0 )
                         {
