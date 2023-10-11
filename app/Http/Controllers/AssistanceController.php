@@ -19,6 +19,7 @@ use App\RegimeDetail;
 use App\Suspension;
 use App\Vacation;
 use App\Worker;
+use App\WorkerAccount;
 use App\WorkingDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -3948,6 +3949,45 @@ class AssistanceController extends Controller
 
     }
 
+    public function showTotalPaysAccounts()
+    {
+        Carbon::setLocale(config('app.locale'));
+
+        $fechaActual = Carbon::now('America/Lima');
+
+        $currentYear = $fechaActual->year;
+        $currentWeek = $fechaActual->week;
+
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $years = DateDimension::distinct()->get(['year']);
+
+        $semanas = DateDimension::distinct()
+            ->where('year', $currentYear)
+            ->orderBy('week')
+            ->get(['week']);
+
+        $weeks = [];
+
+        foreach ( $semanas as $semana )
+        {
+            $fechaInicioSemana = Carbon::now()->setISODate(Carbon::now()->year, $semana->week)->startOfWeek();
+            $fechaFinSemana = Carbon::now()->setISODate(Carbon::now()->year, $semana->week)->endOfWeek();
+            $fechaInicioSemanaFormateada = $fechaInicioSemana->format('d/m');
+            $fechaFinSemanaFormateada = $fechaFinSemana->format('d/m');
+
+            array_push($weeks, [
+                "week" => $semana->week,
+                "dateStart" => $fechaInicioSemanaFormateada,
+                "dateEnd" => $fechaFinSemanaFormateada
+            ]);
+        }
+
+        return view('assistance.totalPaysAccounts', compact( 'permissions', 'years', 'weeks', 'currentYear', 'currentWeek'));
+
+    }
+
     public function getWeeksTotalPaysByYear( $year )
     {
         $weeks = [];
@@ -4043,6 +4083,114 @@ class AssistanceController extends Controller
                 array_push($paySlips, [
                     "codigo" => "<strong>#</strong>",
                     "trabajador" => "<strong>Suma total</strong>",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+        }
+
+        return response()->json([ "weeks" => $weeks ]);
+    }
+
+    public function getTotalPaysAccountsByYearWeek()
+    {
+        $year = $_GET['year'];
+        $weekStart = $_GET['weekStart'];
+        $weekEnd = $_GET['weekEnd'];
+
+        if ( $weekStart != '' || $weekEnd != '' )
+        {
+            // TODO: Hay semanas especificadas
+            $weeks = [];
+            for ( $i=$weekStart; $i<=$weekEnd; $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boletas = PaySlip::where('year', $year)
+                    ->where('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'asc')
+                    ->get();
+                $paySlips = [];
+                $total=0;
+
+                foreach ( $boletas as $boleta )
+                {
+                    $textAccounts = "";
+                    $accounts = WorkerAccount::where('worker_id', $boleta->codigo)->get();
+                    foreach ( $accounts as $account )
+                    {
+                        $textAccounts = $textAccounts . $account->number_account . "<br>";
+                    }
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "cuentas" => $textAccounts,
+                        "monto" => round($boleta->totalNetoPagar, 2)
+                    ]);
+                    $total = $total + round($boleta->totalNetoPagar, 2);
+                }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "cuentas" => "",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+
+
+        } else {
+            // TODO: Hay semanas especificadas
+            $currentWeek = Carbon::now()->weekOfYear;
+            $weeks = [];
+            for ( $i=1; $i<=$currentWeek; $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boletas = PaySlip::where('year', $year)
+                    ->whereIn('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'asc')
+                    ->get();
+                $paySlips = [];
+                $total=0;
+
+                foreach ( $boletas as $boleta )
+                {
+                    $textAccounts = "";
+                    $accounts = WorkerAccount::where('worker_id', $boleta->codigo)->get();
+
+                    foreach ( $accounts as $account )
+                    {
+                        $textAccounts = $textAccounts . $account->number_account . "<br>";
+                    }
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "cuentas" => $textAccounts,
+                        "monto" => $boleta->totalNetoPagar
+                    ]);
+                    $total = $total + $boleta->totalNetoPagar;
+                }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "cuentas" => "",
                     "monto" => "<strong>".$total."</strong>"
                 ]);
 

@@ -1599,9 +1599,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/ver/total/pagar', 'AssistanceController@showTotalPays')
             ->name('assistance.show.total.pays');
 
+        Route::get('/ver/total/pagar/finanzas', 'AssistanceController@showTotalPaysAccounts')
+            ->name('assistance.show.total.pays.accounts');
+
         Route::get('/get/weeks/total/pays/{year}', 'AssistanceController@getWeeksTotalPaysByYear');
 
         Route::get('/get/total/pays/by/year/week/', 'AssistanceController@getTotalPaysByYearWeek');
+        Route::get('/get/total/pays/accounts/by/year/week/', 'AssistanceController@getTotalPaysAccountsByYearWeek');
 
         // TODO: Total Bruto
         Route::get('/ver/total/bruto', 'AssistanceController@showTotalBruto')

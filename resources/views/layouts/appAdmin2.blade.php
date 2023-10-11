@@ -1839,6 +1839,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('totalPays_assistance')
+                                <li class="nav-item">
+                                    <a href="{{ route('assistance.show.total.pays.accounts') }}" class="nav-link @yield('activeReportTotalPaysAccounts')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Total Neto Cuentas</p>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('totalBruto_assistance')
                                 <li class="nav-item">
                                     <a href="{{ route('assistance.show.total.bruto') }}" class="nav-link @yield('activeReportTotalBruto')">

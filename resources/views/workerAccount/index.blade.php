@@ -66,15 +66,16 @@
             <div class="card card-primary">
                 <div class="card-header">
                     <h3 class="card-title">Cuentas Bancarias</h3>
-                    @can('contract_worker')
-                        <div class="card-tools">
-                            <button type="button" id="newAccount" data-url="{{ route('worker.account.store', $worker->id) }}" class="btn btn-sm btn-warning" > <i class="far fa-credit-card"></i> Agregar Cuenta </button>
 
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i>
-                            </button>
-                        </div>
-                    @endcan
+                    <div class="card-tools">
+                        @can('create_workerAccount')
+                        <button type="button" id="newAccount" data-url="{{ route('worker.account.store', $worker->id) }}" class="btn btn-sm btn-warning" > <i class="far fa-credit-card"></i> Agregar Cuenta </button>
+                        @endcan
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+
                 </div>
                 <div class="card-body" id="body-accounts">
                     @foreach( $accounts as $account )
