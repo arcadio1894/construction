@@ -330,8 +330,27 @@ function renderTemplateAccount(account) {
 
     $('#body-accounts').append(clone);
 
+    var optionFormat = function(item) {
+        if ( !item.id ) {
+            return item.text;
+        }
+
+        var span = document.createElement('span');
+        var imgUrl = item.element.getAttribute('data-image_bank');
+        var template = '';
+
+        template += '<img src="' + imgUrl + '" class="rounded-circle" width="25px" alt="image"/>  ';
+        template += item.text;
+
+        span.innerHTML = template;
+
+        return $(span);
+    };
+
     $('.bank').select2({
         placeholder: "Seleccione un banco",
+        templateSelection: optionFormat,
+        templateResult: optionFormat,
     });
     $('.currency').select2({
         placeholder: "Seleccione una moneda",

@@ -40,6 +40,10 @@
     </style>
 @endsection
 
+@section('page-header')
+    <h1 class="page-title">Cuentas Bancarias</h1>
+@endsection
+
 @section('page-title')
     <input type="hidden" name="worker_id" id="worker_id" value="{{ $worker->id }}">
     <h5 class="card-title">Listado de los cuentas bancarias de {{ $worker->first_name . " " . $worker->last_name }}</h5>
@@ -83,7 +87,7 @@
                             <div class="row">
                                 <div class="col-md-3">
                                     <label for="numberAccounts">Número de Cuenta </label>
-                                    <div class="input-group input-group-sm mb-3">
+                                    <div class="input-group mb-3">
                                         <div class="input-group-prepend">
                                             <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
                                         </div>
@@ -94,10 +98,10 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="banks">Banco </label>
-                                        <select name="banks[]" data-bank class="bank form-control form-control-sm select2" style="width: 100%;">
+                                        <select name="banks[]" data-bank class="bank form-control select2" style="width: 100%;">
                                             <option></option>
                                             @foreach( $banks as $bank )
-                                                <option value="{{ $bank->id }}" {{ ($bank->id == $account->bank_id) ? 'selected':'' }}>{{ $bank->short_name }}</option>
+                                                <option  value="{{ $bank->id }}" data-image_bank="{{ asset('/images/bank/'.$bank->image) }}" {{ ($bank->id == $account->bank_id) ? 'selected':'' }}>{{ $bank->short_name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -105,7 +109,7 @@
                                 <div class="col-md-3">
                                     <div class="form-group">
                                         <label for="currency">Moneda </label>
-                                        <select name="currency[]" data-currency class="currency form-control form-control-sm select2" style="width: 100%;">
+                                        <select name="currency[]" data-currency class="currency form-control select2" style="width: 100%;">
                                             <option></option>
                                             <option value="PEN" {{ ('PEN' == $account->currency) ? 'selected':'' }} >Soles</option>
                                             <option value="USD" {{ ('USD' == $account->currency) ? 'selected':'' }} >Dólares</option>
@@ -135,7 +139,7 @@
             <div class="row">
                 <div class="col-md-3">
                     <label for="numberAccounts">Número de Cuenta </label>
-                    <div class="input-group input-group-sm mb-3">
+                    <div class="input-group mb-3">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fas fa-keyboard"></i></span>
                         </div>
@@ -146,10 +150,10 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="banks">Banco </label>
-                        <select name="banks[]" data-bank class="bank form-control form-control-sm select2" style="width: 100%;">
+                        <select name="banks[]" data-bank class="bank form-control select2" style="width: 100%;">
                             <option></option>
                             @foreach( $banks as $bank )
-                                <option value="{{ $bank->id }}" {{ ($bank->id == 1) ? 'selected':'' }}>{{ $bank->short_name }}</option>
+                                <option value="{{ $bank->id }}" data-image_bank="{{ asset('images/bank/'.$bank->image) }}" {{ ($bank->id == 1) ? 'selected':'' }}>{{ $bank->short_name }}</option>
                             @endforeach
                         </select>
                     </div>
@@ -157,7 +161,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="currency">Moneda </label>
-                        <select name="currency[]" data-currency class="currency form-control form-control-sm select2" style="width: 100%;">
+                        <select name="currency[]" data-currency class="currency form-control  select2" style="width: 100%;">
                             <option></option>
                             <option value="PEN" selected >Soles</option>
                             <option value="USD">Dólares</option>
@@ -195,8 +199,27 @@
 
 @section('scripts')
     <script>
+        var optionFormat = function(item) {
+            if ( !item.id ) {
+                return item.text;
+            }
+
+            var span = document.createElement('span');
+            var imgUrl = item.element.getAttribute('data-image_bank');
+            var template = '';
+
+            template += '<img src="' + imgUrl + '" class="rounded-circle" width="25px" alt="image"/>  ';
+            template += item.text;
+
+            span.innerHTML = template;
+
+            return $(span);
+        };
+
         $('.bank').select2({
             placeholder: "Seleccione un banco",
+            templateSelection: optionFormat,
+            templateResult: optionFormat,
         });
         $('.currency').select2({
             placeholder: "Seleccione una moneda",

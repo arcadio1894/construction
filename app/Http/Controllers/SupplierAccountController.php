@@ -3,34 +3,35 @@
 namespace App\Http\Controllers;
 
 use App\Bank;
+use App\Supplier;
+use App\SupplierAccount;
 use App\Worker;
-use App\WorkerAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
-class WorkerAccountController extends Controller
+class SupplierAccountController extends Controller
 {
     public function index($worker_id)
     {
         //$permissions = Permission::all();
-        $worker = Worker::find($worker_id);
+        $supplier = Supplier::find($worker_id);
         $banks = Bank::all();
         $user = Auth::user();
-        $accounts = WorkerAccount::where('worker_id', $worker->id)->get();
+        $accounts = SupplierAccount::where('supplier_id', $supplier->id)->get();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('workerAccount.index', compact('permissions', 'worker', 'banks', 'accounts'));
+        return view('workerAccount.index', compact('permissions', 'supplier', 'banks', 'accounts'));
 
     }
 
-    public function store(Request $request, $worker_id)
+    public function store(Request $request, $supplier_id)
     {
         DB::beginTransaction();
         try {
 
-            $workerAccount = WorkerAccount::create([
-                'worker_id' => $worker_id,
+            $workerAccount = SupplierAccount::create([
+                'supplier_id' => $supplier_id,
                 'number_account' => null,
                 'currency' => 'PEN',
                 'bank_id' => 1,
@@ -58,7 +59,7 @@ class WorkerAccountController extends Controller
         DB::beginTransaction();
         try {
 
-            $account = WorkerAccount::find($account_id);
+            $account = SupplierAccount::find($account_id);
 
             $account->number_account = $number_account;
             $account->bank_id = $bank_id;
@@ -81,7 +82,7 @@ class WorkerAccountController extends Controller
         DB::beginTransaction();
         try {
 
-            $account = WorkerAccount::find($account_id);
+            $account = SupplierAccount::find($account_id);
 
             $account->delete();
 

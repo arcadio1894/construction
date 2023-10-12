@@ -2221,6 +2221,22 @@ Route::middleware('auth')->group(function (){
         Route::post('worker/account/destroy/{account_id}', 'WorkerAccountController@destroy')
             ->name('worker.account.destroy')
             ->middleware('permission:destroy_workerAccount');
+
+        // TODO: Rutas de Supplier Accounts
+        Route::get('/registrar/cuentas/proveedores/{supplier_id}', 'SupplierAccountController@index')
+            ->name('supplier.accounts.index')
+            ->middleware('permission:list_supplierAccount');
+        Route::get('/get/supplier/accounts/{worker_id}', 'SupplierAccountController@getWorkerAccounts')
+            ->middleware('permission:list_supplierAccount');
+        Route::post('supplier/account/store/{worker_id}', 'SupplierAccountController@store')
+            ->name('supplier.account.store')
+            ->middleware('permission:create_supplierAccount');
+        Route::post('supplier/account/update/{account_id}', 'SupplierAccountController@update')
+            ->name('supplier.account.update')
+            ->middleware('permission:edit_supplierAccount');
+        Route::post('supplier/account/destroy/{account_id}', 'SupplierAccountController@destroy')
+            ->name('supplier.account.destroy')
+            ->middleware('permission:destroy_supplierAccount');
     });
 });
 
