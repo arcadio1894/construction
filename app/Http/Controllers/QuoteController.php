@@ -381,7 +381,7 @@ class QuoteController extends Controller
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->where('description','LIKE',$defaultConsumable)->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $utility = PorcentageQuote::where('name', 'utility')->first();

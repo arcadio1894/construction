@@ -20,4 +20,6 @@ class Supplier extends Model
     ];
 
     protected $dates = ['deleted_at'];
+
+    // TODO: Agregar una relacion entre Supplier y SupplierAccount De uno a muchos
 }

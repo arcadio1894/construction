@@ -13,12 +13,12 @@ class SupplierAccount extends Model
         'bank_id'
     ];
 
-    public function worker()
+    public function supplier()
     {
-        return $this->hasMany('App\Supplier');
+        return $this->belongsTo('App\Supplier');
     }
     public function bank()
     {
-        return $this->hasMany('App\Bank');
+        return $this->belongsTo('App\Bank');
     }
 }

@@ -21,7 +21,7 @@ class SupplierAccountController extends Controller
         $accounts = SupplierAccount::where('supplier_id', $supplier->id)->get();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('workerAccount.index', compact('permissions', 'supplier', 'banks', 'accounts'));
+        return view('supplierAccount.index', compact('permissions', 'supplier', 'banks', 'accounts'));
 
     }
 

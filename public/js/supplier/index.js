@@ -28,6 +28,9 @@ $(document).ready(function () {
                         text = text + ' <button data-delete="'+item.id+'" data-company="'+item.business_name+'" '+
                             ' class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i></button>';
                     }
+                    if ( $.inArray('list_supplierAccount', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/registrar/cuentas/proveedores/'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Registrar cuentas"><i class="fas fa-money-bill"></i> </a>  ';
+                    }
                     return text;
 
                 } },
