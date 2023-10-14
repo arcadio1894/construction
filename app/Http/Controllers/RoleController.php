@@ -87,7 +87,8 @@ class RoleController extends Controller
         'personalPayments' => 'PAGO AL PERSONAL',
         'projection' => 'PROYECCION DE SUELDOS',
         'financeWorks' => 'TRABAJOS EN FINANZAS',
-        'workerAccount' => 'CUENTAS BANCARIAS TRABAJADORES'
+        'workerAccount' => 'CUENTAS BANCARIAS TRABAJADORES',
+        'supplierAccount' => 'CUENTAS BANCARIAS PROVEEDORES'
     ];
 
     public function index()
