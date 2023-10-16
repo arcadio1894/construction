@@ -883,7 +883,7 @@ class EntryController extends Controller
         $begin = microtime(true);
 
         $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(6);
+        $date4MonthAgo = $dateCurrent->subMonths(2);
 
         $entries = Entry::with('supplier')
             ->where('entry_type', 'Por compra')
