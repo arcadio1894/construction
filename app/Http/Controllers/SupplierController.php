@@ -128,7 +128,7 @@ class SupplierController extends Controller
 
     public function getSuppliers()
     {
-        $suppliers = Supplier::select('id', 'code', 'business_name', 'RUC', 'address', 'phone', 'email') -> get();
+        $suppliers = Supplier::select('id', 'code', 'business_name', 'RUC', 'address', 'phone', 'email') ->with('accounts') -> get();
         return datatables($suppliers)->toJson();
         //dd(datatables($customers)->toJson());
     }

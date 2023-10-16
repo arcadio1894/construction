@@ -14,6 +14,24 @@ $(document).ready(function () {
             { data: 'address' },
             { data: 'phone' },
             { data: 'email' },
+            {
+                data: null,
+                title: 'Cuentas',
+                wrap: true,
+                render: function (item) {
+                    var text = '';
+                    if ($.inArray('list_supplierAccount', $permissions) !== -1) {
+                        if (item.accounts && item.accounts.length > 0) {
+                            item.accounts.forEach(function (account) {
+                                text += '<span class="badge bg-primary text-md" style="margin: 4px 0;">' + account.number_account + '</span>';
+                            });
+                        } else {
+                            text = '<span class="badge bg-primary text-md">Sin cuentas</span>';
+                        }
+                    }
+                    return text;
+                }
+            },
             { data: null,
                 title: 'Acciones',
                 wrap: true,
