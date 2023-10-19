@@ -1855,6 +1855,33 @@
                                     </a>
                                 </li>
                             @endcan
+                                <li class="nav-item has-treeview @yield('openPermitHour')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon "></i>
+                                        <p>
+                                            Permisos por Horas
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('permit_hour.index') }}" class="nav-link @yield('activeListPermitHour')">
+                                                <i class="far fa-circle nav-icon text-success"></i>
+                                                <p>Listar permisos</p>
+                                            </a>
+                                        </li>
+
+
+                                        <li class="nav-item">
+                                            <a href="{{ route('permit_hour.create') }}" class="nav-link @yield('activeCreatePermitHour')">
+                                                <i class="far fa-circle nav-icon text-success"></i>
+                                                <p>Crear permiso</p>
+                                            </a>
+                                        </li>
+
+                                    </ul>
+                                </li>
                         </ul>
                     </li>
 
@@ -1985,6 +2012,7 @@
                                     </ul>
                                 </li>
                             @endcan
+
                             @can('enable_suspension')
                                 <li class="nav-item has-treeview @yield('openSuspension')">
                                     <a href="#" class="nav-link">
