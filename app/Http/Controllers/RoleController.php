@@ -70,6 +70,7 @@ class RoleController extends Controller
         'medicalRest' => 'DESCANSOS MEDICOS',
         'vacation' => 'VACACIONES',
         'license' => 'LICENCIAS',
+        'unpaidLicense' => 'LICENCIAS SIN GOZO',
         'permit' => 'PERMISOS TRABAJADORES',
         'suspension' => 'SUSPENSIONES',
         'discountContribution' => 'DESCUENTOS Y APORTES',

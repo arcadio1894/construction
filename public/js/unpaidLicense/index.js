@@ -5,7 +5,7 @@ $(document).ready(function () {
     });
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/unpaid_licenses",
+            url: "/dashboard/all/unpaid/licenses",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -60,11 +60,11 @@ $(document).ready(function () {
                         var string = id.substr(id.length - 3);
                         if( string.toUpperCase() == 'PDF')
                         {
-                            return ' <a target="_blank" href="'+document.location.origin+ '/images/medicalRest/'+item.file+'" '+
+                            return ' <a target="_blank" href="'+document.location.origin+ '/images/unpaidLicense/'+item.file+'" '+
                                 ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
                         } else {
-                            return ' <button data-src="'+document.location.origin+ '/images/medicalRest/'+item.file+'" data-image="'+item.id+'" '+
+                            return ' <button data-src="'+document.location.origin+ '/images/unpaidLicense/'+item.file+'" data-image="'+item.id+'" '+
                                 ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
 
                         }
@@ -80,7 +80,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('edit_unpaidLicense', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/licencia_sin_gozo/'+item.id+
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/licencia/sin/gozo/'+item.id+
                             '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar licencia sin gozo"><i class="fa fa-pen"></i></a>';
                     }
                     if ( $.inArray('delete_unpaidLicense', $permissions) !== -1 ) {

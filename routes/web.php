@@ -1684,26 +1684,26 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:delete_license');
 
         //CRUD UnpaidLicenses
-        Route::get('/all/unpaid_licenses', 'UnpaidLicenseController@getAllUnpaidLicenses');
-            //->middleware('permission:list_unpaidLicense');
-        Route::get('licencias_sin_gozo', 'UnpaidLicenseController@index')
-            ->name('unpaidLicense.index');
-            //->middleware('permission:list_license');
-        Route::get('crear/licencia_sin_gozo', 'UnpaidLicenseController@create')
-            ->name('unpaidLicense.create');
-            //->middleware('permission:create_license');
+        Route::get('/all/unpaid/licenses', 'UnpaidLicenseController@getAllUnpaidLicenses')
+            ->middleware('permission:list_unpaidLicense');
+        Route::get('licencias/sin/gozo', 'UnpaidLicenseController@index')
+            ->name('unpaidLicense.index')
+            ->middleware('permission:list_unpaidLicense');
+        Route::get('crear/licencia/sin/gozo', 'UnpaidLicenseController@create')
+            ->name('unpaidLicense.create')
+            ->middleware('permission:create_unpaidLicense');
         Route::post('unpaid_license/store', 'UnpaidLicenseController@store')
-            ->name('unpaidLicense.store');
-            //->middleware('permission:create_license');
-        Route::get('/editar/licencia_sin_gozo/{id}', 'UnpaidLicenseController@edit')
-            ->name('unpaidLicense.edit');
-            //->middleware('permission:edit_license');
+            ->name('unpaidLicense.store')
+            ->middleware('permission:create_unpaidLicense');
+        Route::get('/editar/licencia/sin/gozo/{id}', 'UnpaidLicenseController@edit')
+            ->name('unpaidLicense.edit')
+            ->middleware('permission:edit_unpaidLicense');
         Route::post('unpaid_license/update', 'UnpaidLicenseController@update')
-            ->name('unpaidLicense.update');
-            //->middleware('permission:edit_license');
+            ->name('unpaidLicense.update')
+            ->middleware('permission:edit_unpaidLicense');
         Route::post('unpaid_license/destroy', 'UnpaidLicenseController@destroy')
-            ->name('unpaidLicense.destroy');
-            //->middleware('permission:delete_license');
+            ->name('unpaidLicense.destroy')
+            ->middleware('permission:delete_unpaidLicense');
 
         // CRUD Permisos
         Route::get('/all/permits', 'PermitController@getAllPermits')
