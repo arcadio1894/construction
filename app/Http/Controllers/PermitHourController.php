@@ -4,11 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Assistance;
 use App\AssistanceDetail;
+use App\Http\Requests\PermitHourDestroyRequest;
+use App\Http\Requests\PermitHourStoreRequest;
+use App\Http\Requests\PermitHourUpdateRequest;
 use App\PermitHour;
 use App\Worker;
 use App\WorkingDay;
 use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -34,7 +36,7 @@ class PermitHourController extends Controller
         return view('permithour.create', compact('workers'));
     }
 
-    public function store(Request $request)
+    public function store(PermitHourStoreRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -79,7 +81,7 @@ class PermitHourController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Permiso guardado con éxito.'], 200);
+        return response()->json(['message' => 'Permiso por hora guardado con éxito.'], 200);
 
     }
 
@@ -91,11 +93,12 @@ class PermitHourController extends Controller
 
         $permitHour = PermitHour::with('worker')->find($permitHour_id);
 
-        return view('permithour.edit', compact('permit_Hour', 'workers'));
+
+        return view('permithour.edit', compact('permitHour', 'workers'));
 
     }
 
-    public function update(Request $request)
+    public function update(PermitHourUpdateRequest $request)
     {
         DB::beginTransaction();
         try {
@@ -109,6 +112,7 @@ class PermitHourController extends Controller
 
 
             // TODO: Logica para verificar las fechas de las asistencias
+
             $assistances = Assistance::whereDate('date_assistance', '=',$permitHour->date_start)->get();
 
             if ( count($assistances) > 0 )
@@ -146,14 +150,14 @@ class PermitHourController extends Controller
 
     }
 
-    public function destroy(Request $request)
+    public function destroy(PermitHourDestroyRequest $request)
     {
         DB::beginTransaction();
         try {
 
             $permitHour = PermitHour::find($request->get('permitHour_id'));
-
             $permitHour->delete();
+
 
             DB::commit();
 
@@ -167,11 +171,11 @@ class PermitHourController extends Controller
 
     public function getAllPermits()
     {
-        $permits = PermitHour::select('id', 'date_start', 'hour', 'worker_id', 'created_at', 'reason')
+        $permits_hours = PermitHour::select('id', 'date_start', 'hour', 'worker_id', 'created_at', 'reason')
             ->with('worker')
             ->orderBy('created_at', 'DESC')
             ->get();
-        return datatables($permits)->toJson();
+        return datatables($permits_hours)->toJson();
 
     }
 }

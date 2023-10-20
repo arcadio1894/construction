@@ -6,7 +6,7 @@ $(document).ready(function () {
     });
     $('#dynamic-table').DataTable( {
         ajax: {
-            url: "/dashboard/all/permitshour",
+            url: "/dashboard/all/permits_hours",
             dataSrc: 'data'
         },
         bAutoWidth: false,
@@ -46,47 +46,28 @@ $(document).ready(function () {
             { data: null,
                 title: 'Horas',
                 wrap: true,
-                "render": function (item)
-                {
-                    return '<p>'+ moment(item.hour).format('HH:mm') +'</p>';
-
+                render: function (item) {
+                    var hourValue = parseFloat(item.hour);
+                    if (!isNaN(hourValue)) {
+                        return '<p>' + hourValue.toFixed(2) + '</p>';
+                    } else {
+                        return '<p>Invalid</p>';
+                    }
                 }
             },
-            /*{ data: null,
-                title: 'Archivo',
-                wrap: true,
-                "render": function (item)
-                {
-                    var id = item.file;
-                    if ( id != null ){
-                        var string = id.substr(id.length - 3);
-                        if( string.toUpperCase() == 'PDF')
-                        {
-                            return ' <a target="_blank" href="'+document.location.origin+ '/images/medicalRest/'+item.file+'" '+
-                                ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>';
 
-                        } else {
-                            return ' <button data-src="'+document.location.origin+ '/images/medicalRest/'+item.file+'" data-image="'+item.id+'" '+
-                                ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>';
-
-                        }
-                    } else {
-                        return 'No tiene';
-                    }
-
-                } },*/
             { data: null,
                 title: 'Acciones',
                 wrap: true,
                 "render": function (item)
                 {
                     var text = '';
-                    if ( $.inArray('edit_permithour', $permissions) !== -1 ) {
-                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/permiso/'+item.id+
+                    if ( $.inArray('edit_permitHour', $permissions) !== -1 ) {
+                        text = text + '<a href="'+document.location.origin+ '/dashboard/editar/permisoxhora/'+item.id+
                             '" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar permiso"><i class="fa fa-pen"></i></a>';
                     }
-                    if ( $.inArray('delete_permithour', $permissions) !== -1 ) {
-                        text = text + ' <button data-delete="'+item.id+'" data-end="'+moment(item.date_end).format('DD/MM/YYYY')+'" data-start="'+moment(item.date_start).format('DD/MM/YYYY')+'" '+
+                    if ( $.inArray('destroy_permitHour', $permissions) !== -1 ) {
+                        text = text + ' <button data-delete="'+item.id+'" data-hour="'+item.hour+'" data-start="'+moment(item.date_start).format('DD/MM/YYYY')+'" '+
                             ' class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar permiso"><i class="fa fa-trash"></i></button>';
                     }
                     return text;
@@ -237,7 +218,7 @@ $(document).ready(function () {
 
     $formDelete = $('#formDelete');
     //$formDelete.on('submit', destroyContract);
-    $('#btn-submit').on('click', destroyPermithour);
+    $('#btn-submit').on('click', destroyPermitsHour);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 });
@@ -247,19 +228,21 @@ var $modalDelete;
 var $permissions;
 
 function openModalDelete() {
-    var permithour_id = $(this).data('delete');
+    var permitHour_id = $(this).data('delete');
     var date_start = $(this).data('start');
-    var date_end = $(this).data('end');
+    var hour = $(this).data('hour');
 
-    var fechas = date_start + ' - ' + date_end;
 
-    $modalDelete.find('[id=permithour_id]').val(permithour_id);
+    var fechas = date_start ;
+
+    $modalDelete.find('[id=permitHour_id]').val(permitHour_id);
     $modalDelete.find('[id=code]').html(fechas);
+    $modalDelete.find('[id=hour]').val(hour);
 
     $modalDelete.modal('show');
 }
 
-function destroyPermithour() {
+function destroyPermitsHour() {
     event.preventDefault();
     // Obtener la URL
     $("#btn-submit").attr("disabled", true);

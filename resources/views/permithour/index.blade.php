@@ -86,7 +86,7 @@
                 <form id="formDelete" data-url="{{ route('permit_hour.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="permithour_id" name="permithour_id">
+                        <input type="hidden" id="permitHour_id" name="permitHour_id">
                         <strong> ¿Desea eliminar este permiso por horas? </strong>
                         <p> Deberá verificar las asistencias en las fechas del descanso </p>
                         <p id="code"></p>
@@ -115,5 +115,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/permithour/index.js') }}"></script>
+    <script src="{{ asset('js/permitHour/index.js') }}"></script>
 @endsection

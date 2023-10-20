@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class PermitHour extends Model
 {
     use SoftDeletes;
-
+    protected $table = 'permits_hours';
     protected $fillable = [
         'reason',
         'date_start',
