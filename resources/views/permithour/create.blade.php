@@ -105,7 +105,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="hour">Horas</label>
+                <label for="hour">Cantidad de Horas</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-clock"></i></span>

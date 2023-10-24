@@ -80,6 +80,7 @@
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">VACACIONES</th>
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">PERMISOS</th>
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">SUSPENSION</th>
+        <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">PERMISOS POR HORAS</th>
     </tr>
     </thead>
     <tbody>
@@ -96,6 +97,7 @@
             <td width="100px">{{ $arraySummary[$t]['cantV'] }}</td>
             <td width="100px">{{ $arraySummary[$t]['cantP'] }}</td>
             <td width="100px">{{ $arraySummary[$t]['cantS'] }}</td>
+            <td width="100px">{{ $arraySummary[$t]['cantPH'] }}</td>
         </tr>
     @endfor
     </tbody>

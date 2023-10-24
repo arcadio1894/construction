@@ -97,36 +97,47 @@ class PermitHourController extends Controller
         return view('permithour.edit', compact('permitHour', 'workers'));
 
     }
-
     public function update(PermitHourUpdateRequest $request)
     {
         DB::beginTransaction();
         try {
-
             $permitHour = PermitHour::find($request->get('permitHour_id'));
+            $date_start_db = $permitHour->date_start;
 
             $permitHour->reason = $request->get('reason');
-            $permitHour->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
+            $new_date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
+            $permitHour->date_start = $new_date_start;
             $permitHour->hour = $request->get('hour');
             $permitHour->save();
 
+            if ($date_start_db < $new_date_start) {
+                $assistancesA = Assistance::whereDate('date_assistance', '=', $date_start_db)
+                    ->whereDate('date_assistance', '<', $new_date_start)->get();
 
-            // TODO: Logica para verificar las fechas de las asistencias
+                if (count($assistancesA) > 0) {
+                    foreach ($assistancesA as $assistance) {
+                        $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                            ->where('worker_id', $permitHour->worker_id)->get();
 
-            $assistances = Assistance::whereDate('date_assistance', '=',$permitHour->date_start)->get();
+                        if (count($assistancesDetails) > 0) {
+                            foreach ($assistancesDetails as $assistanceDetail) {
+                                $assistanceDetail->status = 'A';
+                                $assistanceDetail->update();
+                            }
+                        }
+                    }
+                }
+            }
 
-            if ( count($assistances) > 0 )
-            {
-                foreach ( $assistances as $assistance )
-                {
+            $assistances = Assistance::whereDate('date_assistance', '=', $new_date_start)->get();
+
+            if (count($assistances) > 0) {
+                foreach ($assistances as $assistance) {
                     $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
                         ->where('worker_id', $permitHour->worker_id)->get();
 
-                    if ( count( $assistancesDetails ) > 0 )
-                    {
-
-                        foreach ( $assistancesDetails as $assistanceDetail )
-                        {
+                    if (count($assistancesDetails) > 0) {
+                        foreach ($assistancesDetails as $assistanceDetail) {
                             $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
                             $assistanceDetail->hour_entry = $workingDay->time_start;
                             $assistanceDetail->hour_out = $workingDay->time_fin;
@@ -141,33 +152,48 @@ class PermitHourController extends Controller
             }
 
             DB::commit();
-
-        } catch ( \Throwable $e ) {
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Permiso por horas modificado con éxito.'], 200);
-
     }
+
 
     public function destroy(PermitHourDestroyRequest $request)
     {
         DB::beginTransaction();
         try {
-
             $permitHour = PermitHour::find($request->get('permitHour_id'));
+
+
+            $date_start = $permitHour->date_start;
+
             $permitHour->delete();
-
-
             DB::commit();
 
-        } catch ( \Throwable $e ) {
+            $assistances = Assistance::whereDate('date_assistance', '=', $date_start)->get();
+
+            if (count($assistances) > 0) {
+                foreach ($assistances as $assistance) {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $permitHour->worker_id)->get();
+
+                    if (count($assistancesDetails) > 0) {
+                        foreach ($assistancesDetails as $assistanceDetail) {
+                            $assistanceDetail->status = 'A';
+                            $assistanceDetail->update();
+                        }
+                    }
+                }
+            }
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
         return response()->json(['message' => 'Permiso por hora eliminado con éxito.'], 200);
-
     }
+
 
     public function getAllPermits()
     {

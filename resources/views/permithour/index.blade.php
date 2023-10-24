@@ -66,7 +66,7 @@
                 <th>Colaborador</th>
                 <th>Motivo</th>
                 <th>Fecha Inicio</th>
-                <th>Horas </th>
+                <th>Cantidad de Horas </th>
                 <th>Acciones</th>
             </tr>
             </thead>

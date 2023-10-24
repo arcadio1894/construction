@@ -44,7 +44,7 @@ $(document).ready(function () {
                 }
             },
             { data: null,
-                title: 'Horas',
+                title: 'Cantidad de Horas',
                 wrap: true,
                 render: function (item) {
                     var hourValue = parseFloat(item.hour);
