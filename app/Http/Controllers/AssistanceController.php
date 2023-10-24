@@ -17,6 +17,7 @@ use App\Permit;
 use App\Regime;
 use App\RegimeDetail;
 use App\Suspension;
+use App\UnpaidLicense;
 use App\Vacation;
 use App\Worker;
 use App\WorkerAccount;
@@ -123,6 +124,10 @@ class AssistanceController extends Controller
                         ->whereDate('date_end', '>=',$assistance2->date_assistance)
                         ->where('worker_id', $worker->id)
                         ->get();
+                    $unpaidLicenses = UnpaidLicense::whereDate('date_start', '<=',$assistance2->date_assistance)
+                        ->whereDate('date_end', '>=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
                     // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
                     // TODO: Si es VIE la jornada 2
 
@@ -189,6 +194,16 @@ class AssistanceController extends Controller
                             'assistance_id' => $assistance2->id,
                             'working_day_id' => $workingDay->id,
                             'status' => 'S'
+                        ]);
+                    } elseif ( count($unpaidLicenses) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'U'
                         ]);
                     } else {
                         if ( $this->isHoliday($assistance2->date_assistance) )
@@ -358,6 +373,7 @@ class AssistanceController extends Controller
             $cantT = 0;
             $cantH = 0;
             $cantL = 0;
+            $cantU = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -413,6 +429,10 @@ class AssistanceController extends Controller
                         $color = '#6610f2';
                         $estado = 'T';
                         $cantT = $cantT + 1;
+                    } elseif ( $assistance_detail->status == 'U' ){
+                        $color = '#c32169';
+                        $estado = 'U';
+                        $cantU = $cantU + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -455,7 +475,8 @@ class AssistanceController extends Controller
                 'cantP' => $cantP,
                 'cantT' => $cantT,
                 'cantH' => $cantH,
-                'cantL' => $cantL
+                'cantL' => $cantL,
+                'cantU' => $cantU
             ]);
         }
 
@@ -538,6 +559,7 @@ class AssistanceController extends Controller
             $cantT = 0;
             $cantH = 0;
             $cantL = 0;
+            $cantU = 0;
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -592,6 +614,10 @@ class AssistanceController extends Controller
                         $color = '#6610f2';
                         $estado = 'T';
                         $cantT = $cantT + 1;
+                    } elseif ( $assistance_detail->status == 'U' ){
+                        $color = '#c32169';
+                        $estado = 'U';
+                        $cantU = $cantU + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -634,7 +660,8 @@ class AssistanceController extends Controller
                 'cantP' => $cantP,
                 'cantT' => $cantT,
                 'cantH' => $cantH,
-                'cantL' => $cantL
+                'cantL' => $cantL,
+                'cantU' => $cantU
             ]);
         }
 
@@ -687,6 +714,7 @@ class AssistanceController extends Controller
             $cantT = 0;
             $cantH = 0;
             $cantL = 0;
+            $cantU = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -742,6 +770,10 @@ class AssistanceController extends Controller
                         $color = '#42F1CC';
                         $estado = 'L';
                         $cantL = $cantL + 1;
+                    } elseif ( $assistance_detail->status == 'U' ){
+                        $color = '#c32169';
+                        $estado = 'U';
+                        $cantU = $cantU + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -784,7 +816,8 @@ class AssistanceController extends Controller
                 'cantP' => $cantP,
                 'cantT' => $cantT,
                 'cantH' => $cantH,
-                'cantL' => $cantL
+                'cantL' => $cantL,
+                'cantU' => $cantU
             ]);
         }
 
@@ -942,7 +975,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1346,7 +1379,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -1729,7 +1762,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2081,7 +2114,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P','U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -2538,7 +2571,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -3009,7 +3042,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )
@@ -3459,7 +3492,7 @@ class AssistanceController extends Controller
                 //dump($fecha);
                 $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
                     ->where('worker_id', $worker->id)
-                    ->whereNotIn('status', ['S', 'F', 'P'])
+                    ->whereNotIn('status', ['S', 'F', 'P','U'])
                     ->first();
                 //dump($assistance_detail);
                 if ( !empty($assistance_detail) )

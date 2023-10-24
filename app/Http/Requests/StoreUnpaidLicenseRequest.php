@@ -1,8 +1,10 @@
 <?php
 
 namespace App\Http\Requests;
-
+use App\UnpaidLicense;
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreUnpaidLicenseRequest extends FormRequest
 {
@@ -20,8 +22,22 @@ class StoreUnpaidLicenseRequest extends FormRequest
     {
         return [
             'reason' => 'required|string|max:100',
-            'date_start' => 'required|date_format:d/m/Y|after:01/01/' . (date('Y') - 1),
-            'date_end' => 'required|date_format:d/m/Y|after:date_start|',
+            'date_start' => [
+                'required',
+                'date_format:d/m/Y',
+                'after:01/01/' . (date('Y') - 1),
+                /*function ($value, $fail) {
+                    $this->validateDateRange(Carbon::createFromFormat('d/m/Y', $this->input('date_start')), $fail);
+                },*/
+            ],
+            'date_end' => [
+                'required',
+                'date_format:d/m/Y',
+                'after:date_start',
+                /*function ($value, $fail) {
+                    $this->validateDateRange(Carbon::createFromFormat('d/m/Y', $this->input('date_start')), $fail);
+                },*/
+            ],
             'worker_id' => 'required|exists:workers,id',
             'file' => 'file|mimes:jpg,png,pdf|max:10240',
         ];
@@ -38,6 +54,7 @@ class StoreUnpaidLicenseRequest extends FormRequest
             'date_end.required' => 'La :attribute es obligatoria.',
             'date_end.date_format' => 'La :attribute debe tener el formato dd/mm/yyyy.',
             'date_end.after' => 'La :attribute debe ser igual o posterior a la fecha de inicio.',
+            'date_end.custom_rule' => 'La :attribute debe estar fuera de las fechas de asistencia del trabajador.',
             'worker_id.required' => 'El :attribute es obligatorio.',
             'worker_id.exists' => 'El :attribute seleccionado no es válido.',
             'file.mimes' => 'El :attribute debe ser una imagen (jpeg, jpg, png) o un PDF.',
@@ -54,5 +71,19 @@ class StoreUnpaidLicenseRequest extends FormRequest
             'worker_id' => 'trabajador',
             'file' => 'archivo',
         ];
+    }
+
+    private function validateDateRange($date, $fail)
+    {
+        $workerId = $this->input('worker_id');
+
+            $existingLicense = UnpaidLicense::where('worker_id',$workerId)
+                ->whereDate('date_start', '<=', $date)
+                ->whereDate('date_end', '>=', $date)
+                ->get();
+            if (count($existingLicense)>0) {
+                $fail("El :attribute está dentro del rango de una licencia ya existente.");
+            }
+
     }
 }

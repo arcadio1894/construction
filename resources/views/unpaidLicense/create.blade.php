@@ -76,7 +76,7 @@
         @csrf
         <div class="form-group row">
             <div class="col-md-4">
-                <label for="worker_id">Trabajador: </label>
+                <label for="worker_id">Trabajador:<span class="text-danger">*</span> </label>
                 <select id="worker_id" name="worker_id" class="form-control form-control-sm select2" style="width: 100%;">
                     <option></option>
                     @foreach( $workers as $worker )
@@ -86,7 +86,7 @@
             </div>
 
             <div class="col-md-4">
-                <label for="reason">Motivo </label>
+                <label for="reason">Motivo<span class="text-danger">*</span> </label>
 
                 <textarea name="reason" id="reason" class="form-control"></textarea>
 
@@ -104,7 +104,7 @@
 
         <div class="form-group row">
             <div class="col-md-4">
-                <label for="date_start">Fecha Inicio</label>
+                <label for="date_start">Fecha Inicio<span class="text-danger">*</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="col-md-4">
-                <label for="date_end">Fecha Fin</label>
+                <label for="date_end">Fecha Fin<span class="text-danger">*</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>

@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Assistance;
+use App\AssistanceDetail;
 use App\Http\Requests\StoreUnpaidLicenseRequest;
 use App\Http\Requests\UpdateUnpaidLicenseRequest;
 use App\UnpaidLicense;
 use App\Worker;
+use App\WorkingDay;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -34,6 +37,24 @@ class UnpaidLicenseController extends Controller
     {
         DB::beginTransaction();
         try {
+
+            $existingLicenseStart = UnpaidLicense::where('worker_id',$request->get('worker_id'))
+                ->whereDate('date_start', '<=', Carbon::createFromFormat('d/m/Y', $request->get('date_start')))
+                ->whereDate('date_end', '>=', Carbon::createFromFormat('d/m/Y', $request->get('date_start')))
+                ->get();
+
+            $existingLicenseEnd = UnpaidLicense::where('worker_id',$request->get('worker_id'))
+                ->whereDate('date_start', '<=', Carbon::createFromFormat('d/m/Y', $request->get('date_end')))
+                ->whereDate('date_end', '>=', Carbon::createFromFormat('d/m/Y', $request->get('date_end')))
+                ->get();
+
+            if (count($existingLicenseStart)>0){
+                return response()->json(['message' => 'La fecha inicio está entre las fechas de una licencia sin gozo ya registrada'], 422);
+            }
+
+            if (count($existingLicenseEnd)>0){
+                return response()->json(['message' => 'La fecha fin está entre las fechas de una licencia sin gozo ya registrada'], 422);
+            }
 
             $unpaidLicense = UnpaidLicense::create([
                 'reason' => $request->get('reason'),
@@ -69,7 +90,32 @@ class UnpaidLicenseController extends Controller
 
             }
 
-            // TODO: Logica para verificar las fechas de las asistencias
+            $assistances = Assistance::whereDate('date_assistance', '>=',$unpaidLicense->date_start)
+                ->whereDate('date_assistance', '<=',$unpaidLicense->date_end)->get();
+
+            if ( count($assistances) > 0 )
+            {
+                foreach ( $assistances as $assistance )
+                {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $unpaidLicense->worker_id)->get();
+
+                    if ( count( $assistancesDetails ) > 0 )
+                    {
+                        foreach ( $assistancesDetails as $assistanceDetail )
+                        {
+                            $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
+                            $assistanceDetail->hour_entry = $workingDay->time_start;
+                            $assistanceDetail->hour_out = $workingDay->time_fin;
+                            $assistanceDetail->status = 'U';
+                            $assistanceDetail->justification = null;
+                            $assistanceDetail->obs_justification = null;
+                            $assistanceDetail->working_day_id = $workingDay->id;
+                            $assistanceDetail->save();
+                        }
+                    }
+                }
+            }
 
             DB::commit();
 
@@ -98,6 +144,29 @@ class UnpaidLicenseController extends Controller
         try {
 
             $unpaidLicense = UnpaidLicense::find($request->get('unpaidLicense_id'));
+
+            $existingLicenseStart = UnpaidLicense::where('worker_id',$unpaidLicense->worker_id)
+                ->where('id', '!=', $unpaidLicense->id)
+                ->whereDate('date_start', '<=', Carbon::createFromFormat('d/m/Y', $request->get('date_start')))
+                ->whereDate('date_end', '>=', Carbon::createFromFormat('d/m/Y', $request->get('date_start')))
+                ->get();
+
+            $existingLicenseEnd = UnpaidLicense::where('worker_id',$request->get('worker_id'))
+                ->where('id', '!=', $unpaidLicense->id)
+                ->whereDate('date_start', '<=', Carbon::createFromFormat('d/m/Y', $request->get('date_end')))
+                ->whereDate('date_end', '>=', Carbon::createFromFormat('d/m/Y', $request->get('date_end')))
+                ->get();
+
+            if (count($existingLicenseStart)>0){
+                return response()->json(['message' => 'La fecha inicio está entre las fechas de una licencia sin gozo ya registrada'], 422);
+            }
+
+            if (count($existingLicenseEnd)>0){
+                return response()->json(['message' => 'La fecha fin está entre las fechas de una licencia sin gozo ya registrada'], 422);
+            }
+
+            $date_start_db=$unpaidLicense->date_start;
+            $date_end_db=$unpaidLicense->date_end;
 
             $unpaidLicense->reason = $request->get('reason');
             $unpaidLicense->date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : null;
@@ -142,7 +211,67 @@ class UnpaidLicenseController extends Controller
 
             }
 
-            // TODO: Logica para verificar las fechas de las asistencias
+            if ($date_start_db<$unpaidLicense->date_start) {
+                $assistancesA = Assistance::whereDate('date_assistance', '>=', $date_start_db)
+                    ->whereDate('date_assistance', '<', $unpaidLicense->date_start)->get();
+
+                if (count($assistancesA) > 0) {
+                    foreach ($assistancesA as $assistance) {
+                        $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                            ->where('worker_id', $unpaidLicense->worker_id)->get();
+
+                        if (count($assistancesDetails) > 0) {
+                            foreach ($assistancesDetails as $assistanceDetail) {
+                                $assistanceDetail->status = 'A';
+                                $assistanceDetail->update();
+                            }
+                        }
+                    }
+                }
+            }
+            if ($date_end_db>$unpaidLicense->date_end) {
+                $assistancesB = Assistance::whereDate('date_assistance', '>', $unpaidLicense->date_end)
+                    ->whereDate('date_assistance', '<', $date_end_db)->get();
+                if (count($assistancesB) > 0) {
+                    foreach ($assistancesB as $assistance) {
+                        $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                            ->where('worker_id', $unpaidLicense->worker_id)->get();
+
+                        if (count($assistancesDetails) > 0) {
+                            foreach ($assistancesDetails as $assistanceDetail) {
+                                $assistanceDetail->status = 'A';
+                                $assistanceDetail->update();
+                            }
+                        }
+                    }
+                }
+            }
+            $assistances = Assistance::whereDate('date_assistance', '>=',$unpaidLicense->date_start)
+                ->whereDate('date_assistance', '<=',$unpaidLicense->date_end)->get();
+
+            if ( count($assistances) > 0 )
+            {
+                foreach ( $assistances as $assistance )
+                {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $unpaidLicense->worker_id)->get();
+
+                    if ( count( $assistancesDetails ) > 0 )
+                    {
+                        foreach ( $assistancesDetails as $assistanceDetail )
+                        {
+                            $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
+                            $assistanceDetail->hour_entry = $workingDay->time_start;
+                            $assistanceDetail->hour_out = $workingDay->time_fin;
+                            $assistanceDetail->status = 'U';
+                            $assistanceDetail->justification = null;
+                            $assistanceDetail->obs_justification = null;
+                            $assistanceDetail->working_day_id = $workingDay->id;
+                            $assistanceDetail->save();
+                        }
+                    }
+                }
+            }
 
             DB::commit();
 
@@ -166,6 +295,33 @@ class UnpaidLicenseController extends Controller
                 $image_path = public_path().'/images/unpaidLicense/'.$unpaidLicense->file;
                 if (file_exists($image_path)) {
                     unlink($image_path);
+                }
+            }
+
+            $assistances = Assistance::whereDate('date_assistance', '>=',$unpaidLicense->date_start)
+                ->whereDate('date_assistance', '<=',$unpaidLicense->date_end)->get();
+
+            if ( count($assistances) > 0 )
+            {
+                foreach ( $assistances as $assistance )
+                {
+                    $assistancesDetails = AssistanceDetail::where('assistance_id', $assistance->id)
+                        ->where('worker_id', $unpaidLicense->worker_id)->get();
+
+                    if ( count( $assistancesDetails ) > 0 )
+                    {
+                        foreach ( $assistancesDetails as $assistanceDetail )
+                        {
+                            $workingDay = WorkingDay::find($assistanceDetail->working_day_id);
+                            $assistanceDetail->hour_entry = $workingDay->time_start;
+                            $assistanceDetail->hour_out = $workingDay->time_fin;
+                            $assistanceDetail->status = 'A';
+                            $assistanceDetail->justification = null;
+                            $assistanceDetail->obs_justification = null;
+                            $assistanceDetail->working_day_id = $workingDay->id;
+                            $assistanceDetail->save();
+                        }
+                    }
                 }
             }
 

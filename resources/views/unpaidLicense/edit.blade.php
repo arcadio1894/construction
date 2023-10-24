@@ -78,7 +78,7 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="reason">Motivo </label>
+                <label for="reason">Motivo<span class="text-danger">*</span> </label>
 
                 <textarea name="reason" id="reason" class="form-control">{{$unpaidLicense->reason}}</textarea>
 
@@ -103,7 +103,7 @@
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="date_start">Fecha Inicio</label>
+                <label for="date_start">Fecha Inicio<span class="text-danger">*</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
@@ -113,7 +113,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <label for="date_end">Fecha Fin</label>
+                <label for="date_end">Fecha Fin<span class="text-danger">*</span></label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
