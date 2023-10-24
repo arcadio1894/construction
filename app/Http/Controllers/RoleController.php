@@ -43,6 +43,7 @@ class RoleController extends Controller
         'transfer' => 'TRANSFERENCIAS',
         'entryPurchase' => 'ENTRADA POR COMPRA',
         'entryScrap' => 'RETACERÍA',
+        'entryInventory' => 'INVENTARIO',
         'output' => 'SALIDAS',
         'request' => 'SOLICITUDES',
         'typeScrap' => 'TIPO RETACERÍA',

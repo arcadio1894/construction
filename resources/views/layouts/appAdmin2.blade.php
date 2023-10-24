@@ -1005,6 +1005,27 @@
                         </ul>
                     </li>
                     @endcan
+                    @can('list_entryInventory')
+                    <li class="nav-item has-treeview @yield('openEntryInventory')">
+                        <a href="#" class="nav-link @yield('activeEntryInventory')">
+                            <i class="nav-icon fas fa-archive"></i>
+                            <p>
+                                Por Inventario
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('list_entryInventory')
+                            <li class="nav-item">
+                                <a href="{{ route('entry.inventory.index') }}" class="nav-link @yield('activeListEntryInventory')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar entradas</p>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcan
                     @can('showMaterials_orderExecutionAlmacen')
                     <li class="nav-header">MATERIAL EN ORD. EJEC.</li>
                     <li class="nav-item has-treeview @yield('openExecutionsAlmacen')">

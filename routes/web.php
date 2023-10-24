@@ -599,6 +599,30 @@ Route::middleware('auth')->group(function (){
             ->name('save.images.entry')
             ->middleware('permission:update_entryPurchase');
 
+
+        /////////////  ENTRADA POR INVENTARIO    ///////////////
+        Route::get('entradas/inventario', 'EntryInventoryController@indexEntryInventory')->name('entry.inventory.index')
+        ->middleware('permission:list_entryInventory');
+        
+        Route::get('crear/entrada/inventario', 'EntryInventoryController@createEntryInventory')->name('entry.inventory.create')
+        ->middleware('permission:create_entryInventory');
+
+        Route::post('entry_inventory/store', 'EntryInventoryController@storeEntryInventory')->name('entry.inventory.store')
+        ->middleware('permission:create_entryInventory');
+
+        Route::get('entrada/inventario/editar/{entry}', 'EntryInventoryController@editEntryInventory')->name('entry.inventory.edit')
+        ->middleware('permission:update_entryInventory');
+
+        Route::post('entry_inventory/update', 'EntryInventoryController@updateEntryInventory')->name('entry.inventory.update')
+        ->middleware('permission:update_entryInventory');
+
+        Route::post('entry_inventory/destroy/{entry}', 'EntryInventoryController@destroyEntryInventory')->name('entry.inventory.destroy')
+        ->middleware('permission:destroy_entryInventory');
+
+        Route::get('/get/json/entries/inventory', 'EntryInventoryController@getJsonEntriesInventory');
+        ////////////   ENTRADA POR INVENTARIO   ///////////////
+
+
         // Reporte de ordenes de compra
         Route::get('exportar/reporte/ordenes/compra', 'OrderPurchaseController@reportOrderPurchase')
             ->name('report.order.purchase')
