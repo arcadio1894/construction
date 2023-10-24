@@ -62,6 +62,7 @@
                 <th>Direccion</th>
                 <th>Teléfono</th>
                 <th>Email</th>
+                <th>Cuentas</th>
                 <th>Acciones</th>
             </tr>
             </thead>
