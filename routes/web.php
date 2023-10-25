@@ -1729,6 +1729,29 @@ Route::middleware('auth')->group(function (){
             ->name('permit.destroy')
             ->middleware('permission:delete_permit');
 
+        // CRUD Permisos_Hora
+        Route::get('/all/permits_hours', 'PermitHourController@getAllPermits')
+            ->middleware('permission:list_permitHour');
+        Route::get('permisosxhora/trabajadores', 'PermitHourController@index')
+            ->name('permit_hour.index')
+            ->middleware('permission:list_permitHour');
+        Route::get('crear/permisoxhora', 'PermitHourController@create')
+            ->name('permit_hour.create')
+            ->middleware('permission:create_permitHour');
+        Route::post('permit/storexhour', 'PermitHourController@store')
+            ->name('permit_hour.store')
+            ->middleware('permission:create_permitHour');
+        Route::get('/editar/permisoxhora/{id}', 'PermitHourController@edit')
+            ->name('permit_hour.edit')
+            ->middleware('permission:edit_permitHour');
+        Route::post('permitxhour/update', 'PermitHourController@update')
+            ->name('permit_hour.update')
+            ->middleware('permission:edit_permitHour');
+        Route::post('permitxhour/destroy', 'PermitHourController@destroy')
+            ->name('permit_hour.destroy')
+            ->middleware('permission:destroy_permitHour');
+
+
         // CRUD ReasonSuspension
         Route::get('/all/reasonSuspensions', 'ReasonSuspensionController@getAllReasonSuspensions')
             ->middleware('permission:enable_suspension');

@@ -1876,9 +1876,36 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('enable_permitHour')
+                            <li class="nav-item has-treeview @yield('openPermitHour')">
+                                <a href="#" class="nav-link">
+                                    <i class="far fa-circle nav-icon "></i>
+                                    <p>
+                                        Permisos por Horas
+                                        <i class="right fas fa-angle-left"></i>
+                                    </p>
+                                </a>
+                                <ul class="nav nav-treeview">
+                                    @can('list_permitHour')
+                                    <li class="nav-item">
+                                        <a href="{{ route('permit_hour.index') }}" class="nav-link @yield('activeListPermitHour')">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>Listar permisos</p>
+                                        </a>
+                                    </li>
+                                    @endcan
+                                    @can('create_permitHour')
+                                    <li class="nav-item">
+                                        <a href="{{ route('permit_hour.create') }}" class="nav-link @yield('activeCreatePermitHour')">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>Crear permiso</p>
+                                        </a>
+                                    </li>
+                                    @endcan
+                                </ul>
+                            </li>
+                            @endcan
                         </ul>
-                    </li>
-
                     @can('enable_hourSpecial')
                     <li class="nav-item has-treeview @yield('openHourSpecial')">
                         <a href="#" class="nav-link @yield('activeHourSpecial')">
@@ -2006,6 +2033,7 @@
                                     </ul>
                                 </li>
                             @endcan
+
                             @can('enable_suspension')
                                 <li class="nav-item has-treeview @yield('openSuspension')">
                                     <a href="#" class="nav-link">

@@ -72,6 +72,7 @@ class RoleController extends Controller
         'vacation' => 'VACACIONES',
         'license' => 'LICENCIAS',
         'permit' => 'PERMISOS TRABAJADORES',
+        'permitHour' => 'PERMISOS POR HORAS TRABAJADORES',
         'suspension' => 'SUSPENSIONES',
         'discountContribution' => 'DESCUENTOS Y APORTES',
         'discount' => 'DESCUENTOS',
