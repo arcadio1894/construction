@@ -17,6 +17,7 @@ use App\MedicalRest;
 use App\PaySlip;
 use App\PensionSystem;
 use App\PercentageWorker;
+use App\PermitHour;
 use App\Refund;
 use App\SpecialBonus;
 use App\Suspension;
@@ -926,6 +927,10 @@ class BoletaController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -934,8 +939,26 @@ class BoletaController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            }
+                            else{
                             ///dump('Entré porque hay Horas especiales');
                             // TODO: Con H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
@@ -949,6 +972,7 @@ class BoletaController extends Controller
                                 0,
                                 $hoursNeto,
                             ]);
+                        }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');

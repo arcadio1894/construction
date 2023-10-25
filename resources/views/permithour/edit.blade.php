@@ -1,23 +1,23 @@
 @extends('layouts.appAdmin2')
 
-@section('openHourSpecial')
+@section('openAttendance')
     menu-open
 @endsection
 
-@section('activeHourSpecial')
+@section('activeAttendance')
     active
 @endsection
 
-@section('openUnpaidLicenses')
+@section('openPermitHour')
     menu-open
 @endsection
 
-@section('activeListUnpaidLicense')
+@section('activeListPermitHour')
     active
 @endsection
 
 @section('title')
-    Licencias sin gozo
+    Permisos Por Horas
 @endsection
 
 @section('styles-plugins')
@@ -38,12 +38,12 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Licencia sin gozo de {{ $unpaidLicense->worker->first_name .' '.$unpaidLicense->worker->last_name }}</h1>
+    <h1 class="page-title">Permiso de {{ $permitHour->worker->first_name .' '.$permitHour->worker->last_name }} solicitado por hora</h1>
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Modificar licencia sin gozo</h5>
-    <a href="{{ route('unpaidLicense.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Licencias sin gozo</a>
+    <h5 class="card-title">Modificar permiso por hora</h5>
+    <a href="{{ route('permit_hour.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Listado de Permisos por hora</a>
 @endsection
 
 @section('page-breadcrumb')
@@ -52,9 +52,9 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('unpaidLicense.index') }}"><i class="fa fa-archive"></i> Licencias sin gozo</a>
+            <a href="{{ route('permit_hour.index') }}"><i class="fa fa-archive"></i> Permisos por horas</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Edición</li>
     </ol>
 @endsection
 
@@ -62,7 +62,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Importante!</strong> Al modificar las fechas, debe tener en cuenta que se modificarán las asistencias entre los días colocados.
+                <strong>Importante!</strong> Al modificar las fechas, debe tener en cuenta que se modificarán las asistencias pero debe revisar las asistencias de los días modificados.
                 <br>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
@@ -72,55 +72,42 @@
     </div>
     <br>
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('unpaidLicense.update') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('permit_hour.update') }}" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="unpaidLicense_id" value="{{ $unpaidLicense->id }}">
+        <input type="hidden" name="permitHour_id" value="{{ $permitHour->id }}">
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="reason">Motivo<span class="text-danger">*</span> </label>
+                <label for="reason">Motivo </label>
 
-                <textarea name="reason" id="reason" class="form-control">{{$unpaidLicense->reason}}</textarea>
+                <textarea name="reason" id="reason" class="form-control">{{$permitHour->reason}}</textarea>
 
-            </div>
-            <div class="col-md-6">
-                <label for="file">Archivo IMG/PDF </label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-file-archive"></i></span>
-                    </div>
-                    <input type="file" id="file" name="file" class="form-control" >
-                </div>
-                @if ( $unpaidLicense->file != null )
-                    @if ( substr($unpaidLicense->file,-3) == 'pdf' )
-                        <a href="{{ asset('images/unpaidLicense/'.$unpaidLicense->file) }}" target="_blank" class="btn btn-outline-success float-right">Ver PDF</a>
-                    @else
-                        <img data-image src="{{ asset('images/unpaidLicense/'.$unpaidLicense->file) }}" alt="{{$unpaidLicense->id}}" width="100px" height="100px">
-                    @endif
-                @endif
             </div>
         </div>
 
         <div class="form-group row">
             <div class="col-md-6">
-                <label for="date_start">Fecha Inicio<span class="text-danger">*</span></label>
+                <label for="date_start">Fecha Inicio</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                     </div>
-                    <input type="text" id="date_start" value="{{ ($unpaidLicense->date_start == null) ? '': $unpaidLicense->date_start->format('d/m/Y') }}" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="text" id="date_start" value="{{ ($permitHour->date_start == null) ? '': $permitHour->date_start->format('d/m/Y') }}" name="date_start" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
 
                 </div>
             </div>
+            <div class="form-group row">
             <div class="col-md-6">
-                <label for="date_end">Fecha Fin<span class="text-danger">*</span></label>
+                <label for="hour">Cantidad de Horas</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                        <span class="input-group-text"><i class="far fa-clock"></i></span>
                     </div>
-                    <input type="text" id="date_end" name="date_end" value="{{ ($unpaidLicense->date_end == null) ? '': $unpaidLicense->date_end->format('d/m/Y') }}" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                    <input type="number" id="hour" value="{{ ($permitHour->hour == null) ? '' : $permitHour->hour}}" name="hour" class="form-control" step="0.01">
                 </div>
             </div>
+            </div>
+
         </div>
 
         <div class="text-center">
@@ -149,9 +136,8 @@
         $(function () {
             //$('#datemask').inputmask()
             $('#date_start').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
-            $('#date_end').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 
         })
     </script>
-    <script src="{{ asset('js/unpaidLicense/edit.js') }}"></script>
+    <script src="{{ asset('js/permitHour/edit.js') }}"></script>
 @endsection

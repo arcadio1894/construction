@@ -14,6 +14,7 @@ use App\MedicalRest;
 use App\PaySlip;
 use App\PercentageWorker;
 use App\Permit;
+use App\PermitHour;
 use App\Regime;
 use App\RegimeDetail;
 use App\Suspension;
@@ -128,6 +129,9 @@ class AssistanceController extends Controller
                         ->whereDate('date_end', '>=',$assistance2->date_assistance)
                         ->where('worker_id', $worker->id)
                         ->get();
+                    $permits_hours = PermitHour::whereDate('date_start', '=',$assistance2->date_assistance)
+                        ->where('worker_id', $worker->id)
+                        ->get();
                     // TODO: Seleccionar segun el día si es LUN - JUE y SAB La jornada 1
                     // TODO: Si es VIE la jornada 2
 
@@ -204,6 +208,16 @@ class AssistanceController extends Controller
                             'assistance_id' => $assistance2->id,
                             'working_day_id' => $workingDay->id,
                             'status' => 'U'
+                        ]);
+                    } elseif ( count($permits_hours) > 0 ) {
+                        AssistanceDetail::create([
+                            'date_assistance' => $assistance2->date_assistance,
+                            'hour_entry' => $workingDay->time_start,
+                            'hour_out' => $workingDay->time_fin,
+                            'worker_id' => $worker->id,
+                            'assistance_id' => $assistance2->id,
+                            'working_day_id' => $workingDay->id,
+                            'status' => 'PH'
                         ]);
                     } else {
                         if ( $this->isHoliday($assistance2->date_assistance) )
@@ -360,6 +374,7 @@ class AssistanceController extends Controller
         $cantP = 0;
         $cantT = 0;
         $cantH = 0;
+        $cantPH = 0;
         foreach ( $workers as $worker)
         {
             $arrayDayAssistances = [];
@@ -374,6 +389,7 @@ class AssistanceController extends Controller
             $cantH = 0;
             $cantL = 0;
             $cantU = 0;
+            $cantPH = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -433,6 +449,10 @@ class AssistanceController extends Controller
                         $color = '#c32169';
                         $estado = 'U';
                         $cantU = $cantU + 1;
+                    }elseif ( $assistance_detail->status == 'PH' ){
+                        $color = '#9cf210';
+                        $estado = 'PH';
+                        $cantPH = $cantPH + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -476,7 +496,8 @@ class AssistanceController extends Controller
                 'cantT' => $cantT,
                 'cantH' => $cantH,
                 'cantL' => $cantL,
-                'cantU' => $cantU
+                'cantU' => $cantU,
+                'cantPH' => $cantPH
             ]);
         }
 
@@ -545,6 +566,7 @@ class AssistanceController extends Controller
         $cantT = 0;
         $cantH = 0;
         $cantL = 0;
+        $cantPH = 0;
 
         foreach ( $workers as $worker)
         {
@@ -560,6 +582,7 @@ class AssistanceController extends Controller
             $cantH = 0;
             $cantL = 0;
             $cantU = 0;
+            $cantPH = 0;
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
                 $fecha = Carbon::create($yearCurrent, $monthCurrent, $i);
@@ -618,7 +641,11 @@ class AssistanceController extends Controller
                         $color = '#c32169';
                         $estado = 'U';
                         $cantU = $cantU + 1;
-                    } else {
+                    } elseif ( $assistance_detail->status == 'PH' ){
+                        $color = '#9cf210';
+                        $estado = 'PH';
+                        $cantPH = $cantPH + 1;
+                    }else {
                         $color = '#fff';
                         $estado = 'N';
                     }
@@ -661,7 +688,8 @@ class AssistanceController extends Controller
                 'cantT' => $cantT,
                 'cantH' => $cantH,
                 'cantL' => $cantL,
-                'cantU' => $cantU
+                'cantU' => $cantU,
+                'cantPH' => $cantPH
             ]);
         }
 
@@ -700,6 +728,7 @@ class AssistanceController extends Controller
         $cantT = 0;
         $cantH = 0;
         $cantL = 0;
+        $cantPH = 0;
 
         foreach ( $workers as $worker)
         {
@@ -715,6 +744,7 @@ class AssistanceController extends Controller
             $cantH = 0;
             $cantL = 0;
             $cantU = 0;
+            $cantPH = 0;
 
             for ( $i = 1; $i<=$date->daysInMonth; $i++ )
             {
@@ -774,6 +804,10 @@ class AssistanceController extends Controller
                         $color = '#c32169';
                         $estado = 'U';
                         $cantU = $cantU + 1;
+                    } elseif ( $assistance_detail->status == 'PH' ){
+                        $color = '#9cf210';
+                        $estado = 'PH';
+                        $cantPH = $cantPH + 1;
                     } else {
                         $color = '#fff';
                         $estado = 'N';
@@ -817,7 +851,8 @@ class AssistanceController extends Controller
                 'cantT' => $cantT,
                 'cantH' => $cantH,
                 'cantL' => $cantL,
-                'cantU' => $cantU
+                'cantU' => $cantU,
+                'cantPH' => $cantPH
             ]);
         }
 
@@ -997,6 +1032,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -1005,22 +1044,43 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 || count($permit_hour)>0)
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $assistance_detail->hour_out_new);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $hoursNeto);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
+
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');
@@ -1400,6 +1460,9 @@ class AssistanceController extends Controller
                         ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
                         ->where('worker_id', $worker->id)
                         ->get();
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
                     //dump($licenses);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
@@ -1409,22 +1472,42 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');
@@ -1784,6 +1867,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -1792,24 +1879,44 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                                ($i%2!=0) ? $colors[0]: $colors[1],
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                    ($i%2!=0) ? $colors[0]: $colors[1],
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
-                        } else {
+                        }  else {
                             //dump('Entré porque no hay Horas especiales');
                             // TODO: Sin H-ESP
                             $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
@@ -2136,6 +2243,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -2144,21 +2255,40 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');
@@ -2593,6 +2723,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -2601,21 +2735,41 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');
@@ -3064,6 +3218,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -3072,21 +3230,40 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');
@@ -3514,6 +3691,10 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
                     //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
                     $timeBreak = PercentageWorker::where('name', 'time_break')->first();
                     $time_break = (float)$timeBreak->value;
                     //dump($time_break);
@@ -3522,21 +3703,42 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
                         {
-                            ///dump('Entré porque hay Horas especiales');
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            //dump('Horas Trabajadas: '. $hoursWorked);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            //dump('Horas Trabajadas: '. $hoursNeto);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                            ]);
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+
+                                ]);
+                            }
+                            else{
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+
+                                ]);
+                            }
                             //dump($arrayDayAssistances);
                         } else {
                             //dump('Entré porque no hay Horas especiales');

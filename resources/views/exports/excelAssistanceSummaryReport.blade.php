@@ -83,6 +83,7 @@
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">FERIADOS</th>
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">LICENCIA</th>
         <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">L. SIN GOZO</th>
+        <th width="100px" style="background-color: #1c3c80; font-size: 13px; color: white">PERMISOS POR HORAS</th>
     </tr>
     </thead>
     <tbody>
@@ -102,6 +103,7 @@
             <td width="100px">{{ $arraySummary[$t]['cantH'] }}</td>
             <td width="100px">{{ $arraySummary[$t]['cantL'] }}</td>
             <td width="100px">{{ $arraySummary[$t]['cantU'] }}</td>
+            <td width="100px">{{ $arraySummary[$t]['cantPH'] }}</td>
         </tr>
     @endfor
     </tbody>

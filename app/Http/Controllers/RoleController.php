@@ -72,6 +72,7 @@ class RoleController extends Controller
         'license' => 'LICENCIAS',
         'unpaidLicense' => 'LICENCIAS SIN GOZO',
         'permit' => 'PERMISOS TRABAJADORES',
+        'permitHour' => 'PERMISOS POR HORAS TRABAJADORES',
         'suspension' => 'SUSPENSIONES',
         'discountContribution' => 'DESCUENTOS Y APORTES',
         'discount' => 'DESCUENTOS',
