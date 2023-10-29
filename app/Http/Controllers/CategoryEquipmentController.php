@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\CategoryEquipment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoryEquipmentController extends Controller
 {
     public function index()
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('categoryEquipment.index', compact('permissions'));
     }
 
     public function create()

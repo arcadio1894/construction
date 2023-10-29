@@ -2401,6 +2401,39 @@
                         </li>
                     @endcan
 
+                    @canany('enable_sales')
+                        <li class="nav-header">VENTAS</li>
+                    @endcanany
+
+                    @can('enable_defaultEquipment')
+                        <li class="nav-item has-treeview @yield('openDefaultEquipment')">
+                            <a href="#" class="nav-link @yield('activeDefaultEquipment')">
+                                <i class="nav-icon fas fa-th-list"></i>
+                                <p>
+                                     Catálogo de equipos
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('listCategory_defaultEquipment')
+                                    <li class="nav-item">
+                                        <a href="{{route('categoryEquipment.index')}}" class="nav-link @yield('activeCategoryEquipment')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Ver catálogo</p>
+                                        </a>
+                                    </li>
+                                @endcan
+
+                                <li class="nav-item">
+                                    <a href="#" class="nav-link @yield('activeCategoryEquipmentDelete')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Categorias Eliminadas</p>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                    @endcan
+
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>
                     @endcanany
