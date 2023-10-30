@@ -492,7 +492,7 @@ function renderTemplateTotalHours(i, week, date, assistances ) {
         clone.querySelector("[data-h_ord]").innerHTML = assistances[0][0];
         clone.querySelector("[data-h_ord]").setAttribute('class', 'bg-dark');
     } else {
-        clone.querySelector("[data-h_ord]").innerHTML = assistances[0][0];
+        clone.querySelector("[data-h_ord]").innerHTML = parseFloat(assistances[0][0]).toFixed(2);
     }
 
     if ( assistances[0][1] === '' )
@@ -501,7 +501,7 @@ function renderTemplateTotalHours(i, week, date, assistances ) {
 
         clone.querySelector("[data-h_25]").setAttribute('class', 'bg-dark');
     } else {
-        clone.querySelector("[data-h_25]").innerHTML = assistances[0][1];
+        clone.querySelector("[data-h_25]").innerHTML = parseFloat(assistances[0][1]).toFixed(2);
     }
 
     if ( assistances[0][2] === '' )
@@ -509,11 +509,11 @@ function renderTemplateTotalHours(i, week, date, assistances ) {
         clone.querySelector("[data-h_35]").innerHTML = assistances[0][2];
         clone.querySelector("[data-h_35]").setAttribute('class', 'bg-dark');
     } else {
-        clone.querySelector("[data-h_35]").innerHTML = assistances[0][2];
+        clone.querySelector("[data-h_35]").innerHTML = parseFloat(assistances[0][2]).toFixed(2);
     }
 
-    clone.querySelector("[data-h_100]").innerHTML = assistances[0][3];
-    clone.querySelector("[data-h_esp]").innerHTML = assistances[0][4];
+    clone.querySelector("[data-h_100]").innerHTML = parseFloat(assistances[0][3]).toFixed(2);
+    clone.querySelector("[data-h_esp]").innerHTML = parseFloat(assistances[0][4]).toFixed(2);
 
 
     $('#body-totalHours').append(clone);
