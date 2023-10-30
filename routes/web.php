@@ -2284,6 +2284,16 @@ Route::middleware('auth')->group(function (){
         Route::post('supplier/account/destroy/{account_id}', 'SupplierAccountController@destroy')
             ->name('supplier.account.destroy')
             ->middleware('permission:destroy_supplierAccount');
+
+        // TODO: Rutas de CategoryEquipments
+        Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
+            ->name('categoryEquipment.index')
+            ->middleware('permission:listCategory_defaultEquipment');
+
+        // TODO: Rutas de DefaultEquipments
+        Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')
+            ->name('defaultEquipment.index')
+            /*->middleware('permission:listCategory_defaultEquipment')*/;
     });
 });
 

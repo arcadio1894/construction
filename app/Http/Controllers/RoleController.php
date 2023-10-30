@@ -90,7 +90,9 @@ class RoleController extends Controller
         'projection' => 'PROYECCION DE SUELDOS',
         'financeWorks' => 'TRABAJOS EN FINANZAS',
         'workerAccount' => 'CUENTAS BANCARIAS TRABAJADORES',
-        'supplierAccount' => 'CUENTAS BANCARIAS PROVEEDORES'
+        'supplierAccount' => 'CUENTAS BANCARIAS PROVEEDORES',
+        'defaultEquipment' => 'CATALOGO EQUIPOS',
+        'sales' => 'VENTAS'
     ];
 
     public function index()

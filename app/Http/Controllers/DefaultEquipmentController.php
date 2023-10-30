@@ -2,82 +2,47 @@
 
 namespace App\Http\Controllers;
 
+use App\CategoryEquipment;
 use App\DefaultEquipment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class DefaultEquipmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index($category_id)
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $category = CategoryEquipment::find($category_id);
+        return view('defaultEquipment.index', compact('permissions', 'category'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         //
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\DefaultEquipment  $defaultEquipment
-     * @return \Illuminate\Http\Response
-     */
     public function show(DefaultEquipment $defaultEquipment)
     {
         //
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\DefaultEquipment  $defaultEquipment
-     * @return \Illuminate\Http\Response
-     */
     public function edit(DefaultEquipment $defaultEquipment)
     {
         //
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\DefaultEquipment  $defaultEquipment
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, DefaultEquipment $defaultEquipment)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\DefaultEquipment  $defaultEquipment
-     * @return \Illuminate\Http\Response
-     */
     public function destroy(DefaultEquipment $defaultEquipment)
     {
         //
