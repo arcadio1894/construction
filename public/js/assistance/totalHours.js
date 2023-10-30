@@ -322,11 +322,11 @@ function fillTotalHoursTable() {
                                         json.arrayByWeek[j].week,
                                         json.arrayByWeek[j].month,
                                         json.arrayByWeek[j].date,
-                                        json.arrayByWeek[j].h_ord,
-                                        json.arrayByWeek[j].h_25,
-                                        json.arrayByWeek[j].h_35,
-                                        json.arrayByWeek[j].h_100,
-                                        json.arrayByWeek[j].h_esp
+                                        parseFloat(json.arrayByWeek[j].h_ord).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_25).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_35).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_100).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_esp).toFixed(2)
                                     );
                                 }
 
@@ -403,11 +403,11 @@ function fillTotalHoursTable() {
                                         json.arrayByWeek[j].week,
                                         json.arrayByWeek[j].month,
                                         json.arrayByWeek[j].date,
-                                        json.arrayByWeek[j].h_ord,
-                                        json.arrayByWeek[j].h_25,
-                                        json.arrayByWeek[j].h_35,
-                                        json.arrayByWeek[j].h_100,
-                                        json.arrayByWeek[j].h_esp
+                                        parseFloat(json.arrayByWeek[j].h_ord).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_25).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_35).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_100).toFixed(2),
+                                        parseFloat(json.arrayByWeek[j].h_esp).toFixed(2)
                                     );
                                 }
 

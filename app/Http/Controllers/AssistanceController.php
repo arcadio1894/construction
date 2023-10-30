@@ -2222,7 +2222,7 @@ class AssistanceController extends Controller
                     if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         //dump('Entré porque no es Feriado y es dia normal');
                         // TODO: No feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 || count($permit_hour)>0 )
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 || count($permit_hour)>0 )
                         {
                             if(count($permit_hour)>0 )
                             {
