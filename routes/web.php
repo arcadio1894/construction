@@ -2287,6 +2287,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
+        Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
+
 
         // TODO: Rutas de DefaultEquipments
         Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')
