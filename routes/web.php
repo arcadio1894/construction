@@ -2265,6 +2265,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
+        Route::get('/categorias/editar', 'CategoryEquipmentController@edit')
+            ->name('categoryEquipment.edit');
+        Route::get('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
+            ->name('categoryEquipment.destroy');
+        Route::get('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')
+            ->name('categoryEquipment.restore');
+        Route::get('/categorias/equiposeliminados/', 'CategoryEquipmentController@eliminated')
+            ->name('categoryEquipment.eliminated');
 
         // TODO: Rutas de DefaultEquipments
         Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')
