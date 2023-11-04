@@ -241,6 +241,17 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon bg-gradient-maroon elevation-1" style="background-color: #42F1CC">U</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">LICENCIA SIN GOZO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
         <div class="col-md-3">
             <div class="info-box">
                 <span class="info-box-icon elevation-1" style="background-color: #9cf210">PH</span>

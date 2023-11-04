@@ -1683,6 +1683,28 @@ Route::middleware('auth')->group(function (){
             ->name('license.destroy')
             ->middleware('permission:delete_license');
 
+        //CRUD UnpaidLicenses
+        Route::get('/all/unpaid/licenses', 'UnpaidLicenseController@getAllUnpaidLicenses')
+            ->middleware('permission:list_unpaidLicense');
+        Route::get('licencias/sin/gozo', 'UnpaidLicenseController@index')
+            ->name('unpaidLicense.index')
+            ->middleware('permission:list_unpaidLicense');
+        Route::get('crear/licencia/sin/gozo', 'UnpaidLicenseController@create')
+            ->name('unpaidLicense.create')
+            ->middleware('permission:create_unpaidLicense');
+        Route::post('unpaid_license/store', 'UnpaidLicenseController@store')
+            ->name('unpaidLicense.store')
+            ->middleware('permission:create_unpaidLicense');
+        Route::get('/editar/licencia/sin/gozo/{id}', 'UnpaidLicenseController@edit')
+            ->name('unpaidLicense.edit')
+            ->middleware('permission:edit_unpaidLicense');
+        Route::post('unpaid_license/update', 'UnpaidLicenseController@update')
+            ->name('unpaidLicense.update')
+            ->middleware('permission:edit_unpaidLicense');
+        Route::post('unpaid_license/destroy', 'UnpaidLicenseController@destroy')
+            ->name('unpaidLicense.destroy')
+            ->middleware('permission:delete_unpaidLicense');
+
         // CRUD Permisos
         Route::get('/all/permits', 'PermitController@getAllPermits')
             ->middleware('permission:list_permit');
@@ -2265,14 +2287,17 @@ Route::middleware('auth')->group(function (){
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
-        Route::get('/categorias/editar', 'CategoryEquipmentController@edit')
+        Route::post('/categorias/editar', 'CategoryEquipmentController@edit')
             ->name('categoryEquipment.edit');
-        Route::get('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
+        Route::delete('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
             ->name('categoryEquipment.destroy');
-        Route::get('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')
+        Route::post('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')
             ->name('categoryEquipment.restore');
         Route::get('/categorias/equiposeliminados/', 'CategoryEquipmentController@eliminated')
             ->name('categoryEquipment.eliminated');
+        Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
+        Route::get('/get/data/category/equipmentseliminated/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipmentEliminated');
+
 
         // TODO: Rutas de DefaultEquipments
         Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')

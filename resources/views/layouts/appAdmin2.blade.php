@@ -1983,6 +1983,36 @@
                                     </ul>
                                 </li>
                             @endcan
+                            @can('enable_unpaidLicense')
+                                    <li class="nav-item has-treeview @yield('openUnpaidLicenses')">
+                                        <a href="#" class="nav-link">
+                                            <i class="far fa-circle nav-icon text-success"></i>
+                                            <p>
+                                                Licencias sin gozo
+                                                <i class="right fas fa-angle-left"></i>
+                                            </p>
+                                        </a>
+                                        <ul class="nav nav-treeview">
+                                            @can('list_unpaidLicense')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('unpaidLicense.index') }}" class="nav-link @yield('activeListUnpaidLicense')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Listar licencias sin gozo</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                            @can('create_unpaidLicense')
+                                                <li class="nav-item">
+                                                    <a href="{{ route('unpaidLicense.create') }}" class="nav-link @yield('activeCreateUnpaidLicense')">
+                                                        <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                        <p>Crear licencia sin gozo</p>
+                                                    </a>
+                                                </li>
+                                            @endcan
+                                        </ul>
+                                    </li>
+                            @endcan
+
                             @can('enable_permit')
                                 <li class="nav-item has-treeview @yield('openPermit')">
                                     <a href="#" class="nav-link">
