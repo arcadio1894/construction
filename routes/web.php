@@ -2288,6 +2288,9 @@ Route::middleware('auth')->group(function (){
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
         Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
+        Route::post('/category/equipment/store', 'CategoryEquipmentController@store')
+            ->name('categoryEquipment.store')
+            ->middleware('permission:createCategory_defaultEquipment');
 
 
         // TODO: Rutas de DefaultEquipments

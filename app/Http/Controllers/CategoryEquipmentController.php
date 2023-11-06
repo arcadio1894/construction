@@ -3,8 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\CategoryEquipment;
+use App\Http\Requests\StoreCategoryEquipmentsRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class CategoryEquipmentController extends Controller
 {
@@ -64,14 +67,33 @@ class CategoryEquipmentController extends Controller
         return ['data' => $arrayCategoryEquipments, 'pagination' => $pagination];
     }
 
-    public function create()
+    public function store(StoreCategoryEquipmentsRequest $request)
     {
-        //
-    }
+        DB::beginTransaction();
+        try {
+            $categoryEquipment = CategoryEquipment::create([
+                'description' => $request->get('description')
+            ]);
+            if (!$request->file('image')) {
+                $categoryEquipment->image = 'no_image.png';
+                $categoryEquipment->save();
 
-    public function store(Request $request)
-    {
-        //
+            } else {
+                $path = public_path().'/images/categoryEquipment/';
+                $image = $request->file('image');
+                $filename = $categoryEquipment->id . '.JPG';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'JPG');
+                $categoryEquipment->image = $filename;
+                $categoryEquipment->save();
+            }
+            DB::commit();
+        }catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Categoría de equipo creada con éxito.'], 200);
     }
 
     public function show(CategoryEquipment $categoryEquipment)
