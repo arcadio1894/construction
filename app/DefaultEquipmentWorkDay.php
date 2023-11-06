@@ -8,7 +8,7 @@ class DefaultEquipmentWorkDay extends Model
 {
     protected $fillable = [
         'default_equipment_id',
-        'equipment_id',
+        'description',
         'quantityPerson',
         'hoursPerPerson',
         'pricePerHour',

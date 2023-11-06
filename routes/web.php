@@ -2293,7 +2293,15 @@ Route::middleware('auth')->group(function (){
         // TODO: Rutas de DefaultEquipments
         Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')
             ->name('defaultEquipment.index')
-            /*->middleware('permission:listCategory_defaultEquipment')*/;
+            ->middleware('permission:list_defaultEquipment');
+        Route::get('/equipos/categoria/{category_id}/crear', 'DefaultEquipmentController@create')
+            ->name('defaultEquipment.create')
+            ->middleware('permission:create_defaultEquipment');
+        Route::post('store/defaultEquipment', 'DefaultEquipmentController@store')
+            ->name('defaultEquipment.store')
+            ->middleware('permission:create_defaultEquipment');
+        Route::get('/get/data/defaultEquipments/{numberPage}', 'DefaultEquipmentController@getDataDefaultEquipments');
+        
     });
 });
 
