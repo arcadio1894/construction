@@ -405,7 +405,7 @@
                                         </div>
                                         <div class="col-md-1">
                                             <div class="form-group">
-                                                <input type="number" value="{{ $consumable->unit_price/1.18 }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" value="{{ number_format($consumable->unit_price/1.18, 2) }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                             </div>
