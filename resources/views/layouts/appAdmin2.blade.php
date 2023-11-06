@@ -2453,13 +2453,14 @@
                                         </a>
                                     </li>
                                 @endcan
-
+                                @can('eliminatedCategory_defaultEquipment')
                                 <li class="nav-item">
                                     <a href="{{route('categoryEquipment.eliminated')}}" class="nav-link @yield('activeCategoryEquipmentDelete')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Categorias Eliminadas</p>
                                     </a>
                                 </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

@@ -149,7 +149,7 @@
             <span class="page-link">...</span>
         </li>
     </template>
-
+    @can('destroyCategory_defaultEquipment')
     <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -169,6 +169,8 @@
             </div>
         </div>
     </div>
+    @endcan
+    @can('editCategory_defaultEquipment')
     <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -206,6 +208,7 @@
             </div>
         </div>
     </div>
+    @endcan
 
 @endsection
 

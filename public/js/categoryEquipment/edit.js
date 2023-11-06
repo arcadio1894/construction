@@ -1,10 +1,10 @@
 $(document).on('click', '[data-edit]', function () {
-    // Obtiene los datos de los atributos data del botón
+
     var categoryId = $(this).data('edit');
     var description = $(this).data('description');
     var image = $(this).data('image');
     console.log(categoryId);
-    // Establece los valores en el formulario de edición
+
     $('#editDescription').val(description);
     var path = document.location.origin;
     var completePath = path + '/images/categoryEquipment/' + image;
@@ -21,7 +21,10 @@ $(document).on('click', '[data-edit]', function () {
 
         var formData = new FormData();
         formData.append('description', newDescription);
-        formData.append('editImage', newImage);
+        if (newImage) {
+            formData.append('editImage', newImage);
+        }
+
         console.log(newImage);
         $.ajax({
             url: 'actualizar/' + categoryId,

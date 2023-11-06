@@ -142,6 +142,7 @@
             <span class="page-link">...</span>
         </li>
     </template>
+    @can('restoreCategory_defaultEquipment')
     <div class="modal fade" id="restoreModal" tabindex="-1" aria-labelledby="restoreModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -161,6 +162,7 @@
             </div>
         </div>
     </div>
+    @endcan
 
 @endsection
 

@@ -2288,15 +2288,20 @@ Route::middleware('auth')->group(function (){
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
         Route::get('/categorias/editar/{categoryEquipment}', 'CategoryEquipmentController@edit')
-            ->name('categoryEquipment.edit');
+            ->name('categoryEquipment.edit')
+            ->middleware('permission:editCategory_defaultEquipment');
         Route::post('/categorias/actualizar/{categoryEquipment}', 'CategoryEquipmentController@update')
-            ->name('categoryEquipment.update');
+            ->name('categoryEquipment.update')
+            ->middleware('permission:editCategory_defaultEquipment');
         Route::delete('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
-            ->name('categoryEquipment.destroy');
+            ->name('categoryEquipment.destroy')
+            ->middleware('permission:destroyCategory_defaultEquipment');
         Route::post('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')
-            ->name('categoryEquipment.restore');
+            ->name('categoryEquipment.restore')
+            ->middleware('permission:restoreCategory_defaultEquipment');
         Route::get('/categorias/equiposeliminados/', 'CategoryEquipmentController@eliminated')
-            ->name('categoryEquipment.eliminated');
+            ->name('categoryEquipment.eliminated')
+            ->middleware('permission:eliminatedCategory_defaultEquipment');
         Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
         Route::get('/get/data/category/equipmentseliminated/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipmentEliminated');
 

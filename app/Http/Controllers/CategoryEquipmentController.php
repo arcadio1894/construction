@@ -100,25 +100,11 @@ class CategoryEquipmentController extends Controller
             if (!$categoryEquipment) {
                 return response()->json(['message' => 'Categoría de equipo no encontrada'], 404);
             }
-
             $categoryEquipment->description = $request->input('description');
-            //dd($request->file('editImage'));
-            if (!$request->file('editImage')) {
-                if ( $categoryEquipment->image == "no_image.png" )
-                {
-                    $categoryEquipment->image = "no_image.png";
-                    $categoryEquipment->save();
-                }
+            $categoryEquipment->save();
 
-            } else {
-                if ( $categoryEquipment->image  !="no_image.png" )
-                {
-                    $path = public_path().'/images/categoryEquipment/'.$categoryEquipment->image;
-                    if (file_exists($path)) {
-                        unlink($path);
-                    }
-                }
-
+            if ($request->hasFile('editImage')) {
+                // Se ha seleccionado una nueva imagen, procesarla
                 $path = public_path().'/images/categoryEquipment/';
                 $image = $request->file('editImage');
                 $filename = $categoryEquipment->id . '.JPG';
@@ -126,11 +112,10 @@ class CategoryEquipmentController extends Controller
                 $img->orientate();
                 $img->save($path.$filename, 80, 'JPG');
                 $categoryEquipment->image = $filename;
-                $categoryEquipment->save();
             }
 
+            $categoryEquipment->save();
 
-            //$categoryEquipment->save();
             DB::commit();
         } catch (\Throwable $e) {
             DB::rollBack();
