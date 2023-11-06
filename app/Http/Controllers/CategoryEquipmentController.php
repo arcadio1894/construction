@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CategoryEquipment;
+use App\Http\Requests\UpdateCategoryEquipmentRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -86,14 +87,10 @@ class CategoryEquipmentController extends Controller
         //
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryEquipmentRequest $request, $id)
     {
         DB::beginTransaction();
         try {
-            $request->validate([
-                'description' => 'required|string',
-                'editImage' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
-            ]);
 
             $categoryEquipment = CategoryEquipment::find($id);
 
@@ -127,35 +124,48 @@ class CategoryEquipmentController extends Controller
 
 
     public function destroy($id) {
-        try {
+        DB::beginTransaction();
 
+        try {
             $categoryEquipment = CategoryEquipment::find($id);
 
             if (!$categoryEquipment) {
+                DB::rollBack();
                 return response()->json(['message' => 'La categoría de equipo no se encontró'], 404);
             }
 
-
             $categoryEquipment->delete();
 
+            DB::commit();
 
-            return response()->json(['message' => 'Categoría de equipo eliminada con éxito']);
+            return response()->json(['message' => 'Categoría de equipo eliminada con éxito'], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             return response()->json(['message' => 'Error al eliminar la categoría de equipo'], 500);
         }
     }
 
     public function restore($id)
     {
-        $categoryEquipment = CategoryEquipment::withTrashed()->find($id);
+        DB::beginTransaction();
 
-        if (!$categoryEquipment) {
-            return response()->json(['message' => 'Categoría de equipo no encontrada'], 404);
+        try {
+            $categoryEquipment = CategoryEquipment::withTrashed()->find($id);
+
+            if (!$categoryEquipment) {
+                DB::rollBack();
+                return response()->json(['message' => 'Categoría de equipo no encontrada'], 404);
+            }
+
+            $categoryEquipment->restore();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Categoría de equipo restaurada con éxito'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['message' => 'Error al restaurar la categoría de equipo'], 500);
         }
-
-        $categoryEquipment->restore();
-
-        return response()->json(['message' => 'Categoría de equipo restaurada con éxito'], 200);
     }
 
     public function eliminated()

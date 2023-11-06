@@ -1,5 +1,4 @@
 $(document).on('click', '[data-delete]', function () {
-
     var categoryId = $(this).data('delete');
     var description = $(this).data('description');
     var image = $(this).data('image');
