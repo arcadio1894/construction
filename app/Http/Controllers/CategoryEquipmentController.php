@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\CategoryEquipment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Intervention\Image\Facades\Image;
 
 class CategoryEquipmentController extends Controller
 {
@@ -79,18 +81,65 @@ class CategoryEquipmentController extends Controller
         //
     }
 
-    public function edit()
-    {
-
-        $user = Auth::user();
-        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
-        return view('categoryEquipment.edit', compact('permissions'));
-    }
-
-    public function update(Request $request, CategoryEquipment $categoryEquipment)
+    public function edit($id)
     {
         //
     }
+
+    public function update(Request $request, $id)
+    {
+        DB::beginTransaction();
+        try {
+            $request->validate([
+                'description' => 'required|string',
+                'editImage' => 'image|mimes:jpg,jpeg,png,gif|max:2048',
+            ]);
+
+            $categoryEquipment = CategoryEquipment::find($id);
+
+            if (!$categoryEquipment) {
+                return response()->json(['message' => 'Categoría de equipo no encontrada'], 404);
+            }
+
+            $categoryEquipment->description = $request->input('description');
+            //dd($request->file('editImage'));
+            if (!$request->file('editImage')) {
+                if ( $categoryEquipment->image == "no_image.png" )
+                {
+                    $categoryEquipment->image = "no_image.png";
+                    $categoryEquipment->save();
+                }
+
+            } else {
+                if ( $categoryEquipment->image  !="no_image.png" )
+                {
+                    $path = public_path().'/images/categoryEquipment/'.$categoryEquipment->image;
+                    if (file_exists($path)) {
+                        unlink($path);
+                    }
+                }
+
+                $path = public_path().'/images/categoryEquipment/';
+                $image = $request->file('editImage');
+                $filename = $categoryEquipment->id . '.JPG';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'JPG');
+                $categoryEquipment->image = $filename;
+                $categoryEquipment->save();
+            }
+
+
+            //$categoryEquipment->save();
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Categoría de equipo actualizada con éxito.'], 200);
+    }
+
 
     public function destroy($id) {
         try {

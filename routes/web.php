@@ -2287,8 +2287,10 @@ Route::middleware('auth')->group(function (){
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
-        Route::post('/categorias/editar', 'CategoryEquipmentController@edit')
+        Route::get('/categorias/editar/{categoryEquipment}', 'CategoryEquipmentController@edit')
             ->name('categoryEquipment.edit');
+        Route::post('/categorias/actualizar/{categoryEquipment}', 'CategoryEquipmentController@update')
+            ->name('categoryEquipment.update');
         Route::delete('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
             ->name('categoryEquipment.destroy');
         Route::post('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')

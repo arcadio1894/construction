@@ -179,24 +179,28 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <form id="editCategoryForm">
+                    <form id="editCategoryForm"  enctype="multipart/form-data">
+                            @csrf
+                        <input type="hidden" name="categoryEquipment_id" id="categoryEquipment_id">
                         <div class="form-group">
                             <label for="editDescription">Descripción<span class="right badge badge-danger">(*)</span></label>
                             <input type="text" id="editDescription" class="form-control" placeholder="Nueva descripción">
                         </div>
                         <div class="col-md-12">
-                            <label for="file">Archivo IMG/PDF </label>
+                            <label for="editImage">Archivo IMG/PDF </label>
                             <div class="input-group">
                                 <div class="input-group-prepend">
                                     <span class="input-group-text"><i class="far fa-file-archive"></i></span>
                                 </div>
-                                <input type="file" id="file" name="file" class="form-control" >
+                                <input type="file" id="editImage" name="editImage" accept="image/*" class="form-control" >
                             </div>
+                            <label id="selectedFileNameLabel"></label>
                         </div>
+                        <img id="editImagePreview" src="" alt="Vista previa de la imagen">
                     </form>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-outline-secondary" id="btn-edit-cancel" data-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" id="btn-edit-confirm">Guardar Cambios</button>
                 </div>
             </div>
@@ -212,5 +216,6 @@
 
 @section('scripts')
     <script src="{{ asset('js/categoryEquipment/index.js') }}"></script>
+    <script src="{{ asset('js/categoryEquipment/edit.js') }}"></script>
     <script src="{{ asset('js/categoryEquipment/delete.js') }}"></script>
 @endsection

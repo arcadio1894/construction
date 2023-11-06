@@ -8,12 +8,12 @@
     active
 @endsection
 
-@section('activeCategoryEquipment')
+@section('activeCategoryEquipmentDelete')
     active
 @endsection
 
 @section('title')
-    Categoria de Equipos
+    Categoria de Equipos Eliminados
 @endsection
 
 @section('styles-plugins')
@@ -32,10 +32,12 @@
         }
     </style>
 @endsection
+@section('page-header')
+    <h1 class="page-title">Categoria de Equipos Eliminados</h1>
+@endsection
 
 @section('page-title')
     <h5 class="card-title">Listado de categorias de equipos eliminados</h5>
-    {{--<a href="{{ route('category.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Categoria </a>--}}
 @endsection
 
 @section('page-breadcrumb')
@@ -112,23 +114,24 @@
         </div>
     </template>
 
+
     <template id="previous-page">
         <li class="page-item previous">
-            <a href="#" class="page-link" data-item>
+            <a href="#" class="page-link" data-item><
                 <i class="previous"></i>
             </a>
         </li>
     </template>
 
     <template id="item-page">
-        <li class="page-item">
+        <li class="page-item" data-active>
             <a href="#" class="page-link" data-item="">5</a>
         </li>
     </template>
 
     <template id="next-page">
         <li class="page-item next">
-            <a href="#" class="page-link" data-item>
+            <a href="#" class="page-link" data-item>>
                 <i class="next"></i>
             </a>
         </li>
