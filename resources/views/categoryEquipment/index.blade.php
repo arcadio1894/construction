@@ -23,12 +23,23 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
 @endsection
 
 @section('styles')
     <style>
         .select2-search__field{
             width: 100% !important;
+        }
+        #suggestions-container {
+            position: relative;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
 @endsection
@@ -40,7 +51,7 @@
 @section('page-title')
     <h5 class="card-title">Listado de categorias de equipos</h5>
     @can('createCategory_defaultEquipment')
-        <a href="#" class="btn btn-outline-success btn-sm float-right" data-toggle="modal" data-target="#createModal"> <i class="fa fa-plus font-20"></i> Nueva Categoria </a>
+        <button type="button"  class="btn btn-outline-success btn-sm float-right" data-toggle="modal" data-target="#createModal" id="btn-createModal"> <i class="fa fa-plus font-20"></i> Nueva Categoria </button>
     @endcan
 @endsection
 
@@ -61,19 +72,18 @@
     <form action="#">
         <div class="card card-primary mb-3">
             <div class="card-body">
-                <div class="row align-items-center">
+                <div class="row">
                     <div class="col-md-8">
-                        <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                            <input type="text" class="form-control" id="inputNameCategoryEquipment" name="search" value="" placeholder="Nombre de la categoría del equipo">
+                        <div class="form-group">
+                            <input type="text" placeholder="Nombre de la categoría del equipo" id="inputNameCategoryEquipment" class="form-control rounded-0 typeahead categoryTypeahead">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="btn-search" class="btn btn-primary">Buscar</button>
                     </div>
+
                 </div>
+                <div id="suggestions-container" class="col-md-10 suggestions-container"></div>
             </div>
         </div>
     </form>
@@ -198,6 +208,7 @@
 @section('plugins')
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
 @endsection
 
 @section('scripts')

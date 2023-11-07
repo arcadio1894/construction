@@ -19,6 +19,16 @@ class CategoryEquipmentController extends Controller
         return view('categoryEquipment.index', compact('permissions'));
     }
 
+    public function getCategoriesTypeahead(Request $request)
+    {
+        $searchTerm = $request->input('query');
+        $categories = CategoryEquipment::where('description', 'like', '%' . $searchTerm . '%')
+            ->get(['description', 'id']);
+
+        return $categories;
+
+    }
+
     public function getDataCategoryEquipment(Request $request, $pageNumber = 1){
         $perPage = 4;
 
@@ -26,7 +36,7 @@ class CategoryEquipmentController extends Controller
 
         // Aplicar filtros si se proporcionan
         if ($nameCategoryEquipment) {
-            $query = CategoryEquipment::where('description', $nameCategoryEquipment)
+            $query = CategoryEquipment::where('description', 'like', '%'.$nameCategoryEquipment.'%')
                 ->orderBy('description', 'ASC')
                 ->get();
         } else {

@@ -11,6 +11,7 @@ var $formCreate;
 function storeCategoryEquipment() {
     event.preventDefault();
     $("#btn-save-submit").attr("disabled", true);
+    $("#btn-createModal").attr("disabled", true);
     var formulario = $('#formCreate')[0];
     var form = new FormData(formulario);
     var createUrl = $formCreate.data('url');
