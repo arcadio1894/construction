@@ -190,10 +190,10 @@
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
         <div id="company3" class="clearfix">
             <div>RUC 20540001384</div>
-            <div>A.H. Ramiro Prialé Mz. 17 Lte. 1</div>
-            <div>La Esperanza, Trujillo, Perú</div>
+            <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
+            {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 998-396-337</div>
+            <div>Teléfono: +51 959 332 205</div>
             <div>Cotizado por: </div>
         </div>
     </div>
@@ -405,10 +405,10 @@
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
         <div id="company3" class="clearfix">
             <div>RUC 20540001384</div>
-            <div>A.H. Ramiro Prialé Mz. 17 Lte. 1</div>
-            <div>La Esperanza, Trujillo, Perú</div>
+            <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
+            {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 998-396-337</div>
+            <div>Teléfono: +51 959 332 205</div>
             <div>Cotizado por: </div>
         </div>
     </div>
@@ -454,7 +454,7 @@
     @endforeach
 </div>
 <footer>
-    A.H. Ramiro Prialé Mz. 17 Lte. 1  |  +51 998-396-337
+    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 959 332 205
 </footer>
 </body>
 </html>
