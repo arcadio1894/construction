@@ -2311,6 +2311,28 @@ Route::middleware('auth')->group(function (){
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
             ->name('categoryEquipment.index')
             ->middleware('permission:listCategory_defaultEquipment');
+        Route::get('/categorias/editar/{categoryEquipment}', 'CategoryEquipmentController@edit')
+            ->name('categoryEquipment.edit')
+            ->middleware('permission:editCategory_defaultEquipment');
+        Route::post('/categorias/actualizar/{categoryEquipment}', 'CategoryEquipmentController@update')
+            ->name('categoryEquipment.update')
+            ->middleware('permission:editCategory_defaultEquipment');
+        Route::delete('/categorias/equiposxeliminar/{id}', 'CategoryEquipmentController@destroy')
+            ->name('categoryEquipment.destroy')
+            ->middleware('permission:destroyCategory_defaultEquipment');
+        Route::post('/categorias/equiposxrestaurar/{id}', 'CategoryEquipmentController@restore')
+            ->name('categoryEquipment.restore')
+            ->middleware('permission:restoreCategory_defaultEquipment');
+        Route::get('/categorias/equiposeliminados/', 'CategoryEquipmentController@eliminated')
+            ->name('categoryEquipment.eliminated')
+            ->middleware('permission:eliminatedCategory_defaultEquipment');
+        Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
+        Route::get('/get/data/category/equipmentseliminated/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipmentEliminated');
+        Route::post('/category/equipment/store', 'CategoryEquipmentController@store')
+            ->name('categoryEquipment.store')
+            ->middleware('permission:createCategory_defaultEquipment');
+        Route::get('/get/category/equipment/typeahead', 'CategoryEquipmentController@getCategoriesTypeahead');
+
 
         // TODO: Rutas de DefaultEquipments
         Route::get('/equipos/categoria/{category_id}', 'DefaultEquipmentController@index')
