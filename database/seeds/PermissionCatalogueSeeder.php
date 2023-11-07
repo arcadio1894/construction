@@ -20,6 +20,10 @@ class PermissionCatalogueSeeder extends Seeder
             'enable_defaultEquipment' => 'Habilitar Catálogo de equipos',
             'listCategory_defaultEquipment' => 'Listar Categorías de Catálogo',
             'createCategory_defaultEquipment' => 'Crear Categorías de Catálogo',
+            'editCategory_defaultEquipment'=> 'Editar Categorías de Catálogo',
+            'destroyCategory_defaultEquipment'=> 'Eliminar Categorías de Catálogo',
+            'restoreCategory_defaultEquipment'=> 'Restaurar Categorías de Catálogo',
+            'eliminatedCategory_defaultEquipment'=> 'Listar Categorías eliminadas de Catálogo',
         ];
         foreach ($permissions as $permissionName => $description) {
             $permission = Permission::firstOrCreate(
