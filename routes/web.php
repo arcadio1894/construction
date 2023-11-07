@@ -2304,6 +2304,10 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:eliminatedCategory_defaultEquipment');
         Route::get('/get/data/category/equipments/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipment');
         Route::get('/get/data/category/equipmentseliminated/{numberPage}', 'CategoryEquipmentController@getDataCategoryEquipmentEliminated');
+        Route::post('/category/equipment/store', 'CategoryEquipmentController@store')
+            ->name('categoryEquipment.store')
+            ->middleware('permission:createCategory_defaultEquipment');
+        Route::get('/get/category/equipment/typeahead', 'CategoryEquipmentController@getCategoriesTypeahead');
 
 
         // TODO: Rutas de DefaultEquipments

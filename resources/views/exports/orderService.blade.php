@@ -172,10 +172,10 @@
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
         <div id="company3" class="clearfix">
             <div>RUC 20540001384</div>
-            <div>A.H. Ramiro Prialé Mz. 17 Lte. 1</div>
-            <div>La Esperanza, Trujillo, Perú</div>
+            <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
+            {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 998-396-337</div>
+            <div>Teléfono: +51 959 332 205</div>
         </div>
     </div>
 
@@ -209,8 +209,8 @@
     <div id="project">
         <div><span>RAZON SOCIAL</span>: SERMEIND FABRICACIONES INDUSTRIALES S.A.C</div>
         <div><span>RUC</span>: 20540001384</div>
-        <div><span>DOMICILIO</span>: A.H. RAMIRO PRIALÉ MZ. 17 LTE. 01. LA ESPERANZA <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - TRUJILLO</div>
-        <div><span>TELÉFONO</span>: (+51) 998396337</div>
+        <div><span>DOMICILIO</span>: Predio el Horcón - Sector el Horcón U.C 02972- F-Moche <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - TRUJILLO</div>
+        <div><span>TELÉFONO</span>: (+51) 959 332 205</div>
         <div><span>CORREO</span>: KPAREDES@SERMEIND.COM</div>
 
     </div>
@@ -357,7 +357,7 @@
     @endforeach
 </div>--}}
 <footer>
-    A.H. Ramiro Prialé Mz. 17 Lte. 1  |  +51 998-396-337
+    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 959 332 205
 </footer>
 </body>
 </html>

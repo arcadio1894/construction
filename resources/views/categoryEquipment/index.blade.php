@@ -23,12 +23,23 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2/css/select2.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/typehead/typeahead.css') }}">
 @endsection
 
 @section('styles')
     <style>
         .select2-search__field{
             width: 100% !important;
+        }
+        #suggestions-container {
+            position: relative;
+            width: 100%;
+            max-height: 150px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
     </style>
 @endsection
@@ -39,7 +50,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de categorias de equipos</h5>
-    <a href="#" class="btn btn-outline-success btn-sm float-right" data-toggle="modal" data-target="#createModal"> <i class="fa fa-plus font-20"></i> Nueva Categoria </a>
+    @can('createCategory_defaultEquipment')
+        <button type="button"  class="btn btn-outline-success btn-sm float-right" data-toggle="modal" data-target="#createModal" id="btn-createModal"> <i class="fa fa-plus font-20"></i> Nueva Categoria </button>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -59,19 +72,18 @@
     <form action="#">
         <div class="card card-primary mb-3">
             <div class="card-body">
-                <div class="row align-items-center">
+                <div class="row">
                     <div class="col-md-8">
-                        <div class="input-group">
-                        <span class="input-group-text">
-                            <i class="fas fa-search"></i>
-                        </span>
-                            <input type="text" class="form-control" id="inputNameCategoryEquipment" name="search" value="" placeholder="Nombre de la categoría del equipo">
+                        <div class="form-group">
+                            <input type="text" placeholder="Nombre de la categoría del equipo" id="inputNameCategoryEquipment" class="form-control rounded-0 typeahead categoryTypeahead">
                         </div>
                     </div>
                     <div class="col-md-4">
                         <button type="button" id="btn-search" class="btn btn-primary">Buscar</button>
                     </div>
+
                 </div>
+                <div id="suggestions-container" class="col-md-10 suggestions-container"></div>
             </div>
         </div>
     </form>
@@ -210,15 +222,58 @@
     </div>
     @endcan
 
+    @can('createCategory_defaultEquipment')
+    <div class="modal fade" id="createModal" tabindex="-1" aria-labelledby="createModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="createModalLabel">Nueva Categoría de equipo</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="formCreate" class="form-horizontal" data-url="{{ route('categoryEquipment.store') }}" enctype="multipart/form-data">
+                    @csrf
+                <div class="modal-body">
+
+                        <div class="mb-3">
+                            <label for="description" class="form-label">Descripción<span class="text-danger">*</span></label>
+                            <input type="text" class="form-control" id="description" name="description" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Imagen</label>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="far fa-file-archive"></i></span>
+                                </div>
+                                <input type="file" id="image" name="image" accept="image/*" class="form-control">
+                            </div>
+                        </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cerrar</button>
+                    <button type="button" class="btn btn-outline-primary" id="btn-save-submit">Guardar</button>
+                </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endcan
+
+
+
 @endsection
 
 @section('plugins')
     <!-- Select2 -->
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
 @endsection
 
 @section('scripts')
     <script src="{{ asset('js/categoryEquipment/index.js') }}"></script>
     <script src="{{ asset('js/categoryEquipment/edit.js') }}"></script>
     <script src="{{ asset('js/categoryEquipment/delete.js') }}"></script>
+    <script src="{{ asset('js/categoryEquipment/create.js') }}"></script>
 @endsection

@@ -13,26 +13,25 @@ class PermissionCatalogueSeeder extends Seeder
      */
     public function run()
     {
-        Permission::create([
-            'name' => 'enable_sales',
-            'description' => 'Habilitar Mod. Ventas'
-        ]);
-
-        Permission::create([
-            'name' => 'enable_defaultEquipment',
-            'description' => 'Habilitar Catálogo de equipos'
-        ]);
-        Permission::create([
-            'name' => 'listCategory_defaultEquipment',
-            'description' => 'Listar Categorías de Catálogo'
-        ]);
-
         $role = Role::findByName('admin');
 
-        $role->givePermissionTo([
-            'enable_sales',
-            'enable_defaultEquipment',
-            'listCategory_defaultEquipment'
-        ]);
+        $permissions = [
+            'enable_sales' => 'Habilitar Mod. Ventas',
+            'enable_defaultEquipment' => 'Habilitar Catálogo de equipos',
+            'listCategory_defaultEquipment' => 'Listar Categorías de Catálogo',
+            'createCategory_defaultEquipment' => 'Crear Categorías de Catálogo',
+            'editCategory_defaultEquipment'=> 'Editar Categorías de Catálogo',
+            'destroyCategory_defaultEquipment'=> 'Eliminar Categorías de Catálogo',
+            'restoreCategory_defaultEquipment'=> 'Restaurar Categorías de Catálogo',
+            'eliminatedCategory_defaultEquipment'=> 'Listar Categorías eliminadas de Catálogo',
+        ];
+        foreach ($permissions as $permissionName => $description) {
+            $permission = Permission::firstOrCreate(
+                ['name' => $permissionName],
+                ['description' => $description, 'guard_name' => 'web']
+            );
+
+            $role->givePermissionTo($permission);
+        }
     }
 }

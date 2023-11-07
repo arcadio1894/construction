@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\CategoryEquipment;
 use App\Http\Requests\UpdateCategoryEquipmentRequest;
+use App\Http\Requests\StoreCategoryEquipmentsRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,6 +20,16 @@ class CategoryEquipmentController extends Controller
         return view('categoryEquipment.index', compact('permissions'));
     }
 
+    public function getCategoriesTypeahead(Request $request)
+    {
+        $searchTerm = $request->input('query');
+        $categories = CategoryEquipment::where('description', 'like', '%' . $searchTerm . '%')
+            ->get(['description', 'id']);
+
+        return $categories;
+
+    }
+
     public function getDataCategoryEquipment(Request $request, $pageNumber = 1){
         $perPage = 4;
 
@@ -26,7 +37,7 @@ class CategoryEquipmentController extends Controller
 
         // Aplicar filtros si se proporcionan
         if ($nameCategoryEquipment) {
-            $query = CategoryEquipment::where('description', $nameCategoryEquipment)
+            $query = CategoryEquipment::where('description', 'like', '%'.$nameCategoryEquipment.'%')
                 ->orderBy('description', 'ASC')
                 ->get();
         } else {
@@ -67,14 +78,33 @@ class CategoryEquipmentController extends Controller
         return ['data' => $arrayCategoryEquipments, 'pagination' => $pagination];
     }
 
-    public function create()
+    public function store(StoreCategoryEquipmentsRequest $request)
     {
-        //
-    }
+        DB::beginTransaction();
+        try {
+            $categoryEquipment = CategoryEquipment::create([
+                'description' => $request->get('description')
+            ]);
+            if (!$request->file('image')) {
+                $categoryEquipment->image = 'no_image.png';
+                $categoryEquipment->save();
 
-    public function store(Request $request)
-    {
-        //
+            } else {
+                $path = public_path().'/images/categoryEquipment/';
+                $image = $request->file('image');
+                $filename = $categoryEquipment->id . '.JPG';
+                $img = Image::make($image);
+                $img->orientate();
+                $img->save($path.$filename, 80, 'JPG');
+                $categoryEquipment->image = $filename;
+                $categoryEquipment->save();
+            }
+            DB::commit();
+        }catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Categoría de equipo creada con éxito.'], 200);
     }
 
     public function show(CategoryEquipment $categoryEquipment)
