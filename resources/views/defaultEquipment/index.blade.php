@@ -90,17 +90,21 @@
                     <div class="col-md-1">
                     </div>
                     <div class="col-md-3">
+                        <label for="inputLarge">Largo <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputLarge" name="search" value="" placeholder="Largo"  min="0" step="0.01"/>
                     </div>
                     <div class="col-md-3">
+                        <label for="inputWidth">Ancho <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputWidth" name="search" value="" placeholder="Ancho" min="0" step="0.01"/>
                     </div>
                     <div class="col-md-3">
+                        <label for="inputHigh">Alto <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputHigh" name="search" value="" placeholder="Alto" min="0" step="0.01"/>
                     </div>
                     <!--end::Input group-->
                     <!--begin:Action-->
                     <div class="col-md-1">
+                        <label for="btn-search">&nbsp;</label><br>
                         <button type="button" id="btn-search" class="btn btn-primary me-5">Buscar</button>
                     </div>
                     <div class="col-md-1">
@@ -209,9 +213,6 @@
                 </div>
                 <div class="card-footer">
                     <div class="text-center">
-                        <a data-view="{{-- $category->id --}}" data-descritpion="{{-- $category->description --}}" href="#" class="btn btn-sm btn-outline-primary">
-                            <i class="fas fa-user"></i> Ver
-                        </a>
                         <a data-edit="{{-- $category->id --}}" data-descritpion="{{-- $category->description --}}" href="#" class="btn btn-sm btn-outline-warning">
                             <i class="bi bi-pencil-square"></i> Editar 
                         </a>
