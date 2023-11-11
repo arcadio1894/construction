@@ -75,17 +75,17 @@
         <div class="col-sm-4">
             <label for="area">Materiales en salidas por área <span class="right badge badge-danger">(*)</span></label>
             <select id="area" name="area" class="form-control select2" style="width: 100%;">
-                <option>Seleccione el área</option>
+                <option></option>
 
             </select>
 
         </div>
         <div class="col-sm-2">
-            <label for="startDate">Fecha de inicio</label>
+            <label for="startDate">Fecha de inicio<span class="right badge badge-danger">(*)</span></label>
             <input type="date" id="startDate" name="startDate" class="form-control">
         </div>
         <div class="col-sm-2">
-            <label for="endDate">Fecha de fin</label>
+            <label for="endDate">Fecha de fin<span class="right badge badge-danger">(*)</span></label>
             <input type="date" id="endDate" name="endDate" class="form-control">
         </div>
         <div class="col-sm-4">

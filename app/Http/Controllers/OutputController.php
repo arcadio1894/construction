@@ -3356,7 +3356,10 @@ class OutputController extends Controller
                             'percentage' => $item->percentage,
                             'location' => $l,
                             'state' => $item->state,
-                            'detail_id' => $outputDetail->id
+                            'detail_id' => $outputDetail->id,
+                            'material_id'=>$item->material->id,
+                            'quantity'=>$item->percentage,
+                            'material_complete'=>$item->material
                         ]);
 
                 } else {
@@ -3373,7 +3376,10 @@ class OutputController extends Controller
                             'location' => 'Personalizado',
                             'percentage' => $outputDetail->percentage,
                             'state' => 'Personalizado',
-                            'detail_id' => $outputDetail->id
+                            'detail_id' => $outputDetail->id,
+                            'material_id'=>$outputDetail->material->id,
+                            'quantity'=>$outputDetail->percentage,
+                            'material_complete'=>$outputDetail->material
                         ]);
                 }
             } else {

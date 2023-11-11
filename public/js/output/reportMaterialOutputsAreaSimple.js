@@ -178,7 +178,7 @@ function showOutputs(){
     var id_area = $('#area').val();
     var startDate = $('#startDate').val();
     var endDate = $('#endDate').val();
-    if (!area) {
+    if (!id_area) {
         toastr.error('Seleccione un área.', 'ERROR');
         $('#btn-outputs').attr("disabled", false);
         return;
@@ -289,10 +289,7 @@ function activateTemplate(id) {
     var t = document.querySelector(id);
     return document.importNode(t.content, true);
 }
-$(document).on("click", ".btn-view-items", function () {
-    var outputId = $(this).data("output-id");
-    console.log("Ver Items Clicked for Output ID: " + outputId);
-});
+
 
 
 
