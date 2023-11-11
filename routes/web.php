@@ -1902,6 +1902,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/outputs/simple/of/material/{id_material}', 'OutputController@getJsonOutputsSimpleOfMaterial')
             ->middleware('permission:report_requestSimple');
 
+        Route::get('/reporte/material/salidas/xarea', 'OutputController@reportMaterialByAreaOutputsSimple')
+            ->name('output.simple.reportByArea');
+        Route::get('/get/json/outputs/simple/of/materialxarea/{id_area}', 'OutputController@getJsonOutputsSimpleOfMaterialByArea');
+            //->middleware('permission:report_requestSimple');
+        Route::get('/get/json/areas/in/output', 'OutputController@getJsonAreasInOutputSimple');
+        Route::get('/get/json/items/output/areas/{output_id}', 'OutputController@getJsonItemsOutputArea');
+
+
         // Descuentos
         Route::get('/all/discounts', 'DiscountController@getAllDiscounts')
             ->middleware('permission:list_discount');
