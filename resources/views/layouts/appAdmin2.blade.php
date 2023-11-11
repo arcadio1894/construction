@@ -1026,6 +1026,29 @@
                         </ul>
                     </li>
                     @endcan
+
+                    @can('showReportEntries_entryPurchase')
+                    <li class="nav-item has-treeview @yield('openEntryPurchaseReport')">
+                        <a href="#" class="nav-link @yield('activeEntryPurchaseReport')">
+                            <i class="nav-icon fas fa-archive"></i>
+                            <p>
+                                Reportes
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            @can('showReportEntries_entryPurchase')
+                            <li class="nav-item">
+                                <a href="{{ route('entry.purchase.report.index') }}" class="nav-link @yield('activeListEntryPurchaseReport')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar por Compras</p>
+                                </a>
+                            </li>
+                            @endcan
+                        </ul>
+                    </li>
+                    @endcan
+
                     @can('showMaterials_orderExecutionAlmacen')
                     <li class="nav-header">MATERIAL EN ORD. EJEC.</li>
                     <li class="nav-item has-treeview @yield('openExecutionsAlmacen')">
