@@ -4,7 +4,7 @@ use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
-class PermissionDownloadTotalPaysAccounts extends Seeder
+class PermissionDownloadTotalPaysAccountsSeeder extends Seeder
 {
     /**
      * Run the database seeds.
