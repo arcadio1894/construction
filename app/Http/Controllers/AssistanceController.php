@@ -4253,7 +4253,6 @@ class AssistanceController extends Controller
                     foreach ($accountsArray as $key => $account) {
                         $num=$key+1;
                         $textAccounts .= "Cta.".$num.": ".$account['number_account'];
-                        //$textAccounts .= $account['number_account'];
                         if ($key !== array_key_last($accountsArray)) {
                             $textAccounts .= "<br>";
                         }
@@ -4307,9 +4306,9 @@ class AssistanceController extends Controller
                     $accountsArray = $accounts->toArray();
 
                     foreach ($accountsArray as $key => $account) {
-                        $textAccounts .= "C".$key.": ".$account['number_account'];
+                        $num=$key+1;
+                        $textAccounts .= "Cta.".$num.": ".$account['number_account'];
 
-                        // Verificar si es el último elemento
                         if ($key !== array_key_last($accountsArray)) {
                             $textAccounts .= "<br>";
                         }
