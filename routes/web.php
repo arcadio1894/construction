@@ -1626,6 +1626,10 @@ Route::middleware('auth')->group(function (){
         Route::get('/ver/total/pagar/finanzas', 'AssistanceController@showTotalPaysAccounts')
             ->name('assistance.show.total.pays.accounts');
 
+        Route::get('/download/excel/pagar/finanzas/', 'AssistanceController@exportTotalPaysAccounts')
+            ->name('download.excel.total.pays.accounts')
+            ->middleware('permission:downloadTotalPaysAccounts_assistance');
+
         Route::get('/get/weeks/total/pays/{year}', 'AssistanceController@getWeeksTotalPaysByYear');
 
         Route::get('/get/total/pays/by/year/week/', 'AssistanceController@getTotalPaysByYearWeek');

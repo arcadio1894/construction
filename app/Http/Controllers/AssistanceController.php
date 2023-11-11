@@ -8,6 +8,7 @@ use App\DateDimension;
 use App\Exports\AssistanceExcelMultipleSheets;
 use App\Exports\HoursDiaryExcelExport;
 use App\Exports\TotalHoursExcelMultipleSheet;
+use App\Exports\TotalPaysAccountsExcelMultipleSheet;
 use App\Holiday;
 use App\License;
 use App\MedicalRest;
@@ -4220,6 +4221,126 @@ class AssistanceController extends Controller
         }
 
         return view('assistance.totalPaysAccounts', compact( 'permissions', 'years', 'weeks', 'currentYear', 'currentWeek'));
+
+    }
+
+    public function exportTotalPaysAccounts(){
+
+        $year = $_GET['year'];
+        $weekStart = $_GET['weekStart'];
+        $weekEnd = $_GET['weekEnd'];
+
+        if ( $weekStart != '' || $weekEnd != '' )
+        {
+            // TODO: Hay semanas especificadas
+            $weeks = [];
+            for ( $i=$weekStart; $i<=$weekEnd; $i++ )
+            {
+                $boletas = PaySlip::where('year', $year)
+                    ->where('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'asc')
+                    ->get();
+                $paySlips = [];
+                $total=0;
+
+                foreach ( $boletas as $boleta )
+                {
+                    $textAccounts = "";
+                    $accounts = WorkerAccount::where('worker_id', $boleta->codigo)->get();
+                    $accountsArray = $accounts->toArray();
+
+                    foreach ($accountsArray as $key => $account) {
+                        $num=$key+1;
+                        $textAccounts .= "Cta.".$num.": ".$account['number_account'];
+                        //$textAccounts .= $account['number_account'];
+                        if ($key !== array_key_last($accountsArray)) {
+                            $textAccounts .= "<br>";
+                        }
+                    }
+
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "cuentas" => $textAccounts,
+                        "monto" => round($boleta->totalNetoPagar, 2)
+                    ]);
+                    $total = $total + round($boleta->totalNetoPagar, 2);
+                }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "cuentas" => "",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+
+
+        } else {
+            // TODO: Hay semanas especificadas
+            $currentWeek = Carbon::now()->weekOfYear;
+            $weeks = [];
+            for ( $i=1; $i<=$currentWeek; $i++ )
+            {
+                //array_push($weeks, $i);
+                // Boletas que pertenecen a ese año y semana
+                $boletas = PaySlip::where('year', $year)
+                    ->whereIn('semana', $i)
+                    ->orderBy('semana', 'desc')
+                    ->orderBy('codigo', 'asc')
+                    ->get();
+                $paySlips = [];
+                $total=0;
+
+                foreach ( $boletas as $boleta )
+                {
+                    $textAccounts = "";
+                    $accounts = WorkerAccount::where('worker_id', $boleta->codigo)->get();
+                    $accountsArray = $accounts->toArray();
+
+                    foreach ($accountsArray as $key => $account) {
+                        $textAccounts .= "C".$key.": ".$account['number_account'];
+
+                        // Verificar si es el último elemento
+                        if ($key !== array_key_last($accountsArray)) {
+                            $textAccounts .= "<br>";
+                        }
+                    }
+
+                    array_push($paySlips, [
+                        "codigo" => $boleta->codigo,
+                        "trabajador" => $boleta->nombre,
+                        "cuentas" => $textAccounts,
+                        "monto" => $boleta->totalNetoPagar
+                    ]);
+                    $total = $total + $boleta->totalNetoPagar;
+                }
+
+                array_push($paySlips, [
+                    "codigo" => "<strong>#</strong>",
+                    "trabajador" => "<strong>Suma total</strong>",
+                    "cuentas" => "",
+                    "monto" => "<strong>".$total."</strong>"
+                ]);
+
+                array_push($weeks, [
+                    "week" => $i,
+                    "year" => $year,
+                    "title" => $this->getTitleWeek($year, $i),
+                    "boletas" => $paySlips
+                ]);
+            }
+        }
+
+        return (new TotalPaysAccountsExcelMultipleSheet($weeks))->download('reporteTotalPagarCuentas.xlsx');
 
     }
 
