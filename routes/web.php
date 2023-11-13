@@ -2345,7 +2345,15 @@ Route::middleware('auth')->group(function (){
             ->name('defaultEquipment.store')
             ->middleware('permission:create_defaultEquipment');
         Route::get('/get/data/defaultEquipments/{numberPage}', 'DefaultEquipmentController@getDataDefaultEquipments');
-        
+        Route::get('/editar/equipo/categoria/{equipment_id}', 'DefaultEquipmentController@edit')
+            ->name('defaultEquipment.edit')
+            ->middleware('permission:update_defaultEquipment');
+        Route::post('update/defaultEquipment/{equipment_id}', 'DefaultEquipmentController@update')
+            ->name('defaultEquipment.update')
+            ->middleware('permission:update_defaultEquipment');
+        Route::post('destroy/defaultEquipment/{equipment_id}', 'DefaultEquipmentController@destroy')
+            ->name('defaultEquipment.destroy')
+            ->middleware('permission:destroy_defaultEquipment');
     });
 });
 

@@ -177,7 +177,7 @@ class Equipment extends Model
             $total += $workday->total;
         }
 
-        return $total*$this->quantity;
+        return $total;
 
     }
 }
