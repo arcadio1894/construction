@@ -37,7 +37,7 @@
     <style>
         .my-custom-card {
             min-height: 280px; /* Establece la altura mínima deseada */
-            max-height: 300; /* Establece la altura máxima deseada */
+            max-height: 300px; /* Establece la altura máxima deseada */
             overflow: auto; /* Agrega barras de desplazamiento si el contenido supera la altura máxima */
         }        
     </style>
@@ -60,10 +60,10 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="#"><i class="fa fa-archive"></i> Categoria: {{ $category->description }}</a>
+            <a href="{{ route('categoryEquipment.index') }}"><i class="fa fa-archive"></i> Categorias: {{ $category->description }}</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="#"><i class="fa fa-archive"></i> Equipos</a>
+            <a href="{{ route('defaultEquipment.index', $category->id) }}"><i class="fa fa-archive"></i> Equipos</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -216,7 +216,7 @@
                         <a data-edit="{{-- $category->id --}}" data-descritpion="{{-- $category->description --}}" href="#" class="btn btn-sm btn-outline-warning">
                             <i class="bi bi-pencil-square"></i> Editar 
                         </a>
-                        <a data-delete="{{-- $category->id --}}" data-descritpion="{{-- $category->description --}}" href="#" class="btn btn-sm btn-outline-danger">
+                        <a data-delete="" data-descritpion="" class="btn btn-sm btn-outline-danger">
                             <i class="bi bi-trash"></i> Eliminar
                         </a>
                     </div>
