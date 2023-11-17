@@ -67,7 +67,7 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <button type="button" id="btn-search" class="btn btn-primary">Buscar</button>
+                        <button type="button" id="btn-search" class="btn btn-primary btn-block">Buscar</button>
                     </div>
                 </div>
             </div>
