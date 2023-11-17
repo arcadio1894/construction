@@ -15,6 +15,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Laracasts\Utilities\JavaScript\JavaScriptFacade;
 
+use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportCustomerContactExport;
+
 class CustomerController extends Controller
 {
     public function index()
@@ -190,5 +193,40 @@ class CustomerController extends Controller
         }
 
         return response()->json(['message' => 'Cliente restaurado con éxito.'], 200);
+    }
+
+    public function generateReport()
+    {
+        $customers = DB::table('customers')->whereNull('deleted_at')->get();
+        $deletedCustomers = DB::table('customers')->whereNotNull('deleted_at')->get();
+
+        $data = [];
+        $deletedData = [];
+
+        foreach ($customers as $customer) {
+            $contacts = DB::table('contact_names')->where('customer_id', $customer->id)->get();
+            $data[] = [
+                'id' => $customer->id,
+                'business_name' => $customer->business_name,
+                'RUC' => $customer->RUC,
+                'code' => $customer->code,
+                'address' => $customer->address,
+                'location' => $customer->location,
+                'contacts' => $contacts,
+            ];
+        }
+
+        foreach ($deletedCustomers as $deletedCustomer) {
+            $deletedData[] = [
+                'id' => $deletedCustomer->id,
+                'business_name' => $deletedCustomer->business_name,
+                'RUC' => $deletedCustomer->RUC,
+                'code' => $deletedCustomer->code,
+                'address' => $deletedCustomer->address,
+                'location' => $deletedCustomer->location,
+            ];
+        }
+
+        return Excel::download(new ReportCustomerContactExport($data,$deletedData), 'report.xlsx');
     }
 }

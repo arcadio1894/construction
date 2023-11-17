@@ -257,3 +257,35 @@ function destroyCustomer() {
         },
     });
 }
+
+function exportarExcel() {
+
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Descargar reporte de Clientes ',
+        content: 'Se descargará la lista de Clientes y Contactos.',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/reporte/clientes/contactos";
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
+}

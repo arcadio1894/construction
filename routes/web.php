@@ -91,6 +91,11 @@ Route::middleware('auth')->group(function (){
             ->name('customer.restore')
             ->middleware('permission:destroy_customer');
 
+        //REPORTE CUSTOMERS CONTACTS
+        Route::get('/reporte/clientes/contactos', 'CustomerController@generateReport')
+            ->name('customer.reportExcel')
+            ->middleware('permission:reportDownload_customer');
+
         //SUPPLIER
         Route::get('/all/suppliers', 'SupplierController@getSuppliers')
             ->middleware('permission:list_supplier');

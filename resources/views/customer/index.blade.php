@@ -44,6 +44,11 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de clientes</h5>
+    @can('reportDownload_customer')
+        <a href="#" class="btn btn-outline-warning btn-sm float-right" onclick="exportarExcel()"> 
+            <i class="far fa-file-excel"></i> Exportar Excel 
+        </a>
+    @endcan
     @can('create_customer')
     <a href="{{ route('customer.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Cliente </a>
     @endcan
