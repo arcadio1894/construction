@@ -95,7 +95,7 @@ class DefaultEquipment extends Model
 
     public function workforces()
     {
-        return $this->hasMany('App\DefaultEquipmentWorkforce');
+        return $this->hasMany('App\DefaultEquipmentWorkForce');
     }
 
     public function turnstiles()
