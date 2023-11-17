@@ -105,7 +105,7 @@ class DefaultEquipment extends Model
 
     public function workdays()
     {
-        return $this->hasMany('App\DefaultEquipmentWorkday');
+        return $this->hasMany('App\DefaultEquipmentWorkDay');
     }
 
     public function getTotalMaterialsAttribute()

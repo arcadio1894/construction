@@ -9,9 +9,9 @@ use App\Http\Requests\StoreDefaultEquipmentRequest;
 
 use App\DefaultEquipmentMaterial;
 use App\DefaultEquipmentConsumable;
-use App\DefaultEquipmentWorkforce;
+use App\DefaultEquipmentWorkForce;
 use App\DefaultEquipmentTurnstile;
-use App\DefaultEquipmentWorkday;
+use App\DefaultEquipmentWorkDay;
 
 use App\Http\Requests\UpdateDefaultEquipmentRequest;
 use App\Material;
@@ -158,7 +158,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $w=0; $w<sizeof($workforces); $w++ )
                 {
-                    $equipmentWorkforce = DefaultEquipmentWorkforce::create([
+                    $equipmentWorkforce = DefaultEquipmentWorkForce::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $workforces[$w]->description,
                         'quantity' => (float) $workforces[$w]->quantity,
@@ -185,7 +185,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $d=0; $d<sizeof($dias); $d++ )
                 {
-                    $equipmentdias = DefaultEquipmentWorkday::create([
+                    $equipmentdias = DefaultEquipmentWorkDay::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $dias[$d]->description,
                         'quantityPerson' => (float) $dias[$d]->quantity,
@@ -383,7 +383,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $w=0; $w<sizeof($workforces); $w++ )
                 {
-                    $equipmentWorkforce = DefaultEquipmentWorkforce::create([
+                    $equipmentWorkforce = DefaultEquipmentWorkForce::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $workforces[$w]->description,
                         'quantity' => (float) $workforces[$w]->quantity,
@@ -407,7 +407,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $d=0; $d<sizeof($dias); $d++ )
                 {
-                    $equipmentdias = DefaultEquipmentWorkday::create([
+                    $equipmentdias = DefaultEquipmentWorkDay::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $dias[$d]->description,
                         'quantityPerson' => (float) $dias[$d]->quantity,
