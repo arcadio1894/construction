@@ -2315,6 +2315,10 @@ Route::middleware('auth')->group(function (){
         Route::post('supplier/account/destroy/{account_id}', 'SupplierAccountController@destroy')
             ->name('supplier.account.destroy')
             ->middleware('permission:destroy_supplierAccount');
+        Route::get('/download/supplierexcel', 'SupplierController@generateReport')
+            ->middleware('permission:exportreport_supplier');
+
+
 
         // TODO: Rutas de CategoryEquipments
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')

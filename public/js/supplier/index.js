@@ -199,12 +199,43 @@ $(document).ready(function () {
     $formDelete.on('submit', destroySupplier);
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
+    $('#btn-download').on('click', downloadExcelSupplier);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+function downloadExcelSupplier() {
 
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Descargar reporte de proveedores ',
+        content: 'Se descargará la lista de proveedores completa incluyendo los proveedores eliminados',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/download/supplierexcel";
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
+}
 function openModalDelete() {
     var supplier_id = $(this).data('delete');
     var company = $(this).data('company');
