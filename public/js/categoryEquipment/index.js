@@ -132,7 +132,7 @@ function renderDataCategoryEquipments(data) {
     $("#body-card").html('');
     $("#pagination").html('');
     $("#textPagination").html('');
-    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' operaciones');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' categorías');
     $('#numberItems').html('');
     $('#numberItems').html(pagination.totalFilteredRecords);
 
@@ -189,6 +189,10 @@ function renderCategoryEquipmentCard(data) {
     imageElement.setAttribute('src', document.location.origin + '/images/categoryEquipment/' + data.image);
     imageElement.style.width = '100px';
     imageElement.style.height = 'auto';
+
+    var equipButton = clone.querySelector("[data-equip]");
+    equipButton.setAttribute('data-equip', data.id);
+    equipButton.setAttribute('href', document.location.origin + '/dashboard/equipos/categoria/' + data.id);
 
     var editButton = clone.querySelector("[data-edit]");
     editButton.setAttribute('data-edit', data.id);

@@ -129,8 +129,8 @@ class Equipment extends Model
             $total += $material->total;
         }
 
-        return $total*$this->quantity;
-
+        //return $total*$this->quantity;
+        return $total;
     }
 
     public function getTotalConsumablesAttribute()
@@ -141,8 +141,8 @@ class Equipment extends Model
             $total += $consumable->total;
         }
 
-        return $total*$this->quantity;
-
+        //return $total*$this->quantity;
+        return $total;
     }
 
     public function getTotalWorkforcesAttribute()
@@ -153,8 +153,8 @@ class Equipment extends Model
             $total += $workforce->total;
         }
 
-        return $total*$this->quantity;
-
+        //return $total*$this->quantity;
+        return $total;
     }
 
     public function getTotalTurnstilesAttribute()
@@ -165,8 +165,8 @@ class Equipment extends Model
             $total += $turnstile->total;
         }
 
-        return $total*$this->quantity;
-
+        //return $total*$this->quantity;
+        return $total;
     }
 
     public function getTotalWorkdaysAttribute()
@@ -177,7 +177,7 @@ class Equipment extends Model
             $total += $workday->total;
         }
 
-        return $total*$this->quantity;
+        return $total;
 
     }
 }

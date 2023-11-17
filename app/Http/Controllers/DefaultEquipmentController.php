@@ -9,10 +9,11 @@ use App\Http\Requests\StoreDefaultEquipmentRequest;
 
 use App\DefaultEquipmentMaterial;
 use App\DefaultEquipmentConsumable;
-use App\DefaultEquipmentWorkforce;
+use App\DefaultEquipmentWorkForce;
 use App\DefaultEquipmentTurnstile;
-use App\DefaultEquipmentWorkday;
+use App\DefaultEquipmentWorkDay;
 
+use App\Http\Requests\UpdateDefaultEquipmentRequest;
 use App\Material;
 use App\UnitMeasure;
 use App\Workforce;
@@ -36,7 +37,8 @@ class DefaultEquipmentController extends Controller
     }
 
     public function create($category_id)
-    {   $begin = microtime(true);
+    {
+        $begin = microtime(true);
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
         $category = CategoryEquipment::find($category_id);
@@ -156,7 +158,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $w=0; $w<sizeof($workforces); $w++ )
                 {
-                    $equipmentWorkforce = DefaultEquipmentWorkforce::create([
+                    $equipmentWorkforce = DefaultEquipmentWorkForce::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $workforces[$w]->description,
                         'quantity' => (float) $workforces[$w]->quantity,
@@ -183,7 +185,7 @@ class DefaultEquipmentController extends Controller
 
                 for ( $d=0; $d<sizeof($dias); $d++ )
                 {
-                    $equipmentdias = DefaultEquipmentWorkday::create([
+                    $equipmentdias = DefaultEquipmentWorkDay::create([
                         'default_equipment_id' => $equipment->id,
                         'description' => $dias[$d]->description,
                         'quantityPerson' => (float) $dias[$d]->quantity,
@@ -259,19 +261,225 @@ class DefaultEquipmentController extends Controller
         //
     }
 
-    public function edit(DefaultEquipment $defaultEquipment)
+    public function edit($equipment_id)
     {
-        //
+        $begin = microtime(true);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $equipment = DefaultEquipment::with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays'])
+            ->find($equipment_id);
+
+        $category = CategoryEquipment::find($equipment->category_equipment_id);
+
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+
+        $unitMeasures = UnitMeasure::all();
+
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Editar equipo por defecto VISTA',
+            'time' => $end
+        ]);
+
+        return view('defaultEquipment.edit', compact('permissions', 'category', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment'));
+
     }
 
-    public function update(Request $request, DefaultEquipment $defaultEquipment)
+    public function update(UpdateDefaultEquipmentRequest $request, $equipment_id)
     {
-        //
+        $begin = microtime(true);
+
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $equipment = DefaultEquipment::find($equipment_id);
+
+            $equipments = json_decode($request->get('equipments'));
+
+            for ( $i=0; $i<sizeof($equipments); $i++ )
+            {
+                $equipment->description = $equipments[$i]->nameequipment;
+                $equipment->large = $equipments[$i]->largeequipment;
+                $equipment->width = $equipments[$i]->widthequipment;
+                $equipment->high = $equipments[$i]->highequipment;
+                $equipment->category_equipment_id = $equipments[$i]->categoryequipmentid;
+                $equipment->details = ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail;
+                $equipment->utility = $equipments[$i]->utility;
+                $equipment->letter = $equipments[$i]->letter;
+                $equipment->rent = $equipments[$i]->rent;
+
+                $materials = $equipments[$i]->materials;
+
+                $consumables = $equipments[$i]->consumables;
+
+                $workforces = $equipments[$i]->workforces;
+
+                $tornos = $equipments[$i]->tornos;
+
+                $dias = $equipments[$i]->dias;
+
+                // TODO: Eliminamos los datos anteriores
+                foreach( $equipment->materials as $material ) {
+                    //$totalDeleted = $totalDeleted + (float) $material->total;
+                    $material->delete();
+                }
+                foreach( $equipment->consumables as $consumable ) {
+                    //$totalDeleted = $totalDeleted + (float) $consumable->total;
+                    $consumable->delete();
+                }
+                foreach( $equipment->workforces as $workforce ) {
+                    //$totalDeleted = $totalDeleted + (float) $workforce->total;
+                    $workforce->delete();
+                }
+                foreach( $equipment->turnstiles as $turnstile ) {
+                    //$totalDeleted = $totalDeleted + (float) $turnstile->total;
+                    $turnstile->delete();
+                }
+                foreach( $equipment->workdays as $workday ) {
+                    //$totalDeleted = $totalDeleted + (float) $workday->total;
+                    $workday->delete();
+                }
+
+                for ( $j=0; $j<sizeof($materials); $j++ )
+                {
+                    $equipmentMaterial = DefaultEquipmentMaterial::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id' => $materials[$j]->material->id,
+                        'quantity' => (float) $materials[$j]->quantity,
+                        'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                        'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                        'percentage' => (float) $materials[$j]->quantity,
+                        'unit_price' => (float) $materials[$j]->material->unit_price,
+                        'total_price' => (float) $materials[$j]->quantity*(float) $materials[$j]->material->unit_price,
+                    ]);
+
+                }
+
+                for ( $k=0; $k<sizeof($consumables); $k++ )
+                {
+                    $material = Material::find($consumables[$k]->id);
+
+                    $equipmentConsumable = DefaultEquipmentConsumable::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id' => $consumables[$k]->id,
+                        'quantity' => (float) $consumables[$k]->quantity,
+                        'unit_price' => (float) $consumables[$k]->price,
+                        'total_price' => (float) $consumables[$k]->total,
+                    ]);
+
+                }
+
+                for ( $w=0; $w<sizeof($workforces); $w++ )
+                {
+                    $equipmentWorkforce = DefaultEquipmentWorkForce::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description' => $workforces[$w]->description,
+                        'quantity' => (float) $workforces[$w]->quantity,
+                        'unit_price' => (float) $workforces[$w]->price,
+                        'total_price' => (float) $workforces[$w]->total,
+                        'unit' => $workforces[$w]->unit,
+                    ]);
+                }
+
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmenttornos = DefaultEquipmentTurnstile::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'unit_price' => (float) $tornos[$r]->price,
+                        'total_price' => (float) $tornos[$r]->total
+                    ]);
+
+                }
+
+                for ( $d=0; $d<sizeof($dias); $d++ )
+                {
+                    $equipmentdias = DefaultEquipmentWorkDay::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description' => $dias[$d]->description,
+                        'quantityPerson' => (float) $dias[$d]->quantity,
+                        'hoursPerPerson' => (float) $dias[$d]->hours,
+                        'pricePerHour' => (float) $dias[$d]->price,
+                        'total_price' => (float) $dias[$d]->total
+                    ]);
+                }
+
+                $equipment->save();
+            }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar equipo por defecto.',
+                'time' => $end
+            ]);
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Equipo por defecto guardado con éxito.'], 200);
+
     }
 
-    public function destroy(DefaultEquipment $defaultEquipment)
+    public function destroy($id_equipment)
     {
-        //
+        $begin = microtime(true);
+        DB::beginTransaction();
+        try {
+
+            $equipment = DefaultEquipment::find($id_equipment);
+
+            foreach( $equipment->materials as $material ) {
+                $material->delete();
+            }
+            foreach( $equipment->consumables as $consumable ) {
+                $consumable->delete();
+            }
+            foreach( $equipment->workforces as $workforce ) {
+                $workforce->delete();
+            }
+            foreach( $equipment->turnstiles as $turnstile ) {
+                $turnstile->delete();
+            }
+            foreach( $equipment->workdays as $workday ) {
+                $workday->delete();
+            }
+
+            $equipment->delete();
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Eliminar equipo por defecto',
+                'time' => $end
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Equipo eliminado con éxito.'], 200);
+
     }
 
     public function getDataDefaultEquipments(Request $request, $pageNumber = 1)

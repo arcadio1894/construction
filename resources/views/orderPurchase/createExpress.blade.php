@@ -350,7 +350,7 @@
 
             <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" min="0" data-quantity step="0.01" >
+                    <input type="number" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g,'');calculateTotal(this);" placeholder="0.00" min="0" data-quantity step="1" >
                 </div>
             </div>
             <div class="col-md-1">

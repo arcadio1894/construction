@@ -79,11 +79,11 @@
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <button type="button" id="btn-search" class="btn btn-primary">Buscar</button>
+                        <button type="button" id="btn-search" class="btn btn-primary btn-block">Buscar</button>
                     </div>
 
                 </div>
-                <div id="suggestions-container" class="col-md-10 suggestions-container"></div>
+                <div id="suggestions-container" class="col-md-8 suggestions-container"></div>
             </div>
         </div>
     </form>
@@ -92,7 +92,7 @@
         <h5 class="fw-bold me-5 my-1"><span id="numberItems"></span> Categorías de Equipo encontradas</h5>
     </div>
 
-    <div class="container">
+    <div class="">
         <div class="row" id="body-card"></div>
         <div class="d-flex justify-content-between align-items-center">
             <div class="fs-6 fw-bold text-gray-700" id="textPagination"></div>
@@ -121,6 +121,9 @@
                 </div>
                 <div class="card-footer">
                     <div class="text-center">
+                        <a data-equip href="#" class="btn btn-sm btn-outline-success">
+                            <i class="fas fa-wrench"></i> Equipos
+                        </a>
                         <a data-edit="" data-description="" data-image=""  href="#" class="btn btn-sm btn-outline-primary" data-toggle="modal" data-target="#editModal">
                             <i class="fas fa-edit"></i> Editar
                         </a>

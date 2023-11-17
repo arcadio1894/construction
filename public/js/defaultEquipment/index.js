@@ -1,15 +1,102 @@
 $(document).ready(function () {
 
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions)
+    //console.log($permissions);
 
     getDataDefaultEquipments(1);
 
     $(document).on('click', '[data-item]', showData);
     $("#btn-search").on('click', showDataSeach);
 
+    $(document).on('click', '[data-delete]', deleteDefaultEquipment);
+
 });
 
+function deleteDefaultEquipment() {
+    var id = $(this).data('delete');
+    var description = $(this).data('description');
+    $.confirm({
+        icon: 'far fa-trash',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        columnClass: 'small',
+        title: '¿Esta seguro de eliminar este equipo?',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: "/dashboard/destroy/defaultEquipment/" + id,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (json) {
+                            $.alert(json.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 1000 )
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            $("#btn-submit").attr("disabled", false);
+
+                        },
+                    });
+                    //
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Eliminación cancelada.");
+                },
+            },
+        }
+    });
+}
 
 function showDataSeach() {
     getDataDefaultEquipments(1)
@@ -152,7 +239,10 @@ function renderDataTableCard(data) {
     clone.querySelector("[data-width]").innerHTML = data.width;
     clone.querySelector("[data-high]").innerHTML = data.high;
     clone.querySelector("[data-details]").innerHTML = data.details;
-
+    clone.querySelector("[data-edit]").setAttribute('data-edit', data.id);
+    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/equipo/categoria/'+data.id);
+    clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
+    clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
     $("#body-card").append(clone);
 
     $('[data-toggle="tooltip"]').tooltip();
