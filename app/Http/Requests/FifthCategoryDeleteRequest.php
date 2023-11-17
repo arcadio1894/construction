@@ -15,7 +15,7 @@ class FifthCategoryDeleteRequest extends FormRequest
     {
         return [
             'worker_id' => 'required|exists:workers,id',
-            'fifthCategory_id' => 'required|exists:gratifications,id',
+            'fifthCategory_id' => 'required|exists:fifth_categories,id',
         ];
     }
 

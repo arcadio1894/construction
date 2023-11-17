@@ -86,8 +86,11 @@
                                 <tr>
                                     <th>ID</th>
                                     <th>Trabajador</th>
+                                    <th>Año</th>
+                                    <th>Mes</th>
+                                    <th>Monto Total</th>
+                                    <th>Monto Fraccionado</th>
                                     <th>Fecha Pago</th>
-                                    <th>Monto</th>
                                     <th>Acciones</th>
                                 </tr>
                                 </thead>
@@ -96,8 +99,11 @@
                                     <tr>
                                         <td data-id>{{ $worker->id }}</td>
                                         <td data-worker>{{ $worker->first_name.' '.$worker->last_name }}</td>
-                                        <td data-date>{{ $fifthCategory->date->format('d/m/Y') }}</td>
+                                        <td data-year>{{ $fifthCategory->year !== null ? $fifthCategory->year : 'No registrado' }}</td>
+                                        <td data-month>{{ $fifthCategory->month !== null ? $months[$fifthCategory->month-1]->month_name : 'No registrado' }}</td>
+                                        <td data-totalAmount>{{ $fifthCategory->total_amount !== null ? $fifthCategory->total_amount : 'No registrado' }}</td>
                                         <td data-amount>{{ $fifthCategory->amount }}</td>
+                                        <td data-date>{{ $fifthCategory->date->format('d/m/Y') }}</td>
                                         <td>
                                             @can('edit_fifthCategory')
                                             <button type="button" data-edit data-fifthCategory_id="{{ $fifthCategory->id }}" data-date="{{ $fifthCategory->date->format('d/m/Y') }}" data-amount="{{ $fifthCategory->amount }}" data-worker_id="{{ $fifthCategory->worker_id }}" data-worker="{{ $worker->first_name.' '.$worker->last_name }}" class="btn btn-outline-warning btn-sm"><i class="fas fa-pen"></i> </button>
@@ -132,7 +138,7 @@
                     <div class="modal-body">
                         <input type="hidden" id="worker_id" name="worker_id">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-7">
                                 <div class="form-group">
                                     <label class="col-sm-12 control-label" for="name_worker"> Trabajador <span class="right badge badge-danger">(*)</span></label>
 
@@ -141,23 +147,76 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
+                                    <label class="col-sm-12 control-label" for="selectYear">Año <span class="right badge badge-danger">(*)</span></label>
 
                                     <div class="col-sm-12">
-                                        <input type="number" id="amount" name="amount" class="form-control" required />
+                                        <select id="selectYear" name="selectYear" class="form-control">
+                                            @foreach($years as $year)
+                                                <option value="{{ $year->year }}">
+                                                    {{ $year->year }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label class="col-sm-12 control-label" for="date"> Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
+                                    <label class="col-sm-12 control-label" for="selectMonth">Mes <span class="right badge badge-danger">(*)</span></label>
 
                                     <div class="col-sm-12">
-                                        <input type="text" id="date" name="date" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                        <select id="selectMonth" name="selectMonth" class="form-control">
+                                            @foreach($months as $month)
+                                                <option value="{{ $month->month }}">
+                                                    {{ $month->month_name }}
+                                                </option>
+                                            @endforeach
+                                        </select>
                                     </div>
                                 </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="col-sm-12 control-label" for="totalAmount"> Monto total <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <input type="number" id="totalAmount" name="totalAmount" class="form-control" required />
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="col-sm-12 control-label" for="payments">Cuotas <span class="right badge badge-danger">(*)</span></label>
+
+                                    <div class="col-sm-12">
+                                        <select id="payments" name="payments" class="form-control">
+                                            <option value="1" selected>1 cuota</option>
+                                            <option value="2">2 cuotas</option>
+                                            <option value="3">3 cuotas</option>
+                                            <option value="4">4 cuotas</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="col-sm-12 control-label"></label>
+                                    <div class="col-sm-12">
+                                        <button type="button" id="btn-generate" class="btn btn-warning btn-block">Generar</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-header">
+                            <h3 class="card-title">Detalle de Cuotas</h3>
+                        </div>
+                        <div class="card-body d-flex justify-content-end">
+                            <div class="row">
+                            <div class="col-md-12 mt-3" id="generated-rows-container">
+                            </div>
                             </div>
                         </div>
                     </div>
@@ -169,6 +228,32 @@
             </div>
         </div>
     </div>
+    <template id="generated-row-template">
+        <div class="row">
+            <div class="col-md-3">
+                <label class="col-sm-12 control-label" for="payment">Cuota</label>
+                <div class="col-sm-12">
+                    <input type="text" id="payment" name="payment[]" class="form-control" readonly />
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="col-sm-12 control-label" for="amount">Monto <span class="right badge badge-danger">(*)</span></label>
+                <div class="col-sm-12">
+                    <input type="text" id="amount" name="amount[]" class="form-control" />
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="col-sm-12 control-label" for="date">Fecha a pagar <span class="right badge badge-danger">(*)</span></label>
+                    <div class="col-sm-12">
+                        <input type="date" class="form-control" name="date[]"/>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </template>
+
 
     <div id="modalEdit" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">
@@ -197,7 +282,7 @@
                                     <label class="col-sm-12 control-label" for="amount"> Monto <span class="right badge badge-danger">(*)</span></label>
 
                                     <div class="col-sm-12">
-                                        <input type="number" id="amount" name="amount" class="form-control" required />
+                                        <input type="number" id="amount" readonly name="amount" class="form-control" required />
                                     </div>
                                 </div>
                             </div>
@@ -296,7 +381,7 @@
     <script>
         $(function () {
 
-            $('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            //$('#date').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#dateEdit').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             $('#dateDelete').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
 

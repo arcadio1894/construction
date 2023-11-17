@@ -15,8 +15,11 @@ class FifthCategoryStoreRequest extends FormRequest
     {
         return [
             'worker_id' => 'required|exists:workers,id',
-            'amount' => 'required|numeric',
-            'date' => 'required|date_format:d/m/Y'
+            'amount.*' => 'required|numeric',
+            'date.*' => 'required',
+            'selectYear' => 'required|integer',
+            'selectMonth' => 'required|integer',
+            'totalAmount' => 'required|numeric'
         ];
     }
 
@@ -25,10 +28,16 @@ class FifthCategoryStoreRequest extends FormRequest
         return [
             'worker_id.required' => 'El :attribute es obligatorio.',
             'worker_id.exists' => 'El :attribute no existe en la base de datos.',
-            'amount.required' => 'El :attribute es obligatorio.',
-            'amount.numeric' => 'El :attribute no es un número válido.',
-            'date.required' => 'La :attribute es obligatorio.',
-            'date.date_format' => 'La :attribute no tiene el formato dd/mm/yyyy.'
+            'amount.*.required' => 'El :attribute es obligatorio.',
+            'amount.*.numeric' => 'El :attribute no es un número válido.',
+            'date.*.required' => 'La :attribute es obligatorio.',
+            'date.*.date_format' => 'La :attribute no tiene el formato dd/mm/yyyy.',
+            'selectMonth.require'=>'El :attribute es obligatorio',
+            'selectMonth.integer'=>'El :attribute ingresado es incorrecto',
+            'selectYear.require'=>'El :attribute es obligatorio',
+            'selectYear.integer'=>'El :attribute ingresado es incorrecto',
+            'totalAmount.require'=>'El :attribute es obligatorio',
+            'totalAmount.numeric'=>'El :attribute no es un número válido',
         ];
     }
 
@@ -36,8 +45,11 @@ class FifthCategoryStoreRequest extends FormRequest
     {
         return [
             'worker_id' => 'trabajador',
-            'amount' => 'monto a pagar',
-            'date' => 'fecha de pago'
+            'amount.*' => 'monto a pagar',
+            'date.*' => 'fecha a pagar',
+            'selectMonth' => 'mes',
+            'selectYear' => 'año',
+            'totalAmount' => 'monto total'
         ];
     }
 }

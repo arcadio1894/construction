@@ -14,11 +14,23 @@ $(document).ready(function () {
     $modalEdit = $('#modalEdit');
     $formDelete = $('#formDelete');
     $modalDelete = $('#modalDelete');
-
+    
     $('#btn-submit').on('click', storeFifthCategory);
     $('#btn-submitEdit').on('click', updateFifthCategory);
     $('#btn-submitDelete').on('click', deleteFifthCategory);
+    $("#btn-generate").on("click", generatePayments);
 
+    var initialDetailsContent = $("#generated-rows-container").html();
+    $("#selectMonth, #selectYear, #totalAmount, #payments").on("change", function () {
+        $("#generated-rows-container").html(initialDetailsContent);
+    });
+});
+document.addEventListener("DOMContentLoaded", function() {
+    var currentDate = new Date();
+    var currentMonth = currentDate.getMonth() + 1;
+    var currentYear = currentDate.getFullYear();
+    document.getElementById("selectMonth").value = currentMonth;
+    document.getElementById("selectYear").value = currentYear;
 });
 
 var $formCreate;
@@ -328,4 +340,46 @@ function deleteFifthCategory() {
             $("#btn-submitDelete").attr("disabled", false);
         },
     });
+}
+
+function generatePayments() {
+    var totalAmount = parseFloat($("#totalAmount").val());
+    if (!totalAmount) {
+        toastr.error('Ingrese el monto total', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+    var numberOfPayments = parseInt($("#payments").val());
+
+    var paymentAmount = totalAmount / numberOfPayments;
+
+    $("#generated-rows-container").empty();
+
+    var templateContent = $("#generated-row-template").html();
+
+    for (var i = 1; i <= numberOfPayments; i++) {
+        var newRow = $(templateContent).clone();
+
+        // Cambiar los id para evitar conflictos
+        newRow.find("input:eq(0)").val(i);
+        newRow.find("input:eq(1)").val(paymentAmount.toFixed(2));
+        newRow.find("input:eq(2)").val("");
+        $("#generated-rows-container").append(newRow);
+    }
 }

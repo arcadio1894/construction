@@ -13,6 +13,9 @@ class FifthCategory extends Model
         'date',
         'amount',
         'worker_id',
+        'year',
+        'total_amount',
+        'month'
     ];
 
     protected $dates = ['deleted_at', 'date'];

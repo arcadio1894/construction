@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DateDimension;
 use App\FifthCategory;
 use App\Http\Requests\FifthCategoryDeleteRequest;
 use App\Http\Requests\FifthCategoryStoreRequest;
@@ -105,24 +106,29 @@ class FifthCategoryController extends Controller
     public function create($worker_id)
     {
         $worker = Worker::find($worker_id);
+        $months = DateDimension::select('month_name','month')->distinct()->get();
+        $years = DateDimension::select('year')->distinct()->get();
         $fifthCategories = FifthCategory::where('worker_id', $worker_id)
             ->orderBy('date', 'desc')->get();
-        return view('fifthCategory.create', compact('fifthCategories', 'worker'));
+        return view('fifthCategory.create', compact('fifthCategories', 'worker', 'months', 'years'));
     }
 
     public function store(FifthCategoryStoreRequest $request)
     {
-        $validated = $request->validated();
-
         DB::beginTransaction();
         try {
 
-            $fifthCategory = FifthCategory::create([
-                'date' => ($request->get('date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date')) : null,
-                'amount' => $request->get('amount'),
-                'worker_id' => $request->get('worker_id'),
-
-            ]);
+            $numberOfCuotes=$request->get('payments');
+            for ($i = 0; $i < $numberOfCuotes; $i++) {
+                $fifthCategory = FifthCategory::create([
+                    'date' => $request->date[$i],
+                    'amount' => $request->amount[$i],
+                    'total_amount' =>$request->get('totalAmount'),
+                    'worker_id' => $request->get('worker_id'),
+                    'year' => $request->get('selectYear'),
+                    'month' => $request->get('selectMonth'),
+                ]);
+            }
 
             DB::commit();
 
@@ -143,7 +149,7 @@ class FifthCategoryController extends Controller
 
             $fifthCategory = FifthCategory::find($request->get('fifthCategory_id'));
             $fifthCategory->date = ($request->get('date') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date')) : null;
-            $fifthCategory->amount = $request->get('amount');
+            //$fifthCategory->amount = $request->get('amount');
             $fifthCategory->save();
 
             DB::commit();
