@@ -600,6 +600,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_entryPurchase');
 
 
+
+        Route::get('entradas/compra/reporte', 'EntryController@indexEntryPurchaseReport')->name('entry.purchase.report.index')
+            ->middleware('permission:list_entryPurchase');
+        Route::post('/get/json/entries/purchase/report', 'EntryController@getJsonEntriesPurchaseReport');
+
+
         /////////////  ENTRADA POR INVENTARIO    ///////////////
         Route::get('entradas/inventario', 'EntryInventoryController@indexEntryInventory')->name('entry.inventory.index')
         ->middleware('permission:list_entryInventory');

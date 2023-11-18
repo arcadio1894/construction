@@ -2190,4 +2190,46 @@ class EntryController extends Controller
 
         return true; // La cadena está formada solo por ceros
     }
+
+    public function indexEntryPurchaseReport(){
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        return view('entry.index_entry_purchase_report', compact('permissions'));
+    }
+
+    public function getJsonEntriesPurchaseReport(Request $request){
+        $begin = microtime(true);
+    
+        $startMonthsAgo = $request->get('start');
+        $endMonthsAgo = $request->get('end');
+    
+        // Verificar si startMonthsAgo o endMonthsAgo son nulos
+        if (is_null($startMonthsAgo) || is_null($endMonthsAgo)) {
+            return response()->json(['error' => 'Ambos campos de fechas son obligatorios.'], 400);
+        }
+        
+        $startDate = Carbon::createFromFormat('d/m/Y', $startMonthsAgo)->format('Y-m-d');
+        $endDate = Carbon::createFromFormat('d/m/Y', $endMonthsAgo)->format('Y-m-d');
+    
+        $entries = Entry::with('supplier')
+            ->where('entry_type', 'Por compra')
+            ->where('finance', false)
+            ->whereBetween('created_at', [$startDate.' 00:00:00', $endDate.' 23:59:59'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+    
+        $end = microtime(true) - $begin;
+    
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Obtener ingresos por compra en un rango de fechas personalizado',
+            'time' => $end
+        ]);
+    
+        return datatables($entries)->toJson();
+        
+    }
+    
 }
+
