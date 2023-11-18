@@ -59,7 +59,7 @@ $(document).ready(function () {
     $('#btn-pays').on('click', searchTotalPays);
     //fillTotalHoursTable();
 
-    $('#btn-download').on('click', downloadExcelTotalDiary);
+    $('#btn-download').on('click', downloadExcelTotalPaysAccounts);
 
 });
 
@@ -67,16 +67,14 @@ let $selectYear;
 let $selectWeekStart;
 let $selectWeekEnd;
 
-function downloadExcelTotalDiary() {
-    var worker  = $('#worker').val();
-    var start  = $('#start').val();
-    var end  = $('#end').val();
-    var startDate   = moment(start, "DD/MM/YYYY");
-    var endDate     = moment(end, "DD/MM/YYYY");
+function downloadExcelTotalPaysAccounts() {
+    var year  = $('#year').val();
+    var weekStart  = $('#weekStart').val();
+    var weekEnd  = $('#weekEnd').val();
 
-    if ( worker == '' || worker == null )
+    if ( year == '' || year == null )
     {
-        toastr.error('Seleccione un trabajador', 'Error',
+        toastr.error('Seleccione un año', 'Error',
             {
                 "closeButton": true,
                 "debug": false,
@@ -97,87 +95,58 @@ function downloadExcelTotalDiary() {
         return;
     }
 
-    if ( start == '' || end == '' )
+    if ( weekStart != '' || weekEnd != '' )
     {
-        console.log('Sin fechas');
+        if ( weekStart > weekEnd )
+        {
+            toastr.error('El orden de las semanas es incorrecta.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "2000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    }
+
+    if ( weekStart == '' || weekEnd == '' )
+    {
+        console.log('Sin semanas');
         $.confirm({
-            icon: 'fas fa-file-excel',
+            icon: 'fas fa-download',
             theme: 'modern',
             closeIcon: true,
             animation: 'zoom',
             type: 'green',
-            title: 'No especificó fechas',
-            content: 'Si no hay fechas se descargarán el total a pagar de todo el año',
+            title: 'No especificó semanas',
+            content: 'Si no hay fechas se mostrarán los pagos de todo el año',
             buttons: {
                 confirm: {
                     text: 'DESCARGAR',
                     action: function (e) {
-                        //$.alert('Descargado igual');
-                        console.log(start);
-                        console.log(end);
 
-                        $("#hours-total").LoadingOverlay("show", {
-                            background  : "rgba(236, 91, 23, 0.5)"
-                        });
-
-                        $("#summary-hours").LoadingOverlay("show", {
-                            background  : "rgba(236, 91, 23, 0.5)"
-                        });
-
-                        var query = {
-                            start: start,
-                            end: end
+                        var query2 = {
+                            year: year,
+                            weekStart: weekStart,
+                            weekEnd: weekEnd
                         };
 
-                        $.ajax({
-                            url: "/dashboard/get/total/hours/by/worker/"+ worker +"/?"  + $.param(query),
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function (json) {
-                                $('#body-totalHours').html('');
-                                $('#body-summaryHours').html('');
+                        var url = "/dashboard/download/excel/pagar/finanzas/?" + $.param(query2);
 
-                                for (var i=0; i<json.arrayByDates.length; i++)
-                                {
-                                    console.log(json.arrayByDates[i].week);
-                                    renderTemplateTotalHours(
-                                        i+1,
-                                        json.arrayByDates[i].week,
-                                        json.arrayByDates[i].date,
-                                        json.arrayByDates[i].assistances
-                                    );
-                                }
-
-                                for (var j=0; j<json.arrayByWeek.length; j++)
-                                {
-                                    renderTemplateSummaryTotalHours(
-                                        j+1,
-                                        json.arrayByWeek[j].week,
-                                        json.arrayByWeek[j].month,
-                                        json.arrayByWeek[j].date,
-                                        json.arrayByWeek[j].h_ord,
-                                        json.arrayByWeek[j].h_25,
-                                        json.arrayByWeek[j].h_35,
-                                        json.arrayByWeek[j].h_100,
-                                        json.arrayByWeek[j].h_esp
-                                    );
-                                }
-
-                                $("#hours-total").LoadingOverlay("hide", true);
-
-                                $("#summary-hours").LoadingOverlay("hide", true);
-
-                                var query2 = {
-                                    start: start,
-                                    end: end,
-                                    worker: worker
-                                };
-
-                                var url = "/dashboard/download/excel/total/hours/?" + $.param(query2);
-
-                                window.location = url;
-                            }
-                        });
+                        window.location = url;
+                        document.getElementById("btn-download").hidden = true;
 
                     },
                 },
@@ -192,83 +161,28 @@ function downloadExcelTotalDiary() {
     } else {
         console.log('Con fechas');
         $.confirm({
-            icon: 'fas fa-search',
+            icon: 'fas fa-download',
             theme: 'modern',
             closeIcon: true,
             animation: 'zoom',
             type: 'green',
-            title: 'Descargar total a pagar desde '+start+' hasta '+end,
-            content: 'Se descargarán el total a pagar desde la fecha indicada',
+            title: 'Descargar pagos desde la SEM '+weekStart+' hasta la SEM'+weekEnd,
+            content: 'Se descargarán los pagos desde la semana indicada',
             buttons: {
                 confirm: {
                     text: 'DESCARGAR',
                     action: function (e) {
-                        //$.alert('Descargado igual');
-                        $("#hours-total").LoadingOverlay("show", {
-                            background  : "rgba(236, 91, 23, 0.5)"
-                        });
-
-                        $("#summary-hours").LoadingOverlay("show", {
-                            background  : "rgba(236, 91, 23, 0.5)"
-                        });
-                        console.log(start);
-                        console.log(end);
-
-                        var query = {
-                            start: start,
-                            end: end
-                        };
-
-                        $.ajax({
-                            url: "/dashboard/get/total/hours/by/worker/"+ worker +"/?"  + $.param(query),
-                            type: 'GET',
-                            dataType: 'json',
-                            success: function (json) {
-                                $('#body-totalHours').html('');
-                                $('#body-summaryHours').html('');
-
-                                for (var i=0; i<json.arrayByDates.length; i++)
-                                {
-                                    console.log(json.arrayByDates[i].week);
-                                    renderTemplateTotalHours(
-                                        i+1,
-                                        json.arrayByDates[i].week,
-                                        json.arrayByDates[i].date,
-                                        json.arrayByDates[i].assistances
-                                    );
-                                }
-
-                                for (var j=0; j<json.arrayByWeek.length; j++)
-                                {
-                                    renderTemplateSummaryTotalHours(
-                                        j+1,
-                                        json.arrayByWeek[j].week,
-                                        json.arrayByWeek[j].month,
-                                        json.arrayByWeek[j].date,
-                                        json.arrayByWeek[j].h_ord,
-                                        json.arrayByWeek[j].h_25,
-                                        json.arrayByWeek[j].h_35,
-                                        json.arrayByWeek[j].h_100,
-                                        json.arrayByWeek[j].h_esp
-                                    );
-                                }
-
-                                $("#hours-total").LoadingOverlay("hide", true);
-
-                                $("#summary-hours").LoadingOverlay("hide", true);
-
-                            }
-                        });
 
                         var query2 = {
-                            start: start,
-                            end: end,
-                            worker: worker
+                            year: year,
+                            weekStart: weekStart,
+                            weekEnd: weekEnd
                         };
 
-                        var url = "/dashboard/download/excel/total/hours/?" + $.param(query2);
+                        var url = "/dashboard/download/excel/pagar/finanzas/?" + $.param(query2);
 
                         window.location = url;
+                        document.getElementById("btn-download").hidden = true;
 
                     },
                 },
@@ -282,7 +196,6 @@ function downloadExcelTotalDiary() {
         });
 
     }
-
 }
 
 function searchTotalPays() {
@@ -386,6 +299,8 @@ function searchTotalPays() {
                                     );
                                 }
 
+                                $("#btn-download").removeAttr("hidden");
+
                                 $("#total-pays-load").LoadingOverlay("hide", true);
 
                             }
@@ -443,6 +358,8 @@ function searchTotalPays() {
                                         json.weeks[i].boletas
                                     );
                                 }
+
+                                $("#btn-download").removeAttr("hidden");
 
                                 $("#total-pays-load").LoadingOverlay("hide", true);
 
