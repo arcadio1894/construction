@@ -1180,6 +1180,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('report_request')
+                                <li class="nav-item">
+                                    <a href="{{ route('output.simple.reportByArea') }}" class="nav-link @yield('activeReportMaterialAreaOutputSimple')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reporte de Salida por área</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                     @endcan

@@ -183,9 +183,13 @@
                     <h3 class="card-title">REPORTE DE TOTAL A PAGAR</h3>
 
                     <div class="card-tools">
-
+                        @can('downloadTotalPaysAccounts_assistance')
+                            <button type="button" hidden id="btn-download" class="btn btn-sm btn-warning" > <i class="far fa-file-excel">
+                                </i> Descargar reporte </button>
+                        @endcan
                         <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                             <i class="fas fa-minus"></i></button>
+
                     </div>
                 </div>
                 <div class="card-body" id="total-pays-load">

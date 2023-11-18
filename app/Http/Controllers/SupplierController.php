@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\SuppliersExport;
 use App\Http\Requests\DeleteSupplierRequest;
 use App\Http\Requests\RestoreSupplierRequest;
 use App\Http\Requests\StoreSupplierRequest;
@@ -10,6 +11,7 @@ use App\Supplier;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class SupplierController extends Controller
 {
@@ -162,5 +164,47 @@ class SupplierController extends Controller
         }
 
         return response()->json(['message' => 'Proveedor restaurado con éxito.'], 200);
+    }
+    public function generateReport()
+    {
+        $suppliers = DB::table('suppliers')->whereNull('deleted_at')->get();
+        $deletedSuppliers = DB::table('suppliers')->whereNotNull('deleted_at')->get();
+
+        $data = [];
+        $deletedData = [];
+
+        foreach ($suppliers as $supplier) {
+            $accounts = DB::table('supplier_accounts')->where('supplier_id', $supplier->id)->pluck('number_account')->toArray();
+            $labeledAccounts = [];
+            foreach ($accounts as $index => $account) {
+                $label = 'Cuenta ' . ($index + 1);
+                $labeledAccounts[] = $label . ': ' . $account;
+            }
+            $data[] = [
+                'id' => $supplier->id,
+                'code'=> $supplier->code,
+                'business_name' => $supplier->business_name,
+                'RUC' => $supplier->RUC,
+                'address' => $supplier->address,
+                'phone' => $supplier->phone,
+                'email' => $supplier->email,
+                'accounts' => $labeledAccounts,
+            ];
+        }
+
+        foreach ($deletedSuppliers as $deletedSupplier) {
+            $deletedData[] = [
+                'id' => $deletedSupplier->id,
+                'code'=> $deletedSupplier->code,
+                'business_name' => $deletedSupplier->business_name,
+                'RUC' => $deletedSupplier->RUC,
+                'address' => $deletedSupplier->address,
+                'phone' =>$deletedSupplier ->phone,
+                'email' =>$deletedSupplier->email,
+
+            ];
+        }
+
+        return Excel::download(new SuppliersExport($data,$deletedData), 'report.xlsx');
     }
 }

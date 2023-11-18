@@ -44,6 +44,11 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de proveedores</h5>
+    @can('exportreport_supplier')
+    <div class="card-tools">
+        <button type="button" id="btn-download" class="btn btn-sm btn-success btn-sm" > <i class="far fa-file-excel"></i> Descargar proveedores </button>
+    </div>
+    @endcan
     @can('create_supplier')
     <a href="{{ route('supplier.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Proveedor </a>
     @endcan

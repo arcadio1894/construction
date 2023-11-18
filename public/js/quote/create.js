@@ -1856,19 +1856,23 @@ function updateTableTotalsEquipment(button, data) {
     var table = button.parent().parent().next().children().next().next().next().next().next().children().next().children();
 
     var totalMaterialsElement = table.find('[data-total_materials]');
-    totalMaterialsElement.html((totalMaterials*quantity).toFixed(2));
+    //totalMaterialsElement.html((totalMaterials*quantity).toFixed(2));
+    totalMaterialsElement.html((totalMaterials).toFixed(2));
     totalMaterialsElement.css('text-align', 'right');
 
     var totalConsumablesElement = table.find('[data-total_consumables]');
-    totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
+    //totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
+    totalConsumablesElement.html((totalConsumables).toFixed(2));
     totalConsumablesElement.css('text-align', 'right');
 
     var totalWorkforcesElement = table.find('[data-total_workforces]');
-    totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
+    //totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
+    totalWorkforcesElement.html((totalWorkforces).toFixed(2));
     totalWorkforcesElement.css('text-align', 'right');
 
     var totalTornosElement = table.find('[data-total_tornos]');
-    totalTornosElement.html((totalTornos*quantity).toFixed(2));
+    //totalTornosElement.html((totalTornos*quantity).toFixed(2));
+    totalTornosElement.html((totalTornos).toFixed(2));
     totalTornosElement.css('text-align', 'right');
 
     var totalDiasElement = table.find('[data-total_dias]');

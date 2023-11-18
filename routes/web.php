@@ -1637,6 +1637,10 @@ Route::middleware('auth')->group(function (){
         Route::get('/ver/total/pagar/finanzas', 'AssistanceController@showTotalPaysAccounts')
             ->name('assistance.show.total.pays.accounts');
 
+        Route::get('/download/excel/pagar/finanzas/', 'AssistanceController@exportTotalPaysAccounts')
+            ->name('download.excel.total.pays.accounts')
+            ->middleware('permission:downloadTotalPaysAccounts_assistance');
+
         Route::get('/get/weeks/total/pays/{year}', 'AssistanceController@getWeeksTotalPaysByYear');
 
         Route::get('/get/total/pays/by/year/week/', 'AssistanceController@getTotalPaysByYearWeek');
@@ -1912,6 +1916,15 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_requestSimple');
         Route::get('/get/json/outputs/simple/of/material/{id_material}', 'OutputController@getJsonOutputsSimpleOfMaterial')
             ->middleware('permission:report_requestSimple');
+        //RUTAS PARA REPORTE DE SALIDAS POR AREA
+        Route::get('/reporte/material/salidas/xarea', 'OutputController@reportMaterialByAreaOutputsSimple')
+            ->name('output.simple.reportByArea')
+            ->middleware('permission:report_request');
+        Route::get('/get/json/outputs/simple/of/materialxarea/{id_area}', 'OutputController@getJsonOutputsSimpleOfMaterialByArea')
+            ->middleware('permission:report_request');
+        Route::get('/get/json/areas/in/output', 'OutputController@getJsonAreasInOutputSimple');
+        Route::get('/get/json/items/output/areas/{output_id}', 'OutputController@getJsonItemsOutputArea');
+
 
         // Descuentos
         Route::get('/all/discounts', 'DiscountController@getAllDiscounts')
@@ -2317,6 +2330,10 @@ Route::middleware('auth')->group(function (){
         Route::post('supplier/account/destroy/{account_id}', 'SupplierAccountController@destroy')
             ->name('supplier.account.destroy')
             ->middleware('permission:destroy_supplierAccount');
+        Route::get('/download/supplierexcel', 'SupplierController@generateReport')
+            ->middleware('permission:exportreport_supplier');
+
+
 
         // TODO: Rutas de CategoryEquipments
         Route::get('/categorias/equipos/', 'CategoryEquipmentController@index')
