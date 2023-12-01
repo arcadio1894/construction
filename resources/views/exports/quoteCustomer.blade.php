@@ -243,7 +243,7 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">TOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice == 'PEN') ? number_format( (float)($quote->total_quote), 0) ? : number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice == 'PEN') ? number_format( (float)($quote->total_quote), 0) : number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
         </tr>
         {{--<tr>
             <td class="desc"></td>
