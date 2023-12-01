@@ -15,6 +15,11 @@ class CreateEquipmentProformaTurnstilesTable extends Migration
     {
         Schema::create('equipment_proforma_turnstiles', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('equipment_proforma_id')->nullable()->constrained('equipment_proformas');
+            $table->longText('description')->nullable();
+            $table->decimal('quantity', 9, 2)->nullable();
+            $table->decimal('unit_price', 9, 2)->nullable();
+            $table->decimal('total_price', 9, 2)->nullable();
             $table->timestamps();
         });
     }

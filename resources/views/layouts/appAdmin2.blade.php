@@ -2516,6 +2516,35 @@
                             </ul>
                         </li>
                     @endcan
+                    @can('enable_defaultEquipment')
+                        <li class="nav-item has-treeview @yield('openProforma')">
+                            <a href="#" class="nav-link @yield('activeProforma')">
+                                <i class="nav-icon fas fa-th-list"></i>
+                                <p>
+                                    Pre - Cotizaciones
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('listCategory_defaultEquipment')
+                                    <li class="nav-item">
+                                        <a href="{{route('proforma.index')}}" class="nav-link @yield('activeListProforma')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listado</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('eliminatedCategory_defaultEquipment')
+                                    <li class="nav-item">
+                                        <a href="#" class="nav-link @yield('activeCreateProforma')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear Pre-Cotización</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
 
                     @canany('list_invoice')
                         <li class="nav-header">FINANZAS</li>

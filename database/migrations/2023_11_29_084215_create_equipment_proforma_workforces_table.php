@@ -15,6 +15,12 @@ class CreateEquipmentProformaWorkforcesTable extends Migration
     {
         Schema::create('equipment_proforma_workforces', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('equipment_proforma_id')->nullable()->constrained('equipment_proformas');
+            $table->longText('description')->nullable();
+            $table->decimal('quantity', 9, 2)->nullable();
+            $table->decimal('unit_price', 9, 2)->nullable();
+            $table->decimal('total_price', 9, 2)->nullable();
+            $table->string('unit')->nullable();
             $table->timestamps();
         });
     }

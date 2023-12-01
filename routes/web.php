@@ -2377,6 +2377,15 @@ Route::middleware('auth')->group(function (){
         Route::post('destroy/defaultEquipment/{equipment_id}', 'DefaultEquipmentController@destroy')
             ->name('defaultEquipment.destroy')
             ->middleware('permission:destroy_defaultEquipment');
+
+        // TODO: Rutas de Pre Cotizaciones
+        Route::get('/pre/cotizaciones/', 'ProformaController@index')
+            ->name('proforma.index')
+            /*->middleware('permission:list_defaultEquipment')*/;
+        Route::get('/get/data/proformas/{numberPage}', 'ProformaController@getDataProformas');
+        Route::get('/crear/pre/cotizacion/', 'ProformaController@create')
+            ->name('proforma.create')
+            /*->middleware('permission:list_defaultEquipment')*/;
     });
 });
 

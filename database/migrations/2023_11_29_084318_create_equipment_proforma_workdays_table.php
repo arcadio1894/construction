@@ -15,6 +15,12 @@ class CreateEquipmentProformaWorkdaysTable extends Migration
     {
         Schema::create('equipment_proforma_workdays', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('equipment_proforma_id')->nullable()->constrained('equipment_proformas');
+            $table->longText('description')->nullable();
+            $table->decimal('quantityPerson', 9, 2)->nullable();
+            $table->decimal('hoursPerPerson', 9, 2)->nullable();
+            $table->decimal('pricePerHour', 9, 2)->nullable();
+            $table->decimal('total_price', 9, 2)->nullable();
             $table->timestamps();
         });
     }
