@@ -10,6 +10,8 @@ let $subtotal=0;
 let $subtotal2=0;
 let $subtotal3=0;
 var $permissions;
+let $itemsSelected = [];
+let $itemsSaved = [];
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
@@ -47,6 +49,13 @@ $(document).ready(function () {
         e.preventDefault();
         $(".busqueda-avanzada").slideToggle();
     });
+    
+    $('#btn-search').on('click', searchEquipments);
+
+    $(document).on('change', '[data-selected]', selectItem);
+    $('#btn-saveItems').on('click', saveEquipments);
+
+    $(document).on('click', '[data-acDelete]', deleteItem);
 
 });
 
@@ -56,6 +65,338 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+
+function deleteItem() {
+    let button = $(this);
+    let id_delete = button.attr('data-acEquipment');
+    let result = $itemsSaved.find( item => item.id == id_delete );
+    $total = $total - parseFloat(result.total);
+    $totalUtility = $totalUtility - parseFloat(result.total_utility);
+
+    $('#subtotal').html('USD '+ $total.toFixed(2));
+    $('#total').html('USD '+($total*1.18).toFixed(2));
+    $('#subtotal_utility').html('USD '+ ($totalUtility).toFixed(2));
+    $('#total_utility').html('USD '+($totalUtility*1.18).toFixed(2));
+
+    $itemsSaved = $.grep($itemsSaved, function(e){
+        return e.id != id_delete;
+    });
+
+    button.parent().parent().remove();
+}
+
+function saveEquipments() {
+    for ( let j=0; j<$itemsSelected.length; j++ )
+    {
+        if ( $itemsSaved.find(x => x.item == $itemsSelected[j].id ) )
+        {
+            toastr.error('Hay items repetidos. Elija otro', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+    }
+
+    for ( let i=0; i<$itemsSelected.length; i++ )
+    {
+        //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
+
+        // TODO: Hacer la llamada ajax para actualizar los equipos
+        $.get('/dashboard/get/data/default/equipment/'+$itemsSelected[i].id, function(data) {
+            if ( data.change == true )
+            {
+                toastr.warning('Han sido actualizados algunos precios de materiales y consumibles.', 'Precaución',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            $total = $total + parseFloat(data.pEquipment);
+            $totalUtility = $totalUtility + parseFloat(data.tEquipment);
+            console.log($total);
+            console.log($totalUtility);
+            $itemsSaved.push({'id':data.id, "total":data.pEquipment, "total_utility":data.tEquipment});
+            $('#subtotal').html('USD '+ $total.toFixed(2));
+            $('#total').html('USD '+($total*1.18).toFixed(2));
+            $('#subtotal_utility').html('USD '+ ($totalUtility).toFixed(2));
+            $('#total_utility').html('USD '+($totalUtility*1.18).toFixed(2));
+            renderDataEquipmentDefault(data.id, data.nEquipment, data.qEquipment, data.pEquipment, data.uEquipment, data.rlEquipment, data.uPEquipment, data.tEquipment);
+
+        }).fail(function(jqXHR, textStatus, errorThrown) {
+            // Función de error, se ejecuta cuando la solicitud GET falla
+            console.error(textStatus, errorThrown);
+            if (jqXHR.responseJSON.message && !jqXHR.responseJSON.errors) {
+                toastr.error(jqXHR.responseJSON.message, 'Error', {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            }
+            for (var property in jqXHR.responseJSON.errors) {
+                toastr.error(jqXHR.responseJSON.errors[property], 'Error', {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            }
+        }, 'json')
+            .done(function() {
+                // Configuración de encabezados
+                var headers = {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                };
+
+                $.ajaxSetup({
+                    headers: headers
+                });
+            });
+
+        //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
+        //renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
+
+    }
+
+    $itemsSelected = [];
+    $("#body-equipments").html('');
+    $("#nameEquipment").val('');
+    $("#category").val(null).trigger('change');
+
+    $modalAddEquipment.modal('hide');
+}
+
+function renderDataEquipmentDefault(id, nEquipment, qEquipment, pEquipment, uEquipment, rlEquipment, uPEquipment, tEquipment) {
+    var clone = activateTemplate('#template-summary');
+    clone.querySelector("[data-nEquipment]").innerHTML = nEquipment;
+    clone.querySelector("[data-qEquipment]").innerHTML = qEquipment;
+    clone.querySelector("[data-pEquipment]").innerHTML = pEquipment;
+    clone.querySelector("[data-uEquipment]").innerHTML = uEquipment;
+    clone.querySelector("[data-rlEquipment]").innerHTML = rlEquipment;
+    clone.querySelector("[data-uPEquipment]").innerHTML = uPEquipment;
+    clone.querySelector("[data-tEquipment]").innerHTML = tEquipment;
+    clone.querySelector("[data-acEquipment]").setAttribute('data-acEquipment', id);
+    /*clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+data.id);
+    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+data.id);*/
+    $("#body-summary").append(clone);
+}
+
+function searchEquipments() {
+    let category = $("#category").val();
+    let nameEquipment = $("#nameEquipment").val();
+    let length = $("#length").val();
+    let width = $("#width").val();
+    let high = $("#high").val();
+
+    $.get('/dashboard/get/data/equipments/proforma/', {
+        category: category,
+        nameEquipment: nameEquipment,
+        length: length,
+        width: width,
+        high: high
+    }, function(data) {
+        if ( data.equipments.length == 0 )
+        {
+            renderDataEquipmentEmpty(data);
+        } else {
+            renderDataEquipments(data);
+        }
+
+
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        // Función de error, se ejecuta cuando la solicitud GET falla
+        console.error(textStatus, errorThrown);
+        if (jqXHR.responseJSON.message && !jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.message, 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+        for (var property in jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.errors[property], 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+    }, 'json')
+        .done(function() {
+            // Configuración de encabezados
+            var headers = {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            };
+
+            $.ajaxSetup({
+                headers: headers
+            });
+        });
+}
+
+function renderDataEquipmentEmpty(data) {
+    var dataAccounting = data.data;
+    var pagination = data.pagination;
+    console.log(dataAccounting);
+    console.log(pagination);
+
+    $("#body-equipments").html('');
+
+    renderDataTableEmpty();
+}
+
+function renderDataEquipments(data) {
+    var dataEquipments = data.equipments;
+    console.log(dataEquipments);
+
+    $("#body-equipments").html('');
+
+    for (let j = 0; j < dataEquipments.length ; j++) {
+        renderDataTable(dataEquipments[j]);
+    }
+}
+
+function renderDataTableEmpty() {
+    var clone = activateTemplate('#item-table-empty');
+    $("#body-equipments").append(clone);
+}
+
+function renderDataTable(data) {
+    var clone = activateTemplate('#template-equipment');
+    clone.querySelector("[data-id]").innerHTML = data.id;
+    clone.querySelector("[data-equipo]").innerHTML = data.description;
+    clone.querySelector("[data-ancho]").innerHTML = data.width;
+    clone.querySelector("[data-largo]").innerHTML = data.large;
+    clone.querySelector("[data-alto]").innerHTML = data.high;
+    clone.querySelector("[data-selected]").setAttribute('data-selected', data.id);
+    clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+data.id);
+    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+data.id);
+    $("#body-equipments").append(clone);
+
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+function selectItem() {
+    event.preventDefault();
+    if (this.checked) {
+        let itemId = $(this).data('selected');
+        if (isSelected(itemId))
+        {
+            toastr.error('No se puede seleccionar porque ya está seleccionado.', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        } else {
+            $itemsSelected.push({id:itemId});
+            console.log($itemsSelected);
+        }
+
+    } else {
+        let itemD = $(this).data('selected');
+        const result = $itemsSelected.find( item => item.id === itemD );
+        if (result)
+        {
+            $itemsSelected = $.grep($itemsSelected, function(e){
+                return e.id !== itemD;
+            });
+        }
+        console.log($itemsSelected);
+    }
+
+}
+
+function isSelected(id) {
+    const result = $itemsSaved.find( item => item.id == id );
+    return result ? true : false;
+}
 
 function mayus(e) {
     e.value = e.value.toUpperCase();
@@ -199,17 +540,6 @@ function addEquipment() {
     $modalAddEquipment.modal('show');
     /*renderTemplateEquipment();*/
 
-}
-
-function deleteItem() {
-    //console.log($(this).parent().parent().parent());
-    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
-    card.removeClass('card-success');
-    card.addClass('card-gray-dark');
-
-    $(this).parent().parent().remove();
-    var itemId = $(this).data('delete');
-    //$items = $items.filter(item => item.id !== itemId);
 }
 
 function calculatePercentage() {
@@ -725,54 +1055,8 @@ function storeQuote() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
     console.log(imagesIncomplete());
-    if ( imagesIncomplete() )
-    {
-        toastr.error('No se puede guardar porque faltan imagenes o descripciones.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        $("#btn-submit").attr("disabled", false);
-        return;
-    }
 
-    if ( editedActive() )
-    {
-        toastr.error('No se puede guardar porque hay equipos no confirmados.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        $("#btn-submit").attr("disabled", false);
-        return;
-    }
-    if( $equipments.length === 0 )
+    if( $itemsSaved.length === 0 )
     {
         toastr.error('No se puede crear una cotización sin equipos.', 'Error',
             {
@@ -797,7 +1081,7 @@ function storeQuote() {
     }
     // Obtener la URL
     var createUrl = $formCreate.data('url');
-    var equipos = JSON.stringify($equipments);
+    var equipos = JSON.stringify($itemsSaved);
     var formulario = $('#formCreate')[0];
     var form = new FormData(formulario);
     form.append('equipments', equipos);

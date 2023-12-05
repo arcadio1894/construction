@@ -2386,6 +2386,12 @@ Route::middleware('auth')->group(function (){
         Route::get('/crear/pre/cotizacion/', 'ProformaController@create')
             ->name('proforma.create')
             /*->middleware('permission:list_defaultEquipment')*/;
+        Route::get('get/data/equipments/proforma/', 'ProformaController@getDataEquipments');
+        Route::get('get/data/default/equipment/{equipment_id}', 'ProformaController@getDataEquipmentDefault');
+        Route::post('store/proforma', 'ProformaController@store')
+            ->name('proforma.store')
+            /*->middleware('permission:create_quote')*/;
+
     });
 });
 

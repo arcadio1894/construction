@@ -2,14 +2,31 @@
 
 namespace App\Http\Controllers;
 
+use App\Audit;
 use App\CategoryEquipment;
 use App\Customer;
+use App\DefaultEquipment;
+use App\DefaultEquipmentConsumable;
+use App\DefaultEquipmentMaterial;
+use App\DefaultEquipmentTurnstile;
+use App\DefaultEquipmentWorkForce;
+use App\EquipmentProforma;
+use App\EquipmentProformaConsumable;
+use App\EquipmentProformaMaterial;
+use App\EquipmentProformaTurnstiles;
+use App\EquipmentProformaWorkdays;
+use App\EquipmentProformaWorkforces;
+use App\Http\Requests\ProformaStoreRequest;
+use App\Material;
+use App\Notification;
+use App\NotificationUser;
 use App\PaymentDeadline;
 use App\Proforma;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ProformaController extends Controller
 {
@@ -136,15 +153,302 @@ class ProformaController extends Controller
 
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function getDataEquipments(Request $request)
     {
-        //
+        $category = $request->input('category');
+        $nameEquipment = $request->input('nameEquipment');
+        $large = $request->input('length');
+        $width = $request->input('width');
+        $high = $request->input('high');
+
+        $query = DefaultEquipment::where('category_equipment_id', $category)
+            ->orderBy('created_at', 'DESC');
+
+        // Aplicar filtros si se proporcionan
+        if ($nameEquipment) {
+            $query->where('description', 'like', '%'.$nameEquipment.'%');
+        }
+
+        if ($large) {
+            $query->where('large', $large);
+        }
+
+        if ($width) {
+            $query->where('width', $width);
+        }
+
+        if ($high) {
+            $query->where('high', $high);
+        }
+
+
+
+        $equipments = $query->get();
+
+        //dd($proformas);
+
+        $arrayEquipments = [];
+
+        foreach ( $equipments as $equipment )
+        {
+            array_push($arrayEquipments, [
+                "id" => $equipment->id,
+                "description" => $equipment->description,
+                "large" => $equipment->large,
+                "width" => $equipment->width,
+                "high" => $equipment->high,
+            ]);
+        }
+
+        return ['equipments' => $arrayEquipments];
+    }
+
+    public function getDataEquipmentDefault($equipment_id)
+    {
+        $equipment = DefaultEquipment::find($equipment_id);
+        // TODO: Actualizar los precios
+        $flagChange = false;
+        foreach ( $equipment->materials as $equipment_material )
+        {
+            if ( $equipment_material->unit_price !== $equipment_material->material->unit_price )
+            {
+                $flagChange = true;
+                $equipment_material->unit_price = $equipment_material->material->unit_price;
+                $equipment_material->total_price = $equipment_material->material->unit_price * $equipment_material->quantity;
+                $equipment_material->save();
+            }
+        }
+
+        foreach ( $equipment->consumables as $equipment_consumable )
+        {
+            if ( $equipment_consumable->unit_price !== $equipment_consumable->material->unit_price )
+            {
+                $flagChange = true;
+                $equipment_consumable->unit_price = $equipment_consumable->material->unit_price;
+                $equipment_consumable->total_price = $equipment_consumable->material->unit_price * $equipment_consumable->quantity;
+                $equipment_consumable->save();
+            }
+        }
+
+        return response()->json([
+            "change" => $flagChange,
+            "id" => $equipment->id,
+            "nEquipment" => $equipment->description,
+            "qEquipment" => 1,
+            "pEquipment" => round(($equipment->total_equipment/1)/1.18, 2),
+            "uEquipment" => $equipment->utility,
+            "rlEquipment" => round($equipment->rent + $equipment->letter, 2),
+            "uPEquipment" => round(($equipment->total_equipment_utility/1.18)/1, 2),
+            "tEquipment" => round($equipment->total_equipment_utility/1.18, 2)
+        ]);
+    }
+
+    public function store(ProformaStoreRequest $request)
+    {
+        //$begin = microtime(true);
+//        dump($request);
+//        dd();
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $maxCode = Proforma::max('id');
+            $maxId = $maxCode + 1;
+            $length = 5;
+            //$codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+
+            $proforma = Proforma::create([
+                'code' => '',
+                'description_quote' => $request->get('code_description'),
+                'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
+                'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5),
+                'delivery_time' => ($request->has('delivery_time')) ? $request->get('delivery_time') : '',
+                'customer_id' => ($request->has('customer_id')) ? $request->get('customer_id') : null,
+                'contact_id' => ($request->has('contact_id')) ? $request->get('contact_id') : null,
+                'payment_deadline_id' => ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null,
+                'state' => 'created',
+                'currency' => 'USD',
+                'user_creator' => Auth::id()
+            ]);
+
+            $codeQuote = '';
+            if ( $maxId < $proforma->id ){
+                $codeQuote = 'PCOT-'.str_pad($proforma->id,$length,"0", STR_PAD_LEFT);
+                $proforma->code = $codeQuote;
+                $proforma->save();
+            } else {
+                $codeQuote = 'PCOT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $proforma->code = $codeQuote;
+                $proforma->save();
+            }
+
+            $equipments = json_decode($request->get('equipments'));
+
+            $totalQuote = 0;
+
+            for ( $i=0; $i<sizeof($equipments); $i++ )
+            {
+                $defaultEquipment = DefaultEquipment::find($equipments[$i]->id);
+                $equipment = EquipmentProforma::create([
+                    'proforma_id' => $proforma->id,
+                    'default_equipment_id' => $defaultEquipment->id,
+                    'description' =>($defaultEquipment->description == "" || $defaultEquipment->description == null) ? '':$defaultEquipment->description,
+                    'detail' => ($defaultEquipment->detail == "" || $defaultEquipment->detail == null) ? '':$defaultEquipment->detail,
+                    'quantity' => 1,
+                    'utility' => $defaultEquipment->utility,
+                    'rent' => $defaultEquipment->rent,
+                    'letter' => $defaultEquipment->letter,
+                    'total' => $defaultEquipment->total*1.18
+                ]);
+
+                $totalMaterial = 0;
+
+                $totalConsumable = 0;
+
+                $totalWorkforces = 0;
+
+                $totalTornos = 0;
+
+                $totalDias = 0;
+
+                $materials = $defaultEquipment->materials;
+
+                $consumables = $defaultEquipment->consumables;
+
+                $workforces = $defaultEquipment->workforces;
+
+                $tornos = $defaultEquipment->turnstiles;
+
+                $dias = $defaultEquipment->workdays;
+
+                for ( $j=0; $j<sizeof($materials); $j++ )
+                {
+                    $equipmentMaterial = EquipmentProformaMaterial::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $materials[$j]->material_id,
+                        'quantity' => (float) $materials[$j]->quantity,
+                        'unit_price' => (float) $materials[$j]->unit_price,
+                        'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                        'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                        'percentage' => (float) $materials[$j]->percentage,
+                        'total_price' => (float) $materials[$j]->total_price,
+                    ]);
+
+                    $totalMaterial += $equipmentMaterial->total_price;
+                }
+
+                for ( $k=0; $k<sizeof($consumables); $k++ )
+                {
+                    $equipmentConsumable = EquipmentProformaConsumable::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $consumables[$k]->material_id,
+                        'quantity' => (float) $consumables[$k]->quantity,
+                        'unit_price' => (float) $consumables[$k]->unit_price,
+                        'total_price' => (float) $consumables[$k]->total_price,
+                    ]);
+
+                    $totalConsumable += $equipmentConsumable->total_price;
+                }
+
+                for ( $w=0; $w<sizeof($workforces); $w++ )
+                {
+                    $equipmentWorkforce = EquipmentProformaWorkforces::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $workforces[$w]->description,
+                        'unit_price' => (float) $workforces[$w]->unit_price,
+                        'quantity' => (float) $workforces[$w]->quantity,
+                        'total_price' => (float) $workforces[$w]->total_price,
+                        'unit' => $workforces[$w]->unit,
+                    ]);
+
+                    $totalWorkforces += $equipmentWorkforce->total_price;
+                }
+
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmenttornos = EquipmentProformaTurnstiles::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'unit_price' => (float) $tornos[$r]->unit_price,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'total_price' => (float) $tornos[$r]->total_price
+                    ]);
+
+                    $totalTornos += $equipmenttornos->total_price;
+                }
+
+                for ( $d=0; $d<sizeof($dias); $d++ )
+                {
+                    $equipmentdias = EquipmentProformaWorkdays::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $dias[$d]->description,
+                        'quantityPerson' => (float) $dias[$d]->quantityPerson,
+                        'hoursPerPerson' => (float) $dias[$d]->hoursPerPerson,
+                        'pricePerHour' => (float) $dias[$d]->pricePerHour,
+                        'total_price' => (float) $dias[$d]->total_price
+                    ]);
+
+                    $totalDias += $equipmentdias->total_price;
+                }
+
+                $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) )+$totalDias;
+                $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+                $totalQuote += $totalEquipmentR;
+
+                $equipment->total = $totalEquipo;
+
+                $equipment->save();
+            }
+
+            $proforma->total = $totalQuote;
+
+            $proforma->save();
+
+            // Crear notificacion
+            $notification = Notification::create([
+                'content' => $proforma->code.' creada por '.Auth::user()->name,
+                'reason_for_creation' => 'create_prequote',
+                'user_id' => Auth::user()->id,
+                'url_go' => ""
+            ]);
+
+            // Roles adecuados para recibir esta notificación admin, logistica
+            $users = User::role(['admin', 'principal' , 'logistic'])->get();
+            foreach ( $users as $user )
+            {
+                if ( $user->id != Auth::user()->id )
+                {
+                    foreach ( $user->roles as $role )
+                    {
+                        NotificationUser::create([
+                            'notification_id' => $notification->id,
+                            'role_id' => $role->id,
+                            'user_id' => $user->id,
+                            'read' => false,
+                            'date_read' => null,
+                            'date_delete' => null
+                        ]);
+                    }
+                }
+            }
+
+            //$end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar pre cotizacion POST',
+                'time' => 0//$end
+            ]);
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Pre Cotización '.$codeQuote.' guardada con éxito.'], 200);
+
     }
 
     /**

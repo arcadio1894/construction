@@ -194,6 +194,7 @@ function getDataProformas($numberPage) {
         });
 }
 
+
 function renderDataProformaEmpty(data) {
     var dataAccounting = data.data;
     var pagination = data.pagination;
