@@ -222,7 +222,7 @@ class ReportController extends Controller
             $itemsCount = Item::where('material_id', $material->id)
                 ->where('location_id', $location_id)
                 ->where('state_item', '<>', 'exited')
-                ->count();
+                ->sum('percentage');
 
             if ( $itemsCount > 0 )
             {
@@ -290,7 +290,7 @@ class ReportController extends Controller
             $itemsCount = Item::where('material_id', $material->id)
                 ->whereIn('location_id', $locations)
                 ->where('state_item', '<>', 'exited')
-                ->count();
+                ->sum('percentage');
 
             if ( $itemsCount > 0 )
             {
