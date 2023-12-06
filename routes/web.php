@@ -2391,7 +2391,22 @@ Route::middleware('auth')->group(function (){
         Route::post('store/proforma', 'ProformaController@store')
             ->name('proforma.store')
             /*->middleware('permission:create_quote')*/;
-
+        Route::post('/destroy/proforma/{proforma_id}', 'ProformaController@destroy')
+            ->name('proforma.destroy')
+            /*->middleware('permission:destroy_quote')*/;
+        Route::get('ver/pre/cotizacion/{proforma_id}', 'ProformaController@show')
+            ->name('proforma.show')
+            /*->middleware('permission:list_quote')*/;
+        Route::get('imprimir/proforma/cliente/{quote}', 'ProformaController@printProformaToCustomer')
+            /*->middleware('permission:printCustomer_quote')*/;
+        Route::post('/visto/bueno/proforma/{proforma_id}', 'ProformaController@vistoBuenoProforma')
+            /*->middleware('permission:VBFinances_quote')*/;
+        Route::get('editar/pre/cotizacion/{proforma_id}', 'ProformaController@edit')
+            ->name('proforma.edit')
+            /*->middleware('permission:list_quote')*/;
+        Route::post('update/proforma', 'ProformaController@update')
+            ->name('proforma.update')
+            /*->middleware('permission:create_quote')*/;
     });
 });
 

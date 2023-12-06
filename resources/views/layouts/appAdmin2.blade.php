@@ -2536,7 +2536,7 @@
                                 @endcan
                                 @can('eliminatedCategory_defaultEquipment')
                                     <li class="nav-item">
-                                        <a href="#" class="nav-link @yield('activeCreateProforma')">
+                                        <a href="{{ route('proforma.create') }}" class="nav-link @yield('activeCreateProforma')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Crear Pre-Cotización</p>
                                         </a>

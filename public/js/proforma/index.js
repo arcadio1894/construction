@@ -15,7 +15,9 @@ $(document).ready(function () {
     $(document).on('click', '[data-item]', showData);
     $("#btn-search").on('click', showDataSeach);
 
-    $(document).on('click', '[data-delete]', deleteDefaultEquipment);
+    $(document).on('click', '[data-delete]', deleteProforma);
+
+    $(document).on('click', '[data-confirm]', confirmProforma);
 
     $("#btnBusquedaAvanzada").click(function(e){
         e.preventDefault();
@@ -24,17 +26,18 @@ $(document).ready(function () {
 
 });
 
-function deleteDefaultEquipment() {
-    var id = $(this).data('delete');
+function confirmProforma() {
+    var button = $(this);
+    var id = button.data('confirm');
     var description = $(this).data('description');
     $.confirm({
-        icon: 'far fa-trash',
+        icon: 'fas fa-check-double',
         theme: 'modern',
         closeIcon: true,
         animation: 'zoom',
-        type: 'red',
+        type: 'green',
         columnClass: 'small',
-        title: '¿Esta seguro de eliminar este equipo?',
+        title: '¿Esta seguro de dar el visto bueno a esta pre cotización?',
         content: description,
         buttons: {
             confirm: {
@@ -42,14 +45,14 @@ function deleteDefaultEquipment() {
                 btnClass: 'btn-blue',
                 action: function () {
                     $.ajax({
-                        url: "/dashboard/destroy/defaultEquipment/" + id,
+                        url: "/dashboard/visto/bueno/proforma/" + id,
                         type: 'POST',
                         dataType: 'json',
                         success: function (json) {
                             $.alert(json.message);
                             setTimeout( function () {
                                 location.reload();
-                            }, 1000 )
+                            }, 2000 )
                         },
                         error: function (data) {
                             if( data.responseJSON.message && !data.responseJSON.errors )
@@ -93,7 +96,93 @@ function deleteDefaultEquipment() {
                                         "hideMethod": "fadeOut"
                                     });
                             }
-                            $("#btn-submit").attr("disabled", false);
+
+                        },
+                    });
+                    //
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Visto bueno cancelado.");
+
+                },
+            },
+        }
+    });
+}
+
+function deleteProforma() {
+    var button = $(this);
+    var id = button.data('delete');
+    var description = $(this).data('description');
+    $.confirm({
+        icon: 'far fa-trash',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        columnClass: 'small',
+        title: '¿Esta seguro de eliminar esta pre cotización?',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: "/dashboard/destroy/proforma/" + id,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function (json) {
+                            $.alert(json.message);
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
 
                         },
                     });
@@ -104,6 +193,7 @@ function deleteDefaultEquipment() {
                 text: 'CANCELAR',
                 action: function (e) {
                     $.alert("Eliminación cancelada.");
+
                 },
             },
         }
@@ -287,10 +377,49 @@ function renderDataTable(data) {
     clone.querySelector("[data-state]").innerHTML = data.state;
     clone.querySelector("[data-created_at]").innerHTML = data.created_at;
     clone.querySelector("[data-creator]").innerHTML = data.creator;
-    /*clone.querySelector("[data-edit]").setAttribute('data-edit', data.id);
-    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/equipo/categoria/'+data.id);
+
+    clone.querySelector("[data-show]").setAttribute('href', location.origin+'/dashboard/ver/pre/cotizacion/'+data.id);
+
+    clone.querySelector("[data-print]").setAttribute('href', document.location.origin + '/dashboard/imprimir/proforma/cliente/' + data.id);
+
+    clone.querySelector("[data-confirm]").setAttribute('data-confirm', data.id);
+    clone.querySelector("[data-confirm]").setAttribute('data-description', data.description);
+
     clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
-    clone.querySelector("[data-delete]").setAttribute('data-description', data.description);*/
+    clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
+
+    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/pre/cotizacion/'+data.id);
+
+    if ( data.estado == 'destroy' )
+    {
+        let element = clone.querySelector("[data-confirm]");
+        if (element) {
+            element.style.display = 'none';
+        }
+        let elemento = clone.querySelector("[data-delete]");
+        if (elemento) {
+            elemento.style.display = 'none';
+        }
+        let elemento2 = clone.querySelector("[data-edit]");
+        if (elemento2) {
+            elemento2.style.display = 'none';
+        }
+    }
+
+    if ( data.estado == 'confirmed' )
+    {
+        var element = clone.querySelector("[data-confirm]");
+        if (element) {
+            element.style.display = 'none';
+        }
+        var elemento2 = clone.querySelector("[data-edit]");
+        if (elemento2) {
+            elemento2.style.display = 'none';
+        }
+    }
+    /*clone.querySelector("[data-confirm]").setAttribute('data-confirm', data.id);
+    clone.querySelector("[data-confirm]").setAttribute('data-description', data.description);
+*/
     $("#body-table").append(clone);
 
     $('[data-toggle="tooltip"]').tooltip();

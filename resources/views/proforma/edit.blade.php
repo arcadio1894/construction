@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeCreateProforma')
+@section('activeListProforma')
     active
 @endsection
 
@@ -61,7 +61,7 @@
 @endsection
 
 @section('page-title')
-    <h5 class="card-title">Crear nueva Pre Cotización</h5>
+    <h5 class="card-title">Editar Pre Cotización {{ $proforma->code }}</h5>
 @endsection
 
 @section('page-breadcrumb')
@@ -72,21 +72,23 @@
         <li class="breadcrumb-item">
             <a href="{{ route('proforma.index') }}"><i class="fa fa-key"></i> Pre Cotizaciones</a>
         </li>
-        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Nuevo</li>
+        <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Editar</li>
     </ol>
 @endsection
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
 
-    <form id="formCreate" class="form-horizontal" data-url="{{ route('proforma.store') }}" enctype="multipart/form-data">
+    <form id="formCreate" class="form-horizontal" data-url="{{ route('proforma.update') }}" enctype="multipart/form-data">
         @csrf
+
         <div class="row">
             <div class="col-md-12">
                 <div class="card card-success">
                     <div class="card-header">
                         <h3 class="card-title">DATOS GENERALES</h3>
-
+                        <input type="hidden" id="customer_proforma_id" value="{{ $proforma->customer_id }}">
+                        <input type="hidden" id="contact_proforma_id" value="{{ $proforma->contact_id }}">
                         <div class="card-tools">
                             <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
                                 <i class="fas fa-minus"></i></button>
@@ -96,25 +98,26 @@
                         <div class="form-group row">
                             <div class="col-md-12">
                                 <label for="descriptionQuote">Descripción general de cotización </label>
-                                <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm">
+                                <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm" value="{{ $proforma->description_quote }}">
+                                <input type="hidden" name="proforma_id" value="{{ $proforma->id }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <div class="col-md-4">
-                                <label for="description">Código de Pre Cotización </label>
-                                <input type="text" id="codeQuote" readonly value="{{ $codeQuote }}" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm">
+                                <label for="codeQuote">Código de Pre Cotización </label>
+                                <input type="text" id="codeQuote" readonly value="{{ $proforma->code }}" onkeyup="mayus(this);" name="code_quote" class="form-control form-control-sm">
                             </div>
                             @hasanyrole('logistic|admin|principal|quote_single')
                             <div class="col-md-4" id="sandbox-container">
                                 <label for="date_quote">Fecha de cotización </label>
                                 <div class="input-daterange" id="datepicker">
-                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_quote" name="date_quote">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_quote" name="date_quote" value="{{ date('d/m/Y', strtotime($proforma->date_quote)) }}">
                                 </div>
                             </div>
                             <div class="col-md-4" id="sandbox-container">
-                                <label for="date_end">Válido hasta </label>
+                                <label for="date_validate">Válido hasta </label>
                                 <div class="input-daterange" id="datepicker2">
-                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_validate" name="date_validate">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="date_validate" name="date_validate" value="{{ date('d/m/Y', strtotime($proforma->date_validate)) }}">
                                 </div>
                             </div>
                             @endhasanyrole
@@ -125,14 +128,14 @@
                                 <select id="paymentQuote" name="payment_deadline" class="form-control form-control-sm select2" style="width: 100%;">
                                     <option></option>
                                     @foreach( $paymentDeadlines as $paymentDeadline )
-                                        <option value="{{ $paymentDeadline->id }}">{{ $paymentDeadline->description }}</option>
+                                        <option value="{{ $paymentDeadline->id }}" {{ ($paymentDeadline->id == $proforma->payment_deadline_id) ? 'selected':'' }}>{{ $paymentDeadline->description }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             @endhasanyrole
                             <div class="col-md-4">
-                                <label for="description">Tiempo de entrega </label>
-                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm">
+                                <label for="timeQuote">Tiempo de entrega </label>
+                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $proforma->delivery_time }}">
                             </div>
                             {{--@hasanyrole('logistic|admin')--}}
                             <div class="col-md-4">
@@ -140,7 +143,7 @@
                                 <select id="customer_id" name="customer_id" class="form-control form-control-sm select2" style="width: 100%;">
                                     <option></option>
                                     @foreach( $customers as $customer )
-                                        <option value="{{ $customer->id }}">{{ $customer->business_name }}</option>
+                                        <option value="{{ $customer->id }}" {{ ($customer->id == $proforma->customer_id) ? 'selected':'' }}>{{ $customer->business_name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -153,7 +156,7 @@
                             <div class="col-md-8">
                                 <label for="observations">Observaciones </label>
                                 <textarea class="textarea_edit" id="observations" name="observations" data-detailequipment placeholder="Place some text here"
-                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ $proforma->observations }}</textarea>
                             </div>
                             {{--@endhasanyrole--}}
                         </div>
@@ -200,7 +203,22 @@
                                     </tr>
                                     </thead>
                                     <tbody id="body-summary">
-
+                                    @foreach( $proforma->equipments as $equipment )
+                                        <tr>
+                                            <td data-nEquipment>{{ $equipment->description }}</td>
+                                            <td data-qEquipment>{{ $equipment->quantity }}</td>
+                                            <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
+                                            <td data-uEquipment>{{ $equipment->utility }}</td>
+                                            <td data-rlEquipment>{{ $equipment->rent + $equipment->letter }}</td>
+                                            <td data-uPEquipment>{{ round(($equipment->subtotal_percentage/1.18)/$equipment->quantity, 2) }}</td>
+                                            <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
+                                            <td>
+                                                <button data-percentage type="button" class="btn btn-sm btn-outline-danger" data-acEquipment="{{ $equipment->id }}" data-utility="{{$equipment->utility}}" data-rent="{{$equipment->rent}}" data-letter="{{$equipment->letter}}" ><i class="fas fa-"></i></button>
+                                                <a href="#" type="button" class="btn btn-sm btn-outline-danger" data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-trash-alt"></i></a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" data-acDelete data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-trash-alt"></i></button>
+                                            </td>
+                                        </tr>
+                                    @endforeach
                                     </tbody>
                                     <template id="template-summary">
                                         <tr>
@@ -438,5 +456,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/proforma/create.js') }}"></script>
+    <script src="{{ asset('js/proforma/edit.js') }}"></script>
 @endsection

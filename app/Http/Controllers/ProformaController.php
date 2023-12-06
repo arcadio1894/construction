@@ -27,6 +27,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Barryvdh\DomPDF\Facade as PDF;
 
 class ProformaController extends Controller
 {
@@ -90,7 +91,7 @@ class ProformaController extends Controller
             {
                 $state = '<span class="badge bg-primary">Creada</span>';
             } elseif ( $proforma->state == 'confirmed' ) {
-                $state = '<span class="badge bg-gradient-navy text-white">V.B. '. $proforma->date_vb_proforma->format('d/m/Y') .' - '. $proforma->user_vb->name.'</span>';
+                $state = '<span class="badge bg-gradient-navy text-white">V.B. '. $proforma->date_vb_proforma->format('d/m/Y') .' - <br>'. $proforma->user_vb->name.'</span>';
             } elseif ( $proforma->state == 'destroy' ) {
                 $state = '<span class="badge bg-danger">Cancelada</span>';
             } elseif ( $proforma->state == 'expired' ) {
@@ -112,6 +113,7 @@ class ProformaController extends Controller
                 "total_con_igv" => round($proforma->total_proforma, 0),
                 "currency" => $proforma->currency,
                 "state" => $state,
+                "estado" => $proforma->state,
                 "created_at" => $proforma->created_at->format('d/m/Y'),
                 "creator" => ($proforma->user_creator == null) ? '': $proforma->creator->name
             ]);
@@ -245,7 +247,7 @@ class ProformaController extends Controller
 
     public function store(ProformaStoreRequest $request)
     {
-        //$begin = microtime(true);
+        $begin = microtime(true);
 //        dump($request);
 //        dd();
         $validated = $request->validated();
@@ -268,7 +270,8 @@ class ProformaController extends Controller
                 'payment_deadline_id' => ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null,
                 'state' => 'created',
                 'currency' => 'USD',
-                'user_creator' => Auth::id()
+                'user_creator' => Auth::id(),
+                'observations' => $request->get('observations'),
             ]);
 
             $codeQuote = '';
@@ -435,12 +438,12 @@ class ProformaController extends Controller
                 }
             }
 
-            //$end = microtime(true) - $begin;
+            $end = microtime(true) - $begin;
 
             Audit::create([
                 'user_id' => Auth::user()->id,
                 'action' => 'Guardar pre cotizacion POST',
-                'time' => 0//$end
+                'time' => $end
             ]);
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -451,26 +454,42 @@ class ProformaController extends Controller
 
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Proforma  $proforma
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Proforma $proforma)
+    public function show($proforma_id)
     {
-        //
+        $proforma = Proforma::where('id', $proforma_id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments'])->first();
+        //dump($quote);
+
+        /*Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver cotizacion VISTA',
+            'time' => $end
+        ]);*/
+        return view('proforma.show', compact('proforma'));
+
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Proforma  $proforma
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Proforma $proforma)
+    public function edit($proforma_id)
     {
-        //
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $customers = Customer::all();
+        $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        $categories = CategoryEquipment::all();
+        $proforma = Proforma::where('id', $proforma_id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments'])->first();
+        //dump($quote);
+
+        /*Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Ver cotizacion VISTA',
+            'time' => $end
+        ]);*/
+        return view('proforma.edit', compact('proforma', 'permissions', 'customers', 'paymentDeadlines', 'categories'));
     }
 
     /**
@@ -485,14 +504,63 @@ class ProformaController extends Controller
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Proforma  $proforma
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Proforma $proforma)
+    public function destroy($proforma_id)
     {
-        //
+        DB::beginTransaction();
+        try {
+                $proforma = Proforma::find($proforma_id);
+                $proforma->state = 'destroy';
+                $proforma->save();
+                DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Pre Cotización '.$proforma->code.' eliminada con éxito.'], 200);
+    }
+
+    public function printProformaToCustomer($id)
+    {
+        // Eliminamos elos archivos
+
+        $proforma = Proforma::where('id', $id)
+            ->with('customer')
+            ->with('deadline')
+            ->with(['equipments'])->first();
+
+        $view = view('proforma.proformaCustomer', compact('proforma'));
+
+        $pdf = PDF::loadHTML($view);
+
+        $description = str_replace(array('"', "'", "/"),'',$proforma->description_quote);
+
+        $name = $proforma->code . ' '. ltrim(rtrim($description)) . '.pdf';
+        return $pdf->stream($name);
+
+        //return $pdf->stream($name);
+    }
+
+    public function vistoBuenoProforma($id)
+    {
+        DB::beginTransaction();
+        try {
+            $proforma = Proforma::find($id);
+
+            //$quote->order_execution = $codeOrderExecution;
+            $proforma->vb_proforma = 1;
+            $proforma->date_vb_proforma= Carbon::now('America/Lima');
+            $proforma->user_vb_proforma= Auth::id();
+            $proforma->state = 'confirmed';
+            $proforma->save();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Visto bueno guardado.'], 200);
+
     }
 }

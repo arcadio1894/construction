@@ -17,7 +17,7 @@ class Proforma extends Model
         'customer_id',
         'contact_id',
         'payment_deadline_id',
-        'vb_finances',
+        'vb_proforma',
         'date_vb_proforma',
         'user_vb_proforma',
         'total',
