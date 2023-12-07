@@ -16,6 +16,7 @@ use App\EquipmentProformaMaterial;
 use App\EquipmentProformaTurnstiles;
 use App\EquipmentProformaWorkdays;
 use App\EquipmentProformaWorkforces;
+use App\Http\Requests\ProformaEditRequest;
 use App\Http\Requests\ProformaStoreRequest;
 use App\Material;
 use App\Notification;
@@ -492,16 +493,43 @@ class ProformaController extends Controller
         return view('proforma.edit', compact('proforma', 'permissions', 'customers', 'paymentDeadlines', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Proforma  $proforma
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Proforma $proforma)
+    public function update(ProformaEditRequest $request)
     {
-        //
+        $begin = microtime(true);
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+            $quote = Proforma::find($request->get('proforma_id'));
+
+            $quote->description_quote = $request->get('code_description');
+            $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now();
+            $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5);
+            $quote->payment_deadline_id = ($request->has('payment_deadline')) ? $request->get('payment_deadline') : null;
+            $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
+            $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
+            $quote->contact_id = ($request->has('contact_id')) ? $request->get('contact_id') : null;
+            $quote->currency_invoice = 'USD';
+            $quote->currency_compra = null;
+            $quote->currency_venta = null;
+            $quote->total_soles = 0;
+            $quote->save();
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Editar pre cotizaciones POST',
+                'time' => $end
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Nuevos equipos guardados con éxito.'], 200);
+
     }
 
     public function destroy($proforma_id)

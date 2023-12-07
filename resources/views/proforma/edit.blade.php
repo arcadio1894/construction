@@ -213,8 +213,8 @@
                                             <td data-uPEquipment>{{ round(($equipment->subtotal_percentage/1.18)/$equipment->quantity, 2) }}</td>
                                             <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
                                             <td>
-                                                <button data-percentage type="button" class="btn btn-sm btn-outline-danger" data-acEquipment="{{ $equipment->id }}" data-utility="{{$equipment->utility}}" data-rent="{{$equipment->rent}}" data-letter="{{$equipment->letter}}" ><i class="fas fa-"></i></button>
-                                                <a href="#" type="button" class="btn btn-sm btn-outline-danger" data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-trash-alt"></i></a>
+                                                <button data-percentage type="button" class="btn btn-sm btn-outline-primary" data-acEquipment="{{ $equipment->id }}" data-utility="{{$equipment->utility}}" data-rent="{{$equipment->rent}}" data-letter="{{$equipment->letter}}" ><i class="fas fa-percentage"></i></button>
+                                                <a href="#" type="button" class="btn btn-sm btn-outline-warning" data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-edit"></i></a>
                                                 <button type="button" class="btn btn-sm btn-outline-danger" data-acDelete data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
@@ -254,19 +254,19 @@
                         <table class="table">
                             <tr>
                                 <th style="width:50%">Total S/IGV: </th>
-                                <td id="subtotal">USD 0.00</td>
+                                <td id="subtotal">{{ $proforma->currency }} {{ round(($proforma->total_equipments/1.18), 2) }}</td>
                             </tr>
                             <tr>
                                 <th>Total C/IGV: </th>
-                                <td id="total">USD 0.00</td>
+                                <td id="total">{{ $proforma->currency }} {{ round($proforma->total_equipments, 2) }}</td>
                             </tr>
                             <tr>
                                 <th style="width:50%">Total+Utilidad S/IGV: </th>
-                                <td id="subtotal_utility">USD 0.00</td>
+                                <td id="subtotal_utility">{{ $proforma->currency }} {{ round(($proforma->total_proforma)/1.18, 2) }}</td>
                             </tr>
                             <tr>
                                 <th style="width:50%">Total+Utilidad C/IGV: </th>
-                                <td id="total_utility">USD 0.00</td>
+                                <td id="total_utility">{{ $proforma->currency }} {{ round($proforma->total_proforma, 2) }}</td>
                             </tr>
                         </table>
                     </div>
