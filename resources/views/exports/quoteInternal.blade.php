@@ -194,6 +194,7 @@
             {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
             <div>Teléfono: +51 959 332 205</div>
+            <div>Email: servicios@sermeind.com.pe</div>
             <div>Cotizado por: </div>
         </div>
     </div>
@@ -409,6 +410,7 @@
             {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
             <div>Teléfono: +51 959 332 205</div>
+            <div>Email: servicios@sermeind.com.pe</div>
             <div>Cotizado por: </div>
         </div>
     </div>

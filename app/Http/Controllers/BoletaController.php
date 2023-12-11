@@ -804,7 +804,7 @@ class BoletaController extends Controller
             ->where('worker_id', $worker->id)
             ->first();
 
-        if ( !empty($fifthCategory) )
+        if ( !empty($gratification) )
         {
             $amountRentaQuintaCat+=$gratification->amount;
         }
