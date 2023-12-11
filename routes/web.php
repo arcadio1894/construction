@@ -2407,6 +2407,16 @@ Route::middleware('auth')->group(function (){
         Route::post('update/proforma', 'ProformaController@update')
             ->name('proforma.update')
             /*->middleware('permission:create_quote')*/;
+        Route::get('add/data/default/equipment/proforma/{proforma_id}/{equipment_id}', 'ProformaController@addDataDefaultEquipmentProforma');
+        Route::post('destroy/equipment/proforma/{proforma_id}/{equipment_id}', 'ProformaController@destroyEquipmentProforma');
+        Route::post('/update/percentages/equipment/{id_equipment}/proforma/{id_proforma}', 'ProformaController@changePercentagesEquipment')
+            /*->middleware('permission:update_quote')*/;
+        Route::get('/editar/equipo/pre/cotizacion/{equipment_id}', 'ProformaController@editEquipmentProforma')
+            ->name('equipment.proforma.edit')
+            /*->middleware('permission:update_defaultEquipment')*/;
+        Route::post('update/equipment/proforma/{equipment_id}', 'ProformaController@updateEquipmentProforma')
+            ->name('equipment.proforma.update')
+            /*->middleware('permission:create_defaultEquipment')*/;
     });
 });
 

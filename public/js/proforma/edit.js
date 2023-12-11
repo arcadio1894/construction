@@ -15,31 +15,13 @@ let $itemsSaved = [];
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
+    $itemsSaved = JSON.parse($('#equipments').val());
+    $total = parseFloat($('#total_equipments').val());
+    $totalUtility = parseFloat($('#total_proforma').val());
+    console.log($itemsSaved);
 
     $formCreate = $('#formCreate');
     $("#btn-submit").on("click", storeQuote);
-
-    $selectCustomer = $('#customer_id');
-    $selectContact = $('#contact_id');
-
-    $selectCustomer.change(function () {
-        $selectContact.empty();
-        var customer =  $selectCustomer.val();
-        $.get( "/dashboard/get/contact/"+customer, function( data ) {
-            $selectContact.append($("<option>", {
-                value: '',
-                text: 'Seleccione contacto'
-            }));
-            for ( var i=0; i<data.length; i++ )
-            {
-                $selectContact.append($("<option>", {
-                    value: data[i].id,
-                    text: data[i].contact
-                }));
-            }
-        });
-
-    });
 
     $("#btn-addEquipment").on("click", addEquipment);
 
@@ -88,6 +70,12 @@ $(document).ready(function () {
 
     });
 
+    $(document).on('click', '[data-percentage]', changePercentages);
+
+    $('#btn-changePercentage').on('click', savePercentages);
+
+    $modalChangePercentages = $('#modalChangePercentages');
+
 });
 
 var $formCreate;
@@ -96,6 +84,7 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+var $modalChangePercentages;
 
 function getContacts() {
     var customer =  $('#customer_proforma_id').val();
@@ -121,26 +110,217 @@ function getContacts() {
     });
 }
 
-function deleteItem() {
-    let button = $(this);
-    let id_delete = button.attr('data-acEquipment');
-    let result = $itemsSaved.find( item => item.id == id_delete );
-    $total = $total - parseFloat(result.total);
-    $totalUtility = $totalUtility - parseFloat(result.total_utility);
+function savePercentages() {
+    var utility = $('#percentage_utility').val();
+    var rent = $('#percentage_rent').val();
+    var letter = $('#percentage_letter').val();
 
-    $('#subtotal').html('USD '+ $total.toFixed(2));
-    $('#total').html('USD '+($total*1.18).toFixed(2));
-    $('#subtotal_utility').html('USD '+ ($totalUtility).toFixed(2));
-    $('#total_utility').html('USD '+($totalUtility*1.18).toFixed(2));
+    var proforma = $('#proforma_percentage').val();
+    var equipment = $('#equipment_percentage').val();
 
-    $itemsSaved = $.grep($itemsSaved, function(e){
-        return e.id != id_delete;
+    $.ajax({
+        url: '/dashboard/update/percentages/equipment/'+equipment+'/proforma/'+proforma,
+        method: 'POST',
+        data: JSON.stringify({ utility: utility, rent:rent, letter: letter}),
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        processData:false,
+        contentType:'application/json; charset=utf-8',
+        success: function (data) {
+            console.log(data);
+            $modalChangePercentages.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                location.reload();
+            }, 2000 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+        },
     });
 
-    button.parent().parent().remove();
+
+}
+
+function changePercentages() {
+    var utility = $(this).data('utility');
+    var rent = $(this).data('rent');
+    var letter = $(this).data('letter');
+
+    var proforma = $("#proforma_id").val();
+    var equipment = $(this).data('acequipment');
+
+    $('#proforma_percentage').val(proforma);
+    $('#equipment_percentage').val(equipment);
+
+    $('#percentage_utility').val(utility);
+    $('#percentage_rent').val(rent);
+    $('#percentage_letter').val(letter);
+
+    $modalChangePercentages.modal('show');
+}
+
+function deleteItem() {
+    let button = $(this);
+    let equipment_id = button.attr('data-acequipment');
+    let proforma_id = $('#proforma_id').val();
+    let result = $itemsSaved.find( item => item.id == equipment_id );
+
+    $.confirm({
+        icon: 'far fa-trash',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        columnClass: 'small',
+        title: '¿Esta seguro de eliminar este equipo?',
+        content: '',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: "/dashboard/destroy/equipment/proforma/"+proforma_id+"/"+equipment_id,
+                        type: 'POST',
+                        dataType: 'json',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        success: function (json) {
+                            $.alert(json.message);
+
+                            $total = parseFloat(json.total_equipments);
+                            $totalUtility = parseFloat(json.total_proforma);
+
+                            $('#subtotal').html('USD '+ ($total/1.18).toFixed(2));
+                            $('#total').html('USD '+($total).toFixed(2));
+                            $('#subtotal_utility').html('USD '+ ($totalUtility/1.18).toFixed(2));
+                            $('#total_utility').html('USD '+($totalUtility).toFixed(2));
+
+                            $itemsSaved = $.grep($itemsSaved, function(e){
+                                return e.id != equipment_id;
+                            });
+
+                            button.parent().parent().remove();
+                        },
+                        error: function (data) {
+                            if( data.responseJSON.message && !data.responseJSON.errors )
+                            {
+                                toastr.error(data.responseJSON.message, 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+                            for ( var property in data.responseJSON.errors ) {
+                                toastr.error(data.responseJSON.errors[property], 'Error',
+                                    {
+                                        "closeButton": true,
+                                        "debug": false,
+                                        "newestOnTop": false,
+                                        "progressBar": true,
+                                        "positionClass": "toast-top-right",
+                                        "preventDuplicates": false,
+                                        "onclick": null,
+                                        "showDuration": "300",
+                                        "hideDuration": "1000",
+                                        "timeOut": "2000",
+                                        "extendedTimeOut": "1000",
+                                        "showEasing": "swing",
+                                        "hideEasing": "linear",
+                                        "showMethod": "fadeIn",
+                                        "hideMethod": "fadeOut"
+                                    });
+                            }
+
+                        },
+                    });
+                    //
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Eliminación cancelada.");
+
+                },
+            },
+        }
+    });
+
+
 }
 
 function saveEquipments() {
+    let proforma_id = $('#proforma_id').val();
     for ( let j=0; j<$itemsSelected.length; j++ )
     {
         if ( $itemsSaved.find(x => x.item == $itemsSelected[j].id ) )
@@ -172,7 +352,7 @@ function saveEquipments() {
         //$items.push({'item': $itemsSelected[i].id, 'percentage': $itemsSelected[i].percentage});
 
         // TODO: Hacer la llamada ajax para actualizar los equipos
-        $.get('/dashboard/get/data/default/equipment/'+$itemsSelected[i].id, function(data) {
+        $.get('/dashboard/add/data/default/equipment/proforma/'+proforma_id+'/'+$itemsSelected[i].id, function(data) {
             if ( data.change == true )
             {
                 toastr.warning('Han sido actualizados algunos precios de materiales y consumibles.', 'Precaución',
@@ -194,16 +374,16 @@ function saveEquipments() {
                         "hideMethod": "fadeOut"
                     });
             }
-            $total = $total + parseFloat(data.pEquipment);
-            $totalUtility = $totalUtility + parseFloat(data.tEquipment);
+            $total = parseFloat(data.total_equipments);
+            $totalUtility = parseFloat(data.total_proforma);
             console.log($total);
             console.log($totalUtility);
             $itemsSaved.push({'id':data.id, "total":data.pEquipment, "total_utility":data.tEquipment});
-            $('#subtotal').html('USD '+ $total.toFixed(2));
-            $('#total').html('USD '+($total*1.18).toFixed(2));
-            $('#subtotal_utility').html('USD '+ ($totalUtility).toFixed(2));
-            $('#total_utility').html('USD '+($totalUtility*1.18).toFixed(2));
-            renderDataEquipmentDefault(data.id, data.nEquipment, data.qEquipment, data.pEquipment, data.uEquipment, data.rlEquipment, data.uPEquipment, data.tEquipment);
+            $('#subtotal').html('USD '+ ($total/1.18).toFixed(2));
+            $('#total').html('USD '+($total).toFixed(2));
+            $('#subtotal_utility').html('USD '+ ($totalUtility/1.18).toFixed(2));
+            $('#total_utility').html('USD '+($totalUtility).toFixed(2));
+            renderDataEquipmentDefault(data.id, data.nEquipment, data.qEquipment, data.pEquipment, data.uEquipment, data.rlEquipment, data.uPEquipment, data.tEquipment, data.utility, data.rent, data.letter);
 
         }).fail(function(jqXHR, textStatus, errorThrown) {
             // Función de error, se ejecuta cuando la solicitud GET falla
@@ -258,9 +438,6 @@ function saveEquipments() {
                 });
             });
 
-        //renderTemplateMaterial($itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
-        //renderTemplateMaterial(equipment_name, $itemsSelected[i].material, $itemsSelected[i].code, $itemsSelected[i].location, $itemsSelected[i].state,  $itemsSelected[i].price, $itemsSelected[i].id, $itemsSelected[i].length,$itemsSelected[i].width);
-
     }
 
     $itemsSelected = [];
@@ -271,7 +448,7 @@ function saveEquipments() {
     $modalAddEquipment.modal('hide');
 }
 
-function renderDataEquipmentDefault(id, nEquipment, qEquipment, pEquipment, uEquipment, rlEquipment, uPEquipment, tEquipment) {
+function renderDataEquipmentDefault(id, nEquipment, qEquipment, pEquipment, uEquipment, rlEquipment, uPEquipment, tEquipment, utility, rent, letter) {
     var clone = activateTemplate('#template-summary');
     clone.querySelector("[data-nEquipment]").innerHTML = nEquipment;
     clone.querySelector("[data-qEquipment]").innerHTML = qEquipment;
@@ -280,9 +457,17 @@ function renderDataEquipmentDefault(id, nEquipment, qEquipment, pEquipment, uEqu
     clone.querySelector("[data-rlEquipment]").innerHTML = rlEquipment;
     clone.querySelector("[data-uPEquipment]").innerHTML = uPEquipment;
     clone.querySelector("[data-tEquipment]").innerHTML = tEquipment;
-    clone.querySelector("[data-acEquipment]").setAttribute('data-acEquipment', id);
-    /*clone.querySelector("[data-selected]").setAttribute('id', 'checkboxSuccess'+data.id);
-    clone.querySelector("[data-label]").setAttribute('for', 'checkboxSuccess'+data.id);*/
+    clone.querySelector("[data-percentage]").setAttribute('data-percentage', id);
+    clone.querySelector("[data-percentage]").setAttribute('data-acEquipment', id);
+    clone.querySelector("[data-percentage]").setAttribute('data-utility', utility);
+    clone.querySelector("[data-percentage]").setAttribute('data-rent', rent);
+    clone.querySelector("[data-percentage]").setAttribute('data-letter', letter);
+    clone.querySelector("[data-edit]").setAttribute('data-edit', id);
+    clone.querySelector("[data-edit]").setAttribute('data-acEquipment', id);
+    clone.querySelector("[data-edit]").setAttribute('href', document.location.origin+'/dashboard/editar/equipo/pre/cotizacion/'+id);
+    clone.querySelector("[data-acDelete]").setAttribute('data-acDelete', id);
+    clone.querySelector("[data-acDelete]").setAttribute('data-acEquipment', id);
+    clone.querySelector("[data-acDelete]").setAttribute('data-acEquipment', id);
     $("#body-summary").append(clone);
 }
 
@@ -1110,30 +1295,6 @@ function storeQuote() {
     event.preventDefault();
     $("#btn-submit").attr("disabled", true);
     console.log(imagesIncomplete());
-
-    if( $itemsSaved.length === 0 )
-    {
-        toastr.error('No se puede crear una cotización sin equipos.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        $("#btn-submit").attr("disabled", false);
-        return;
-    }
     // Obtener la URL
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($itemsSaved);
@@ -1168,7 +1329,7 @@ function storeQuote() {
                 });
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.reload();
+                //location.reload();
             }, 2000 )
         },
         error: function (data) {

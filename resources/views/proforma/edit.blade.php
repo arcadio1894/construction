@@ -78,6 +78,9 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <input type="hidden" id="equipments" value="{{ json_encode($equipments) }}">
+    <input type="hidden" id="total_equipments" value="{{ $proforma->total_equipments }}">
+    <input type="hidden" id="total_proforma" value="{{ $proforma->total_proforma }}">
 
     <form id="formCreate" class="form-horizontal" data-url="{{ route('proforma.update') }}" enctype="multipart/form-data">
         @csrf
@@ -99,7 +102,7 @@
                             <div class="col-md-12">
                                 <label for="descriptionQuote">Descripción general de cotización </label>
                                 <input type="text" id="descriptionQuote" onkeyup="mayus(this);" name="code_description" class="form-control form-control-sm" value="{{ $proforma->description_quote }}">
-                                <input type="hidden" name="proforma_id" value="{{ $proforma->id }}">
+                                <input type="hidden" name="proforma_id" id="proforma_id" value="{{ $proforma->id }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -207,14 +210,14 @@
                                         <tr>
                                             <td data-nEquipment>{{ $equipment->description }}</td>
                                             <td data-qEquipment>{{ $equipment->quantity }}</td>
-                                            <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
+                                            <td data-pEquipment>{{ round(($equipment->total_equipment/$equipment->quantity)/1.18, 2) }}</td>
                                             <td data-uEquipment>{{ $equipment->utility }}</td>
                                             <td data-rlEquipment>{{ $equipment->rent + $equipment->letter }}</td>
-                                            <td data-uPEquipment>{{ round(($equipment->subtotal_percentage/1.18)/$equipment->quantity, 2) }}</td>
-                                            <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
+                                            <td data-uPEquipment>{{ round(($equipment->total_equipment_utility/1.18)/$equipment->quantity, 2) }}</td>
+                                            <td data-tEquipment>{{ round($equipment->total_equipment_utility/1.18, 2) }}</td>
                                             <td>
                                                 <button data-percentage type="button" class="btn btn-sm btn-outline-primary" data-acEquipment="{{ $equipment->id }}" data-utility="{{$equipment->utility}}" data-rent="{{$equipment->rent}}" data-letter="{{$equipment->letter}}" ><i class="fas fa-percentage"></i></button>
-                                                <a href="#" type="button" class="btn btn-sm btn-outline-warning" data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-edit"></i></a>
+                                                <a href="{{ route('equipment.proforma.edit', $equipment->id) }}" type="button" data-edit class="btn btn-sm btn-outline-warning" data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-edit"></i></a>
                                                 <button type="button" class="btn btn-sm btn-outline-danger" data-acDelete data-acEquipment="{{ $equipment->id }}" ><i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
@@ -230,7 +233,9 @@
                                             <td data-uPEquipment></td>
                                             <td data-tEquipment></td>
                                             <td>
-                                                <button type="button" class="btn btn-sm btn-outline-danger" data-acDelete="" data-acEquipment="" ><i class="fas fa-trash-alt"></i></button>
+                                                <button data-percentage type="button" class="btn btn-sm btn-outline-primary" data-acEquipment="" data-utility="" data-rent="" data-letter="" ><i class="fas fa-percentage"></i></button>
+                                                <a href="#" type="button" data-edit class="btn btn-sm btn-outline-warning" data-acEquipment="" ><i class="fas fa-edit"></i></a>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" data-acDelete data-acEquipment="" ><i class="fas fa-trash-alt"></i></button>
                                             </td>
                                         </tr>
                                     </template>
@@ -392,6 +397,75 @@
         </div>
     </div>
 
+    <div id="modalChangePercentages" class="modal fade" tabindex="-1">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Cambiar los porcentages de ganancia</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="proforma_percentage" id="proforma_percentage">
+                    <input type="hidden" name="equipment_percentage" id="equipment_percentage">
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                <strong>Importante!</strong> Se recargará automaticamente la página para que hagan efecto los cambios.
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="col-sm-12 control-label" for="percentage_utility"> Utilidad </label>
+
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control form-control-sm" name="percentage_utility" id="percentage_utility" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="col-sm-12 control-label" for="percentage_letter"> Letra </label>
+
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control form-control-sm" name="percentage_letter" id="percentage_letter" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4" >
+                            <label class="col-sm-12 control-label" for="percentage_rent"> Renta </label>
+
+                            <div class="input-group input-group-sm">
+                                <input type="number" class="form-control form-control-sm" name="percentage_rent" id="percentage_rent" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                        ">
+                                <div class="input-group-append">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger" data-dismiss="modal">Cancelar</button>
+                    <button type="button" id="btn-changePercentage" class="btn btn-outline-primary">Guardar porcentajes</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -439,9 +513,9 @@
                 allowClear: true
             });
 
-            $('#date_quote').attr("value", moment().format('DD/MM/YYYY'));
+            //$('#date_quote').attr("value", moment().format('DD/MM/YYYY'));
 
-            $('#date_validate').attr("value", moment().add(5, 'days').format('DD/MM/YYYY'));
+            //$('#date_validate').attr("value", moment().add(5, 'days').format('DD/MM/YYYY'));
 
             $('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",

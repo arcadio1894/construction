@@ -63,17 +63,17 @@ class EquipmentProforma extends Model
 
     public function workforces()
     {
-        return $this->hasMany('App\EquipmentProformaWorkforce');
+        return $this->hasMany('App\EquipmentProformaWorkforces');
     }
 
     public function turnstiles()
     {
-        return $this->hasMany('App\EquipmentProformaTurnstile');
+        return $this->hasMany('App\EquipmentProformaTurnstiles');
     }
 
     public function workdays()
     {
-        return $this->hasMany('App\EquipmentProformaWorkday');
+        return $this->hasMany('App\EquipmentProformaWorkdays');
     }
 
     public function getTotalMaterialsAttribute()
@@ -81,7 +81,7 @@ class EquipmentProforma extends Model
         $total = 0;
         foreach ( $this->materials as $material )
         {
-            $total += $material->total;
+            $total += $material->total_price;
         }
 
         //return $total*$this->quantity;
@@ -93,7 +93,7 @@ class EquipmentProforma extends Model
         $total = 0;
         foreach ( $this->consumables as $consumable )
         {
-            $total += $consumable->total;
+            $total += $consumable->total_price;
         }
 
         //return $total*$this->quantity;
@@ -105,7 +105,7 @@ class EquipmentProforma extends Model
         $total = 0;
         foreach ( $this->workforces as $workforce )
         {
-            $total += $workforce->total;
+            $total += $workforce->total_price;
         }
 
         //return $total*$this->quantity;
@@ -117,7 +117,7 @@ class EquipmentProforma extends Model
         $total = 0;
         foreach ( $this->turnstiles as $turnstile )
         {
-            $total += $turnstile->total;
+            $total += $turnstile->total_price;
         }
 
         //return $total*$this->quantity;
@@ -129,10 +129,31 @@ class EquipmentProforma extends Model
         $total = 0;
         foreach ( $this->workdays as $workday )
         {
-            $total += $workday->total;
+            $total += $workday->total_price;
         }
 
         return $total;
+
+    }
+
+    public function getTotalEquipmentAttribute()
+    {
+        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+
+        return $total;
+
+    }
+
+    public function getTotalEquipmentUtilityAttribute()
+    {
+        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+
+        $total1 = $total * (($this->utility/100)+1);
+        $total2 = $total1 * (($this->letter/100)+1);
+        $total3 = $total2 * (($this->rent/100)+1);
+        $totalFinal =  $total3;
+
+        return $totalFinal;
 
     }
 }

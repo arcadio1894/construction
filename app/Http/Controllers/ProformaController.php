@@ -18,12 +18,15 @@ use App\EquipmentProformaWorkdays;
 use App\EquipmentProformaWorkforces;
 use App\Http\Requests\ProformaEditRequest;
 use App\Http\Requests\ProformaStoreRequest;
+use App\Http\Requests\UpdateEquipmentProformaRequest;
 use App\Material;
 use App\Notification;
 use App\NotificationUser;
 use App\PaymentDeadline;
 use App\Proforma;
+use App\UnitMeasure;
 use App\User;
+use App\Workforce;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -246,6 +249,414 @@ class ProformaController extends Controller
         ]);
     }
 
+    public function addDataDefaultEquipmentProforma($proforma_id, $equipment_id)
+    {
+        $proforma = Proforma::find($proforma_id);
+
+        $defaultEquipment = DefaultEquipment::find($equipment_id);
+
+        // TODO: Actualizar los precios
+        $flagChange = false;
+
+        foreach ( $defaultEquipment->materials as $equipment_material )
+        {
+            if ( $equipment_material->unit_price !== $equipment_material->material->unit_price )
+            {
+                $flagChange = true;
+                $equipment_material->unit_price = $equipment_material->material->unit_price;
+                $equipment_material->total_price = $equipment_material->material->unit_price * $equipment_material->quantity;
+                $equipment_material->save();
+            }
+        }
+
+        foreach ( $defaultEquipment->consumables as $equipment_consumable )
+        {
+            if ( $equipment_consumable->unit_price !== $equipment_consumable->material->unit_price )
+            {
+                $flagChange = true;
+                $equipment_consumable->unit_price = $equipment_consumable->material->unit_price;
+                $equipment_consumable->total_price = $equipment_consumable->material->unit_price * $equipment_consumable->quantity;
+                $equipment_consumable->save();
+            }
+        }
+
+        $totalQuote = $proforma->total_proforma;
+
+        $equipment = EquipmentProforma::create([
+            'proforma_id' => $proforma->id,
+            'default_equipment_id' => $defaultEquipment->id,
+            'description' =>($defaultEquipment->description == "" || $defaultEquipment->description == null) ? '':$defaultEquipment->description,
+            'detail' => ($defaultEquipment->details == "" || $defaultEquipment->details == null) ? '':$defaultEquipment->details,
+            'quantity' => 1,
+            'utility' => $defaultEquipment->utility,
+            'rent' => $defaultEquipment->rent,
+            'letter' => $defaultEquipment->letter,
+            'total' => $defaultEquipment->total*1.18
+        ]);
+
+        $totalMaterial = 0;
+
+        $totalConsumable = 0;
+
+        $totalWorkforces = 0;
+
+        $totalTornos = 0;
+
+        $totalDias = 0;
+
+        $materials = $defaultEquipment->materials;
+
+        $consumables = $defaultEquipment->consumables;
+
+        $workforces = $defaultEquipment->workforces;
+
+        $tornos = $defaultEquipment->turnstiles;
+
+        $dias = $defaultEquipment->workdays;
+
+        for ( $j=0; $j<sizeof($materials); $j++ )
+        {
+            $equipmentMaterial = EquipmentProformaMaterial::create([
+                'equipment_proforma_id' => $equipment->id,
+                'material_id' => $materials[$j]->material_id,
+                'quantity' => (float) $materials[$j]->quantity,
+                'unit_price' => (float) $materials[$j]->unit_price,
+                'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                'percentage' => (float) $materials[$j]->percentage,
+                'total_price' => (float) $materials[$j]->total_price,
+            ]);
+
+            $totalMaterial += $equipmentMaterial->total_price;
+        }
+
+        for ( $k=0; $k<sizeof($consumables); $k++ )
+        {
+            $equipmentConsumable = EquipmentProformaConsumable::create([
+                'equipment_proforma_id' => $equipment->id,
+                'material_id' => $consumables[$k]->material_id,
+                'quantity' => (float) $consumables[$k]->quantity,
+                'unit_price' => (float) $consumables[$k]->unit_price,
+                'total_price' => (float) $consumables[$k]->total_price,
+            ]);
+
+            $totalConsumable += $equipmentConsumable->total_price;
+        }
+
+        for ( $w=0; $w<sizeof($workforces); $w++ )
+        {
+            $equipmentWorkforce = EquipmentProformaWorkforces::create([
+                'equipment_proforma_id' => $equipment->id,
+                'description' => $workforces[$w]->description,
+                'unit_price' => (float) $workforces[$w]->unit_price,
+                'quantity' => (float) $workforces[$w]->quantity,
+                'total_price' => (float) $workforces[$w]->total_price,
+                'unit' => $workforces[$w]->unit,
+            ]);
+
+            $totalWorkforces += $equipmentWorkforce->total_price;
+        }
+
+        for ( $r=0; $r<sizeof($tornos); $r++ )
+        {
+            $equipmenttornos = EquipmentProformaTurnstiles::create([
+                'equipment_proforma_id' => $equipment->id,
+                'description' => $tornos[$r]->description,
+                'unit_price' => (float) $tornos[$r]->unit_price,
+                'quantity' => (float) $tornos[$r]->quantity,
+                'total_price' => (float) $tornos[$r]->total_price
+            ]);
+
+            $totalTornos += $equipmenttornos->total_price;
+        }
+
+        for ( $d=0; $d<sizeof($dias); $d++ )
+        {
+            $equipmentdias = EquipmentProformaWorkdays::create([
+                'equipment_proforma_id' => $equipment->id,
+                'description' => $dias[$d]->description,
+                'quantityPerson' => (float) $dias[$d]->quantityPerson,
+                'hoursPerPerson' => (float) $dias[$d]->hoursPerPerson,
+                'pricePerHour' => (float) $dias[$d]->pricePerHour,
+                'total_price' => (float) $dias[$d]->total_price
+            ]);
+
+            $totalDias += $equipmentdias->total_price;
+        }
+
+        $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) )+$totalDias;
+        $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+        $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+        $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+        $totalQuote += $totalEquipmentR;
+
+        $equipment->total = $totalEquipo;
+
+        $equipment->save();
+
+        $proforma->total = $totalQuote;
+
+        $proforma->save();
+
+        $proforma1 = Proforma::find($proforma_id);
+
+        return response()->json([
+            "change" => $flagChange,
+            "id" => $equipment->id,
+            "nEquipment" => $equipment->description,
+            "qEquipment" => 1,
+            "pEquipment" => round(($equipment->total/1)/1.18, 2),
+            "uEquipment" => $equipment->utility,
+            "rlEquipment" => round($equipment->rent + $equipment->letter, 2),
+            "uPEquipment" => round(($equipment->subtotal_percentage/1.18)/1, 2),
+            "tEquipment" => round($equipment->subtotal_percentage/1.18, 2),
+            "utility" => $equipment->utility,
+            "rent" => $equipment->rent,
+            "letter" => $equipment->letter,
+            "total_equipments" => $proforma1->total_equipments,
+            "total_proforma" => $proforma1->total_proforma
+        ]);
+    }
+
+    public function editEquipmentProforma($equipment_id)
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $equipment = EquipmentProforma::with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays'])
+            ->find($equipment_id);
+
+        $defaultConsumable = '(*)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+
+        $unitMeasures = UnitMeasure::all();
+
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $utility = $equipment->utility;
+        $rent = $equipment->rent;
+        $letter = $equipment->letter;
+
+        return view('proforma.editEquipment', compact('permissions', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment'));
+
+    }
+
+    public function updateEquipmentProforma(UpdateEquipmentProformaRequest $request, $equipment_id)
+    {
+        $begin = microtime(true);
+
+        $validated = $request->validated();
+
+        DB::beginTransaction();
+        try {
+
+            $equipment = EquipmentProforma::find($equipment_id);
+
+            $equipments = json_decode($request->get('equipments'));
+
+            for ( $i=0; $i<sizeof($equipments); $i++ )
+            {
+                $equipment->description = $equipments[$i]->description;
+                $equipment->detail = ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail;
+                $equipment->utility = $equipments[$i]->utility;
+                $equipment->letter = $equipments[$i]->letter;
+                $equipment->rent = $equipments[$i]->rent;
+
+                $materials = $equipments[$i]->materials;
+
+                $consumables = $equipments[$i]->consumables;
+
+                $workforces = $equipments[$i]->workforces;
+
+                $tornos = $equipments[$i]->tornos;
+
+                $dias = $equipments[$i]->dias;
+
+                // TODO: Eliminamos los datos anteriores
+                foreach( $equipment->materials as $material ) {
+                    //$totalDeleted = $totalDeleted + (float) $material->total;
+                    $material->delete();
+                }
+                foreach( $equipment->consumables as $consumable ) {
+                    //$totalDeleted = $totalDeleted + (float) $consumable->total;
+                    $consumable->delete();
+                }
+                foreach( $equipment->workforces as $workforce ) {
+                    //$totalDeleted = $totalDeleted + (float) $workforce->total;
+                    $workforce->delete();
+                }
+                foreach( $equipment->turnstiles as $turnstile ) {
+                    //$totalDeleted = $totalDeleted + (float) $turnstile->total;
+                    $turnstile->delete();
+                }
+                foreach( $equipment->workdays as $workday ) {
+                    //$totalDeleted = $totalDeleted + (float) $workday->total;
+                    $workday->delete();
+                }
+
+                for ( $j=0; $j<sizeof($materials); $j++ )
+                {
+                    $equipmentMaterial = EquipmentProformaMaterial::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'material_id' => $materials[$j]->material->id,
+                        'quantity' => (float) $materials[$j]->quantity,
+                        'length' => (float) ($materials[$j]->length == '') ? 0: $materials[$j]->length,
+                        'width' => (float) ($materials[$j]->width == '') ? 0: $materials[$j]->width,
+                        'percentage' => (float) $materials[$j]->quantity,
+                        'unit_price' => (float) $materials[$j]->material->unit_price,
+                        'total_price' => (float) $materials[$j]->quantity*(float) $materials[$j]->material->unit_price,
+                    ]);
+
+                }
+
+                for ( $k=0; $k<sizeof($consumables); $k++ )
+                {
+                    $material = Material::find($consumables[$k]->id);
+
+                    $equipmentConsumable = EquipmentProformaConsumable::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'material_id' => $consumables[$k]->id,
+                        'quantity' => (float) $consumables[$k]->quantity,
+                        'unit_price' => (float) $consumables[$k]->price,
+                        'total_price' => (float) $consumables[$k]->total,
+                    ]);
+
+                }
+
+                for ( $w=0; $w<sizeof($workforces); $w++ )
+                {
+                    $equipmentWorkforce = EquipmentProformaWorkforces::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'description' => $workforces[$w]->description,
+                        'quantity' => (float) $workforces[$w]->quantity,
+                        'unit_price' => (float) $workforces[$w]->price,
+                        'total_price' => (float) $workforces[$w]->total,
+                        'unit' => $workforces[$w]->unit,
+                    ]);
+                }
+
+                for ( $r=0; $r<sizeof($tornos); $r++ )
+                {
+                    $equipmenttornos = EquipmentProformaTurnstiles::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'description' => $tornos[$r]->description,
+                        'quantity' => (float) $tornos[$r]->quantity,
+                        'unit_price' => (float) $tornos[$r]->price,
+                        'total_price' => (float) $tornos[$r]->total
+                    ]);
+
+                }
+
+                for ( $d=0; $d<sizeof($dias); $d++ )
+                {
+                    $equipmentdias = EquipmentProformaWorkdays::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'description' => $dias[$d]->description,
+                        'quantityPerson' => (float) $dias[$d]->quantity,
+                        'hoursPerPerson' => (float) $dias[$d]->hours,
+                        'pricePerHour' => (float) $dias[$d]->price,
+                        'total_price' => (float) $dias[$d]->total
+                    ]);
+                }
+
+                $equipment->save();
+            }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Guardar equipo por defecto.',
+                'time' => $end
+            ]);
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Equipo de pre cotización guardado con éxito.'], 200);
+
+    }
+
+    public function destroyEquipmentProforma($proforma_id, $equipment_id)
+    {
+        $proforma = Proforma::find($proforma_id);
+
+        DB::beginTransaction();
+        try {
+            $equipment_proforma = EquipmentProforma::where('id', $equipment_id)
+                ->where('proforma_id',$proforma->id)->first();
+
+            foreach( $equipment_proforma->materials as $material ) {
+                $material->delete();
+            }
+            foreach( $equipment_proforma->consumables as $consumable ) {
+                $consumable->delete();
+            }
+            foreach( $equipment_proforma->workforces as $workforce ) {
+                $workforce->delete();
+            }
+            foreach( $equipment_proforma->turnstiles as $turnstile ) {
+                $turnstile->delete();
+            }
+            foreach( $equipment_proforma->workdays as $workday ) {
+                $workday->delete();
+            }
+
+            $totalDeleted = $equipment_proforma->total;
+
+            $totalEquipmentU = $totalDeleted*(($equipment_proforma->utility/100)+1);
+            $totalEquipmentL = $totalEquipmentU*(($equipment_proforma->letter/100)+1);
+            $totalEquipmentR = $totalEquipmentL*(($equipment_proforma->rent/100)+1);
+
+            $proforma->total = $proforma->total - $totalEquipmentR;
+
+            $proforma->currency = 'USD';
+            $proforma->currency_compra = null;
+            $proforma->currency_venta = null;
+            $proforma->total_soles = 0;
+            $proforma->save();
+
+            $equipment_proforma->delete();
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json([
+            'message' => 'Equipo eliminada con éxito.',
+            "total_equipments" => $proforma->total_equipments,
+            "total_proforma" => $proforma->total_proforma
+        ], 200);
+
+    }
+
+    public function changePercentagesEquipment(Request $request, $id_equipment, $id_proforma)
+    {
+        DB::beginTransaction();
+        try {
+            $equipment = EquipmentProforma::find($id_equipment);
+            $equipment->utility = $request->input('utility');
+            $equipment->rent = $request->input('rent');
+            $equipment->letter = $request->input('letter');
+            $equipment->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Porcentages actualizados'], 200);
+
+    }
+
     public function store(ProformaStoreRequest $request)
     {
         $begin = microtime(true);
@@ -297,7 +708,7 @@ class ProformaController extends Controller
                     'proforma_id' => $proforma->id,
                     'default_equipment_id' => $defaultEquipment->id,
                     'description' =>($defaultEquipment->description == "" || $defaultEquipment->description == null) ? '':$defaultEquipment->description,
-                    'detail' => ($defaultEquipment->detail == "" || $defaultEquipment->detail == null) ? '':$defaultEquipment->detail,
+                    'detail' => ($defaultEquipment->details == "" || $defaultEquipment->details == null) ? '':$defaultEquipment->details,
                     'quantity' => 1,
                     'utility' => $defaultEquipment->utility,
                     'rent' => $defaultEquipment->rent,
@@ -328,7 +739,7 @@ class ProformaController extends Controller
                 for ( $j=0; $j<sizeof($materials); $j++ )
                 {
                     $equipmentMaterial = EquipmentProformaMaterial::create([
-                        'equipment_id' => $equipment->id,
+                        'equipment_proforma_id' => $equipment->id,
                         'material_id' => $materials[$j]->material_id,
                         'quantity' => (float) $materials[$j]->quantity,
                         'unit_price' => (float) $materials[$j]->unit_price,
@@ -344,7 +755,7 @@ class ProformaController extends Controller
                 for ( $k=0; $k<sizeof($consumables); $k++ )
                 {
                     $equipmentConsumable = EquipmentProformaConsumable::create([
-                        'equipment_id' => $equipment->id,
+                        'equipment_proforma_id' => $equipment->id,
                         'material_id' => $consumables[$k]->material_id,
                         'quantity' => (float) $consumables[$k]->quantity,
                         'unit_price' => (float) $consumables[$k]->unit_price,
@@ -357,7 +768,7 @@ class ProformaController extends Controller
                 for ( $w=0; $w<sizeof($workforces); $w++ )
                 {
                     $equipmentWorkforce = EquipmentProformaWorkforces::create([
-                        'equipment_id' => $equipment->id,
+                        'equipment_proforma_id' => $equipment->id,
                         'description' => $workforces[$w]->description,
                         'unit_price' => (float) $workforces[$w]->unit_price,
                         'quantity' => (float) $workforces[$w]->quantity,
@@ -371,7 +782,7 @@ class ProformaController extends Controller
                 for ( $r=0; $r<sizeof($tornos); $r++ )
                 {
                     $equipmenttornos = EquipmentProformaTurnstiles::create([
-                        'equipment_id' => $equipment->id,
+                        'equipment_proforma_id' => $equipment->id,
                         'description' => $tornos[$r]->description,
                         'unit_price' => (float) $tornos[$r]->unit_price,
                         'quantity' => (float) $tornos[$r]->quantity,
@@ -384,7 +795,7 @@ class ProformaController extends Controller
                 for ( $d=0; $d<sizeof($dias); $d++ )
                 {
                     $equipmentdias = EquipmentProformaWorkdays::create([
-                        'equipment_id' => $equipment->id,
+                        'equipment_proforma_id' => $equipment->id,
                         'description' => $dias[$d]->description,
                         'quantityPerson' => (float) $dias[$d]->quantityPerson,
                         'hoursPerPerson' => (float) $dias[$d]->hoursPerPerson,
@@ -484,17 +895,26 @@ class ProformaController extends Controller
             ->with('deadline')
             ->with(['equipments'])->first();
         //dump($quote);
+        $equipments = [];
+
+        if ($proforma) {
+
+            foreach ($proforma->equipments as $equipment) {
+                array_push($equipments, ['id' => $equipment->default_equipment_id]);
+            }
+        }
 
         /*Audit::create([
             'user_id' => Auth::user()->id,
             'action' => 'Ver cotizacion VISTA',
             'time' => $end
         ]);*/
-        return view('proforma.edit', compact('proforma', 'permissions', 'customers', 'paymentDeadlines', 'categories'));
+        return view('proforma.edit', compact('proforma', 'permissions', 'customers', 'paymentDeadlines', 'categories', 'equipments'));
     }
 
     public function update(ProformaEditRequest $request)
     {
+        //dd($request);
         $begin = microtime(true);
         $validated = $request->validated();
 
@@ -509,7 +929,7 @@ class ProformaController extends Controller
             $quote->delivery_time = ($request->has('delivery_time')) ? $request->get('delivery_time') : '';
             $quote->customer_id = ($request->has('customer_id')) ? $request->get('customer_id') : null;
             $quote->contact_id = ($request->has('contact_id')) ? $request->get('contact_id') : null;
-            $quote->currency_invoice = 'USD';
+            $quote->currency = 'USD';
             $quote->currency_compra = null;
             $quote->currency_venta = null;
             $quote->total_soles = 0;
@@ -528,7 +948,7 @@ class ProformaController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Nuevos equipos guardados con éxito.'], 200);
+        return response()->json(['message' => 'Pre cotización guardada con éxito.'], 200);
 
     }
 

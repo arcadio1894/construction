@@ -38,7 +38,7 @@ class Proforma extends Model
         $equipos = EquipmentProforma::where('proforma_id', $this->id)->get();
         foreach ( $equipos as $equipment )
         {
-            $totalFinal2 = $totalFinal2 + $equipment->total;
+            $totalFinal2 = $totalFinal2 + $equipment->total_equipment;
         }
 
         return $totalFinal2;
@@ -46,7 +46,14 @@ class Proforma extends Model
 
     public function getTotalProformaAttribute()
     {
-        $totalFinal = $this->total;
+        $equipments = $this->equipments;
+
+        $totalFinal = 0;
+
+        foreach ( $equipments as $equipment )
+        {
+            $totalFinal+=$equipment->total_equipment_utility;
+        }
 
         return $totalFinal;
     }
