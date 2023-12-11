@@ -257,7 +257,7 @@ class EntryController extends Controller
                             $precio1 = round((float)$items[$i]->price,2) / (float) $entry->currency_compra;
                             $price1 = ($detail_entry->material->price > $precio1) ? $detail_entry->material->price : $precio1;
                             $materialS = Material::find($detail_entry->material_id);
-                            if ( $materialS->price < $price1 )
+                            if ( $materialS->unit_price < $price1 )
                             {
                                 $materialS->unit_price = $price1;
                                 $materialS->save();
