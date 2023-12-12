@@ -1043,7 +1043,7 @@ class ProformaController extends Controller
                 'contact_id' => ($proforma->contact_id != null) ? $proforma->contact_id : null,
                 'payment_deadline_id' => ($proforma->payment_deadline_id != null) ? $proforma->payment_deadline_id : null,
                 'state' => 'created',
-
+                'proforma_id' => $proforma->id
             ]);
 
             $codeQuote = '';
