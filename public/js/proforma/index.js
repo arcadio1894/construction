@@ -26,6 +26,10 @@ $(document).ready(function () {
 
 });
 
+function mayus(e) {
+    e.value = e.value.toUpperCase();
+}
+
 function confirmProforma() {
     var button = $(this);
     var id = button.data('confirm');
@@ -201,26 +205,31 @@ function deleteProforma() {
 }
 
 function showDataSeach() {
-    getDataDefaultEquipments(1)
+    getDataProformas(1)
 }
 
 function showData() {
+    //event.preventDefault();
     var numberPage = $(this).attr('data-item');
     console.log(numberPage);
-    getDataDefaultEquipments(numberPage)
+    getDataProformas(numberPage)
 }
 
 function getDataProformas($numberPage) {
-    var categoryEquipmentid = $('#inputCategoryEquipmentid').val();
-    var largeDefaultEquipment = $('#inputLarge').val(); 
-    var widthDefaultEquipment = $('#inputWidth').val(); 
-    var highDefaultEquipment = $('#inputHigh').val();
+    var description = $('#description').val();
+    var code = $('#code').val();
+    var deadline = $('#deadline').val();
+    var customer = $('#customer').val();
+    var startDate = $('#start').val();
+    var endDate = $('#end').val();
 
     $.get('/dashboard/get/data/proformas/'+$numberPage, {
-        category_Equipment_id:categoryEquipmentid,
-        large_Default_Equipment: largeDefaultEquipment,
-        width_Default_Equipment: widthDefaultEquipment,
-        high_Default_Equipment: highDefaultEquipment
+        description:description,
+        code: code,
+        deadline: deadline,
+        customer: customer,
+        startDate: startDate,
+        endDate: endDate
     }, function(data) {
         if ( data.data.length == 0 )
         {
@@ -283,7 +292,6 @@ function getDataProformas($numberPage) {
             });
         });
 }
-
 
 function renderDataProformaEmpty(data) {
     var dataAccounting = data.data;
@@ -378,17 +386,52 @@ function renderDataTable(data) {
     clone.querySelector("[data-created_at]").innerHTML = data.created_at;
     clone.querySelector("[data-creator]").innerHTML = data.creator;
 
-    clone.querySelector("[data-show]").setAttribute('href', location.origin+'/dashboard/ver/pre/cotizacion/'+data.id);
+    if ( $.inArray('show_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-show]").setAttribute('href', location.origin + '/dashboard/ver/pre/cotizacion/' + data.id);
+    } else {
+        let element = clone.querySelector("[data-show]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
-    clone.querySelector("[data-print]").setAttribute('href', document.location.origin + '/dashboard/imprimir/proforma/cliente/' + data.id);
+    if ( $.inArray('print_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-print]").setAttribute('href', document.location.origin + '/dashboard/imprimir/proforma/cliente/' + data.id);
+    } else {
+        let element = clone.querySelector("[data-print]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
-    clone.querySelector("[data-confirm]").setAttribute('data-confirm', data.id);
-    clone.querySelector("[data-confirm]").setAttribute('data-description', data.description);
+    if ( $.inArray('confirm_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-confirm]").setAttribute('data-confirm', data.id);
+        clone.querySelector("[data-confirm]").setAttribute('data-description', data.description);
+    } else {
+        let element = clone.querySelector("[data-confirm]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
-    clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
-    clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
+    if ( $.inArray('destroy_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
+        clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
+    } else {
+        let element = clone.querySelector("[data-delete]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
-    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/pre/cotizacion/'+data.id);
+    if ( $.inArray('update_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-edit]").setAttribute('href', location.origin + '/dashboard/editar/pre/cotizacion/' + data.id);
+    } else {
+        let element = clone.querySelector("[data-edit]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
     if ( data.estado == 'destroy' )
     {

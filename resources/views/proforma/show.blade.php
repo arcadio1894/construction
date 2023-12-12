@@ -186,11 +186,11 @@
                                         <tr>
                                             <td data-nEquipment>{{ $equipment->description }}</td>
                                             <td data-qEquipment>{{ $equipment->quantity }}</td>
-                                            <td data-pEquipment>{{ round(($equipment->total/$equipment->quantity)/1.18, 2) }}</td>
+                                            <td data-pEquipment>{{ round(($equipment->total_equipment/$equipment->quantity)/1.18, 2) }}</td>
                                             <td data-uEquipment>{{ $equipment->utility }}</td>
                                             <td data-rlEquipment>{{ $equipment->rent + $equipment->letter }}</td>
-                                            <td data-uPEquipment>{{ round(($equipment->subtotal_percentage/1.18)/$equipment->quantity, 2) }}</td>
-                                            <td data-tEquipment>{{ round($equipment->subtotal_percentage/1.18, 2) }}</td>
+                                            <td data-uPEquipment>{{ round(($equipment->total_equipment_utility/1.18)/$equipment->quantity, 2) }}</td>
+                                            <td data-tEquipment>{{ round($equipment->total_equipment_utility/1.18, 2) }}</td>
                                         </tr>
                                     @endforeach
                                     </tbody>

@@ -37,7 +37,8 @@ class Quote extends Model
         'vb_finances',
         'date_vb_finances',
         'vb_operations',
-        'date_vb_operations'
+        'date_vb_operations',
+        'proforma_id'
     ];
 
     public function getTotalEquipmentsAttribute()

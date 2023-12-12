@@ -816,16 +816,16 @@ function saveEquipment() {
                     totalEquipmentR = totalEquipmentL*((equipmentDeleted.rent/100)+1);
                     totalEquipmentUtility = totalEquipmentR.toFixed(2);
 
-                    $total = parseFloat($total) - parseFloat(equipmentDeleted.total);
-                    $totalUtility = parseFloat($totalUtility) - parseFloat(totalEquipmentUtility);
+                    //$total = parseFloat($total) - parseFloat(equipmentDeleted.total);
+                    //$totalUtility = parseFloat($totalUtility) - parseFloat(totalEquipmentUtility);
 
                     // $('#subtotal').html('USD '+($total/1.18).toFixed(2));
                     // $('#total').html('USD '+ $total.toFixed(2));
 
-                    $('#subtotal').html('USD '+ ($total/1.18).toFixed(2));
+                    /*$('#subtotal').html('USD '+ ($total/1.18).toFixed(2));
                     $('#total').html('USD '+$total.toFixed(2));
                     $('#subtotal_utility').html('USD '+ ($totalUtility/1.18).toFixed(2));
-                    $('#total_utility').html('USD '+$totalUtility.toFixed(2));
+                    $('#total_utility').html('USD '+$totalUtility.toFixed(2));*/
                     //calculateMargen2($('#utility').val());
                     //calculateLetter2($('#letter').val());
                     //calculateRent2($('#taxes').val());
@@ -1032,13 +1032,14 @@ function saveEquipment() {
                         totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
                     }
                     totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
+                    console.log("totalEquipment "+totalEquipment);
                     totalEquipmentU = totalEquipment*((utility/100)+1);
                     totalEquipmentL = totalEquipmentU*((letter/100)+1);
                     totalEquipmentR = totalEquipmentL*((rent/100)+1);
                     totalEquipmentUtility = totalEquipmentR.toFixed(2);
-
-                    $total = parseFloat($total) + parseFloat(totalEquipment);
-                    $totalUtility = parseFloat($totalUtility) + parseFloat(totalEquipmentUtility);
+                    console.log("totalEquipmentUtility "+totalEquipmentUtility);
+                    $total = parseFloat(totalEquipment);
+                    $totalUtility = parseFloat(totalEquipmentUtility);
 
                     $('#subtotal').html('USD '+ ($total/1.18).toFixed(2));
                     $('#total').html('USD '+$total.toFixed(2));

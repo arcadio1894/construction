@@ -10,12 +10,18 @@ use App\DefaultEquipmentConsumable;
 use App\DefaultEquipmentMaterial;
 use App\DefaultEquipmentTurnstile;
 use App\DefaultEquipmentWorkForce;
+use App\Equipment;
+use App\EquipmentConsumable;
+use App\EquipmentMaterial;
 use App\EquipmentProforma;
 use App\EquipmentProformaConsumable;
 use App\EquipmentProformaMaterial;
 use App\EquipmentProformaTurnstiles;
 use App\EquipmentProformaWorkdays;
 use App\EquipmentProformaWorkforces;
+use App\EquipmentTurnstile;
+use App\EquipmentWorkday;
+use App\EquipmentWorkforce;
 use App\Http\Requests\ProformaEditRequest;
 use App\Http\Requests\ProformaStoreRequest;
 use App\Http\Requests\UpdateEquipmentProformaRequest;
@@ -24,6 +30,8 @@ use App\Notification;
 use App\NotificationUser;
 use App\PaymentDeadline;
 use App\Proforma;
+use App\Quote;
+use App\QuoteUser;
 use App\UnitMeasure;
 use App\User;
 use App\Workforce;
@@ -50,30 +58,48 @@ class ProformaController extends Controller
     public function getDataProformas(Request $request, $pageNumber = 1)
     {
         $perPage = 10;
-        /*$categoryEquipmentid = $request->input('category_Equipment_id');
-        $largeDefaultEquipment = $request->input('large_Default_Equipment');
-        $widthDefaultEquipment = $request->input('width_Default_Equipment');
-        $highDefaultEquipment = $request->input('high_Default_Equipment');*/
-        $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(4);
-        $query = Proforma::where('created_at', '>=', $date4MonthAgo)
-            ->orderBy('created_at', 'DESC');
+        $description = $request->input('description');
+        $code = $request->input('code');
+        $deadline = $request->input('deadline');
+        $customer = $request->input('customer');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $dateCurrent = Carbon::now('America/Lima');
+            $date4MonthAgo = $dateCurrent->subMonths(4);
+            $query = Proforma::where('created_at', '>=', $date4MonthAgo)
+                ->orderBy('created_at', 'DESC');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = Proforma::whereDate('date_quote', '>=', $fechaInicio)
+                ->whereDate('date_quote', '<=', $fechaFinal)
+                ->orderBy('created_at', 'DESC');
+        }
 
         // Aplicar filtros si se proporcionan
-        /*if ($largeDefaultEquipment) {
-            $query->where('large', $largeDefaultEquipment);
+        if ($description) {
+            $query->where('description_quote', 'LIKE', '%'.$description.'%');
 
         }
 
-        if ($widthDefaultEquipment) {
-            $query->where('width', $widthDefaultEquipment);
+        if ($code) {
+            $query->where('code', 'LIKE', '%'.$code.'%');
 
         }
 
-        if ($highDefaultEquipment) {
-            $query->where('high', $highDefaultEquipment);
+        if ($deadline) {
+            $query->where('payment_deadline_id', $deadline);
 
-        }*/
+        }
+
+        if ($customer) {
+            $query->where('customer_id', $customer);
+
+        }
 
         $totalFilteredRecords = $query->count();
         $totalPages = ceil($totalFilteredRecords / $perPage);
@@ -459,6 +485,7 @@ class ProformaController extends Controller
             {
                 $equipment->description = $equipments[$i]->description;
                 $equipment->detail = ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail;
+                $equipment->quantity = $equipments[$i]->quantity;
                 $equipment->utility = $equipments[$i]->utility;
                 $equipment->letter = $equipments[$i]->letter;
                 $equipment->rent = $equipments[$i]->rent;
@@ -567,7 +594,7 @@ class ProformaController extends Controller
 
             Audit::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Guardar equipo por defecto.',
+                'action' => 'Guardar equipo proforma.',
                 'time' => $end
             ]);
 
@@ -1001,6 +1028,196 @@ class ProformaController extends Controller
             $proforma->user_vb_proforma= Auth::id();
             $proforma->state = 'confirmed';
             $proforma->save();
+
+            $maxCode = Quote::max('id');
+            $maxId = $maxCode + 1;
+            $length = 5;
+
+            $quote = Quote::create([
+                'code' => '',
+                'description_quote' => $proforma->description_quote,
+                'date_quote' => ($proforma->date_quote != null) ? $proforma->date_quote : Carbon::now(),
+                'date_validate' => ($proforma->date_validate != null) ? $proforma->date_validate : Carbon::now()->addDays(5),
+                'delivery_time' => $proforma->delivery_time,
+                'customer_id' => ($proforma->customer_id != null) ? $proforma->customer_id : null,
+                'contact_id' => ($proforma->contact_id != null) ? $proforma->contact_id : null,
+                'payment_deadline_id' => ($proforma->payment_deadline_id != null) ? $proforma->payment_deadline_id : null,
+                'state' => 'created',
+
+            ]);
+
+            $codeQuote = '';
+            if ( $maxId < $quote->id ){
+                $codeQuote = 'COT-'.str_pad($quote->id,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            } else {
+                $codeQuote = 'COT-'.str_pad($maxId,$length,"0", STR_PAD_LEFT);
+                $quote->code = $codeQuote;
+                $quote->save();
+            }
+
+            QuoteUser::create([
+                'quote_id' => $quote->id,
+                'user_id' => Auth::user()->id,
+            ]);
+
+            $equipments = $proforma->equipments;
+
+            $totalQuote = 0;
+
+            foreach ( $equipments as $equipo )
+            {
+                $equipment = Equipment::create([
+                    'quote_id' => $quote->id,
+                    'description' =>($equipo->description == "" || $equipo->description == null) ? '':$equipo->description,
+                    'detail' => ($equipo->detail == "" || $equipo->detail == null) ? '':$equipo->detail,
+                    'quantity' => $equipo->quantity,
+                    'utility' => $equipo->utility,
+                    'rent' => $equipo->rent,
+                    'letter' => $equipo->letter,
+                    'total' => $equipo->total_equipment
+                ]);
+
+                $totalMaterial = 0;
+
+                $totalConsumable = 0;
+
+                $totalWorkforces = 0;
+
+                $totalTornos = 0;
+
+                $totalDias = 0;
+
+                $materials = $equipo->materials;
+
+                $consumables = $equipo->consumables;
+
+                $workforces = $equipo->workforces;
+
+                $tornos = $equipo->turnstiles;
+
+                $dias = $equipo->workdays;
+
+                foreach ( $materials as $material)
+                {
+                    $equipmentMaterial = EquipmentMaterial::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $material->material_id,
+                        'quantity' => (float) $material->quantity,
+                        'price' => (float) $material->unit_price,
+                        'length' => (float) ($material->length == '') ? 0: $material->length,
+                        'width' => (float) ($material->width == '') ? 0: $material->width,
+                        'percentage' => (float) $material->percentage,
+                        'state' => ($material->quantity > $material->material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ($material->quantity > $material->material->stock_current) ? 'Agotado':'Completo',
+                        'total' => (float) $material->total_price,
+                    ]);
+
+                    $totalMaterial += $equipmentMaterial->total;
+                }
+
+                foreach ( $consumables as $consumable )
+                {
+                    $material = Material::find($consumable->material_id);
+
+                    $equipmentConsumable = EquipmentConsumable::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $consumable->material_id,
+                        'quantity' => (float) $consumable->quantity,
+                        'price' => (float) $consumable->unit_price,
+                        'total' => (float) $consumable->total_price,
+                        'state' => ((float) $consumable->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
+                        'availability' => ((float) $consumable->quantity > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    $totalConsumable += $equipmentConsumable->total;
+                }
+
+                foreach ( $workforces as $workforce )
+                {
+                    $equipmentWorkforce = EquipmentWorkforce::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $workforce->description,
+                        'price' => (float) $workforce->unit_price,
+                        'quantity' => (float) $workforce->quantity,
+                        'total' => (float) $workforce->total_price,
+                        'unit' => $workforce->unit,
+                    ]);
+
+                    $totalWorkforces += $equipmentWorkforce->total;
+                }
+
+                foreach ( $tornos as $torno )
+                {
+                    $equipmenttornos = EquipmentTurnstile::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $torno->description,
+                        'price' => (float) $torno->unit_price,
+                        'quantity' => (float) $torno->quantity,
+                        'total' => (float) $torno->total_price
+                    ]);
+
+                    $totalTornos += $equipmenttornos->total;
+                }
+
+                foreach ( $dias as $dia )
+                {
+                    $equipmentdias = EquipmentWorkday::create([
+                        'equipment_id' => $equipment->id,
+                        'description' => $dia->description,
+                        'quantityPerson' => (float) $dia->quantityPerson,
+                        'hoursPerPerson' => (float) $dia->hoursPerPerson,
+                        'pricePerHour' => (float) $dia->pricePerHour,
+                        'total' => (float) $dia->total_price
+                    ]);
+
+                    $totalDias += $equipmentdias->total;
+                }
+
+                $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity)+$totalDias;
+                $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
+                $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
+                $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
+
+                $totalQuote += $totalEquipmentR;
+
+                $equipment->total = $totalEquipo;
+
+                $equipment->save();
+            }
+
+            $quote->total = $totalQuote;
+
+            $quote->save();
+
+            // Crear notificacion
+            $notification = Notification::create([
+                'content' => $quote->code.' creada por '.Auth::user()->name,
+                'reason_for_creation' => 'create_quote',
+                'user_id' => Auth::user()->id,
+                'url_go' => route('quote.edit', $quote->id)
+            ]);
+
+            // Roles adecuados para recibir esta notificación admin, logistica
+            $users = User::role(['admin', 'principal' , 'logistic'])->get();
+            foreach ( $users as $user )
+            {
+                if ( $user->id != Auth::user()->id )
+                {
+                    foreach ( $user->roles as $role )
+                    {
+                        NotificationUser::create([
+                            'notification_id' => $notification->id,
+                            'role_id' => $role->id,
+                            'user_id' => $user->id,
+                            'read' => false,
+                            'date_read' => null,
+                            'date_delete' => null
+                        ]);
+                    }
+                }
+            }
 
             DB::commit();
         } catch ( \Throwable $e ) {

@@ -2381,42 +2381,42 @@ Route::middleware('auth')->group(function (){
         // TODO: Rutas de Pre Cotizaciones
         Route::get('/pre/cotizaciones/', 'ProformaController@index')
             ->name('proforma.index')
-            /*->middleware('permission:list_defaultEquipment')*/;
+            ->middleware('permission:list_proforma');
         Route::get('/get/data/proformas/{numberPage}', 'ProformaController@getDataProformas');
         Route::get('/crear/pre/cotizacion/', 'ProformaController@create')
             ->name('proforma.create')
-            /*->middleware('permission:list_defaultEquipment')*/;
+            ->middleware('permission:create_proforma');
         Route::get('get/data/equipments/proforma/', 'ProformaController@getDataEquipments');
         Route::get('get/data/default/equipment/{equipment_id}', 'ProformaController@getDataEquipmentDefault');
         Route::post('store/proforma', 'ProformaController@store')
             ->name('proforma.store')
-            /*->middleware('permission:create_quote')*/;
+            ->middleware('permission:create_proforma');
         Route::post('/destroy/proforma/{proforma_id}', 'ProformaController@destroy')
             ->name('proforma.destroy')
-            /*->middleware('permission:destroy_quote')*/;
+            ->middleware('permission:destroy_proforma');
         Route::get('ver/pre/cotizacion/{proforma_id}', 'ProformaController@show')
             ->name('proforma.show')
-            /*->middleware('permission:list_quote')*/;
+            ->middleware('permission:show_proforma');
         Route::get('imprimir/proforma/cliente/{quote}', 'ProformaController@printProformaToCustomer')
-            /*->middleware('permission:printCustomer_quote')*/;
+            ->middleware('permission:print_proforma');
         Route::post('/visto/bueno/proforma/{proforma_id}', 'ProformaController@vistoBuenoProforma')
-            /*->middleware('permission:VBFinances_quote')*/;
+            ->middleware('permission:confirm_proforma');
         Route::get('editar/pre/cotizacion/{proforma_id}', 'ProformaController@edit')
             ->name('proforma.edit')
-            /*->middleware('permission:list_quote')*/;
+            ->middleware('permission:update_proforma');
         Route::post('update/proforma', 'ProformaController@update')
             ->name('proforma.update')
-            /*->middleware('permission:create_quote')*/;
+            ->middleware('permission:update_proforma');
         Route::get('add/data/default/equipment/proforma/{proforma_id}/{equipment_id}', 'ProformaController@addDataDefaultEquipmentProforma');
         Route::post('destroy/equipment/proforma/{proforma_id}/{equipment_id}', 'ProformaController@destroyEquipmentProforma');
         Route::post('/update/percentages/equipment/{id_equipment}/proforma/{id_proforma}', 'ProformaController@changePercentagesEquipment')
-            /*->middleware('permission:update_quote')*/;
+            ->middleware('permission:changePercentage_proforma');
         Route::get('/editar/equipo/pre/cotizacion/{equipment_id}', 'ProformaController@editEquipmentProforma')
             ->name('equipment.proforma.edit')
-            /*->middleware('permission:update_defaultEquipment')*/;
+            ->middleware('permission:editEquipment_proforma');
         Route::post('update/equipment/proforma/{equipment_id}', 'ProformaController@updateEquipmentProforma')
             ->name('equipment.proforma.update')
-            /*->middleware('permission:create_defaultEquipment')*/;
+            ->middleware('permission:destroyEquipment_proforma');
     });
 });
 

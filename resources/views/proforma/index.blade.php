@@ -55,9 +55,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Pre Cotizaciones</h5>
-
+    @can('create_proforma')
     <a href="{{ route('proforma.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva Pre-Cotización </a>
-
+    @endcan
 @endsection
 
 @section('page-breadcrumb')
@@ -83,7 +83,7 @@
             <div class="col-md-12">
                 <!-- Barra de búsqueda -->
                 <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Descripción de la pre cotización..." autocomplete="off">
+                    <input type="text" id="description" onkeyup="mayus(this);" class="form-control" placeholder="Descripción de la pre cotización..." autocomplete="off">
                     <div class="input-group-append ">
                         <button class="btn btn-primary" type="button" id="btn-search">Buscar</button>
                         <a href="#" id="btnBusquedaAvanzada" class="vertical-center ml-3 mt-2">Búsqueda Avanzada</a>
@@ -96,7 +96,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="code">Código:</label>
-                            <input type="text" class="form-control form-control-sm" id="code" placeholder="PCOT-00001" autocomplete="off">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" id="code" placeholder="PCOT-00001" autocomplete="off">
                         </div>
                         <div class="col-md-3">
                             <label for="deadline">Condición de pago:</label>
@@ -202,7 +202,7 @@
         <li class="page-item previous">
             <a href="#" class="page-link" data-item>
                 <!--<i class="previous"></i>-->
-                <i class="bi bi-chevron-left"></i>
+                <i class="fas fa-chevron-left"></i>
             </a>
         </li>
     </template>
@@ -217,7 +217,7 @@
         <li class="page-item next">
             <a href="#" class="page-link" data-item>
                 <!--<i class="next"></i>-->
-                <i class="bi bi-chevron-right"></i>
+                <i class="fas fa-chevron-right"></i>
             </a>
         </li>
     </template>

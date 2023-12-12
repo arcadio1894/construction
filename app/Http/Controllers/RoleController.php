@@ -93,7 +93,8 @@ class RoleController extends Controller
         'workerAccount' => 'CUENTAS BANCARIAS TRABAJADORES',
         'supplierAccount' => 'CUENTAS BANCARIAS PROVEEDORES',
         'defaultEquipment' => 'CATALOGO EQUIPOS',
-        'sales' => 'VENTAS'
+        'sales' => 'VENTAS',
+        'proforma' => 'PRE COTIZACIONES'
     ];
 
     public function index()

@@ -138,7 +138,7 @@ class EquipmentProforma extends Model
 
     public function getTotalEquipmentAttribute()
     {
-        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+        $total = ($this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles)*$this->quantity + $this->total_workdays;
 
         return $total;
 
@@ -146,7 +146,7 @@ class EquipmentProforma extends Model
 
     public function getTotalEquipmentUtilityAttribute()
     {
-        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+        $total = ($this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles)*$this->quantity + $this->total_workdays;
 
         $total1 = $total * (($this->utility/100)+1);
         $total2 = $total1 * (($this->letter/100)+1);

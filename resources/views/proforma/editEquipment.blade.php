@@ -80,7 +80,7 @@
                             <div class="form-group row">
                                 <div class="col-md-3">
                                     <label for="description">Cantidad de equipo <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="number" data-quantityequipment id="quantityequipment" class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    <input type="number" data-quantityequipment id="quantityequipment" class="form-control" placeholder="1" min="0" value="{{ $equipment->quantity }}" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                         this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                         ">
 
