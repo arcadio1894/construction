@@ -31,7 +31,7 @@ class CategoryEquipmentController extends Controller
     }
 
     public function getDataCategoryEquipment(Request $request, $pageNumber = 1){
-        $perPage = 4;
+        $perPage = 10;
 
         $nameCategoryEquipment = $request->get('name_category_equipment');
 
