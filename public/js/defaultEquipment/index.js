@@ -109,12 +109,15 @@ function showData() {
 }
 
 function getDataDefaultEquipments($numberPage) {
+
+    var inputDescription = $('#inputDescription').val();
     var categoryEquipmentid = $('#inputCategoryEquipmentid').val();
     var largeDefaultEquipment = $('#inputLarge').val(); 
     var widthDefaultEquipment = $('#inputWidth').val(); 
     var highDefaultEquipment = $('#inputHigh').val();
 
     $.get('/dashboard/get/data/defaultEquipments/'+$numberPage, {
+        inputDescription:inputDescription,
         category_Equipment_id:categoryEquipmentid,
         large_Default_Equipment: largeDefaultEquipment,
         width_Default_Equipment: widthDefaultEquipment,
@@ -186,7 +189,7 @@ function renderDataDefaultEquipments(data) {
     $("#body-card").html('');
     $("#pagination").html('');
     $("#textPagination").html('');
-    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' operaciones');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' equipos');
     $('#numberItems').html('');
     $('#numberItems').html(pagination.totalFilteredRecords);
 
@@ -234,16 +237,21 @@ function renderDataDefaultEquipments(data) {
 
 function renderDataTableCard(data) {
     var clone = activateTemplate('#item-card');
+    clone.querySelector("[data-id]").innerHTML = data.id;
     clone.querySelector("[data-description]").innerHTML = data.description;
     clone.querySelector("[data-large]").innerHTML = data.large;
     clone.querySelector("[data-width]").innerHTML = data.width;
     clone.querySelector("[data-high]").innerHTML = data.high;
-    clone.querySelector("[data-details]").innerHTML = data.details;
+    clone.querySelector("[data-priceIGV]").innerHTML = data.priceIGV;
+    clone.querySelector("[data-priceSIGV]").innerHTML = data.priceSIGV;
+    clone.querySelector("[data-priceIGVUtility]").innerHTML = data.priceIGVUtility;
+    clone.querySelector("[data-priceSIGVUtility]").innerHTML = data.priceSIGVUtility;
+    clone.querySelector("[data-created_at]").innerHTML = data.created_at;
     clone.querySelector("[data-edit]").setAttribute('data-edit', data.id);
     clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/equipo/categoria/'+data.id);
     clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
     clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
-    $("#body-card").append(clone);
+    $("#body-table").append(clone);
 
     $('[data-toggle="tooltip"]').tooltip();
 }

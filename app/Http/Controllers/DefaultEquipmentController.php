@@ -489,11 +489,16 @@ class DefaultEquipmentController extends Controller
         $largeDefaultEquipment = $request->input('large_Default_Equipment');
         $widthDefaultEquipment = $request->input('width_Default_Equipment');
         $highDefaultEquipment = $request->input('high_Default_Equipment');
+        $inputDescription = $request->input('inputDescription');
 
         $query = DefaultEquipment::where('category_equipment_id',$categoryEquipmentid )
         ->orderBy('created_at', 'DESC');
 
         // Aplicar filtros si se proporcionan
+        if ($inputDescription) {
+            $query->where('description', 'LIKE', '%'.$inputDescription.'%');
+        }
+
         if ($largeDefaultEquipment) {
             $query->where('large', $largeDefaultEquipment);
 
@@ -530,8 +535,11 @@ class DefaultEquipmentController extends Controller
                 "large" => $operation->large,
                 "width" => $operation->width,
                 "high" => $operation->high,
-                "details" => $operation->details,
-
+                "priceIGV" => round($operation->total_equipment, 2),
+                "priceSIGV" => round($operation->total_equipment/1.18, 2),
+                "priceIGVUtility" => round($operation->total_equipment_utility, 2),
+                "priceSIGVUtility" => round($operation->total_equipment_utility/1.18, 2),
+                "created_at" => $operation->created_at->format('d/m/Y'),
             ]);
         }
 

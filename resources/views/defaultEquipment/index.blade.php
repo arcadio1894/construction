@@ -87,17 +87,20 @@
                         
                     </div>
 
-                    <div class="col-md-1">
+                    <div class="col-md-5">
+                        <label for="inputDescription">Descripción <span class="right badge badge-danger">(*)</span></label>
+                        <input type="text" class="form-control form-control-solid ps-10" id="inputDescription" name="search" value="" placeholder="Descripción del equipo" />
                     </div>
-                    <div class="col-md-3">
+
+                    <div class="col-md-2">
                         <label for="inputLarge">Largo <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputLarge" name="search" value="" placeholder="Largo"  min="0" step="0.01"/>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="inputWidth">Ancho <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputWidth" name="search" value="" placeholder="Ancho" min="0" step="0.01"/>
                     </div>
-                    <div class="col-md-3">
+                    <div class="col-md-2">
                         <label for="inputHigh">Alto <span class="right badge badge-danger">(*)</span></label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputHigh" name="search" value="" placeholder="Alto" min="0" step="0.01"/>
                     </div>
@@ -107,8 +110,7 @@
                         <label for="btn-search">&nbsp;</label><br>
                         <button type="button" id="btn-search" class="btn btn-primary me-5">Buscar</button>
                     </div>
-                    <div class="col-md-1">
-                    </div>
+
                     <!--
                     <div class="col-md-1">
                         <a href="{{-- route('defaultEquipment.create',$category->id) --}}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Equipo </a>
@@ -130,7 +132,7 @@
     <div class="d-flex flex-wrap flex-stack pb-7">
         <!--begin::Title-->
         <div class="d-flex flex-wrap align-items-center my-1">
-            <h3 class="fw-bolder me-5 my-1"><span id="numberItems"></span> Equipos encontradas
+            <h3 class="fw-bolder me-5 my-1"><span id="numberItems"></span> Equipos encontrados
                 <span class="text-gray-400 fs-6">por fecha de creación ↓ </span>
             </h3>
         </div>
@@ -141,12 +143,28 @@
     <!--begin::Tab Content-->
     <div class="tab-content">
         <!--begin::Tab pane-->
-        <div id="kt_project_users_card_pane" class="tab-pane fadeshow active">
-            <!--begin::Row-->
-            <div class="row g-6 g-xl-9" id="body-card">
+        <hr>
+        <div class="table-responsive">
+            <table class="table table-bordered table-hover table-sm">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Descripción</th>
+                    <th>Largo</th>
+                    <th>Ancho</th>
+                    <th>Alto</th>
+                    <th>Precio S/IGV S/Uti</th>
+                    <th>Precio C/IGV S/Uti</th>
+                    <th>Precio S/IGV C/Uti</th>
+                    <th>Precio C/IGV C/Uti</th>
+                    <th>Fecha Creación</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody id="body-table">
 
-            </div>
-            <!--end::Row-->
+                </tbody>
+            </table>
         </div>
         <!--end::Tab pane-->
         <!--begin::Pagination-->
@@ -167,7 +185,7 @@
         <li class="page-item previous">
             <a href="#" class="page-link" data-item>
                 <!--<i class="previous"></i>-->
-                <i class="bi bi-chevron-left"></i>
+                <i class="fas fa-chevron-left"></i>
             </a>
         </li>
     </template>
@@ -182,7 +200,7 @@
         <li class="page-item next">
             <a href="#" class="page-link" data-item>
                 <!--<i class="next"></i>-->
-                <i class="bi bi-chevron-right"></i>
+                <i class="fas fa-chevron-right"></i>
             </a>
         </li>
     </template>
@@ -195,7 +213,7 @@
 
 
     <template id="item-card">
-        <div class="col-md-3 col-xxl-3">
+        {{--<div class="col-md-3 col-xxl-3">
 
             <div class="card bg-light my-custom-card">
                 <div class="card-body pt-3">
@@ -213,7 +231,7 @@
                 </div>
                 <div class="card-footer">
                     <div class="text-center">
-                        <a data-edit="{{-- $category->id --}}" data-descritpion="{{-- $category->description --}}" href="#" class="btn btn-sm btn-outline-warning">
+                        <a data-edit="--}}{{-- $category->id --}}{{--" data-descritpion="--}}{{-- $category->description --}}{{--" href="#" class="btn btn-sm btn-outline-warning">
                             <i class="bi bi-pencil-square"></i> Editar 
                         </a>
                         <a data-delete="" data-descritpion="" class="btn btn-sm btn-outline-danger">
@@ -223,7 +241,27 @@
                 </div>
             </div>
 
-        </div>
+        </div>--}}
+        <tr>
+            <td data-id></td>
+            <td data-description></td>
+            <td data-large></td>
+            <td data-width></td>
+            <td data-high></td>
+            <td data-priceSIGV></td>
+            <td data-priceIGV></td>
+            <td data-priceSIGVUtility></td>
+            <td data-priceIGVUtility></td>
+            <td data-created_at></td>
+            <td>
+                <a data-edit="" data-descritpion="" href="#" class="btn btn-sm btn-outline-warning">
+                    <i class="far fa-edit"></i> Editar
+                </a>
+                <a data-delete="" data-descritpion="" class="btn btn-sm btn-outline-danger">
+                    <i class="far fa-trash-alt"></i> Eliminar
+                </a>
+            </td>
+        </tr>
     </template>
 
 
