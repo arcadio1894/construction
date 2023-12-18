@@ -110,6 +110,10 @@
                             <label for="contact_id">Contacto <span class="right badge badge-danger">(*)</span></label>
                             <input type="text" id="contact_id" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto'}}" readonly>
                         </div>
+                        <div class="col-md-8">
+                            <label for="observations">Observaciones </label>
+                            <div>{!! nl2br($quote->observations) !!}</div>
+                        </div>
                     </div>
 
                 </div>

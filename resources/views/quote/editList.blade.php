@@ -136,6 +136,11 @@
                                     <option></option>
                                 </select>
                             </div>
+                            <div class="col-md-8">
+                                <label for="observations">Observaciones </label>
+                                <textarea class="textarea_observations" id="observations" name="observations" placeholder="Place some text here"
+                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ $quote->observations }}</textarea>
+                            </div>
                             {{--@endhasanyrole--}}
                         </div>
 
@@ -2967,6 +2972,21 @@
     <script>
         $(function () {
             //Initialize Select2 Elements
+
+            $('.textarea_observations').summernote({
+                lang: 'es-ES',
+                placeholder: 'Ingrese los detalles',
+                tabsize: 2,
+                height: 120,
+                toolbar: [
+                    ['style', ['bold', 'italic', 'underline', 'clear']],
+                    ['fontname', ['fontname']],
+                    ['para', ['ul', 'ol']],
+                    ['insert', ['link']],
+                    ['view', ['codeview', 'help']]
+                ]
+            });
+
             $('.textarea_edit').summernote({
                 lang: 'es-ES',
                 placeholder: 'Ingrese los detalles',

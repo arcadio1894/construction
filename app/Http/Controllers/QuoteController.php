@@ -104,6 +104,7 @@ class QuoteController extends Controller
             $quote = Quote::create([
                 'code' => '',
                 'description_quote' => $request->get('code_description'),
+                'observations' => $request->get('observations'),
                 'date_quote' => ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now(),
                 'date_validate' => ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5),
                 'way_to_pay' => ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '',
@@ -713,6 +714,7 @@ class QuoteController extends Controller
 
             $quote->code = $request->get('code_quote');
             $quote->description_quote = $request->get('code_description');
+            $quote->observations = $request->get('observations');
             $quote->date_quote = ($request->has('date_quote')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_quote')) : Carbon::now();
             $quote->date_validate = ($request->has('date_validate')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_validate')) : Carbon::now()->addDays(5);
             $quote->way_to_pay = ($request->has('way_to_pay')) ? $request->get('way_to_pay') : '';
@@ -1924,6 +1926,7 @@ class QuoteController extends Controller
             $renew_quote = Quote::create([
                 'code' => '',
                 'description_quote' => $quote->description_quote,
+                'observations' => $quote->observations,
                 'date_quote' => Carbon::now(),
                 'date_validate' => Carbon::now()->addDays(5),
                 'way_to_pay' => $quote->way_to_pay,

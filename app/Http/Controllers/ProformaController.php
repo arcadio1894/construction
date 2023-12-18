@@ -1036,6 +1036,7 @@ class ProformaController extends Controller
             $quote = Quote::create([
                 'code' => '',
                 'description_quote' => $proforma->description_quote,
+                'observations' => $proforma->observations,
                 'date_quote' => ($proforma->date_quote != null) ? $proforma->date_quote : Carbon::now(),
                 'date_validate' => ($proforma->date_validate != null) ? $proforma->date_validate : Carbon::now()->addDays(5),
                 'delivery_time' => $proforma->delivery_time,
