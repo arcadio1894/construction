@@ -93,15 +93,15 @@
                     </div>
 
                     <div class="col-md-2">
-                        <label for="inputLarge">Largo <span class="right badge badge-danger">(*)</span></label>
+                        <label for="inputLarge">Largo </label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputLarge" name="search" value="" placeholder="Largo"  min="0" step="0.01"/>
                     </div>
                     <div class="col-md-2">
-                        <label for="inputWidth">Ancho <span class="right badge badge-danger">(*)</span></label>
+                        <label for="inputWidth">Ancho </label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputWidth" name="search" value="" placeholder="Ancho" min="0" step="0.01"/>
                     </div>
                     <div class="col-md-2">
-                        <label for="inputHigh">Alto <span class="right badge badge-danger">(*)</span></label>
+                        <label for="inputHigh">Alto </label>
                         <input type="number" class="form-control form-control-solid ps-10" id="inputHigh" name="search" value="" placeholder="Alto" min="0" step="0.01"/>
                     </div>
                     <!--end::Input group-->

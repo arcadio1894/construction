@@ -87,9 +87,9 @@ class DefaultEquipmentController extends Controller
                 $equipment = DefaultEquipment::create([
                     //'quote_id' => $quote->id,
                     'description' =>$equipments[$i]->nameequipment,
-                    'large' => $equipments[$i]->largeequipment,
-                    'width' => $equipments[$i]->widthequipment,
-                    'high' => $equipments[$i]->highequipment,
+                    'large' => ($equipments[$i]->largeequipment=="") ? null: $equipments[$i]->largeequipment,
+                    'width' => ($equipments[$i]->widthequipment=="") ? null: $equipments[$i]->widthequipment,
+                    'high' => ($equipments[$i]->highequipment=="") ? null: $equipments[$i]->highequipment,
                     'category_equipment_id' => $equipments[$i]->categoryequipmentid,
                     'details' => ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail,
                     //'quantity' => $equipments[$i]->quantity,
@@ -311,9 +311,9 @@ class DefaultEquipmentController extends Controller
             for ( $i=0; $i<sizeof($equipments); $i++ )
             {
                 $equipment->description = $equipments[$i]->nameequipment;
-                $equipment->large = $equipments[$i]->largeequipment;
-                $equipment->width = $equipments[$i]->widthequipment;
-                $equipment->high = $equipments[$i]->highequipment;
+                $equipment->large = ($equipments[$i]->largeequipment=="") ? null: $equipments[$i]->largeequipment;
+                $equipment->width = ($equipments[$i]->widthequipment=="") ? null: $equipments[$i]->widthequipment;
+                $equipment->high = ($equipments[$i]->highequipment=="") ? null: $equipments[$i]->highequipment;
                 $equipment->category_equipment_id = $equipments[$i]->categoryequipmentid;
                 $equipment->details = ($equipments[$i]->detail == "" || $equipments[$i]->detail == null) ? '':$equipments[$i]->detail;
                 $equipment->utility = $equipments[$i]->utility;

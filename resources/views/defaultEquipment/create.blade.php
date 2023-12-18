@@ -105,15 +105,15 @@
                                 </div>
 
                                 <div class="col-md-1">
-                                    <label for="largeequipment">Largo <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="largeequipment">Largo </label>
                                     <input type="number" data-largeequipment class="form-control" placeholder="0.00" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-1">
-                                    <label for="widthequipment">Ancho <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="widthequipment">Ancho </label>
                                     <input type="number" data-widthequipment class="form-control" placeholder="0.00" min="0" step="0.01">
                                 </div>
                                 <div class="col-md-1">
-                                    <label for="highequipment">Alto <span class="right badge badge-danger">(*)</span></label>
+                                    <label for="highequipment">Alto </label>
                                     <input type="number" data-highequipment class="form-control" placeholder="0.00" min="0" step="0.01">
                                 </div>
 
