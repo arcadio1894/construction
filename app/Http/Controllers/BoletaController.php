@@ -469,8 +469,8 @@ class BoletaController extends Controller
 
             $hoursVacation = $this->getVacationByWorker($worker_id, $start, $end);
             $vacaciones = $hoursVacation;
-            //$montoVacaciones = round($hoursVacation*$pagoXHora, 2);
-            $montoVacaciones = 0;
+            $montoVacaciones = round($hoursVacation*$pagoXHora, 2);
+            //$montoVacaciones = 0;
 
             $amountRefund = $this->getRefundByWorker($worker_id, $start, $end);
             $reintegro = round($amountRefund, 2);
@@ -870,7 +870,20 @@ class BoletaController extends Controller
             {
                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
                 //dump('Horas Trabajadas: '. $hoursWorked);
-                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                $workingDay = WorkingDay::find($assistance_detail->working_day_id);
+                if ( $workingDay->id == $wD->id )
+                {
+                    if ( $hoursWorked > 4 )
+                    {
+                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                    } else {
+                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                    }
+
+                } else {
+                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                }
 
                 $hoursVacation+=$hoursNeto;
             }
