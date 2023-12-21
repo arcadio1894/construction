@@ -275,6 +275,9 @@
         @else
             <div class="notice">PRECIO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
         @endif
+        <br>
+        <div>OBSERVACIONES:</div>
+        <div class="notice">{!! nl2br($quote->observations) !!}</div>
     </div>
     <br><br>
     <div id="notices">

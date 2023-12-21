@@ -256,6 +256,8 @@
         @else
             <div class="notice">PRECIO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $proforma->currency === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
         @endif
+        <br>
+        <div>OBSERVACIONES:</div>
         <div class="notice">{!! nl2br($proforma->observations) !!}</div>
     </div>
     <br><br>

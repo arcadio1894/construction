@@ -380,15 +380,58 @@ class BoletaController extends Controller
         if ( $type == 1 )
         {
             // Es semanal
-            $dateFirst = DateDimension::where('year', $year)
-                //->where('month', $month)
+            /*$dateFirst = DateDimension::where('year', $year)
+                ->where('month', $month)
                 ->where('week', $week)
+                ->orderBy('date', 'asc')
+                ->first();*/
+            /*$dateFirst = DateDimension::where('year', $year)
+                ->where('week', $week)
+                ->orderBy('date', 'asc')
+                ->first();*/
+            /*$dateFirst = DateDimension::where('year', $year)
+                ->where('week', $week)
+                ->where('day_of_week', 1) // 1 representa el lunes
+                ->first();*/
+            $dateFirst = DateDimension::where('year', $year)
+                ->where('month', $month)
+                ->where('week', $week)
+                ->where('day_of_week', 1)
+                ->orderBy('date', 'asc')
                 ->first();
-            $dateLast = DateDimension::where('year', $year)
-                //->where('month', $month)
+
+            if ( !isset($dateFirst) )
+            {
+                $dateFirst = DateDimension::where('year', $year)
+                    ->where('month', $month-1)
+                    ->where('week', $week)
+                    ->where('day_of_week', 1)
+                    ->orderBy('date', 'asc')
+                    ->first();
+            }
+
+            //dump($dateFirst);
+            /*$dateLast = DateDimension::where('year', $year)
+                ->where('month', $month)
                 ->where('week', $week)
                 ->orderBy('date', 'desc')
+                ->first();*/
+           /* $dateLast = DateDimension::where('year', $year)
+                ->where('week', $week)
+                ->orderBy('date', 'desc')
+                ->first();*/
+            /*$dateLast = DateDimension::where('year', $year)
+            ->where('week', $week)
+            ->where('day_of_week', 7) // 7 representa el domingo
+            ->first();*/
+            $dateLast = DateDimension::where('date', '>=', $dateFirst->date)
+                ->orderBy('date', 'asc')
+                ->limit(1)
+                ->offset(6) // Avanzamos 6 días para obtener el final de la semana
                 ->first();
+
+            //dump($dateLast);
+            //dd();
 
             $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
             $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
@@ -1100,18 +1143,31 @@ class BoletaController extends Controller
 
                     } elseif ( $this->isHoliday($fecha) && !$fecha->isSunday() ) {
                         // TODO: Feriado - Dia Normal (L-S)
-                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
+                        // TODO: Ultimo Cambio
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
                         {
-                            // TODO: Con H-ESP
-                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
-                            array_push($arrayDayAssistances, [
-                                0,
-                                0,
-                                0,
-                                0,
-                                $hoursNeto,
-                            ]);
+                            if ( count($vacations)>0 )
+                            {
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            } else {
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
+
                         } else {
                             // TODO: Sin H-ESP
                             if ( $assistance_detail->status == 'A' )
@@ -1278,6 +1334,7 @@ class BoletaController extends Controller
             $month = '';
 
             //dump($arrayByDates);
+            //dd();
 
             for ( $i=0; $i<count($arrayByDates); $i++ )
             {
