@@ -2417,6 +2417,9 @@ Route::middleware('auth')->group(function (){
         Route::post('update/equipment/proforma/{equipment_id}', 'ProformaController@updateEquipmentProforma')
             ->name('equipment.proforma.update')
             ->middleware('permission:destroyEquipment_proforma');
+
+        Route::get('get/contracts/for/expire/', 'ContractController@getContractsForExpire');
+
     });
 });
 

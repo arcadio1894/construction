@@ -294,4 +294,34 @@ class ContractController extends Controller
 
         return response()->json(['message' => 'Contrato habilitado con éxito.'], 200);
     }
+
+    public function getContractsForExpire()
+    {
+        $currentDate = Carbon::now('America/Lima');
+        $futureDate = $currentDate->copy()->addDays(15);
+
+        $contracts = Contract::whereBetween('date_fin', [$currentDate->toDateString(), $futureDate->toDateString()])->get();
+
+        //dd($contracts);
+        $contractsAboutToExpire = [];
+
+        foreach ($contracts as $contract) {
+            $daysRemaining = Carbon::parse($contract->date_fin)->diffInDays($currentDate);
+
+            $contractData = [
+                'worker_name' => $contract->worker->first_name." ".$contract->worker->last_name,
+                'contract_details' => [
+                    'id' => $contract->id,
+                    'code' => $contract->code,
+                    'date_start' => $contract->date_start,
+                    'date_fin' => $contract->date_fin,
+                ],
+                'days_remaining' => $daysRemaining,
+            ];
+
+            array_push($contractsAboutToExpire, $contractData);
+        }
+
+        dd($contractsAboutToExpire);
+    }
 }

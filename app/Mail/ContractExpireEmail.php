@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class StockmaterialsEmail extends Mailable
+class ContractExpireEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -16,7 +16,6 @@ class StockmaterialsEmail extends Mailable
      *
      * @return void
      */
-
     public $filename;
     public $pathComplete;
 
@@ -24,7 +23,7 @@ class StockmaterialsEmail extends Mailable
     {
         $this->filename = $filename;
         $this->pathComplete = $pathComplete;
-        $this->subject('Stocks de materiales');
+        $this->subject('Contratos por caducar');
     }
 
     /**
