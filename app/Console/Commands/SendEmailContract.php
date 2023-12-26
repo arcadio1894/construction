@@ -72,7 +72,7 @@ class SendEmailContract extends Command
 
         $pathComplete = $path .'/'. $filename;
         //TODO: Enviar el correo
-        Mail::to('kparedes@sermeind.com.pe')
+        Mail::to('kparedes@sermeind.com.pe'/*'joryes1894@gmail.com'*/)
             ->cc(['joryes1894@gmail.com','edesceperu@gmail.com'])
             ->send(new ContractExpireEmail($pathComplete, $filename));
     }
