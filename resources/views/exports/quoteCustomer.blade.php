@@ -230,9 +230,9 @@
         @foreach( $quote->equipments as $equipment )
         <tr>
             <td class="desc">{{ $equipment->description }}</td>
-            <td class="unit">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice == 'PEN') ? number_format( ((float)($equipment->subtotal_rent) / $equipment->quantity), 0) : number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 0) }}</td>
+            <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 0) }}</td>
             <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice == 'PEN') ? number_format( (float)($equipment->subtotal_rent), 0) : number_format( (float)($equipment->subtotal_rent/1.18), 0) }}</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 0) }}</td>
         </tr>
         @endforeach
         </tbody>
@@ -244,7 +244,7 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">TOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ ($quote->currency_invoice == 'PEN') ? number_format( (float)($quote->total_quote), 0) : number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
+            <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
         </tr>
         {{--<tr>
             <td class="desc"></td>
@@ -270,11 +270,13 @@
         <div>TÉRMINOS Y CONDICIONES:</div>
         <div class="notice">FORMA DE PAGO: {{ ($quote->deadline !== null) ? $quote->deadline->description : 'No tiene forma de pago' }} </div>
         <div class="notice">TIEMPO DE ENTREGA: {{ $quote->delivery_time }}</div>
-        @if( $quote->currency_invoice === 'USD' )
+        {{--@if( $quote->currency_invoice === 'USD' )
             <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
         @else
             <div class="notice">PRECIO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
-        @endif
+        @endif--}}
+        <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $quote->currency_invoice === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
+
         <br>
         <div>OBSERVACIONES:</div>
         <div class="notice">{!! nl2br($quote->observations) !!}</div>
