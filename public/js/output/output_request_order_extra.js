@@ -1388,8 +1388,8 @@ function saveTableItemsCustom() {
         let largo = $('#length_new_custom').val();
         let areaPedida = parseFloat(largo);
         let areaTotal = parseFloat(result.full_typescrap.length);
-        let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
-        let precio = result.price * porcentaje;
+        let porcentaje = parseFloat((areaPedida/areaTotal)).toFixed(2);
+        let precio = parseFloat(result.price * porcentaje).toFixed(2);
         let code = rand_code($caracteres, 5);
         //$items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
         $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
@@ -1521,8 +1521,8 @@ function saveTableItemsCustom2(event) {
             let largo = $('#length_new_custom').val();
             let areaPedida = parseFloat(largo);
             let areaTotal = parseFloat(result.full_typescrap.length);
-            let porcentaje = parseFloat((areaPedida/areaTotal)*100).toFixed(2);
-            let precio = result.price * porcentaje;
+            let porcentaje = parseFloat((areaPedida/areaTotal)).toFixed(2);
+            let precio = parseFloat(result.price * porcentaje).toFixed(2);
             let code = rand_code($caracteres, 5);
             //$items.push({'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
             $items.push({'material_id':result.id,'equipment_name':equipment_name,'equipment_id': equipment_id,'item': 'Personalizado_'+code, 'percentage': porcentaje, 'length': largo, 'width': null, 'price': precio, 'material': result.id});
