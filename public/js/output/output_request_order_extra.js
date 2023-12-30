@@ -782,6 +782,7 @@ function requestItemsQuantity() {
     }
 
     $('#body-items').html('');
+    $itemsSelected = [];
 
     $.ajax({
         url: "/dashboard/get/items/output/complete/"+result.id,
@@ -864,6 +865,7 @@ function requestItemsQuantity2(event) {
         }
 
         $('#body-items').html('');
+        $itemsSelected = [];
 
         $.ajax({
             url: "/dashboard/get/items/output/complete/"+result.id,
