@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    protected $appends = ['subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_rent_pdf', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit', 'total_quote', 'total_equipments'];
+    protected $appends = ['have_details', 'subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_rent_pdf', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit', 'total_quote', 'total_equipments'];
 
     protected $fillable = [
         'code',
@@ -41,6 +41,35 @@ class Quote extends Model
         'proforma_id',
         'observations'
     ];
+
+    public function getHaveImagesAttribute()
+    {
+        $have_images = true;
+        $images = ImagesQuote::where('quote_id', $this->id)->get();
+
+        if ( isset($images) )
+        {
+            $have_images = false;
+        }
+
+
+        return $have_images;
+    }
+
+    public function getHaveDetailsAttribute()
+    {
+        $have_details = true;
+        $equipos = Equipment::where('quote_id', $this->id)->get();
+        foreach ( $equipos as $equipment )
+        {
+            if ( $equipment->detail == "" || $equipment->detail == null )
+            {
+                $have_details = false;
+            }
+        }
+
+        return $have_details;
+    }
 
     public function getTotalEquipmentsAttribute()
     {

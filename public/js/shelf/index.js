@@ -25,9 +25,9 @@ $(document).ready(function () {
                     if ( $.inArray('destroy_shelf', $permissions) !== -1 ) {
                         text = text + ' <button data-delete="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>';
                     }
-                    if ( $.inArray('update_shelf', $permissions) !== -1 ) {
+                    /*if ( $.inArray('update_shelf', $permissions) !== -1 ) {
                         text = text + ' <button data-print="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-success btn-sm"><i class="far fa-file-excel"></i> Descargar</button>';
-                    }
+                    }*/
                     return text;
 
                 }
@@ -189,7 +189,7 @@ $(document).ready(function () {
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
-    $(document).on('click', '[data-print]', downloadData);
+    //$(document).on('click', '[data-print]', downloadData);
 
 });
 

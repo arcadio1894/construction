@@ -290,7 +290,9 @@
         <div class="notice">Atentamente</div>
     </div>
 </main>
+@if($quote->have_details || $quote->have_images)
 <div class="page-break"></div>
+
 <header class="clearfix">
     <div id="logo">
         <img src="{{ asset('/landing/img/logo_pdf.png') }}">
@@ -324,6 +326,7 @@
     </div>
 
 </header>
+
 <div id="notices">
     {{--<div>CARACTERISTICAS DE {{ $quote->code }}:</div>--}}
     {{--<br>--}}
@@ -350,6 +353,9 @@
         </div><br>
     @endforeach
 </div>
+
+@endif
+
 <footer>
     Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 959 332 205
 </footer>
