@@ -25,6 +25,9 @@ $(document).ready(function () {
                     if ( $.inArray('destroy_shelf', $permissions) !== -1 ) {
                         text = text + ' <button data-delete="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>';
                     }
+                    if ( $.inArray('update_shelf', $permissions) !== -1 ) {
+                        text = text + ' <button data-print="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-success btn-sm"><i class="far fa-file-excel"></i> Imprimir</button>';
+                    }
                     return text;
 
                 }
@@ -198,6 +201,10 @@ var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+function f() {
+    
+}
 
 function mayus(e) {
     e.value = e.value.toUpperCase();
