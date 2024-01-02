@@ -6,10 +6,14 @@ use App\Area;
 use App\Http\Requests\DeleteShelfRequest;
 use App\Http\Requests\StoreShelfRequest;
 use App\Http\Requests\UpdateShelfRequest;
+use App\Item;
+use App\Location;
+use App\Material;
 use App\Shelf;
 use App\Warehouse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ShelfController extends Controller
 {
@@ -86,5 +90,75 @@ class ShelfController extends Controller
 
         //dd(datatables($shelves)->toJson());
         return datatables($shelves)->toJson();
+    }
+
+    public function exportMaterialsAnaquel()
+    {
+        $shelf_id = $_GET['shelf'];
+        $shelf = Shelf::find($shelf_id);
+        $locations = Location::where('warehouse_id', $shelf->warehouse_id)->pluck('id')->toArray();
+        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('description', 'not like', '%EDESCE%')
+            ->where('enable_status', 1)
+            ->get();
+
+        $materials_array = [];
+
+        foreach ( $materials as $material )
+        {
+            $priority = '';
+            if ( $material->stock_current > $material->stock_max ){
+                $priority = 'Completo';
+            } else if ( $material->stock_current = $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current = $material->stock_min ){
+                $priority = 'Por agotarse';
+            } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
+                $priority = 'Agotado';
+            }
+
+            $itemsCount = Item::where('material_id', $material->id)
+                ->whereIn('location_id', $locations)
+                ->where('state_item', '<>', 'exited')
+                ->sum('percentage');
+
+            if ( $itemsCount > 0 )
+            {
+                array_push($materials_array, [
+                    'code' => $material->code,
+                    'material' => $material->full_description,
+                    'measure' => $material->measure,
+                    'unit' => ($material->unitMeasure == null) ? '':$material->unitMeasure->name,
+                    'stock_max' => $material->stock_max,
+                    'stock_min' => $material->stock_min,
+                    'stock_current' => $itemsCount,
+                    'priority'=> $priority,
+                    'price'=> $material->unit_price,
+                    'category'=> ($material->category == null) ? '': $material->category->name,
+                    'subcategory'=> ($material->subcategory == null) ? '': $material->subcategory->name,
+                    'type'=> ($material->materialType == null) ? '': $material->materialType->name,
+                    'subtype'=> ($material->subType == null) ? '': $material->subType->name,
+                    'brand'=> ($material->brand == null) ? '': $material->brand->name,
+                    'exampler'=> ($material->exampler == null) ? '': $material->exampler->name,
+                    'quality'=> ($material->quality == null) ? '': $material->quality->name,
+                    'warrant'=> ($material->warrant == null) ? '':$material->warrant->name,
+                    'scrap'=> ($material->typeScrap == null) ? '':$material->typeScrap->name,
+                ]);
+
+            }
+
+        }
+        //dump($materials_array);
+        $title = '';
+        if ( !is_null($shelf) )
+        {
+            $title = 'BASE DE MATERIALES EN EL ANAQUEL: ' . $shelf->name;
+        }
+
+        return Excel::download(new DatabaseMaterialsExport($materials_array, $title), 'reporte_base_materiales.xlsx');
+
+
     }
 }

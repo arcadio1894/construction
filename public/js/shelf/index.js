@@ -26,7 +26,7 @@ $(document).ready(function () {
                         text = text + ' <button data-delete="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Eliminar</button>';
                     }
                     if ( $.inArray('update_shelf', $permissions) !== -1 ) {
-                        text = text + ' <button data-print="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-success btn-sm"><i class="far fa-file-excel"></i> Imprimir</button>';
+                        text = text + ' <button data-print="'+item.id+'" data-comment="'+item.comment+'" data-name="'+item.name+'" class="btn btn-outline-success btn-sm"><i class="far fa-file-excel"></i> Descargar</button>';
                     }
                     return text;
 
@@ -189,6 +189,8 @@ $(document).ready(function () {
     $modalDelete = $('#modalDelete');
     $(document).on('click', '[data-delete]', openModalDelete);
 
+    $(document).on('click', '[data-print]', downloadData);
+
 });
 
 var $formCreate;
@@ -202,8 +204,41 @@ var $modalDelete;
 
 var $permissions;
 
-function f() {
-    
+function downloadData() {
+    var id_shelf = $(this).data('print');
+    var name_shelf = $(this).data('name');
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Descargar materiales del anaquel ' + name_shelf,
+        content: 'Se descargará todos los materiales dentro de este anaquel.',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    var query = {
+                        shelf: id_shelf,
+                    };
+
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/download/excel/materials/anaquel/?" + $.param(query);
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
 }
 
 function mayus(e) {

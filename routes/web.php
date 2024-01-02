@@ -2421,6 +2421,7 @@ Route::middleware('auth')->group(function (){
         Route::get('get/contracts/for/expire/', 'ContractController@getContractsForExpire');
 
         // TODO: Descargar por anaqueles
+        Route::get('/download/excel/materials/anaquel/', 'ShelfController@exportMaterialsAnaquel');
 
     });
 });
