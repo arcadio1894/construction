@@ -202,29 +202,29 @@
     <template id="template-totalPays">
         <div class="col-lg-6">
             <div class="card card-orange border-warning">
-        <div class="card-header border-0">
-            <h3 class="card-title" data-semana>Semana</h3>
+                <div class="card-header border-0">
+                    <h3 class="card-title" data-semana>Semana</h3>
 
-        </div>
-        <div class="card-body table-responsive p-0">
-            <table class="table table-striped table-valign-middle">
-                <thead>
-                <tr>
-                    <th>Código</th>
-                    <th>Trabajador</th>
-                    <th>Monto</th>
-                </tr>
-                </thead>
-                <tbody data-pays>
-                {{--<tr>
-                    <td data-codigo>Some Product</td>
-                    <td data-trabajador>$13 USD</td>
-                    <td data-monto>12,000 Sold</td>
-                </tr>--}}
-                </tbody>
-            </table>
-        </div>
-    </div>
+                </div>
+                <div class="card-body table-responsive p-0">
+                    <table class="table table-striped table-valign-middle">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Trabajador</th>
+                            <th>Monto</th>
+                        </tr>
+                        </thead>
+                        <tbody data-pays>
+                        {{--<tr>
+                            <td data-codigo>Some Product</td>
+                            <td data-trabajador>$13 USD</td>
+                            <td data-monto>12,000 Sold</td>
+                        </tr>--}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </template>
 
