@@ -6,7 +6,7 @@ $(document).ready(function () {
     $selectWeekEnd = $('#weekEnd');
 
     $selectYear.change(function () {
-        $('#total-pays').hide();
+        $('#total-pays').html("");
 
         $selectWeekStart.empty();
         $selectWeekStart.val('');
