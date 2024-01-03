@@ -382,7 +382,7 @@ class QuoteController extends Controller
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->where('description','LIKE',$defaultConsumable)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->where('description','LIKE',"%".$defaultConsumable."%")->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $utility = PorcentageQuote::where('name', 'utility')->first();
@@ -502,7 +502,8 @@ class QuoteController extends Controller
             'action' => 'Editar cotizacion VISTA',
             'time' => $end
         ]);
-        //dump($quote);
+        //dump($consumables);
+
         return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'images'));
 
     }
