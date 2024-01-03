@@ -47,7 +47,7 @@
 @section('page-title')
     <h5 class="card-title">Listado de solicitudes de área</h5>
     @can('create_requestSimple')
-    <a href="{{ route('output.simple.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud de área </a>
+    <a href="{{ route('output.simple.create.activos') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud de área </a>
     @endcan
 
     @can('confirm_requestSimple')
