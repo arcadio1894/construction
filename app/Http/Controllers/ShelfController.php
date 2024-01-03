@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Area;
+use App\Exports\DatabaseMaterialsByAnaquelExport;
 use App\Http\Requests\DeleteShelfRequest;
 use App\Http\Requests\StoreShelfRequest;
 use App\Http\Requests\UpdateShelfRequest;
@@ -96,7 +97,10 @@ class ShelfController extends Controller
     {
         $shelf_id = $_GET['shelf'];
         $shelf = Shelf::find($shelf_id);
-        $locations = Location::where('warehouse_id', $shelf->warehouse_id)->pluck('id')->toArray();
+        $warehouse = Warehouse::find($shelf->warehouse_id);
+        $locations = Location::where('warehouse_id', $shelf->warehouse_id)
+            ->where('shelf_id', $shelf_id)
+            ->pluck('id')->toArray();
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
             ->where('description', 'not like', '%EDESCE%')
             ->where('enable_status', 1)
@@ -154,10 +158,10 @@ class ShelfController extends Controller
         $title = '';
         if ( !is_null($shelf) )
         {
-            $title = 'BASE DE MATERIALES EN EL ANAQUEL: ' . $shelf->name;
+            $title = 'BASE DE MATERIALES EN EL ANAQUEL: ' . $shelf->name . ' DEL ALMACEN '.$warehouse->name;
         }
 
-        return Excel::download(new DatabaseMaterialsExport($materials_array, $title), 'reporte_base_materiales.xlsx');
+        return Excel::download(new DatabaseMaterialsByAnaquelExport($materials_array, $title), 'reporte_base_materiales_por_anaquel.xlsx');
 
 
     }

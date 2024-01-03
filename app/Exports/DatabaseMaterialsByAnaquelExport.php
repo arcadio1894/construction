@@ -6,7 +6,7 @@ use Illuminate\Contracts\View\View;
 use Maatwebsite\Excel\Concerns\FromView;
 use Maatwebsite\Excel\Concerns\WithTitle;
 
-class DatabaseMaterialsExport implements FromView, WithTitle
+class DatabaseMaterialsByAnaquelExport implements FromView, WithTitle
 {
     public $materials;
     public $title;
