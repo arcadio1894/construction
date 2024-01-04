@@ -154,7 +154,7 @@ class FinanceWorkController extends Controller
             if ($work->state == 'pending')
             {
                 $state = 'PENDIENTE';
-            } elseif ( $work->state == 'CANCELED' )
+            } elseif ( $work->state == 'canceled' )
             {
                 $state = 'CANCELADO';
             }
