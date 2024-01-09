@@ -87,7 +87,7 @@
                                 <div class="form-group " id="sandbox-container">
                                     <label for="date_arrival">Fecha de Entrega</label>
                                     <div class="input-daterange" id="datepicker">
-                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival" value="{{ \Carbon\Carbon::parse($order->date_arrival)->format('d/m/Y')}}" readonly>
+                                        <input type="text" class="form-control date-range-filter" id="date_arrival" name="date_arrival" value="{{ \Carbon\Carbon::parse($order->date_delivery)->format('d/m/Y')}}" readonly>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -327,7 +327,7 @@
             /*$('#date_order').attr("value", moment().format('DD/MM/YYYY'));
             $('#date_arrival').attr("value", moment().format('DD/MM/YYYY'));
 */
-            $('#sandbox-container .input-daterange').datepicker({
+            /*$('#sandbox-container .input-daterange').datepicker({
                 todayBtn: "linked",
                 clearBtn: true,
                 language: "es",
@@ -335,7 +335,7 @@
                 autoclose: true,
                 todayHighlight: true,
                 defaultViewDate: moment().format('L')
-            });
+            });*/
 
             $("input[data-bootstrap-switch]").each(function(){
                 $(this).bootstrapSwitch();
