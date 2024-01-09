@@ -269,6 +269,9 @@ class FinanceWorkController extends Controller
             } elseif (  count($outputs) > 0 )
             {
                 $state_work = 'EN PROCESO';
+            } elseif ( $quote->state == 'canceled' )
+            {
+                $state_work = 'CANCELADO';
             }
         } else {
             if ( $finance_work->state_work == 'finished' )
@@ -280,6 +283,12 @@ class FinanceWorkController extends Controller
             } elseif (  $finance_work->state_work == 'in_progress' )
             {
                 $state_work = 'EN PROCESO';
+            } elseif (  $finance_work->state_work == 'stopped' )
+            {
+                $state_work = 'PAUSADO';
+            } elseif (  $finance_work->state_work == 'canceled' )
+            {
+                $state_work = 'CANCELADO';
             }
         }
 
