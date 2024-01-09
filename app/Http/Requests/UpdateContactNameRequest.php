@@ -27,7 +27,8 @@ class UpdateContactNameRequest extends FormRequest
             'name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
             'phone' => 'nullable|string|max:12',
-            'email' => 'string|max:255|email'
+            'email' => 'string|max:255|email',
+            'area' => 'nullable|string',
         ];
     }
 
@@ -46,7 +47,9 @@ class UpdateContactNameRequest extends FormRequest
 
             'email.string' => 'El :attribute debe contener caracteres válidos.',
             'email.max' => 'El :attribute debe contener máximo 255 caracteres.',
-            'email.email' => 'El :attribute debe ser un email válido.'
+            'email.email' => 'El :attribute debe ser un email válido.',
+
+            'area.string' => 'El :attribute debe contener caracteres válidos.',
         ];
     }
 

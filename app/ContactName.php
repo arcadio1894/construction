@@ -14,7 +14,8 @@ class ContactName extends Model
         'name',
         'customer_id',
         'phone',
-        'email'
+        'email',
+        'area'
     ];
 
     public function customer()

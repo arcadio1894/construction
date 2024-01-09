@@ -126,8 +126,8 @@
             <thead>
             <tr>
                 <th colspan="1" class="normal-title"></th>
-                <th colspan="2" class="cliente-title">INFORMACIÓN DEL CLIENTE</th>
-                <th colspan="8" class="trabajo-title">INFORMACIÓN DEL TRABAJO</th>
+                <th colspan="3" class="cliente-title">INFORMACIÓN DEL CLIENTE</th>
+                <th colspan="9" class="trabajo-title">INFORMACIÓN DEL TRABAJO</th>
                 <th colspan="19" class="facturacion-title">FACTURACIÓN</th>
                 <th colspan="2" class="normal-title"></th>
             </tr>
@@ -135,11 +135,13 @@
                 <th>Año</th>
                 <th>Cliente</th>
                 <th>Responsable</th>
+                <th>Área</th>
+                <th>N° Cotización</th>
+                <th>Tipo</th>
+                <th>N° O.C / O.S</th>
+                <th>Descripción</th>
                 <th>Inicio</th>
                 <th>Entrega</th>
-                <th>N° Cotización</th>
-                <th>N° O.S.</th>
-                <th>Descripción</th>
                 <th>Estado del Trabajo</th>
                 <th>Acta Aceptacion</th>
                 <th>Estado Acta Aceptacion</th>

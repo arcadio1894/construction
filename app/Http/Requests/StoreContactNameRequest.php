@@ -27,7 +27,8 @@ class StoreContactNameRequest extends FormRequest
             'name' => 'required|string|max:255',
             'customer_id' => 'required|exists:customers,id',
             'phone' => 'nullable|string|max:12',
-            'email' => 'nullable|string|max:255|email|unique:contact_names,email'
+            'email' => 'nullable|string|max:255|email|unique:contact_names,email',
+            'area' => 'nullable|string',
         ];
     }
 
@@ -47,7 +48,9 @@ class StoreContactNameRequest extends FormRequest
             'email.string' => 'El :attribute debe contener caracteres válidos.',
             'email.max' => 'El :attribute debe contener máximo 255 caracteres.',
             'email.email' => 'El :attribute debe ser un email válido.',
-            'email.unique' => 'El :attribute ya existe en la base de datos.'
+            'email.unique' => 'El :attribute ya existe en la base de datos.',
+
+            'area.string' => 'El :attribute debe contener caracteres válidos.',
         ];
     }
 
@@ -58,6 +61,7 @@ class StoreContactNameRequest extends FormRequest
             'customer_id' => 'empresa',
             'phone' => 'teléfono',
             'email' => 'correo electrónico',
+            'area' => 'area'
         ];
     }
 }

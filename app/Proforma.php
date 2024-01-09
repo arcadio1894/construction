@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Proforma extends Model
 {
-    protected $appends = ['total_proforma', 'total_equipments'];
+    protected $appends = ['time_delivery', 'total_proforma', 'total_equipments'];
 
     protected $fillable = [
         'code',
@@ -31,6 +31,22 @@ class Proforma extends Model
     ];
 
     protected $dates = ['date_quote', 'date_validate', 'date_vb_proforma'];
+
+    public function getTimeDeliveryAttribute()
+    {
+        if ($this->delivery_time === null) {
+            return ""; // Devuelve null si el campo es null
+        }
+
+        $pattern = '/^(\d+(?:\.\d+)?)\s+(d[ií]́?as)$/iu';
+
+        // Verificar si el campo sigue el formato esperado número + espacio + días (independientemente de las mayúsculas/minúsculas y acentos)
+        if (preg_match($pattern, $this->delivery_time, $matches)) {
+            return (float)$matches[1]; // Devuelve solo el número
+        } else {
+            return $this->delivery_time; // Si no sigue el formato esperado, devuelve el dato completo
+        }
+    }
 
     public function getTotalEquipmentsAttribute()
     {

@@ -58,6 +58,7 @@
                 <th>Código</th>
                 <th>Nombre de contacto</th>
                 <th>Empresa</th>
+                <th>Área</th>
                 <th>Teléfono</th>
                 <th>Email</th>
                 <th>Acciones</th>

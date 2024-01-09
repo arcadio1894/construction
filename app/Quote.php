@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Quote extends Model
 {
-    protected $appends = ['have_details', 'subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_rent_pdf', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit', 'total_quote', 'total_equipments'];
+    protected $appends = ['time_delivery','have_details', 'subtotal_utility', 'subtotal_letter', 'subtotal_rent', 'subtotal_rent_pdf', 'subtotal_utility_edit', 'subtotal_letter_edit', 'subtotal_rent_edit', 'total_quote', 'total_equipments'];
 
     protected $fillable = [
         'code',
@@ -41,6 +41,22 @@ class Quote extends Model
         'proforma_id',
         'observations'
     ];
+
+    public function getTimeDeliveryAttribute()
+    {
+        if ($this->delivery_time === null) {
+            return ""; // Devuelve null si el campo es null
+        }
+
+        $pattern = '/^(\d+(?:\.\d+)?)\s+(d[ií]́?as)$/iu';
+
+        // Verificar si el campo sigue el formato esperado número + espacio + días (independientemente de las mayúsculas/minúsculas y acentos)
+        if (preg_match($pattern, $this->delivery_time, $matches)) {
+            return (float)$matches[1]; // Devuelve solo el número
+        } else {
+            return $this->delivery_time; // Si no sigue el formato esperado, devuelve el dato completo
+        }
+    }
 
     public function getHaveImagesAttribute()
     {

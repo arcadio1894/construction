@@ -116,9 +116,15 @@
                             </div>
                             @endhasanyrole
                             <div class="col-md-4">
-                                <label for="paymentQuote">Tiempo de entrega </label>
-                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}">
-
+                                <label for="timeQuote">Tiempo de entrega </label>
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="number" id="timeQuote" step="1" min="0" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->time_delivery }}">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2"> DIAS</span>
+                                    </div>
+                                </div>
+                                {{--<input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}">
+--}}
                             </div>
                             {{--@hasanyrole('logistic|admin')--}}
                             <div class="col-md-4">

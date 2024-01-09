@@ -1,8 +1,11 @@
 $(document).ready(function () {
-
+    $("#customer_id").select2({
+        placeholder: "Seleccione una empresa",
+        allowClear: true
+    });
     $formEdit = $('#formEdit');
-    $formEdit.on('submit', updateCustomer);
-
+    //$formEdit.on('submit', updateCustomer);
+    $("#btn-submit").on('click', updateCustomer);
 });
 
 var $formEdit;
@@ -14,11 +17,14 @@ function mayus(e) {
 function updateCustomer() {
     event.preventDefault();
     // Obtener la URL
+    $("#btn-submit").attr("disabled", true);
+    var formulario = $('#formEdit')[0];
+    var form = new FormData(formulario);
     var editUrl = $formEdit.data('url');
     $.ajax({
         url: editUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -42,10 +48,33 @@ function updateCustomer() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 $(location).attr('href', data.url)
             }, 2000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -67,7 +96,7 @@ function updateCustomer() {
                     });
             }
 
-
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

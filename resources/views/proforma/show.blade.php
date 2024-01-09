@@ -127,7 +127,12 @@
                             @endhasanyrole
                             <div class="col-md-4">
                                 <label for="timeQuote">Tiempo de entrega </label>
-                                <input type="text" id="timeQuote" readonly onkeyup="mayus(this);" value="{{ $proforma->delivery_time }}" class="form-control form-control-sm">
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="number" id="timeQuote" step="1" min="0" name="delivery_time" class="form-control form-control-sm" value="{{ $proforma->time_delivery }}" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2"> DIAS</span>
+                                    </div>
+                                </div>
                             </div>
                             {{--@hasanyrole('logistic|admin')--}}
                             <div class="col-md-4">

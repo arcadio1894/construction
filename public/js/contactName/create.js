@@ -4,8 +4,8 @@ $(document).ready(function () {
         allowClear: true
     });
     $formCreate = $('#formCreate');
-    $formCreate.on('submit', storeCustomer);
-
+    //$formCreate.on('submit', storeCustomer);
+    $("#btn-submit").on('click', storeCustomer);
 });
 
 var $formCreate;
@@ -17,11 +17,15 @@ function mayus(e) {
 function storeCustomer() {
     event.preventDefault();
     // Obtener la URL
+    $("#btn-submit").attr("disabled", true);
+    var formulario = $('#formCreate')[0];
+    var form = new FormData(formulario);
     var createUrl = $formCreate.data('url');
+
     $.ajax({
         url: createUrl,
         method: 'POST',
-        data: new FormData(this),
+        data: form,
         processData:false,
         contentType:false,
         success: function (data) {
@@ -45,10 +49,33 @@ function storeCustomer() {
                     "hideMethod": "fadeOut"
                 });
             setTimeout( function () {
+                $("#btn-submit").attr("disabled", false);
                 location.reload();
             }, 2000 )
         },
         error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
             for ( var property in data.responseJSON.errors ) {
                 toastr.error(data.responseJSON.errors[property], 'Error',
                     {
@@ -70,7 +97,7 @@ function storeCustomer() {
                     });
             }
 
-
+            $("#btn-submit").attr("disabled", false);
         },
     });
 }

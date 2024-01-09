@@ -250,7 +250,7 @@
     <div id="notices">
         <div>TÉRMINOS Y CONDICIONES:</div>
         <div class="notice">FORMA DE PAGO: {{ ($proforma->deadline !== null) ? $proforma->deadline->description : 'No tiene forma de pago' }} </div>
-        <div class="notice">TIEMPO DE ENTREGA: {{ $proforma->delivery_time }}</div>
+        <div class="notice">TIEMPO DE ENTREGA: {{ ($proforma->time_delivery == null || $proforma->time_delivery == "") ? $proforma->time_delivery: $proforma->time_delivery . " DÍAS" }}</div>
         @if( $proforma->currency === 'USD' )
             <div class="notice">PRECIO NO INCLUYE IGV, EL PRECIO ESTA EXPRESADO EN {{ ( $proforma->currency === 'USD' ) ? 'DÓLARES AMERICANOS':'SOLES' }} </div>
         @else

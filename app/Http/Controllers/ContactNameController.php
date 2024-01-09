@@ -34,6 +34,7 @@ class ContactNameController extends Controller
                 'customer_id' => $request->get('customer_id'),
                 'phone' => $request->get('phone'),
                 'email' => $request->get('email'),
+                'area' => $request->get('area'),
             ]);
 
             $length = 5;
@@ -67,6 +68,7 @@ class ContactNameController extends Controller
             $contactName->customer_id = $request->get('customer_id');
             $contactName->phone = $request->get('phone');
             $contactName->email = $request->get('email');
+            $contactName->area = $request->get('area');
             $contactName->save();
 
             DB::commit();

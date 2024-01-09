@@ -9,6 +9,14 @@ $(document).ready(function () {
             { data: 'code' },
             { data: 'name' },
             { data: 'customer.business_name' },
+            { data: null,
+                title: 'Área',
+                wrap: true,
+                "render": function (item)
+                {
+                    return (item.area == null || item.area == "") ? 'Sin área':item.area;
+                }
+            },
             { data: 'phone' },
             { data: 'email' },
             { data: null,

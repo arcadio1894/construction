@@ -59,7 +59,7 @@
         <div class="form-group row">
             <div class="col-md-6">
                 <label for="customer_id" class="col-12 col-form-label">Empresa <span class="right badge badge-danger">(*)</span></label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <select id="customer_id" class="form-control select2" name="customer_id" data-states style="width: 100%;">
                         <option></option>
                         @foreach( $customers as $customer )
@@ -71,30 +71,37 @@
 
             <div class="col-md-6">
                 <label for="inputEmail3" class="col-12 col-form-label">Nombre de Contacto <span class="right badge badge-danger">(*)</span></label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <input type="text" class="form-control" onkeyup="mayus(this);" name="name" >
                 </div>
             </div>
         </div>
 
         <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <label for="inputEmail3" class="col-12 col-form-label">Área</label>
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" onkeyup="mayus(this);" name="area">
+                </div>
+            </div>
+
+            <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Teléfono</label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <input type="text" class="form-control" name="phone">
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Email</label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <input type="text" class="form-control" name="email">
                 </div>
             </div>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-outline-success">Guardar</button>
+            <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar</button>
             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
         </div>
         <!-- /.card-footer -->

@@ -106,8 +106,13 @@
                                 <input type="text" id="paymentQuote" onkeyup="mayus(this);" name="way_to_pay" class="form-control form-control-sm" value="{{ ($quote->deadline !== null) ? $quote->deadline->description : 'No tiene forma de pago' }} " readonly>
                             </div>
                             <div class="col-md-4">
-                                <label for="description">Tiempo de entrega <span class="right badge badge-danger">(*)</span></label>
-                                <input type="text" id="timeQuote" onkeyup="mayus(this);" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->delivery_time }}" readonly>
+                                <label for="timeQuote">Tiempo de entrega <span class="right badge badge-danger">(*)</span></label>
+                                <div class="input-group input-group-sm mb-3">
+                                    <input type="number" id="timeQuote" step="1" min="0" name="delivery_time" class="form-control form-control-sm" value="{{ $quote->time_delivery }}" readonly>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text" id="basic-addon2"> DIAS</span>
+                                    </div>
+                                </div>
                             </div>
                             <div class="col-md-4">
                                 <label for="customer_id">Cliente <span class="right badge badge-danger">(*)</span></label>

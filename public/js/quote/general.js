@@ -45,7 +45,17 @@ $(document).ready(function () {
                         return '<p>'+ item.way_to_pay +' </p>'
                 }
             },
-            { data: 'delivery_time' },
+            { data: null,
+                title: 'Tiempo Entrega',
+                wrap: true,
+                "render": function (item)
+                {
+                    if ( item.time_delivery == null || item.time_delivery == "" )
+                        return "";
+                    else
+                        return item.time_delivery +' DíAS';
+                }
+            },
             { data: null,
                 title: 'Cliente',
                 wrap: true,

@@ -80,24 +80,31 @@
         </div>
 
         <div class="form-group row">
-            <div class="col-md-6">
+            <div class="col-md-4">
+                <label for="inputEmail3" class="col-12 col-form-label">Área</label>
+                <div class="col-sm-12">
+                    <input type="text" class="form-control" name="area" onkeyup="mayus(this);" value="{{ $contactName->area }}">
+                </div>
+            </div>
+
+            <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Teléfono</label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <input type="text" class="form-control" name="phone" value="{{ $contactName->phone }}">
                 </div>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <label for="inputEmail3" class="col-12 col-form-label">Email</label>
-                <div class="col-sm-10">
+                <div class="col-sm-12">
                     <input type="text" class="form-control" name="email" value="{{ $contactName->email }}">
                 </div>
             </div>
         </div>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-outline-success">Guardar Cambios</button>
-            <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
+            <button type="button" id="btn-submit" class="btn btn-outline-success">Guardar Cambios</button>
+
         </div>
         <!-- /.card-footer -->
     </form>

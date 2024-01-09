@@ -109,21 +109,25 @@ class FinanceWorkController extends Controller
             $detraction = 0;
             $amount_detraction = 0;
             $detraction_text = '';
+            $type = "";
 
             if ( $work->detraction == 'oc' )
             {
                 $detraction = 0.03;
                 $amount_detraction = $total * $detraction;
                 $detraction_text = 'O.C. 3%';
+                $type = "OC";
             } elseif ( $work->detraction == 'os' )
             {
                 $detraction = 0.12;
                 $amount_detraction = $total * $detraction;
                 $detraction_text = 'O.S. 12%';
+                $type = "OS";
             } else {
                 $detraction = 0;
                 $amount_detraction = $total * $detraction;
                 $detraction_text = 'N.N. 0%';
+                $type = "SIN ORDEN";
             }
 
             $act_of_acceptance = '';
@@ -179,11 +183,26 @@ class FinanceWorkController extends Controller
 
             $days =  ($work->quote->deadline == null) ? 0:$work->quote->deadline->days;
 
+            $date_delivery = "No entregado";
+
             if ( $work->date_initiation == null )
             {
                 $date_initiation = ($timeline == null) ? 'No iniciado': $timeline->date->format('d/m/Y');
             } else {
                 $date_initiation = ($work->date_initiation == null) ? 'No iniciado':$work->date_initiation->format('d/m/Y');
+
+                if ( $work->date_initiation != null )
+                {
+                    if ($work->quote->time_delivery != "")
+                    {
+                        $date_delivery = $work->date_initiation->addDays($work->quote->time_delivery)->format('d/m/Y');
+                    } else {
+                        $date_delivery = "No especifica entrega";
+                    }
+                } else {
+                    $date_delivery = "No entregado";
+                }
+
             }
 
             array_push($array, [
@@ -191,8 +210,10 @@ class FinanceWorkController extends Controller
                 "year" => $work->raise_date->year,
                 "customer" => ($work->quote->customer == null) ? 'Sin contacto': $work->quote->customer->business_name,
                 "responsible" => ($work->quote->contact == null) ? 'Sin contacto': $work->quote->contact->name,
+                "area" => ($work->quote->contact == null || ($work->quote->contact != null && $work->quote->contact->area == "")) ? 'Sin área': $work->quote->contact->area,
+                "type" => $type,
                 "initiation" => $date_initiation,
-                "delivery" => ($work->date_delivery == null) ? 'No entregado': $work->date_delivery->format('d/m/Y'),
+                "delivery" => $date_delivery,
                 "quote" => $work->quote->id . "-" . $work->raise_date->year,
                 "order_customer" => $work->quote->code_customer,
                 "description" => $work->quote->description_quote,

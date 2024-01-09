@@ -377,7 +377,13 @@ function renderDataTable(data) {
     clone.querySelector("[data-date_quote]").innerHTML = data.date_quote;
     clone.querySelector("[data-date_validate]").innerHTML = data.date_validate;
     clone.querySelector("[data-deadline]").innerHTML = data.deadline;
-    clone.querySelector("[data-delivery_time]").innerHTML = data.delivery_time;
+    if ( data.delivery_time == "" || data.delivery_time == null )
+    {
+        clone.querySelector("[data-delivery_time]").innerHTML = data.delivery_time;
+    } else {
+        clone.querySelector("[data-delivery_time]").innerHTML = data.delivery_time + ' DÍAS';
+    }
+
     clone.querySelector("[data-customer]").innerHTML = data.customer;
     clone.querySelector("[data-total_con_igv]").innerHTML = data.total_con_igv;
     clone.querySelector("[data-total_sin_igv]").innerHTML = data.total_sin_igv;
