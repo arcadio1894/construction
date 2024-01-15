@@ -60,6 +60,8 @@ class PersonalPaymentController extends Controller
 
         $tiposCambios = $this->getTypeExchange($year, $month);
 
+        //dd($tiposCambios);
+
 
         //TODO: Primero obtenemos las fechas de ese mes y año
         $dates = DateDimension::where('year', $year)
@@ -93,23 +95,26 @@ class PersonalPaymentController extends Controller
         foreach ($semanas as &$element) {
             $semana = $element['semana'];
 
-            $fechaPrimerDia = Carbon::now()->setISODate(date('Y'), $semana)->startOfWeek();
+            //$fechaPrimerDia = Carbon::now()->setISODate(date('Y'), $semana)->startOfWeek();
+            $fechaPrimerDia = Carbon::now()->setISODate($year, $semana)->startOfWeek();
 
             // Verificar si el primer día de la semana pertenece al mes dado
             if ($fechaPrimerDia->month == $month) {
                 $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
             } else {
                 // En caso de que pertenezca a otro mes, obtener el primer día del mes dado
-                $fechaPrimerDia = Carbon::createFromDate(date('Y'), $month, 1);
+                //$fechaPrimerDia = Carbon::createFromDate(date('Y'), $month, 1);
+                $fechaPrimerDia = Carbon::createFromDate($year, $month, 1);
                 $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
             }
         }
 
         unset($element);
-
+        //dump($semanas);
         foreach ($semanas as &$element) {
             $firstDayWeek = $element['firstDayWeek'];
-
+            //dump($firstDayWeek);
+            //dd($tiposCambios);
             // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
             $rate = $this->getExchange($firstDayWeek, $tiposCambios); // Reemplaza getExchange() con el nombre de tu propia función
             $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;

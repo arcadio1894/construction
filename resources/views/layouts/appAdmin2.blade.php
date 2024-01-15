@@ -14,6 +14,7 @@
     <!-- Ionicons -->
     <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
     <link rel="stylesheet" href="{{ asset('admin/plugins/pace-progress/themes/black/pace-theme-flat-top.css') }}">
+    <link rel="stylesheet" href="{{ asset('admin/plugins/overlayScrollbars/css/OverlayScrollbars.min.css') }}">
     <!-- Toastr -->
     <link rel="stylesheet" href="{{ asset('admin/plugins/toastr/toastr.min.css') }}">
     <link rel="stylesheet" href="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.css') }}">
@@ -27,13 +28,18 @@
         .dropdown-item.active, .dropdown-item:active{
             background-color: #ffffff !important;
         }
+
+        .btn i {
+            width: 1em; /* Ajusta el tamaño según sea necesario */
+            height: 1em;
+        }
     </style>
     @yield('styles')
 
     <!-- Google Font: Source Sans Pro -->
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700" rel="stylesheet">
 </head>
-<body class="hold-transition sidebar-mini pace-primary">
+<body class="hold-transition sidebar-mini pace-primary layout-fixed layout-navbar-fixed">
 <div class="wrapper">
 
     <!-- Navbar -->
@@ -2839,7 +2845,7 @@
 <!-- Toastr -->
 <script src="{{ asset('admin/plugins/toastr/toastr.min.js') }}"></script>
 <script src="{{ asset('admin/plugins/jquery-confirm/jquery-confirm.min.js') }}"></script>
-
+<script src="{{ asset('admin/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
 @yield('plugins')
 
 <!-- AdminLTE App -->

@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
-    var tabla = $('#dynamic-table').DataTable( {
+    /*var tabla = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/finance/works",
             dataSrc: 'data'
@@ -220,6 +220,24 @@ $(document).ready(function () {
 
         tabla.columns(0).search(filterYear).columns(1).search(filterCustomer).columns(8).search(filterStateWork).columns(28).search(filterState).draw();
     });
+*/
+    $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
+
+    getDataFinanceWorks(1);
+
+    $("#btnBusquedaAvanzada").click(function(e){
+        e.preventDefault();
+        $(".busqueda-avanzada").slideToggle();
+    });
+
+    $(document).on('click', '[data-item]', showData);
+    $("#btn-search").on('click', showDataSearch);
 
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
@@ -287,6 +305,8 @@ $(document).ready(function () {
         });
 
     });
+
+    $('#btn-export').on('click', exportExcel);
 });
 
 var $formEditTrabajo;
@@ -297,6 +317,389 @@ var $selectCustomer;
 var $selectContact;
 
 var $permissions;
+
+function exportExcel() {
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+    var rate = $('#rate').val();
+
+    console.log(start);
+    console.log(end);
+    console.log(startDate);
+    console.log(endDate);
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todos los ingresos',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end,
+                            rate: rate
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/reporte/ingresos/clientes/?" + $.param(query);
+
+                        window.location = url;
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end,
+            rate: rate
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/reporte/ingresos/clientes/?" + $.param(query);
+
+        window.location = url;
+
+    }
+
+}
+
+function showDataSearch() {
+    getDataFinanceWorks(1)
+}
+
+function showData() {
+    //event.preventDefault();
+    var numberPage = $(this).attr('data-item');
+    console.log(numberPage);
+    getDataFinanceWorks(numberPage)
+}
+
+function getDataFinanceWorks($numberPage) {
+    var description = $('#description').val();
+    var year = $('#year').val();
+    var code = $('#code').val();
+    var customer = $('#customer').val();
+    var stateWork = $('#stateWork').val();
+    var year_factura = $('#year_factura').val();
+    var month_factura = $('#month_factura').val();
+    var year_abono = $('#year_factura').val();
+    var month_abono = $('#month_factura').val();
+    var state = $('#state').val();
+    var startDate = $('#start').val();
+    var endDate = $('#end').val();
+
+    var rate = $('#rate').val();
+
+    $.get('/dashboard/get/finance/works/v2/'+$numberPage, {
+        description:description,
+        year: year,
+        code: code,
+        customer: customer,
+        stateWork: stateWork,
+        year_factura: year_factura,
+        month_factura: month_factura,
+        year_abono: year_abono,
+        month_abono: month_abono,
+        state_invoice: state,
+        startDate: startDate,
+        endDate: endDate,
+        rate:rate
+    }, function(data) {
+        if ( data.data.length == 0 )
+        {
+            renderDataFinanceWorksEmpty(data);
+        } else {
+            renderDataFinanceWorks(data);
+        }
+
+
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        // Función de error, se ejecuta cuando la solicitud GET falla
+        console.error(textStatus, errorThrown);
+        if (jqXHR.responseJSON.message && !jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.message, 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+        for (var property in jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.errors[property], 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+    }, 'json')
+        .done(function() {
+            // Configuración de encabezados
+            var headers = {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            };
+
+            $.ajaxSetup({
+                headers: headers
+            });
+        });
+}
+
+function renderDataFinanceWorksEmpty(data) {
+    var dataAccounting = data.data;
+    var pagination = data.pagination;
+    console.log(dataAccounting);
+    console.log(pagination);
+
+    $("#body-table").html('');
+    $("#pagination").html('');
+    $("#textPagination").html('');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' Pre Cotizaciones');
+    $('#numberItems').html('');
+    $('#numberItems').html(pagination.totalFilteredRecords);
+
+    renderDataTableEmpty();
+}
+
+function renderDataFinanceWorks(data) {
+    var dataFinanceWorks = data.data;
+    var pagination = data.pagination;
+    console.log(dataFinanceWorks);
+    console.log(pagination);
+
+    $("#body-table").html('');
+    $("#pagination").html('');
+    $("#textPagination").html('');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' ingresos clientes.');
+    $('#numberItems').html('');
+    $('#numberItems').html(pagination.totalFilteredRecords);
+
+    for (let j = 0; j < dataFinanceWorks.length ; j++) {
+        renderDataTable(dataFinanceWorks[j]);
+    }
+
+    if (pagination.currentPage > 1)
+    {
+        renderPreviousPage(pagination.currentPage-1);
+    }
+
+    if (pagination.totalPages > 1)
+    {
+        if (pagination.currentPage > 3)
+        {
+            renderItemPage(1);
+
+            if (pagination.currentPage > 4) {
+                renderDisabledPage();
+            }
+        }
+
+        for (var i = Math.max(1, pagination.currentPage - 2); i <= Math.min(pagination.totalPages, pagination.currentPage + 2); i++)
+        {
+            renderItemPage(i, pagination.currentPage);
+        }
+
+        if (pagination.currentPage < pagination.totalPages - 2)
+        {
+            if (pagination.currentPage < pagination.totalPages - 3)
+            {
+                renderDisabledPage();
+            }
+            renderItemPage(i, pagination.currentPage);
+        }
+
+    }
+
+    if (pagination.currentPage < pagination.totalPages)
+    {
+        renderNextPage(pagination.currentPage+1);
+    }
+}
+
+function renderDataTableEmpty() {
+    var clone = activateTemplate('#item-table-empty');
+    $("#body-table").append(clone);
+}
+
+function renderDataTable(data) {
+    var clone = activateTemplate('#item-table');
+    clone.querySelector("[data-year]").innerHTML = data.year;
+
+    clone.querySelector("[data-customer]").innerHTML = data.customer;
+    clone.querySelector("[data-responsible]").innerHTML = data.responsible;
+    clone.querySelector("[data-area]").innerHTML = data.area;
+
+    clone.querySelector("[data-quote]").innerHTML = data.quote;
+    clone.querySelector("[data-type]").innerHTML = data.type;
+    clone.querySelector("[data-order_customer]").innerHTML = data.order_customer;
+    clone.querySelector("[data-description]").innerHTML = data.description;
+    clone.querySelector("[data-initiation]").innerHTML = data.initiation;
+    clone.querySelector("[data-delivery]").innerHTML = data.delivery;
+    if ( data.delivery_past == 's' )
+    {
+        clone.querySelector("[data-delivery]").style.backgroundColor = '#ffc107';
+    }
+    clone.querySelector("[data-state_work]").innerHTML = data.state_work;
+
+    clone.querySelector("[data-act_of_acceptance]").innerHTML = data.act_of_acceptance;
+    clone.querySelector("[data-state_act_of_acceptance]").innerHTML = data.state_act_of_acceptance;
+    clone.querySelector("[data-docier]").innerHTML = data.docier;
+    clone.querySelector("[data-hes]").innerHTML = data.hes;
+
+    clone.querySelector("[data-advancement]").innerHTML = data.advancement;
+    clone.querySelector("[data-amount_advancement]").innerHTML = data.amount_advancement;
+    clone.querySelector("[data-currency]").innerHTML = data.currency;
+    clone.querySelector("[data-subtotal]").innerHTML = data.subtotal;
+    clone.querySelector("[data-igv]").innerHTML = data.igv;
+    clone.querySelector("[data-total]").innerHTML = data.total;
+    clone.querySelector("[data-detraction]").innerHTML = data.detraction;
+    clone.querySelector("[data-amount_detraction]").innerHTML = data.amount_detraction;
+    clone.querySelector("[data-discount_factoring]").innerHTML = data.discount_factoring;
+    clone.querySelector("[data-amount_include_detraction]").innerHTML = data.amount_include_detraction;
+
+    clone.querySelector("[data-pay_condition]").innerHTML = data.pay_condition;
+    clone.querySelector("[data-invoiced]").innerHTML = data.invoiced;
+    clone.querySelector("[data-number_invoice]").innerHTML = data.number_invoice;
+    clone.querySelector("[data-year_invoice]").innerHTML = data.year_invoice;
+    clone.querySelector("[data-month_invoice]").innerHTML = data.month_invoice;
+    clone.querySelector("[data-date_issue]").innerHTML = data.date_issue;
+    clone.querySelector("[data-date_admission]").innerHTML = data.date_admission;
+    clone.querySelector("[data-days]").innerHTML = data.days;
+    clone.querySelector("[data-date_programmed]").innerHTML = data.date_programmed;
+
+    clone.querySelector("[data-bank]").innerHTML = data.bank;
+    clone.querySelector("[data-state]").innerHTML = data.state;
+    clone.querySelector("[data-year_paid]").innerHTML = data.year_paid;
+    clone.querySelector("[data-month_paid]").innerHTML = data.month_paid;
+    clone.querySelector("[data-date_paid]").innerHTML = data.date_paid;
+    clone.querySelector("[data-observation]").innerHTML = data.observation;
+    clone.querySelector("[data-revision]").innerHTML = data.revision;
+
+    clone.querySelector("[data-formEditTrabajo]").setAttribute('data-formEditTrabajo', data.id);
+    clone.querySelector("[data-formEditFacturacion]").setAttribute('data-formEditFacturacion', data.id);
+
+    /*if ( $.inArray('show_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-show]").setAttribute('href', location.origin + '/dashboard/ver/pre/cotizacion/' + data.id);
+    } else {
+        let element = clone.querySelector("[data-show]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
+
+    if ( $.inArray('print_proforma', $permissions) !== -1 ) {
+        clone.querySelector("[data-print]").setAttribute('href', document.location.origin + '/dashboard/imprimir/proforma/cliente/' + data.id);
+    } else {
+        let element = clone.querySelector("[data-print]");
+        if (element) {
+            element.style.display = 'none';
+        }
+    }*/
+
+    $("#body-table").append(clone);
+
+    $('[data-toggle="tooltip"]').tooltip();
+}
+
+function renderPreviousPage($numberPage) {
+    var clone = activateTemplate('#previous-page');
+    clone.querySelector("[data-item]").setAttribute('data-item', $numberPage);
+    $("#pagination").append(clone);
+}
+
+function renderDisabledPage() {
+    var clone = activateTemplate('#disabled-page');
+    $("#pagination").append(clone);
+}
+
+function renderItemPage($numberPage, $currentPage) {
+    var clone = activateTemplate('#item-page');
+    if ( $numberPage == $currentPage )
+    {
+        clone.querySelector("[data-item]").setAttribute('data-item', $numberPage);
+        clone.querySelector("[data-active]").setAttribute('class', 'page-item active');
+        clone.querySelector("[data-item]").innerHTML = $numberPage;
+    } else {
+        clone.querySelector("[data-item]").setAttribute('data-item', $numberPage);
+        clone.querySelector("[data-item]").innerHTML = $numberPage;
+    }
+
+    $("#pagination").append(clone);
+}
+
+function renderNextPage($numberPage) {
+    var clone = activateTemplate('#next-page');
+    clone.querySelector("[data-item]").setAttribute('data-item', $numberPage);
+    $("#pagination").append(clone);
+}
 
 function getContacts(contact_id) {
     var customer =  $('#customer_id').val();
@@ -607,282 +1010,4 @@ function showModalEditFacturacion() {
         $modalEditFacturacion.modal('show');
     }, "json");
 
-}
-
-function renewQuote() {
-    var quote_id = $(this).data('renew');
-    var button = $(this);
-    button.attr("disabled", true);
-    $.confirm({
-        icon: 'fas fa-sync',
-        theme: 'modern',
-        closeIcon: false,
-        animation: 'zoom',
-        type: 'green',
-        columnClass: 'medium',
-        title: '¿Está seguro de renovar esta cotización?',
-        content: 'Se va a crear una nueva cotización pero con todos los mismos contenidos.',
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                btnClass: 'btn-blue',
-                action: function () {
-                    $.ajax({
-                        url: '/dashboard/renew/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert(data.message);
-                            setTimeout( function () {
-                                button.attr("disabled", false);
-                                location.href = data.url;
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            button.attr("disabled", false);
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                    //$.alert('Your name is ' + name);
-                }
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Cotización no elevada.");
-                    button.attr("disabled", false);
-                },
-            },
-        }
-    });
-
-}
-
-function cancelQuote() {
-    var quote_id = $(this).data('delete');
-    var description = $(this).data('name');
-
-    $.confirm({
-        icon: 'fas fa-frown',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'red',
-        title: '¿Está seguro de eliminar esta cotización?',
-        content: description,
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: '/dashboard/destroy/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert("Cotización anulada.");
-                            setTimeout( function () {
-                                location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Anulación cancelada.");
-                },
-            },
-        },
-    });
-
-}
-
-function confirmQuote() {
-    var quote_id = $(this).data('confirm');
-    var description = $(this).data('name');
-
-    var status_send = $(this).data('status');
-
-    if ( status_send == 0 )
-    {
-        toastr.error('No puede confirmar sin antes enviar.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "3000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }
-
-    $.confirm({
-        icon: 'fas fa-smile',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de confirmar esta cotización? ',
-        content: description,
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: '/dashboard/confirm/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert("Cotización confirmada con éxito.");
-                            setTimeout( function () {
-                                location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Anulación cancelada.");
-                },
-            },
-        },
-    });
-
-
-}
-
-function sendQuote() {
-    var quote_id = $(this).data('send');
-    var description = $(this).data('name');
-
-    $.confirm({
-        icon: 'fas fa-paper-plane',
-        theme: 'modern',
-        closeIcon: true,
-        animation: 'zoom',
-        type: 'green',
-        title: '¿Está seguro de enviar esta cotización? ',
-        content: description,
-        buttons: {
-            confirm: {
-                text: 'CONFIRMAR',
-                action: function (e) {
-                    $.ajax({
-                        url: '/dashboard/send/quote/'+quote_id,
-                        method: 'POST',
-                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        processData:false,
-                        contentType:false,
-                        success: function (data) {
-                            console.log(data);
-                            $.alert("Cotización enviada con éxito.");
-                            setTimeout( function () {
-                                location.reload();
-                            }, 2000 )
-                        },
-                        error: function (data) {
-                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
-                        },
-                    });
-                },
-            },
-            cancel: {
-                text: 'CANCELAR',
-                action: function (e) {
-                    $.alert("Anulación cancelada.");
-                },
-            },
-        },
-    });
-
-}
-
-function destroySubCategory() {
-    event.preventDefault();
-    // Obtener la URL
-    var deleteUrl = $formDelete.data('url');
-    $.ajax({
-        url: deleteUrl,
-        method: 'POST',
-        data: new FormData(this),
-        processData:false,
-        contentType:false,
-        success: function (data) {
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalDelete.modal('hide');
-            setTimeout( function () {
-                location.reload();
-            }, 2000 )
-        },
-        error: function (data) {
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-
-
-        },
-    });
 }

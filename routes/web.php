@@ -2280,9 +2280,9 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_financeWorks');
         Route::get('/get/finance/works', 'FinanceWorkController@getFinanceWorks')
             ->middleware('permission:list_financeWorks');
-        Route::get('/trabajos/finanzas', 'FinanceWorkController@index')
+        /*Route::get('/trabajos/finanzas', 'FinanceWorkController@index')
             ->name('finance.works.index')
-            ->middleware('permission:list_financeWorks');
+            ->middleware('permission:list_financeWorks');*/
         Route::get('/get/info/trabajo/finance/work/{financeWork_id}', 'FinanceWorkController@getInfoTrabajoFinanceWork')
             ->middleware('permission:update_financeWorks');
         Route::post('finance/work/edit/trabajo', 'FinanceWorkController@financeWorkEditTrabajo')
@@ -2293,6 +2293,14 @@ Route::middleware('auth')->group(function (){
         Route::post('finance/work/edit/facturacion', 'FinanceWorkController@financeWorkEditFacturacion')
             ->name('finance.work.edit.facturacion')
             ->middleware('permission:update_financeWorks');
+
+        Route::get('/get/finance/works/v2/{numberPage}', 'FinanceWorkController@getDataFinanceWorks')
+            ->middleware('permission:list_financeWorks');
+        Route::get('/trabajos/finanzas/v2', 'FinanceWorkController@indexV2')
+            ->name('finance.works.index')
+            ->middleware('permission:list_financeWorks');
+        Route::get('exportar/reporte/ingresos/clientes/', 'FinanceWorkController@exportFinanceWorks')
+            ->middleware('permission:list_financeWorks');
 
         // TODO: Rutas de Worker Accounts
         Route::get('/registrar/cuentas/trabajador/{worker_id}', 'WorkerAccountController@index')

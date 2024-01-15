@@ -37,6 +37,10 @@
         .select2-search__field{
             width: 100% !important;
         }
+        .btn i {
+            width: 1em; /* Ajusta el tamaño según sea necesario */
+            height: 1em;
+        }
     </style>
 @endsection
 
