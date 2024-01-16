@@ -2704,7 +2704,7 @@
                             <a href="#" class="nav-link @yield('activeFinanceWorks')">
                                 <i class="nav-icon fas fa-credit-card"></i>
                                 <p>
-                                    Trabajos
+                                    Cuadros Financieros
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -2713,7 +2713,7 @@
                                     <li class="nav-item">
                                         <a href="{{ route('finance.works.index') }}" class="nav-link @yield('activeListFinanceWorks')">
                                             <i class="far fa-circle nav-icon"></i>
-                                            <p>Listar trabajos</p>
+                                            <p>Ingresos Clientes</p>
                                         </a>
                                     </li>
                                 @endcan
