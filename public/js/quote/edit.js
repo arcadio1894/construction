@@ -817,10 +817,10 @@ function fillEquipments() {
             }
 
             for (let i = 0; i < diasTotal.length; i++) {
-                totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
+                totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
             }
 
-            totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
+            totalEquipment = parseFloat((totalEquipment * quantity)/*+totalDias*/).toFixed(2);
 
             totalEquipmentU = totalEquipment*((utility/100)+1);
             totalEquipmentL = totalEquipmentU*((letter/100)+1);
@@ -1296,7 +1296,7 @@ function saveEquipment() {
                             totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                         }
                         for (let i = 0; i < diasTotal.length; i++) {
-                            totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
+                            totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                         }
 
                         //totalEquipment = parseFloat((totalEquipment * quantity)).toFixed(2);
@@ -1309,7 +1309,7 @@ function saveEquipment() {
                         //calculateLetter2($('#letter').val());
                         //calculateRent2($('#taxes').val());
 
-                        totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
+                        totalEquipment = parseFloat((totalEquipment * quantity)/*+totalDias*/).toFixed(2);
                         totalEquipmentU = totalEquipment*((utility/100)+1);
                         totalEquipmentL = totalEquipmentU*((letter/100)+1);
                         totalEquipmentR = totalEquipmentL*((rent/100)+1);
@@ -1594,10 +1594,10 @@ function saveEquipment() {
                             totalEquipment2 = parseFloat(totalEquipment2) + parseFloat(consumablesTotal[i]);
                         }
                         for (let i = 0; i < diasTotal.length; i++) {
-                            totalDias2 = parseFloat(totalDias2) + parseFloat(diasTotal[i]);
+                            totalEquipment2 = parseFloat(totalEquipment2) + parseFloat(diasTotal[i]);
                         }
 
-                        totalEquipment2 = parseFloat((totalEquipment2 * quantity)+totalDias2).toFixed(2);
+                        totalEquipment2 = parseFloat((totalEquipment2 * quantity)/*+totalDias2*/).toFixed(2);
                         totalEquipmentU2 = totalEquipment2*((utility/100)+1);
                         totalEquipmentL2 = totalEquipmentU2*((letter/100)+1);
                         totalEquipmentR2 = totalEquipmentL2*((rent/100)+1);
@@ -2615,10 +2615,10 @@ function confirmEquipment() {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
                     for (let i = 0; i < diasTotal.length; i++) {
-                        totalDias = parseFloat(totalDias) + parseFloat(diasTotal[i]);
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }
 
-                    totalEquipment = parseFloat((totalEquipment * quantity)+totalDias).toFixed(2);
+                    totalEquipment = parseFloat((totalEquipment * quantity)/*+totalDias*/).toFixed(2);
 
                     totalEquipmentU = totalEquipment*((utility/100)+1);
                     totalEquipmentL = totalEquipmentU*((letter/100)+1);
