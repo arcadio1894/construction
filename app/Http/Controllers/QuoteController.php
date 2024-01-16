@@ -851,7 +851,9 @@ class QuoteController extends Controller
 
                     //$equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
-                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity) + $totalDias;
+                    // Cambio el 16/01/2024
+                    //$totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity) + $totalDias;
+                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity);
                     $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                     $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                     $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
