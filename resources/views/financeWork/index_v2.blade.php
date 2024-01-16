@@ -234,7 +234,7 @@
                     <div class="row">
                         <div class="col-md-3">
                             <label for="state">Estado Factura:</label>
-                            <select id="state" class="form-control form-control-sm select2" style="width: 100%;">
+                            <select id="stateInvoiced" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
                                 @foreach ($arrayStates as $state)
                                     <option value="{{ $state['value'] }}">{{ $state['display'] }}</option>
@@ -783,6 +783,7 @@
 
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
 
 
 @endsection
@@ -790,9 +791,39 @@
 @section('scripts')
     <script>
         $(function () {
+            $('#date_issue').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date_admission').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date_paid').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            $('#date_initiation').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+            //$('#date_delivery').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
             //Initialize Select2 Elements
             $('#year').select2({
                 placeholder: "Selecione año",
+                allowClear: true
+            });
+
+            $('#state_work').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
+            $('#act_of_acceptance').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
+            $('#state_act_of_acceptance').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
+            $('#docier').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
+            $('#detraction').select2({
+                placeholder: "Selecione detracción",
                 allowClear: true
             });
 
@@ -811,6 +842,10 @@
                 allowClear: true
             });
 
+            $('#stateInvoiced').select2({
+                placeholder: "Selecione estado",
+                allowClear: true
+            });
             $('#year_factura').select2({
                 placeholder: "Selecione año",
                 allowClear: true
@@ -829,6 +864,44 @@
             $('#month_abono').select2({
                 placeholder: "Selecione mes",
                 allowClear: true
+            });
+
+            $('#advancement').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
+            $('#invoiced').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+
+            $('#bank_id').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+
+            $('#month_invoice').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+            $('#year_invoice').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+
+            $('#month_paid').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+            $('#year_paid').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
+            });
+
+            $('#revision').select2({
+                placeholder: "Seleccione",
+                allowClear: true,
             });
         })
     </script>

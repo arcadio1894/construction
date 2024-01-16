@@ -430,7 +430,7 @@ function getDataFinanceWorks($numberPage) {
     var month_factura = $('#month_factura').val();
     var year_abono = $('#year_factura').val();
     var month_abono = $('#month_factura').val();
-    var state = $('#state').val();
+    var state = $('#stateInvoiced').val();
     var startDate = $('#start').val();
     var endDate = $('#end').val();
 
