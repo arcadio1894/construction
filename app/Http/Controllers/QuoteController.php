@@ -466,7 +466,7 @@ class QuoteController extends Controller
                     $new_total_workday = $new_total_workday + $equipment_workday->total;
                 }
 
-                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile) * $equipment->quantity) + $new_total_workday;
+                $totalEquipo = (($new_total_material + $new_total_consumable + $new_total_workforce + $new_total_turnstile  + $new_total_workday ) * $equipment->quantity);
                 $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                 $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                 $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
