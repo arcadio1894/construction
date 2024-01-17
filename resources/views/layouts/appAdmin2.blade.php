@@ -33,6 +33,11 @@
             width: 1em; /* Ajusta el tamaño según sea necesario */
             height: 1em;
         }
+
+        #body-notifications {
+            max-height: 300px; /* Establece la altura máxima del contenedor para activar el scroll */
+            overflow: auto;    /* Añade un scroll si el contenido supera la altura máxima */
+        }
     </style>
     @yield('styles')
 
@@ -2717,6 +2722,12 @@
                                         </a>
                                     </li>
                                 @endcan
+                                    <li class="nav-item">
+                                        <a href="{{ route('expenses.supplier.index') }}" class="nav-link @yield('activeListExpensesSupplier')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Egresos Proveedores</p>
+                                        </a>
+                                    </li>
                             </ul>
                         </li>
                     @endcan

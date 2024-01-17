@@ -26,6 +26,7 @@ class FinanceWorkController extends Controller
         $description = $request->input('description');
         $year = $request->input('year');
         $code = $request->input('code');
+        $order = $request->input('order');
         $customer = $request->input('customer');
         $stateWork = $request->input('stateWork');
         $year_factura = $request->input('year_factura');
@@ -72,6 +73,13 @@ class FinanceWorkController extends Controller
         if ($code) {
             $query->whereHas('quote', function ($query2) use ($code) {
                 $query2->where('code', 'LIKE', '%'.$code.'%');
+            });
+
+        }
+
+        if ($order) {
+            $query->whereHas('quote', function ($query2) use ($order) {
+                $query2->where('code_customer', 'LIKE', '%'.$order.'%');
             });
 
         }

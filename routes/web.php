@@ -2302,6 +2302,15 @@ Route::middleware('auth')->group(function (){
         Route::get('exportar/reporte/ingresos/clientes/', 'FinanceWorkController@exportFinanceWorks')
             ->middleware('permission:list_financeWorks');
 
+        // TODO: Rutas de Egresos Proveedores
+        Route::get('/get/expenses/supplier/v2/{numberPage}', 'ExpenseSupplierController@getDataFinanceWorks')
+            ->middleware('permission:list_expenseSupplier');
+        Route::get('/egresos/proveedores/v2', 'ExpenseSupplierController@indexV2')
+            ->name('expenses.supplier.index')
+            ->middleware('permission:list_expenseSupplier');
+        Route::get('exportar/reporte/egresos/proveedores/', 'ExpenseSupplierController@exportFinanceWorks')
+            ->middleware('permission:export_expenseSupplier');
+
         // TODO: Rutas de Worker Accounts
         Route::get('/registrar/cuentas/trabajador/{worker_id}', 'WorkerAccountController@index')
             ->name('worker.accounts.index')
