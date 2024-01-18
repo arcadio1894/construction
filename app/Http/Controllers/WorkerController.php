@@ -57,19 +57,20 @@ class WorkerController extends Controller
                 'num_children' => $worker->num_children,
                 'daily_salary' => $worker->daily_salary,
                 'monthly_salary' => $worker->monthly_salary,
-                'pension' => $worker->pension,
+                'pension' => ($worker->pension == null || $worker->pension == "") ? "":$worker->pension,
                 'gender' => $worker->gender,
                 'essalud' => $worker->essalud,
                 'assign_family' => $worker->assign_family,
-                'five_category' => $worker->five_category,
+                'five_category' => ($worker->five_category == 1) ? 'SI':'NO',
                 'termination_date' => ($worker->termination_date == null) ? '':$worker->termination_date->format('d/m/Y'),
                 'observation' => $worker->observation,
                 'contract' => ($worker->contract_id == null) ? '': $worker->contract->code,
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'percentage_pension_system' => ($worker->percentage_pension_system == null || $worker->percentage_pension_system == 0) ? '':$worker->percentage_pension_system,
                 'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
-                'have_contract' => $haveContract
+                'have_contract' => $haveContract,
             ] );
         }
 
@@ -189,7 +190,7 @@ class WorkerController extends Controller
                 'pension_system_id' => ($request->get('pension_system') == 0) ? null: $request->get('pension_system'),
                 //'working_day_id' => ($request->get('working_day') == 0) ? null: $request->get('working_day'),
                 'area_worker_id' => ($request->get('area_worker') == 0) ? null: $request->get('area_worker'),
-
+                'percentage_pension_system' => ($request->get('percentage_pension_system') == 0 || $request->get('percentage_pension_system') == "") ? null: $request->get('percentage_pension_system'),
             ]);
 
             // Creacion de los contactos de emergencia
@@ -323,6 +324,8 @@ class WorkerController extends Controller
             $worker->pension_system_id = ($request->get('pension_system') == 0) ? null: $request->get('pension_system');
             //$worker->working_day_id = ($request->get('working_day') == 0) ? null: $request->get('working_day');
             $worker->area_worker_id = ($request->get('area_worker') == 0) ? null: $request->get('area_worker');
+            $worker->percentage_pension_system = ($request->get('percentage_pension_system') == 0 || $request->get('percentage_pension_system') == "") ? null: $request->get('percentage_pension_system');
+
             $worker->save();
 
             // Primero eliminamos los contactos

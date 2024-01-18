@@ -158,19 +158,23 @@
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                 <input type="checkbox" data-column="24" class="custom-control-input" id="customSwitch25">
-                <label class="custom-control-label" for="customSwitch25">Observación</label>
+                <label class="custom-control-label" for="customSwitch25">Porc. Sistema Pensión</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="25" class="custom-control-input" id="customSwitch26">
-                <label class="custom-control-label" for="customSwitch26">Área</label>
+                <input type="checkbox" data-column="25" class="custom-control-input" id="customSwitch26">
+                <label class="custom-control-label" for="customSwitch26">Observación</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="26" class="custom-control-input" id="customSwitch27">
-                <label class="custom-control-label" for="customSwitch27">Profesión</label>
+                <input type="checkbox" checked data-column="26" class="custom-control-input" id="customSwitch27">
+                <label class="custom-control-label" for="customSwitch27">Área</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                 <input type="checkbox" data-column="27" class="custom-control-input" id="customSwitch28">
-                <label class="custom-control-label" for="customSwitch28">Motivo de Cese</label>
+                <label class="custom-control-label" for="customSwitch28">Profesión</label>
+            </div>
+            <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                <input type="checkbox" data-column="28" class="custom-control-input" id="customSwitch29">
+                <label class="custom-control-label" for="customSwitch29">Motivo de Cese</label>
             </div>
         </div>
 
@@ -203,6 +207,7 @@
                 <th>Contrato</th>
                 <th>Estado Civil</th>
                 <th>Sistema Pensión</th>
+                <th>Porc. de Sist. Pension</th>
                 <th>Observación</th>
                 <th>Área</th>
                 <th>Profesión</th>

@@ -284,6 +284,13 @@
                                 </select>
                             </div>
                             <div class="col-md-6">
+                                <label for="percentage_pension_system">Porcentage Sistema Pensión </label>
+                                <input type="number" id="percentage_pension_system" name="percentage_pension_system" class="form-control" placeholder="0.00" min="0" step="0.01" >
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-6">
                                 <label for="pension">Pension Alimentos </label>
                                 <div class="input-group">
                                     <input type="number" id="pension" name="pension" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" >
@@ -292,8 +299,6 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="form-group row">
                             {{--<div class="col-md-6">
                                 <label for="working_day">Jornada Laboral </label>
                                 <select id="working_day" name="working_day" class="form-control select2 working_day" style="width: 100%;">

@@ -57,7 +57,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
-                        text = (parseFloat(item.pension)).toFixed(2);
+                        text = item.pension+"%";
                     }
                     return text ;
                 }
@@ -96,7 +96,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
-                        text = (parseFloat(item.five_category)).toFixed(2);
+                        text = item.five_category;
                     }
                     return text ;
                 }
@@ -128,6 +128,7 @@ $(document).ready(function () {
                     return text ;
                 }
             },
+            { data: 'percentage_pension_system' },
             { data: 'observation' },
             { data: 'area_worker' },
             { data: 'profession' },
@@ -180,7 +181,7 @@ $(document).ready(function () {
         "columnDefs": [
             {
                 "visible": false,
-                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24,26,27 ]
+                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24,25,27,28 ]
             }],
 
         select: {
