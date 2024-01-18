@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Entry;
 use App\OrderPurchase;
 use App\OrderService;
 use Illuminate\Http\Request;
@@ -135,7 +136,27 @@ class ExpenseSupplierController extends Controller
                 // TODO: OrderPurchase
                 $order = OrderPurchase::with('supplier', 'deadline')->find($expense->id);
 
-                //$invoice
+                $invoices = Entry::where('purchase_order', $order->code)->get();
+
+                $invoice = "";
+                $date_invoice = "";
+
+                if ( count($invoices) == 0 )
+                {
+                    $invoice = "SIN FACTURA";
+                    $date_invoice = "SIN FECHA";
+                } elseif ( count($invoices) == 1 )
+                {
+                    $invoice = $invoices[0]->invoice;
+                    $date_invoice = $invoices[0]->date_entry->format('d/m/Y');
+                } elseif ( count($invoices) > 1 )
+                {
+                    foreach ( $invoices as $i )
+                    {
+                        $invoice = $invoice . $i->invoice ."<br>";
+                        $date_invoice = $date_invoice . $invoices[0]->date_entry->format('d/m/Y') ."<br>";
+                    }
+                }
 
                 array_push($array, [
                     "id" => $order->id,
@@ -145,8 +166,8 @@ class ExpenseSupplierController extends Controller
                     "order" => ($order->code == null || $order->code == '') ? '': $order->code,
                     "soles" => ($order->currency == 'PEN') ? $order->total : '',
                     "dolares" => ($order->currency == 'USD') ? $order->total : '',
-                    "invoice" => "",
-                    "date_invoice" => "",
+                    "invoice" => $invoice,
+                    "date_invoice" => $date_invoice,
                     "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
                     "due_date" => "",
                     "state_credit" => "",
