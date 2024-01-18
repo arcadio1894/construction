@@ -1382,8 +1382,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/workers/enable/', 'WorkerController@getWorkersEnable');
         Route::post('/enable/worker/{id}', 'WorkerController@enable')
             ->middleware('permission:restore_worker');
-
-
+        Route::get('exportar/reporte/colaboradores/', 'WorkerController@exportWorkers')
+            ->middleware('permission:edit_worker');
 
         //Route::get('/probar/cadenas', 'WorkerController@pruebaCadenas');
 

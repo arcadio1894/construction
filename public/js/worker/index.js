@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions);
+    //console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/workers/",
@@ -337,11 +337,61 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-delete]', destroyWorker);
+
+    $("#btn-exportExcel").on('click', exportExcel);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+
+function exportExcel() {
+    event.preventDefault();
+    // Inicializar un array para almacenar los valores de data-key
+    var checkedValues = [];
+
+    // Seleccionar todos los checkboxes con la clase custom-control-input que están marcados
+    $('.custom-control-input:checked').each(function() {
+        // Obtener el valor de data-key y agregarlo al array
+        checkedValues.push($(this).data('key'));
+    });
+
+    // Mostrar el array resultante en la consola (puedes hacer lo que quieras con el array)
+    console.log(checkedValues);
+
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de descargar los colaboradores?',
+        content: 'Se descargarán con los datos seleccionados.',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    var query = {
+                        filtros: checkedValues,
+                    };
+
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/exportar/reporte/colaboradores/?" + $.param(query);
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function destroyWorker() {
     event.preventDefault();

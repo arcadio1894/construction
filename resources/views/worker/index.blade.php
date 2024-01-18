@@ -41,6 +41,9 @@
     @can( 'create_worker' )
     <a href="{{ route('worker.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo colaborador </a>
     @endcan
+    {{--
+    <button type="button" class="btn btn-outline-success btn-sm float-right mr-1" id="btn-exportExcel"><i class="far fa-file-excel"></i> Exportar excel</button>
+    --}}
 @endsection
 
 @section('page-breadcrumb')
@@ -61,119 +64,119 @@
     <div>
         <div class="row">
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="0" class="custom-control-input" id="customSwitch1">
+                <input type="checkbox" data-key="code" checked data-column="0" class="custom-control-input" id="customSwitch1">
                 <label class="custom-control-label" for="customSwitch1">Código</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="1" class="custom-control-input" id="customSwitch2">
+                <input type="checkbox" data-key="dni" checked data-column="1" class="custom-control-input" id="customSwitch2">
                 <label class="custom-control-label" for="customSwitch2">DNI</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="2" class="custom-control-input" id="customSwitch3">
+                <input type="checkbox" data-key="first_name" checked data-column="2" class="custom-control-input" id="customSwitch3">
                 <label class="custom-control-label" for="customSwitch3">Nombres</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="3" class="custom-control-input" id="customSwitch4">
+                <input type="checkbox" data-key="last_name" checked data-column="3" class="custom-control-input" id="customSwitch4">
                 <label class="custom-control-label" for="customSwitch4">Apellidos</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="4" class="custom-control-input" id="customSwitch5">
+                <input type="checkbox" data-key="personal_address" data-column="4" class="custom-control-input" id="customSwitch5">
                 <label class="custom-control-label" for="customSwitch5">Dirección</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="5" class="custom-control-input" id="customSwitch6">
+                <input type="checkbox" data-key="phone" data-column="5" class="custom-control-input" id="customSwitch6">
                 <label class="custom-control-label" for="customSwitch6">Teléfono</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="6" class="custom-control-input" id="customSwitch7">
+                <input type="checkbox" data-key="email" data-column="6" class="custom-control-input" id="customSwitch7">
                 <label class="custom-control-label" for="customSwitch7">Email</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="7" class="custom-control-input" id="customSwitch8">
+                <input type="checkbox" data-key="work_function_id" checked data-column="7" class="custom-control-input" id="customSwitch8">
                 <label class="custom-control-label" for="customSwitch8">Cargo</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="8" class="custom-control-input" id="customSwitch9">
+                <input type="checkbox" data-key="gender" data-column="8" class="custom-control-input" id="customSwitch9">
                 <label class="custom-control-label" for="customSwitch9">Género</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="9" class="custom-control-input" id="customSwitch10">
+                <input type="checkbox" data-key="birthplace" data-column="9" class="custom-control-input" id="customSwitch10">
                 <label class="custom-control-label" for="customSwitch10">Fecha Nac.</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="10" class="custom-control-input" id="customSwitch11">
+                <input type="checkbox" data-key="age" data-column="10" class="custom-control-input" id="customSwitch11">
                 <label class="custom-control-label" for="customSwitch11">Edad</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="11" class="custom-control-input" id="customSwitch12">
+                <input type="checkbox" data-key="level_school" data-column="11" class="custom-control-input" id="customSwitch12">
                 <label class="custom-control-label" for="customSwitch12">Nivel Estudios</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="12" class="custom-control-input" id="customSwitch13">
+                <input type="checkbox" data-key="num_children" data-column="12" class="custom-control-input" id="customSwitch13">
                 <label class="custom-control-label" for="customSwitch13">N° de Hijos</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="13" class="custom-control-input" id="customSwitch14">
+                <input type="checkbox" data-key="admission_date" data-column="13" class="custom-control-input" id="customSwitch14">
                 <label class="custom-control-label" for="customSwitch14">Fecha Ingreso</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="14" class="custom-control-input" id="customSwitch15">
+                <input type="checkbox" data-key="termination_date" data-column="14" class="custom-control-input" id="customSwitch15">
                 <label class="custom-control-label" for="customSwitch15">Fecha Cese</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="15" class="custom-control-input" id="customSwitch16">
+                <input type="checkbox" data-key="daily_salary" data-column="15" class="custom-control-input" id="customSwitch16">
                 <label class="custom-control-label" for="customSwitch16">Salario Diario</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="16" class="custom-control-input" id="customSwitch17">
+                <input type="checkbox" data-key="monthly_salary" data-column="16" class="custom-control-input" id="customSwitch17">
                 <label class="custom-control-label" for="customSwitch17">Salario Mensual</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="17" class="custom-control-input" id="customSwitch18">
+                <input type="checkbox" data-key="pension" data-column="17" class="custom-control-input" id="customSwitch18">
                 <label class="custom-control-label" for="customSwitch18">Pension Alimentos</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="18" class="custom-control-input" id="customSwitch19">
+                <input type="checkbox" data-key="essalud" data-column="18" class="custom-control-input" id="customSwitch19">
                 <label class="custom-control-label" for="customSwitch19">ESSALUD</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="19" class="custom-control-input" id="customSwitch20">
+                <input type="checkbox" data-key="assign_family" data-column="19" class="custom-control-input" id="customSwitch20">
                 <label class="custom-control-label" for="customSwitch20">Asignación Familiar</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="20" class="custom-control-input" id="customSwitch21">
+                <input type="checkbox" data-key="five_category" data-column="20" class="custom-control-input" id="customSwitch21">
                 <label class="custom-control-label" for="customSwitch21">Quinta Categoría</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="21" class="custom-control-input" id="customSwitch22">
+                <input type="checkbox" readonly data-column="21" class="custom-control-input" id="customSwitch22">
                 <label class="custom-control-label" for="customSwitch22">Contrato</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="22" class="custom-control-input" id="customSwitch23">
+                <input type="checkbox" data-key="civil_status_id" data-column="22" class="custom-control-input" id="customSwitch23">
                 <label class="custom-control-label" for="customSwitch23">Estado Civil</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="23" class="custom-control-input" id="customSwitch24">
+                <input type="checkbox" data-key="pension_system_id" data-column="23" class="custom-control-input" id="customSwitch24">
                 <label class="custom-control-label" for="customSwitch24">Sistema Pensión</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="24" class="custom-control-input" id="customSwitch25">
+                <input type="checkbox" data-key="percentage_pension_system" data-column="24" class="custom-control-input" id="customSwitch25">
                 <label class="custom-control-label" for="customSwitch25">Porc. Sistema Pensión</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="25" class="custom-control-input" id="customSwitch26">
+                <input type="checkbox" data-key="observation" data-column="25" class="custom-control-input" id="customSwitch26">
                 <label class="custom-control-label" for="customSwitch26">Observación</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" checked data-column="26" class="custom-control-input" id="customSwitch27">
+                <input type="checkbox" data-key="area_worker_id" checked data-column="26" class="custom-control-input" id="customSwitch27">
                 <label class="custom-control-label" for="customSwitch27">Área</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="27" class="custom-control-input" id="customSwitch28">
+                <input type="checkbox" data-key="profession" data-column="27" class="custom-control-input" id="customSwitch28">
                 <label class="custom-control-label" for="customSwitch28">Profesión</label>
             </div>
             <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                <input type="checkbox" data-column="28" class="custom-control-input" id="customSwitch29">
+                <input type="checkbox" data-key="reason_for_termination" data-column="28" class="custom-control-input" id="customSwitch29">
                 <label class="custom-control-label" for="customSwitch29">Motivo de Cese</label>
             </div>
         </div>
