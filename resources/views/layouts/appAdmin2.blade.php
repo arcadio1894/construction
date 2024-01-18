@@ -2722,12 +2722,12 @@
                                         </a>
                                     </li>
                                 @endcan
-                                    <li class="nav-item">
+                                   {{-- <li class="nav-item">
                                         <a href="{{ route('expenses.supplier.index') }}" class="nav-link @yield('activeListExpensesSupplier')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Egresos Proveedores</p>
                                         </a>
-                                    </li>
+                                    </li>--}}
                             </ul>
                         </li>
                     @endcan
