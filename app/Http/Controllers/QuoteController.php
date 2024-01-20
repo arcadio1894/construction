@@ -1690,6 +1690,34 @@ class QuoteController extends Controller
             ]);
         }
 
+        // Crear notificacion
+        $notification = Notification::create([
+            'content' => $quote->code.' elevada por '.Auth::user()->name,
+            'reason_for_creation' => 'raise_quote',
+            'user_id' => Auth::user()->id,
+            'url_go' => route('quote.raise', $quote->id)
+        ]);
+
+        // Roles adecuados para recibir esta notificación admin, logistica
+        $users = User::role(['admin', 'principal' , 'logistic' , 'finance'])->get();
+        foreach ( $users as $user )
+        {
+            if ( $user->id != Auth::user()->id )
+            {
+                foreach ( $user->roles as $role )
+                {
+                    NotificationUser::create([
+                        'notification_id' => $notification->id,
+                        'role_id' => $role->id,
+                        'user_id' => $user->id,
+                        'read' => false,
+                        'date_read' => null,
+                        'date_delete' => null
+                    ]);
+                }
+            }
+        }
+
         $end = microtime(true) - $begin;
 
         Audit::create([

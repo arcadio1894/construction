@@ -53,7 +53,7 @@ $(document).ready(function () {
         $("#monthly_salary").val(salario_mensual);
     });
 
-    $(document).on('select2:select', '.pension_system', function (e) {
+   /* $(document).on('select2:select', '.pension_system', function (e) {
         // Do something
         $("#percentage_system_pension").val('');
         var data = $(this).select2('data');
@@ -61,7 +61,7 @@ $(document).ready(function () {
         var percentage = data[0].element.dataset.percentage;
         $("#percentage_system_pension").val(percentage);
 
-    });
+    });*/
 
     $formCreate = $('#formCreate');
     $("#btn-submit").on("click", storeWorker);

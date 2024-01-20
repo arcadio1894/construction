@@ -526,7 +526,21 @@ class BoletaController extends Controller
             // Descuento
             $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
             $sistemaPension = ($worker->pension_system_id == null) ? 'No tiene': $systemPension->description;
-            $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+            //$porcentageSistemaPension = 100;
+
+            if ( $worker->pension_system_id == null )
+            {
+                $porcentageSistemaPension = 0;
+            } else {
+                if ( $worker->percentage_pension_system == null || $worker->percentage_pension_system == 0 )
+                {
+                    $porcentageSistemaPension = $systemPension->percentage;
+                } else {
+                    $porcentageSistemaPension = $worker->percentage_pension_system;
+                }
+            }
+            //$montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+            $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($porcentageSistemaPension/100), 2);
 
             $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker_id, $start, $end);
             $rentaQuintaCat = round($amountRentaQuintaCat, 2);

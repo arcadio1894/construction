@@ -143,8 +143,13 @@
                             </select>
                         </div>
                         <div class="col-md-3">
-                            <label for="code">Código del Trabajo:</label>
+                            <label for="code">N° de cotización:</label>
                             <input type="text" id="code" class="form-control form-control-sm" placeholder="412" autocomplete="off">
+
+                        </div>
+                        <div class="col-md-3">
+                            <label for="order">Orden de Compra/Servicio:</label>
+                            <input type="text" id="order" class="form-control form-control-sm" placeholder="42000" autocomplete="off">
 
                         </div>
                         <div class="col-md-3">
@@ -156,6 +161,13 @@
                                 @endfor
                             </select>
                         </div>
+
+
+                    </div>
+
+                    <br>
+
+                    <div class="row">
                         <div class="col-md-3">
                             <label for="stateWork">Avance del Trabajo:</label>
                             <select id="stateWork" class="form-control form-control-sm select2" style="width: 100%;">
@@ -165,12 +177,6 @@
                                 @endforeach
                             </select>
                         </div>
-
-                    </div>
-
-                    <br>
-
-                    <div class="row">
                         <div class="col-md-3">
                             <label for="year_factura">Año Facturación:</label>
                             <select id="year_factura" class="form-control form-control-sm select2" style="width: 100%;">
@@ -180,7 +186,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="month_factura">Mes Facturación:</label>
                             <select id="month_factura" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -199,7 +205,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="year_abono">Año Abono:</label>
                             <select id="year_abono" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -208,7 +214,7 @@
                                 @endforeach
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="month_abono">Mes Abono:</label>
                             <select id="month_abono" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>

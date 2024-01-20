@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-    console.log($permissions);
+    //console.log($permissions);
     var table = $('#dynamic-table').DataTable( {
         ajax: {
             url: "/dashboard/get/workers/",
@@ -57,7 +57,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
-                        text = (parseFloat(item.pension)).toFixed(2);
+                        text = item.pension+"%";
                     }
                     return text ;
                 }
@@ -96,7 +96,7 @@ $(document).ready(function () {
                 {
                     var text = '';
                     if ( $.inArray('contract_worker', $permissions) !== -1 ) {
-                        text = (parseFloat(item.five_category)).toFixed(2);
+                        text = item.five_category;
                     }
                     return text ;
                 }
@@ -128,6 +128,7 @@ $(document).ready(function () {
                     return text ;
                 }
             },
+            { data: 'percentage_pension_system' },
             { data: 'observation' },
             { data: 'area_worker' },
             { data: 'profession' },
@@ -180,7 +181,7 @@ $(document).ready(function () {
         "columnDefs": [
             {
                 "visible": false,
-                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24,26,27 ]
+                "targets": [ 4, 5, 6, 8, 9, 10, 11, 12, 13,14,15,16,17,18,19,20,21,22,23,24,25,27,28 ]
             }],
 
         select: {
@@ -336,11 +337,61 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-delete]', destroyWorker);
+
+    $("#btn-exportExcel").on('click', exportExcel);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+
+function exportExcel() {
+    event.preventDefault();
+    // Inicializar un array para almacenar los valores de data-key
+    var checkedValues = [];
+
+    // Seleccionar todos los checkboxes con la clase custom-control-input que están marcados
+    $('.custom-control-input:checked').each(function() {
+        // Obtener el valor de data-key y agregarlo al array
+        checkedValues.push($(this).data('key'));
+    });
+
+    // Mostrar el array resultante en la consola (puedes hacer lo que quieras con el array)
+    console.log(checkedValues);
+
+    $.confirm({
+        icon: 'fas fa-file-excel',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de descargar los colaboradores?',
+        content: 'Se descargarán con los datos seleccionados.',
+        buttons: {
+            confirm: {
+                text: 'DESCARGAR',
+                action: function (e) {
+                    var query = {
+                        filtros: checkedValues,
+                    };
+
+                    $.alert('Descargando archivo ...');
+
+                    var url = "/dashboard/exportar/reporte/colaboradores/?" + $.param(query);
+
+                    window.location = url;
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Exportación cancelada.");
+                },
+            },
+        },
+    });
+}
 
 function destroyWorker() {
     event.preventDefault();

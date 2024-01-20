@@ -424,6 +424,7 @@ function getDataFinanceWorks($numberPage) {
     var description = $('#description').val();
     var year = $('#year').val();
     var code = $('#code').val();
+    var order = $('#order').val();
     var customer = $('#customer').val();
     var stateWork = $('#stateWork').val();
     var year_factura = $('#year_factura').val();
@@ -440,6 +441,7 @@ function getDataFinanceWorks($numberPage) {
         description:description,
         year: year,
         code: code,
+        order: order,
         customer: customer,
         stateWork: stateWork,
         year_factura: year_factura,

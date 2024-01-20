@@ -1382,8 +1382,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/workers/enable/', 'WorkerController@getWorkersEnable');
         Route::post('/enable/worker/{id}', 'WorkerController@enable')
             ->middleware('permission:restore_worker');
-
-
+        Route::get('exportar/reporte/colaboradores/', 'WorkerController@exportWorkers')
+            ->middleware('permission:edit_worker');
 
         //Route::get('/probar/cadenas', 'WorkerController@pruebaCadenas');
 
@@ -2301,6 +2301,15 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_financeWorks');
         Route::get('exportar/reporte/ingresos/clientes/', 'FinanceWorkController@exportFinanceWorks')
             ->middleware('permission:list_financeWorks');
+
+        // TODO: Rutas de Egresos Proveedores
+        Route::get('/get/expenses/supplier/v2/{numberPage}', 'ExpenseSupplierController@getDataFinanceWorks')
+            ->middleware('permission:list_expenseSupplier');
+        Route::get('/egresos/proveedores/v2', 'ExpenseSupplierController@indexV2')
+            ->name('expenses.supplier.index')
+            ->middleware('permission:list_expenseSupplier');
+        Route::get('exportar/reporte/egresos/proveedores/', 'ExpenseSupplierController@exportFinanceWorks')
+            ->middleware('permission:export_expenseSupplier');
 
         // TODO: Rutas de Worker Accounts
         Route::get('/registrar/cuentas/trabajador/{worker_id}', 'WorkerAccountController@index')

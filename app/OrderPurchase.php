@@ -32,7 +32,7 @@ class OrderPurchase extends Model
         'quote_id'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date_order'];
 
     public function supplier()
     {

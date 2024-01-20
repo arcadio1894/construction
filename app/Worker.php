@@ -39,7 +39,8 @@ class Worker extends Model
         'pension_system_id', // id description percentage
         'working_day_id',
         'enable',
-        'area_worker_id'
+        'area_worker_id',
+        'percentage_pension_system'
     ];
 
     // TODO: Las relaciones

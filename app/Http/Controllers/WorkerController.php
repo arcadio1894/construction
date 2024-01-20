@@ -6,6 +6,7 @@ use App\AreaWorker;
 use App\CivilStatus;
 use App\Contract;
 use App\EmergencyContact;
+use App\Exports\WorkersInfoExport;
 use App\PensionSystem;
 use App\PercentageWorker;
 use App\Relationship;
@@ -18,6 +19,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class WorkerController extends Controller
 {
@@ -27,6 +29,120 @@ class WorkerController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         return view('worker.index', compact('permissions'));
+    }
+
+    public function exportWorkers()
+    {
+        $filtros = $_GET['filtros'];
+
+        // Inicializar la consulta con el modelo Worker
+        $query = Worker::query();
+
+        // Filtrar los filtros para incluir solo las columnas existentes en la tabla
+        $filtros = array_filter($filtros, function ($filtro) {
+            // Verificar si la columna existe en la tabla workers
+            return Schema::hasColumn('workers', $filtro);
+        });
+
+        // Verificar si "work_function_id" está presente en los filtros y cargar la relación correspondiente
+        if (in_array('civil_status_id', $filtros)) {
+            $query->with('civil_status');
+        }
+
+        if (in_array('pension_system_id', $filtros)) {
+            $query->with('pension_system');
+        }
+
+        if (in_array('area_worker_id', $filtros)) {
+            $query->with('area_worker');
+        }
+
+        // Seleccionar las columnas indicadas en el array $filtros
+        $query->select($filtros);
+
+        // Obtener los resultados de la consulta
+        $workers = $query->get();
+
+        // Mapear nombres de columnas originales a nombres modificados
+        $columnasModificadas = [
+            "dni"                       => "DNI",
+            "first_name"                => "NOMBRES",
+            "last_name"                 => "APELLIDOS",
+            "personal_address"          => "DIRECCIÓN",
+            "phone"                     => "TELÉFONO",
+            "email"                     => "EMAIL",
+            "work_function_id"          => "CARGO",
+            "gender"                    => "GÉNERO",
+            "birthplace"                => "FECHA NACIMIENTO",
+            "level_school"              => "NIVEL ESTUDIOS",
+            "num_children"              => "N° HIJOS",
+            "admission_date"            => "FECHA INGRESO",
+            "termination_date"          => "FECHA DE CESE",
+            "daily_salary"              => "SALARIO DIARIO",
+            "monthly_salary"            => "SALARIO MENSUAL",
+            "pension"                   => "PENSION DE ALIMENTO",
+            "essalud"                   => "ESSALUD",
+            "assign_family"             => "ASIGNACIÓN FAMILIAR",
+            "five_category"             => "QUINTA CATEGORÍA",
+            "civil_status_id"           => "ESTADO CIVIL",
+            "pension_system_id"         => "SISTEMA PENSION",
+            "percentage_pension_system" => "PORC. SIST. PENSION",
+            "observation"               => "OBSERVACIÓN",
+            "area_worker_id"            => "AREA",
+            "profession"                => "PROFESIÓN",
+            "reason_for_termination"    => "MOTIVO DE CESE"
+            // Agrega más columnas según sea necesario
+        ];
+
+        // Estructurar datos en un array asociativo
+        $datos = [];
+
+        // Agregar encabezados de columna modificados al array
+        $encabezados = [];
+        foreach ($filtros as $filtro) {
+            $encabezados[] = $columnasModificadas[$filtro] ?? $filtro;
+        }
+        $datos[] = $encabezados;
+
+        // Agregar datos al array
+        foreach ($workers as $worker) {
+            $fila = [];
+            foreach ($filtros as $filtro) {
+                // Obtener el valor de la columna o de la relación
+                $valor = ($worker->$filtro ?? '');
+
+                // Personalizar la obtención de datos de las relaciones y manejar casos especiales
+                switch ($filtro) {
+                    case 'work_function_id':
+                        $valor = optional($worker->work_function)->description ?? '';
+                        break;
+                    case 'civil_status_id':
+                        $valor = optional($worker->civil_status)->description ?? '';
+                        break;
+                    case 'pension_system_id':
+                        $pensionSystem = optional($worker->pension_system);
+                        $valor = $pensionSystem->description ?? $pensionSystem->percentage;
+                        break;
+                    case 'percentage_pension_system':
+                        $valor = $worker->percentage_pension_system ?? optional($worker->pension_system)->percentage ?? '';
+                        break;
+                    case 'area_worker_id':
+                        $valor = optional($worker->area_worker)->name ?? '';
+                        break;
+                    // Agrega más casos según sea necesario
+                    default:
+                        // Mantén el valor original si no es una relación especial
+                }
+
+                $fila[] = $valor;
+            }
+            $datos[] = $fila;
+        }
+
+        // Hacer lo que quieras con los resultados
+        //dd($datos);
+        return (new WorkersInfoExport($datos))->download('trabajadores.xlsx');
+
     }
 
     public function getWorkers()
@@ -57,19 +173,20 @@ class WorkerController extends Controller
                 'num_children' => $worker->num_children,
                 'daily_salary' => $worker->daily_salary,
                 'monthly_salary' => $worker->monthly_salary,
-                'pension' => $worker->pension,
+                'pension' => ($worker->pension == null || $worker->pension == "") ? "":$worker->pension,
                 'gender' => $worker->gender,
                 'essalud' => $worker->essalud,
                 'assign_family' => $worker->assign_family,
-                'five_category' => $worker->five_category,
+                'five_category' => ($worker->five_category == 1) ? 'SI':'NO',
                 'termination_date' => ($worker->termination_date == null) ? '':$worker->termination_date->format('d/m/Y'),
                 'observation' => $worker->observation,
                 'contract' => ($worker->contract_id == null) ? '': $worker->contract->code,
                 'civil_status' => ($worker->civil_status_id == null) ? '': $worker->civil_status->description,
                 'work_function' => ($worker->work_function_id == null) ? '': $worker->work_function->description,
                 'pension_system' => ($worker->pension_system_id == null) ? '': $worker->pension_system->description,
+                'percentage_pension_system' => ($worker->percentage_pension_system == null || $worker->percentage_pension_system == 0) ? '':$worker->percentage_pension_system,
                 'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
-                'have_contract' => $haveContract
+                'have_contract' => $haveContract,
             ] );
         }
 
@@ -189,7 +306,7 @@ class WorkerController extends Controller
                 'pension_system_id' => ($request->get('pension_system') == 0) ? null: $request->get('pension_system'),
                 //'working_day_id' => ($request->get('working_day') == 0) ? null: $request->get('working_day'),
                 'area_worker_id' => ($request->get('area_worker') == 0) ? null: $request->get('area_worker'),
-
+                'percentage_pension_system' => ($request->get('percentage_pension_system') == 0 || $request->get('percentage_pension_system') == "") ? null: $request->get('percentage_pension_system'),
             ]);
 
             // Creacion de los contactos de emergencia
@@ -323,6 +440,8 @@ class WorkerController extends Controller
             $worker->pension_system_id = ($request->get('pension_system') == 0) ? null: $request->get('pension_system');
             //$worker->working_day_id = ($request->get('working_day') == 0) ? null: $request->get('working_day');
             $worker->area_worker_id = ($request->get('area_worker') == 0) ? null: $request->get('area_worker');
+            $worker->percentage_pension_system = ($request->get('percentage_pension_system') == 0 || $request->get('percentage_pension_system') == "") ? null: $request->get('percentage_pension_system');
+
             $worker->save();
 
             // Primero eliminamos los contactos

@@ -94,7 +94,8 @@ class RoleController extends Controller
         'supplierAccount' => 'CUENTAS BANCARIAS PROVEEDORES',
         'defaultEquipment' => 'CATALOGO EQUIPOS',
         'sales' => 'VENTAS',
-        'proforma' => 'PRE COTIZACIONES'
+        'proforma' => 'PRE COTIZACIONES',
+        'expenseSupplier' => 'EGRESOS PROVEEDORES'
     ];
 
     public function index()

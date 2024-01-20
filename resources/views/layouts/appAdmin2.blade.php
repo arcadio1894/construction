@@ -33,6 +33,11 @@
             width: 1em; /* Ajusta el tamaño según sea necesario */
             height: 1em;
         }
+
+        #body-notifications {
+            max-height: 300px; /* Establece la altura máxima del contenedor para activar el scroll */
+            overflow: auto;    /* Añade un scroll si el contenido supera la altura máxima */
+        }
     </style>
     @yield('styles')
 
@@ -122,6 +127,7 @@
                                 <span data-message="message" class="text-danger">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
                                 <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
                             </p>
+                            <br>
                             <a href="#" style="margin-top: 20px" data-read data-content >
                                 <span class="float-left text-sm">Marcar como leído</span>
                             </a>
@@ -132,7 +138,7 @@
                     </template>
                     <template id="notification-read">
                         <div class="dropdown-item">
-                            <p class="text-sm" style="margin-bottom: 10px">
+                            <p class="text-sm">
                                 <i class="fas fa-envelope mr-2"></i>
                                 <span data-message="message">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
                                 <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
@@ -140,6 +146,7 @@
                             {{--<a href="#" style="margin-top: 20px" data-read>
                                 <span class="float-left text-sm">Marcar como leído</span>
                             </a>--}}
+                            <br>
                             <a href="#" style="margin-top: 20px" data-go>
                                 <span class="float-right text-sm">Ir</span>
                             </a>
@@ -2717,6 +2724,12 @@
                                         </a>
                                     </li>
                                 @endcan
+                                   {{-- <li class="nav-item">
+                                        <a href="{{ route('expenses.supplier.index') }}" class="nav-link @yield('activeListExpensesSupplier')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Egresos Proveedores</p>
+                                        </a>
+                                    </li>--}}
                             </ul>
                         </li>
                     @endcan
