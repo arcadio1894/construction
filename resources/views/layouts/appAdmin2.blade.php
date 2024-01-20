@@ -127,6 +127,7 @@
                                 <span data-message="message" class="text-danger">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
                                 <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
                             </p>
+                            <br>
                             <a href="#" style="margin-top: 20px" data-read data-content >
                                 <span class="float-left text-sm">Marcar como leído</span>
                             </a>
@@ -137,7 +138,7 @@
                     </template>
                     <template id="notification-read">
                         <div class="dropdown-item">
-                            <p class="text-sm" style="margin-bottom: 10px">
+                            <p class="text-sm">
                                 <i class="fas fa-envelope mr-2"></i>
                                 <span data-message="message">Nueva cotizacion creada por Operador fgdfgdfgdfg</span>
                                 <span class="float-right text-muted text-sm" data-time>Hace 3 mins</span>
@@ -145,6 +146,7 @@
                             {{--<a href="#" style="margin-top: 20px" data-read>
                                 <span class="float-left text-sm">Marcar como leído</span>
                             </a>--}}
+                            <br>
                             <a href="#" style="margin-top: 20px" data-go>
                                 <span class="float-right text-sm">Ir</span>
                             </a>
