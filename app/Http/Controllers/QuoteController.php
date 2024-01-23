@@ -1260,9 +1260,9 @@ class QuoteController extends Controller
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
             ->where('user_id', $user->id)->first();
-        if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
+        /*if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
             return response()->json(['message' => 'No puede editar un equipo que no es de su propiedad'], 422);
-        }
+        }*/
 
         $equipmentSent = null;
 
