@@ -33,7 +33,7 @@ class OrderService extends Model
         'payment_deadline_id'
     ];
 
-    protected $dates = ['deleted_at'];
+    protected $dates = ['deleted_at', 'date_invoice', 'date_order'];
 
     public function supplier()
     {

@@ -5,7 +5,10 @@ namespace App\Http\Controllers;
 use App\Entry;
 use App\OrderPurchase;
 use App\OrderService;
+use App\Supplier;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ExpenseSupplierController extends Controller
@@ -109,11 +112,11 @@ class ExpenseSupplierController extends Controller
         $query = OrderService::with('supplier');*/
 
         $query = OrderPurchase::with('supplier')
-            ->select('id', DB::raw("'op' as type")) // Ajusta los campos según tus necesidades
+            ->select('id', 'date_order', DB::raw("'op' as type"))
             ->union(
                 OrderService::with('supplier')
-                    ->select('id', DB::raw("'os' as type")) // Ajusta los campos según tus necesidades
-            );
+                    ->select('id', 'date_order', DB::raw("'os' as type"))
+            )->orderBy('date_order', 'desc');;
 
         $totalFilteredRecords = $query->count();
         $totalPages = ceil($totalFilteredRecords / $perPage);
@@ -125,9 +128,11 @@ class ExpenseSupplierController extends Controller
             ->take($perPage)
             ->get();
 
-        //dd($proformas);
+        //dd($query);
 
         $array = [];
+
+        $date_current = Carbon::now('America/Lima');
 
         foreach ( $expense_suppliers as $expense )
         {
@@ -145,17 +150,130 @@ class ExpenseSupplierController extends Controller
                 {
                     $invoice = "SIN FACTURA";
                     $date_invoice = "SIN FECHA";
+                    $date_due = "SIN FECHA";
+                    array_push($array, [
+                        "id" => $order->id,
+                        "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
+                        "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                        "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
+                        "order" => ($order->code == null || $order->code == '') ? '': $order->code,
+                        "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
+                        "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
+                        "invoice" => $invoice,
+                        "date_invoice" => $date_invoice,
+                        "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
+                        "due_date" => $date_due,
+                        "state_credit" => "",
+                        "state_paid" => "",
+                    ]);
                 } elseif ( count($invoices) == 1 )
                 {
                     $invoice = $invoices[0]->invoice;
                     $date_invoice = $invoices[0]->date_entry->format('d/m/Y');
+                    $days = ($order->payment_deadline_id != null) ? $order->deadline->days : 0;
+                    $date_due = $invoices[0]->date_entry->addDays($days);
+                    if ($date_due->isSameDay($date_current)) {
+                        $state_credit = "VENCE HOY";
+                    } elseif ($date_due->isAfter($date_current)) {
+                        $state_credit = "POR VENCER";
+                    } else {
+                        $state_credit = "VENCIDO";
+                    }
+
+                    if ($invoices[0]->state_paid == null)
+                    {
+                        $state_paid = "";
+                    } elseif($invoices[0]->state_paid == "pending") {
+                        $state_paid = "PENDIENTE DE ABONAR";
+                    } else {
+                        $state_paid = "ABONADO";
+                    }
+                    array_push($array, [
+                        "id" => $order->id,
+                        "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
+                        "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                        "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
+                        "order" => ($order->code == null || $order->code == '') ? '': $order->code,
+                        "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
+                        "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
+                        "invoice" => $invoice,
+                        "date_invoice" => $date_invoice,
+                        "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
+                        "due_date" => $date_due->format('d/m/Y'),
+                        "state_credit" => $state_credit,
+                        "state_paid" => $state_paid
+                    ]);
                 } elseif ( count($invoices) > 1 )
                 {
                     foreach ( $invoices as $i )
                     {
-                        $invoice = $invoice . $i->invoice ."<br>";
-                        $date_invoice = $date_invoice . $invoices[0]->date_entry->format('d/m/Y') ."<br>";
+                        $invoice = $i->invoice;
+                        $date_invoice = $i->date_entry->format('d/m/Y');
+                        $days = ($order->payment_deadline_id != null) ? $order->deadline->days : 0;
+                        $date_due = $i->date_entry->addDays($days);
+
+                        if ($date_due->isSameDay($date_current)) {
+                            $state_credit = "VENCE HOY";
+                        } elseif ($date_due->isAfter($date_current)) {
+                            $state_credit = "POR VENCER";
+                        } else {
+                            $state_credit = "VENCIDO";
+                        }
+
+                        if ($i->state_paid == null)
+                        {
+                            $state_paid = "";
+                        } elseif($i->state_paid == "pending") {
+                            $state_paid = "PENDIENTE DE ABONAR";
+                        } else {
+                            $state_paid = "ABONADO";
+                        }
+                        array_push($array, [
+                            "id" => $order->id,
+                            "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
+                            "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                            "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
+                            "order" => ($order->code == null || $order->code == '') ? '': $order->code,
+                            "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
+                            "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
+                            "invoice" => $invoice,
+                            "date_invoice" => $date_invoice,
+                            "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
+                            "due_date" => $date_due->format('d/m/Y'),
+                            "state_credit" => $state_credit,
+                            "state_paid" => $state_paid
+                        ]);
                     }
+                }
+
+            } else {
+                // TODO: OrderService
+                $order = OrderService::with('supplier', 'deadline')->find($expense->id);
+                $invoice = $order->invoice;
+                $date_invoice = ($order->date_invoice == null) ? 'SIN FECHA': $order->date_invoice->format('d/m/Y');
+                $days = ($order->payment_deadline_id != null) ? $order->deadline->days : 0;
+                $date_due = ($order->date_invoice == null) ? 'SIN FECHA':$order->date_invoice->addDays($days);
+
+                if ( $date_due == "SIN FECHA" )
+                {
+                    $state_credit = "";
+                } else {
+                    if ($date_due->isSameDay($date_current)) {
+                        $state_credit = "VENCE HOY";
+                    } elseif ($date_due->isAfter($date_current)) {
+                        $state_credit = "POR VENCER";
+                    } else {
+                        $state_credit = "VENCIDO";
+                    }
+                }
+
+                if ($order->state_paid == null)
+                {
+                    $state_paid = "";
+                } elseif($order->state_paid == "pending") {
+                    $state_paid = "PENDIENTE DE ABONAR";
+                } else {
+                    $state_paid = "ABONADO";
                 }
 
                 array_push($array, [
@@ -164,32 +282,14 @@ class ExpenseSupplierController extends Controller
                     "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
                     "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
                     "order" => ($order->code == null || $order->code == '') ? '': $order->code,
-                    "soles" => ($order->currency == 'PEN') ? $order->total : '',
-                    "dolares" => ($order->currency == 'USD') ? $order->total : '',
+                    "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
+                    "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
                     "invoice" => $invoice,
                     "date_invoice" => $date_invoice,
                     "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
-                    "due_date" => "",
-                    "state_credit" => "",
-                    "state_paid" => "",
-                ]);
-            } else {
-                // TODO: OrderService
-                $order = OrderPurchase::with('supplier', 'deadline')->find($expense->id);
-                array_push($array, [
-                    "id" => "",
-                    "year" => "",
-                    "month" => "",
-                    "supplier" => "",
-                    "order" => "",
-                    "soles" => "",
-                    "dolares" => "",
-                    "invoice" => "",
-                    "date_invoice" => "",
-                    "days" => "",
-                    "due_date" => "",
-                    "state_credit" => "",
-                    "state_paid" => "",
+                    "due_date" => ($date_due == "SIN FECHA") ? "SIN FECHA": $date_due->format('d/m/Y'),
+                    "state_credit" => $state_credit,
+                    "state_paid" => $state_paid
                 ]);
             }
 
@@ -213,42 +313,44 @@ class ExpenseSupplierController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $registros = FinanceWork::all();
+        // Obtener los registros de OrderPurchase
+        $purchaseRecords = OrderPurchase::all();
 
-        $arrayYears = $registros->pluck('raise_date')->map(function ($date) {
+        // Obtener los registros de OrderService
+        $serviceRecords = OrderService::all();
+
+        // Unir ambos conjuntos de registros
+        $allRecords = $purchaseRecords->merge($serviceRecords);
+
+        // Obtener los años de las fechas en ambos modelos
+        $arrayYears = $allRecords->pluck('date_order')->map(function ($date) {
             return Carbon::parse($date)->format('Y');
         })->unique()->toArray();
 
         $arrayYears = array_values($arrayYears);
 
-        $arrayCustomers = Customer::select('id', 'business_name')->get()->toArray();
+        $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
 
-        $arrayStateWorks = [
-            ["value" => "to_start", "display" => "POR INICIAR"],
-            ["value" => "in_process", "display" => "EN PROCESO"],
-            ["value" => "finished", "display" => "TERMINADO"],
-            ["value" => "stopped", "display" => "PAUSADO"],
-            ["value" => "canceled", "display" => "CANCELADO"]
+        $arrayStateCredits = [
+            ["value" => "to_start", "display" => "VENCE HOY"],
+            ["value" => "in_process", "display" => "POR VENCER"],
+            ["value" => "finished", "display" => "VENCIDO"]
         ];
 
-        $arrayStates = [
+        $arrayStatePaids = [
             ["value" => "pending", "display" => "PENDIENTE DE ABONO"],
-            ["value" => "canceled", "display" => "ABONADO"],
+            ["value" => "paid", "display" => "ABONADO"],
         ];
 
-
-        $years = DateDimension::distinct()->get(['year']);
-
-        $banks = Bank::all();
-
-        $tiposCambios = $this->getTypeExchange();
+        //$tiposCambios = $this->getTypeExchange();
         //dump($tiposCambios);
-        $firstDayWeek = Carbon::now('America/Lima')->format('Y-m-d');
+        //$firstDayWeek = Carbon::now('America/Lima')->format('Y-m-d');
         //dump($firstDayWeek);
-        $tipoCambio = $this->getExchange($firstDayWeek, $tiposCambios);
-        $rate = $tipoCambio->compra;
+        //$tipoCambio = $this->getExchange($firstDayWeek, $tiposCambios);
+        //$rate = $tipoCambio->compra;
+        $day_current = Carbon::now('America/Lima');
 
-        return view('financeWork.index_v2', compact( 'rate','years', 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStateWorks', 'arrayStates', 'banks'));
+        return view('expenseSupplier.index_v2', compact( 'day_current', 'arrayYears', 'permissions', 'arraySuppliers', 'arrayStateCredits', 'arrayStatePaids'));
 
     }
 

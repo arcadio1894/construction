@@ -2303,7 +2303,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_financeWorks');
 
         // TODO: Rutas de Egresos Proveedores
-        Route::get('/get/expenses/supplier/v2/{numberPage}', 'ExpenseSupplierController@getDataFinanceWorks')
+        Route::get('/get/expenses/supplier/v2/{numberPage}', 'ExpenseSupplierController@getDataExpenseSuppliers')
             ->middleware('permission:list_expenseSupplier');
         Route::get('/egresos/proveedores/v2', 'ExpenseSupplierController@indexV2')
             ->name('expenses.supplier.index')
