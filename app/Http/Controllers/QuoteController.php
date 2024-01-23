@@ -2547,6 +2547,34 @@ class QuoteController extends Controller
         return response()->json(['message' => 'Guardado con éxito'], 200);
     }
 
+    public function getDecimalsQuote($quote_id)
+    {
+        $quote = Quote::find($quote_id);
+
+        $decimals = ($quote->state_decimals == 1) ? 1 : 0;
+
+        return response()->json(["decimals" => $decimals]);
+    }
+
+    public function changeDecimalsQuote(Request $request)
+    {
+        $quote_id = $request->input('quote_id');
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($quote_id);
+            $quote->state_decimals = ($request->input('decimals') == 0 || $request->input('decimals') == '') ? 0: 1;
+            $quote->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Guardado con éxito'], 200);
+    }
+
     public function vistoBuenoFinancesQuote($quote_id)
     {
         DB::beginTransaction();

@@ -39,7 +39,8 @@ class Quote extends Model
         'vb_operations',
         'date_vb_operations',
         'proforma_id',
-        'observations'
+        'observations',
+        'state_decimals'
     ];
 
     public function getTimeDeliveryAttribute()

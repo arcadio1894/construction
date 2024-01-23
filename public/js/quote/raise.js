@@ -353,6 +353,8 @@ $(document).ready(function () {
 
                     }
 
+                    text = text + ' <button data-decimals="'+item.id+'" data-name="'+item.description_quote+'" '+
+                        ' class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Mostrar decimales"><i class="fas fa-toggle-on"></i></button>';
 
 
                     return text;
@@ -510,6 +512,8 @@ $(document).ready(function () {
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
     $modalDetraction = $('#modalDetraction');
+    $formDecimals = $('#formDecimals');
+    $modalDecimals = $('#modalDecimals');
     $(document).on('click', '[data-delete]', cancelQuote);
     $(document).on('click', '[data-finish]', finishQuote);
 
@@ -527,6 +531,11 @@ $(document).ready(function () {
     $(document).on('click', '[data-vb_operations]', vbOpeationsQuote);
 
     $(document).on('click', '[data-vb_finances]', vbFinancesQuote);
+
+    $(document).on('click', '[data-decimals]', showModalDecimals);
+
+    $('#btn-changeDecimals').on('click', saveDecimals);
+
 });
 
 var $formDelete;
@@ -536,6 +545,79 @@ var $permissions;
 var $modalDetraction;
 
 var $formDetraction;
+
+var $modalDecimals;
+var $formDecimals;
+
+function showModalDecimals() {
+    $('#decimals').val('');
+    $('#decimals').trigger('change');
+    var quote_id = $(this).data('decimals');
+    $.ajax({
+        url: "/dashboard/get/decimals/quote/"+quote_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $formDecimals.find("[id=quote_id]").val(quote_id);
+            $('#decimals').val(data.decimals);
+            $('#decimals').trigger('change');
+
+            $modalDecimals.modal('show');
+        }
+    });
+}
+
+function saveDecimals() {
+    var button = $(this);
+    button.attr("disabled", true);
+    var form = $formDecimals[0];
+    $.confirm({
+        icon: 'fas fa-toggle-on',
+        theme: 'modern',
+        closeIcon: false,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de guardar la elección?',
+        content: 'Mostrar decimales implica que el PDF va a mostrar los valores con decimales.<br>Ocultar decimales implica que el PDF mostrará valores sin decimales.'  ,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/change/decimals/quote',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: new FormData(form),
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                button.attr("disabled", false);
+                                $modalDecimals.modal('hide');
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            button.attr("disabled", false);
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    button.attr("disabled", false);
+                    $.alert("No se guardó ninguún dato.");
+                },
+            },
+        }
+    });
+
+}
 
 function vbOpeationsQuote() {
     var quote_id = $(this).data('vb_operations');
