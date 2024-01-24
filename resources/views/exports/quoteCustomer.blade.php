@@ -255,7 +255,7 @@
             <td class=""></td>
             <td class="qty">TOTAL</td>
             @if ( $quote->state_decimals == 1 )
-                <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 2) }}<</td>
+                <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 2) }}</td>
             @else
                 <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
             @endif
