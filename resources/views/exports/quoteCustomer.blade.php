@@ -228,12 +228,22 @@
         </thead>
         <tbody>
         @foreach( $quote->equipments as $equipment )
-        <tr>
-            <td class="desc">{{ $equipment->description }}</td>
-            <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 0) }}</td>
-            <td class="qty">{{ $equipment->quantity }}</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 0) }}</td>
-        </tr>
+            @if ( $quote->state_decimals == 1 )
+                <tr>
+                    <td class="desc">{{ $equipment->description }}</td>
+                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 2) }}</td>
+                    <td class="qty">{{ $equipment->quantity }}</td>
+                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 2) }}</td>
+                </tr>
+            @else
+                <tr>
+                    <td class="desc">{{ $equipment->description }}</td>
+                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 0) }}</td>
+                    <td class="qty">{{ $equipment->quantity }}</td>
+                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 0) }}</td>
+                </tr>
+            @endif
+
         @endforeach
         </tbody>
     </table>
@@ -244,7 +254,11 @@
             <td class=""></td>
             <td class=""></td>
             <td class="qty">TOTAL</td>
-            <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
+            @if ( $quote->state_decimals == 1 )
+                <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 2) }}</td>
+            @else
+                <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($quote->total_quote/1.18), 0) }}.00</td>
+            @endif
         </tr>
         {{--<tr>
             <td class="desc"></td>

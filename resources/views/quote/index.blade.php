@@ -106,6 +106,32 @@
         </div>
     </div>
     @endcan
+    <div id="modalDecimals" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar visualizar decimales</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formDecimals" data-url="{{ route('decimals.change') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="quote_id" name="quote_id">
+                        <strong>Cambie o Seleccione la visualización de decimales</strong>
+                        <select id="decimals" name="decimals" class="form-control select2" style="width: 100%;">
+                            <option value=""></option>
+                            <option value="1">Mostrar decimales</option>
+                            <option value="0">Ocultar decimales</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-changeDecimals" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -121,4 +147,14 @@
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
     <script src="{{ asset('js/quote/index.js') }}"></script>
+    <script>
+        $(function () {
+
+            $('#decimals').select2({
+                placeholder: "Seleccione"
+            });
+
+
+        })
+    </script>
 @endsection

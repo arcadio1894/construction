@@ -1260,9 +1260,9 @@ class QuoteController extends Controller
         $quote = Quote::find($id_quote);
         $quote_user = QuoteUser::where('quote_id', $id_quote)
             ->where('user_id', $user->id)->first();
-        if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
+        /*if ( !$quote_user && !$user->hasRole(['admin','principal', 'logistic']) ) {
             return response()->json(['message' => 'No puede editar un equipo que no es de su propiedad'], 422);
-        }
+        }*/
 
         $equipmentSent = null;
 
@@ -2536,6 +2536,34 @@ class QuoteController extends Controller
             $financeWork = FinanceWork::where('quote_id', $quote_id)->first();
             $financeWork->detraction = ($request->input('detraction') == 'nn' || $request->input('detraction') == '') ? null: $request->input('detraction');
             $financeWork->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Guardado con éxito'], 200);
+    }
+
+    public function getDecimalsQuote($quote_id)
+    {
+        $quote = Quote::find($quote_id);
+
+        $decimals = ($quote->state_decimals == 1) ? 1 : 0;
+
+        return response()->json(["decimals" => $decimals]);
+    }
+
+    public function changeDecimalsQuote(Request $request)
+    {
+        $quote_id = $request->input('quote_id');
+        DB::beginTransaction();
+        try {
+            $quote = Quote::find($quote_id);
+            $quote->state_decimals = ($request->input('decimals') == 0 || $request->input('decimals') == '') ? 0: 1;
+            $quote->save();
 
             // TODO: Actualizar la cotizacion
 

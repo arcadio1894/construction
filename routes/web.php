@@ -861,6 +861,11 @@ Route::middleware('auth')->group(function (){
             ->name('detraction.change')
             ->middleware('permission:update_quote');
 
+        Route::get('/get/decimals/quote/{quote_id}', 'QuoteController@getDecimalsQuote');
+        Route::post('/change/decimals/quote', 'QuoteController@changeDecimalsQuote')
+            ->name('decimals.change')
+            ->middleware('permission:update_quote');
+
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')
             ->middleware('permission:update_quote');
