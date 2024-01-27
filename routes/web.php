@@ -2315,6 +2315,11 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_expenseSupplier');
         Route::get('exportar/reporte/egresos/proveedores/', 'ExpenseSupplierController@exportFinanceWorks')
             ->middleware('permission:export_expenseSupplier');
+        Route::get('/get/info/facturacion/expense/supplier/{invoice_id}/{type}', 'ExpenseSupplierController@getInfoFacturacionExpenseSupplier')
+            ->middleware('permission:modify_expenseSupplier');
+        Route::post('expense/supplier/edit/facturacion', 'ExpenseSupplierController@expenseSupplierEditFacturacion')
+            ->name('expense.supplier.edit.facturacion')
+            ->middleware('permission:modify_expenseSupplier');
 
         // TODO: Rutas de Worker Accounts
         Route::get('/registrar/cuentas/trabajador/{worker_id}', 'WorkerAccountController@index')

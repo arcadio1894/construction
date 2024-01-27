@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\DateDimension;
 use App\Entry;
 use App\OrderPurchase;
 use App\OrderService;
@@ -16,107 +17,213 @@ class ExpenseSupplierController extends Controller
     public function getDataExpenseSuppliers(Request $request, $pageNumber = 1)
     {
         $perPage = 10;
-        /*$description = $request->input('description');
+        $number_order = $request->input('number_order');
         $year = $request->input('year');
-        $code = $request->input('code');
-        $order = $request->input('order');
-        $customer = $request->input('customer');
-        $stateWork = $request->input('stateWork');
-        $year_factura = $request->input('year_factura');
-        $month_factura = $request->input('month_factura');
-        $year_abono = $request->input('year_abono');
-        $month_abono = $request->input('month_abono');
-        $state_invoice = $request->input('state_invoice');
+        $supplier = $request->input('supplier');
+        $date_due = $request->input('date_due');
+        $stateCredit = $request->input('stateCredit');
+        $statePaid = $request->input('statePaid');
+        $month_order = $request->input('month_order');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
-        $rate = $request->input('rate');*/
 
-        /*if ( $startDate == "" || $endDate == "" )
+        if ( $startDate == "" || $endDate == "" )
         {
             $dateCurrent = Carbon::now('America/Lima');
-            $date4MonthAgo = $dateCurrent->subMonths(6);
-            $query = FinanceWork::with('quote', 'bank')
-                ->where('created_at', '>=', $date4MonthAgo)
-                ->orderBy('created_at', 'DESC');
+            //$date4MonthAgo = $dateCurrent->subMonths(6);
+            /*$query = OrderPurchase::with(['supplier', 'entries'])
+                ->select('id', 'date_order','code', DB::raw("'op' as type"))
+                ->union(
+                    OrderService::with('supplier')
+                        ->select('id', 'date_order', 'code', DB::raw("'os' as type"))
+                )->orderBy('date_order', 'desc');*/
+            $queryPurchase = OrderPurchase::with(['supplier', 'entries', 'deadline'])
+                ->select('order_purchases.id', 'date_order','code', DB::raw("'op' as type"));
+
+            // Subconsulta para OrderService
+            $queryService = OrderService::with(['supplier', 'deadline'])
+                ->select('order_services.id', 'date_order', 'code', DB::raw("'os' as type"));
         } else {
             $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
             $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
 
-            $query = FinanceWork::with('quote', 'bank')
-                ->whereHas('quote', function ($query2) use ($fechaInicio, $fechaFinal) {
-                    $query2->whereDate('date_quote', '>=', $fechaInicio)
-                        ->whereDate('date_quote', '<=', $fechaFinal);
-                })
-                ->orderBy('created_at', 'DESC');
+            /*$query = OrderPurchase::with(['supplier', 'entries'])
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->select('id', 'date_order','code', DB::raw("'op' as type"))
+                ->union(
+                    OrderService::with('supplier')
+                        ->whereDate('date_order', '>=', $fechaInicio)
+                        ->whereDate('date_order', '<=', $fechaFinal)
+                        ->select('id', 'date_order','code', DB::raw("'os' as type"))
+                )->orderBy('date_order', 'desc');*/
+            $queryPurchase = OrderPurchase::with(['supplier', 'entries', 'deadline'])
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->select('order_purchases.id', 'date_order','code', DB::raw("'op' as type"));
+
+            // Subconsulta para OrderService
+            $queryService = OrderService::with(['supplier', 'deadline'])
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->select('order_services.id', 'date_order', 'code', DB::raw("'os' as type"));
         }
+
+        //dump($query->get('code'));
+
+
 
         // Aplicar filtros si se proporcionan
-        if ($description) {
-            $query->whereHas('quote', function ($query2) use ($description) {
-                $query2->where('description_quote', 'LIKE', '%'.$description.'%');
+        if ($number_order != "") {
+            /*$query->where('code', $number_order);*/
+            $queryPurchase->where('code', 'LIKE', '%'.$number_order.'%');
+            $queryService->where('code', 'LIKE', '%'.$number_order.'%');
+        }
+
+        if ($supplier != "") {
+            /*$query->whereHas('supplier', function ($query2) use ($supplier) {
+                $query2->where('supplier_id', $supplier);
+            });*/
+            $queryPurchase->whereHas('supplier', function ($supplierQuery) use ($supplier) {
+                $supplierQuery->where('supplier_id', $supplier);
+            });
+            $queryService->whereHas('supplier', function ($supplierQuery) use ($supplier) {
+                $supplierQuery->where('supplier_id', $supplier);
             });
 
         }
 
-        if ($year) {
-            $query->whereYear('raise_date', $year);
+        if ($year != "") {
+            /*$query->whereYear('date_order', $year);*/
+            $queryPurchase->whereYear('date_order', $year);
+            $queryService->whereYear('date_order', $year);
 
         }
 
-        if ($code) {
-            $query->whereHas('quote', function ($query2) use ($code) {
-                $query2->where('code', 'LIKE', '%'.$code.'%');
+        if ($month_order != "") {
+            /*$query->whereMonth('date_order', $month_order);*/
+            $queryPurchase->whereMonth('date_order', $month_order);
+            $queryService->whereMonth('date_order', $month_order);
+        }
+
+        if ($statePaid != "")
+        {
+            /*$query->where(function ($subquery) use ($statePaid) {
+                // Filtrar por estado pagado en Entries
+                $subquery->whereHas('entries', function ($entriesSubquery) use ($statePaid) {
+                    $entriesSubquery->where('state_paid', $statePaid);
+                });
+
+                // También filtrar por estado pagado en OrderService
+                $subquery->orWhere(function ($orderServiceSubquery) use ($statePaid) {
+                    $orderServiceSubquery->where('state_paid', $statePaid);
+                });
+            });*/
+            $queryPurchase->whereHas('entries', function ($entriesSubquery) use ($statePaid) {
+                $entriesSubquery->where('state_paid', $statePaid);
             });
-
+            $queryService->where('state_paid', $statePaid);
         }
 
-        if ($order) {
-            $query->whereHas('quote', function ($query2) use ($order) {
-                $query2->where('code_customer', 'LIKE', '%'.$order.'%');
+        if ($date_due != "") {
+            $date_due = Carbon::createFromFormat('d/m/Y', $date_due)->format('Y-m-d');
+
+            $queryPurchase->whereHas('entries', function ($entriesSubquery) use ($date_due) {
+                $entriesSubquery->where(
+                    DB::raw('DATE_ADD(entries.date_entry, INTERVAL payment_deadlines.days DAY)'),
+                    '<=',
+                    $date_due
+                );
             });
+            $queryPurchase->leftJoin('payment_deadlines', 'order_purchases.payment_deadline_id', '=', 'payment_deadlines.id')
+                ->addSelect('payment_deadlines.days as deadline_days');
+
+            $queryService->where(
+                DB::raw('DATE_ADD(order_services.date_invoice, INTERVAL payment_deadlines.days DAY)'),
+                '<=',
+                $date_due
+            );
+
+            $queryService->leftJoin('payment_deadlines', 'order_services.payment_deadline_id', '=', 'payment_deadlines.id')
+                ->addSelect('payment_deadlines.days as deadline_days');
 
         }
 
-        if ($customer) {
-            $query->whereHas('quote', function ($query2) use ($customer) {
-                $query2->where('customer_id', $customer);
-            });
+        if ($stateCredit != "") {
+            $now = Carbon::now()->toDateString(); // Obtener la fecha actual
 
+            if ($stateCredit == 1) {
+                // VENCE HOY
+                $queryPurchase->whereHas('entries', function ($entriesSubquery) use ($now) {
+                    $entriesSubquery->whereDate(
+                        DB::raw('DATE_ADD(entries.date_entry, INTERVAL payment_deadlines.days DAY)'),
+                        $now
+                    );
+                });
+
+                $queryPurchase->leftJoin('payment_deadlines', 'order_purchases.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+                $queryService->whereDate(
+                    DB::raw('DATE_ADD(order_services.date_invoice, INTERVAL payment_deadlines.days DAY)'),
+                    $now
+                );
+
+                $queryService->leftJoin('payment_deadlines', 'order_services.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+            } elseif ($stateCredit == 2) {
+                // POR VENCER
+                $queryPurchase->whereHas('entries', function ($entriesSubquery) use ($now) {
+                    $entriesSubquery->whereDate(
+                        DB::raw('DATE_ADD(entries.date_entry, INTERVAL payment_deadlines.days DAY)'),
+                        '>',
+                        $now
+                    );
+                });
+
+                $queryPurchase->leftJoin('payment_deadlines', 'order_purchases.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+                $queryService->whereDate(
+                    DB::raw('DATE_ADD(order_services.date_invoice, INTERVAL payment_deadlines.days DAY)'),
+                    '>',
+                    $now
+                );
+
+                $queryService->leftJoin('payment_deadlines', 'order_services.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+            } elseif ($stateCredit == 3) {
+                // VENCIDO
+                $queryPurchase->whereHas('entries', function ($entriesSubquery) use ($now) {
+                    $entriesSubquery->whereDate(
+                        DB::raw('DATE_ADD(entries.date_entry, INTERVAL payment_deadlines.days DAY)'),
+                        '<',
+                        $now
+                    );
+                });
+
+                $queryPurchase->leftJoin('payment_deadlines', 'order_purchases.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+                $queryService->whereDate(
+                    DB::raw('DATE_ADD(order_services.date_invoice, INTERVAL payment_deadlines.days DAY)'),
+                    '<',
+                    $now
+                );
+                $queryService->leftJoin('payment_deadlines', 'order_services.payment_deadline_id', '=', 'payment_deadlines.id')
+                    ->addSelect('payment_deadlines.days as deadline_days');
+
+            }
         }
 
-        if ($stateWork) {
-            $query->where('state_work', $stateWork);
-        }
+        /*dump($queryPurchase->get());
+        dump($queryService->get());
+        dd();*/
 
-        if ($year_factura) {
-            $query->where('year_invoice', $year_factura);
-        }
+        $query = $queryPurchase->union($queryService)->orderBy('date_order', 'desc');
 
-        if ($month_factura) {
-            $query->where('month_invoice', $month_factura);
-        }
-
-        if ($year_abono) {
-            $query->where('year_paid', $year_abono);
-        }
-
-        if ($month_abono) {
-            $query->where('month_paid', $month_abono);
-        }
-
-        if ($state_invoice) {
-            $query->where('state', $state_invoice);
-        }*/
-
-        /*$query = OrderPurchase::with('supplier');
-        $query = OrderService::with('supplier');*/
-
-        $query = OrderPurchase::with('supplier')
-            ->select('id', 'date_order', DB::raw("'op' as type"))
-            ->union(
-                OrderService::with('supplier')
-                    ->select('id', 'date_order', DB::raw("'os' as type"))
-            )->orderBy('date_order', 'desc');;
 
         $totalFilteredRecords = $query->count();
         $totalPages = ceil($totalFilteredRecords / $perPage);
@@ -152,15 +259,18 @@ class ExpenseSupplierController extends Controller
                     $date_invoice = "SIN FECHA";
                     $date_due = "SIN FECHA";
                     array_push($array, [
-                        "id" => $order->id,
+                        "id" => "",
+                        "type" => "oc",
                         "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
-                        "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                        "month" => ($order->date_order == null) ? '': $this->obtenerNombreMes($order->date_order->month),
+                        "date_order" => ($order->date_order == null) ? '': $order->date_order->format('d/m/Y'),
                         "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
                         "order" => ($order->code == null || $order->code == '') ? '': $order->code,
                         "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
                         "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
                         "invoice" => $invoice,
                         "date_invoice" => $date_invoice,
+                        "deadline" => ($order->payment_deadline_id != null) ? $order->deadline->description : '',
                         "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
                         "due_date" => $date_due,
                         "state_credit" => "",
@@ -177,7 +287,7 @@ class ExpenseSupplierController extends Controller
                     } elseif ($date_due->isAfter($date_current)) {
                         $state_credit = "POR VENCER";
                     } else {
-                        $state_credit = "VENCIDO";
+                        $state_credit = '<p style="color: red;font-weight: bold">VENCIDO</p>';
                     }
 
                     if ($invoices[0]->state_paid == null)
@@ -189,15 +299,18 @@ class ExpenseSupplierController extends Controller
                         $state_paid = "ABONADO";
                     }
                     array_push($array, [
-                        "id" => $order->id,
+                        "id" => $invoices[0]->id,
+                        "type" => "oc",
                         "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
-                        "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                        "month" => ($order->date_order == null) ? '': $this->obtenerNombreMes($order->date_order->month),
+                        "date_order" => ($order->date_order == null) ? '': $order->date_order->format('d/m/Y'),
                         "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
                         "order" => ($order->code == null || $order->code == '') ? '': $order->code,
                         "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
                         "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
                         "invoice" => $invoice,
                         "date_invoice" => $date_invoice,
+                        "deadline" => ($order->payment_deadline_id != null) ? $order->deadline->description : '',
                         "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
                         "due_date" => $date_due->format('d/m/Y'),
                         "state_credit" => $state_credit,
@@ -217,7 +330,7 @@ class ExpenseSupplierController extends Controller
                         } elseif ($date_due->isAfter($date_current)) {
                             $state_credit = "POR VENCER";
                         } else {
-                            $state_credit = "VENCIDO";
+                            $state_credit = '<p style="color: red;font-weight: bold">VENCIDO</p>';
                         }
 
                         if ($i->state_paid == null)
@@ -229,15 +342,18 @@ class ExpenseSupplierController extends Controller
                             $state_paid = "ABONADO";
                         }
                         array_push($array, [
-                            "id" => $order->id,
+                            "id" => $i->id,
+                            "type" => "oc",
                             "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
-                            "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                            "month" => ($order->date_order == null) ? '': $this->obtenerNombreMes($order->date_order->month),
+                            "date_order" => ($order->date_order == null) ? '': $order->date_order->format('d/m/Y'),
                             "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
                             "order" => ($order->code == null || $order->code == '') ? '': $order->code,
                             "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
                             "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
                             "invoice" => $invoice,
                             "date_invoice" => $date_invoice,
+                            "deadline" => ($order->payment_deadline_id != null) ? $order->deadline->description : '',
                             "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
                             "due_date" => $date_due->format('d/m/Y'),
                             "state_credit" => $state_credit,
@@ -263,7 +379,7 @@ class ExpenseSupplierController extends Controller
                     } elseif ($date_due->isAfter($date_current)) {
                         $state_credit = "POR VENCER";
                     } else {
-                        $state_credit = "VENCIDO";
+                        $state_credit = '<p style="color: red;font-weight: bold">VENCIDO</p>';
                     }
                 }
 
@@ -278,14 +394,17 @@ class ExpenseSupplierController extends Controller
 
                 array_push($array, [
                     "id" => $order->id,
+                    "type" => "os",
                     "year" => ($order->date_order == null) ? '': $order->date_order->format('Y'),
-                    "month" => ($order->date_order == null) ? '': $order->date_order->format('m'),
+                    "month" => ($order->date_order == null) ? '': $this->obtenerNombreMes($order->date_order->month),
+                    "date_order" => ($order->date_order == null) ? '': $order->date_order->format('d/m/Y'),
                     "supplier" => ($order->supplier_id == null) ? '': $order->supplier->business_name,
                     "order" => ($order->code == null || $order->code == '') ? '': $order->code,
                     "soles" => ($order->currency_order == 'PEN') ? $order->total : '',
                     "dolares" => ($order->currency_order == 'USD') ? $order->total : '',
                     "invoice" => $invoice,
                     "date_invoice" => $date_invoice,
+                    "deadline" => ($order->payment_deadline_id != null) ? $order->deadline->description : '',
                     "days" => ($order->payment_deadline_id != null) ? $order->deadline->days : '',
                     "due_date" => ($date_due == "SIN FECHA") ? "SIN FECHA": $date_due->format('d/m/Y'),
                     "state_credit" => $state_credit,
@@ -329,12 +448,14 @@ class ExpenseSupplierController extends Controller
 
         $arrayYears = array_values($arrayYears);
 
+        $years = DateDimension::distinct()->get(['year']);
+
         $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
 
         $arrayStateCredits = [
-            ["value" => "to_start", "display" => "VENCE HOY"],
-            ["value" => "in_process", "display" => "POR VENCER"],
-            ["value" => "finished", "display" => "VENCIDO"]
+            ["value" => "1", "display" => "VENCE HOY"],
+            ["value" => "2", "display" => "POR VENCER"],
+            ["value" => "3", "display" => "VENCIDO"]
         ];
 
         $arrayStatePaids = [
@@ -350,8 +471,27 @@ class ExpenseSupplierController extends Controller
         //$rate = $tipoCambio->compra;
         $day_current = Carbon::now('America/Lima');
 
-        return view('expenseSupplier.index_v2', compact( 'day_current', 'arrayYears', 'permissions', 'arraySuppliers', 'arrayStateCredits', 'arrayStatePaids'));
+        return view('expenseSupplier.index_v2', compact( 'years', 'day_current', 'arrayYears', 'permissions', 'arraySuppliers', 'arrayStateCredits', 'arrayStatePaids'));
 
+    }
+
+    public function obtenerNombreMes($numeroMes) {
+        $meses = [
+            1 => 'Enero',
+            2 => 'Febrero',
+            3 => 'Marzo',
+            4 => 'Abril',
+            5 => 'Mayo',
+            6 => 'Junio',
+            7 => 'Julio',
+            8 => 'Agosto',
+            9 => 'Septiembre',
+            10 => 'Octubre',
+            11 => 'Noviembre',
+            12 => 'Diciembre',
+        ];
+
+        return isset($meses[$numeroMes]) ? $meses[$numeroMes] : 'Mes inválido';
     }
 
     public function exportFinanceWorks()
@@ -854,6 +994,79 @@ class ExpenseSupplierController extends Controller
         ]);
 
         return (new FinanceWorksExport($financeWorks_array, $dates))->download('ingresosClientes.xlsx');
+
+    }
+
+    public function getInfoFacturacionExpenseSupplier($invoice_id, $type)
+    {
+        //dump($invoice_id);
+        //dd();
+        $state = "";
+        if ( $type == "oc" )
+        {
+            if ( $invoice_id != "nn" )
+            {
+                $entry = Entry::find($invoice_id);
+                $state = $entry->state_paid;
+            }
+        } elseif ( $type == "os" ) {
+            if ( $invoice_id != "nn" )
+            {
+                $orderService = OrderService::find($invoice_id);
+                $state = $orderService->state_paid;
+            }
+        }
+
+
+        return response()->json([
+            "state" => $state,
+        ]);
+    }
+
+    public function expenseSupplierEditFacturacion( Request $request )
+    {
+        //dd($request);
+        $type = $request->get('type');
+        $invoice_id = $request->get('invoice_id');
+        $state = $request->get('state');
+
+        DB::beginTransaction();
+        try {
+
+            if ( $type == "oc" )
+            {
+                if ( $invoice_id == null || $invoice_id == "" )
+                {
+                    return response()->json(['message' => "No se encuentra una factura."], 422);
+                } else {
+                    $entry = Entry::find($invoice_id);
+                    $entry->state_paid = $state;
+                    $entry->save();
+                }
+            } elseif ( $type == "os" ) {
+                if ( $invoice_id == null || $invoice_id == "" )
+                {
+                    return response()->json(['message' => "No se encuentra una factura."], 422);
+                } else {
+                    $entry = OrderService::find($invoice_id);
+
+                    if ( $entry->invoice == "" || $entry->invoice == null )
+                    {
+                        return response()->json(['message' => "No se encuentra una factura."], 422);
+                    } else {
+                        $entry->state_paid = $state;
+                        $entry->save();
+                    }
+                }
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Información de Facturación modificado con éxito.'], 200);
 
     }
 }

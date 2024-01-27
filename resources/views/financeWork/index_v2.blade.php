@@ -105,7 +105,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('proforma.index') }}"><i class="fa fa-archive"></i> Pre Cotizaciones</a>
+            <a href="{{ route('finance.works.index') }}"><i class="fa fa-archive"></i> Ingresos Clientes</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>

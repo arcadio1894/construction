@@ -27,7 +27,8 @@ class Entry extends Model
         'image',
         'imageOb',
         'type_order',
-        'category_invoice_id'
+        'category_invoice_id',
+        'state_paid'
     ];
 
     public function getSubTotalAttribute()
@@ -98,6 +99,11 @@ class Entry extends Model
     public function credit()
     {
         return $this->hasOne('App\SupplierCredit');
+    }
+
+    public function orderPurchase()
+    {
+        return $this->belongsTo(OrderPurchase::class, 'purchase_order', 'code');
     }
 
     protected $dates = ['deleted_at', 'date_entry'];

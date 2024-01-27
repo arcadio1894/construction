@@ -59,6 +59,11 @@ class OrderPurchase extends Model
         return $this->belongsTo('App\PaymentDeadline', 'payment_deadline_id');
     }
 
+    public function entries()
+    {
+        return $this->hasMany(Entry::class, 'purchase_order', 'code');
+    }
+
     public function getStatusAttribute()
     {
         $entry = Entry::where('purchase_order', $this->code)

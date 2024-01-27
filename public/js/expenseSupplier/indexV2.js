@@ -229,7 +229,15 @@ $(document).ready(function () {
         autoclose: true
     });
 
-    getDataFinanceWorks(1);
+    $('#sandbox-container1 .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
+
+    getDataExpenseSuppliers(1);
 
     $("#btnBusquedaAvanzada").click(function(e){
         e.preventDefault();
@@ -243,68 +251,13 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
 
-    $formEditTrabajo = $('#formEditTrabajo');
     $formEditFacturacion = $('#formEditFacturacion');
 
-    $modalEditTrabajo = $('#modalEditTrabajo');
     $modalEditFacturacion = $('#modalEditFacturacion');
 
-    $('#btnSubmitFormEditTrabajo').on('click', submitFormEditTrabajo);
     $('#btnSubmitFormEditFacturacion').on('click', submitFormEditFacturacion);
 
-    $(document).on('click', '[data-formEditTrabajo]', showModalEditTrabajo);
-
     $(document).on('click', '[data-formEditFacturacion]', showModalEditFacturacion);
-
-    $('#invoiced').on('change', function() {
-        var opcionSeleccionada = $(this).val();
-
-        if (opcionSeleccionada == 'y') {
-            $('#number_invoice').attr("readonly", false);
-            $('#month_invoice').attr("disabled", false);
-            $('#year_invoice').attr("disabled", false);
-            $('#date_issue').attr("readonly", false);
-            $('#date_admission').attr("readonly", false);
-            $('#bank_id').attr("disabled", false);
-        } else if (opcionSeleccionada == 'n') {
-            $('#number_invoice').attr("readonly", true);
-            $('#month_invoice').attr("disabled", true);
-            $('#year_invoice').attr("disabled", true);
-            $('#date_issue').attr("readonly", true);
-            $('#date_admission').attr("readonly", true);
-            $('#bank_id').attr("disabled", true);
-        }
-    });
-
-    $selectCustomer = $('#customer_id');
-    $selectContact = $('#contact_id');
-
-    $selectCustomer.change(function (event, extraData) {
-
-        $selectContact.empty();
-        var customer =  $selectCustomer.val();
-        $.get( "/dashboard/get/contact/"+customer, function( data ) {
-            $selectContact.append($("<option>", {
-                value: '',
-                text: 'Seleccione contacto'
-            }));
-            var contact_id = $('#contact_id').val();
-            for ( var i=0; i<data.length; i++ )
-            {
-                if (data[i].id === parseInt(contact_id)) {
-                    var newOption = new Option(data[i].contact, data[i].id, false, true);
-                    // Append it to the select
-                    $selectContact.append(newOption).trigger('change');
-
-                } else {
-                    var newOption2 = new Option(data[i].contact, data[i].id, false, false);
-                    // Append it to the select
-                    $selectContact.append(newOption2);
-                }
-            }
-        });
-
-    });
 
     $('#btn-export').on('click', exportExcel);
 });
@@ -410,54 +363,43 @@ function exportExcel() {
 }
 
 function showDataSearch() {
-    getDataFinanceWorks(1)
+    getDataExpenseSuppliers(1)
 }
 
 function showData() {
     //event.preventDefault();
     var numberPage = $(this).attr('data-item');
     console.log(numberPage);
-    getDataFinanceWorks(numberPage)
+    getDataExpenseSuppliers(numberPage)
 }
 
-function getDataFinanceWorks($numberPage) {
-    var description = $('#description').val();
+function getDataExpenseSuppliers($numberPage) {
+    var number_order = $('#number_order').val();
     var year = $('#year').val();
-    var code = $('#code').val();
-    var order = $('#order').val();
-    var customer = $('#customer').val();
-    var stateWork = $('#stateWork').val();
-    var year_factura = $('#year_factura').val();
-    var month_factura = $('#month_factura').val();
-    var year_abono = $('#year_factura').val();
-    var month_abono = $('#month_factura').val();
-    var state = $('#stateInvoiced').val();
+    var supplier = $('#supplier').val();
+    var date_due = $('#date_due').val();
+    var stateCredit = $('#stateCredit').val();
+    var statePaid = $('#statePaid').val();
+    var month_order = $('#month_order').val();
     var startDate = $('#start').val();
     var endDate = $('#end').val();
 
-    var rate = $('#rate').val();
-
-    $.get('/dashboard/get/finance/works/v2/'+$numberPage, {
-        description:description,
+    $.get('/dashboard/get/expenses/supplier/v2/'+$numberPage, {
+        number_order:number_order,
         year: year,
-        code: code,
-        order: order,
-        customer: customer,
-        stateWork: stateWork,
-        year_factura: year_factura,
-        month_factura: month_factura,
-        year_abono: year_abono,
-        month_abono: month_abono,
-        state_invoice: state,
+        supplier: supplier,
+        date_due: date_due,
+        stateCredit: stateCredit,
+        statePaid: statePaid,
+        month_order: month_order,
         startDate: startDate,
         endDate: endDate,
-        rate:rate
     }, function(data) {
         if ( data.data.length == 0 )
         {
-            renderDataFinanceWorksEmpty(data);
+            renderDataExpenseSuppliersEmpty(data);
         } else {
-            renderDataFinanceWorks(data);
+            renderDataExpenseSuppliers(data);
         }
 
 
@@ -515,7 +457,7 @@ function getDataFinanceWorks($numberPage) {
         });
 }
 
-function renderDataFinanceWorksEmpty(data) {
+function renderDataExpenseSuppliersEmpty(data) {
     var dataAccounting = data.data;
     var pagination = data.pagination;
     console.log(dataAccounting);
@@ -524,14 +466,14 @@ function renderDataFinanceWorksEmpty(data) {
     $("#body-table").html('');
     $("#pagination").html('');
     $("#textPagination").html('');
-    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' ingresos clientes');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' egresos proveedores');
     $('#numberItems').html('');
     $('#numberItems').html(pagination.totalFilteredRecords);
 
     renderDataTableEmpty();
 }
 
-function renderDataFinanceWorks(data) {
+function renderDataExpenseSuppliers(data) {
     var dataFinanceWorks = data.data;
     var pagination = data.pagination;
     console.log(dataFinanceWorks);
@@ -540,7 +482,7 @@ function renderDataFinanceWorks(data) {
     $("#body-table").html('');
     $("#pagination").html('');
     $("#textPagination").html('');
-    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' ingresos clientes.');
+    $("#textPagination").html('Mostrando '+pagination.startRecord+' a '+pagination.endRecord+' de '+pagination.totalFilteredRecords+' egresos proveedores.');
     $('#numberItems').html('');
     $('#numberItems').html(pagination.totalFilteredRecords);
 
@@ -594,77 +536,24 @@ function renderDataTableEmpty() {
 function renderDataTable(data) {
     var clone = activateTemplate('#item-table');
     clone.querySelector("[data-year]").innerHTML = data.year;
+    clone.querySelector("[data-month]").innerHTML = data.month;
+    clone.querySelector("[data-date_order]").innerHTML = data.date_order;
+    clone.querySelector("[data-supplier]").innerHTML = data.supplier;
+    clone.querySelector("[data-order]").innerHTML = data.order;
 
-    clone.querySelector("[data-customer]").innerHTML = data.customer;
-    clone.querySelector("[data-responsible]").innerHTML = data.responsible;
-    clone.querySelector("[data-area]").innerHTML = data.area;
+    clone.querySelector("[data-soles]").innerHTML = data.soles;
+    clone.querySelector("[data-dolares]").innerHTML = data.dolares;
 
-    clone.querySelector("[data-quote]").innerHTML = data.quote;
-    clone.querySelector("[data-type]").innerHTML = data.type;
-    clone.querySelector("[data-order_customer]").innerHTML = data.order_customer;
-    clone.querySelector("[data-description]").innerHTML = data.description;
-    clone.querySelector("[data-initiation]").innerHTML = data.initiation;
-    clone.querySelector("[data-delivery]").innerHTML = data.delivery;
-    if ( data.delivery_past == 's' )
-    {
-        clone.querySelector("[data-delivery]").style.backgroundColor = '#ffc107';
-    }
-    clone.querySelector("[data-state_work]").innerHTML = data.state_work;
-
-    clone.querySelector("[data-act_of_acceptance]").innerHTML = data.act_of_acceptance;
-    clone.querySelector("[data-state_act_of_acceptance]").innerHTML = data.state_act_of_acceptance;
-    clone.querySelector("[data-docier]").innerHTML = data.docier;
-    clone.querySelector("[data-hes]").innerHTML = data.hes;
-
-    clone.querySelector("[data-advancement]").innerHTML = data.advancement;
-    clone.querySelector("[data-amount_advancement]").innerHTML = data.amount_advancement;
-    clone.querySelector("[data-currency]").innerHTML = data.currency;
-    clone.querySelector("[data-subtotal]").innerHTML = data.subtotal;
-    clone.querySelector("[data-igv]").innerHTML = data.igv;
-    clone.querySelector("[data-total]").innerHTML = data.total;
-    clone.querySelector("[data-detraction]").innerHTML = data.detraction;
-    clone.querySelector("[data-amount_detraction]").innerHTML = data.amount_detraction;
-    clone.querySelector("[data-discount_factoring]").innerHTML = data.discount_factoring;
-    clone.querySelector("[data-amount_include_detraction]").innerHTML = data.amount_include_detraction;
-
-    clone.querySelector("[data-pay_condition]").innerHTML = data.pay_condition;
-    clone.querySelector("[data-invoiced]").innerHTML = data.invoiced;
-    clone.querySelector("[data-number_invoice]").innerHTML = data.number_invoice;
-    clone.querySelector("[data-year_invoice]").innerHTML = data.year_invoice;
-    clone.querySelector("[data-month_invoice]").innerHTML = data.month_invoice;
-    clone.querySelector("[data-date_issue]").innerHTML = data.date_issue;
-    clone.querySelector("[data-date_admission]").innerHTML = data.date_admission;
+    clone.querySelector("[data-deadline]").innerHTML = data.deadline;
+    clone.querySelector("[data-invoice]").innerHTML = data.invoice;
+    clone.querySelector("[data-date_invoice]").innerHTML = data.date_invoice;
     clone.querySelector("[data-days]").innerHTML = data.days;
-    clone.querySelector("[data-date_programmed]").innerHTML = data.date_programmed;
+    clone.querySelector("[data-due_date]").innerHTML = data.due_date;
+    clone.querySelector("[data-state_credit]").innerHTML = data.state_credit;
+    clone.querySelector("[data-state_paid]").innerHTML = data.state_paid;
 
-    clone.querySelector("[data-bank]").innerHTML = data.bank;
-    clone.querySelector("[data-state]").innerHTML = data.state;
-    clone.querySelector("[data-year_paid]").innerHTML = data.year_paid;
-    clone.querySelector("[data-month_paid]").innerHTML = data.month_paid;
-    clone.querySelector("[data-date_paid]").innerHTML = data.date_paid;
-    clone.querySelector("[data-observation]").innerHTML = data.observation;
-    clone.querySelector("[data-revision]").innerHTML = data.revision;
-
-    clone.querySelector("[data-formEditTrabajo]").setAttribute('data-formEditTrabajo', data.id);
     clone.querySelector("[data-formEditFacturacion]").setAttribute('data-formEditFacturacion', data.id);
-
-    /*if ( $.inArray('show_proforma', $permissions) !== -1 ) {
-        clone.querySelector("[data-show]").setAttribute('href', location.origin + '/dashboard/ver/pre/cotizacion/' + data.id);
-    } else {
-        let element = clone.querySelector("[data-show]");
-        if (element) {
-            element.style.display = 'none';
-        }
-    }
-
-    if ( $.inArray('print_proforma', $permissions) !== -1 ) {
-        clone.querySelector("[data-print]").setAttribute('href', document.location.origin + '/dashboard/imprimir/proforma/cliente/' + data.id);
-    } else {
-        let element = clone.querySelector("[data-print]");
-        if (element) {
-            element.style.display = 'none';
-        }
-    }*/
+    clone.querySelector("[data-formEditFacturacion]").setAttribute('data-type', data.type);
 
     $("#body-table").append(clone);
 
@@ -701,120 +590,6 @@ function renderNextPage($numberPage) {
     var clone = activateTemplate('#next-page');
     clone.querySelector("[data-item]").setAttribute('data-item', $numberPage);
     $("#pagination").append(clone);
-}
-
-function getContacts(contact_id) {
-    var customer =  $('#customer_id').val();
-    $.get( "/dashboard/get/contact/"+customer, function( data ) {
-        $selectContact.append($("<option>", {
-            value: '',
-            text: ''
-        }));
-        for ( var i=0; i<data.length; i++ )
-        {
-            if (data[i].id === parseInt(contact_id)) {
-                var newOption = new Option(data[i].contact, data[i].id, false, true);
-                // Append it to the select
-                $selectContact.append(newOption).trigger('change');
-
-            } else {
-                var newOption2 = new Option(data[i].contact, data[i].id, false, false);
-                // Append it to the select
-                $selectContact.append(newOption2);
-            }
-
-        }
-    });
-}
-
-function submitFormEditTrabajo(event) {
-    event.preventDefault();
-    var button = $(this);
-
-    button.prop('disabled', true);
-    var createUrl = $formEditTrabajo.data('url');
-    $.ajax({
-        url: createUrl, // La URL a la que enviarás la solicitud
-        method: 'POST', // El método HTTP que utilizarás (en este caso, POST)
-        data: new FormData($('#formEditTrabajo')[0]),
-        processData:false,
-        contentType:false,
-        success: function(data) {
-            // Esta función se ejecutará si la solicitud fue exitosa
-            // La variable 'response' contendrá los datos devueltos por el servidor (según el tipo de datos especificado en 'dataType')
-            console.log(data);
-            toastr.success(data.message, 'Éxito',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            $modalEditTrabajo.modal('hide');
-            setTimeout( function () {
-                button.attr("disabled", false);
-                showDataSearch();
-                //location.reload();
-            }, 100 )
-        },
-        error: function(data) {
-            if( data.responseJSON.message && !data.responseJSON.errors )
-            {
-                toastr.error(data.responseJSON.message, 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-            for ( var property in data.responseJSON.errors ) {
-                toastr.error(data.responseJSON.errors[property], 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-            }
-            button.attr("disabled", false);
-            // Esta función se ejecutará si ocurre un error en la solicitud
-            // Puedes utilizar las variables 'jqXHR', 'textStatus' y 'errorThrown' para obtener información sobre el error
-        }
-    });
 }
 
 function submitFormEditFacturacion(event) {
@@ -907,109 +682,25 @@ function submitFormEditFacturacion(event) {
     });
 }
 
-function showModalEditTrabajo() {
-    var financeWork_id = $(this).attr('data-formEditTrabajo');
-
-    $formEditTrabajo.find("[id=financeWork_id]").val(financeWork_id);
-    $.get("/dashboard/get/info/trabajo/finance/work/"+financeWork_id, function (data) {
-        console.log(data);
-
-        $formEditTrabajo.find("[id=financeWork_id]").val(financeWork_id);
-        $('#detraction').val(data.detraction);
-        $('#detraction').trigger('change');
-        $('#act_of_acceptance').val(data.act_of_acceptance);
-        $('#act_of_acceptance').trigger('change');
-        $('#date_initiation').val(data.date_initiation);
-        $('#date_delivery').val(data.date_delivery);
-        $('#state_act_of_acceptance').val("");
-        $('#state_act_of_acceptance').trigger('change');
-        $('#customer_id').val(data.customer_id);
-        $('#customer_id').trigger('change');
-        getContacts(data.contact_id);
-        $('#state_work').val(data.state_work);
-        $('#state_work').trigger('change');
-        $('#docier').val(data.docier);
-        $('#docier').trigger('change');
-        $('#hes').val(data.hes);
-        if ( data.state_act_of_acceptance != null )
-        {
-            $('#state_act_of_acceptance').val(data.state_act_of_acceptance);
-            $('#state_act_of_acceptance').trigger('change');
-        }
-
-        $modalEditTrabajo.modal('show');
-    }, "json");
-
-
-}
-
 function showModalEditFacturacion() {
-    var financeWork_id = $(this).attr('data-formEditFacturacion');
+    var invoice_id = $(this).attr('data-formEditFacturacion');
+    var type = $(this).attr('data-type');
 
-    $formEditFacturacion.find("[id=financeWork_id]").val(financeWork_id);
-    $.get("/dashboard/get/info/facturacion/finance/work/"+financeWork_id, function (data) {
+    $formEditFacturacion.find("[id=invoice_id]").val(invoice_id);
+    $formEditFacturacion.find("[id=type]").val(type);
+
+    if ( invoice_id == "" )
+    {
+        invoice_id = "nn";
+    }
+
+    $.get("/dashboard/get/info/facturacion/expense/supplier/"+invoice_id+"/"+type, function (data) {
         console.log(data);
 
-        $formEditFacturacion.find("[id=financeWork_id]").val(financeWork_id);
-
-        $('#advancement').val(data.advancement);
-        $('#advancement').trigger('change');
-        $('#amount_advancement').val(data.amount_advancement);
-        $('#invoiced').val(data.invoiced);
-        $('#invoiced').trigger('change');
-
-        if ( data.invoiced != null && data.invoiced == 'n' )
-        {
-            $('#number_invoice').attr("readonly", true);
-            $('#number_invoice').val(data.number_invoice);
-            $('#month_invoice').attr("disabled", true);
-            $('#month_invoice').val(data.month_invoice);
-            $('#month_invoice').trigger('change');
-            $('#year_invoice').attr("disabled", true);
-            $('#year_invoice').val(data.year_invoice);
-            $('#year_invoice').trigger('change');
-            $('#date_issue').attr("readonly", true);
-            $('#date_issue').val(data.date_issue);
-            $('#date_admission').attr("readonly", true);
-            $('#date_admission').val(data.date_admission);
-            $('#bank_id').attr("disabled", true);
-            $('#bank_id').val(data.bank_id);
-            $('#bank_id').trigger('change');
-        } else {
-            $('#number_invoice').attr("readonly", false);
-            $('#number_invoice').val(data.number_invoice);
-            $('#month_invoice').attr("disabled", false);
-            $('#month_invoice').val(data.month_invoice);
-            $('#month_invoice').trigger('change');
-            $('#year_invoice').attr("disabled", false);
-            $('#year_invoice').val(data.year_invoice);
-            $('#year_invoice').trigger('change');
-            $('#date_issue').attr("readonly", false);
-            $('#date_issue').val(data.date_issue);
-            $('#date_admission').attr("readonly", false);
-            $('#date_admission').val(data.date_admission);
-            $('#bank_id').attr("disabled", false);
-            $('#bank_id').val(data.bank_id);
-            $('#bank_id').trigger('change');
-        }
+        //$formEditFacturacion.find("[id=invoice_id]").val(invoice_id);
 
         $('#state').val(data.state);
         $('#state').trigger('change');
-
-        $('#month_paid').val(data.month_paid);
-        $('#month_paid').trigger('change');
-
-        $('#year_paid').val(data.year_paid);
-        $('#year_paid').trigger('change');
-
-        $('#date_paid').val(data.date_paid);
-
-        $('#observation').val(data.observation);
-
-        $('#discount_factoring').val(data.discount_factoring);
-
-        $('#revision').val(data.revision);
-        $('#revision').trigger('change');
 
         $modalEditFacturacion.modal('show');
     }, "json");
