@@ -2313,7 +2313,7 @@ Route::middleware('auth')->group(function (){
         Route::get('/egresos/proveedores/v2', 'ExpenseSupplierController@indexV2')
             ->name('expenses.supplier.index')
             ->middleware('permission:list_expenseSupplier');
-        Route::get('exportar/reporte/egresos/proveedores/', 'ExpenseSupplierController@exportFinanceWorks')
+        Route::get('exportar/reporte/egresos/proveedores/', 'ExpenseSupplierController@exportExpenseSuppliers')
             ->middleware('permission:export_expenseSupplier');
         Route::get('/get/info/facturacion/expense/supplier/{invoice_id}/{type}', 'ExpenseSupplierController@getInfoFacturacionExpenseSupplier')
             ->middleware('permission:modify_expenseSupplier');

@@ -95,8 +95,9 @@
 @section('page-title')
     <h5 class="card-title">Listado de Egresos Proveedores</h5>
 
-    {{--<button type="button" id="btn-export" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-file-excel"></i> Descargar Excel </button>
---}}
+    @can('export_expenseSupplier')
+    <button type="button" id="btn-export" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-file-excel"></i> Descargar Excel </button>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

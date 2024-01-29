@@ -276,7 +276,6 @@ function exportExcel() {
     var end  = $('#end').val();
     var startDate   = moment(start, "DD/MM/YYYY");
     var endDate     = moment(end, "DD/MM/YYYY");
-    var rate = $('#rate').val();
 
     console.log(start);
     console.log(end);
@@ -304,13 +303,12 @@ function exportExcel() {
 
                         var query = {
                             start: start,
-                            end: end,
-                            rate: rate
+                            end: end
                         };
 
                         $.alert('Descargando archivo ...');
 
-                        var url = "/dashboard/exportar/reporte/ingresos/clientes/?" + $.param(query);
+                        var url = "/dashboard/exportar/reporte/egresos/proveedores/?" + $.param(query);
 
                         window.location = url;
 
@@ -331,8 +329,7 @@ function exportExcel() {
 
         var query = {
             start: start,
-            end: end,
-            rate: rate
+            end: end
         };
 
         toastr.success('Descargando archivo ...', 'Éxito',
@@ -354,7 +351,7 @@ function exportExcel() {
                 "hideMethod": "fadeOut"
             });
 
-        var url = "/dashboard/exportar/reporte/ingresos/clientes/?" + $.param(query);
+        var url = "/dashboard/exportar/reporte/egresos/proveedores/?" + $.param(query);
 
         window.location = url;
 
