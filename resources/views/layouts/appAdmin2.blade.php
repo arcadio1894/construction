@@ -2724,12 +2724,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('enable_expenseSupplier')
                                     <li class="nav-item">
                                         <a href="{{ route('expenses.supplier.index') }}" class="nav-link @yield('activeListExpensesSupplier')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Egresos Proveedores</p>
                                         </a>
                                     </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

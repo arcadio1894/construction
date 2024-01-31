@@ -92,6 +92,10 @@
     </style>
 @endsection
 
+@section('page-header')
+    <h1 class="page-title">Egresos Proveedores</h1>
+@endsection
+
 @section('page-title')
     <h5 class="card-title">Listado de Egresos Proveedores</h5>
 
@@ -187,16 +191,6 @@
                             </select>
                         </div>
 
-                        {{--<div class="col-md-2">
-                            <label for="year_order">Año de la orden:</label>
-                            <select id="year_order" class="form-control form-control-sm select2" style="width: 100%;">
-                                <option value="">TODOS</option>
-                                @foreach( $years as $year )
-                                    <option value="{{ $year->year }}">{{ $year->year}}</option>
-                                @endforeach
-                            </select>
-                        </div>--}}
-
                         <div class="col-md-2">
                             <label for="month_order">Mes de la orden:</label>
                             <select id="month_order" class="form-control form-control-sm select2" style="width: 100%;">
@@ -224,6 +218,15 @@
                                     <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end" autocomplete="off">
                                 </div>
                             </div>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="credito">Crédito / Contado:</label>
+                            <select id="credito" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value="">TODOS</option>
+                                @foreach ($arrayStateDeadlines as $arrayStateDeadline)
+                                    <option value="{{ $arrayStateDeadline['value'] }}">{{ $arrayStateDeadline['display'] }}</option>
+                                @endforeach
+                            </select>
                         </div>
                     </div>
 
@@ -592,6 +595,12 @@
                 placeholder: "Selecione",
                 allowClear: true
             });
+
+            $('#credito').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+
         })
     </script>
     <script src="{{ asset('js/expenseSupplier/indexV2.js') }}"></script>

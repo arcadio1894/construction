@@ -28,6 +28,7 @@ class ExpenseSupplierController extends Controller
         $month_order = $request->input('month_order');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
+        $credito = $request->input('credito');
 
         if ( $startDate == "" || $endDate == "" )
         {
@@ -218,6 +219,24 @@ class ExpenseSupplierController extends Controller
                     ->addSelect('payment_deadlines.days as deadline_days');
 
             }
+        }
+
+        if ($credito != "") {
+            $queryPurchase->whereHas('deadline', function ($supplierQuery) use ($credito) {
+                if ($credito == 1) {
+                    $supplierQuery->whereIn('payment_deadline_id', [1, 2])->where('type', 'purchases');
+                } elseif ($credito == 2) {
+                    $supplierQuery->whereNotIn('payment_deadline_id', [1, 2])->where('type', 'purchases');
+                }
+            });
+
+            $queryService->whereHas('deadline', function ($supplierQuery) use ($credito) {
+                if ($credito == 1) {
+                    $supplierQuery->whereIn('payment_deadline_id', [1, 2])->where('type', 'purchases');
+                } elseif ($credito == 2) {
+                    $supplierQuery->whereNotIn('payment_deadline_id', [1, 2])->where('type', 'purchases');
+                }
+            });
         }
 
         /*dump($queryPurchase->get());
@@ -465,6 +484,11 @@ class ExpenseSupplierController extends Controller
             ["value" => "paid", "display" => "ABONADO"],
         ];
 
+        $arrayStateDeadlines = [
+            ["value" => "1", "display" => "AL CONTADO"],
+            ["value" => "2", "display" => "AL CRÉDITO"],
+        ];
+
         //$tiposCambios = $this->getTypeExchange();
         //dump($tiposCambios);
         //$firstDayWeek = Carbon::now('America/Lima')->format('Y-m-d');
@@ -473,7 +497,7 @@ class ExpenseSupplierController extends Controller
         //$rate = $tipoCambio->compra;
         $day_current = Carbon::now('America/Lima');
 
-        return view('expenseSupplier.index_v2', compact( 'years', 'day_current', 'arrayYears', 'permissions', 'arraySuppliers', 'arrayStateCredits', 'arrayStatePaids'));
+        return view('expenseSupplier.index_v2', compact( 'arrayStateDeadlines', 'years', 'day_current', 'arrayYears', 'permissions', 'arraySuppliers', 'arrayStateCredits', 'arrayStatePaids'));
 
     }
 

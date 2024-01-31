@@ -13,7 +13,7 @@
 @endsection
 
 @section('title')
-    Trabajos Finanzas
+    Ingresos Clientes
 @endsection
 
 @section('styles-plugins')
@@ -92,8 +92,12 @@
     </style>
 @endsection
 
+@section('page-header')
+    <h1 class="page-title">Ingresos Clientes</h1>
+@endsection
+
 @section('page-title')
-    <h5 class="card-title">Listado de trabajos para Finanzas</h5>
+    <h5 class="card-title">Listado de Ingresos Clientes</h5>
 
     <button type="button" id="btn-export" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-file-excel"></i> Descargar Excel </button>
 
@@ -520,7 +524,7 @@
 
                         <div class="row">
                             <div class="col-sm-6">
-                                <label for="detraction">Detracción:</label>
+                                <label for="detraction">Tipo de Orden:</label>
                                 <select id="detraction" name="detraction" class="form-control select2" style="width: 100%;">
                                     <option value=""></option>
                                     <option value="nn">Ninguno</option>
@@ -829,7 +833,7 @@
             });
 
             $('#detraction').select2({
-                placeholder: "Selecione detracción",
+                placeholder: "Selecione tipo",
                 allowClear: true
             });
 

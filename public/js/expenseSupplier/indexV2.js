@@ -380,6 +380,7 @@ function getDataExpenseSuppliers($numberPage) {
     var month_order = $('#month_order').val();
     var startDate = $('#start').val();
     var endDate = $('#end').val();
+    var credito = $('#credito').val();
 
     $.get('/dashboard/get/expenses/supplier/v2/'+$numberPage, {
         number_order:number_order,
@@ -391,6 +392,7 @@ function getDataExpenseSuppliers($numberPage) {
         month_order: month_order,
         startDate: startDate,
         endDate: endDate,
+        credito: credito
     }, function(data) {
         if ( data.data.length == 0 )
         {
