@@ -158,11 +158,11 @@ class ReportController extends Controller
             $priority = '';
             if ( $material->stock_current > $material->stock_max ){
                 $priority = 'Completo';
-            } else if ( $material->stock_current = $material->stock_max ){
+            } else if ( $material->stock_current == $material->stock_max ){
                 $priority = 'Aceptable';
             } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
                 $priority = 'Aceptable';
-            } else if ( $material->stock_current = $material->stock_min ){
+            } else if ( $material->stock_current == $material->stock_min ){
                 $priority = 'Por agotarse';
             } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
                 $priority = 'Agotado';
@@ -209,11 +209,11 @@ class ReportController extends Controller
             $priority = '';
             if ( $material->stock_current > $material->stock_max ){
                 $priority = 'Completo';
-            } else if ( $material->stock_current = $material->stock_max ){
+            } else if ( $material->stock_current == $material->stock_max ){
                 $priority = 'Aceptable';
             } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
                 $priority = 'Aceptable';
-            } else if ( $material->stock_current = $material->stock_min ){
+            } else if ( $material->stock_current == $material->stock_min ){
                 $priority = 'Por agotarse';
             } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
                 $priority = 'Agotado';
@@ -277,11 +277,11 @@ class ReportController extends Controller
             $priority = '';
             if ( $material->stock_current > $material->stock_max ){
                 $priority = 'Completo';
-            } else if ( $material->stock_current = $material->stock_max ){
+            } else if ( $material->stock_current == $material->stock_max ){
                 $priority = 'Aceptable';
             } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
                 $priority = 'Aceptable';
-            } else if ( $material->stock_current = $material->stock_min ){
+            } else if ( $material->stock_current == $material->stock_min ){
                 $priority = 'Por agotarse';
             } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
                 $priority = 'Agotado';
