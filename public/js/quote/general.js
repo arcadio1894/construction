@@ -622,6 +622,9 @@ $(document).ready(function () {
     $(document).on('click', '[data-decimals]', showModalDecimals);
 
     $('#btn-changeDecimals').on('click', saveDecimals);
+
+    $(document).on('click', '[data-raise]', raiseQuote);
+    $(document).on('click', '[data-raise2]', raise2Quote);
 });
 
 var $formDelete;
@@ -630,6 +633,128 @@ var $modalDecimals;
 var $formDecimals;
 
 var $permissions;
+
+function raiseQuote() {
+    var quote_id = $(this).data('raise');
+    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de elevar esta cotización a orden de ejecución?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización elevada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
+
+function raise2Quote() {
+    var quote_id = $(this).data('raise2');
+    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de modificar el codigo del cliente?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Código modificado correctamente.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
 
 function showModalDecimals() {
     $('#decimals').val('');
