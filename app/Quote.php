@@ -43,6 +43,47 @@ class Quote extends Model
         'state_decimals'
     ];
 
+    protected $dates = ['date_quote', 'created_at', 'date_vb_finances', 'date_vb_operations', 'date_validate'];
+   /* public function getEstadoAttribute()
+    {
+        if ( $this->state === 'created' ) {
+            if ( $this->send_state == 1 || $this->send_state == true )
+            {
+                return 'send';
+            } else {
+                return 'created';
+            }
+        }
+        if ($this->state_active === 'close'){
+            return 'close';
+        } else {
+            if ($this->state === 'confirmed' && $this->raise_status === 1){
+                if ( $this->vb_finances == 1 && $this->vb_operations == null )
+                {
+                    return 'VB_finance';
+                } else {
+                    if ( $this->vb_finances == 1 && $this->vb_operations == 1 )
+                    {
+                        return 'VB_operation';
+                    } else {
+                        if ( $this->vb_finances == null && $this->vb_operations == null )
+                        {
+                            return 'raise';
+                        }
+                    }
+                }
+            }
+            if ($this->state === 'confirmed' && $this->raise_status === 0){
+                return 'confirm';
+            }
+            if ($this->state === 'canceled'){
+                return 'canceled';
+            }
+        }
+
+        return "";
+    }*/
+
     public function getTimeDeliveryAttribute()
     {
         if ($this->delivery_time === null) {

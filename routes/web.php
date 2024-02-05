@@ -866,6 +866,15 @@ Route::middleware('auth')->group(function (){
             ->name('decimals.change')
             ->middleware('permission:update_quote');
 
+        // TODO: Rutas para V2 de listado de cotizaciones
+        Route::get('/get/data/quotes/v2/{numberPage}', 'QuoteController@getDataQuotes')
+            ->middleware('permission:list_quote');
+        Route::get('/listado/general/cotizaciones/v2', 'QuoteController@indexV2')
+            ->name('quote.general.indexV2')
+            ->middleware('permission:list_quote');
+        /*Route::get('exportar/reporte/ingresos/clientes/', 'FinanceWorkController@exportFinanceWorks')
+            ->middleware('permission:list_quotes');*/
+
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')
             ->middleware('permission:update_quote');

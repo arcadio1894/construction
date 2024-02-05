@@ -245,7 +245,7 @@ $(document).ready(function () {
                             }
                             if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
                                 text = text + '<a href="'+document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+item.id+
-                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></i></a> ';
+                                    '" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Finalizar equipos"><i class="fas fa-times-circle"></i></a> ';
                             }
                             /*return '<span class="badge bg-gradient-navy text-white">V.B. Finanzas - '+moment(item.date_vb_finances).format('DD/MM/YYYY')+'</span>';*/
                             // TODO: Boton para dar visto bueno operaciones Cambiar el permiso
