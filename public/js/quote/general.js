@@ -629,6 +629,9 @@ var $modalDelete;
 var $modalDecimals;
 var $formDecimals;
 
+var $modalDetraction;
+var $formDetraction;
+
 var $permissions;
 
 function showModalDecimals() {

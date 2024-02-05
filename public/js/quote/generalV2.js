@@ -1,226 +1,6 @@
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
     //console.log($permissions);
-    /*var tabla = $('#dynamic-table').DataTable( {
-        ajax: {
-            url: "/dashboard/get/finance/works",
-            dataSrc: 'data'
-        },
-        bAutoWidth: false,
-        "aoColumns": [
-            { data: 'year' },
-
-            { data: 'customer' },
-            { data: 'responsible' },
-            { data: 'area' },
-
-            { data: 'quote'},
-            { data: 'type' },
-            { data: 'order_customer' },
-            { data: 'description'},
-            { data: 'initiation'},
-            { data: 'delivery'},
-            { data: 'state_work'},
-
-            { data: 'act_of_acceptance'},
-            { data: 'state_act_of_acceptance'},
-            { data: 'docier'},
-            { data: 'hes'},
-
-            { data: 'advancement'},
-            { data: 'amount_advancement'},
-            { data: 'subtotal'},
-            { data: 'igv'},
-            { data: 'total'},
-            { data: 'detraction'},
-            { data: 'amount_detraction'},
-            { data: 'discount_factoring'},
-            { data: 'amount_include_detraction'},
-
-            { data: 'pay_condition'},
-            { data: 'invoiced'},
-            { data: 'number_invoice'},
-            { data: 'year_invoice'},
-            { data: 'month_invoice'},
-            { data: 'date_issue'},
-            { data: 'date_admission'},
-            { data: 'days'},
-            { data: 'date_programmed'},
-
-            { data: 'bank'},
-            { data: 'state'},
-            { data: 'year_paid'},
-            { data: 'month_paid'},
-            { data: 'date_paid'},
-            { data: 'observation'},
-            { data: 'revision'},
-            { data: null,
-                title: '',
-                wrap: true,
-                sortable:false,
-                "render": function (item)
-                {
-                    var text = '';
-                    text = text + ' <button data-formEditTrabajo="' + item.id + '" ' +
-                        ' class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Información Trabajo"><i class="fas fa-tools fa-lg"></i></button>';
-                    text = text + ' <button data-formEditFacturacion="' + item.id + '" ' +
-                        ' class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Información Facturación"><i class="fas fa-donate fa-lg"></i></button>';
-
-                    return text;
-                }
-            },
-
-        ],
-        "aaSorting": [],
-
-        select: {
-            style: 'single'
-        },
-        language: {
-            "processing": "Procesando...",
-            "lengthMenu": "Mostrar _MENU_ registros",
-            "zeroRecords": "No se encontraron resultados",
-            "emptyTable": "Ningún dato disponible en esta tabla",
-            "info": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-            "infoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
-            "infoFiltered": "(filtrado de un total de _MAX_ registros)",
-            "search": "Buscar:",
-            "infoThousands": ",",
-            "loadingRecords": "Cargando...",
-            "paginate": {
-                "first": "Primero",
-                "last": "Último",
-                "next": "Siguiente",
-                "previous": "Anterior"
-            },
-            "aria": {
-                "sortAscending": ": Activar para ordenar la columna de manera ascendente",
-                "sortDescending": ": Activar para ordenar la columna de manera descendente"
-            },
-            "buttons": {
-                "copy": "Copiar",
-                "colvis": "Visibilidad",
-                "collection": "Colección",
-                "colvisRestore": "Restaurar visibilidad",
-                "copyKeys": "Presione ctrl o u2318 + C para copiar los datos de la tabla al portapapeles del sistema. <br \/> <br \/> Para cancelar, haga clic en este mensaje o presione escape.",
-                "copySuccess": {
-                    "1": "Copiada 1 fila al portapapeles",
-                    "_": "Copiadas %d fila al portapapeles"
-                },
-                "copyTitle": "Copiar al portapapeles",
-                "csv": "CSV",
-                "excel": "Excel",
-                "pageLength": {
-                    "-1": "Mostrar todas las filas",
-                    "1": "Mostrar 1 fila",
-                    "_": "Mostrar %d filas"
-                },
-                "pdf": "PDF",
-                "print": "Imprimir"
-            },
-            "autoFill": {
-                "cancel": "Cancelar",
-                "fill": "Rellene todas las celdas con <i>%d<\/i>",
-                "fillHorizontal": "Rellenar celdas horizontalmente",
-                "fillVertical": "Rellenar celdas verticalmentemente"
-            },
-            "decimal": ",",
-            "searchBuilder": {
-                "add": "Añadir condición",
-                "button": {
-                    "0": "Constructor de búsqueda",
-                    "_": "Constructor de búsqueda (%d)"
-                },
-                "clearAll": "Borrar todo",
-                "condition": "Condición",
-                "conditions": {
-                    "date": {
-                        "after": "Despues",
-                        "before": "Antes",
-                        "between": "Entre",
-                        "empty": "Vacío",
-                        "equals": "Igual a",
-                        "not": "No",
-                        "notBetween": "No entre",
-                        "notEmpty": "No Vacio"
-                    },
-                    "number": {
-                        "between": "Entre",
-                        "empty": "Vacio",
-                        "equals": "Igual a",
-                        "gt": "Mayor a",
-                        "gte": "Mayor o igual a",
-                        "lt": "Menor que",
-                        "lte": "Menor o igual que",
-                        "not": "No",
-                        "notBetween": "No entre",
-                        "notEmpty": "No vacío"
-                    },
-                    "string": {
-                        "contains": "Contiene",
-                        "empty": "Vacío",
-                        "endsWith": "Termina en",
-                        "equals": "Igual a",
-                        "not": "No",
-                        "notEmpty": "No Vacio",
-                        "startsWith": "Empieza con"
-                    }
-                },
-                "data": "Data",
-                "deleteTitle": "Eliminar regla de filtrado",
-                "leftTitle": "Criterios anulados",
-                "logicAnd": "Y",
-                "logicOr": "O",
-                "rightTitle": "Criterios de sangría",
-                "title": {
-                    "0": "Constructor de búsqueda",
-                    "_": "Constructor de búsqueda (%d)"
-                },
-                "value": "Valor"
-            },
-            "searchPanes": {
-                "clearMessage": "Borrar todo",
-                "collapse": {
-                    "0": "Paneles de búsqueda",
-                    "_": "Paneles de búsqueda (%d)"
-                },
-                "count": "{total}",
-                "countFiltered": "{shown} ({total})",
-                "emptyPanes": "Sin paneles de búsqueda",
-                "loadMessage": "Cargando paneles de búsqueda",
-                "title": "Filtros Activos - %d"
-            },
-            "select": {
-                "1": "%d fila seleccionada",
-                "_": "%d filas seleccionadas",
-                "cells": {
-                    "1": "1 celda seleccionada",
-                    "_": "$d celdas seleccionadas"
-                },
-                "columns": {
-                    "1": "1 columna seleccionada",
-                    "_": "%d columnas seleccionadas"
-                }
-            },
-            "thousands": ".",
-            "datetime": {
-                "previous": "Anterior",
-                "next": "Proximo",
-                "hours": "Horas"
-            }
-        }
-
-    } );
-
-    $('#filterYear, #filterCustomer, #filterStateWork, #filterState').on('change', function() {
-        var filterYear = $('#filterYear').val();
-        var filterCustomer = $('#filterCustomer').val();
-        var filterStateWork = $('#filterStateWork').val();
-        var filterState = $('#filterState').val();
-
-        tabla.columns(0).search(filterYear).columns(1).search(filterCustomer).columns(8).search(filterStateWork).columns(28).search(filterState).draw();
-    });
-*/
     $('#sandbox-container .input-daterange').datepicker({
         todayBtn: "linked",
         clearBtn: true,
@@ -247,7 +27,9 @@ $(document).ready(function () {
     $formDelete.on('submit', destroySubCategory);
     $modalDelete = $('#modalDelete');
     $formDecimals = $('#formDecimals');
+    $formDetraction = $('#formDetraction');
     $modalDecimals = $('#modalDecimals');
+    $modalDetraction = $('#modalDetraction');
     $(document).on('click', '[data-delete]', cancelQuote);
 
     $(document).on('click', '[data-confirm]', confirmQuote);
@@ -263,6 +45,13 @@ $(document).ready(function () {
     $(document).on('click', '[data-decimals]', showModalDecimals);
 
     $('#btn-changeDecimals').on('click', saveDecimals);
+
+    $(document).on('click', '[data-raise]', raiseQuote);
+    $(document).on('click', '[data-raise2]', raise2Quote);
+
+    $(document).on('click', '[data-detraction]', showModalDetraction);
+
+    $('#btn-change').on('click', saveDetraction);
 });
 
 var $formDelete;
@@ -271,6 +60,198 @@ var $modalDecimals;
 var $formDecimals;
 
 var $permissions;
+
+function saveDetraction() {
+    var button = $(this);
+    button.attr("disabled", true);
+    var form = $formDetraction[0];
+    $.confirm({
+        icon: 'fas fa-donate',
+        theme: 'modern',
+        closeIcon: false,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de guardar el tipo de orden?',
+        content: 'Este cambio colocará la detracción en el módulo de finanzas.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/change/detraction/quote',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: new FormData(form),
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                button.attr("disabled", false);
+                                $modalDetraction.modal('hide');
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            button.attr("disabled", false);
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    button.attr("disabled", false);
+                    $.alert("No se guardó ninguún dato.");
+                },
+            },
+        }
+    });
+
+}
+
+function showModalDetraction() {
+    $('#detraction').val('');
+    $('#detraction').trigger('change');
+    var quote_id = $(this).data('detraction');
+    $.ajax({
+        url: "/dashboard/get/detraction/quote/"+quote_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $formDetraction.find("[id=quote_id]").val(quote_id);
+            $('#detraction').val(data.detraction);
+            $('#detraction').trigger('change');
+
+            $modalDetraction.modal('show');
+        }
+    });
+}
+
+function raiseQuote() {
+    var quote_id = $(this).data('raise');
+    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de elevar esta cotización a orden de ejecución?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Cotización elevada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
+
+function raise2Quote() {
+    var quote_id = $(this).data('raise2');
+    var code = ($(this).data('code')===null) ? 'No tiene' : $(this).data('code');
+
+    $.confirm({
+        icon: 'fa fa-level-up-alt',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de modificar el codigo del cliente?',
+        content: '' +
+            '<form action="" class="formName">' +
+            '<div class="form-group">' +
+            '<strong>Código actual: </strong>' + code +
+            '<br><label>Ingrese el código del cliente aquí: </label>' +
+            '<input type="text" placeholder="Código" class="name form-control" required />' +
+            '</div>' +
+            '</form>',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    var name = this.$content.find('.name').val();
+                    if(!name || name.trim()===''){
+                        $.alert('Ingrese un código válido');
+                        return false;
+                    }
+                    $.ajax({
+                        url: '/dashboard/raise/quote/'+quote_id+'/code/'+name,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Código modificado correctamente.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no elevada.");
+                },
+            },
+        }
+    });
+
+}
 
 function showModalDecimals() {
     $('#decimals').val('');
@@ -642,7 +623,7 @@ function confirmQuote() {
             cancel: {
                 text: 'CANCELAR',
                 action: function (e) {
-                    $.alert("Anulación cancelada.");
+                    $.alert("Confirmación cancelada.");
                 },
             },
         },
@@ -688,7 +669,7 @@ function sendQuote() {
             cancel: {
                 text: 'CANCELAR',
                 action: function (e) {
-                    $.alert("Anulación cancelada.");
+                    $.alert("Envío cancelado.");
                 },
             },
         },
@@ -1283,11 +1264,11 @@ function renderDataTable(data) {
             }
         }
 
-        if ( $.inArray('update_quote', $permissions) !== -1 ) {
-            let url = document.location.origin+ '/dashboard/editar/cotizacion/'+data.id;
-            cloneBtnConfirm.querySelector("[data-editar]").setAttribute("href", url);
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnConfirm.querySelector("[data-regresar_enviado]").setAttribute("data-deselevar", data.id);
+            cloneBtnConfirm.querySelector("[data-regresar_enviado]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-editar]");
+            let element = cloneBtnConfirm.querySelector("[data-regresar_enviado]");
             if (element) {
                 element.style.display = 'none';
             }
@@ -1305,7 +1286,7 @@ function renderDataTable(data) {
 
         if ( $.inArray('raise_quote', $permissions) !== -1 ) {
             cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-raise", data.id);
-            cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-code", data.code);
+            cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-code", data.order);
             cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-name", data.description);
         } else {
             let element = cloneBtnConfirm.querySelector("[data-elevar]");
@@ -1400,32 +1381,62 @@ function renderDataTable(data) {
             }
         }
 
-        if ( $.inArray('update_quote', $permissions) !== -1 ) {
-            let url = document.location.origin+ '/dashboard/editar/cotizacion/'+data.id;
-            cloneBtnConfirm.querySelector("[data-editar]").setAttribute("href", url);
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnRaised.querySelector("[data-modificar_codigo]").setAttribute("data-raise2", data.id);
+            cloneBtnRaised.querySelector("[data-modificar_codigo]").setAttribute("data-code", data.order);
+            cloneBtnRaised.querySelector("[data-modificar_codigo]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-editar]");
-            if (element) {
-                element.style.display = 'none';
-            }
-        }
-
-        if ( $.inArray('adjust_quote', $permissions) !== -1 ) {
-            let url = document.location.origin+ '/dashboard/ajustar/cotizacion/'+data.id;
-            cloneBtnConfirm.querySelector("[data-ajustar_porcentajes]").setAttribute("href", url);
-        } else {
-            let element = cloneBtnConfirm.querySelector("[data-ajustar_porcentajes]");
+            let element = cloneBtnRaised.querySelector("[data-modificar_codigo]");
             if (element) {
                 element.style.display = 'none';
             }
         }
 
         if ( $.inArray('raise_quote', $permissions) !== -1 ) {
-            cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-raise", data.id);
-            cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-code", data.code);
-            cloneBtnConfirm.querySelector("[data-elevar]").setAttribute("data-name", data.description);
+            cloneBtnRaised.querySelector("[data-seleccionar_detraccion]").setAttribute("data-detraction", data.id);
+            cloneBtnRaised.querySelector("[data-seleccionar_detraccion]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-elevar]");
+            let element = cloneBtnRaised.querySelector("[data-seleccionar_detraccion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+            cloneBtnRaised.querySelector("[data-finalizar]").setAttribute("data-finish", data.id);
+            cloneBtnRaised.querySelector("[data-finalizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-finalizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+data.id;
+            cloneBtnRaised.querySelector("[data-reemplazar_materiales]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-reemplazar_materiales]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+data.id;
+            cloneBtnRaised.querySelector("[data-finalizar_equipos]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-finalizar_equipos]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnRaised.querySelector("[data-regresar_enviado]").setAttribute("data-deselevar", data.id);
+            cloneBtnRaised.querySelector("[data-regresar_enviado]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-regresar_enviado]");
             if (element) {
                 element.style.display = 'none';
             }
@@ -1433,39 +1444,49 @@ function renderDataTable(data) {
 
         if ( $.inArray('confirm_quote', $permissions) !== -1 ) {
             let url = document.location.origin+ '/dashboard/cotizar/soles/cotizacion/'+data.id;
-            cloneBtnConfirm.querySelector("[data-cotizar_soles]").setAttribute("href", url);
+            cloneBtnRaised.querySelector("[data-cotizar_soles]").setAttribute("href", url);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-cotizar_soles]");
+            let element = cloneBtnRaised.querySelector("[data-cotizar_soles]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('VBFinances_quote', $permissions) !== -1 ) {
+            cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]").setAttribute("data-vb_finances", data.id);
+            cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]");
             if (element) {
                 element.style.display = 'none';
             }
         }
 
         if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
-            cloneBtnConfirm.querySelector("[data-anular]").setAttribute("data-delete", data.id);
-            cloneBtnConfirm.querySelector("[data-anular]").setAttribute("data-name", data.description);
+            cloneBtnRaised.querySelector("[data-anular]").setAttribute("data-delete", data.id);
+            cloneBtnRaised.querySelector("[data-anular]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-anular]");
+            let element = cloneBtnRaised.querySelector("[data-anular]");
             if (element) {
                 element.style.display = 'none';
             }
         }
 
         if ( $.inArray('renew_quote', $permissions) !== -1 ) {
-            cloneBtnConfirm.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
-            cloneBtnConfirm.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
+            cloneBtnRaised.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
+            cloneBtnRaised.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-recotizar]");
+            let element = cloneBtnRaised.querySelector("[data-recotizar]");
             if (element) {
                 element.style.display = 'none';
             }
         }
 
         if ( $.inArray('list_quote', $permissions) !== -1 ) {
-            cloneBtnConfirm.querySelector("[data-decimales]").setAttribute("data-decimals", data.id);
-            cloneBtnConfirm.querySelector("[data-decimales]").setAttribute("data-name", data.description);
+            cloneBtnRaised.querySelector("[data-decimales]").setAttribute("data-decimals", data.id);
+            cloneBtnRaised.querySelector("[data-decimales]").setAttribute("data-name", data.description);
         } else {
-            let element = cloneBtnConfirm.querySelector("[data-decimales]");
+            let element = cloneBtnRaised.querySelector("[data-decimales]");
             if (element) {
                 element.style.display = 'none';
             }
@@ -1476,21 +1497,358 @@ function renderDataTable(data) {
 
     if ( data.state == "VB_finance" ) {
         var cloneBtnVB_finance = activateTemplate('#template-btn_VB_finance');
+
+        if ( $.inArray('show_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/ver/cotizacion/'+data.id;
+            cloneBtnVB_finance.querySelector("[data-ver_cotizacion]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-ver_cotizacion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        /*if ( $.inArray('update_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/editar/planos/cotizacion/'+data.id;
+            cloneBtnRaised.querySelector("[data-editar_planos]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-editar_planos]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }*/
+
+        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/imprimir/cliente/'+data.id;
+            cloneBtnVB_finance.querySelector("[data-imprimir_cliente]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-imprimir_cliente]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/imprimir/interno/'+data.id;
+            cloneBtnVB_finance.querySelector("[data-imprimir_interna]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-imprimir_interna]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-modificar_codigo]").setAttribute("data-raise2", data.id);
+            cloneBtnVB_finance.querySelector("[data-modificar_codigo]").setAttribute("data-code", data.order);
+            cloneBtnVB_finance.querySelector("[data-modificar_codigo]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-modificar_codigo]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-seleccionar_detraccion]").setAttribute("data-detraction", data.id);
+            cloneBtnVB_finance.querySelector("[data-seleccionar_detraccion]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-seleccionar_detraccion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-finalizar]").setAttribute("data-finish", data.id);
+            cloneBtnVB_finance.querySelector("[data-finalizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-finalizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('replacement_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/reemplazar/materiales/cotizacion/'+data.id;
+            cloneBtnVB_finance.querySelector("[data-reemplazar_materiales]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-reemplazar_materiales]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+data.id;
+            cloneBtnVB_finance.querySelector("[data-finalizar_equipos]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-finalizar_equipos]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-regresar_enviado]").setAttribute("data-deselevar", data.id);
+            cloneBtnVB_finance.querySelector("[data-regresar_enviado]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-regresar_enviado]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('VBOperations_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-visto_bueno_operaciones]").setAttribute("data-vb_operations", data.id);
+            cloneBtnVB_finance.querySelector("[data-visto_bueno_operaciones]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-visto_bueno_operaciones]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-anular]").setAttribute("data-delete", data.id);
+            cloneBtnVB_finance.querySelector("[data-anular]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-anular]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
+            cloneBtnVB_finance.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-recotizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('list_quote', $permissions) !== -1 ) {
+            cloneBtnVB_finance.querySelector("[data-decimales]").setAttribute("data-decimals", data.id);
+            cloneBtnVB_finance.querySelector("[data-decimales]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_finance.querySelector("[data-decimales]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
         botones.append(cloneBtnVB_finance);
     }
 
     if ( data.state == "VB_operation" ) {
         var cloneBtnVB_operation = activateTemplate('#template-btn_VB_operation');
+
+        if ( $.inArray('show_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/ver/cotizacion/'+data.id;
+            cloneBtnVB_operation.querySelector("[data-ver_cotizacion]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-ver_cotizacion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/imprimir/cliente/'+data.id;
+            cloneBtnVB_operation.querySelector("[data-imprimir_cliente]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-imprimir_cliente]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('printInternal_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/imprimir/interno/'+data.id;
+            cloneBtnVB_operation.querySelector("[data-imprimir_interna]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-imprimir_interna]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-modificar_codigo]").setAttribute("data-raise2", data.id);
+            cloneBtnVB_operation.querySelector("[data-modificar_codigo]").setAttribute("data-code", data.order);
+            cloneBtnVB_operation.querySelector("[data-modificar_codigo]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-modificar_codigo]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-seleccionar_detraccion]").setAttribute("data-detraction", data.id);
+            cloneBtnVB_operation.querySelector("[data-seleccionar_detraccion]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-seleccionar_detraccion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-finalizar]").setAttribute("data-finish", data.id);
+            cloneBtnVB_operation.querySelector("[data-finalizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-finalizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finishEquipment_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/finalizar/equipos/cotizacion/'+data.id;
+            cloneBtnVB_operation.querySelector("[data-finalizar_equipos]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-finalizar_equipos]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('update_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/modificar/lista/materiales/cotizacion/'+data.id;
+            cloneBtnVB_operation.querySelector("[data-modificar_lista_materiales]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-modificar_lista_materiales]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-regresar_enviado]").setAttribute("data-deselevar", data.id);
+            cloneBtnVB_operation.querySelector("[data-regresar_enviado]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-regresar_enviado]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('destroy_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-anular]").setAttribute("data-delete", data.id);
+            cloneBtnVB_operation.querySelector("[data-anular]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-anular]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
+            cloneBtnVB_operation.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-recotizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('list_quote', $permissions) !== -1 ) {
+            cloneBtnVB_operation.querySelector("[data-decimales]").setAttribute("data-decimals", data.id);
+            cloneBtnVB_operation.querySelector("[data-decimales]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnVB_operation.querySelector("[data-decimales]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
         botones.append(cloneBtnVB_operation);
     }
 
     if ( data.state == "close" ) {
         var cloneBtnClose = activateTemplate('#template-btn_close');
+
+        if ( $.inArray('show_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/ver/cotizacion/'+data.id;
+            cloneBtnClose.querySelector("[data-ver_cotizacion]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnClose.querySelector("[data-ver_cotizacion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('printCustomer_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/imprimir/cliente/'+data.id;
+            cloneBtnClose.querySelector("[data-imprimir_cliente]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnClose.querySelector("[data-imprimir_cliente]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('raise_quote', $permissions) !== -1 ) {
+            cloneBtnClose.querySelector("[data-modificar_codigo]").setAttribute("data-raise2", data.id);
+            cloneBtnClose.querySelector("[data-modificar_codigo]").setAttribute("data-code", data.order);
+            cloneBtnClose.querySelector("[data-modificar_codigo]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnClose.querySelector("[data-modificar_codigo]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+            cloneBtnClose.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
+            cloneBtnClose.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnClose.querySelector("[data-recotizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('finish_quote', $permissions) !== -1 ) {
+            cloneBtnClose.querySelector("[data-reactivar]").setAttribute("data-active", data.id);
+            cloneBtnClose.querySelector("[data-reactivar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnClose.querySelector("[data-reactivar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
         botones.append(cloneBtnClose);
     }
 
     if ( data.state == "canceled" ) {
         var cloneBtnCanceled = activateTemplate('#template-btn_canceled');
+
+        if ( $.inArray('show_quote', $permissions) !== -1 ) {
+            let url = document.location.origin+ '/dashboard/ver/cotizacion/'+data.id;
+            cloneBtnCanceled.querySelector("[data-ver_cotizacion]").setAttribute("href", url);
+        } else {
+            let element = cloneBtnCanceled.querySelector("[data-ver_cotizacion]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('renew_quote', $permissions) !== -1 ) {
+            cloneBtnCanceled.querySelector("[data-recotizar]").setAttribute("data-renew", data.id);
+            cloneBtnCanceled.querySelector("[data-recotizar]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnCanceled.querySelector("[data-recotizar]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
         botones.append(cloneBtnCanceled);
     }
 
