@@ -12,6 +12,7 @@ use App\EquipmentMaterial;
 use App\EquipmentTurnstile;
 use App\EquipmentWorkday;
 use App\EquipmentWorkforce;
+use App\Exports\QuotesReportExcelExport;
 use App\FinanceWork;
 use App\Http\Requests\StoreQuoteRequest;
 use App\Http\Requests\UpdateQuoteRequest;
@@ -1310,6 +1311,275 @@ class QuoteController extends Controller
         ];
 
         return view('quote.general_v2', compact( 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStates'));
+
+    }
+
+    public function exportQuotesExcel()
+    {
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $type = $_GET['stateQuote'];
+        $quotes_array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            $dates = 'TOTALES';
+            $quotes = [];
+            switch ($type) {
+                case 'all':
+                    $quotes = Quote::with(['customer'])
+                        //->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'raised':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'close':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','close')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $quotes as $quote )
+            {
+                $date_quote = Carbon::createFromFormat('Y-m-d H:i:s', $quote->date_quote)->format('d-m-Y');
+
+                $monto_materiales = 0;
+                $monto_consumibles = 0;
+                $monto_servicios_varios = 0;
+                $monto_servicios_adicionales = 0;
+                $monto_dias_trabajo = 0;
+
+                foreach( $quote->equipments as $equipment )
+                {
+                    foreach ( $equipment->materials as $material  )
+                    {
+                        if ( $material->original == 1 && $material->replacement == 0 )
+                        {
+                            $monto_materiales += (($material->price * $material->quantity)*$equipment->quantity);
+                        }
+
+                    }
+
+                    foreach ( $equipment->consumables as $consumable  )
+                    {
+                        $monto_consumibles += (($consumable->price * $consumable->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->workforces as $workforce  )
+                    {
+                        $monto_servicios_varios += (($workforce->price * $workforce->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->turnstiles as $turnstile  )
+                    {
+                        $monto_servicios_adicionales += (($turnstile->price * $turnstile->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->workdays as $workday  )
+                    {
+                        $monto_dias_trabajo += (($workday->total)*$equipment->quantity);
+                    }
+                }
+
+                $output_details = OutputDetail::where('quote_id', $quote->id)
+                    ->get();
+
+                $monto_materiales_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id != 2 )
+                        {
+                            $monto_materiales_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+                $monto_consumibles_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id == 2 )
+                        {
+                            $monto_consumibles_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+                array_push($quotes_array, [
+                    'date' => $date_quote,
+                    'code' => $quote->code,
+                    'description' => $quote->description_quote,
+                    'materials_quote' => $monto_materiales,
+                    'materials_real' => $monto_materiales_real,
+                    'consumables_quote' => $monto_consumibles,
+                    'consumables_real' => $monto_consumibles_real,
+                    'monto_servicios_varios' => $monto_servicios_varios,
+                    'monto_servicios_adicionales' => $monto_servicios_adicionales,
+                    'monto_dias_trabajo' => $monto_dias_trabajo,
+                    'total' => $quote->total_quote,
+                    'currency_invoice' => $quote->currency_invoice,
+                    'state_raise' => $quote->raise_status,
+                    'state_active' => $quote->state_active,
+                ]);
+
+            }
+
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'DEL '. $start .' AL '. $end;
+            $quotes = [];
+            switch ($type) {
+                case 'all':
+                    $quotes = Quote::with(['customer'])
+                        //->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'raised':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','open')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'close':
+                    $quotes = Quote::with(['customer'])
+                        ->where('state_active','close')
+                        ->where('state','confirmed')
+                        ->where('raise_status',1)
+                        ->whereDate('date_quote', '>=',$date_start)
+                        ->whereDate('date_quote', '<=',$end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $quotes as $quote )
+            {
+                $date_quote = Carbon::createFromFormat('Y-m-d H:i:s', $quote->date_quote)->format('d-m-Y');
+
+                $monto_materiales = 0;
+                $monto_consumibles = 0;
+                $monto_servicios_varios = 0;
+                $monto_servicios_adicionales = 0;
+                $monto_dias_trabajo = 0;
+
+                foreach( $quote->equipments as $equipment )
+                {
+                    foreach ( $equipment->materials as $material  )
+                    {
+                        if ( $material->original == 1 && $material->replacement == 0 )
+                        {
+                            $monto_materiales += (($material->price * $material->quantity)*$equipment->quantity);
+                        }
+
+                    }
+
+                    foreach ( $equipment->consumables as $consumable  )
+                    {
+                        $monto_consumibles += (($consumable->price * $consumable->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->workforces as $workforce  )
+                    {
+                        $monto_servicios_varios += (($workforce->price * $workforce->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->turnstiles as $turnstile  )
+                    {
+                        $monto_servicios_adicionales += (($turnstile->price * $turnstile->quantity)*$equipment->quantity);
+                    }
+
+                    foreach ( $equipment->workdays as $workday  )
+                    {
+                        $monto_dias_trabajo += (($workday->total)*$equipment->quantity);
+                    }
+                }
+
+                $output_details = OutputDetail::where('quote_id', $quote->id)
+                    ->get();
+
+                $monto_materiales_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id != 2 )
+                        {
+                            $monto_materiales_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+                $monto_consumibles_real = 0;
+                foreach ( $output_details as $output_detail )
+                {
+                    if ( $output_detail->material_id != null )
+                    {
+                        $material = Material::find($output_detail->material_id);
+                        if ( $material->category_id == 2 )
+                        {
+                            $monto_consumibles_real += ($output_detail->price);
+                        }
+
+                    }
+                }
+
+
+                array_push($quotes_array, [
+                    'date' => $date_quote,
+                    'code' => $quote->code,
+                    'description' => $quote->description_quote,
+                    'materials_quote' => $monto_materiales,
+                    'materials_real' => $monto_materiales_real,
+                    'consumables_quote' => $monto_consumibles,
+                    'consumables_real' => $monto_consumibles_real,
+                    'monto_servicios_varios' => $monto_servicios_varios,
+                    'monto_servicios_adicionales' => $monto_servicios_adicionales,
+                    'monto_dias_trabajo' => $monto_dias_trabajo,
+                    'total' => $quote->total_quote,
+                    'currency_invoice' => $quote->currency_invoice,
+                    'state_raise' => $quote->raise_status,
+                    'state_active' => $quote->state_active,
+                ]);
+            }
+
+        }
+
+        return (new QuotesReportExcelExport($quotes_array, $dates))->download('reporteCotizaciones.xlsx');
 
     }
 
@@ -2754,6 +3024,13 @@ class QuoteController extends Controller
             $quote->code_customer = '';
             $quote->state = 'created';
             $quote->raise_status = false;
+
+            // TODO: Acciones extras para que funcione en otros estados
+            $quote->vb_finances = null;
+            $quote->date_vb_finances = null;
+            $quote->vb_operations = null;
+            $quote->date_vb_operations = null;
+
             $quote->save();
 
             DB::commit();

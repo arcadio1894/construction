@@ -807,12 +807,12 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 @can('list_quote')
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{ route('quote.list.general') }}" class="nav-link @yield('activeGeneralQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listado general</p>
                                         </a>
-                                    </li>
+                                    </li>--}}
                                     <li class="nav-item">
                                         <a href="{{ route('quote.general.indexV2') }}" class="nav-link @yield('activeGeneralQuote')">
                                             <i class="far fa-circle nav-icon"></i>

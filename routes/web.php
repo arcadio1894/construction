@@ -872,8 +872,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/listado/general/cotizaciones/v2', 'QuoteController@indexV2')
             ->name('quote.general.indexV2')
             ->middleware('permission:list_quote');
-        /*Route::get('exportar/reporte/ingresos/clientes/', 'FinanceWorkController@exportFinanceWorks')
-            ->middleware('permission:list_quotes');*/
+        Route::get('exportar/reporte/cotizaciones/v2/', 'QuoteController@exportQuotesExcel')
+            ->middleware('permission:list_quote');
 
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')

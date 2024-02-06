@@ -32,6 +32,8 @@ $(document).ready(function () {
     $modalDetraction = $('#modalDetraction');
     $(document).on('click', '[data-delete]', cancelQuote);
 
+    $(document).on('click', '[data-finish]', finishQuote);
+
     $(document).on('click', '[data-confirm]', confirmQuote);
 
     $(document).on('click', '[data-send]', sendQuote);
@@ -52,6 +54,12 @@ $(document).ready(function () {
     $(document).on('click', '[data-detraction]', showModalDetraction);
 
     $('#btn-change').on('click', saveDetraction);
+
+    $(document).on('click', '[data-vb_operations]', vbOpeationsQuote);
+
+    $(document).on('click', '[data-vb_finances]', vbFinancesQuote);
+
+    $(document).on('click', '[data-active_quote]', activeQuote);
 });
 
 var $formDelete;
@@ -60,6 +68,201 @@ var $modalDecimals;
 var $formDecimals;
 
 var $permissions;
+var $modalDetraction;
+
+function activeQuote() {
+    var quote_id = $(this).data('active');
+
+    $.confirm({
+        icon: 'fas fa-lock-open',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'orange',
+        columnClass: 'medium',
+        title: '¿Está seguro de reactivar esta cotización?',
+        content: 'Se va a activar la cotización y se puede seguir trabajando.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/active/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                /*location.reload();*/
+                                getDataQuotes(1);
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Cotización no activada.");
+                },
+            },
+        }
+    });
+
+}
+
+function vbOpeationsQuote() {
+    var quote_id = $(this).data('vb_operations');
+
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de dar el visto bueno de operaciones?',
+        content: 'Se guardará la fecha de visto bueno y se podrá modificar la lista de materiales.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/visto/bueno/operations/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                /*location.reload();*/
+                                getDataQuotes(1);
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Se canceló el proceso.");
+                },
+            },
+        }
+    });
+
+}
+
+function vbFinancesQuote() {
+    var quote_id = $(this).data('vb_finances');
+
+    $.confirm({
+        icon: 'fas fa-check-double',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'small',
+        title: '¿Está seguro de dar el visto bueno de finanzas?',
+        content: 'Se guardará la fecha de visto bueno. Por favor verifica si ya descargaste el pdf de cliente.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/visto/bueno/finances/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                /*location.reload();*/
+                                getDataQuotes(1);
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                    //$.alert('Your name is ' + name);
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Se canceló el proceso.");
+                },
+            },
+        }
+    });
+
+}
+
+function finishQuote() {
+    var quote_id = $(this).data('finish');
+    var description = $(this).data('name');
+
+    $.confirm({
+        icon: 'fas fa-smile',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'green',
+        title: '¿Está seguro de finalizar esta cotización?',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/finish/quote/'+quote_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                /*location.href = data.url;*/
+                                getDataQuotes(1);
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+
+}
 
 function saveDetraction() {
     var button = $(this);
@@ -171,7 +374,8 @@ function raiseQuote() {
                             console.log(data);
                             $.alert("Cotización elevada.");
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -232,7 +436,8 @@ function raise2Quote() {
                             console.log(data);
                             $.alert("Código modificado correctamente.");
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -302,6 +507,7 @@ function saveDecimals() {
                             setTimeout( function () {
                                 button.attr("disabled", false);
                                 $modalDecimals.modal('hide');
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -324,6 +530,7 @@ function saveDecimals() {
 }
 
 function deselevarQuote() {
+    event.preventDefault();
     var quote_id = $(this).data('deselevar');
 
     $.confirm({
@@ -350,7 +557,9 @@ function deselevarQuote() {
                             console.log(data);
                             $.alert(data.message);
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
+
                             }, 2000 )
                         },
                         error: function (data) {
@@ -374,14 +583,17 @@ function deselevarQuote() {
 function exportQuotes() {
     var start  = $('#start').val();
     var end  = $('#end').val();
-    var startDate   = moment(start, "DD/MM/YYYY");
-    var endDate     = moment(end, "DD/MM/YYYY");
-    var typeQuote = $("input[name='typeQuote']:checked").val();
+    var stateQuote = $("#stateQuote").val();
 
     console.log(start);
     console.log(end);
-    console.log(startDate);
-    console.log(endDate);
+
+    if ( stateQuote == "" )
+    {
+        stateQuote = "all";
+    }
+
+    console.log(stateQuote);
 
     if ( start == '' || end == '' )
     {
@@ -405,12 +617,12 @@ function exportQuotes() {
                         var query = {
                             start: start,
                             end: end,
-                            type: typeQuote
+                            stateQuote: stateQuote
                         };
 
                         $.alert('Descargando archivo ...');
 
-                        var url = "/dashboard/exportar/reporte/cotizaciones/?" + $.param(query);
+                        var url = "/dashboard/exportar/reporte/cotizaciones/v2/?" + $.param(query);
 
                         window.location = url;
 
@@ -432,7 +644,7 @@ function exportQuotes() {
         var query = {
             start: start,
             end: end,
-            type: typeQuote
+            stateQuote: stateQuote
         };
 
         toastr.success('Descargando archivo ...', 'Éxito',
@@ -454,7 +666,7 @@ function exportQuotes() {
                 "hideMethod": "fadeOut"
             });
 
-        var url = "/dashboard/exportar/reporte/cotizaciones/?" + $.param(query);
+        var url = "/dashboard/exportar/reporte/cotizaciones/v2/?" + $.param(query);
 
         window.location = url;
 
@@ -540,7 +752,8 @@ function cancelQuote() {
                             console.log(data);
                             $.alert("Cotización anulada.");
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -561,6 +774,7 @@ function cancelQuote() {
 }
 
 function confirmQuote() {
+    event.preventDefault();
     var quote_id = $(this).data('confirm');
     var description = $(this).data('name');
 
@@ -611,7 +825,8 @@ function confirmQuote() {
                             console.log(data);
                             $.alert("Cotización confirmada con éxito.");
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -657,7 +872,8 @@ function sendQuote() {
                             console.log(data);
                             $.alert("Cotización enviada con éxito.");
                             setTimeout( function () {
-                                location.reload();
+                                /*location.reload();*/
+                                getDataQuotes(1);
                             }, 2000 )
                         },
                         error: function (data) {
@@ -839,6 +1055,10 @@ function showData() {
 }
 
 function getDataQuotes($numberPage) {
+    $('[data-toggle="tooltip"]').tooltip('dispose').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
+
     var description_quote = $('#description_quote').val();
     var year = $('#year').val();
     var code = $('#code').val();
@@ -1125,7 +1345,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnCreated);
     }
 
-    if ( data.state == "send" ) {
+    if ( data.state == "send" )
+    {
         var cloneBtnSend = activateTemplate('#template-btn_send');
         if ( $.inArray('show_quote', $permissions) !== -1 ) {
             let url = document.location.origin+ '/dashboard/ver/cotizacion/'+data.id;
@@ -1221,7 +1442,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnSend);
     }
 
-    if ( data.state == "confirm" ) {
+    if ( data.state == "confirm" )
+    {
         var cloneBtnConfirm = activateTemplate('#template-btn_confirm');
 
         if ( $.inArray('show_quote', $permissions) !== -1 ) {
@@ -1338,7 +1560,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnConfirm);
     }
 
-    if ( data.state == "raise" ) {
+    if ( data.state == "raise" )
+    {
         var cloneBtnRaised = activateTemplate('#template-btn_raised');
 
         if ( $.inArray('show_quote', $permissions) !== -1 ) {
@@ -1495,7 +1718,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnRaised);
     }
 
-    if ( data.state == "VB_finance" ) {
+    if ( data.state == "VB_finance" )
+    {
         var cloneBtnVB_finance = activateTemplate('#template-btn_VB_finance');
 
         if ( $.inArray('show_quote', $permissions) !== -1 ) {
@@ -1642,7 +1866,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnVB_finance);
     }
 
-    if ( data.state == "VB_operation" ) {
+    if ( data.state == "VB_operation" )
+    {
         var cloneBtnVB_operation = activateTemplate('#template-btn_VB_operation');
 
         if ( $.inArray('show_quote', $permissions) !== -1 ) {
@@ -1769,7 +1994,8 @@ function renderDataTable(data) {
         botones.append(cloneBtnVB_operation);
     }
 
-    if ( data.state == "close" ) {
+    if ( data.state == "close" )
+    {
         var cloneBtnClose = activateTemplate('#template-btn_close');
 
         if ( $.inArray('show_quote', $permissions) !== -1 ) {

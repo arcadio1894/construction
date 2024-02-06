@@ -89,6 +89,9 @@
             display: flex;
             align-items: center;
         }
+        .datepicker-orient-top {
+            top: 100px !important;
+        }
     </style>
 @endsection
 
@@ -101,9 +104,9 @@
     @can('create_quote')
         <a href="{{ route('quote.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva cotización </a>
     @endcan
-    {{--@can('export_expenseSupplier')
-    <button type="button" id="btn-export" class="btn btn-outline-success btn-sm float-right" > <i class="far fa-file-excel"></i> Descargar Excel </button>
-    @endcan--}}
+    @hasanyrole('admin|principal')
+    <button type="button" id="btn-export" class="btn btn-outline-primary btn-sm float-right mr-2" > <i class="far fa-file-excel"></i> Descargar Excel </button>
+    @endhasanyrole
 @endsection
 
 @section('page-breadcrumb')
@@ -392,8 +395,9 @@
     <template id="template-btn_close">
         <a data-ver_cotizacion href="{{--'+document.location.origin+ '/dashboard/ver/cotizacion/'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Detalles"><i class="fa fa-eye"></i></a>
         <a data-imprimir_cliente target="_blank" href="{{--' + document.location.origin + '/dashboard/imprimir/cliente/' + item.id +'--}}" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir para cliente"><i class="fa fa-print"></i></a>
+        <button data-modificar_codigo data-raise2="{{--'+item.id+'--}}" data-code="{{--'+item.code_customer+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Modificar código"><i class="fa fa-chart-line"></i></button>
         <button data-recotizar data-renew="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>
-        <button data-reactivar data-active="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reactivar"><i class="fas fa-lock-open"></i></button>
+        <button data-reactivar data-active_quote="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Reactivar"><i class="fas fa-lock-open"></i></button>
     </template>
 
     <template id="template-btn_canceled">
@@ -431,6 +435,34 @@
         <button data-recotizar data-renew="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Recotizar"><i class="fas fa-sync"></i></button>
         <button data-decimales data-decimals="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Mostrar decimales"><i class="fas fa-toggle-on"></i></button>
     </template>
+
+    <div id="modalDetraction" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar detracción</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formDetraction" data-url="{{ route('detraction.change') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="quote_id" name="quote_id">
+                        <strong>Cambie o Seleccione el tipo de orden</strong>
+                        <select id="detraction" name="detraction" class="form-control select2" style="width: 100%;">
+                            <option value=""></option>
+                            <option value="nn">Ninguno</option>
+                            <option value="oc">Orden de Compra</option>
+                            <option value="os">Orden de Servicio</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-change" class="btn btn-success">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     @can('destroy_quote')
         <div id="modalDelete" class="modal fade" tabindex="-1">
@@ -500,7 +532,19 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
 
+    <script>
+        $(function () {
 
+            $('#detraction').select2({
+                placeholder: "Seleccione"
+            });
+            $('#decimals').select2({
+                placeholder: "Seleccione"
+            });
+
+
+        })
+    </script>
 @endsection
 
 @section('scripts')
