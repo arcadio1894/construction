@@ -3072,13 +3072,22 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#materials-selected');
-        if ( material.stock_current == 0 )
+
+        if ( material.status_enable == 1 )
         {
             clone.querySelector("[data-materialDescription]").setAttribute('value', description);
             clone.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+
         } else {
-            clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+            if ( material.stock_current == 0 )
+            {
+                clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+                clone.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+            } else {
+                clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+            }
         }
+
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         if (material.type_scrap == null)
         {
