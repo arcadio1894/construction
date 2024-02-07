@@ -246,8 +246,8 @@
                     <th>Tiempo Entrega</th>
                     <th>Cliente</th>
                     <th>Orden Servicio</th>
-                    <th>Total</th>
                     <th>Total Sin IGV</th>
+                    <th>Total</th>
                     <th>Moneda</th>
                     <th>Estado</th>
                     <th>Fecha Creación</th>
