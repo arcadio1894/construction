@@ -1020,6 +1020,15 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/get/information/quantity/material/{material_id}', 'OrderPurchaseController@getInformationQuantityMaterial');
 
+        // TODO: Rutas para V2 de listado de Ordenes de compra
+        Route::get('/get/data/orders/general/v2/{numberPage}', 'OrderPurchaseController@getDataOrderGeneral')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('/listado/general/ordenes/compra/v2', 'OrderPurchaseController@indexV2')
+            ->name('order.purchase.general.indexV2')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('exportar/reporte/cotizaciones/v2/', 'OrderPurchaseController@exportOrderGeneralExcel')
+            ->middleware('permission:list_orderPurchaseExpress');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

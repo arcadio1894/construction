@@ -1315,7 +1315,7 @@
                             <ul class="nav nav-treeview">
                                 @canany('list_orderPurchaseNormal','list_orderPurchaseNormal')
                                     <li class="nav-item">
-                                        <a href="{{route('order.purchase.general.index')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
+                                        <a href="{{route('order.purchase.general.indexV2')}}" class="nav-link @yield('activeListOrderPurchaseGeneral')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar ordenes general</p>
                                         </a>
