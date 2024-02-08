@@ -127,9 +127,10 @@ class OrderPurchaseController extends Controller
                         // TODO: Reemplazo de materiales
                         if ( $material->replacement == 0 )
                         {
+                            // TODO: Cambiamos a tipo de orden 'orn' y 'ore'
                             $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
                                 ->where('material_id', $material->material_id)
-                                ->where('type_output', 'orn')
+                                /*->whereIn('type_output', 'orn')*/
                                 ->get();
 
                             foreach ( $materials_taken as $item )
@@ -291,9 +292,10 @@ class OrderPurchaseController extends Controller
                         if ( $material->replacement == 0 )
                         {
                             if ( $material->material_id == $material_id  ){
+                                // TODO: Quitamos el orn para tomar todas las solicitudes
                                 $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
                                     ->where('material_id', $material->material_id)
-                                    ->where('type_output', 'orn')
+                                    /*->where('type_output', 'orn')*/
                                     ->get();
 
                                 foreach ( $materials_taken as $item )
@@ -722,9 +724,10 @@ class OrderPurchaseController extends Controller
                         // TODO: Reemplazo de materiales
                         if ( $material->replacement == 0 )
                         {
+                            // TODO: QUitammos orn para tomar todas las solicitudes
                             $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
                                 ->where('material_id', $material->material_id)
-                                ->where('type_output', 'orn')
+                                /*->where('type_output', 'orn')*/
                                 ->get();
 
                             foreach ( $materials_taken as $item )
