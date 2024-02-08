@@ -1026,8 +1026,12 @@ Route::middleware('auth')->group(function (){
         Route::get('/listado/general/ordenes/compra/v2', 'OrderPurchaseController@indexV2')
             ->name('order.purchase.general.indexV2')
             ->middleware('permission:list_orderPurchaseExpress');
-        Route::get('exportar/reporte/cotizaciones/v2/', 'OrderPurchaseController@exportOrderGeneralExcel')
+        Route::get('exportar/reporte/ordenes/compra/v2/', 'OrderPurchaseController@exportOrderGeneralExcel')
             ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('/get/state/order/purchase/{orderPurchase_id}', 'OrderPurchaseController@getStateOrderPurchase');
+        Route::post('/change/state/order/purchase', 'OrderPurchaseController@changeStateOrderPurchase')
+            ->name('state.order.purchase.change')
+            ->middleware('permission:update_orderPurchaseExpress');
 
         // PROFILE
         Route::get('perfil', 'UserController@profile')

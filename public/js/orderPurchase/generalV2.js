@@ -251,25 +251,142 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
 
-    $formEditFacturacion = $('#formEditFacturacion');
-
-    $modalEditFacturacion = $('#modalEditFacturacion');
-
-    $('#btnSubmitFormEditFacturacion').on('click', submitFormEditFacturacion);
-
-    $(document).on('click', '[data-formEditFacturacion]', showModalEditFacturacion);
-
     $('#btn-export').on('click', exportExcel);
+
+    $(document).on('click', '[data-delete]', cancelOrden);
+
+    $modalState = $("#modalState");
+    $formStates = $("#formStates");
+
+    $(document).on('click', '[data-estado]', showModalState);
+
+    $('#btn-changeState').on('click', saveState);
+
 });
 
-var $formEditTrabajo;
-var $formEditFacturacion;
-var $modalEditTrabajo;
-var $modalEditFacturacion;
-var $selectCustomer;
-var $selectContact;
+var $formStates;
+var $modalState;
 
 var $permissions;
+
+function saveState() {
+    var button = $(this);
+    button.attr("disabled", true);
+    var form = $formStates[0];
+    $.confirm({
+        icon: 'fas fa-toggle-off',
+        theme: 'modern',
+        closeIcon: false,
+        animation: 'zoom',
+        type: 'green',
+        columnClass: 'medium',
+        title: '¿Está seguro de guardar el estado de la orden?',
+        content: 'Este cambio modificará el estado de la orden.',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                btnClass: 'btn-blue',
+                action: function () {
+                    $.ajax({
+                        url: '/dashboard/change/state/order/purchase',
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        data: new FormData(form),
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $modalState.modal('hide');
+                            $.alert(data.message);
+                            setTimeout( function () {
+                                button.attr("disabled", false);
+
+                                getDataOrderPurchases(1);
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            button.attr("disabled", false);
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                }
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    button.attr("disabled", false);
+                    $.alert("No se guardó ninguún dato.");
+                },
+            },
+        }
+    });
+
+}
+
+function showModalState() {
+    $('#stateOrder').val('');
+    $('#stateOrder').trigger('change');
+    var orderPurchase_id = $(this).data('state');
+    $.ajax({
+        url: "/dashboard/get/state/order/purchase/"+orderPurchase_id,
+        type: 'GET',
+        dataType: 'json',
+        success: function (data) {
+            $formStates.find("[id=orderPurchase_id]").val(orderPurchase_id);
+
+            $('#stateOrder').val(data.state);
+            $('#stateOrder').trigger('change');
+
+            $modalState.modal('show');
+        }
+    });
+}
+
+function cancelOrden() {
+    var order_id = $(this).data('delete');
+    var description = $(this).data('name');
+
+    $.confirm({
+        icon: 'fas fa-frown',
+        theme: 'modern',
+        closeIcon: true,
+        animation: 'zoom',
+        type: 'red',
+        title: '¿Está seguro de eliminar esta orden de compra?',
+        content: description,
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.ajax({
+                        url: '/dashboard/destroy/order/purchase/normal/'+order_id,
+                        method: 'POST',
+                        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                        processData:false,
+                        contentType:false,
+                        success: function (data) {
+                            console.log(data);
+                            $.alert("Orden de compra normal anulada.");
+                            setTimeout( function () {
+                                location.reload();
+                            }, 2000 )
+                        },
+                        error: function (data) {
+                            $.alert("Sucedió un error en el servidor. Intente nuevamente.");
+                        },
+                    });
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Anulación cancelada.");
+                },
+            },
+        },
+    });
+
+}
 
 function exportExcel() {
     var start  = $('#start').val();
@@ -588,6 +705,16 @@ function renderDataTable(data) {
             }
         }
 
+        if ( $.inArray('update_orderPurchaseExpress', $permissions) !== -1 ) {
+            cloneBtnExpress.querySelector("[data-estado]").setAttribute("data-state", data.id);
+            cloneBtnExpress.querySelector("[data-estado]").setAttribute("data-name", data.code);
+        } else {
+            let element = cloneBtnExpress.querySelector("[data-estado]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
         botones.append(cloneBtnExpress);
     }
 
@@ -630,6 +757,16 @@ function renderDataTable(data) {
             cloneBtnNormal.querySelector("[data-anular]").setAttribute("data-name", data.code);
         } else {
             let element = cloneBtnNormal.querySelector("[data-anular]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }
+
+        if ( $.inArray('update_orderPurchaseNormal', $permissions) !== -1 ) {
+            cloneBtnNormal.querySelector("[data-estado]").setAttribute("data-state", data.id);
+            cloneBtnNormal.querySelector("[data-estado]").setAttribute("data-name", data.code);
+        } else {
+            let element = cloneBtnNormal.querySelector("[data-estado]");
             if (element) {
                 element.style.display = 'none';
             }

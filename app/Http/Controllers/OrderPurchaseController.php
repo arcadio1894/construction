@@ -185,6 +185,39 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function getStateOrderPurchase($orderPurchase_id)
+    {
+        $order = OrderPurchase::find($orderPurchase_id);
+
+        if (isset($order))
+        {
+            $state = $order->status_order;
+        } else {
+            $state = 'nn';
+        }
+
+        return response()->json(["state" => $state]);
+    }
+
+    public function changeStateOrderPurchase(Request $request)
+    {
+        $orderPurchase_id = $request->input('orderPurchase_id');
+        DB::beginTransaction();
+        try {
+            $order = OrderPurchase::find($orderPurchase_id);
+            $order->status_order = ($request->input('stateOrder') == 'nn' || $request->input('stateOrder') == '') ? null: $request->input('stateOrder');
+            $order->save();
+
+            // TODO: Actualizar la cotizacion
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Guardado con éxito'], 200);
+    }
+
     public function exportOrderGeneralExcel()
     {
         $start = $_GET['start'];

@@ -340,6 +340,7 @@
         <a data-ver_orden href="{{--'+document.location.origin+ '/dashboard/ver/orden/compra/express/'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a>
         <a data-editar href="{{--'+document.location.origin+ '/dashboard/editar/orden/compra/express/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a>
         <button data-anular data-delete="{{--'+item.id+'--}}" data-name="{{--'+item.code+'--}}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>'
+        <button data-estado data-state="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cambiar estado"><i class="fas fa-toggle-on"></i></button>
     </template>
 
     <template id="template-normal">
@@ -347,57 +348,31 @@
         <a data-ver_orden href="{{--'+document.location.origin+ '/dashboard/ver/orden/compra/normal/'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a>
         <a data-editar href="{{--'+document.location.origin+ '/dashboard/editar/orden/compra/normal/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a>
         <button data-anular data-delete="{{--'+item.id+'--}}" data-name="{{--'+item.code+'--}}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>'
+        <button data-estado data-state="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cambiar estado"><i class="fas fa-toggle-on"></i></button>
     </template>
 
-    <div id="modalDetraction" class="modal fade" tabindex="-1">
+    <div id="modalState" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Seleccionar tipo de orden</h4>
+                    <h4 class="modal-title">Cambiar estado de la orden</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formDetraction" data-url="{{ route('detraction.change') }}">
+                <form id="formStates" data-url="{{ route('state.order.purchase.change') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="quote_id" name="quote_id">
-                        <strong>Cambie o Seleccione el tipo de orden</strong>
-                        <select id="detraction" name="detraction" class="form-control select2" style="width: 100%;">
+                        <input type="hidden" id="orderPurchase_id" name="orderPurchase_id">
+                        <strong>Cambie o Seleccione el estado de la orden</strong>
+                        <select id="stateOrder" name="stateOrder" class="form-control select2" style="width: 100%;">
                             <option value=""></option>
-                            <option value="nn">Ninguno</option>
-                            <option value="oc">Orden de Compra</option>
-                            <option value="os">Orden de Servicio</option>
+                            <option value="stand_by">PENDIENTE</option>
+                            <option value="send">ENVIADO</option>
+                            <option value="pick_up">RECOGIDO</option>
                         </select>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-change" class="btn btn-success">Guardar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div id="modalDecimals" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Seleccionar visualizar decimales</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </div>
-                <form id="formDecimals" data-url="{{ route('decimals.change') }}">
-                    @csrf
-                    <div class="modal-body">
-                        <input type="hidden" id="quote_id" name="quote_id">
-                        <strong>Cambie o Seleccione la visualización de decimales</strong>
-                        <select id="decimals" name="decimals" class="form-control select2" style="width: 100%;">
-                            <option value=""></option>
-                            <option value="1">Mostrar decimales</option>
-                            <option value="0">Ocultar decimales</option>
-                        </select>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-changeDecimals" class="btn btn-success">Guardar</button>
+                        <button type="button" id="btn-changeState" class="btn btn-success">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -419,17 +394,6 @@
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/js/bootstrap-datepicker.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/bootstrap-datepicker/locales/bootstrap-datepicker.es.min.js') }}"></script>
     <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
-
-    <script>
-        $(function () {
-
-            $('#detraction').select2({
-                placeholder: "Seleccione"
-            });
-
-
-        })
-    </script>
 @endsection
 
 @section('scripts')
@@ -454,6 +418,10 @@
             $('#state').select2({
                 placeholder: "Seleccione Estado",
                 allowClear: true
+            });
+
+            $('#stateOrder').select2({
+                placeholder: "Seleccione"
             });
 
         })
