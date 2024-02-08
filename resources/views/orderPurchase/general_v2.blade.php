@@ -101,11 +101,12 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de Ordenes de compras general</h5>
+    <button type="button" id="btn-export" class="btn btn-outline-primary btn-sm float-right mr-1" > <i class="far fa-file-excel"></i> Descargar Excel </button>
     @can('create_orderPurchaseNormal')
-        <a href="{{ route('order.purchase.normal.create') }}" class="btn btn-outline-primary btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden normal </a>
+        <a href="{{ route('order.purchase.normal.create') }}" class="btn btn-outline-primary btn-sm float-right mr-1" > <i class="fa fa-plus font-20"></i> Nueva orden normal </a>
     @endcan
     @can('create_orderPurchaseExpress')
-        <a href="{{ route('order.purchase.express.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva orden express </a>
+        <a href="{{ route('order.purchase.express.create') }}" class="btn btn-outline-success btn-sm float-right mr-1" > <i class="fa fa-plus font-20"></i> Nueva orden express </a>
     @endcan
 @endsection
 

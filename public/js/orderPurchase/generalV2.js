@@ -409,7 +409,7 @@ function exportExcel() {
             animation: 'zoom',
             type: 'green',
             title: 'No especificó fechas',
-            content: 'Si no hay fechas se descargará todos los ingresos',
+            content: 'Si no hay fechas se descargará todos las órdenes de compra',
             buttons: {
                 confirm: {
                     text: 'DESCARGAR',
@@ -425,7 +425,7 @@ function exportExcel() {
 
                         $.alert('Descargando archivo ...');
 
-                        var url = "/dashboard/exportar/reporte/egresos/proveedores/?" + $.param(query);
+                        var url = "/dashboard/exportar/reporte/ordenes/compra/v2/?" + $.param(query);
 
                         window.location = url;
 
@@ -468,7 +468,7 @@ function exportExcel() {
                 "hideMethod": "fadeOut"
             });
 
-        var url = "/dashboard/exportar/reporte/egresos/proveedores/?" + $.param(query);
+        var url = "/dashboard/exportar/reporte/ordenes/compra/v2/?" + $.param(query);
 
         window.location = url;
 
