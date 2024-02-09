@@ -191,7 +191,7 @@
 
                     <div class="row">
                         <div class="col-md-3">
-                            <label for="date_due">Fecha de Entrega:</label>
+                            <label for="date_due">Fecha de Llegada:</label>
                             <div class="col-md-12" id="sandbox-container1">
                                 <div class="input-daterange input-group" id="datepicker1">
                                     <input type="text" class="form-control form-control-sm date-range-filter" id="deliveryDate" name="deliveryDate" autocomplete="off">

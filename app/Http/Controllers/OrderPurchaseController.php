@@ -84,7 +84,7 @@ class OrderPurchaseController extends Controller
 
         if ($deliveryDate != "") {
             $fecha = Carbon::createFromFormat('d/m/Y', $deliveryDate);
-            $query->whereDate('date_order', $fecha);
+            $query->whereDate('date_arrival', $fecha);
         }
 
         $totalFilteredRecords = $query->count();
