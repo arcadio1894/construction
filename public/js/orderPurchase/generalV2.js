@@ -368,7 +368,7 @@ function cancelOrden() {
                             console.log(data);
                             $.alert("Orden de compra normal anulada.");
                             setTimeout( function () {
-                                location.reload();
+                                getDataOrderPurchases(1);
                             }, 2000 )
                         },
                         error: function (data) {
