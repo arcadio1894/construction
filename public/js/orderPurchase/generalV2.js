@@ -488,6 +488,10 @@ function showData() {
 }
 
 function getDataOrderPurchases($numberPage) {
+    $('[data-toggle="tooltip"]').tooltip('dispose').tooltip({
+        selector: '[data-toggle="tooltip"]'
+    });
+
     var year = $('#year').val();
     var supplier = $('#supplier').val();
     var code = $('#code').val();
