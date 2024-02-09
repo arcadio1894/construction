@@ -495,6 +495,7 @@ function getDataOrderPurchases($numberPage) {
     var year = $('#year').val();
     var supplier = $('#supplier').val();
     var code = $('#code').val();
+    var quote = $('#quote').val();
     var type = $('#type').val();
     var state = $('#state').val();
     var deliveryDate = $('#deliveryDate').val();
@@ -505,6 +506,7 @@ function getDataOrderPurchases($numberPage) {
         year: year,
         supplier: supplier,
         code: code,
+        quote: quote,
         type: type,
         state: state,
         deliveryDate: deliveryDate,

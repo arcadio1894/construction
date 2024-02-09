@@ -208,6 +208,11 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <label for="quote">Cotización:</label>
+                            <input type="text" id="quote" class="form-control form-control-sm" placeholder="791-" autocomplete="off">
+
+                        </div>
                     </div>
 
                     <br>

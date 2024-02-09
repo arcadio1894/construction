@@ -35,6 +35,7 @@ class OrderPurchaseController extends Controller
         $perPage = 10;
         $year = $request->input('year');
         $code = $request->input('code');
+        $quote = $request->input('quote');
         $supplier = $request->input('supplier');
         $type = $request->input('type');
         $state = $request->input('state');
@@ -63,6 +64,10 @@ class OrderPurchaseController extends Controller
         if ($code != "") {
             $query->where('code', 'LIKE', '%'.$code.'%');
 
+        }
+
+        if ($quote != "") {
+            $query->where('observation', 'LIKE', '%'.$quote.'%');
         }
 
         if ($supplier != "") {
