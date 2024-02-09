@@ -336,7 +336,7 @@ class OrderPurchaseController extends Controller
 
         }
 
-        return (new OrderPurchaseExcelExport($orders_array, $dates))->download('reporteCotizaciones.xlsx');
+        return (new OrderPurchaseExcelExport($orders_array, $dates))->download('reporteOrdenesCompra.xlsx');
 
     }
 

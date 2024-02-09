@@ -19,6 +19,6 @@ class OrderPurchaseExcelExport implements FromView
 
     public function view(): View
     {
-        return view('exports.excelOrderPurchase', ['orders'=>$this->orders,'dates'=>$this->dates]);
+        return view('exports.excelOrderPurchaseExcel', ['orders'=>$this->orders,'dates'=>$this->dates]);
     }
 }
