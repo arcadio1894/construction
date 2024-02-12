@@ -331,7 +331,7 @@
 
     <template id="item-table-empty">
         <tr>
-            <td colspan="41" align="center">No se ha encontrado ningún egreso</td>
+            <td colspan="17" align="center">No se ha encontrado ningún dato</td>
         </tr>
     </template>
 

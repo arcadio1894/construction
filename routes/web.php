@@ -466,6 +466,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/disabled/materials', 'MaterialController@getAllMaterialsDisable')->name('disabled.materials')
             ->middleware('permission:enable_material');
 
+        // TODO: Listado de materiales version 2
+        Route::get('/get/data/material/v2/{numberPage}', 'MaterialController@getDataMaterials')
+            ->middleware('permission:list_material');
+        Route::get('/listado/materiales/v2', 'MaterialController@indexV2')
+            ->name('material.indexV2')
+            ->middleware('permission:list_material');
+
         //AREAS
         Route::get('areas', 'AreaController@index')->name('area.index')
             ->middleware('permission:list_area');

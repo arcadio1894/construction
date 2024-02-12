@@ -764,6 +764,12 @@
                                         <p>Listar materiales</p>
                                     </a>
                                 </li>
+                                <li class="nav-item">
+                                    <a href="{{route('material.indexV2')}}" class="nav-link @yield('activeListMaterial')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listar materiales</p>
+                                    </a>
+                                </li>
                                 @endcan
                                 @can('listActive_material')
                                     <li class="nav-item">

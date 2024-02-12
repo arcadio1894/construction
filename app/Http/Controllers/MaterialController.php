@@ -252,6 +252,142 @@ class MaterialController extends Controller
 
     }
 
+    public function getDataMaterials(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $description = $request->input('description');
+        $category = $request->input('category');
+        $subcategory = $request->input('subcategory');
+        $material_type = $request->input('material_type');
+        $sub_type = $request->input('sub_type');
+        $cedula = $request->input('cedula');
+        $calidad = $request->input('calidad');
+        $marca = $request->input('marca');
+        $retaceria = $request->input('retaceria');
+
+        $query = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
+            ->where('enable_status', 1)
+            ->where('category_id', '<>', 8)
+            ->orderBy('id');
+
+        // Aplicar filtros si se proporcionan
+        if ($description != "") {
+            $query->where('description', 'LIKE', '%'.$description.'%');
+        }
+
+        if ($category != "") {
+            $query->where('category_id', $category);
+        }
+
+        if ($subcategory != "") {
+            $query->where('subcategory_id', $subcategory);
+        }
+
+        if ($material_type != "") {
+            $query->where('material_type_id', $material_type);
+        }
+
+        if ($sub_type != "") {
+            $query->where('subtype_id', $sub_type);
+        }
+
+        if ($cedula != "") {
+            $query->where('warrant_id', $cedula);
+        }
+
+        if ($calidad != "") {
+            $query->where('quality_id', $calidad);
+        }
+
+        if ($marca != "") {
+            $query->where('brand_id', $marca);
+        }
+
+        if ($retaceria != "") {
+            $query->where('typescrap_id', $retaceria);
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $materials = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        $array = [];
+
+        foreach ( $materials as $material )
+        {
+            $priority = '';
+            if ( $material->stock_current > $material->stock_max ){
+                $priority = 'Completo';
+            } else if ( $material->stock_current == $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current > $material->stock_min && $material->stock_current < $material->stock_max ){
+                $priority = 'Aceptable';
+            } else if ( $material->stock_current == $material->stock_min ){
+                $priority = 'Por agotarse';
+            } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
+                $priority = 'Agotado';
+            }
+
+            array_push($array, [
+                "id" => $material->id,
+                "codigo" => $material->code,
+                "descripcion" => $material->full_description,
+                "medida" => $material->measure,
+                "unidad_medida" => ($material->unitMeasure == null) ? '':$material->unitMeasure->name,
+                "stock_max" => $material->stock_max,
+                "stock_min" => $material->stock_min,
+                "stock_actual" => $material->stock_current,
+                "prioridad" => $priority,
+                "precio_unitario" => $material->unit_price,
+                "categoria" => ($material->category == null) ? '': $material->category->name,
+                "sub_categoria" => ($material->subcategory == null) ? '': $material->subcategory->name,
+                "tipo" => ($material->materialType == null) ? '': $material->materialType->name,
+                "sub_tipo" => ($material->subType == null) ? '': $material->subType->name,
+                "cedula" => ($material->warrant == null) ? '':$material->warrant->name,
+                "calidad" => ($material->quality == null) ? '': $material->quality->name,
+                "marca" => ($material->brand == null) ? '': $material->brand->name,
+                "modelo" => ($material->exampler == null) ? '': $material->exampler->name,
+                "retaceria" => ($material->typeScrap == null) ? '':$material->typeScrap->name,
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
+    public function indexV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $arrayCategories = Category::where('id', '<>', 8)->select('id', 'name')->get()->toArray();
+
+        $arrayCedulas = Warrant::select('id', 'name')->get()->toArray();
+
+        $arrayCalidades = Quality::select('id', 'name')->get()->toArray();
+
+        $arrayMarcas = Brand::select('id', 'name')->get()->toArray();
+
+        $arrayRetacerias = Typescrap::select('id', 'name')->get()->toArray();
+
+        return view('material.indexv2', compact( 'permissions', 'arrayCategories', 'arrayCedulas', 'arrayCalidades', 'arrayMarcas', 'arrayRetacerias'));
+
+    }
+
     public function getAllMaterials()
     {
         $materials = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
