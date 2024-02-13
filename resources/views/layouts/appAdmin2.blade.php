@@ -758,12 +758,12 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 @can('list_material')
-                                <li class="nav-item">
+                                {{--<li class="nav-item">
                                     <a href="{{route('material.index')}}" class="nav-link @yield('activeListMaterial')">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Listar materiales</p>
                                     </a>
-                                </li>
+                                </li>--}}
                                 <li class="nav-item">
                                     <a href="{{route('material.indexV2')}}" class="nav-link @yield('activeListMaterial')">
                                         <i class="far fa-circle nav-icon"></i>
