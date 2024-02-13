@@ -256,6 +256,7 @@ class MaterialController extends Controller
     {
         $perPage = 10;
         $description = $request->input('description');
+        $code = $request->input('code');
         $category = $request->input('category');
         $subcategory = $request->input('subcategory');
         $material_type = $request->input('material_type');
@@ -273,6 +274,10 @@ class MaterialController extends Controller
         // Aplicar filtros si se proporcionan
         if ($description != "") {
             $query->where('description', 'LIKE', '%'.$description.'%');
+        }
+
+        if ($code != "") {
+            $query->where('code', 'LIKE', '%'.$code.'%');
         }
 
         if ($category != "") {

@@ -177,7 +177,7 @@
                     <br>
 
                     <div class="row">
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="cedula">Cédula:</label>
                             <select id="cedula" name="cedula" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -186,7 +186,7 @@
                                 @endfor
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="calidad">Calidad:</label>
                             <select id="calidad" name="calidad" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -195,7 +195,7 @@
                                 @endfor
                             </select>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="marca">Marca:</label>
                             <select id="marca" name="marca" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -212,6 +212,12 @@
                                     <option value="{{ $arrayRetacerias[$i]['id'] }}">{{ $arrayRetacerias[$i]['name'] }}</option>
                                 @endfor
                             </select>
+                        </div>
+
+                        <div class="col-md-3">
+                            <label for="quote">Código:</label>
+                            <input type="text" id="code" class="form-control form-control-sm" placeholder="791" autocomplete="off">
+
                         </div>
                     </div>
 

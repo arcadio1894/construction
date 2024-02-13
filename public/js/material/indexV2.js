@@ -386,6 +386,7 @@ function getDataMaterials($numberPage, $activeColumns) {
     });
 
     var description = $('#description').val();
+    var code = $('#code').val();
     var category = $('#category').val();
     var subcategory = $('#subcategory').val();
     var material_type = $('#material_type').val();
@@ -397,6 +398,7 @@ function getDataMaterials($numberPage, $activeColumns) {
 
     $.get('/dashboard/get/data/material/v2/'+$numberPage, {
         description:description,
+        code:code,
         category: category,
         subcategory: subcategory,
         material_type: material_type,
