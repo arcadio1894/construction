@@ -116,13 +116,13 @@ class Quote extends Model
 
     public function getHaveDetailsAttribute()
     {
-        $have_details = true;
+        $have_details = false;
         $equipos = Equipment::where('quote_id', $this->id)->get();
         foreach ( $equipos as $equipment )
         {
-            if ( $equipment->detail == "" || $equipment->detail == null )
+            if ( $equipment->detail != "" || $equipment->detail != null )
             {
-                $have_details = false;
+                $have_details = true;
             }
         }
 
