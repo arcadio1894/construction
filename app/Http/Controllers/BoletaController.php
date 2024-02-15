@@ -1047,7 +1047,20 @@ class BoletaController extends Controller
                                 // TODO: Con H-ESP
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
                                 //dump('Horas Trabajadas: '. $hoursWorked);
-                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 //dump('Horas Trabajadas: '. $hoursNeto);
                                 array_push($arrayDayAssistances, [
                                     0,
@@ -1172,7 +1185,20 @@ class BoletaController extends Controller
                             } else {
                                 // TODO: Con H-ESP
                                 $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
-                                $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                //$hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
                                 array_push($arrayDayAssistances, [
                                     0,
                                     0,
