@@ -606,7 +606,16 @@ Route::middleware('auth')->group(function (){
             ->name('save.images.entry')
             ->middleware('permission:update_entryPurchase');
 
-
+        // TODO: Rutas para V2 de listado de Ordenes de compra en Entradas por almacen
+        Route::get('/get/all/orders/entrie/v2/{numberPage}', 'EntryController@getAllOrdersV2')
+            ->middleware('permission:listOrder_entryPurchase');
+        Route::get('/entradas/compra/ordenes/v2', 'EntryController@listOrderPurchaseV2')
+            ->name('order.purchase.list.indexV2')
+            ->middleware('permission:listOrder_entryPurchase');
+        Route::get('/update/state/orders/with/status/', 'EntryController@updateStateOrderPurchase')
+            ->middleware('permission:listOrder_entryPurchase');
+        /*Route::get('exportar/reporte/ordenes/compra/v2/', 'OrderPurchaseController@exportOrderGeneralExcel')
+            ->middleware('permission:list_orderPurchaseExpress');*/
 
         Route::get('entradas/compra/reporte', 'EntryController@indexEntryPurchaseReport')->name('entry.purchase.report.index')
             ->middleware('permission:list_entryPurchase');

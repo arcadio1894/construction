@@ -983,6 +983,12 @@
                                     <p>Listar órdenes</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('order.purchase.list.indexV2') }}" class="nav-link @yield('activeListOrdersInEntries')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar órdenes</p>
+                                </a>
+                            </li>
                             @endcan
                             @can('reportMaterialEntries_entryPurchase')
                             <li class="nav-item">

@@ -1024,6 +1024,63 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        // TODO: Logica para actualizar
+        $entry = Entry::find($id_entry);
+        $orderPurchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+        $entradas = Entry::where('purchase_order', $orderPurchase->code)
+            ->get();
+
+        if ( count($entradas) > 0 )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
+
+            if (isset($details))
+            {
+                $flag = 1;
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $cant_material = 0;
+                    foreach ( $entradas as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
+
+                    if ($cant_material < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        /*$orderPurchase->state = 0;
+                        $orderPurchase->save();*/
+                        $flag = 0;
+                    }
+                }
+                if ( $flag == 0 )
+                {
+                    // TODO: Esto significa que esta incompleta
+                    $orderPurchase->state = 0;
+                    $orderPurchase->save();
+                } else {
+                    // TODO: Esto significa que esta completa
+                    $orderPurchase->state = 1;
+                    $orderPurchase->save();
+                }
+
+            } else {
+                // TODO: Esto significa que esta por ingresar
+                $orderPurchase->state = 2;
+                $orderPurchase->save();
+            }
+
+        } else {
+            // TODO: Esto significa que esta por ingresar
+            $orderPurchase->state = 2;
+            $orderPurchase->save();
+        }
+
         return response()->json(['message' => 'Detalle de compra eliminado con éxito.'], 200);
     }
 
@@ -1193,6 +1250,63 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        // TODO: Logica para actualizar
+        $entry = Entry::find($id_entry);
+        $orderPurchase = OrderPurchase::where('code', $entry->purchase_order)->first();
+        $entradas = Entry::where('purchase_order', $orderPurchase->code)
+            ->get();
+
+        if ( count($entradas) > 0 )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
+
+            if (isset($details))
+            {
+                $flag = 1;
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $cant_material = 0;
+                    foreach ( $entradas as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
+
+                    if ($cant_material < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        /*$orderPurchase->state = 0;
+                        $orderPurchase->save();*/
+                        $flag = 0;
+                    }
+                }
+                if ( $flag == 0 )
+                {
+                    // TODO: Esto significa que esta incompleta
+                    $orderPurchase->state = 0;
+                    $orderPurchase->save();
+                } else {
+                    // TODO: Esto significa que esta completa
+                    $orderPurchase->state = 1;
+                    $orderPurchase->save();
+                }
+
+            } else {
+                // TODO: Esto significa que esta por ingresar
+                $orderPurchase->state = 2;
+                $orderPurchase->save();
+            }
+
+        } else {
+            // TODO: Esto significa que esta por ingresar
+            $orderPurchase->state = 2;
+            $orderPurchase->save();
+        }
+
         return response()->json(['message' => 'Detalles de compra guardados con éxito.'], 200);
     }
 
@@ -1226,6 +1340,173 @@ class EntryController extends Controller
 
         return view('entry.listOrderPurchase', compact('permissions'));
 
+    }
+
+    public function getAllOrdersV2(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $year = $request->input('year');
+        $code = $request->input('code');
+        $quote = $request->input('quote');
+        $supplier = $request->input('supplier');
+        $state = $request->input('state');
+        $deliveryDate = $request->input('deliveryDate');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->orderBy('date_order', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->orderBy('date_order', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_order', $year);
+        }
+
+        if ($code != "") {
+            $query->where('code', 'LIKE', '%'.$code.'%');
+
+        }
+
+        if ($quote != "") {
+            $query->where('observation', 'LIKE', '%'.$quote.'%');
+        }
+
+        if ($supplier != "") {
+            $query->whereHas('supplier', function ($query2) use ($supplier) {
+                $query2->where('supplier_id', $supplier);
+            });
+
+        }
+
+        if ($deliveryDate != "") {
+            $fecha = Carbon::createFromFormat('d/m/Y', $deliveryDate);
+            $query->whereDate('date_arrival', $fecha);
+        }
+
+        if ($state != "") {
+            $query->where('state', $state);
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $orders = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        //dd($query);
+
+        $array = [];
+
+        foreach ( $orders as $order )
+        {
+            $state = "";
+            $stateText = "";
+            if ( $order->state == 2 ) {
+                $state = '2';
+                $stateText = '<span class="badge bg-primary">POR INGRESAR</span>';
+            } elseif ( $order->state == 0 ){
+                $state = '0';
+                $stateText = '<span class="badge bg-warning">INCOMPLETA</span>';
+            } elseif ( $order->state == 1 ) {
+                $state = '1';
+                $stateText = '<span class="badge bg-success">COMPLETA</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $order->type == 'n' ) {
+                $type = 'n';
+                $typeText = '<span class="badge bg-primary">Orden Normal</span>';
+            } elseif ( $order->type == 'e' ){
+                $type = 'e';
+                $typeText = '<span class="badge bg-success">Orden Express</span>';
+            }
+
+            array_push($array, [
+                "id" => $order->id,
+                "year" => ( $order->date_order == null || $order->date_quote == "") ? '':$order->date_order->year,
+                "code" => ($order->code == null || $order->code == "") ? '': $order->code,
+                "date_order" => ($order->date_order == null || $order->date_order == "") ? '': $order->date_order->format('d/m/Y'),
+                "date_arrival" => ($order->date_arrival == null || $order->date_arrival == "") ? '': $order->date_arrival->format('d/m/Y'),
+                "observation" => $order->observation,
+                "supplier" => ($order->supplier_id == "" || $order->supplier_id == null) ? "" : $order->supplier->business_name,
+                "approved_user" => ($order->approved_by == "" || $order->approved_by == null) ? "" : $order->approved_user->name,
+                "currency" => ($order->currency_order == null || $order->currency_order == "") ? '': $order->currency_order,
+                "total" => $order->total,
+                "type" => $type,
+                "typeText" => $typeText,
+                "state" => $state,
+                "stateText" => $stateText,
+                "status" => $order->status,
+                "regularize" => $order->regularize
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
+    public function listOrderPurchaseV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = OrderPurchase::all();
+
+        $arrayYears = $registros->pluck('date_order')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
+        // created, send, confirm, raised, VB_finance, VB_operation, close, canceled
+
+        $arrayStates = [
+            ["value" => "1", "display" => "COMPLETAS"],
+            ["value" => "0", "display" => "INCOMPLETAS"],
+            ["value" => "2", "display" => "POR INGRESAR"]
+        ];
+
+        return view('entry.listOrderPurchaseV2', compact('permissions', 'arrayYears', 'arraySuppliers', 'arrayStates'));
+
+    }
+
+    public function updateStateOrderPurchase()
+    {
+        $begin = microtime(true);
+        $orders = OrderPurchase::all();
+
+        foreach ( $orders as $order )
+        {
+            $order->state = $order->status;
+            $order->save();
+        }
+        $end = microtime(true) - $begin;
+        dump($end);
+        dd("Proceso finalizado");
     }
 
     public function createEntryOrder($id)
@@ -1527,7 +1808,6 @@ class EntryController extends Controller
 
             }
 
-
             /* SI ( En el campo factura y en (Orden Compra/Servicio) ) AND Diferente a 000
                 Entonces
                 SI ( Existe en la tabla creditos ) ENTONCES
@@ -1625,6 +1905,62 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        // TODO: Logica para actualizar
+        $orderPurchase = OrderPurchase::find($request->get('purchase_order_id'));
+        $entradas = Entry::where('purchase_order', $orderPurchase->code)
+            ->get();
+
+        if ( count($entradas) > 0 )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
+
+            if (isset($details))
+            {
+                $flag = 1;
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $cant_material = 0;
+                    foreach ( $entradas as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
+
+                    if ($cant_material < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        /*$orderPurchase->state = 0;
+                        $orderPurchase->save();*/
+                        $flag = 0;
+                    }
+                }
+                if ( $flag == 0 )
+                {
+                    // TODO: Esto significa que esta incompleta
+                    $orderPurchase->state = 0;
+                    $orderPurchase->save();
+                } else {
+                    // TODO: Esto significa que esta completa
+                    $orderPurchase->state = 1;
+                    $orderPurchase->save();
+                }
+
+            } else {
+                // TODO: Esto significa que esta por ingresar
+                $orderPurchase->state = 2;
+                $orderPurchase->save();
+            }
+
+        } else {
+            // TODO: Esto significa que esta por ingresar
+            $orderPurchase->state = 2;
+            $orderPurchase->save();
+        }
+
         return response()->json(['message' => 'Ingreso por compra guardado con éxito.', 'url'=>route('entry.purchase.index')], 200);
 
     }

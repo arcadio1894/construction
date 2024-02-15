@@ -29,7 +29,8 @@ class OrderPurchase extends Model
         'regularize',
         'payment_deadline_id',
         'status_order',
-        'quote_id'
+        'quote_id',
+        'state'
     ];
 
     protected $dates = ['deleted_at', 'date_order', 'date_arrival'];
