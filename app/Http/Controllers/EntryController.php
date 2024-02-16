@@ -786,6 +786,7 @@ class EntryController extends Controller
     public function destroyEntryPurchase(Entry $entry)
     {
         $begin = microtime(true);
+        $entry2 = $entry;
         DB::beginTransaction();
         try {
             if ( $entry->entry_type === 'Por compra' )
@@ -874,6 +875,62 @@ class EntryController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        // TODO: Logica para actualizar
+        $orderPurchase = OrderPurchase::where('code', $entry2->purchase_order)->first();
+        $entradas = Entry::where('purchase_order', $orderPurchase->code)
+            ->get();
+
+        if ( count($entradas) > 0 )
+        {
+            $details = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)->get();
+
+            if (isset($details))
+            {
+                $flag = 1;
+                foreach ($details as $detail)
+                {
+                    $material = $detail->material_id;
+                    // TODO: obtener las entradas de esa orden y material
+                    $cant_material = 0;
+                    foreach ( $entradas as $entrada )
+                    {
+                        $entry_details_sum = DetailEntry::where('entry_id', $entrada->id)
+                            ->where('material_id', $material)->sum('entered_quantity');
+                        $cant_material += $entry_details_sum;
+                    }
+
+                    if ($cant_material < $detail->quantity)
+                    {
+                        // TODO: Esto significa que esta incompleta
+                        /*$orderPurchase->state = 0;
+                        $orderPurchase->save();*/
+                        $flag = 0;
+                    }
+                }
+                if ( $flag == 0 )
+                {
+                    // TODO: Esto significa que esta incompleta
+                    $orderPurchase->state = 0;
+                    $orderPurchase->save();
+                } else {
+                    // TODO: Esto significa que esta completa
+                    $orderPurchase->state = 1;
+                    $orderPurchase->save();
+                }
+
+            } else {
+                // TODO: Esto significa que esta por ingresar
+                $orderPurchase->state = 2;
+                $orderPurchase->save();
+            }
+
+        } else {
+            // TODO: Esto significa que esta por ingresar
+            $orderPurchase->state = 2;
+            $orderPurchase->save();
+        }
+
         return response()->json(['message' => 'Ingreso por compra eliminado con éxito.'], 200);
 
     }
