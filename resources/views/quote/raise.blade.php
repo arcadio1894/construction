@@ -57,7 +57,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('quote.index') }}"><i class="fa fa-archive"></i> Cotizaciones</a>
+            <a href="{{ route('quote.general.indexV2') }}"><i class="fa fa-archive"></i> Cotizaciones</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>

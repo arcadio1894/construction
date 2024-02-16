@@ -882,7 +882,7 @@ Route::middleware('auth')->group(function (){
             ->name('decimals.change')
             ->middleware('permission:update_quote');
 
-        // TODO: Rutas para V2 de listado de cotizaciones
+        // TODO: Rutas para V2 de listado de cotizaciones GENERAL
         Route::get('/get/data/quotes/v2/{numberPage}', 'QuoteController@getDataQuotes')
             ->middleware('permission:list_quote');
         Route::get('/listado/general/cotizaciones/v2', 'QuoteController@indexV2')
@@ -890,6 +890,20 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_quote');
         Route::get('exportar/reporte/cotizaciones/v2/', 'QuoteController@exportQuotesExcel')
             ->middleware('permission:list_quote');
+
+        // TODO: Rutas para V2 de listado de cotizaciones INDEX
+        Route::get('/get/data/quotes/index/v2/{numberPage}', 'QuoteController@getDataQuotesIndex')
+            ->middleware('permission:list_quote');
+        Route::get('/listado/cotizaciones/v2', 'QuoteController@index2V2')
+            ->name('quote.indexV2')
+            ->middleware('permission:list_quote');
+
+        // TODO: Rutas para V2 de listado de cotizaciones ELEVADAS
+        Route::get('/get/data/quotes/raise/v2/{numberPage}', 'QuoteController@getDataQuotesIRaise')
+            ->middleware('permission:showRaised_quote');
+        Route::get('/listado/cotizaciones/elevadas/v2', 'QuoteController@raiseV2')
+            ->name('quote.raiseV2')
+            ->middleware('permission:showRaised_quote');
 
         // TODO: Cambiar porcentages
         Route::post('/update/percentages/equipment/{id_equipment}/quote/{id_quote}', 'QuoteController@changePercentagesEquipment')

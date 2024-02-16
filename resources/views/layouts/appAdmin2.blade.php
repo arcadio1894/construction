@@ -827,8 +827,14 @@
                                     </li>
                                 @endcan
                                 @can('list_quote')
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{route('quote.index')}}" class="nav-link @yield('activeListQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listar cotizaciones</p>
+                                        </a>
+                                    </li>--}}
+                                    <li class="nav-item">
+                                        <a href="{{route('quote.indexV2')}}" class="nav-link @yield('activeListQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar cotizaciones</p>
                                         </a>

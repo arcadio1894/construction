@@ -8,7 +8,7 @@
     active
 @endsection
 
-@section('activeGeneralQuote')
+@section('activeListQuote')
     active
 @endsection
 
@@ -96,7 +96,7 @@
 @endsection
 
 @section('page-header')
-    <h1 class="page-title">Listado General de Cotizaciones</h1>
+    <h1 class="page-title">Listado de Cotizaciones Creadas</h1>
 @endsection
 
 @section('page-title')
@@ -104,9 +104,6 @@
     @can('create_quote')
         <a href="{{ route('quote.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva cotización </a>
     @endcan
-    @hasanyrole('admin|principal')
-    <button type="button" id="btn-export" class="btn btn-outline-primary btn-sm float-right mr-2" > <i class="far fa-file-excel"></i> Descargar Excel </button>
-    @endhasanyrole
 @endsection
 
 @section('page-breadcrumb')
@@ -115,7 +112,7 @@
             <a href="{{ route('dashboard.principal') }}"><i class="fa fa-home"></i> Dashboard</a>
         </li>
         <li class="breadcrumb-item">
-            <a href="{{ route('quote.general.indexV2') }}"><i class="fa fa-archive"></i> Cotizaciones</a>
+            <a href="{{ route('quote.indexV2') }}"><i class="fa fa-archive"></i> Cotizaciones</a>
         </li>
         <li class="breadcrumb-item"><i class="fa fa-plus-circle"></i> Listado</li>
     </ol>
@@ -572,6 +569,6 @@
 
         })
     </script>
-    <script src="{{ asset('js/quote/generalV2.js') }}"></script>
+    <script src="{{ asset('js/quote/indexV2.js') }}"></script>
 
 @endsection
