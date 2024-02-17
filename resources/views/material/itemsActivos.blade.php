@@ -47,7 +47,7 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de items de materiales</h5>
-    <a href="{{ route('material.index') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
+    <a href="{{ route('material.indexV2') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-arrow-left font-20"></i> Regresar </a>
 @endsection
 
 @section('content')
