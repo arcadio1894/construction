@@ -363,7 +363,7 @@ class MaterialController extends Controller
             array_push($array, [
                 "id" => $material->id,
                 "codigo" => $material->code,
-                "descripcion" => $material->full_description,
+                "descripcion" => $material->full_name,
                 "medida" => $material->measure,
                 "unidad_medida" => ($material->unitMeasure == null) ? '':$material->unitMeasure->name,
                 "stock_max" => $material->stock_max,
