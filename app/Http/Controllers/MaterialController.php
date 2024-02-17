@@ -58,7 +58,7 @@ class MaterialController extends Controller
     {
         //dd($request);
         $validated = $request->validated();
-
+        $mat = null;
         DB::beginTransaction();
         try {
 
@@ -119,12 +119,16 @@ class MaterialController extends Controller
                     ]);
                 }
             }
-
+            $mat = $material;
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        $mat->full_name = $material->full_description;
+        $mat->save();
+
         return response()->json(['message' => 'Material guardado con éxito.'], 200);
 
     }
@@ -235,6 +239,10 @@ class MaterialController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
+
+        $material = Material::find($request->get('material_id'));
+        $material->full_name = $material->full_description;
+        $material->save();
         return response()->json(['message' => 'Cambios guardados con éxito.'], 200);
 
     }
@@ -273,7 +281,20 @@ class MaterialController extends Controller
 
         // Aplicar filtros si se proporcionan
         if ($description != "") {
-            $query->where('description', 'LIKE', '%'.$description.'%');
+            // Convertir la cadena de búsqueda en un array de palabras clave
+            $keywords = explode(' ', $description);
+
+            // Construir la consulta para buscar todas las palabras clave en el campo full_name
+            $query->where(function ($query) use ($keywords) {
+                foreach ($keywords as $keyword) {
+                    $query->where('full_name', 'LIKE', '%' . $keyword . '%');
+                }
+            });
+
+            // Asegurarse de que todas las palabras clave estén presentes en la descripción
+            foreach ($keywords as $keyword) {
+                $query->where('full_name', 'LIKE', '%' . $keyword . '%');
+            }
         }
 
         if ($code != "") {
@@ -779,5 +800,21 @@ class MaterialController extends Controller
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
         return view('material.enable', compact('permissions'));
+    }
+
+    public function updateDescriptionLargeMaterials()
+    {
+        $begin = microtime(true);
+        dump("Iniciano proceso");
+        $materials = Material::all();
+
+        foreach ($materials as $material) {
+            $nombreCompleto = $material->full_description;
+            $material->full_name = $nombreCompleto;
+            $material->save();
+        }
+        $end = microtime(true) - $begin;
+        dump($end);
+        dd();
     }
 }
