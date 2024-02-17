@@ -903,7 +903,7 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_quote');
 
         // TODO: Rutas para V2 de listado de cotizaciones ELEVADAS
-        Route::get('/get/data/quotes/raise/v2/{numberPage}', 'QuoteController@getDataQuotesIRaise')
+        Route::get('/get/data/quotes/raise/v2/{numberPage}', 'QuoteController@getDataQuotesRaise')
             ->middleware('permission:showRaised_quote');
         Route::get('/listado/cotizaciones/elevadas/v2', 'QuoteController@raiseV2')
             ->name('quote.raiseV2')

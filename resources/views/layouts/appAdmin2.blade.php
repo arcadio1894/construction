@@ -850,7 +850,7 @@
                                 @endcan
                                 @can('showRaised_quote')
                                     <li class="nav-item">
-                                        <a href="{{ route('quote.raise') }}" class="nav-link @yield('activeRaiseQuote')">
+                                        <a href="{{ route('quote.raiseV2') }}" class="nav-link @yield('activeRaiseQuote')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Elevar cotización</p>
                                         </a>

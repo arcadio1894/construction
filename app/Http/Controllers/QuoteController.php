@@ -551,7 +551,7 @@ class QuoteController extends Controller
             ["value" => "canceled", "display" => "CANCELADAS"]
         ];
 
-        return view('quote.indexv2', compact( 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStates'));
+        return view('quote.raisev2', compact( 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStates'));
 
     }
 
