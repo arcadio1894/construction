@@ -1067,6 +1067,18 @@ Route::middleware('auth')->group(function (){
             ->name('state.order.purchase.change')
             ->middleware('permission:update_orderPurchaseExpress');
 
+        // TODO: Rutas para V2 de listado de Ordenes de compra Normal y Express
+        Route::get('/get/data/orders/express/v2/{numberPage}', 'OrderPurchaseController@getDataOrderExpress')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('/listado/ordenes/compra/express/v2', 'OrderPurchaseController@indexExpressV2')
+            ->name('order.purchase.express.indexV2')
+            ->middleware('permission:list_orderPurchaseExpress');
+        Route::get('/get/data/orders/normal/v2/{numberPage}', 'OrderPurchaseController@getDataOrderNormal')
+            ->middleware('permission:list_orderPurchaseNormal');
+        Route::get('/listado/ordenes/compra/normal/v2', 'OrderPurchaseController@indexNormalV2')
+            ->name('order.purchase.normal.indexV2')
+            ->middleware('permission:list_orderPurchaseNormal');
+
         // PROFILE
         Route::get('perfil', 'UserController@profile')
             ->name('user.profile');

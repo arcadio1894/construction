@@ -191,6 +191,312 @@ class OrderPurchaseController extends Controller
 
     }
 
+    public function getDataOrderExpress(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $year = $request->input('year');
+        $code = $request->input('code');
+        $quote = $request->input('quote');
+        $supplier = $request->input('supplier');
+        $state = $request->input('state');
+        $deliveryDate = $request->input('deliveryDate');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->where('type', 'e')
+                ->orderBy('date_order', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->where('type', 'e')
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->orderBy('date_order', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_order', $year);
+        }
+
+        if ($code != "") {
+            $query->where('code', 'LIKE', '%'.$code.'%');
+
+        }
+
+        if ($quote != "") {
+            $query->where('observation', 'LIKE', '%'.$quote.'%');
+        }
+
+        if ($supplier != "") {
+            $query->whereHas('supplier', function ($query2) use ($supplier) {
+                $query2->where('supplier_id', $supplier);
+            });
+
+        }
+
+        if ($state != "") {
+            $query->where('status_order', $state);
+
+        }
+
+        if ($deliveryDate != "") {
+            $fecha = Carbon::createFromFormat('d/m/Y', $deliveryDate);
+            $query->whereDate('date_arrival', $fecha);
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $orders = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        //dd($query);
+
+        $array = [];
+
+        foreach ( $orders as $order )
+        {
+            $state = "";
+            $stateText = "";
+            if ( $order->status_order == 'stand_by' ) {
+                $state = 'stand_by';
+                $stateText = '<span class="badge bg-warning">Pendiente</span>';
+            } elseif ( $order->status_order == 'send' ){
+                $state = 'send';
+                $stateText = '<span class="badge bg-primary">Enviado</span>';
+            } elseif ( $order->status_order == 'pick_up' ) {
+                $state = 'pick_up';
+                $stateText = '<span class="badge bg-success">Recogido</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $order->type == 'n' ) {
+                $type = 'n';
+                $typeText = '<span class="badge bg-primary">Orden Normal</span>';
+            } elseif ( $order->type == 'e' ){
+                $type = 'e';
+                $typeText = '<span class="badge bg-success">Orden Express</span>';
+            }
+
+            array_push($array, [
+                "id" => $order->id,
+                "year" => ( $order->date_order == null || $order->date_quote == "") ? '':$order->date_order->year,
+                "code" => ($order->code == null || $order->code == "") ? '': $order->code,
+                "date_order" => ($order->date_order == null || $order->date_order == "") ? '': $order->date_order->format('d/m/Y'),
+                "date_arrival" => ($order->date_arrival == null || $order->date_arrival == "") ? '': $order->date_arrival->format('d/m/Y'),
+                "observation" => $order->observation,
+                "supplier" => ($order->supplier_id == "" || $order->supplier_id == null) ? "" : $order->supplier->business_name,
+                "approved_user" => ($order->approved_by == "" || $order->approved_by == null) ? "" : $order->approved_user->name,
+                "currency" => ($order->currency_order == null || $order->currency_order == "") ? '': $order->currency_order,
+                "total" => $order->total,
+                "type" => $type,
+                "typeText" => $typeText,
+                "state" => $state,
+                "stateText" => $stateText,
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
+    public function indexExpressV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = OrderPurchase::all();
+
+        $arrayYears = $registros->pluck('date_order')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
+        // created, send, confirm, raised, VB_finance, VB_operation, close, canceled
+
+        $arrayStates = [
+            ["value" => "stand_by", "display" => "PENDIENTES"],
+            ["value" => "send", "display" => "ENVIADAS"],
+            ["value" => "pick_up", "display" => "RECOGIDAS"]
+        ];
+
+        return view('orderPurchase.express_v2', compact( 'permissions', 'arrayYears', 'arraySuppliers', 'arrayStates'));
+
+    }
+
+    public function getDataOrderNormal(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $year = $request->input('year');
+        $code = $request->input('code');
+        $quote = $request->input('quote');
+        $supplier = $request->input('supplier');
+        $state = $request->input('state');
+        $deliveryDate = $request->input('deliveryDate');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->where('type', 'n')
+                ->orderBy('date_order', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = OrderPurchase::with(['supplier', 'approved_user'])
+                ->where('type', 'n')
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->orderBy('date_order', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_order', $year);
+        }
+
+        if ($code != "") {
+            $query->where('code', 'LIKE', '%'.$code.'%');
+
+        }
+
+        if ($quote != "") {
+            $query->where('observation', 'LIKE', '%'.$quote.'%');
+        }
+
+        if ($supplier != "") {
+            $query->whereHas('supplier', function ($query2) use ($supplier) {
+                $query2->where('supplier_id', $supplier);
+            });
+
+        }
+
+        if ($state != "") {
+            $query->where('status_order', $state);
+
+        }
+
+        if ($deliveryDate != "") {
+            $fecha = Carbon::createFromFormat('d/m/Y', $deliveryDate);
+            $query->whereDate('date_arrival', $fecha);
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $orders = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        //dd($query);
+
+        $array = [];
+
+        foreach ( $orders as $order )
+        {
+            $state = "";
+            $stateText = "";
+            if ( $order->status_order == 'stand_by' ) {
+                $state = 'stand_by';
+                $stateText = '<span class="badge bg-warning">Pendiente</span>';
+            } elseif ( $order->status_order == 'send' ){
+                $state = 'send';
+                $stateText = '<span class="badge bg-primary">Enviado</span>';
+            } elseif ( $order->status_order == 'pick_up' ) {
+                $state = 'pick_up';
+                $stateText = '<span class="badge bg-success">Recogido</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $order->type == 'n' ) {
+                $type = 'n';
+                $typeText = '<span class="badge bg-primary">Orden Normal</span>';
+            } elseif ( $order->type == 'e' ){
+                $type = 'e';
+                $typeText = '<span class="badge bg-success">Orden Express</span>';
+            }
+
+            array_push($array, [
+                "id" => $order->id,
+                "year" => ( $order->date_order == null || $order->date_quote == "") ? '':$order->date_order->year,
+                "code" => ($order->code == null || $order->code == "") ? '': $order->code,
+                "date_order" => ($order->date_order == null || $order->date_order == "") ? '': $order->date_order->format('d/m/Y'),
+                "date_arrival" => ($order->date_arrival == null || $order->date_arrival == "") ? '': $order->date_arrival->format('d/m/Y'),
+                "observation" => $order->observation,
+                "supplier" => ($order->supplier_id == "" || $order->supplier_id == null) ? "" : $order->supplier->business_name,
+                "approved_user" => ($order->approved_by == "" || $order->approved_by == null) ? "" : $order->approved_user->name,
+                "currency" => ($order->currency_order == null || $order->currency_order == "") ? '': $order->currency_order,
+                "total" => $order->total,
+                "type" => $type,
+                "typeText" => $typeText,
+                "state" => $state,
+                "stateText" => $stateText,
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
+    public function indexNormalV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = OrderPurchase::all();
+
+        $arrayYears = $registros->pluck('date_order')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
+        // created, send, confirm, raised, VB_finance, VB_operation, close, canceled
+
+        $arrayStates = [
+            ["value" => "stand_by", "display" => "PENDIENTES"],
+            ["value" => "send", "display" => "ENVIADAS"],
+            ["value" => "pick_up", "display" => "RECOGIDAS"]
+        ];
+
+        return view('orderPurchase.normal_v2', compact( 'permissions', 'arrayYears', 'arraySuppliers', 'arrayStates'));
+
+    }
+
     public function getStateOrderPurchase($orderPurchase_id)
     {
         $order = OrderPurchase::find($orderPurchase_id);
