@@ -967,6 +967,12 @@
                         </a>
                         <ul class="nav nav-treeview">
                             @can('list_entryPurchase')
+                            {{--<li class="nav-item">
+                                <a href="{{ route('entry.purchase.indexV2') }}" class="nav-link @yield('activeListEntryPurchase')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar entradas</p>
+                                </a>
+                            </li>--}}
                             <li class="nav-item">
                                 <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
@@ -1340,32 +1346,32 @@
                                     </li>
                                 @endcanany
                                 @can('list_orderPurchaseExpress')
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{route('order.purchase.express.index')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar express</p>
                                         </a>
-                                    </li>
-                                    {{--<li class="nav-item">
+                                    </li>--}}
+                                    <li class="nav-item">
                                         <a href="{{route('order.purchase.express.indexV2')}}" class="nav-link @yield('activeListOrderPurchaseExpress')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar express</p>
                                         </a>
-                                    </li>--}}
+                                    </li>
                                 @endcan
                                 @can('list_orderPurchaseNormal')
-                                    <li class="nav-item">
+                                    {{--<li class="nav-item">
                                         <a href="{{route('order.purchase.normal.index')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar normal</p>
                                         </a>
-                                    </li>
-                                    {{--<li class="nav-item">
+                                    </li>--}}
+                                    <li class="nav-item">
                                         <a href="{{route('order.purchase.normal.indexV2')}}" class="nav-link @yield('activeListOrderPurchaseNormal')">
                                             <i class="far fa-circle nav-icon"></i>
                                             <p>Listar normal</p>
                                         </a>
-                                    </li>--}}
+                                    </li>
                                 @endcan
                                 @can('list_orderPurchaseFinance')
                                     <li class="nav-item">

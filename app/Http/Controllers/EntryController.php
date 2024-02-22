@@ -42,6 +42,147 @@ class EntryController extends Controller
         return view('entry.index_entry_purchase', compact('permissions'));
     }
 
+    public function getAllEntriesV2(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $year = $request->input('year');
+        $invoice = $request->input('invoice');
+        $guide = $request->input('guide');
+        $supplier = $request->input('supplier');
+        $order = $request->input('order');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = Entry::with('supplier')
+                ->where('entry_type', 'Por compra')
+                ->where('finance', false)
+                ->orderBy('date_entry', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = Entry::with('supplier')
+                ->where('entry_type', 'Por compra')
+                ->where('finance', false)
+                ->whereDate('date_entry', '>=', $fechaInicio)
+                ->whereDate('date_entry', '<=', $fechaFinal)
+                ->orderBy('date_entry', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_entry', $year);
+        }
+
+        if ($invoice != "") {
+            $query->where('invoice', 'LIKE', '%'.$invoice.'%');
+
+        }
+
+        if ($guide != "") {
+            $query->where('referral_guide', 'LIKE', '%'.$guide.'%');
+        }
+
+        if ($order != "") {
+            $query->where('purchase_order', 'LIKE', '%'.$order.'%');
+
+        }
+
+        if ($supplier != "") {
+            $query->whereHas('supplier', function ($query2) use ($supplier) {
+                $query2->where('supplier_id', $supplier);
+            });
+
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $entries = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        //dd($query);
+
+        $array = [];
+
+        foreach ( $entries as $entry )
+        {
+            $file = "nn";
+            if ( $entry->image != null ) {
+                $string = substr($entry->image, -3);
+                if( strtoupper($string) == 'PDF')
+                {
+                    $file = "pdf";
+                } else {
+                    $file = "img";
+                }
+            }
+
+            $diferido = "";
+            $diferidoText = "";
+            if ( $entry->deferred_invoice === 'off' )
+            {
+                $diferido = 'off';
+                $diferidoText = '<span class="badge bg-success">NO</span>';
+            }else {
+                $diferido = 'on';
+                $diferidoText = '<span class="badge bg-warning">SI</span>';
+            }
+
+
+            array_push($array, [
+                "id" => $entry->id,
+                "guide" => $entry->referral_guide,
+                "order" => $entry->purchase_order,
+                "invoice" => $entry->invoice,
+                "type" => $entry->entry_type,
+                "supplier" => ($entry->supplier_id == "" || $entry->supplier_id == null) ? "" : $entry->supplier->business_name,
+                "date_entry" => ($entry->date_entry == null || $entry->date_entry == "") ? '': $entry->date_entry->format('d/m/Y'),
+                "diferido" => $diferido,
+                "diferidoText" => $diferidoText,
+                "file" => $file,
+                "total" => $entry->total,
+                "currency" => ($entry->currency_invoice == null || $entry->currency_invoice == "") ? '': $entry->currency_invoice,
+
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
+    public function listEntryPurchaseV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = Entry::all();
+
+        $arrayYears = $registros->pluck('date_entry')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arraySuppliers = Supplier::select('id', 'business_name')->get()->toArray();
+
+        return view('entry.index_entry_purchasev2', compact( 'permissions', 'arrayYears', 'arraySuppliers'));
+
+    }
+
     public function indexEntryScraps()
     {
         return view('entry.index_entry_scrap');

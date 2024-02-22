@@ -587,6 +587,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/json/entries/scrap', 'EntryController@getJsonEntriesScrap');
         Route::get('/get/json/items/{entry_id}', 'ItemController@getJsonItemsEntry');
 
+        // TODO: Rutas para V2 de listado de Entradas por almacen
+        Route::get('/get/all/entries/v2/{numberPage}', 'EntryController@getAllEntriesV2')
+            ->middleware('permission:list_entryPurchase');
+        Route::get('/listado/entradas/compra/v2', 'EntryController@listEntryPurchaseV2')
+            ->name('entry.purchase.indexV2')
+            ->middleware('permission:list_entryPurchase');
+
         Route::get('entrada/compra/editar/{entry}', 'EntryController@editEntryPurchase')->name('entry.purchase.edit')
             ->middleware('permission:update_entryPurchase');
         Route::get('entrada/compra/visualizar/{entry}', 'EntryController@showEntryPurchase')->name('entry.purchase.show')
