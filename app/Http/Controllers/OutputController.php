@@ -2905,7 +2905,7 @@ class OutputController extends Controller
             ->with('responsibleUser')
             ->with('quote')
             ->where('indicator', 'ors')
-            ->where('responsible_user', $user->id)
+            ->where('requesting_user', $user->id)
             ->orderBy('created_at', 'desc')
             ->get();
 
