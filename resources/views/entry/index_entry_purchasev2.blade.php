@@ -309,45 +309,128 @@
     </template>
 
     <template id="template-pdf">
-        <a target="_blank" href="{{--'+document.location.origin+ '/images/entries/'+item.image+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>
+        <a data-pdf target="_blank" href="{{--'+document.location.origin+ '/images/entries/'+item.image+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver PDF"><i class="fa fa-file-pdf"></i></a>
     </template>
 
     <template id="template-img">
-        <button data-src="{{--'+document.location.origin+ '/images/entries/'+item.image+'--}}" data-image="{{--'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>
+        <button data-imagen data-src="{{--'+document.location.origin+ '/images/entries/'+item.image+'--}}" data-image="{{--'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>
     </template>
 
-    <template id="template-normal">
-        <a data-imprimir target="_blank" href="{{--'+document.location.origin+ '/dashboard/imprimir/orden/compra/'+item.id+'--}}" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Imprimir Orden"><i class="fa fa-print"></i> </a>
-        <a data-ver_orden href="{{--'+document.location.origin+ '/dashboard/ver/orden/compra/normal/'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Orden"><i class="fa fa-eye"></i></a>
-        <a data-editar href="{{--'+document.location.origin+ '/dashboard/editar/orden/compra/normal/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i></a>
-        <button data-anular data-delete="{{--'+item.id+'--}}" data-name="{{--'+item.code+'--}}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>'
-        <button data-estado data-state="{{--'+item.id+'--}}" data-name="{{--'+item.description_quote+'--}}" class="btn btn-outline-info btn-sm" data-toggle="tooltip" data-placement="top" title="Cambiar estado"><i class="fas fa-toggle-on"></i></button>
+    <template id="template-buttons">
+        <button data-detalles data-detail="{{--'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver detalles"><i class="fa fa-eye"></i></button>
+        <a data-editar href="{{--'+document.location.origin+ '/dashboard/entrada/compra/editar/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>
+        <button data-anular data-delete="{{--'+item.id+--}}'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Anular"><i class="fa fa-trash"></i></button>
+        <a data-documentos href="{{--'+document.location.origin+ '/dashboard/agregar/documentos/extras/entrada/'+item.id+'--}}" class="btn bg-lime color-palette btn-sm" data-toggle="tooltip" data-placement="top" title="Agregar Facturas y Guias extras"><i class="fas fa-images"></i></a>
     </template>
 
-    <div id="modalState" class="modal fade" tabindex="-1">
+
+    <div id="modalDelete" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h4 class="modal-title">Cambiar estado de la orden</h4>
+                    <h4 class="modal-title">Confirmar eliminación</h4>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
-                <form id="formStates" data-url="{{ route('state.order.purchase.change') }}">
+                <form id="formDelete" data-url="{{ route('material.destroy') }}">
                     @csrf
                     <div class="modal-body">
-                        <input type="hidden" id="orderPurchase_id" name="orderPurchase_id">
-                        <strong>Cambie o Seleccione el estado de la orden</strong>
-                        <select id="stateOrder" name="stateOrder" class="form-control select2" style="width: 100%;">
-                            <option value=""></option>
-                            <option value="stand_by">PENDIENTE</option>
-                            <option value="send">ENVIADO</option>
-                            <option value="pick_up">RECOGIDO</option>
-                        </select>
+                        <input type="hidden" id="material_id" name="material_id">
+                        <p>¿Está seguro de eliminar este material?</p>
+                        <p id="descriptionDelete"></p>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                        <button type="button" id="btn-changeState" class="btn btn-success">Guardar</button>
+                        <button type="submit" class="btn btn-danger">Eliminar</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalImage" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Visualización del documento</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <div class="modal-body">
+                    <img id="image-document" src="" alt="" width="100%">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modalItems" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Listado de detalles e Items</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body table-responsive">
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Material</th>
+                            <th>Cantidad</th>
+                            <th>Precio</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-details">
+
+                        </tbody>
+                        <template id="template-detail">
+                            <tr>
+                                <td data-code></td>
+                                <td data-material></td>
+                                <td data-quantity></td>
+                                <td data-price></td>
+                            </tr>
+                        </template>
+                    </table>
+                    <hr>
+                    <table class="table table-head-fixed text-nowrap table-hover">
+                        <thead>
+                        <tr>
+                            <th style="width: 10px">#</th>
+                            <th>Material</th>
+                            <th>Código</th>
+                            <th>Largo</th>
+                            <th>Ancho</th>
+                            <th>Peso</th>
+                            <th>Precio</th>
+                            <th>Ubicación</th>
+                            <th>Estado</th>
+                        </tr>
+                        </thead>
+                        <tbody id="table-items">
+
+                        </tbody>
+                        <template id="template-item">
+                            <tr>
+                                <td data-i></td>
+                                <td data-material></td>
+                                <td data-code></td>
+                                <td data-length></td>
+                                <td data-width><span class="badge bg-danger">55%</span></td>
+                                <td data-weight></td>
+                                <td data-price></td>
+                                <td data-location></td>
+                                <td data-state></td>
+                            </tr>
+                        </template>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                </div>
             </div>
         </div>
     </div>

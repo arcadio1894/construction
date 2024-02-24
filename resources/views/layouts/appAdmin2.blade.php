@@ -967,18 +967,18 @@
                         </a>
                         <ul class="nav nav-treeview">
                             @can('list_entryPurchase')
-                            {{--<li class="nav-item">
+                            <li class="nav-item">
                                 <a href="{{ route('entry.purchase.indexV2') }}" class="nav-link @yield('activeListEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>
-                            </li>--}}
-                            <li class="nav-item">
+                            </li>
+                            {{--<li class="nav-item">
                                 <a href="{{ route('entry.purchase.index') }}" class="nav-link @yield('activeListEntryPurchase')">
                                     <i class="far fa-circle nav-icon"></i>
                                     <p>Listar entradas</p>
                                 </a>
-                            </li>
+                            </li>--}}
                             @endcan
                             {{--@can('create_entryPurchase')
                             <li class="nav-item">

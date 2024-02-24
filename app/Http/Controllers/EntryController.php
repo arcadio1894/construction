@@ -148,7 +148,7 @@ class EntryController extends Controller
                 "file" => $file,
                 "total" => $entry->total,
                 "currency" => ($entry->currency_invoice == null || $entry->currency_invoice == "") ? '': $entry->currency_invoice,
-
+                "image" => $entry->image
             ]);
         }
 
