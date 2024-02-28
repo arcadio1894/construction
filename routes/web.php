@@ -678,6 +678,13 @@ Route::middleware('auth')->group(function (){
         Route::get('/get/data/material/scrap/{material_id}', 'EntryScrapsController@getJsonDataMaterial');
 
         // OUTPUT
+        // TODO: Rutas para V2 de listado de Ordenes de compra en Entradas por almacen
+        Route::get('/get/all/outputs/requests/v2/{numberPage}', 'OutputController@getAllOutputsRequestsV2')
+            ->middleware('permission:list_request');
+        Route::get('/listado/solicitudes/salida/v2', 'OutputController@indexOutputRequestV2')
+            ->name('output.request.indexV2')
+            ->middleware('permission:list_request');
+
         Route::get('solicitudes/salida', 'OutputController@indexOutputRequest')
             ->name('output.request.index')
             ->middleware('permission:list_request');

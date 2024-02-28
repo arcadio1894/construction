@@ -15,6 +15,8 @@ class Output extends Model
         'indicator'
     ];
 
+    protected $dates = ['request_date'];
+
     public function details()
     {
         return $this->hasMany('App\OutputDetail');

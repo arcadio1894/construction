@@ -28,6 +28,209 @@ use Illuminate\Support\Facades\DB;
 
 class OutputController extends Controller
 {
+    public function indexOutputRequestV2()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = Output::all();
+
+        $arrayYears = $registros->pluck('request_date')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arrayTypes = [
+            ["value" => "or", "display" => "SOLICITUDES REGULARES"],
+            ["value" => "orn", "display" => "SOLICITUDES NORMALES"],
+            ["value" => "ore", "display" => "SOLICITUDES EXTRAS"]
+        ];
+
+        $arrayStates = [
+            ["value" => "created", "display" => "CREADAS"],
+            ["value" => "attended", "display" => "ATENDIDAS"]
+        ];
+
+        $arrayUsers = User::select('id', 'name')->get()->toArray();
+
+        $arrayQuotes = Quote::select('id', 'code', 'description_quote')
+            ->where('state', 'confirmed')
+            ->where('raise_status', 1)
+            ->where('state_active', '<>','close')
+            ->orderBy('created_at', 'desc')
+            ->get()->toArray();
+
+        return view('output.index_output_request_v2', compact('permissions', 'arrayYears', 'arrayTypes', 'arrayStates', 'arrayUsers', 'arrayQuotes'));
+    }
+
+    public function getAllOutputsRequestsV2(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $year = $request->input('year');
+        $code = $request->input('code');
+        $execution_order = $request->input('execution_order');
+        $quote = $request->input('quote');
+        $code_quote = $request->input('code_quote');
+        $description_quote = $request->input('description_quote');
+        $type = $request->input('type');
+        $state = $request->input('state');
+        $requesting_user = $request->input('requesting_user');
+        $responsible_user = $request->input('responsible_user');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = Output::with(['requestingUser', 'responsibleUser', 'quote'])
+                ->where('indicator', '<>', 'ors')
+                ->where('state', '<>', 'confirmed')
+                ->orderBy('created_at', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = Output::with(['requestingUser', 'responsibleUser', 'quote'])
+                ->where('indicator', '<>', 'ors')
+                ->where('state', '<>', 'confirmed')
+                ->whereDate('request_date', '>=', $fechaInicio)
+                ->whereDate('request_date', '<=', $fechaFinal)
+                ->orderBy('request_date', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('request_date', $year);
+        }
+
+        if ($code != "") {
+            $query->where('id', 'LIKE', '%'.$code.'%');
+
+        }
+
+        if ($execution_order != "") {
+            $query->where('execution_order', 'LIKE', '%'.$execution_order.'%');
+        }
+
+        if ($quote != "") {
+            $query->whereHas('quote', function ($query2) use ($quote) {
+                $query2->where('id', $quote);
+            });
+        }
+
+        if ($code_quote != "") {
+            $query->whereHas('quote', function ($query2) use ($code_quote) {
+                $query2->where('code', $code_quote);
+            });
+
+        }
+
+        if ($description_quote != "") {
+            $query->whereHas('quote', function ($query2) use ($description_quote) {
+                $query2->where('description_quote', 'LIKE', '%'.$description_quote.'%');
+            });
+
+        }
+
+        if ($type != "") {
+            $query->where('indicator', $type);
+
+        }
+
+        if ($state != "") {
+            $query->where('state', $state);
+
+        }
+
+        if ( $requesting_user != "" ) {
+            $query->whereHas('requestingUser', function ($query2) use ($requesting_user) {
+                $query2->where('requesting_user', $requesting_user);
+            });
+        }
+
+        if ( $responsible_user != "" ) {
+            $query->whereHas('responsibleUser', function ($query2) use ($responsible_user) {
+                $query2->where('responsible_user', $responsible_user);
+            });
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $outputs = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        //dd($query);
+
+        $array = [];
+
+        foreach ( $outputs as $output )
+        {
+            $state = "";
+            $stateText = "";
+            if ( $output->state == 'created' ) {
+                $state = 'created';
+                $stateText = '<span class="badge bg-success">Solicitud creada</span>';
+            } elseif ( $output->state == 'attended' ){
+                $state = 'send';
+                $stateText = '<span class="badge bg-warning">Solicitud atendida</span>';
+            } elseif ( $output->state == 'confirmed' ) {
+                $state = 'pick_up';
+                $stateText = '<span class="badge bg-secondary">Solicitud confirmada</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $output->indicator == 'orn' ) {
+                $type = 'orn';
+                $typeText = '<span class="badge bg-primary">Solicitud Normal</span>';
+            } elseif ( $output->indicator == 'ore' ){
+                $type = 'ore';
+                $typeText = '<span class="badge bg-success">Solicitud Extra</span>';
+            } elseif ( $output->indicator == 'or' ){
+                $type = 'or';
+                $typeText = '<span class="badge bg-secondary">Solicitud Regular</span>';
+            } elseif ( $output->indicator == 'ors' ){
+                $type = 'or';
+                $typeText = '<span class="badge bg-warning">Solicitud de Área</span>';
+            }
+
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+
+            array_push($array, [
+                "id" => $output->id,
+                "year" => ( $output->request_date == null || $output->request_date == "") ? '':$output->request_date->year,
+                "code" => "Solicitud-".$output->id,
+                "execution_order" => $output->execution_order,
+                "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                "request_date" => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                "requesting_user" => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                "responsible_user" => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                "type" => $type,
+                "typeText" => $typeText,
+                "state" => $state,
+                "stateText" => $stateText,
+                "custom" => ($itemsNull > 0) ? true: false,
+
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
     public function indexOutputRequest()
     {
         $user = Auth::user();
