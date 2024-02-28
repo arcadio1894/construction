@@ -313,7 +313,8 @@ function editOrderExecution() {
             $modalEdit.modal('hide');
             setTimeout( function () {
                 $("#btn-submitEdit").attr("disabled", false);
-                location.reload();
+                //location.reload();
+                getDataOutputsRequest(1);
             }, 2000 )
         },
         error: function (data) {
@@ -636,7 +637,8 @@ function attendOutput() {
             $modalAttend.modal('hide');
             setTimeout( function () {
                 $("#btn-submit").attr("disabled", false);
-                location.reload();
+                //location.reload();
+                getDataOutputsRequest(1);
             }, 2000 )
         },
         error: function (data) {
@@ -720,7 +722,8 @@ function deleteTotalOutput() {
                 });
             $modalDeleteTotal.modal('hide');
             setTimeout( function () {
-                location.reload();
+                //location.reload();
+                getDataOutputsRequest(1);
             }, 2000 )
         },
         error: function (data) {
