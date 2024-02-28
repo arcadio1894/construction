@@ -1206,6 +1206,12 @@
                                     <p>Listar solicitudes</p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="{{ route('output.request.indexV2') }}" class="nav-link @yield('activeListOutputRequest')">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Listar solicitudes</p>
+                                </a>
+                            </li>
                             @endcan
                             @can('create_request')
                             <li class="nav-item">

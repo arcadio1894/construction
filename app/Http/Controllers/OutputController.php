@@ -119,7 +119,7 @@ class OutputController extends Controller
 
         if ($code_quote != "") {
             $query->whereHas('quote', function ($query2) use ($code_quote) {
-                $query2->where('code', $code_quote);
+                $query2->where('code', 'LIKE', '%'.$code_quote.'%');
             });
 
         }
@@ -175,10 +175,10 @@ class OutputController extends Controller
                 $state = 'created';
                 $stateText = '<span class="badge bg-success">Solicitud creada</span>';
             } elseif ( $output->state == 'attended' ){
-                $state = 'send';
+                $state = 'attended';
                 $stateText = '<span class="badge bg-warning">Solicitud atendida</span>';
             } elseif ( $output->state == 'confirmed' ) {
-                $state = 'pick_up';
+                $state = 'confirmed';
                 $stateText = '<span class="badge bg-secondary">Solicitud confirmada</span>';
             }
 
@@ -201,6 +201,13 @@ class OutputController extends Controller
             $itemsNull = OutputDetail::where('output_id', $output->id)
                 ->whereNull('item_id')->count();
 
+            $customlText = "";
+
+            if ($itemsNull > 0)
+            {
+                $customlText = '<br><span class="badge bg-danger">Solicitud personalizada</span>';
+            }
+
             array_push($array, [
                 "id" => $output->id,
                 "year" => ( $output->request_date == null || $output->request_date == "") ? '':$output->request_date->year,
@@ -213,9 +220,9 @@ class OutputController extends Controller
                 "type" => $type,
                 "typeText" => $typeText,
                 "state" => $state,
-                "stateText" => $stateText,
+                "stateText" => $stateText . $customlText,
                 "custom" => ($itemsNull > 0) ? true: false,
-
+                "quote" => ($output->quote == null) ? 'No hay datos': $output->quote->code,
             ]);
         }
 
