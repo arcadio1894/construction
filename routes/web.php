@@ -2532,6 +2532,13 @@ Route::middleware('auth')->group(function (){
         // TODO: Descargar por anaqueles
         Route::get('/download/excel/materials/anaquel/', 'ShelfController@exportMaterialsAnaquel');
 
+        // TODO: Rutas de Reporte de Solicitudes por cotizacion
+        Route::get('/get/outputs/by/quote/v2/{numberPage}', 'OutputController@getOutputsByQuote');
+        Route::get('/reporte/de/sikicitudes/por/cotizacion/', 'OutputController@reportOutputsByQuote')
+            ->name('report.outputs.by.quote')
+            ->middleware('permission:report_output');
+        Route::get('/exportar/reporte/ordenes/by/quote/v2/', 'OutputController@exportReportOutputsByQuote');
+
     });
 });
 

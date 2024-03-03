@@ -6,9 +6,12 @@ use App\Area;
 use App\AreaWorker;
 use App\Audit;
 use App\Category;
+use App\DetailEntry;
+use App\Entry;
 use App\Equipment;
 use App\EquipmentConsumable;
 use App\EquipmentMaterial;
+use App\Exports\OutputsByQuoteExcelExport;
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Http\Requests\StoreSimpleOutputRequest;
 use App\Item;
@@ -3707,4 +3710,497 @@ class OutputController extends Controller
         return $array;
     }
 
+    public function getOutputsByQuote(Request $request, $pageNumber = 1)
+    {
+        $quote_id = $request->input('quote');
+
+        $quote = Quote::find($quote_id);
+
+        $year = $request->input('year');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        $order_execution = $quote->order_execution;
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = Output::where('execution_order', $order_execution)
+                ->orderBy('request_date', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = Output::where('execution_order', $order_execution)
+                ->whereDate('request_date', '>=', $fechaInicio)
+                ->whereDate('request_date', '<=', $fechaFinal)
+                ->orderBy('request_date', 'desc');
+
+        }
+
+
+
+        if ($year != "") {
+            $query->whereYear('request_date', $year);
+        }
+
+        $outputs = $query->get();
+        $materials_quantity = [];
+
+        $array_outputs = [];
+
+        foreach ( $outputs as $output )
+        {
+            $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+            foreach ( $outputDetails as $key => $outputDetail )
+            {
+                if ( $outputDetail->item_id != null || $outputDetail->item_id != "" )
+                {
+                    $item = Item::find($outputDetail->item_id);
+                    $detail = DetailEntry::find($item->detail_entry_id);
+                    $entry = Entry::find($detail->entry_id);
+                    array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+
+                }
+
+            }
+
+            $new_arr3 = array();
+            foreach($materials_quantity as $item) {
+                if(isset($new_arr3[$item['material_id']])) {
+                    $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                    continue;
+                }
+
+                $new_arr3[$item['material_id']] = $item;
+            }
+
+            $materials = array_values($new_arr3);
+
+            $state = "";
+            $stateText = "";
+            if ( $output->state == 'created' ) {
+                $state = 'created';
+                $stateText = '<span class="badge bg-success">Solicitud creada</span>';
+            } elseif ( $output->state == 'attended' ){
+                $state = 'attended';
+                $stateText = '<span class="badge bg-warning">Solicitud atendida</span>';
+            } elseif ( $output->state == 'confirmed' ) {
+                $state = 'confirmed';
+                $stateText = '<span class="badge bg-secondary">Solicitud confirmada</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $output->indicator == 'orn' ) {
+                $type = 'orn';
+                $typeText = '<span class="badge bg-primary">Solicitud Normal</span>';
+            } elseif ( $output->indicator == 'ore' ){
+                $type = 'ore';
+                $typeText = '<span class="badge bg-success">Solicitud Extra</span>';
+            } elseif ( $output->indicator == 'or' ){
+                $type = 'or';
+                $typeText = '<span class="badge bg-secondary">Solicitud Regular</span>';
+            } elseif ( $output->indicator == 'ors' ){
+                $type = 'or';
+                $typeText = '<span class="badge bg-warning">Solicitud de Área</span>';
+            }
+
+            $itemsNull = OutputDetail::where('output_id', $output->id)
+                ->whereNull('item_id')->count();
+
+            $customlText = "";
+
+            if ($itemsNull > 0)
+            {
+                $customlText = '<br><span class="badge bg-danger">Solicitud personalizada</span>';
+            }
+
+            array_push($array_outputs, [
+                "id" => $output->id,
+                "year" => ( $output->request_date == null || $output->request_date == "") ? '':$output->request_date->year,
+                "code" => "Solicitud-".$output->id,
+                "execution_order" => $output->execution_order,
+                "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                "request_date" => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                "requesting_user" => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                "responsible_user" => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                "type" => $type,
+                "typeText" => $typeText,
+                "state" => $state,
+                "stateText" => $stateText . $customlText,
+                "custom" => ($itemsNull > 0) ? true: false,
+                "quote" => ($output->quote == null) ? 'No hay datos': $output->quote->code,
+                "materials" => $materials
+            ]);
+        }
+
+        //dump($array_outputs[0]);
+        //dd();
+        // Definir el número de elementos por página
+        $perPage = 10;
+
+        // Obtener el número total de elementos en el array
+        $totalFilteredRecords = count($array_outputs);
+
+        // Calcular el número total de páginas
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        // Calcular el índice del primer elemento de la página actual
+        $startIndex = ($pageNumber - 1) * $perPage;
+
+        // Obtener los elementos de la página actual utilizando array_slice()
+        $arrayPaginated = array_slice($array_outputs, $startIndex, $perPage);
+
+        // Ahora $arrayPaginated contiene los elementos de la página actual
+
+        // También puedes obtener el índice del último elemento de la página actual
+        $endIndex = min($startIndex + $perPage, $totalFilteredRecords);
+
+        $array = [];
+
+        /*dump($arrayPaginated);
+        dd();*/
+
+        for ( $i=0; $i<count($arrayPaginated); $i++)
+        {
+            for ( $j=0; $j<count($arrayPaginated[$i]["materials"]); $j++ )
+            {
+                array_push($array, [
+                    "id" => $arrayPaginated[$i]["id"],
+                    "year" => $arrayPaginated[$i]["year"],
+                    "code" => $arrayPaginated[$i]["code"],
+                    "execution_order" => $arrayPaginated[$i]["execution_order"],
+                    "description" => $arrayPaginated[$i]["description"],
+                    "request_date" => $arrayPaginated[$i]["request_date"],
+                    "requesting_user" => $arrayPaginated[$i]["requesting_user"],
+                    "responsible_user" => $arrayPaginated[$i]["responsible_user"],
+                    "type" => $arrayPaginated[$i]["type"],
+                    "typeText" => $arrayPaginated[$i]["typeText"],
+                    "state" => $arrayPaginated[$i]["state"],
+                    "stateText" => $arrayPaginated[$i]["stateText"],
+                    "custom" => $arrayPaginated[$i]["custom"],
+                    "quote" => $arrayPaginated[$i]["quote"],
+                    "material_code" => $arrayPaginated[$i]["materials"][$j]["material_code"],
+                    "material" => $arrayPaginated[$i]["materials"][$j]["material"],
+                    "quantity" => $arrayPaginated[$i]["materials"][$j]["quantity"],
+                    "price" => $arrayPaginated[$i]["materials"][$j]["price"],
+                    "currency" => $arrayPaginated[$i]["materials"][$j]["currency"],
+                ]);
+            }
+
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startIndex,
+            'endRecord' => $endIndex,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+/*        dump($array);
+        dd();*/
+
+        return ['data' => $array, 'pagination' => $pagination];
+
+    }
+
+    public function reportOutputsByQuote()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = Output::all();
+
+        $arrayYears = $registros->pluck('request_date')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arrayQuotes = Quote::select('id', 'code', 'description_quote')
+            ->where('state', 'confirmed')
+            ->where('raise_status', 1)
+            ->where('state_active', '<>','close')
+            ->orderBy('created_at', 'desc')
+            ->get()->toArray();
+
+        return view('output.report_outputs_by_quote_v2', compact('permissions', 'arrayYears', 'arrayQuotes'));
+
+    }
+
+    public function exportReportOutputsByQuote()
+    {
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $quote = $_GET['quote'];
+        $array_outputs = [];
+        $outputs_array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            $cot = Quote::find($quote);
+            $dates = 'REPORTE TOTAL DE SOLICITUDES Y MATERIALES DE LA COTIZACIÓN '.$cot->code. '-'.$cot->description_quote;
+
+            $outputs = Output::where('execution_order', $cot->order_execution)
+                ->orderBy('request_date', 'desc')->get();
+
+            $materials_quantity = [];
+
+            $array_outputs = [];
+
+            foreach ( $outputs as $output )
+            {
+                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+                foreach ( $outputDetails as $key => $outputDetail )
+                {
+                    if ( $outputDetail->item_id != null || $outputDetail->item_id != "" )
+                    {
+                        $item = Item::find($outputDetail->item_id);
+                        $detail = DetailEntry::find($item->detail_entry_id);
+                        $entry = Entry::find($detail->entry_id);
+                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+
+                    }
+
+                }
+
+                $new_arr3 = array();
+                foreach($materials_quantity as $item) {
+                    if(isset($new_arr3[$item['material_id']])) {
+                        $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                        continue;
+                    }
+
+                    $new_arr3[$item['material_id']] = $item;
+                }
+
+                $materials = array_values($new_arr3);
+
+                $state = "";
+                $stateText = "";
+                if ( $output->state == 'created' ) {
+                    $state = 'created';
+                    $stateText = 'Solicitud creada';
+                } elseif ( $output->state == 'attended' ){
+                    $state = 'attended';
+                    $stateText = 'Solicitud atendida';
+                } elseif ( $output->state == 'confirmed' ) {
+                    $state = 'confirmed';
+                    $stateText = 'Solicitud confirmada';
+                }
+
+                $type = "";
+                $typeText = "";
+                if ( $output->indicator == 'orn' ) {
+                    $type = 'orn';
+                    $typeText = 'Solicitud Normal';
+                } elseif ( $output->indicator == 'ore' ){
+                    $type = 'ore';
+                    $typeText = 'Solicitud Extra';
+                } elseif ( $output->indicator == 'or' ){
+                    $type = 'or';
+                    $typeText = 'Solicitud Regular';
+                } elseif ( $output->indicator == 'ors' ){
+                    $type = 'or';
+                    $typeText = 'Solicitud de Área';
+                }
+
+                $itemsNull = OutputDetail::where('output_id', $output->id)
+                    ->whereNull('item_id')->count();
+
+                $customlText = "";
+
+                if ($itemsNull > 0)
+                {
+                    $customlText = 'Solicitud personalizada';
+                }
+
+                array_push($array_outputs, [
+                    "id" => $output->id,
+                    "year" => ( $output->request_date == null || $output->request_date == "") ? '':$output->request_date->year,
+                    "code" => "Solicitud-".$output->id,
+                    "execution_order" => $output->execution_order,
+                    "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                    "request_date" => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                    "requesting_user" => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                    "responsible_user" => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                    "type" => $type,
+                    "typeText" => $typeText,
+                    "state" => $state,
+                    "stateText" => $typeText." | ".$stateText ." | ". $customlText,
+                    "custom" => ($itemsNull > 0) ? true: false,
+                    "quote" => ($output->quote == null) ? 'No hay datos': $output->quote->code,
+                    "materials" => $materials
+                ]);
+            }
+
+            for ( $i=0; $i<count($array_outputs); $i++)
+            {
+                for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
+                {
+                    array_push($outputs_array, [
+                        "id" => $array_outputs[$i]["id"],
+                        "year" => $array_outputs[$i]["year"],
+                        "code" => $array_outputs[$i]["code"],
+                        "execution_order" => $array_outputs[$i]["execution_order"],
+                        "description" => $array_outputs[$i]["description"],
+                        "request_date" => $array_outputs[$i]["request_date"],
+                        "requesting_user" => $array_outputs[$i]["requesting_user"],
+                        "responsible_user" => $array_outputs[$i]["responsible_user"],
+                        "type" => $array_outputs[$i]["type"],
+                        "typeText" => $array_outputs[$i]["typeText"],
+                        "state" => $array_outputs[$i]["state"],
+                        "stateText" => $array_outputs[$i]["stateText"],
+                        "custom" => $array_outputs[$i]["custom"],
+                        "quote" => $array_outputs[$i]["quote"],
+                        "material_code" => $array_outputs[$i]["materials"][$j]["material_code"],
+                        "material" => $array_outputs[$i]["materials"][$j]["material"],
+                        "quantity" => $array_outputs[$i]["materials"][$j]["quantity"],
+                        "price" => $array_outputs[$i]["materials"][$j]["price"],
+                        "currency" => $array_outputs[$i]["materials"][$j]["currency"],
+                    ]);
+                }
+
+            }
+
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $cot = Quote::find($quote);
+            $dates = 'REPORTE DEL '. $date_start .' AL '. $end_start .' DE SOLICITUDES Y MATERIALES DE LA COTIZACIÓN '.$cot->code. '-'.$cot->description_quote;
+
+            $outputs = Output::where('execution_order', $cot->order_execution)
+                ->whereDate('date_order', '>=', $date_start)
+                ->whereDate('date_order', '<=', $end_start)
+                ->orderBy('request_date', 'desc')->get();
+
+            $materials_quantity = [];
+
+            $array_outputs = [];
+
+            foreach ( $outputs as $output )
+            {
+                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+                foreach ( $outputDetails as $key => $outputDetail )
+                {
+                    if ( $outputDetail->item_id != null || $outputDetail->item_id != "" )
+                    {
+                        $item = Item::find($outputDetail->item_id);
+                        $detail = DetailEntry::find($item->detail_entry_id);
+                        $entry = Entry::find($detail->entry_id);
+                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+
+                    }
+
+                }
+
+                $new_arr3 = array();
+                foreach($materials_quantity as $item) {
+                    if(isset($new_arr3[$item['material_id']])) {
+                        $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                        continue;
+                    }
+
+                    $new_arr3[$item['material_id']] = $item;
+                }
+
+                $materials = array_values($new_arr3);
+
+                $state = "";
+                $stateText = "";
+                if ( $output->state == 'created' ) {
+                    $state = 'created';
+                    $stateText = 'Solicitud creada';
+                } elseif ( $output->state == 'attended' ){
+                    $state = 'attended';
+                    $stateText = 'Solicitud atendida';
+                } elseif ( $output->state == 'confirmed' ) {
+                    $state = 'confirmed';
+                    $stateText = 'Solicitud confirmada';
+                }
+
+                $type = "";
+                $typeText = "";
+                if ( $output->indicator == 'orn' ) {
+                    $type = 'orn';
+                    $typeText = 'Solicitud Normal';
+                } elseif ( $output->indicator == 'ore' ){
+                    $type = 'ore';
+                    $typeText = 'Solicitud Extra';
+                } elseif ( $output->indicator == 'or' ){
+                    $type = 'or';
+                    $typeText = 'Solicitud Regular';
+                } elseif ( $output->indicator == 'ors' ){
+                    $type = 'or';
+                    $typeText = 'Solicitud de Área';
+                }
+
+                $itemsNull = OutputDetail::where('output_id', $output->id)
+                    ->whereNull('item_id')->count();
+
+                $customlText = "";
+
+                if ($itemsNull > 0)
+                {
+                    $customlText = 'Solicitud personalizada';
+                }
+
+                array_push($array_outputs, [
+                    "id" => $output->id,
+                    "year" => ( $output->request_date == null || $output->request_date == "") ? '':$output->request_date->year,
+                    "code" => "Solicitud-".$output->id,
+                    "execution_order" => $output->execution_order,
+                    "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                    "request_date" => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                    "requesting_user" => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                    "responsible_user" => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                    "type" => $type,
+                    "typeText" => $typeText,
+                    "state" => $state,
+                    "stateText" => $typeText." | ".$stateText ." | ". $customlText,
+                    "custom" => ($itemsNull > 0) ? true: false,
+                    "quote" => ($output->quote == null) ? 'No hay datos': $output->quote->code,
+                    "materials" => $materials
+                ]);
+            }
+
+            for ( $i=0; $i<count($array_outputs); $i++)
+            {
+                for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
+                {
+                    array_push($outputs_array, [
+                        "id" => $array_outputs[$i]["id"],
+                        "year" => $array_outputs[$i]["year"],
+                        "code" => $array_outputs[$i]["code"],
+                        "execution_order" => $array_outputs[$i]["execution_order"],
+                        "description" => $array_outputs[$i]["description"],
+                        "request_date" => $array_outputs[$i]["request_date"],
+                        "requesting_user" => $array_outputs[$i]["requesting_user"],
+                        "responsible_user" => $array_outputs[$i]["responsible_user"],
+                        "type" => $array_outputs[$i]["type"],
+                        "typeText" => $array_outputs[$i]["typeText"],
+                        "state" => $array_outputs[$i]["state"],
+                        "stateText" => $array_outputs[$i]["stateText"],
+                        "custom" => $array_outputs[$i]["custom"],
+                        "quote" => $array_outputs[$i]["quote"],
+                        "material_code" => $array_outputs[$i]["materials"][$j]["material_code"],
+                        "material" => $array_outputs[$i]["materials"][$j]["material"],
+                        "quantity" => $array_outputs[$i]["materials"][$j]["quantity"],
+                        "price" => $array_outputs[$i]["materials"][$j]["price"],
+                        "currency" => $array_outputs[$i]["materials"][$j]["currency"]
+                    ]);
+                }
+
+            }
+
+        }
+
+        return (new OutputsByQuoteExcelExport($outputs_array, $dates))->download('reporteSalidasPorCotizacion.xlsx');
+
+    }
 }

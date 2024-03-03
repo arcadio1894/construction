@@ -1229,6 +1229,14 @@
                                     </a>
                                 </li>
                             @endcan
+                            @can('report_output')
+                                <li class="nav-item">
+                                    <a href="{{ route('report.outputs.by.quote') }}" class="nav-link @yield('activeReportOutputByQuote')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Reporte Salidas Cotización</p>
+                                    </a>
+                                </li>
+                            @endcan
                             @can('report_request')
                                 <li class="nav-item">
                                     <a href="{{ route('output.simple.reportByArea') }}" class="nav-link @yield('activeReportMaterialAreaOutputSimple')">
