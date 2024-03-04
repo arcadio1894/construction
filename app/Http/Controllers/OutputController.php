@@ -3922,7 +3922,7 @@ class OutputController extends Controller
         $arrayQuotes = Quote::select('id', 'code', 'description_quote')
             ->where('state', 'confirmed')
             ->where('raise_status', 1)
-            ->where('state_active', '<>','close')
+            /*->where('state_active', '<>','close')*/
             ->orderBy('created_at', 'desc')
             ->get()->toArray();
 
