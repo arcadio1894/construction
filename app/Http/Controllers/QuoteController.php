@@ -26,6 +26,7 @@ use App\PaymentDeadline;
 use App\PorcentageQuote;
 use App\Quote;
 use App\QuoteUser;
+use App\ResumenQuote;
 use App\UnitMeasure;
 use App\User;
 use App\Workforce;
@@ -1647,12 +1648,12 @@ class QuoteController extends Controller
                         case 'close':
                             $q->where('state_active', 'close');
                             break;
-                        case 'VB_finance':
+                        /*case 'VB_finance':
                             $q->where('state', 'confirmed')
                                 ->where('raise_status', 1)
                                 ->where('vb_finances', 1)
                                 ->whereNull('vb_operations');
-                            break;
+                            break;*/
                         case 'VB_operation':
                             $q->where('state', 'confirmed')
                                 ->where('raise_status', 1)
@@ -1721,8 +1722,10 @@ class QuoteController extends Controller
                 if ($quote->state === 'confirmed' && $quote->raise_status === 1){
                     if ( $quote->vb_finances == 1 && $quote->vb_operations == null )
                     {
-                        $state = 'VB_finance';
-                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                        $state = 'raise';
+                        $stateText = '<span class="badge bg-success">Elevada</span>';
+                        /*$state = 'VB_finance';
+                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';*/
                     } else {
                         if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
                         {
@@ -1809,7 +1812,7 @@ class QuoteController extends Controller
             ["value" => "send", "display" => "ENVIADAS"],
             ["value" => "confirm", "display" => "CONFIRMADAS"],
             ["value" => "raised", "display" => "ELEVADAS"],
-            ["value" => "VB_finance", "display" => "VB FINANZAS"],
+            /*["value" => "VB_finance", "display" => "VB FINANZAS"],*/
             ["value" => "VB_operation", "display" => "VB OPERACIONES"],
             ["value" => "close", "display" => "FINALIZADOS"],
             ["value" => "canceled", "display" => "CANCELADAS"]
@@ -2692,6 +2695,47 @@ class QuoteController extends Controller
         $quote->raise_status = true;
         $quote->save();
 
+        // TODO: Dar el visto bueno de finanzas automático
+        //$quote->order_execution = $codeOrderExecution;
+        /*$quote->vb_finances = 1;
+        $quote->date_vb_finances = Carbon::now('America/Lima');
+        $quote->save();*/
+
+        // TODO: Guardar los resumenes
+        $resumen = ResumenQuote::create([
+            'quote_id' => $quote->id,
+            'code' => $quote->code,
+            'description_quote' => $quote->description_quote,
+            'date_quote' => $quote->date_quote,
+            'customer_id' => ($quote->customer_id == null) ? null : $quote->customer_id,
+            'customer' => ($quote->customer_id == null) ? "" : $quote->customer->business_name,
+            'contact_id' => ($quote->contact_id == null) ? null : $quote->contact_id,
+            'contact' => ($quote->contact_id == null) ? "" : $quote->contact->name,
+            'total_sin_igv' => round(($quote->total_equipments)/1.18, 2),
+            'total_con_igv' => round($quote->total_equipments, 2),
+            'total_utilidad_sin_igv' => round(($quote->total_quote)/1.18, 2),
+            'total_utilidad_con_igv' => round($quote->total_quote, 2)
+        ]);
+
+        foreach ( $quote->equipments as $equipment )
+        {
+            $resumenEquipment = ResumenQuote::create([
+                'resumen_quote_id' => $resumen->id,
+                'equipment_id' => $equipment->id,
+                'description' => $equipment->description,
+                'total_materials' => $equipment->total_materials,
+                'total_consumables' => $equipment->total_consumables,
+                'total_workforces' => $equipment->total_workforces,
+                'total_turnstiles' => $equipment->total_turnstiles,
+                'total_workdays' => $equipment->total_workdays,
+                'quantity' => $equipment->quantity,
+                'total' => round($equipment->subtotal_percentage/1.18, 2),
+                'utility' => $equipment->utility,
+                'letter' => $equipment->letter,
+                'rent' => $equipment->rent
+            ]);
+        }
+
         $financeWork = FinanceWork::where('quote_id', $quote->id)->first();
 
         if ( !isset($financeWork) )
@@ -3537,6 +3581,14 @@ class QuoteController extends Controller
             $quote->date_vb_operations = null;
 
             $quote->save();
+
+            // TODO: Acciones para borrar los resumenes
+            $resumen = ResumenQuote::where('quote_id', $quote->id)->first();
+            foreach ( $resumen->details as $resumenEquipment )
+            {
+                $resumenEquipment->delete();
+            }
+            $resumen->delete();
 
             DB::commit();
         } catch ( \Throwable $e ) {
