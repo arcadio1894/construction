@@ -2232,3 +2232,8 @@ function showModalEditFacturacion() {
     }, "json");
 
 }
+
+function activateTemplate(id) {
+    var t = document.querySelector(id);
+    return document.importNode(t.content, true);
+}

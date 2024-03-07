@@ -888,6 +888,14 @@
                                         </a>
                                     </li>
                                 @endcan
+                                @can('resumen_quote')
+                                    <li class="nav-item">
+                                        <a href="{{ route('resumen.quote') }}" class="nav-link @yield('activeResumeQuote')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Resumen Cotización</p>
+                                        </a>
+                                    </li>
+                                @endcan
                             </ul>
                         </li>
                     @endcan

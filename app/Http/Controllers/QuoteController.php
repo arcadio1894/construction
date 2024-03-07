@@ -26,6 +26,7 @@ use App\PaymentDeadline;
 use App\PorcentageQuote;
 use App\Quote;
 use App\QuoteUser;
+use App\ResumenEquipment;
 use App\ResumenQuote;
 use App\UnitMeasure;
 use App\User;
@@ -2681,121 +2682,131 @@ class QuoteController extends Controller
         $begin = microtime(true);
         $quote = Quote::find($quote_id);
 
-        if ( !isset( $quote->order_execution ) )
-        {
-            $all_quotes = Quote::whereNotNull('order_execution')->get();
-            $quantity = count($all_quotes) + 1;
-            $length = 5;
-            $codeOrderExecution = 'OE-'.str_pad($quantity,$length,"0", STR_PAD_LEFT);
-            $quote->order_execution = $codeOrderExecution;
-            $quote->save();
-        }
-
-        $quote->code_customer = $code;
-        $quote->raise_status = true;
-        $quote->save();
-
-        // TODO: Dar el visto bueno de finanzas automático
-        //$quote->order_execution = $codeOrderExecution;
-        /*$quote->vb_finances = 1;
-        $quote->date_vb_finances = Carbon::now('America/Lima');
-        $quote->save();*/
-
-        // TODO: Guardar los resumenes
-        $resumen = ResumenQuote::create([
-            'quote_id' => $quote->id,
-            'code' => $quote->code,
-            'description_quote' => $quote->description_quote,
-            'date_quote' => $quote->date_quote,
-            'customer_id' => ($quote->customer_id == null) ? null : $quote->customer_id,
-            'customer' => ($quote->customer_id == null) ? "" : $quote->customer->business_name,
-            'contact_id' => ($quote->contact_id == null) ? null : $quote->contact_id,
-            'contact' => ($quote->contact_id == null) ? "" : $quote->contact->name,
-            'total_sin_igv' => round(($quote->total_equipments)/1.18, 2),
-            'total_con_igv' => round($quote->total_equipments, 2),
-            'total_utilidad_sin_igv' => round(($quote->total_quote)/1.18, 2),
-            'total_utilidad_con_igv' => round($quote->total_quote, 2)
-        ]);
-
-        foreach ( $quote->equipments as $equipment )
-        {
-            $resumenEquipment = ResumenQuote::create([
-                'resumen_quote_id' => $resumen->id,
-                'equipment_id' => $equipment->id,
-                'description' => $equipment->description,
-                'total_materials' => $equipment->total_materials,
-                'total_consumables' => $equipment->total_consumables,
-                'total_workforces' => $equipment->total_workforces,
-                'total_turnstiles' => $equipment->total_turnstiles,
-                'total_workdays' => $equipment->total_workdays,
-                'quantity' => $equipment->quantity,
-                'total' => round($equipment->subtotal_percentage/1.18, 2),
-                'utility' => $equipment->utility,
-                'letter' => $equipment->letter,
-                'rent' => $equipment->rent
-            ]);
-        }
-
-        $financeWork = FinanceWork::where('quote_id', $quote->id)->first();
-
-        if ( !isset($financeWork) )
-        {
-            $financeWork = FinanceWork::create([
-                'quote_id' => $quote->id,
-                'raise_date' => Carbon::now('America/Lima'), // Cuando se eleva la cotizacion debe guardarse este dato
-                'date_delivery' => null,
-                'act_of_acceptance' => 'pending',
-                'state_act_of_acceptance' => null,
-                'advancement' => 'n',
-                'amount_advancement' => 0,
-                'detraction' => null,
-                'invoiced' => 'n',
-                'number_invoice' => null,
-                'month_invoice' => null,
-                'date_issue' => null,
-                'date_admission' => null,
-                'bank_id' => null,
-                'state' => 'pending',
-                'date_paid' => null,
-                'observation' => null
-            ]);
-        }
-
-        // Crear notificacion
-        $notification = Notification::create([
-            'content' => $quote->code.' elevada por '.Auth::user()->name,
-            'reason_for_creation' => 'raise_quote',
-            'user_id' => Auth::user()->id,
-            'url_go' => route('quote.raise', $quote->id)
-        ]);
-
-        // Roles adecuados para recibir esta notificación admin, logistica
-        $users = User::role(['admin', 'principal' , 'logistic' , 'finance'])->get();
-        foreach ( $users as $user )
-        {
-            if ( $user->id != Auth::user()->id )
+        DB::beginTransaction();
+        try {
+            if ( !isset( $quote->order_execution ) )
             {
-                foreach ( $user->roles as $role )
+                $all_quotes = Quote::whereNotNull('order_execution')->get();
+                $quantity = count($all_quotes) + 1;
+                $length = 5;
+                $codeOrderExecution = 'OE-'.str_pad($quantity,$length,"0", STR_PAD_LEFT);
+                $quote->order_execution = $codeOrderExecution;
+                $quote->save();
+            }
+
+            $quote->code_customer = $code;
+            $quote->raise_status = true;
+            $quote->save();
+
+            // TODO: Dar el visto bueno de finanzas automático
+            //$quote->order_execution = $codeOrderExecution;
+            /*$quote->vb_finances = 1;
+            $quote->date_vb_finances = Carbon::now('America/Lima');
+            $quote->save();*/
+
+            // TODO: Guardar los resumenes
+            $resumen = ResumenQuote::create([
+                'quote_id' => $quote->id,
+                'code' => $quote->code,
+                'description_quote' => $quote->description_quote,
+                'date_quote' => $quote->date_quote,
+                'customer_id' => ($quote->customer_id == null) ? null : $quote->customer_id,
+                'customer' => ($quote->customer_id == null) ? "" : $quote->customer->business_name,
+                'contact_id' => ($quote->contact_id == null) ? null : $quote->contact_id,
+                'contact' => ($quote->contact_id == null) ? "" : $quote->contact->name,
+                'total_sin_igv' => round(($quote->total_equipments)/1.18, 2),
+                'total_con_igv' => round($quote->total_equipments, 2),
+                'total_utilidad_sin_igv' => round(($quote->total_quote)/1.18, 2),
+                'total_utilidad_con_igv' => round($quote->total_quote, 2)
+            ]);
+
+            foreach ( $quote->equipments as $equipment )
+            {
+                $resumenEquipment = ResumenEquipment::create([
+                    'resumen_quote_id' => $resumen->id,
+                    'equipment_id' => $equipment->id,
+                    'description' => $equipment->description,
+                    'total_materials' => $equipment->total_materials,
+                    'total_consumables' => $equipment->total_consumables,
+                    'total_workforces' => $equipment->total_workforces,
+                    'total_turnstiles' => $equipment->total_turnstiles,
+                    'total_workdays' => $equipment->total_workdays,
+                    'quantity' => $equipment->quantity,
+                    'total' => round($equipment->subtotal_percentage/1.18, 2),
+                    'utility' => $equipment->utility,
+                    'letter' => $equipment->letter,
+                    'rent' => $equipment->rent
+                ]);
+            }
+
+            $financeWork = FinanceWork::where('quote_id', $quote->id)->first();
+
+            if ( !isset($financeWork) )
+            {
+                $financeWork = FinanceWork::create([
+                    'quote_id' => $quote->id,
+                    'raise_date' => Carbon::now('America/Lima'), // Cuando se eleva la cotizacion debe guardarse este dato
+                    'date_delivery' => null,
+                    'act_of_acceptance' => 'pending',
+                    'state_act_of_acceptance' => null,
+                    'advancement' => 'n',
+                    'amount_advancement' => 0,
+                    'detraction' => null,
+                    'invoiced' => 'n',
+                    'number_invoice' => null,
+                    'month_invoice' => null,
+                    'date_issue' => null,
+                    'date_admission' => null,
+                    'bank_id' => null,
+                    'state' => 'pending',
+                    'date_paid' => null,
+                    'observation' => null
+                ]);
+            }
+
+            // Crear notificacion
+            $notification = Notification::create([
+                'content' => $quote->code.' elevada por '.Auth::user()->name,
+                'reason_for_creation' => 'raise_quote',
+                'user_id' => Auth::user()->id,
+                'url_go' => route('quote.raise', $quote->id)
+            ]);
+
+            // Roles adecuados para recibir esta notificación admin, logistica
+            $users = User::role(['admin', 'principal' , 'logistic' , 'finance'])->get();
+            foreach ( $users as $user )
+            {
+                if ( $user->id != Auth::user()->id )
                 {
-                    NotificationUser::create([
-                        'notification_id' => $notification->id,
-                        'role_id' => $role->id,
-                        'user_id' => $user->id,
-                        'read' => false,
-                        'date_read' => null,
-                        'date_delete' => null
-                    ]);
+                    foreach ( $user->roles as $role )
+                    {
+                        NotificationUser::create([
+                            'notification_id' => $notification->id,
+                            'role_id' => $role->id,
+                            'user_id' => $user->id,
+                            'read' => false,
+                            'date_read' => null,
+                            'date_delete' => null
+                        ]);
+                    }
                 }
             }
+
+            $end = microtime(true) - $begin;
+
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Elevar cotizacion',
+                'time' => $end
+            ]);
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
         }
 
-        $end = microtime(true) - $begin;
-
-        Audit::create([
-            'user_id' => Auth::user()->id,
-            'action' => 'Elevar cotizacion',
-            'time' => $end
-        ]);
+        return response()->json(['message' => 'Cotización elevada.'], 200);
     }
 
     public function getAllQuotesConfirmed()
@@ -3584,11 +3595,14 @@ class QuoteController extends Controller
 
             // TODO: Acciones para borrar los resumenes
             $resumen = ResumenQuote::where('quote_id', $quote->id)->first();
-            foreach ( $resumen->details as $resumenEquipment )
+            if ( isset($resumen) )
             {
-                $resumenEquipment->delete();
+                foreach ( $resumen->details as $resumenEquipment )
+                {
+                    $resumenEquipment->delete();
+                }
+                $resumen->delete();
             }
-            $resumen->delete();
 
             DB::commit();
         } catch ( \Throwable $e ) {
@@ -4161,5 +4175,80 @@ class QuoteController extends Controller
         }
         return response()->json(['message' => 'Nuevos equipos guardados con éxito.'], 200);
 
+    }
+
+    public function resumenQuote()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = Quote::all();
+
+        $arrayYears = $registros->pluck('request_date')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arrayQuotes = Quote::select('id', 'code', 'description_quote')
+            ->where('state', 'confirmed')
+            ->where('raise_status', 1)
+            /*->where('state_active', '<>','close')*/
+            ->orderBy('created_at', 'desc')
+            ->get()->toArray();
+
+        return view('quote.resumen_quote_v2', compact('permissions', 'arrayYears', 'arrayQuotes'));
+
+    }
+
+    public function getResumenQuote(Request $request)
+    {
+        $quote_id = $request->input('quote');
+
+        $quote = Quote::find($quote_id);
+        $resumen = ResumenQuote::where('quote_id', $quote_id)->first();
+
+        $equipmentsOfQuote = [];
+        $resumenEquipments = [];
+        $totalQuote = [];
+
+        if ( isset($resumen) )
+        {
+            foreach ( $resumen->details as $resumenEquipment )
+            {
+                array_push($equipmentsOfQuote, [
+                    "equipo" => $resumenEquipment->description,
+                    "cantidad" => $resumenEquipment->quantity,
+                    "subtotal_sin_igv" => round(($resumenEquipment->total/$resumenEquipment->quantity)/1.18, 2),
+                    "utilidad" => $resumenEquipment->utility,
+                    "gastos_varios" => $resumenEquipment->rent + $resumenEquipment->letter,
+                    "precio_unit_sin_igv" => round(($resumenEquipment->total)/$resumenEquipment->quantity, 2),
+                    "total_sin_igv" => round($resumenEquipment->total, 2)
+                ]);
+
+                array_push($resumenEquipments, [
+                    "equipment" => $resumenEquipment->description,
+                    "total_materials" => $resumenEquipment->total_materials,
+                    "total_consumables" => $resumenEquipment->total_consumables,
+                    "total_workforces" => $resumenEquipment->total_workforces,
+                    "total_tornos" => $resumenEquipment->total_turnstiles,
+                    "total_dias" => $resumenEquipment->total_workdays
+                ]);
+
+            }
+
+            $totalQuote = [
+                "total_sin_igv" => $quote->currency_invoice." ". $resumen->total_sin_igv,
+                "total_con_igv" => $quote->currency_invoice." ". $resumen->total_con_igv,
+                "total_utilidad_sin_igv" => $quote->currency_invoice." ". $resumen->total_utilidad_sin_igv,
+                "total_utilidad_con_igv" => $quote->currency_invoice." ". $resumen->total_utilidad_con_igv
+            ];
+        }
+
+        return [
+            'equipmentsOfQuote' => $equipmentsOfQuote,
+            'resumenEquipments' => $resumenEquipments,
+            'totalQuote' => $totalQuote
+        ];
     }
 }

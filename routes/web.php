@@ -2539,6 +2539,12 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_output');
         Route::get('/exportar/reporte/ordenes/by/quote/v2/', 'OutputController@exportReportOutputsByQuote');
 
+        // TODO: Resumen de cotizaciones
+        Route::get('/resumen/de/cotizaciones/', 'QuoteController@resumenQuote')
+            ->name('resumen.quote')
+            ->middleware('permission:resumen_quote');
+        Route::get('/get/resumen/quote/', 'QuoteController@getResumenQuote');
+
     });
 });
 
