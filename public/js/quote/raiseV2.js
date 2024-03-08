@@ -1675,11 +1675,21 @@ function renderDataTable(data) {
             }
         }
 
-        if ( $.inArray('VBFinances_quote', $permissions) !== -1 ) {
+        /*if ( $.inArray('VBFinances_quote', $permissions) !== -1 ) {
             cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]").setAttribute("data-vb_finances", data.id);
             cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]").setAttribute("data-name", data.description);
         } else {
             let element = cloneBtnRaised.querySelector("[data-visto_bueno_finanzas]");
+            if (element) {
+                element.style.display = 'none';
+            }
+        }*/
+
+        if ( $.inArray('VBOperations_quote', $permissions) !== -1 ) {
+            cloneBtnRaised.querySelector("[data-visto_bueno_operaciones]").setAttribute("data-vb_operations", data.id);
+            cloneBtnRaised.querySelector("[data-visto_bueno_operaciones]").setAttribute("data-name", data.description);
+        } else {
+            let element = cloneBtnRaised.querySelector("[data-visto_bueno_operaciones]");
             if (element) {
                 element.style.display = 'none';
             }

@@ -387,16 +387,16 @@ class QuoteController extends Controller
                         case 'close':
                             $q->where('state_active', 'close');
                             break;
-                        case 'VB_finance':
+                        /*case 'VB_finance':
                             $q->where('state', 'confirmed')
                                 ->where('raise_status', 1)
                                 ->where('vb_finances', 1)
                                 ->whereNull('vb_operations');
-                            break;
+                            break;*/
                         case 'VB_operation':
                             $q->where('state', 'confirmed')
                                 ->where('raise_status', 1)
-                                ->where('vb_finances', 1)
+                                /*->where('vb_finances', 1)*/
                                 ->where('vb_operations', 1);
                             break;
                         case 'raised':
@@ -405,8 +405,7 @@ class QuoteController extends Controller
                                 ->where('state', '<>','canceled')
                                 ->where('state_active', '<>','close')
                                 ->where(function ($q2) {
-                                    $q2->where('vb_finances', null)
-                                        ->where('vb_operations', null);
+                                    $q2->where('vb_operations', null);
                                 });
                             break;
                         case 'confirm':
@@ -461,8 +460,11 @@ class QuoteController extends Controller
                 if ($quote->state === 'confirmed' && $quote->raise_status === 1){
                     if ( $quote->vb_finances == 1 && $quote->vb_operations == null )
                     {
-                        $state = 'VB_finance';
+                        $state = 'raise';
+                        $stateText = '<span class="badge bg-success">Elevada</span>';
+                        /*$state = 'VB_finance';
                         $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                    */
                     } else {
                         if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
                         {
@@ -547,7 +549,6 @@ class QuoteController extends Controller
         $arrayStates = [
             ["value" => "confirm", "display" => "CONFIRMADAS"],
             ["value" => "raised", "display" => "ELEVADAS"],
-            ["value" => "VB_finance", "display" => "VB FINANZAS"],
             ["value" => "VB_operation", "display" => "VB OPERACIONES"],
             ["value" => "close", "display" => "FINALIZADOS"],
             ["value" => "canceled", "display" => "CANCELADAS"]
@@ -1658,7 +1659,7 @@ class QuoteController extends Controller
                         case 'VB_operation':
                             $q->where('state', 'confirmed')
                                 ->where('raise_status', 1)
-                                ->where('vb_finances', 1)
+                                /*->where('vb_finances', 1)*/
                                 ->where('vb_operations', 1);
                             break;
                         case 'raised':
@@ -1667,8 +1668,7 @@ class QuoteController extends Controller
                                 ->where('state', '<>','canceled')
                                 ->where('state_active', '<>','close')
                                 ->where(function ($q2) {
-                                    $q2->where('vb_finances', null)
-                                        ->where('vb_operations', null);
+                                    $q2->where('vb_operations', null);
                                 });
                             break;
                         case 'confirm':
