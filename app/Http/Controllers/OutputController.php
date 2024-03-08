@@ -3955,6 +3955,8 @@ class OutputController extends Controller
 
             foreach ( $outputs as $output )
             {
+                $materials_quantity = [];
+
                 $outputDetails = OutputDetail::where('output_id', $output->id)->get();
                 foreach ( $outputDetails as $key => $outputDetail )
                 {
