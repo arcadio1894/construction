@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Audit;
 use App\Exports\OrderPurchaseExcelExport;
 use App\Exports\ReportOrderPurchaseExport;
+use App\Exports\ReportOrdersByMaterialExcelExport;
 use App\FollowMaterial;
 use App\Http\Requests\StoreOrderPurchaseRequest;
 use App\Item;
@@ -30,6 +31,232 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class OrderPurchaseController extends Controller
 {
+    public function getReportOrderPurchaseByMaterial(Request $request, $pageNumber = 1)
+    {
+        $perPage = 10;
+        $material_id = $request->input('material');
+        $year = $request->input('year');
+        $startDate = $request->input('startDate');
+        $endDate = $request->input('endDate');
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $query = OrderPurchase::with(['supplier', 'approved_user', 'details.material'])
+                ->orderBy('date_order', 'desc');
+        } else {
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = OrderPurchase::with(['supplier', 'approved_user', 'details.material'])
+                ->whereDate('date_order', '>=', $fechaInicio)
+                ->whereDate('date_order', '<=', $fechaFinal)
+                ->orderBy('date_order', 'desc');
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_order', $year);
+        }
+
+        if ($material_id != "") {
+            $query->whereHas('details.material', function($q) use ($material_id) {
+                $q->where('id', $material_id);
+            });
+        }
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $orders = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        $orderPurchases = [];
+
+        foreach ($orders as $order) {
+            $state = "";
+            $stateText = "";
+            if ( $order->status_order == 'stand_by' ) {
+                $state = 'stand_by';
+                $stateText = '<span class="badge bg-warning">Pendiente</span>';
+            } elseif ( $order->status_order == 'send' ){
+                $state = 'send';
+                $stateText = '<span class="badge bg-primary">Enviado</span>';
+            } elseif ( $order->status_order == 'pick_up' ) {
+                $state = 'pick_up';
+                $stateText = '<span class="badge bg-success">Recogido</span>';
+            }
+
+            $type = "";
+            $typeText = "";
+            if ( $order->type == 'n' ) {
+                $type = 'n';
+                $typeText = '<span class="badge bg-primary">Orden Normal</span>';
+            } elseif ( $order->type == 'e' ){
+                $type = 'e';
+                $typeText = '<span class="badge bg-success">Orden Express</span>';
+            }
+
+            foreach ($order->details as $orderPurchaseDetail) {
+                if ($orderPurchaseDetail->material_id == $material_id) {
+                    array_push($orderPurchases, [
+                        "id" => $order->id,
+                        "year" => ($order->date_order == null || $order->date_order == "") ? '' : $order->date_order->year,
+                        "code" => ($order->code == null || $order->code == "") ? '' : $order->code,
+                        "date_order" => ($order->date_order == null || $order->date_order == "") ? '' : $order->date_order->format('d/m/Y'),
+                        "date_arrival" => ($order->date_arrival == null || $order->date_arrival == "") ? '' : $order->date_arrival->format('d/m/Y'),
+                        "observation" => $order->observation,
+                        "supplier" => ($order->supplier_id == "" || $order->supplier_id == null) ? "" : $order->supplier->business_name,
+                        "approved_user" => ($order->approved_by == "" || $order->approved_by == null) ? "" : $order->approved_user->name,
+                        "currency" => ($order->currency_order == null || $order->currency_order == "") ? '' : $order->currency_order,
+                        "state" => $typeText . "<br>" . $stateText,
+                        "material_code" => $orderPurchaseDetail->material->code,
+                        "material" => $orderPurchaseDetail->material->full_name,
+                        "quantity" => $orderPurchaseDetail->quantity,
+                        "price" => $orderPurchaseDetail->price,
+                        "total" => ($orderPurchaseDetail->total_price == null) ? ($orderPurchaseDetail->quantity * $orderPurchaseDetail->price) : $orderPurchaseDetail->price,
+                    ]);
+                    // Si solo quieres el primer detalle que coincide con el material_id, puedes agregar un break aquí.
+                    break;
+                }
+            }
+
+        }
+
+        //dump($orderPurchases);
+        //dd();
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $orderPurchases, 'pagination' => $pagination];
+
+    }
+
+    public function reportOrderPurchaseByMaterial()
+    {
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+
+        $registros = OrderPurchase::all();
+
+        $arrayYears = $registros->pluck('date_order')->map(function ($date) {
+            return Carbon::parse($date)->format('Y');
+        })->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $arrayMaterials = Material::select('id', 'code', 'full_name')
+            ->orderBy('id', 'asc')
+            ->get()->toArray();
+
+        return view('orderPurchase.report_orders_by_material_v2', compact('permissions', 'arrayYears', 'arrayMaterials'));
+
+    }
+
+    public function exportReportOrdersByMaterial()
+    {
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $material_id = $_GET['material'];
+        $year = $_GET['year'];
+        $orders = [];
+        $dates = '';
+
+        $material = Material::find($material_id);
+
+        if ( $start == '' || $end == '' )
+        {
+
+            $dates = 'REPORTE DE ORDENES DE COMPRA CON EL MATERIAL '.$material->full_name;
+
+            $query = OrderPurchase::with(['supplier', 'approved_user', 'details.material'])
+                ->orderBy('date_order', 'desc');
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'REPORTE DE ORDENES DE COMPRA CON EL MATERIAL '.$material->full_name.' DEL '. $start .' AL '. $end;
+
+            $query = OrderPurchase::with(['supplier', 'approved_user', 'details.material'])
+                ->whereDate('date_order', '>=', $date_start)
+                ->whereDate('date_order', '<=', $end_start)
+                ->orderBy('date_order', 'desc');
+
+        }
+
+        if ($year != "") {
+            $query->whereYear('date_order', $year);
+        }
+
+        if ($material_id != "") {
+            $query->whereHas('details.material', function($q) use ($material_id) {
+                $q->where('id', $material_id);
+            });
+        }
+
+        $orders = $query->get();
+
+        $orderPurchases = [];
+
+        foreach ($orders as $order) {
+            $stateText = "";
+            if ( $order->status_order == 'stand_by' ) {
+                $stateText = 'Pendiente';
+            } elseif ( $order->status_order == 'send' ){
+                $stateText = 'Enviado';
+            } elseif ( $order->status_order == 'pick_up' ) {
+                $stateText = 'Recogido';
+            }
+
+            $typeText = "";
+            if ( $order->type == 'n' ) {
+                $typeText = 'Orden Normal';
+            } elseif ( $order->type == 'e' ){
+                $typeText = 'Orden Express';
+            }
+
+            foreach ($order->details as $orderPurchaseDetail) {
+                if ($orderPurchaseDetail->material_id == $material_id) {
+                    array_push($orderPurchases, [
+                        "id" => $order->id,
+                        "year" => ($order->date_order == null || $order->date_order == "") ? '' : $order->date_order->year,
+                        "code" => ($order->code == null || $order->code == "") ? '' : $order->code,
+                        "date_order" => ($order->date_order == null || $order->date_order == "") ? '' : $order->date_order->format('d/m/Y'),
+                        "date_arrival" => ($order->date_arrival == null || $order->date_arrival == "") ? '' : $order->date_arrival->format('d/m/Y'),
+                        "observation" => $order->observation,
+                        "supplier" => ($order->supplier_id == "" || $order->supplier_id == null) ? "" : $order->supplier->business_name,
+                        "approved_user" => ($order->approved_by == "" || $order->approved_by == null) ? "" : $order->approved_user->name,
+                        "currency" => ($order->currency_order == null || $order->currency_order == "") ? '' : $order->currency_order,
+                        "state" => $typeText . " | " . $stateText,
+                        "material_code" => $orderPurchaseDetail->material->code,
+                        "material" => $orderPurchaseDetail->material->full_name,
+                        "quantity" => $orderPurchaseDetail->quantity,
+                        "price" => $orderPurchaseDetail->price,
+                        "total" => ($orderPurchaseDetail->total_price == null) ? ($orderPurchaseDetail->quantity * $orderPurchaseDetail->price) : $orderPurchaseDetail->price,
+                    ]);
+                    // Si solo quieres el primer detalle que coincide con el material_id, puedes agregar un break aquí.
+                    break;
+                }
+            }
+
+        }
+
+        /*dump($orderPurchases);
+        dd();*/
+        return (new ReportOrdersByMaterialExcelExport($orderPurchases, $dates))->download('reporteOrdenesCompra.xlsx');
+
+    }
+    
     public function getDataOrderGeneral(Request $request, $pageNumber = 1)
     {
         $perPage = 10;

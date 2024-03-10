@@ -2545,6 +2545,13 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:resumen_quote');
         Route::get('/get/resumen/quote/', 'QuoteController@getResumenQuote');
 
+        // TODO: Rutas de Reporte de Materiales en Ordenes de Compra
+        Route::get('/get/data/order/purchase/by/material/{numberPage}', 'OrderPurchaseController@getReportOrderPurchaseByMaterial');
+        Route::get('/reporte/de/ordenes/compra/por/materiales', 'OrderPurchaseController@reportOrderPurchaseByMaterial')
+            ->name('report.orders.by.materials')
+            ->middleware('permission:report_orderPurchaseExpress');
+        Route::get('/exportar/reporte/ordenes/by/material/v2/', 'OrderPurchaseController@exportReportOrdersByMaterial');
+
     });
 });
 
