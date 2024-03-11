@@ -192,6 +192,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <label for="creator">Creador:</label>
+                            <select id="creator" name="creator" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value="">TODOS</option>
+                                @for ($i=0; $i<count($arrayUsers); $i++)
+                                    <option value="{{ $arrayUsers[$i]['id'] }}">{{ $arrayUsers[$i]['name'] }}</option>
+                                @endfor
+                            </select>
+                        </div>
                     </div>
 
                     <br>
@@ -554,6 +563,10 @@
             });
 
             $('#customer').select2({
+                placeholder: "Selecione",
+                allowClear: true
+            });
+            $('#creator').select2({
                 placeholder: "Selecione",
                 allowClear: true
             });

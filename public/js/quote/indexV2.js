@@ -1064,6 +1064,7 @@ function getDataQuotes($numberPage) {
     var code = $('#code').val();
     var order = $('#order').val();
     var customer = $('#customer').val();
+    var creator = $('#creator').val();
     var stateQuote = $('#stateQuote').val();
     var startDate = $('#start').val();
     var endDate = $('#end').val();
@@ -1074,6 +1075,7 @@ function getDataQuotes($numberPage) {
         code: code,
         order: order,
         customer: customer,
+        creator: creator,
         stateQuote: stateQuote,
         startDate: startDate,
         endDate: endDate,
