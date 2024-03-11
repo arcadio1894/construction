@@ -1580,6 +1580,7 @@ class QuoteController extends Controller
         $code = $request->input('code');
         $order = $request->input('order');
         $customer = $request->input('customer');
+        $creator = $request->input('creator');
         $stateQuote = $request->input('stateQuote');
         $startDate = $request->input('startDate');
         $endDate = $request->input('endDate');
@@ -1625,6 +1626,13 @@ class QuoteController extends Controller
                 $query2->where('customer_id', $customer);
             });
 
+        }
+
+        if ($creator != "")
+        {
+            $query->whereHas('users', function ($query2) use ($creator) {
+                $query2->where('user_id', $creator);
+            });
         }
 
         if ($stateQuote) {
@@ -1819,7 +1827,9 @@ class QuoteController extends Controller
             ["value" => "canceled", "display" => "CANCELADAS"]
         ];
 
-        return view('quote.general_v2', compact( 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStates'));
+        $arrayUsers = User::select('id', 'name')->get()->toArray();
+
+        return view('quote.general_v2', compact( 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStates', 'arrayUsers'));
 
     }
 
