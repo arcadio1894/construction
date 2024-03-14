@@ -3760,7 +3760,15 @@ class OutputController extends Controller
                     $item = Item::find($outputDetail->item_id);
                     $detail = DetailEntry::find($item->detail_entry_id);
                     $entry = Entry::find($detail->entry_id);
-                    array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+                    if ( $entry->currency_invoice == "PEN" )
+                    {
+                        $price = round((float)$outputDetail->price * $entry->currency_venta, 2);
+                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+
+                    } else {
+                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+
+                    }
 
                 }
 
@@ -3770,6 +3778,7 @@ class OutputController extends Controller
             foreach($materials_quantity as $item) {
                 if(isset($new_arr3[$item['material_id']])) {
                     $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                    $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
                     continue;
                 }
 
