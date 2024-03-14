@@ -659,7 +659,7 @@
                 <table class="table">
                     <tr>
                         <th style="width:50%">Total S/IGV: </th>
-                        <td id="subtotal"> USD {{ round(($quote->total_equipments)/1.18, 2) }}</td>
+                        <td id="subtotal"> {{ $quote->currency_invoice }} {{ round(($quote->total_equipments)/1.18, 2) }}</td>
                         <input type="hidden" name="quote_total" id="quote_total" value="{{ $quote->total }}">
                         <input type="hidden" name="quote_subtotal_utility" id="quote_subtotal_utility" value="{{ $quote->subtotal_utility }}">
                         <input type="hidden" name="quote_subtotal_letter" id="quote_subtotal_letter" value="{{ $quote->subtotal_letter }}">
@@ -668,15 +668,15 @@
                     </tr>
                     <tr>
                         <th style="width:50%">Total C/IGV: </th>
-                        <td id="total"> USD {{ round($quote->total_equipments, 2) }}</td>
+                        <td id="total"> {{ $quote->currency_invoice }} {{ round($quote->total_equipments, 2) }}</td>
                     </tr>
                     <tr>
                         <th style="width:50%">Total+Utilidad S/IGV: </th>
-                        <td id="subtotal_utility">USD {{ round(($quote->total_quote)/1.18, 2) }}</td>
+                        <td id="subtotal_utility"> {{ $quote->currency_invoice }} {{ round(($quote->total_quote)/1.18, 2) }}</td>
                     </tr>
                     <tr>
                         <th style="width:50%">Total+Utilidad C/IGV: </th>
-                        <td id="total_utility">USD {{ round($quote->total_quote, 2) }}</td>
+                        <td id="total_utility"> {{ $quote->currency_invoice }} {{ round($quote->total_quote, 2) }}</td>
                     </tr>
 
                 </table>
