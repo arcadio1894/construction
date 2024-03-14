@@ -97,7 +97,11 @@
             <th width="150px" style="word-wrap: break-word">{{ $outputs[$i]['stateText'] }}</th>
             <th width="75px">{{ $outputs[$i]['material_code'] }}</th>
             <th width="200px" style="word-wrap: break-word">{{ $outputs[$i]['material'] }}</th>
+            @if($outputs[$i]['quantity'] == "TOTAL")
+            <th width="90px">{{ $outputs[$i]['quantity'] }}</th>
+            @else
             <th width="90px">{{ round((float)($outputs[$i]['quantity']), 2) }}</th>
+            @endif
             <th width="90px">{{ $outputs[$i]['currency'] }}</th>
             <th width="90px">{{ round((float)($outputs[$i]['price']), 2) }}</th>
         </tr>
