@@ -14,21 +14,24 @@ var $permissions;
 $(document).ready(function () {
     console.log($total);
     $permissions = JSON.parse($('#permissions').val());
+    $materials = JSON.parse($('#materials').val());
     $("#element_loader").LoadingOverlay("show", {
-        background  : "rgba(61, 215, 239, 0.4)"
+        background: "rgba(61, 215, 239, 0.4)"
     });
     $selectContact = $('#contact_id');
     getContacts();
 
-    $.ajax({
+    /*$.ajax({
         url: "/dashboard/get/quote/materials/",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            for (var i=0; i<json.length; i++)
+            /!*for (var i=0; i<json.length; i++)
             {
                 $materials.push(json[i]);
-            }
+            }*!/
+            $materials = json;
+
 
         },
         complete: function (data) {
@@ -36,15 +39,14 @@ $(document).ready(function () {
             fillEquipments();
 
         }
-    });
-
+    });*/
+    fillEquipments();
     $.ajax({
         url: "/dashboard/get/materials/quote",
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
+            for (var i = 0; i < json.length; i++) {
                 $materialsTypeahead.push(json[i].material);
             }
 
@@ -66,8 +68,7 @@ $(document).ready(function () {
         type: 'GET',
         dataType: 'json',
         success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
+            for (var i = 0; i < json.length; i++) {
                 $consumables.push(json[i]);
             }
         }
@@ -77,7 +78,7 @@ $(document).ready(function () {
     $modalChangePercentages = $('#modalChangePercentages');
 
     $(document).on('click', '[data-add]', addMaterial);
-    
+
     $(document).on('click', '[data-confirm]', confirmEquipment);
 
     $(document).on('click', '[data-addMano]', addMano);
@@ -91,18 +92,17 @@ $(document).ready(function () {
     $('#btn-addEquipment').on('click', addEquipment);
 
     $('#btn-addMaterial').on('click', addTableMaterials);
-    
+
     $('#btnCalculate').on('click', calculatePercentage);
 
     $formCreate = $('#formEdit');
     $("#btn-submit").on("click", storeQuote);
     //$formCreate.on('submit', storeQuote);
 
-    $('input[type=radio][name=presentation]').on('change', function() {
+    $('input[type=radio][name=presentation]').on('change', function () {
         switch ($(this).val()) {
             case 'fraction':
-                if($material.typescrap_id === 3)
-                {
+                if ($material.typescrap_id === 3) {
                     $('#width_entered_material').hide();
                     $('#length_entered_material').show();
                     $('#quantity_entered_material').hide();
@@ -190,16 +190,16 @@ $(document).ready(function () {
     $(document).on('click', '[data-acEdit]', changePercentages);
     $('#btn-changePercentage').on('click', savePercentages);
 
-    $(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
+    $(document).on('typeahead:select', '.materialTypeahead', function (ev, suggestion) {
         var select_material = $(this);
         console.log($(this).val());
         // TODO: Tomar el texto no el val()
         var material_search = select_material.val();
 
-        $material = $materials.find( mat=>mat.full_description.trim().toLowerCase() === material_search.trim().toLowerCase() );
+        //$material = $materials.find(mat => mat.full_description.trim().toLowerCase() === material_search.trim().toLowerCase());
+        $material = $materials.find(mat => mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase());
 
-        if( $material === undefined )
-        {
+        if ($material === undefined) {
             toastr.error('Debe seleccionar un material', 'Error',
                 {
                     "closeButton": true,
@@ -248,8 +248,7 @@ $(document).ready(function () {
             }
         }*/
 
-        if ( $material.type_scrap === null )
-        {
+        if ($material.type_scrap === null) {
             $('#presentation').hide();
             $('#length_material').hide();
             $('#width_material').hide();
@@ -263,7 +262,7 @@ $(document).ready(function () {
             $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
             $modalAddMaterial.modal('show');
         } else {
-            switch($material.type_scrap.id) {
+            switch ($material.type_scrap.id) {
                 case 1:
                     $('#presentation').show();
                     $("#fraction").prop("checked", true);
@@ -330,83 +329,83 @@ $(document).ready(function () {
         }
     });
 
-    $(document).on('input', '[data-materialLargo]', function() {
+    $(document).on('input', '[data-materialLargo]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-materialAncho]', function() {
+    $(document).on('input', '[data-materialAncho]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-materialQuantity]', function() {
+    $(document).on('input', '[data-materialQuantity]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
 
-    $(document).on('input', '[data-manoQuantity]', function() {
+    $(document).on('input', '[data-manoQuantity]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-manoPrice]', function() {
+    $(document).on('input', '[data-manoPrice]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-description]', function() {
+    $(document).on('input', '[data-description]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-cantidad]', function() {
+    $(document).on('input', '[data-cantidad]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-horas]', function() {
+    $(document).on('input', '[data-horas]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-precio]', function() {
+    $(document).on('input', '[data-precio]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-consumableQuantity]', function() {
+    $(document).on('input', '[data-consumableQuantity]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-tornoQuantity]', function() {
+    $(document).on('input', '[data-tornoQuantity]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-tornoPrice]', function() {
+    $(document).on('input', '[data-tornoPrice]', function () {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-quantityequipment]', function() {
+    $(document).on('input', '[data-quantityequipment]', function () {
         var card = $(this).parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-descriptionequipment]', function() {
+    $(document).on('input', '[data-descriptionequipment]', function () {
         var card = $(this).parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on('input', '[data-detailequipment]', function() {
+    $(document).on('input', '[data-detailequipment]', function () {
         var card = $(this).parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
-    $(document).on("summernote.change", ".textarea_edit",function (e) {   // callback as jquery custom event
+    $(document).on("summernote.change", ".textarea_edit", function (e) {   // callback as jquery custom event
         var card = $(this).parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
@@ -424,15 +423,14 @@ $(document).ready(function () {
 
     $selectCustomer.change(function () {
         $selectContact.empty();
-        var customer =  $selectCustomer.val();
-        $.get( "/dashboard/get/contact/"+customer, function( data ) {
+        var customer = $selectCustomer.val();
+        $.get("/dashboard/get/contact/" + customer, function (data) {
             $selectContact.append($("<option>", {
                 value: '',
                 text: 'Seleccione contacto'
             }));
             var contact_quote_id = $('#contact_quote_id').val();
-            for ( var i=0; i<data.length; i++ )
-            {
+            for (var i = 0; i < data.length; i++) {
                 if (data[i].id === parseInt(contact_quote_id)) {
                     var newOption = new Option(data[i].contact, data[i].id, false, true);
                     // Append it to the select
@@ -666,7 +664,8 @@ function fillEquipments() {
 
             var materialsArray = [];
             for (let i = 0; i < materialsDescription.length; i++) {
-                var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
                 materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
             }
 
@@ -1148,7 +1147,8 @@ function saveEquipment() {
                         var materialsArray = [];
 
                         for (let i = 0; i < materialsDescription.length; i++) {
-                            var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                            //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                            var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -1446,7 +1446,8 @@ function saveEquipment() {
                         var materialsArray = [];
 
                         for (let i = 0; i < materialsDescription.length; i++) {
-                            var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase());
+                            //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase());
+                            var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase());
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -2468,7 +2469,8 @@ function confirmEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                        //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                        var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
@@ -3188,7 +3190,8 @@ function addTableMaterials() {
 
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
         //console.log($renderMaterial);
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
+        //renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
+        renderTemplateMaterial($material.code, $material.full_name, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');
@@ -3292,7 +3295,8 @@ function addTableMaterials() {
         var witdh2 = $('#material_width_entered').val();
         console.log($renderMaterial);
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity2, 'material_price':0, 'material_length':length2, 'material_width':witdh2});
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
+        //renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
+        renderTemplateMaterial($material.code, $material.full_name, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');

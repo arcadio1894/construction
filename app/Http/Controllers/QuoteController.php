@@ -1027,6 +1027,26 @@ class QuoteController extends Controller
             $images = $imagenes;
         }
 
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+            //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure
+            ]);
+        }
+
         $end = microtime(true) - $begin;
 
         Audit::create([
@@ -1036,7 +1056,7 @@ class QuoteController extends Controller
         ]);
         //dump($consumables);
 
-        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'images'));
+        return view('quote.edit', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'images', 'array'));
 
     }
 
@@ -1491,9 +1511,25 @@ class QuoteController extends Controller
 
     public function getMaterials()
     {
-        $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+        /*$materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
+            ->where('enable_status', 1)->get();*/
+        $materials = Material::with('unitMeasure','typeScrap')
             /*->where('enable_status', 1)*/->get();
-        return $materials;
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_description' => $material->full_description,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'type_scrap' => $material->typeScrap,
+                'unit_measure' => $material->unitMeasure
+            ]);
+        }
+
+        return $array;
     }
 
     public function getMaterialsTypeahead()
