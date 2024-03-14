@@ -4282,10 +4282,13 @@ class QuoteController extends Controller
         {
             foreach ( $resumen->details as $resumenEquipment )
             {
+                $total = ($resumenEquipment->total_materials+$resumenEquipment->total_consumables+$resumenEquipment->total_workforces+$resumenEquipment->total_turnstiles+$resumenEquipment->total_workdays)*$resumenEquipment->quantity;
+                $subtotal_sin_igv = round($total/1.18, 2);
                 array_push($equipmentsOfQuote, [
                     "equipo" => $resumenEquipment->description,
                     "cantidad" => $resumenEquipment->quantity,
-                    "subtotal_sin_igv" => round(($resumenEquipment->total/$resumenEquipment->quantity)/1.18, 2),
+                    //"subtotal_sin_igv" => round(($resumenEquipment->total/$resumenEquipment->quantity)/1.18, 2),
+                    "subtotal_sin_igv" => $subtotal_sin_igv,
                     "utilidad" => $resumenEquipment->utility,
                     "gastos_varios" => $resumenEquipment->rent + $resumenEquipment->letter,
                     "precio_unit_sin_igv" => round(($resumenEquipment->total)/$resumenEquipment->quantity, 2),
