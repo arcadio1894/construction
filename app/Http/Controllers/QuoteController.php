@@ -4282,7 +4282,7 @@ class QuoteController extends Controller
         {
             foreach ( $resumen->details as $resumenEquipment )
             {
-                $total = ($resumenEquipment->total_materials+$resumenEquipment->total_consumables+$resumenEquipment->total_workforces+$resumenEquipment->total_turnstiles+$resumenEquipment->total_workdays)*$resumenEquipment->quantity;
+                $total = $resumenEquipment->total_materials+$resumenEquipment->total_consumables+$resumenEquipment->total_workforces+$resumenEquipment->total_turnstiles+$resumenEquipment->total_workdays;
                 $subtotal_sin_igv = round($total/1.18, 2);
                 array_push($equipmentsOfQuote, [
                     "equipo" => $resumenEquipment->description,
