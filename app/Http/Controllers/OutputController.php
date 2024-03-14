@@ -3974,8 +3974,15 @@ class OutputController extends Controller
                         $item = Item::find($outputDetail->item_id);
                         $detail = DetailEntry::find($item->detail_entry_id);
                         $entry = Entry::find($detail->entry_id);
-                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+                        if ( $entry->currency_invoice == "PEN" )
+                        {
+                            $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
+                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
 
+                        } else {
+                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
+
+                        }
                     }
 
                 }
@@ -3984,6 +3991,7 @@ class OutputController extends Controller
                 foreach($materials_quantity as $item) {
                     if(isset($new_arr3[$item['material_id']])) {
                         $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                        $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
                         continue;
                     }
 
@@ -4050,10 +4058,12 @@ class OutputController extends Controller
                 ]);
             }
 
+            $total = 0;
             for ( $i=0; $i<count($array_outputs); $i++)
             {
                 for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
                 {
+                    $total = $total + $array_outputs[$i]["materials"][$j]["price"];
                     array_push($outputs_array, [
                         "id" => $array_outputs[$i]["id"],
                         "year" => $array_outputs[$i]["year"],
@@ -4078,7 +4088,27 @@ class OutputController extends Controller
                 }
 
             }
-
+            array_push($outputs_array, [
+                "id" => "",
+                "year" => "",
+                "code" => "",
+                "execution_order" => "",
+                "description" => "",
+                "request_date" => "",
+                "requesting_user" => "",
+                "responsible_user" => "",
+                "type" => "",
+                "typeText" => "",
+                "state" => "",
+                "stateText" => "",
+                "custom" => "",
+                "quote" => "",
+                "material_code" => "",
+                "material" => "",
+                "quantity" => "TOTAL",
+                "price" => round($total, 2),
+                "currency" => 'USD',
+            ]);
 
         } else {
             $date_start = Carbon::createFromFormat('d/m/Y', $start);
@@ -4106,8 +4136,15 @@ class OutputController extends Controller
                         $item = Item::find($outputDetail->item_id);
                         $detail = DetailEntry::find($item->detail_entry_id);
                         $entry = Entry::find($detail->entry_id);
-                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
+                        if ( $entry->currency_invoice == "PEN" )
+                        {
+                            $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
+                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
 
+                        } else {
+                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
+
+                        }
                     }
 
                 }
@@ -4116,6 +4153,7 @@ class OutputController extends Controller
                 foreach($materials_quantity as $item) {
                     if(isset($new_arr3[$item['material_id']])) {
                         $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                        $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
                         continue;
                     }
 
@@ -4182,10 +4220,13 @@ class OutputController extends Controller
                 ]);
             }
 
+            $total = 0;
+
             for ( $i=0; $i<count($array_outputs); $i++)
             {
                 for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
                 {
+                    $total = $total + $array_outputs[$i]["materials"][$j]["price"];
                     array_push($outputs_array, [
                         "id" => $array_outputs[$i]["id"],
                         "year" => $array_outputs[$i]["year"],
@@ -4210,6 +4251,28 @@ class OutputController extends Controller
                 }
 
             }
+
+            array_push($outputs_array, [
+                "id" => "",
+                "year" => "",
+                "code" => "",
+                "execution_order" => "",
+                "description" => "",
+                "request_date" => "",
+                "requesting_user" => "",
+                "responsible_user" => "",
+                "type" => "",
+                "typeText" => "",
+                "state" => "",
+                "stateText" => "",
+                "custom" => "",
+                "quote" => "",
+                "material_code" => "",
+                "material" => "",
+                "quantity" => "TOTAL",
+                "price" => round($total, 2),
+                "currency" => 'USD',
+            ]);
 
         }
 
