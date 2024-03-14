@@ -23,6 +23,7 @@ $(document).ready(function () {
 var $permissions;
 
 function exportExcel() {
+    $("#btn-export").attr("disabled", true);
     var start  = $('#start').val();
     var end  = $('#end').val();
     var startDate   = moment(start, "DD/MM/YYYY");
@@ -61,17 +62,19 @@ function exportExcel() {
                             };
 
                             $.alert('Descargando archivo ...');
+                            //$("#btn-export").attr("disabled", false);
 
                             var url = "/dashboard/exportar/reporte/ordenes/by/quote/v2/?" + $.param(query);
 
                             window.location = url;
-
+                            $("#btn-export").attr("disabled", false);
                         },
                     },
                     cancel: {
                         text: 'CANCELAR',
                         action: function (e) {
                             $.alert("Exportación cancelada.");
+                            $("#btn-export").attr("disabled", false);
                         },
                     },
                 },
@@ -109,6 +112,7 @@ function exportExcel() {
             var url = "/dashboard/exportar/reporte/ordenes/by/quote/v2/?" + $.param(query);
 
             window.location = url;
+            $("#btn-export").attr("disabled", false);
 
         }
     } else
@@ -130,6 +134,7 @@ function exportExcel() {
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         });
+        $("#btn-export").attr("disabled", false);
     }
 
 
@@ -147,6 +152,7 @@ function showData() {
 }
 
 function getDataOutputsRequest($numberPage) {
+    $("#btn-search").attr("disabled", true);
     $('[data-toggle="tooltip"]').tooltip('dispose').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
@@ -164,6 +170,7 @@ function getDataOutputsRequest($numberPage) {
             startDate: startDate,
             endDate: endDate,
         }, function(data) {
+            $("#btn-search").attr("disabled", false);
             if ( data.data.length == 0 )
             {
                 renderDataOutputsRequestEmpty(data);
@@ -212,6 +219,7 @@ function getDataOutputsRequest($numberPage) {
                     "hideMethod": "fadeOut"
                 });
             }
+            $("#btn-search").attr("disabled", false);
         }, 'json')
             .done(function() {
                 // Configuración de encabezados
@@ -241,6 +249,7 @@ function getDataOutputsRequest($numberPage) {
             "showMethod": "fadeIn",
             "hideMethod": "fadeOut"
         });
+        $("#btn-search").attr("disabled", false);
     }
 
 }
