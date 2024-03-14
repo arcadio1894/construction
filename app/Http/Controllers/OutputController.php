@@ -3762,7 +3762,7 @@ class OutputController extends Controller
                     $entry = Entry::find($detail->entry_id);
                     if ( $entry->currency_invoice == "PEN" )
                     {
-                        $price = round((float)$outputDetail->price * $entry->currency_venta, 2);
+                        $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
                         array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => ($entry->currency_invoice == null) ? 'USD': $entry->currency_invoice));
 
                     } else {
