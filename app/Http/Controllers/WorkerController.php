@@ -155,6 +155,8 @@ class WorkerController extends Controller
             $haveContract = false;
             $contract = DB::table('contracts')->where('worker_id', $worker->id)->latest('updated_at')->first();
             $haveContract = ($contract != null) ? true:false ;
+            $finish_contract = DB::table('finish_contracts')->where('worker_id', $worker->id)->where('active', 1)->first();
+            $haveFinishContract = ($finish_contract != null) ? true:false ;
             array_push( $arrayWorkers, [
                 'id' => $worker->id,
                 'first_name' => $worker->first_name,
@@ -187,6 +189,7 @@ class WorkerController extends Controller
                 'percentage_pension_system' => ($worker->percentage_pension_system == null || $worker->percentage_pension_system == 0) ? '':$worker->percentage_pension_system,
                 'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
                 'have_contract' => $haveContract,
+                'haveFinishContract' => $haveFinishContract
             ] );
         }
 
