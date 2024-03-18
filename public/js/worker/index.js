@@ -170,6 +170,10 @@ $(document).ready(function () {
                             //text = text + '<button data-renewcontract="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Renovar contrato"><i class="fas fa-sync-alt"></i> </button>  ';
                         }
 
+                        if ( item.haveFinishContract == 1 )
+                        {
+                            text = text + '<button data-termino_contrato="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Terminar contrato"><i class="fas fa-window-close"></i> </button>  ';
+                        }
                     }
 
                     return text ;

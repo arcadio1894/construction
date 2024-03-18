@@ -153,10 +153,28 @@ class WorkerController extends Controller
         foreach ( $workers as $worker )
         {
             $haveContract = false;
+            $haveFinishContract = false;
             $contract = DB::table('contracts')->where('worker_id', $worker->id)->latest('updated_at')->first();
             $haveContract = ($contract != null) ? true:false ;
-            $finish_contract = DB::table('finish_contracts')->where('worker_id', $worker->id)->where('active', 1)->first();
-            $haveFinishContract = ($finish_contract != null) ? true:false ;
+            $last_finish_contract = DB::table('finish_contracts')->where('worker_id', $worker->id)->latest('created_at')->first();
+            if (isset($last_finish_contract))
+            {
+                if ($last_finish_contract->active == 1)
+                {
+                    $haveFinishContract = true;
+                } else {
+                    $haveFinishContract = false;
+                }
+            } else {
+                if ($haveContract)
+                {
+                    $haveFinishContract = true;
+                } else {
+                    $haveFinishContract = false;
+                }
+
+            }
+            //$haveFinishContract = ($finish_contract != null) ? true:false ;
             array_push( $arrayWorkers, [
                 'id' => $worker->id,
                 'first_name' => $worker->first_name,
