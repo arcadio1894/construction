@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contract;
+use App\FinishContract;
 use App\Worker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -211,6 +212,11 @@ class ContractController extends Controller
             $contract->enable = false;
 
             $contract->save();
+
+            // TODO: Verificar si hay algun finishContract
+            $finishContract = FinishContract::where('contract_id', $contract->id)->first();
+            $finishContract->active = false;
+            $finishContract->save();
 
             DB::commit();
 

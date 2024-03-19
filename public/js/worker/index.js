@@ -170,9 +170,14 @@ $(document).ready(function () {
                             //text = text + '<button data-renewcontract="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-success btn-sm" data-toggle="tooltip" data-placement="top" title="Renovar contrato"><i class="fas fa-sync-alt"></i> </button>  ';
                         }
 
-                        if ( item.haveFinishContract == 1 )
+                        if ( item.canFinishContract == 1 && item.canFinishContractEdit == 0 )
                         {
-                            text = text + '<button data-termino_contrato="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Terminar contrato"><i class="fas fa-window-close"></i> </button>  ';
+                            text = text + '<button data-termino_contrato="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Terminar contrato"><i class="fas fa-user-slash"></i> </button>  ';
+                        }
+
+                        if ( item.canFinishContract == 0 && item.canFinishContractEdit == 1 )
+                        {
+                            text = text + '<button data-termino_contrato_edit="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Terminar contrato"><i class="fas fa-user-slash"></i> </button>  ';
                         }
                     }
 
@@ -341,13 +346,160 @@ $(document).ready(function () {
     });
 
     $(document).on('click', '[data-delete]', destroyWorker);
+    $(document).on('click', '[data-termino_contrato]', finishContractWorker);
+
+    $(document).on('click', '[data-termino_contrato_edit]', finishContractWorkerEdit);
+
+    $modalFinishContract = $("#modalFinishContract");
+    $formFinishContract = $('#formFinishContract');
 
     $("#btn-exportExcel").on('click', exportExcel);
+
+    $("#btn-finish_contract").on('click', finishContract);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+var $formFinishContract;
+
+var $modalFinishContract;
+
+function finishContract() {
+    event.preventDefault();
+    // Obtener la URL
+    $("#btn-finish_contract").attr("disabled", true);
+    var formulario = $('#formFinishContract')[0];
+    var form = new FormData(formulario);
+    var createUrl = $formFinishContract.data('url');
+    $.ajax({
+        url: createUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            $modalFinishContract.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-finish_contract").attr("disabled", false);
+                location.reload();
+            }, 1500 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+            $("#btn-finish_contract").attr("disabled", false);
+        },
+    });
+}
+
+function finishContractWorkerEdit() {
+    var worker_id = $(this).data("worker_id");
+    var worker_nombre = $(this).data("nombre");
+
+    $.get('/dashboard/get/data/finish/contract/worker/edit/'+worker_id, function(data) {
+        // Esta función se ejecutará cuando la petición sea exitosa
+        //console.log('Datos recibidos:', data);
+        var contract_id = data.contract_id;
+        var contract_name = data.contract_name;
+        var finishContract_date = data.date_finish;
+        var finishContract_reason = data.reason;
+        var finish_contract_id = data.finish_contract_id;
+
+        $modalFinishContract.find('[id=type]').val("e");
+        $modalFinishContract.find('[id=worker_id]').val(worker_id);
+        $modalFinishContract.find('[id=contract_id]').val(contract_id);
+        $modalFinishContract.find('[id=name]').html(worker_nombre);
+        $modalFinishContract.find('[id=contrato]').html(contract_name);
+        $modalFinishContract.find('[id=date_finish]').val(finishContract_date);
+        $modalFinishContract.find('[id=reason]').val(finishContract_reason);
+        $modalFinishContract.find('[id=finish_contract_id]').val(finish_contract_id);
+        /*var fechaActual = moment().format('DD/MM/YYYY');
+        $('#date_finish').val(fechaActual);*/
+    }, 'json');
+
+    $modalFinishContract.modal("show");
+}
+
+function finishContractWorker() {
+    var worker_id = $(this).data("worker_id");
+    var worker_nombre = $(this).data("nombre");
+
+    $.get('/dashboard/get/data/finish/contract/worker/'+worker_id, function(data) {
+        // Esta función se ejecutará cuando la petición sea exitosa
+        //console.log('Datos recibidos:', data);
+        var contract_id = data.contract_id;
+        var contract_name = data.contract_name;
+        $modalFinishContract.find('[id=worker_id]').val(worker_id);
+        $modalFinishContract.find('[id=contract_id]').val(contract_id);
+        $modalFinishContract.find('[id=name]').html(worker_nombre);
+        $modalFinishContract.find('[id=contrato]').html(contract_name);
+        $modalFinishContract.find('[id=type]').val("s");
+        var fechaActual = moment().format('DD/MM/YYYY');
+        $('#date_finish').val(fechaActual);
+    }, 'json');
+
+    $modalFinishContract.modal("show");
+}
 
 function exportExcel() {
     event.preventDefault();

@@ -7,6 +7,8 @@ use App\CivilStatus;
 use App\Contract;
 use App\EmergencyContact;
 use App\Exports\WorkersInfoExport;
+use App\FinishContract;
+use App\Http\Requests\FinishContractStoreRequest;
 use App\PensionSystem;
 use App\PercentageWorker;
 use App\Relationship;
@@ -153,27 +155,57 @@ class WorkerController extends Controller
         foreach ( $workers as $worker )
         {
             $haveContract = false;
-            $haveFinishContract = false;
+            $canFinishContract = false;
+            $canFinishContractEdit = false;
+
             $contract = DB::table('contracts')->where('worker_id', $worker->id)->latest('updated_at')->first();
             $haveContract = ($contract != null) ? true:false ;
-            $last_finish_contract = DB::table('finish_contracts')->where('worker_id', $worker->id)->latest('created_at')->first();
-            if (isset($last_finish_contract))
+
+            if ( $haveContract )
+            {
+                $last_finish_contract = DB::table('finish_contracts')->where('worker_id', $worker->id)->where('contract_id', $contract->id)->latest('updated_at')->first();
+                if ( !isset($last_finish_contract) )
+                {
+                    // TODO: No existe un termino de contrato
+                    $canFinishContract = true;
+                    $canFinishContractEdit = false;
+                } else {
+                    // TODO: Existe un termino de contrato
+                    if ( $last_finish_contract->active == 1 )
+                    {
+                        // TODO: Existe un termino de contrato activo
+                        $canFinishContract = false;
+                        $canFinishContractEdit = true;
+                    } elseif ( $last_finish_contract->active == 0 ) {
+                        // TODO: Existe un termino de contrato inactivo
+                        $canFinishContract = false;
+                        $canFinishContractEdit = false;
+                    }
+                }
+            } else {
+                // TODO: Si no hay contratos
+                $canFinishContract = false;
+                $canFinishContractEdit = false;
+            }
+
+            /*if (isset($last_finish_contract))
             {
                 if ($last_finish_contract->active == 1)
                 {
                     $haveFinishContract = true;
+                    $haveFinishContractEdit = true;
                 } else {
                     $haveFinishContract = false;
                 }
             } else {
                 if ($haveContract)
                 {
-                    $haveFinishContract = true;
+                    $haveFinishContract = false;
                 } else {
                     $haveFinishContract = false;
                 }
 
-            }
+            }*/
             //$haveFinishContract = ($finish_contract != null) ? true:false ;
             array_push( $arrayWorkers, [
                 'id' => $worker->id,
@@ -207,7 +239,8 @@ class WorkerController extends Controller
                 'percentage_pension_system' => ($worker->percentage_pension_system == null || $worker->percentage_pension_system == 0) ? '':$worker->percentage_pension_system,
                 'area_worker' => ($worker->area_worker_id == null) ? '': $worker->area_worker->name,
                 'have_contract' => $haveContract,
-                'haveFinishContract' => $haveFinishContract
+                'canFinishContract' => $canFinishContract,
+                'canFinishContractEdit' => $canFinishContractEdit
             ] );
         }
 
@@ -519,6 +552,20 @@ class WorkerController extends Controller
 
             $worker->enable = false;
             $worker->save();
+
+            // TODO: Verificar si hay algun finishContract
+            $finishContracts = FinishContract::where('worker_id', $worker->id)
+                ->where('active', 1)
+                ->get();
+            if ( !is_null($finishContracts) )
+            {
+                foreach ( $finishContracts as $contract )
+                {
+                    $contract->active = false;
+                    $contract->save();
+                }
+
+            }
             DB::commit();
 
         } catch ( \Throwable $e ) {
@@ -637,5 +684,73 @@ class WorkerController extends Controller
         $email = '@sermeind.com.pe';
 
         dump($email);
+    }
+
+    public function getDataFinishContractWorker($worker_id)
+    {
+        $contract = DB::table('contracts')->where('worker_id', $worker_id)->latest('updated_at')->first();
+
+        return response()->json([
+            'contract_id' => $contract->id,
+            'contract_name' => $contract->code
+        ], 200);
+    }
+
+    public function getDataFinishContractWorkerEdit($worker_id)
+    {
+        $contract = DB::table('contracts')->where('worker_id', $worker_id)->latest('updated_at')->first();
+        $last_finish_contract = DB::table('finish_contracts')->where('worker_id', $worker_id)->latest('created_at')->first();
+        // Convierte la cadena a un objeto Carbon
+        $date_finish = Carbon::createFromFormat('Y-m-d', $last_finish_contract->date_finish);
+        // Formatea la fecha
+        $formatted_date = $date_finish->format('d/m/Y');
+
+        return response()->json([
+            'contract_id' => $contract->id,
+            'contract_name' => $contract->code,
+            'date_finish' => $formatted_date,
+            'reason' => $last_finish_contract->reason,
+            'finish_contract_id' => $last_finish_contract->id
+        ], 200);
+    }
+
+    public function finishContract( FinishContractStoreRequest $request )
+    {
+        DB::beginTransaction();
+        try {
+            // Creamos el email con el formato mapellido@sermeind.com
+            $worker_id = $request->get('worker_id');
+            $contract_id = $request->get('contract_id');
+            $date_finish = ($request->get('date_finish') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_finish')) : null;
+            $reason = $request->get('reason');
+            $type = $request->get('type');
+            $finish_contract_id = $request->get('finish_contract_id');
+
+            if ( $type == "s" )
+            {
+                // Creamos al usuario
+                $finish_contract = FinishContract::create([
+                    'worker_id' => $worker_id,
+                    'contract_id' => $contract_id,
+                    'date_finish' => $date_finish,
+                    'reason' => $reason,
+                    'active' => 1
+                ]);
+            } elseif ( $type == "e" ) {
+                $finish_contract = FinishContract::find($finish_contract_id);
+                $finish_contract->date_finish = $date_finish;
+                $finish_contract->reason = $reason;
+                $finish_contract->save();
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            //dump($e);
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Contrato finalizado editado con éxito.'], 200);
     }
 }

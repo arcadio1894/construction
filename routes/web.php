@@ -1531,6 +1531,13 @@ Route::middleware('auth')->group(function (){
         Route::post('contract/restore', 'ContractController@restore')
             ->name('contract.restore')
             ->middleware('permission:contract_worker');
+        Route::get('get/data/finish/contract/worker/{worker_id}', 'WorkerController@getDataFinishContractWorker')
+            ->middleware('permission:contract_worker');
+        Route::get('get/data/finish/contract/worker/edit/{worker_id}', 'WorkerController@getDataFinishContractWorkerEdit')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/finish', 'WorkerController@finishContract')
+            ->name('contract.finish')
+            ->middleware('permission:contract_worker');
 
         // CRUD Estado Civil
         Route::get('/all/civilStatuses', 'CivilStatusController@getAllCivilStatus')

@@ -224,7 +224,53 @@
         </table>
     </div>
 
+    <div id="modalFinishContract" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Finalizar contracto</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formFinishContract" data-url="{{ route('contract.finish') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="type" name="type">
+                        <input type="hidden" id="worker_id" name="worker_id">
+                        <input type="hidden" id="contract_id" name="contract_id">
+                        <input type="hidden" id="finish_contract_id" name="finish_contract_id">
+                        <strong>¿Desea terminar el contrato actual activo?</strong> <br>
+                        <strong>Colaborador: </strong>
+                        <p id="name"></p>
+                        <strong>Contrato Actual: </strong>
+                        <p id="contrato"></p>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="date_finish">Fecha Finalización<span class="text-danger">*</span></label>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" id="date_finish" name="date_finish" class="form-control" data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="reason">Motivo </label>
 
+                                <textarea name="reason" id="reason" class="form-control"></textarea>
+
+                            </div>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-finish_contract" class="btn btn-danger">Finalizar Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -237,9 +283,18 @@
     <script src="{{ asset('admin/plugins/select2/js/select2.full.min.js') }}"></script>
     <!-- Vdialog -->
     <script src="{{ asset('admin/plugins/vdialog/js/lib/vdialog.js') }}"></script>
+    <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
+    <script src="{{ asset('admin/plugins/inputmask/min/jquery.inputmask.bundle.min.js') }}"></script>
 
 @endsection
 
 @section('scripts')
+    <script>
+        $(function () {
+            //$('#datemask').inputmask()
+            $('#date_finish').inputmask('dd/mm/yyyy', { 'placeholder': 'dd/mm/yyyy' });
+
+        })
+    </script>
     <script src="{{ asset('js/worker/index.js') }}"></script>
 @endsection

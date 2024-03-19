@@ -180,6 +180,16 @@
                 <!-- /.info-box-content -->
             </div>
         </div>
+        <div class="col-md-3">
+            <div class="info-box">
+                <span class="info-box-icon elevation-1" style="background-color: #ff851b">TC</span>
+
+                <div class="info-box-content">
+                    <span class="info-box-number">TERMINO CONTRATO</span>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+        </div>
     </div>
 
     <div class="row">
@@ -272,11 +282,10 @@
                                 <option value="T" {{ ($arrayAssistances[$i]['status'] == 'T') ? 'selected':'' }}>T</option>
                                 <option value="H" {{ ($arrayAssistances[$i]['status'] == 'H') ? 'selected':'' }}>H</option>
                                 <option value="L" {{ ($arrayAssistances[$i]['status'] == 'L') ? 'selected':'' }}>L</option>
-<<<<<<< HEAD
                                 <option value="U" {{ ($arrayAssistances[$i]['status'] == 'U') ? 'selected':'' }}>U</option>
-=======
                                 <option value="PH" {{ ($arrayAssistances[$i]['status'] == 'PH') ? 'selected':'' }}>PH</option>
->>>>>>> 7c0484d1a8bc8f19f7fb6d8934ed8ee79d0ed9a2
+                                <option value="TC" {{ ($arrayAssistances[$i]['status'] == 'TC') ? 'selected':'' }}>TC</option>
+
                             </select>
                         </div>
                         <div class="col-md-1">
