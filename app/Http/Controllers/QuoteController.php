@@ -219,15 +219,18 @@ class QuoteController extends Controller
                 if ($quote->state === 'confirmed' && $quote->raise_status === 1){
                     if ( $quote->vb_finances == 1 && $quote->vb_operations == null )
                     {
-                        $state = 'VB_finance';
+                        $state = 'raise';
+                        $stateText = '<span class="badge bg-success">Elevada</span>';
+                        /*$state = 'VB_finance';
                         $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                    */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
@@ -484,12 +487,12 @@ class QuoteController extends Controller
                         $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
                     */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
@@ -1810,14 +1813,15 @@ class QuoteController extends Controller
                         $state = 'raise';
                         $stateText = '<span class="badge bg-success">Elevada</span>';
                         /*$state = 'VB_finance';
-                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';*/
+                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                    */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
