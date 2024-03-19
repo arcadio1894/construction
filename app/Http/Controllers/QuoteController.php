@@ -219,15 +219,18 @@ class QuoteController extends Controller
                 if ($quote->state === 'confirmed' && $quote->raise_status === 1){
                     if ( $quote->vb_finances == 1 && $quote->vb_operations == null )
                     {
-                        $state = 'VB_finance';
+                        $state = 'raise';
+                        $stateText = '<span class="badge bg-success">Elevada</span>';
+                        /*$state = 'VB_finance';
                         $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                    */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
@@ -484,12 +487,12 @@ class QuoteController extends Controller
                         $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
                     */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
@@ -605,6 +608,26 @@ class QuoteController extends Controller
         $rent = PorcentageQuote::where('name', 'rent')->first();
         $letter = PorcentageQuote::where('name', 'letter')->first();
 
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+        //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure
+            ]);
+        }
+
         $end = microtime(true) - $begin;
 
         Audit::create([
@@ -612,7 +635,7 @@ class QuoteController extends Controller
             'action' => 'Crear cotizacion VISTA',
             'time' => $end
         ]);
-        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter'));
+        return view('quote.create', compact('customers', 'unitMeasures', 'consumables', 'workforces', 'codeQuote', 'permissions', 'paymentDeadlines', 'utility', 'rent', 'letter', 'array'));
     }
 
     public function store(StoreQuoteRequest $request)
@@ -1790,14 +1813,15 @@ class QuoteController extends Controller
                         $state = 'raise';
                         $stateText = '<span class="badge bg-success">Elevada</span>';
                         /*$state = 'VB_finance';
-                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';*/
+                        $stateText = '<span class="badge bg-gradient-navy text-white">V.B. Finanzas <br>'. $quote->date_vb_finances->format("d/m/Y") .' </span>';
+                    */
                     } else {
-                        if ( $quote->vb_finances == 1 && $quote->vb_operations == 1 )
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
                         {
                             $state = 'VB_operation';
                             $stateText = '<span class="badge bg-gradient-orange text-white">V.B. Operaciones <br> '.$quote->date_vb_operations->format("d/m/Y").'</span>';
                         } else {
-                            if ( $quote->vb_finances == null && $quote->vb_operations == null )
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
                             {
                                 $state = 'raise';
                                 $stateText = '<span class="badge bg-success">Elevada</span>';
@@ -3802,8 +3826,27 @@ class QuoteController extends Controller
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+        //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure
+            ]);
+        }
         //dump($quote);
-        return view('quote.editList', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines', 'permissions', 'utility', 'rent', 'letter'));
+        return view('quote.editList', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines', 'permissions', 'utility', 'rent', 'letter', 'array'));
 
     }
 

@@ -60,6 +60,7 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <input type="hidden" id="materials" value="{{ json_encode($array) }}">
 
     <form id="formEdit" class="form-horizontal" data-url="{{ route('quote.update.list') }}" enctype="multipart/form-data">
         @csrf
