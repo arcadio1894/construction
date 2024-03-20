@@ -271,6 +271,36 @@
             </div>
         </div>
     </div>
+    <div id="modalFinishContractDelete" class="modal fade" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Finalizar contracto</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+                <form id="formFinishContractDelete" data-url="{{ route('contract.finish.delete') }}">
+                    @csrf
+                    <div class="modal-body">
+                        <input type="hidden" id="type" name="type">
+                        <input type="hidden" id="worker_id" name="worker_id">
+                        <input type="hidden" id="contract_id" name="contract_id">
+                        <input type="hidden" id="finish_contract_id" name="finish_contract_id">
+                        <strong>¿Desea eliminar el término de contrato actual activo?</strong> <br>
+                        <strong>Colaborador: </strong>
+                        <p id="name"></p>
+                        <strong>Contrato Actual: </strong>
+                        <p id="contrato"></p>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        <button type="button" id="btn-finish_contract_delete" class="btn btn-danger">Eliminar Finalización de Contrato</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')

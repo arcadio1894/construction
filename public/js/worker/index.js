@@ -178,6 +178,7 @@ $(document).ready(function () {
                         if ( item.canFinishContract == 0 && item.canFinishContractEdit == 1 )
                         {
                             text = text + '<button data-termino_contrato_edit="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Editar Terminar contrato"><i class="fas fa-user-slash"></i> </button>  ';
+                            text = text + '<button data-termino_contrato_delete="'+item.id+'" data-nombre="'+item.first_name+' '+item.last_name+'" data-worker_id="'+item.id+'" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top" title="Eliminar Terminar contrato"><i class="fas fa-user-slash"></i> </button>  ';
                         }
                     }
 
@@ -349,21 +350,138 @@ $(document).ready(function () {
     $(document).on('click', '[data-termino_contrato]', finishContractWorker);
 
     $(document).on('click', '[data-termino_contrato_edit]', finishContractWorkerEdit);
+    $(document).on('click', '[data-termino_contrato_delete]', finishContractWorkerDelete);
 
     $modalFinishContract = $("#modalFinishContract");
     $formFinishContract = $('#formFinishContract');
 
+    $modalFinishContractDelete = $("#modalFinishContractDelete");
+    $formFinishContractDelete = $('#formFinishContractDelete');
+
     $("#btn-exportExcel").on('click', exportExcel);
 
     $("#btn-finish_contract").on('click', finishContract);
+    $("#btn-finish_contract_delete").on('click', finishContractDelete);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
 var $formFinishContract;
+var $formFinishContractDelete;
 
 var $modalFinishContract;
+var $modalFinishContractDelete;
+
+function finishContractDelete() {
+    event.preventDefault();
+    // Obtener la URL
+    $("#btn-finish_contract_delete").attr("disabled", true);
+    var formulario = $('#formFinishContractDelete')[0];
+    var form = new FormData(formulario);
+    var createUrl = $formFinishContractDelete.data('url');
+    $.ajax({
+        url: createUrl,
+        method: 'POST',
+        data: form,
+        processData:false,
+        contentType:false,
+        success: function (data) {
+            console.log(data);
+            $modalFinishContractDelete.modal('hide');
+            toastr.success(data.message, 'Éxito',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            setTimeout( function () {
+                $("#btn-finish_contract_delete").attr("disabled", false);
+                location.reload();
+            }, 1500 )
+        },
+        error: function (data) {
+            if( data.responseJSON.message && !data.responseJSON.errors )
+            {
+                toastr.error(data.responseJSON.message, 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+            for ( var property in data.responseJSON.errors ) {
+                toastr.error(data.responseJSON.errors[property], 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+            }
+
+            $("#btn-finish_contract_delete").attr("disabled", false);
+        },
+    });
+}
+
+function finishContractWorkerDelete() {
+    var worker_id = $(this).data("worker_id");
+    var worker_nombre = $(this).data("nombre");
+
+    $.get('/dashboard/get/data/finish/contract/worker/delete/'+worker_id, function(data) {
+        // Esta función se ejecutará cuando la petición sea exitosa
+        //console.log('Datos recibidos:', data);
+        var contract_id = data.contract_id;
+        var contract_name = data.contract_name;
+        var finish_contract_id = data.finish_contract_id;
+
+        $modalFinishContractDelete.find('[id=type]').val("e");
+        $modalFinishContractDelete.find('[id=worker_id]').val(worker_id);
+        $modalFinishContractDelete.find('[id=contract_id]').val(contract_id);
+        $modalFinishContractDelete.find('[id=name]').html(worker_nombre);
+        $modalFinishContractDelete.find('[id=contrato]').html(contract_name);
+        $modalFinishContractDelete.find('[id=finish_contract_id]').val(finish_contract_id);
+
+    }, 'json');
+
+    $modalFinishContractDelete.modal("show");
+}
 
 function finishContract() {
     event.preventDefault();

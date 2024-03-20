@@ -8,6 +8,7 @@ use App\Contract;
 use App\EmergencyContact;
 use App\Exports\WorkersInfoExport;
 use App\FinishContract;
+use App\Http\Requests\FinishContractDeleteRequest;
 use App\Http\Requests\FinishContractStoreRequest;
 use App\PensionSystem;
 use App\PercentageWorker;
@@ -752,5 +753,49 @@ class WorkerController extends Controller
         }
 
         return response()->json(['message' => 'Contrato finalizado editado con éxito.'], 200);
+    }
+
+    public function getDataFinishContractWorkerDelete($worker_id)
+    {
+        $contract = DB::table('contracts')->where('worker_id', $worker_id)->latest('updated_at')->first();
+        $last_finish_contract = DB::table('finish_contracts')->where('worker_id', $worker_id)->latest('created_at')->first();
+        // Convierte la cadena a un objeto Carbon
+        $date_finish = Carbon::createFromFormat('Y-m-d', $last_finish_contract->date_finish);
+        // Formatea la fecha
+        $formatted_date = $date_finish->format('d/m/Y');
+
+        return response()->json([
+            'contract_id' => $contract->id,
+            'contract_name' => $contract->code,
+            'date_finish' => $formatted_date,
+            'reason' => $last_finish_contract->reason,
+            'finish_contract_id' => $last_finish_contract->id
+        ], 200);
+    }
+
+    public function finishContractDelete( FinishContractDeleteRequest $request )
+    {
+        DB::beginTransaction();
+        try {
+            // Creamos el email con el formato mapellido@sermeind.com
+            $worker_id = $request->get('worker_id');
+            $contract_id = $request->get('contract_id');
+            $finish_contract_id = $request->get('finish_contract_id');
+
+            $finish_contract = FinishContract::find($finish_contract_id);
+            if ( isset($finish_contract) )
+            {
+                $finish_contract->delete();
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            //dump($e);
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Finalización de contrato eliminado con éxito.'], 200);
     }
 }

@@ -1539,6 +1539,12 @@ Route::middleware('auth')->group(function (){
             ->name('contract.finish')
             ->middleware('permission:contract_worker');
 
+        Route::get('get/data/finish/contract/worker/delete/{worker_id}', 'WorkerController@getDataFinishContractWorkerDelete')
+            ->middleware('permission:contract_worker');
+        Route::post('contract/finish/delete', 'WorkerController@finishContractDelete')
+            ->name('contract.finish.delete')
+            ->middleware('permission:contract_worker');
+
         // CRUD Estado Civil
         Route::get('/all/civilStatuses', 'CivilStatusController@getAllCivilStatus')
             ->middleware('permission:statusCivil_worker');
