@@ -13,8 +13,9 @@ var $permissions;
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
+    $materials = JSON.parse($('#materials').val());
 
-    $.ajax({
+    /*$.ajax({
         url: "/dashboard/get/quote/materials/",
         type: 'GET',
         dataType: 'json',
@@ -24,7 +25,7 @@ $(document).ready(function () {
                 $materials.push(json[i]);
             }
         }
-    });
+    });*/
 
     $.ajax({
         url: "/dashboard/get/quote/consumables/",
@@ -207,7 +208,7 @@ $(document).ready(function () {
         // TODO: Tomar el texto no el val()
         var material_search = select_material.val();
 
-        $material = $materials.find( mat=>mat.full_description === material_search );
+        $material = $materials.find( mat=>mat.full_name === material_search );
 
         if( $material === undefined )
         {
@@ -718,7 +719,7 @@ function saveEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                        var materialSelected = $materials.find( mat=>mat.full_name === materialsDescription[i] );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
@@ -1669,7 +1670,7 @@ function confirmEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>mat.full_description === materialsDescription[i] );
+                        var materialSelected = $materials.find( mat=>mat.full_name === materialsDescription[i] );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
@@ -2413,7 +2414,7 @@ function addTableMaterials() {
 
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
         //console.log($renderMaterial);
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
+        renderTemplateMaterial($material.code, $material.full_name, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');
@@ -2517,7 +2518,7 @@ function addTableMaterials() {
         var witdh2 = $('#material_width_entered').val();
         console.log($renderMaterial);
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity2, 'material_price':0, 'material_length':length2, 'material_width':witdh2});
-        renderTemplateMaterial($material.code, $material.full_description, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
+        renderTemplateMaterial($material.code, $material.full_name, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
 
         $('#material_length_entered').val('');
         $('#material_width_entered').val('');
