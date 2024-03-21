@@ -600,6 +600,10 @@ function renderDataTable(data, activeColumns) {
     clone.querySelector("[data-modelo]").innerHTML = data.modelo;
     clone.querySelector("[data-retaceria]").innerHTML = data.retaceria;
 
+    let url_image = document.location.origin + '/images/material/' + data.image;
+    clone.querySelector("[data-ver_imagen]").setAttribute("data-src", url_image);
+    clone.querySelector("[data-ver_imagen]").setAttribute("data-image", data.id);
+
     // Configurar enlaces y botones según los permisos y datos
     if ($.inArray('update_material', $permissions) !== -1) {
         let url = document.location.origin + '/dashboard/editar/material/' + data.id;

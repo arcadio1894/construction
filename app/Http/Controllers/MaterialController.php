@@ -380,6 +380,7 @@ class MaterialController extends Controller
                 "marca" => ($material->brand == null) ? '': $material->brand->name,
                 "modelo" => ($material->exampler == null) ? '': $material->exampler->name,
                 "retaceria" => ($material->typeScrap == null) ? '':$material->typeScrap->name,
+                "image" => ($material->image == null || $material->image == "" ) ? 'no_image.png':$material->image,
             ]);
         }
 
