@@ -310,6 +310,10 @@
             <input type="checkbox" data-column="retaceria" class="custom-control-input" id="customSwitch19">
             <label class="custom-control-label" for="customSwitch19">Retacería</label>
         </div>
+        <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+            <input type="checkbox" checked data-column="imagen" class="custom-control-input" id="customSwitch20">
+            <label class="custom-control-label" for="customSwitch20">Imagen</label>
+        </div>
     </div>
 
     <!--begin::Toolbar-->
@@ -392,6 +396,7 @@
             <th data-column="marca" data-marca>Marca</th>
             <th data-column="modelo" data-modelo>Modelo</th>
             <th data-column="retaceria" data-retaceria>Retacería</th>
+            <th data-column="imagen" data-retaceria>Imagen</th>
             <th></th>
         </tr>
     </template>
@@ -446,6 +451,9 @@
             <td data-column="marca" data-marca></td>
             <td data-column="modelo" data-modelo></td>
             <td data-column="retaceria" data-retaceria></td>
+            <td data-column="imagen" data-imagen>
+                <button data-ver_imagen data-src="{{--'+document.location.origin+ '/images/material/'+item.image+'--}}" data-image="{{--'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>
+            </td>
             <td>
                 <a data-editar_material href="{{--'+document.location.origin+ '/dashboard/editar/material/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>
                 <button data-deshabilitar data-delete="{{--'+item.id+'--}}" data-description="{{--'+item.full_description+'--}}" data-measure="{{--'+item.measure+'--}}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-bell-slash"></i> </button>
@@ -457,7 +465,7 @@
 
     <template id="item-table-empty">
         <tr>
-            <td colspan="19" align="center">No se ha encontrado ningún dato</td>
+            <td colspan="20" align="center">No se ha encontrado ningún dato</td>
         </tr>
     </template>
 
@@ -494,7 +502,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 </div>
                 <div class="modal-body">
-                    <img id="image-document" src="" alt="" width="100%">
+                    <img id="image-document" src="" alt="" width="80%">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
