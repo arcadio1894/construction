@@ -135,7 +135,7 @@ class AssistanceController extends Controller
                         ->where('worker_id', $worker->id)
                         ->get();
 
-                    $finish_contract = FinishContract::whereDate('date_finish', '>=',$assistance2->date_assistance)
+                    $finish_contract = FinishContract::whereDate('date_finish', '<=',$assistance2->date_assistance)
                         ->where('worker_id', $worker->id)
                         ->where('active', 1)
                         ->get();
