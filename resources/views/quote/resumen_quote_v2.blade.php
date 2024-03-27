@@ -121,7 +121,7 @@
         <!--begin::Input group-->
         <div class="row">
 
-            <div class="col-md-10">
+            <div class="col-md-8">
                 <label for="quote">Cotizaciones:</label>
                 <select id="quote" name="quote" class="form-control form-control-sm select2" style="width: 100%;">
                     <option value="">TODOS</option>
@@ -135,6 +135,10 @@
                 <label for="quote">&nbsp;</label><br>
                 <button class="btn btn-primary btn-sm btn-block" type="button" id="btn-search">Buscar</button>
             </div>
+            {{--<div class="col-md-2">
+                <label for="btn-download">&nbsp;</label><br>
+                <button class="btn btn-success btn-sm btn-block" type="button" id="btn-download">Descargar PDF</button>
+            </div>--}}
 
         </div>
 

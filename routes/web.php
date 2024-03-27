@@ -2557,6 +2557,9 @@ Route::middleware('auth')->group(function (){
             ->name('resumen.quote')
             ->middleware('permission:resumen_quote');
         Route::get('/get/resumen/quote/', 'QuoteController@getResumenQuote');
+        Route::get('/get/info/resumen/quote/{quote_id}', 'QuoteController@getInfoResumenQuote');
+        Route::get('/exportar/pdf/materiales/cotizaciones/v2/', 'QuoteController@exportPDFMaterialesCotizaciones');
+
 
         // TODO: Rutas de Reporte de Materiales en Ordenes de Compra
         Route::get('/get/data/order/purchase/by/material/{numberPage}', 'OrderPurchaseController@getReportOrderPurchaseByMaterial');

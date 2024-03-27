@@ -3,6 +3,7 @@ $(document).ready(function () {
     //console.log($permissions);
 
     $('#btn-search').on('click', showDataSearch);
+    $('#btn-download').on('click', downloadPDF);
 
 });
 
@@ -13,6 +14,146 @@ var $formDecimals;
 
 var $permissions;
 var $modalDetraction;
+
+function downloadPDF() {
+    var quote_id  = $('#quote').val();
+
+    if ( quote_id == "" )
+    {
+        toastr.error('Seleccione una cotización.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    $.get('/dashboard/get/info/resumen/quote/'+quote_id, function(data) {
+        console.log(data);
+
+        if ( data.havePDF == 1 )
+        {
+            $.confirm({
+                icon: 'fas fa-file-excel',
+                theme: 'modern',
+                closeIcon: true,
+                animation: 'zoom',
+                type: 'green',
+                title: '¿Desea descargar el PDF de materiales adjunto?',
+                content: 'PDF encontrado',
+                buttons: {
+                    confirm: {
+                        text: 'DESCARGAR',
+                        action: function (e) {
+                            var query = {
+                                quote_id: quote_id
+                            };
+
+                            $.alert('Descargando archivo ...');
+
+                            var url = "/dashboard/exportar/pdf/materiales/cotizaciones/v2/?" + $.param(query);
+
+                            window.location = url;
+
+                        },
+                    },
+                    cancel: {
+                        text: 'CANCELAR',
+                        action: function (e) {
+                            $.alert("Exportación cancelada.");
+                        },
+                    },
+                },
+            });
+        } else {
+            toastr.error("Lo sentimos la cotización no cuenta con un PDF", 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        // Función de error, se ejecuta cuando la solicitud GET falla
+        console.error(textStatus, errorThrown);
+        if (jqXHR.responseJSON.message && !jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.message, 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+        for (var property in jqXHR.responseJSON.errors) {
+            toastr.error(jqXHR.responseJSON.errors[property], 'Error', {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        }
+    }, 'json')
+        .done(function() {
+            // Configuración de encabezados
+            var headers = {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            };
+
+            $.ajaxSetup({
+                headers: headers
+            });
+        });
+
+
+
+}
 
 function showDataSearch() {
     getDataQuote()

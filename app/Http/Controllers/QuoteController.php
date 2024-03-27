@@ -2793,6 +2793,54 @@ class QuoteController extends Controller
             /*$quote->vb_finances = 1;
             $quote->date_vb_finances = Carbon::now('America/Lima');
             $quote->save();*/
+            // TODO: Guardar el pdf interna en el sistema
+            $quote = Quote::where('id', $quote->id)
+                ->with('customer')
+                ->with('deadline')
+                ->with(['equipments' => function ($query) {
+                    $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+                }])->first();
+
+            $images = ImagesQuote::where('quote_id', $quote->id)
+                ->where('type', 'img')
+                ->orderBy('order', 'ASC')->get();
+
+            $view = view('exports.quoteInternal', compact('quote', 'images'));
+
+            $pdf = PDF::loadHTML($view);
+
+            $description = str_replace(array('"', "'", "/"),'',$quote->description_quote);
+
+            $name = $quote->code . ' '. ltrim(rtrim($description)) . '.pdf';
+
+            $image_path = public_path().'/pdfs/quotes/'.$name;
+            if (file_exists($image_path)) {
+                unlink($image_path);
+            }
+
+            $output = $pdf->output();
+            file_put_contents(public_path().'/pdfs/quotes/'.$name, $output);
+
+            $pdfPrincipal = public_path().'/pdfs/quotes/'.$name;
+
+            $oMerger = PDFMerger::init();
+
+            $oMerger->addPDF($pdfPrincipal, 'all');
+
+            $pdfs = ImagesQuote::where('quote_id', $quote->id)
+                ->where('type', 'pdf')->get();
+
+            foreach ( $pdfs as $pdf )
+            {
+                $namePdf = public_path().'/images/planos/'.$pdf->image;
+                $oMerger->addPDF($namePdf, 'all');
+            }
+
+            $oMerger->merge();
+            $oMerger->setFileName($name);
+            // Guarda el archivo fusionado en la misma carpeta
+            $output_path = public_path('pdfs/quotes/' . $name);
+            $oMerger->save($output_path);
 
             // TODO: Guardar los resumenes
             $resumen = ResumenQuote::create([
@@ -2807,7 +2855,8 @@ class QuoteController extends Controller
                 'total_sin_igv' => round(($quote->total_equipments)/1.18, 2),
                 'total_con_igv' => round($quote->total_equipments, 2),
                 'total_utilidad_sin_igv' => round(($quote->total_quote)/1.18, 2),
-                'total_utilidad_con_igv' => round($quote->total_quote, 2)
+                'total_utilidad_con_igv' => round($quote->total_quote, 2),
+                'path_pdf' => $name
             ]);
 
             foreach ( $quote->equipments as $equipment )
@@ -4362,5 +4411,45 @@ class QuoteController extends Controller
             'resumenEquipments' => $resumenEquipments,
             'totalQuote' => $totalQuote
         ];
+    }
+
+    public function getInfoResumenQuote($quote_id)
+    {
+        $resumen = ResumenQuote::where('quote_id', $quote_id)->first();
+
+        $havePDF = 0;
+        if (isset($resumen))
+        {
+            $pdf = $resumen->path_pdf;
+            if ( $pdf == "" || $pdf == null )
+            {
+                $havePDF = 0;
+            } else {
+                $havePDF = 1;
+            }
+        } else {
+            $havePDF = 0;
+        }
+
+        return response()->json(['havePDF' => $havePDF], 200);
+    }
+
+    public function exportPDFMaterialesCotizaciones()
+    {
+        $quote_id = $_GET['quote_id'];
+
+        $resumen = ResumenQuote::where('quote_id', $quote_id)->first();
+
+        $path_pdf = $resumen->path_pdf;
+
+        $pathComplete = public_path().'/pdfs/quotes/'.$path_pdf;
+
+        if (!file_exists($pathComplete)) {
+            // Manejo del caso en que el archivo PDF no existe
+            return response()->json(['error' => 'El archivo PDF no existe en la ruta especificada'], 404);
+        }
+
+        // Descargar el PDF
+        return response()->download($pathComplete, $path_pdf);
     }
 }

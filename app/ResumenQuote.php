@@ -18,7 +18,8 @@ class ResumenQuote extends Model
         'total_sin_igv',
         'total_con_igv',
         'total_utilidad_sin_igv',
-        'total_utilidad_con_igv'
+        'total_utilidad_con_igv',
+        'path_pdf'
     ];
 
     protected $dates = ['date_quote'];
