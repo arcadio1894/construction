@@ -24,7 +24,7 @@
 
         header {
             padding: 10px 0;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         #logo {
@@ -134,6 +134,11 @@
             font-size: 1.2em;
         }
 
+        #notices .notice2 {
+            color: #5D6975;
+            font-size: 0.9em;
+        }
+
         footer {
             color: #ffffff;
             width: 100%;
@@ -213,7 +218,7 @@
 <div id="notices">
     <div>Nos es grato dirigirnos a ustedes para hacerles llegar la presente cotización de acuerdo a nuestra conversación.</div>
 </div>
-<br><br>
+<br>
 
 <main>
 
@@ -247,7 +252,7 @@
         @endforeach
         </tbody>
     </table>
-    <br><br><br><br>
+    <br><br>
     <table id="sumary">
         <tbody>
         <tr>
@@ -293,13 +298,13 @@
 
         <br>
         <div>OBSERVACIONES:</div>
-        <div class="notice">{!! nl2br($quote->observations) !!}</div>
+        <div class="notice2">{!! nl2br($quote->observations) !!}</div>
     </div>
-    <br><br>
+    <br>
     <div id="notices">
         <div class="center">Los equipos cotizados cumplen con los estándares de fabricación de equipos para plantas de alimentos (diseño
             sanitarios) , adecuado uso de recursos (estándares de ahorro energético, emisiones).</div>
-        <br><br>
+        <br>
         <div class="notice">Sin otro particular, quedamos de usted.</div>
         <div class="notice">Atentamente</div>
     </div>
