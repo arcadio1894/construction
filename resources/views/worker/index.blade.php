@@ -41,9 +41,8 @@
     @can( 'create_worker' )
     <a href="{{ route('worker.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo colaborador </a>
     @endcan
-    {{--
-    <button type="button" class="btn btn-outline-success btn-sm float-right mr-1" id="btn-exportExcel"><i class="far fa-file-excel"></i> Exportar excel</button>
-    --}}
+   {{-- <button type="button" class="btn btn-outline-success btn-sm float-right mr-1" id="btn-exportExcel"><i class="far fa-file-excel"></i> Exportar excel</button>
+--}}
 @endsection
 
 @section('page-breadcrumb')
