@@ -465,7 +465,27 @@ class ProformaController extends Controller
         $rent = $equipment->rent;
         $letter = $equipment->letter;
 
-        return view('proforma.editEquipment', compact('permissions', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment'));
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+        //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure
+            ]);
+        }
+
+        return view('proforma.editEquipment', compact('permissions', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment', 'array'));
 
     }
 

@@ -56,7 +56,7 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
-
+    <input type="hidden" id="materials" value="{{ json_encode($array) }}">
     <form id="formCreate" class="form-horizontal" data-url="{{ route('equipment.proforma.update', $equipment->id) }}" enctype="multipart/form-data">
             @csrf
             <div class="row" id="body-equipment">
