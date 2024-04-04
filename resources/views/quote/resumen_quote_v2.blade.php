@@ -135,10 +135,10 @@
                 <label for="quote">&nbsp;</label><br>
                 <button class="btn btn-primary btn-sm btn-block" type="button" id="btn-search">Buscar</button>
             </div>
-            {{--<div class="col-md-2">
+            <div class="col-md-2">
                 <label for="btn-download">&nbsp;</label><br>
                 <button class="btn btn-success btn-sm btn-block" type="button" id="btn-download">Descargar PDF</button>
-            </div>--}}
+            </div>
 
         </div>
 
