@@ -2568,6 +2568,9 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:report_orderPurchaseExpress');
         Route::get('/exportar/reporte/ordenes/by/material/v2/', 'OrderPurchaseController@exportReportOrdersByMaterial');
 
+        // Ruta de prueba para ver las ubicaciones de un material
+        Route::get('/ver/ubicacion/material/{material}', 'ReportController@getLocationsGeneralMaterial');
+
     });
 });
 

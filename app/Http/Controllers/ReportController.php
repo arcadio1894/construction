@@ -168,6 +168,9 @@ class ReportController extends Controller
             } else if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 ){
                 $priority = 'Agotado';
             }
+
+            $localizacion = $this->getLocationsGeneralMaterial($material->id);
+
             array_push($materials_array, [
                 'code' => $material->code,
                 'material' => $material->full_description,
@@ -187,6 +190,7 @@ class ReportController extends Controller
                 'quality'=> ($material->quality == null) ? '': $material->quality->name,
                 'warrant'=> ($material->warrant == null) ? '':$material->warrant->name,
                 'scrap'=> ($material->typeScrap == null) ? '':$material->typeScrap->name,
+                'location' => $localizacion
             ]);
         }
         //dump($materials_array);
@@ -194,6 +198,29 @@ class ReportController extends Controller
         $title = 'BASE DE MATERIALES COMPLETA';
 
         return Excel::download(new DatabaseMaterialsExport($materials_array, $title), 'reporte_base_materiales.xlsx');
+    }
+
+    public function getLocationsGeneralMaterial($material)
+    {
+        $textLocations = "";
+        $items = Item::where('material_id', $material)
+            /*->where('state_item', '<>', 'exited')*/
+            ->get();
+
+        $locations = $items->pluck('location_id')->unique()->toArray();
+
+        if (!empty($locations)) {
+            // No se encontraron items para el material específico
+            foreach ($locations as $location) {
+                $ubicacion = Location::with(['shelf', 'level'])->find($location);
+
+                $textLocations = $textLocations . "Anaquel:" . $ubicacion->shelf->name ." - Nivel: ". $ubicacion->level->name ."\n";
+
+            }
+
+        }
+
+        return $textLocations;
     }
 
     public function excelBDMaterialsByLocation($location_id)
