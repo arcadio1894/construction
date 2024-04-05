@@ -214,7 +214,7 @@ class ReportController extends Controller
             foreach ($locations as $location) {
                 $ubicacion = Location::with(['shelf', 'level'])->find($location);
 
-                $textLocations = $textLocations . "Anaquel:" . $ubicacion->shelf->name ." - Nivel: ". $ubicacion->level->name ."\n";
+                $textLocations = $textLocations . $ubicacion->shelf->name ." - ". $ubicacion->level->name ." | ";
 
             }
 
