@@ -39,10 +39,14 @@ class SuspensionController extends Controller
         DB::beginTransaction();
         try {
             $current = Carbon::now('America/Lima');
-            $fecha = $current->year.'/'.$current->month.'/'.$current->day;
             $reason = ReasonSuspension::find($request->get('reason_id'));
-            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : Carbon::createFromFormat('d/m/Y', $fecha);
-            $date_end = $date_start->addDays($reason->days-1);
+            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : $current;
+
+            // Clonar $date_start para asegurarse de que no se modifique
+            $date_start2 = $date_start->copy();
+
+            $date_end = $date_start2->addDays($reason->days-1);
+
             $suspension = Suspension::create([
                 'reason_suspension_id' => $reason->id,
                 'date_start' => $date_start,
@@ -109,8 +113,11 @@ class SuspensionController extends Controller
             $current = Carbon::now('America/Lima');
             $fecha = $current->year.'/'.$current->month.'/'.$current->day;
             $reason = ReasonSuspension::find($request->get('reason_id'));
-            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : Carbon::createFromFormat('d/m/Y', $fecha);
-            $date_end = $date_start->addDays($reason->days-1);
+            $date_start = ($request->get('date_start') != null) ? Carbon::createFromFormat('d/m/Y', $request->get('date_start')) : $current;
+            /*$date_end = $date_start->addDays($reason->days-1);*/
+            $date_start2 = $date_start->copy();
+
+            $date_end = $date_start2->addDays($reason->days-1);
 
             $suspension = Suspension::find($request->get('suspension_id'));
 

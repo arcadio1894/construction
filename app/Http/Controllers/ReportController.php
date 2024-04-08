@@ -204,7 +204,7 @@ class ReportController extends Controller
     {
         $textLocations = "";
         $items = Item::where('material_id', $material)
-            /*->where('state_item', '<>', 'exited')*/
+            ->where('state_item', '<>', 'exited')
             ->get();
 
         $locations = $items->pluck('location_id')->unique()->toArray();
