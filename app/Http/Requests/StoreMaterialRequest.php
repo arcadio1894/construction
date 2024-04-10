@@ -15,7 +15,7 @@ class StoreMaterialRequest extends FormRequest
     public function rules()
     {
         return [
-            'description' => 'required|string|max:255',
+            'description' => 'required|string',
             'measure' => 'nullable|string|max:255',
             'unit_measure' => 'required|exists:unit_measures,id',
             'typescrap' => 'nullable|exists:typescraps,id',
@@ -39,7 +39,6 @@ class StoreMaterialRequest extends FormRequest
         return [
             'description.required' => 'El :attribute es obligatorio.',
             'description.string' => 'El :attribute debe contener caracteres válidos',
-            'description.max' => 'El :attribute es demasiado largo.',
 
             'measure.string' => 'El :attribute debe contener caracteres válidos.',
             'measure.max' => 'El :attribute es demasiado largo.',
