@@ -95,7 +95,8 @@ class RoleController extends Controller
         'defaultEquipment' => 'CATALOGO EQUIPOS',
         'sales' => 'VENTAS',
         'proforma' => 'PRE COTIZACIONES',
-        'expenseSupplier' => 'EGRESOS PROVEEDORES'
+        'expenseSupplier' => 'EGRESOS PROVEEDORES',
+        'inventory' => 'INVENTARIO FISICO'
     ];
 
     public function index()

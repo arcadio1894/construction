@@ -2571,6 +2571,16 @@ Route::middleware('auth')->group(function (){
         // Ruta de prueba para ver las ubicaciones de un material
         Route::get('/ver/ubicacion/material/{material}', 'ReportController@getLocationsGeneralMaterial');
 
+        // TODO: Rutas de Inventario Fisico
+        Route::get('/get/data/inventory/{numberPage}', 'InventoryController@getDataInventory');
+        Route::get('/listado/de/inventario/fisico/', 'InventoryController@listInventory')
+            ->name('inventory.index')
+            ->middleware('permission:list_inventory');
+        Route::get('/exportar/listado/inventario/v2/', 'InventoryController@exportListInventory')
+            ->middleware('permission:export_inventory');
+        Route::post('/save/data/inventory/{id}', 'InventoryController@saveListInventory')
+            ->name('inventory.save')
+            ->middleware('permission:save_inventory');
     });
 });
 

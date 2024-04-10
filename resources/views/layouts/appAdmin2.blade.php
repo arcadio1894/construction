@@ -927,6 +927,14 @@
                                 </a>
                             </li>
                             @endcan
+                            @can('list_inventory')
+                                <li class="nav-item">
+                                    <a href="{{ route('inventory.index') }}" class="nav-link @yield('activeListInventory')">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Listado</p>
+                                    </a>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                     @endcan
