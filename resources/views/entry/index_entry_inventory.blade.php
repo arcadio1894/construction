@@ -89,6 +89,7 @@
             <tr>
                 <th>Código</th>
                 <th>Fecha</th>
+                <th>Observaciones</th>
                 <th>Acciones</th>
 
             </tr>

@@ -58,6 +58,14 @@ $(document).ready(function () {
                 }
             },
             { data: null,
+                title: 'Observaciones',
+                wrap: true,
+                "render": function (item)
+                {
+                    return '<p> '+ 'Entrada-'+item.observation+'</p>'
+                }
+            },
+            { data: null,
                 title: 'Acciones',
                 wrap: true,
                 "render": function (item)

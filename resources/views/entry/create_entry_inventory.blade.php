@@ -86,7 +86,7 @@
 
                         <div class="col-md-6">
                             <div class="form-group " id="sandbox-container">
-                                <label for="date_invoice">Fecha de Factura</label>
+                                <label for="date_invoice">Fecha de Ingreso</label>
                                 <div class="input-daterange" id="datepicker">
                                     <input type="text" class="form-control date-range-filter" id="date_invoice" name="date_invoice">
                                 </div>
@@ -97,6 +97,13 @@
                             <div class="form-group">
                                 <label for="entry_type">Tipo de Ingreso <span class="right badge badge-danger">(*)</span></label>
                                 <input type="text" id="entry_type" value="Inventario" name="entry_type" class="form-control" readonly>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="observation">Observaciones </label>
+                                <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ...."></textarea>
                             </div>
                         </div>
 
