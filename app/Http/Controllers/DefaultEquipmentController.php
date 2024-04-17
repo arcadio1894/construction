@@ -70,7 +70,8 @@ class DefaultEquipmentController extends Controller
                 'unit_price' => $material->unit_price,
                 'unit' => $material->unitMeasure->name,
                 'code' => $material->code,
-                'unit_measure' => $material->unitMeasure
+                'unit_measure' => $material->unitMeasure,
+                'typescrap_id' => $material->typescrap_id
             ]);
         }
 
@@ -319,7 +320,8 @@ class DefaultEquipmentController extends Controller
                 'unit_price' => $material->unit_price,
                 'unit' => $material->unitMeasure->name,
                 'code' => $material->code,
-                'unit_measure' => $material->unitMeasure
+                'unit_measure' => $material->unitMeasure,
+                'typescrap_id' => $material->typescrap_id
             ]);
         }
 
