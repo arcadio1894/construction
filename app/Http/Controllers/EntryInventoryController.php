@@ -111,7 +111,7 @@ class EntryInventoryController extends Controller
                 'finance' => false,
                 'currency_compra' => (float) $tipoCambioSunat->compra,
                 'currency_venta' => (float) $tipoCambioSunat->venta,
-                'observation' => null,
+                'observation' => $request->get('observation'),
             ]);
 
 
@@ -285,7 +285,7 @@ class EntryInventoryController extends Controller
             $entry->deferred_invoice ='off';
             $entry->supplier_id = null;
             $entry->date_entry = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
-            $entry->observation = null;
+            $entry->observation = $request->get('observation');
             $entry->save();
 
             $end = microtime(true) - $begin;

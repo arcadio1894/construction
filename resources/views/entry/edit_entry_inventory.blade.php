@@ -100,6 +100,13 @@
                                 </div>
 
                             </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="observation">Observaciones </label>
+                                    <textarea name="observation" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese observación ....">{{ $entry->observation }}</textarea>
+                                </div>
+                            </div>
                         </div>
 
                     </div>
