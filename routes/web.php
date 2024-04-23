@@ -2581,6 +2581,8 @@ Route::middleware('auth')->group(function (){
         Route::post('/save/data/inventory/{id}', 'InventoryController@saveListInventory')
             ->name('inventory.save')
             ->middleware('permission:save_inventory');
+
+        Route::get('/exportar/entradas/almacen/v2/', 'EntryController@exportEntriesAlmacen');
     });
 });
 

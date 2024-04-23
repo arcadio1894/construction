@@ -9,9 +9,114 @@ $(document).ready(function () {
     $modalLocations = $('#modalLocations');
 
     $('#btn-submitDownload').on('click', getReportByLocation);
+
+    $modalEntries = $('#modalEntries');
+
+    $('#btn-downloadEntries').on('click', showModalEntries);
+    $('#btn-submitExport').on('click', getReportExport);
+
+    $('#sandbox-container .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
 });
 
 let $modalLocations;
+let $modalEntries;
+
+function showModalEntries() {
+    $modalEntries.modal('show');
+}
+
+function getReportExport() {
+    $("#btn-submitExport").attr("disabled", true);
+    let typeEntry = $('#typeEntry').val();
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todos las entradas pero demorará bastante',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end,
+                            typeEntry: typeEntry
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/entradas/almacen/v2/?" + $.param(query);
+
+                        window.location = url;
+                        $("#btn-submitExport").attr("disabled", false);
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                        $("#btn-submitExport").attr("disabled", false);
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end,
+            typeEntry: typeEntry
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/entradas/almacen/v2/?" + $.param(query);
+
+        window.location = url;
+        $("#btn-submitExport").attr("disabled", false);
+    }
+}
 
 function getAmountReport() {
     $("#element_loader").LoadingOverlay("show", {

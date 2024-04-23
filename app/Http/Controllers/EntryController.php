@@ -6,6 +6,7 @@ use App\Audit;
 use App\DetailEntry;
 use App\Entry;
 use App\EntryImage;
+use App\Exports\EntriesReportExcelDownload;
 use App\FollowMaterial;
 use App\Http\Requests\StoreEntryPurchaseOrderRequest;
 use App\Http\Requests\StoreEntryPurchaseRequest;
@@ -2764,6 +2765,135 @@ class EntryController extends Controller
         return datatables($entries)->toJson();
         
     }
-    
+
+    public function exportEntriesAlmacen()
+    {
+        //dd($request);
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $type = $_GET['typeEntry'];
+        //dump($start);
+        //dump($end);
+        $array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            //dump('Descargar todos');
+            $dates = 'REPORTE DE ENTRADAS TOTALES';
+            $entries = [];
+            switch ($type) {
+                case 1: //Todas
+                    $dates = $dates . " POR COMPRA E INVENTARIO ";
+                    $entries = Entry::with('supplier', 'details')
+                        ->whereIn('entry_type', ['Por compra','Inventario'])
+                        ->where('finance', false)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 2: // Por Compra
+                    $dates = $dates . " POR COMPRA";
+                    $entries = Entry::with('supplier', 'details')
+                        ->where('entry_type', 'Por compra')
+                        ->where('finance', false)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 3: // Por Inventario
+                    $dates = $dates . " POR INVENTARIO ";
+                    $entries = Entry::with('supplier', 'details')
+                        ->where('entry_type', 'Inventario')
+                        ->where('finance', false)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $entries as $entry )
+            {
+                foreach ( $entry->details as $detail )
+                {
+                    array_push($array, [
+                        'tipo' => $entry->entry_type,
+                        'orden' => $entry->purchase_order,
+                        'factura' => $entry->invoice,
+                        'proveedor' => ($entry->supplier_id != null) ? $entry->supplier->business_name:"Sin Provedor",
+                        'fecha' => ($entry->date_entry != null) ? $entry->date_entry->format("d/m/Y"):"Sin fecha",
+                        'observaciones' => $entry->observation,
+                        'codigo' => $detail->material->code,
+                        'material' => $detail->material->full_name,
+                        'cantidad' => $detail->entered_quantity,
+                        'precio' => $detail->unit_price,
+                        'total_precio' => ($detail->total_detail == null) ? round($detail->unit_price*$detail->entered_quantity, 2):$detail->total_detail,
+                    ]);
+                }
+
+            }
+
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'REPORTE DE ENTRADAS';
+            $entries = [];
+            switch ($type) {
+                case 1: //Todas
+                    $dates = $dates . " POR COMPRA E INVENTARIO DEL ".$start." AL ".$end;
+                    $entries = Entry::with('supplier', 'details')
+                        ->whereIn('entry_type', ['Por compra','Inventario'])
+                        ->whereDate('date_entry', '>=', $date_start)
+                        ->whereDate('date_entry', '<=', $end_start)
+                        ->where('finance', false)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 2: // Por Compra
+                    $dates = $dates . " POR COMPRA DEL ".$start." AL ".$end;
+                    $entries = Entry::with('supplier', 'details')
+                        ->where('entry_type', 'Por compra')
+                        ->where('finance', false)
+                        ->whereDate('date_entry', '>=', $date_start)
+                        ->whereDate('date_entry', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 3: // Por Inventario
+                    $dates = $dates . " POR INVENTARIO DEL ".$start." AL ".$end;
+                    $entries = Entry::with('supplier', 'details')
+                        ->where('entry_type', 'Inventario')
+                        ->where('finance', false)
+                        ->whereDate('date_entry', '>=', $date_start)
+                        ->whereDate('date_entry', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            foreach ( $entries as $entry )
+            {
+                foreach ( $entry->details as $detail )
+                {
+                    array_push($array, [
+                        'tipo' => $entry->entry_type,
+                        'orden' => $entry->purchase_order,
+                        'factura' => $entry->invoice,
+                        'proveedor' => ($entry->supplier_id != null) ? $entry->supplier->business_name:"Sin Provedor",
+                        'fecha' => ($entry->date_entry != null) ? $entry->date_entry->format("d/m/Y"):"Sin fecha",
+                        'observaciones' => $entry->observation,
+                        'codigo' => $detail->material->code,
+                        'material' => $detail->material->full_name,
+                        'cantidad' => $detail->entered_quantity,
+                        'precio' => $detail->unit_price,
+                        'total_precio' => ($detail->total_detail == null) ? round($detail->unit_price*$detail->entered_quantity, 2):$detail->total_detail,
+                    ]);
+                }
+
+            }
+
+        }
+        return (new EntriesReportExcelDownload($array, $dates))->download('reporteEntradasCompraInventario.xlsx');
+
+    }
 }
 

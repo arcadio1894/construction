@@ -233,14 +233,29 @@
             <!-- /.info-box -->
             <div class="info-box" id="box">
                 <span class="info-box-icon bg-success elevation-1">
-                    <a href="{{ route('report.excel.materials') }}">
+                    {{--<a href="--}}{{--{{ route('report.excel.materials') }}--}}{{--">--}}
                         <i class="fas fa-database"></i>
-                    </a>
+                    {{--</a>--}}
                 </span>
 
                 <div class="info-box-content">
                     <span class="info-box-text">BASE DE DATOS POR ALMACEN</span>
                     <button id="btn-download" class="btn btn-sm btn-outline-success">
+                        <span class="info-box-number">
+                            Descargar <i class="fas fa-cloud-download-alt"></i>
+                        </span>
+                    </button>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
+            <div class="info-box" id="box">
+                <span class="info-box-icon bg-success elevation-1">
+                    <i class="fas fa-file-excel"></i>
+                </span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">DESCARGAR INGRESOS</span>
+                    <button id="btn-downloadEntries" class="btn btn-sm btn-outline-success">
                         <span class="info-box-number">
                             Descargar <i class="fas fa-cloud-download-alt"></i>
                         </span>
@@ -1131,6 +1146,49 @@
             </div>
         </div>
     </div>
+
+    <div id="modalEntries" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar los filtros para realizar la descarga</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="typeEntry" class="col-12 col-form-label">Tipo de entradas <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-sm-12">
+                                <select id="typeEntry" name="typeEntry" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>TODAS</option>
+                                    <option value="2" >POR COMPRA</option>
+                                    <option value="3" >INVENTARIO</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="typeEntry" class="col-12 col-form-label">Fechas de entradas <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-md-12" id="sandbox-container">
+                                <div class="input-daterange input-group" id="datepicker">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="start" name="start" autocomplete="off">
+                                    <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="end" name="end" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-submitExport" class="btn btn-primary" >Descargar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -1151,6 +1209,10 @@
             //Initialize Select2 Elements
             $('#location').select2({
                 placeholder: "Selecione un almacén",
+            });
+            $('#typeEntry').select2({
+                placeholder: "Selecione Tipo",
+                allowClear: true
             });
         })
     </script>
