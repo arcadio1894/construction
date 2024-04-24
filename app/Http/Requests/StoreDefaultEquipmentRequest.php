@@ -40,7 +40,8 @@ class StoreDefaultEquipmentRequest extends FormRequest
             'widthequipment' => 'nullable|numeric',
             'highequipment' => 'nullable|numeric',
             'categoryequipmentid' => 'required|numeric',
-            'detailequipment' => 'required|string',
+            /*'detailequipment' => 'required|string',*/
+            'detailequipment' => 'string',
             'utility' => 'nullable|numeric|min:0',
             'letter' => 'nullable|numeric|min:0',
             'taxes' => 'nullable|numeric|min:0'
