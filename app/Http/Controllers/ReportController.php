@@ -28,6 +28,7 @@ class ReportController extends Controller
     {
         $materials = Material::where('stock_current', '>', 0)
             ->where('description', 'not like', '%EDESCE%')
+            ->whereNotIn('category_id', [8,6])
             ->get();
         $amount_dollars = 0;
         $amount_soles = 0;
