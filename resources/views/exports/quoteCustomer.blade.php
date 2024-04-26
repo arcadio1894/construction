@@ -236,16 +236,24 @@
             @if ( $quote->state_decimals == 1 )
                 <tr>
                     <td class="desc">{{ $equipment->description }}</td>
-                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 2) }}</td>
+                    @php
+                        $subtotal = round(($equipment->subtotal_rent/1.18), 2);
+                        $unit_price = $subtotal / $equipment->quantity;
+                    @endphp
+                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( $unit_price, 2) }}</td>
                     <td class="qty">{{ $equipment->quantity }}</td>
-                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 2) }}</td>
+                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( $subtotal, 2) }}</td>
                 </tr>
             @else
                 <tr>
                     <td class="desc">{{ $equipment->description }}</td>
-                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( ((float)($equipment->subtotal_rent/1.18) / $equipment->quantity), 0) }}</td>
+                    @php
+                        $subtotal = round(($equipment->subtotal_rent/1.18), 0);
+                        $unit_price = $subtotal / $equipment->quantity;
+                    @endphp
+                    <td class="unit">{{ $quote->currency_invoice }} {{ number_format( $unit_price, 2 }}</td>
                     <td class="qty">{{ $equipment->quantity }}</td>
-                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( (float)($equipment->subtotal_rent/1.18), 0) }}</td>
+                    <td class="total">{{ $quote->currency_invoice }} {{ number_format( $subtotal, 0) }}</td>
                 </tr>
             @endif
 
