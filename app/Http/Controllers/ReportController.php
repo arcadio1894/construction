@@ -28,6 +28,7 @@ class ReportController extends Controller
     {
         $materials = Material::where('stock_current', '>', 0)
             ->where('description', 'not like', '%EDESCE%')
+            ->where('enable_status', 1)
             ->whereNotIn('category_id', [8,6])
             ->get();
         $amount_dollars = 0;
@@ -89,6 +90,7 @@ class ReportController extends Controller
         $materials = Material::where('stock_current', '>', 0)
             ->where('description', 'not like', '%EDESCE%')
             ->where('enable_status', 1)
+            ->whereNotIn('category_id', [8,6])
             ->get();
         $materials_array = [];
         $amount_dollars = 0;
