@@ -48,7 +48,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return moment(item.request_date).format('DD-MM-YYYY H:m a');
+                    return item.request_date;
                 }
             },
             /*{ data: 'requesting_user.name' },*/

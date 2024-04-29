@@ -37,7 +37,7 @@ $(document).ready(function () {
                 wrap: true,
                 "render": function (item)
                 {
-                    return '<p> '+ moment(item.request_date).format('DD-MM-YYYY H:m a') +'</p>'
+                    return '<p> '+ item.request_date +'</p>'
                 }
             },
             /*{ data: 'requesting_user.name' },*/
