@@ -2997,7 +2997,8 @@ class QuoteController extends Controller
         $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
         //dump($request->get('date_invoice'));
-        $fecha = Carbon::parse($quote->date_quote);
+        //$fecha = Carbon::parse($quote->date_quote);
+        $fecha = Carbon::now('America/Lima');
 
         //dump();
         $curl = curl_init();
