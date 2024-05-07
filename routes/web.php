@@ -2583,6 +2583,9 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:save_inventory');
 
         Route::get('/exportar/entradas/almacen/v2/', 'EntryController@exportEntriesAlmacen');
+
+        // TODO: Rutas Rotacion de materiales
+        Route::get('/store/rotation/material/', 'RotationMaterialController@storeRotationMaterial');
     });
 });
 

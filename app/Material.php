@@ -33,7 +33,10 @@ class Material extends Model
         'typescrap_id',
         'enable_status',
         'full_name',
-        'inventory'
+        'inventory',
+        'date_update_price',
+        'state_update_price',
+        'rotation'
     ];
 
     public function setNameProductAttribute($value)
