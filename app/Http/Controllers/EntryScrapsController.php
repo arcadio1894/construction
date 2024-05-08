@@ -22,7 +22,7 @@ class EntryScrapsController extends Controller
     {
         $materials = Material::with('typeScrap:id,name,length,width')
             ->whereNotNull('typescrap_id')
-            ->where('stock_current', '>', 0)
+            ->where('stock_current', '>=', 0)
             ->where('enable_status', 1)
             ->get();
 
@@ -73,7 +73,7 @@ class EntryScrapsController extends Controller
         DB::beginTransaction();
         try {
 
-            if ( $typescrap == 1 || $typescrap == 2 )
+            if ( $typescrap == 1 || $typescrap == 2 || $typescrap == 6 )
             {
                 if ( $length_new == 0 || $width_new == 0 )
                 {
@@ -106,7 +106,7 @@ class EntryScrapsController extends Controller
 
             }
 
-            if ( $typescrap == 1 || $typescrap == 2 )
+            if ( $typescrap == 1 || $typescrap == 2 || $typescrap == 6 )
             {
                 $materialSelected = Material::find($material_id);
                 $itemSelected = Item::find($idItem);
@@ -368,7 +368,7 @@ class EntryScrapsController extends Controller
         DB::beginTransaction();
         try {
 
-            if ( $typescrap == 1 || $typescrap == 2 )
+            if ( $typescrap == 1 || $typescrap == 2 || $typescrap == 6 )
             {
                 if ( $length_new == 0 || $width_new == 0 )
                 {
@@ -385,7 +385,7 @@ class EntryScrapsController extends Controller
                 }
             }
 
-            if ( $typescrap == 1 || $typescrap == 2 )
+            if ( $typescrap == 1 || $typescrap == 2 || $typescrap == 6 )
             {
                 $materialSelected = Material::find($material_id);
                 $typescrapSelected = Typescrap::find($typescrap);
