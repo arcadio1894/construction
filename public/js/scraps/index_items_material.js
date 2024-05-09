@@ -375,7 +375,7 @@ function saveNewScrap() {
 
     var typescrap_nuevo = $('#typescrap_nuevo');
 
-    if ( typescrap_nuevo == 1 || typescrap_nuevo == 2 )
+    if ( typescrap_nuevo == 1 || typescrap_nuevo == 2 || typescrap_nuevo == 6 )
     {
         if( $('#length_new_nuevo').val().trim() === '' || $('#length_new_nuevo').val()<0 )
         {
@@ -556,7 +556,7 @@ function showModalNewScrap() {
             $modalCreateNewScrap.find('[id=length_nuevo]').val(json.type_scrap.length);
             $modalCreateNewScrap.find('[id=width_nuevo]').val(json.type_scrap.width);
 
-            if ( json.type_scrap.id == 1 || json.type_scrap.id == 2 )
+            if ( json.type_scrap.id == 1 || json.type_scrap.id == 2 || json.type_scrap.id == 6 )
             {
                 $('#length_item_nuevo').show();
                 $('#width_item_nuevo').show();
@@ -648,7 +648,7 @@ function saveScrap() {
 
     var typescrap = $('#typescrap');
 
-    if ( typescrap == 1 || typescrap == 2 )
+    if ( typescrap == 1 || typescrap == 2 || typescrap == 6 )
     {
         if( $('#length_new').val().trim() === '' || $('#length_new').val()<0 )
         {
@@ -860,7 +860,7 @@ function showModalCreateScrap() {
     $modalCreateScrap.find('[id=width]').val(widthItem);
     $modalCreateScrap.find('[id=typescrap]').val(typescrap);
 
-    if ( typescrap == 1 || typescrap == 2 )
+    if ( typescrap == 1 || typescrap == 2 || typescrap == 6 )
     {
         $('#length_item').show();
         $('#width_item').show();
