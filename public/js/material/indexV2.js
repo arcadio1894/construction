@@ -395,6 +395,7 @@ function getDataMaterials($numberPage, $activeColumns) {
     var calidad = $('#calidad').val();
     var marca = $('#marca').val();
     var retaceria = $('#retaceria').val();
+    var rotation = $('#rotation').val();
 
     $.get('/dashboard/get/data/material/v2/'+$numberPage, {
         description:description,
@@ -406,7 +407,8 @@ function getDataMaterials($numberPage, $activeColumns) {
         cedula: cedula,
         calidad: calidad,
         marca: marca,
-        retaceria: retaceria
+        retaceria: retaceria,
+        rotation: rotation
     }, function(data) {
         if ( data.data.length == 0 )
         {
@@ -603,6 +605,8 @@ function renderDataTable(data, activeColumns) {
     let url_image = document.location.origin + '/images/material/' + data.image;
     clone.querySelector("[data-ver_imagen]").setAttribute("data-src", url_image);
     clone.querySelector("[data-ver_imagen]").setAttribute("data-image", data.id);
+
+    clone.querySelector("[data-rotation]").innerHTML = data.rotation;
 
     // Configurar enlaces y botones según los permisos y datos
     if ($.inArray('update_material', $permissions) !== -1) {

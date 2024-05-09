@@ -273,10 +273,12 @@ class MaterialController extends Controller
         $calidad = $request->input('calidad');
         $marca = $request->input('marca');
         $retaceria = $request->input('retaceria');
+        $rotation = $request->input('rotation');
 
         $query = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
             ->where('enable_status', 1)
             ->where('category_id', '<>', 8)
+            ->orderBy('rotation', "desc")
             ->orderBy('id');
 
         // Aplicar filtros si se proporcionan
@@ -333,6 +335,10 @@ class MaterialController extends Controller
             $query->where('typescrap_id', $retaceria);
         }
 
+        if ( $rotation != "" ) {
+            $query->where('rotation', $rotation);
+        }
+
         $totalFilteredRecords = $query->count();
         $totalPages = ceil($totalFilteredRecords / $perPage);
 
@@ -360,6 +366,16 @@ class MaterialController extends Controller
                 $priority = 'Agotado';
             }
 
+            $rotacion = "";
+            if ( $material->rotation == "a" )
+            {
+                $rotacion = '<span class="badge bg-success text-md">ALTA</span>';
+            } elseif ( $material->rotation == "m" ) {
+                $rotacion = '<span class="badge bg-warning text-md">MEDIA</span>';
+            } else {
+                $rotacion = '<span class="badge bg-danger text-md">BAJA</span>';
+            }
+
             array_push($array, [
                 "id" => $material->id,
                 "codigo" => $material->code,
@@ -381,6 +397,7 @@ class MaterialController extends Controller
                 "modelo" => ($material->exampler == null) ? '': $material->exampler->name,
                 "retaceria" => ($material->typeScrap == null) ? '':$material->typeScrap->name,
                 "image" => ($material->image == null || $material->image == "" ) ? 'no_image.png':$material->image,
+                "rotation" => $rotacion
             ]);
         }
 
@@ -411,7 +428,13 @@ class MaterialController extends Controller
 
         $arrayRetacerias = Typescrap::select('id', 'name')->get()->toArray();
 
-        return view('material.indexv2', compact( 'permissions', 'arrayCategories', 'arrayCedulas', 'arrayCalidades', 'arrayMarcas', 'arrayRetacerias'));
+        $arrayRotations = [
+            ["value" => "a", "display" => "ALTA"],
+            ["value" => "m", "display" => "MEDIA"],
+            ["value" => "b", "display" => "BAJA"]
+        ];
+
+        return view('material.indexv2', compact( 'permissions', 'arrayCategories', 'arrayCedulas', 'arrayCalidades', 'arrayMarcas', 'arrayRetacerias', 'arrayRotations'));
 
     }
 

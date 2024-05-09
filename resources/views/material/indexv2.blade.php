@@ -155,7 +155,7 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="material_type">Tipo:</label>
                             <select id="material_type" name="material_type" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
@@ -163,14 +163,22 @@
                             </select>
                         </div>
 
-                        <div class="col-md-3">
+                        <div class="col-md-2">
                             <label for="sub_type">SubTipo:</label>
                             <select id="sub_type" name="sub_type" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value="">TODOS</option>
 
                             </select>
                         </div>
-
+                        <div class="col-md-2">
+                            <label for="rotation">Rotación:</label>
+                            <select id="rotation" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value="">TODOS</option>
+                                @for ($i=0; $i<count($arrayRotations); $i++)
+                                    <option value="{{ $arrayRotations[$i]['value'] }}">{{ $arrayRotations[$i]['display'] }}</option>
+                                @endfor
+                            </select>
+                        </div>
 
                     </div>
 
@@ -314,6 +322,10 @@
             <input type="checkbox" checked data-column="imagen" class="custom-control-input" id="customSwitch20">
             <label class="custom-control-label" for="customSwitch20">Imagen</label>
         </div>
+        <div class="col-md-2 custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+            <input type="checkbox" checked data-column="rotation" class="custom-control-input" id="customSwitch21">
+            <label class="custom-control-label" for="customSwitch21">Rotación</label>
+        </div>
     </div>
 
     <!--begin::Toolbar-->
@@ -396,7 +408,8 @@
             <th data-column="marca" data-marca>Marca</th>
             <th data-column="modelo" data-modelo>Modelo</th>
             <th data-column="retaceria" data-retaceria>Retacería</th>
-            <th data-column="imagen" data-retaceria>Imagen</th>
+            <th data-column="imagen" data-imagen>Imagen</th>
+            <th data-column="rotation" data-rotation>Rotación</th>
             <th></th>
         </tr>
     </template>
@@ -454,6 +467,7 @@
             <td data-column="imagen" data-imagen>
                 <button data-ver_imagen data-src="{{--'+document.location.origin+ '/images/material/'+item.image+'--}}" data-image="{{--'+item.id+'--}}" class="btn btn-outline-primary btn-sm" data-toggle="tooltip" data-placement="top" title="Ver Imagen"><i class="fa fa-image"></i></button>
             </td>
+            <td data-column="rotation" data-rotation></td>
             <td>
                 <a data-editar_material href="{{--'+document.location.origin+ '/dashboard/editar/material/'+item.id+'--}}" class="btn btn-outline-warning btn-sm" data-toggle="tooltip" data-placement="top" title="Editar"><i class="fa fa-pen"></i> </a>
                 <button data-deshabilitar data-delete="{{--'+item.id+'--}}" data-description="{{--'+item.full_description+'--}}" data-measure="{{--'+item.measure+'--}}" class="btn btn-outline-danger btn-sm" data-toggle="tooltip" data-placement="top" title="Deshabilitar"><i class="fas fa-bell-slash"></i> </button>
@@ -572,6 +586,10 @@
                 allowClear: true
             });
 
+            $('#rotation').select2({
+                placeholder: "Seleccione Rotación",
+                allowClear: true
+            });
 
         })
     </script>
