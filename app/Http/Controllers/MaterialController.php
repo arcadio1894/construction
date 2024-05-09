@@ -20,6 +20,7 @@ use App\Subtype;
 use App\Typescrap;
 use App\UnitMeasure;
 use App\Warrant;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -234,6 +235,13 @@ class MaterialController extends Controller
                 }
             }
 
+            if ($material->wasChanged('unit_price') )
+            {
+                $material->date_update_price = Carbon::now("America/Lima");
+                $material->state_update_price = 1;
+                $material->save();
+            }
+
             DB::commit();
         } catch ( \Throwable $e ) {
             DB::rollBack();
@@ -397,7 +405,8 @@ class MaterialController extends Controller
                 "modelo" => ($material->exampler == null) ? '': $material->exampler->name,
                 "retaceria" => ($material->typeScrap == null) ? '':$material->typeScrap->name,
                 "image" => ($material->image == null || $material->image == "" ) ? 'no_image.png':$material->image,
-                "rotation" => $rotacion
+                "rotation" => $rotacion,
+                "update_price" => $material->state_update_price
             ]);
         }
 

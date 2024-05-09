@@ -584,7 +584,13 @@ function renderDataTable(data, activeColumns) {
 
     // Llenar los datos en cada celda según el objeto de datos
     clone.querySelector("[data-codigo]").innerHTML = data.codigo;
-    clone.querySelector("[data-descripcion]").innerHTML = data.descripcion;
+    if ( data.update_price == 1 )
+    {
+        clone.querySelector("[data-descripcion]").innerHTML = '<p class="text-blue">'+data.descripcion+'</p>';
+    } else {
+        clone.querySelector("[data-descripcion]").innerHTML = data.descripcion;
+    }
+
     clone.querySelector("[data-medida]").innerHTML = data.medida;
     clone.querySelector("[data-unidad_medida]").innerHTML = data.unidad_medida;
     clone.querySelector("[data-stock_max]").innerHTML = data.stock_max;
