@@ -3896,13 +3896,30 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#materials-selected');
-        if ( material.stock_current == 0 )
+
+        if ( material.enable_status == 0 )
         {
             clone.querySelector("[data-materialDescription]").setAttribute('value', description);
-            clone.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+            clone.querySelector("[data-materialDescription]").setAttribute("style", "color:purple;");
+
         } else {
-            clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+            if ( material.stock_current == 0 )
+            {
+                clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+                clone.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( material.update_price == 1 )
+                {
+                    clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+                    clone.querySelector("[data-materialDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+                }
+                //clone.querySelector("[data-materialDescription]").setAttribute('value', description);
+            }
         }
+
+
         //clone.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         /*clone.querySelector("[data-materialLargo]").setAttribute('value', length);
@@ -3956,13 +3973,30 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
         render.append(clone);
     } else {
         var clone2 = activateTemplate('#materials-selected');
-        if ( material.stock_current == 0 )
+
+        if ( material.enable_status == 0 )
         {
             clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
-            clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+            clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:purple;");
+
         } else {
-            clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+            if ( material.stock_current == 0 )
+            {
+                clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+                clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( material.update_price == 1 )
+                {
+                    clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+                    clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+                }
+                //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+            }
         }
+
+
         //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
         clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
         /*clone2.querySelector("[data-materialLargo]").setAttribute('value', length);
@@ -4006,13 +4040,30 @@ function renderTemplateConsumable(render, consumable, quantity) {
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
         //clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-        if ( consumable.stock_current == 0 )
+
+        if ( consumable.enable_status == 0 )
         {
             clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+            clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:purple;");
+
         } else {
-            clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            if ( consumable.stock_current == 0 )
+            {
+                clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( consumable.state_update_price == 1 )
+                {
+                    clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                    clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                }
+                //clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            }
         }
+
+
         clone.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
         clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
@@ -4024,13 +4075,30 @@ function renderTemplateConsumable(render, consumable, quantity) {
         render.append(clone);
     } else {
         var clone2 = activateTemplate('#template-consumable');
-        if ( consumable.stock_current == 0 )
+
+        if ( consumable.enable_status == 0 )
         {
             clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+            clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:purple;");
+
         } else {
-            clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            if ( consumable.stock_current == 0 )
+            {
+                clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( consumable.state_update_price == 1 )
+                {
+                    clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                    clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+                }
+                //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            }
         }
+
+
         //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
         clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
         clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);

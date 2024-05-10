@@ -625,7 +625,10 @@ class QuoteController extends Controller
                 'unit' => $material->unitMeasure->name,
                 'code' => $material->code,
                 'unit_measure' => $material->unitMeasure,
-                'typescrap_id' => $material->typescrap_id
+                'typescrap_id' => $material->typescrap_id,
+                'enable_status' => $material->enable_status,
+                'update_price' => $material->state_update_price
+
             ]);
         }
 
@@ -1068,7 +1071,9 @@ class QuoteController extends Controller
                 'unit' => $material->unitMeasure->name,
                 'code' => $material->code,
                 'unit_measure' => $material->unitMeasure,
-                'typescrap_id' => $material->typescrap_id
+                'typescrap_id' => $material->typescrap_id,
+                'enable_status' => $material->enable_status,
+                'update_price' => $material->state_update_price
             ]);
         }
 
