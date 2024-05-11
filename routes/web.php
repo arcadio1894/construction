@@ -2587,6 +2587,7 @@ Route::middleware('auth')->group(function (){
         // TODO: Rutas Rotacion de materiales
         Route::get('/store/rotation/material/', 'RotationMaterialController@storeRotationMaterial');
         Route::get('/get/rotation/material/', 'RotationMaterialController@getRotationMaterial');
+        Route::get('/get/data/rotations/v2/{page}', 'RotationMaterialController@getDataRotations');
     });
 });
 

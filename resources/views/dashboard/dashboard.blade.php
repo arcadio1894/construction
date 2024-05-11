@@ -159,10 +159,10 @@
 @section('content-report')
     @hasanyrole('admin|almacen|principal')
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
             <div class="card card-info">
                 <div class="card-header border-0">
-                    <h3 class="card-title">Valor de existencias en almacén </h3>
+                    <h3 class="card-title">Existencias en almacén </h3>
 
                     <div class="card-tools">
                         <button type="button" id="btn-refresh" class="btn btn-sm btn-warning float-left"><i class="fas fa-sync text-success"></i> Refrescar</button>
@@ -212,7 +212,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-12 col-sm-6">
+        <div class="col-12 col-sm-4">
             <div class="info-box">
                 <span class="info-box-icon bg-info elevation-1">
                     <a href="{{ route('report.excel.materials') }}">
@@ -262,6 +262,52 @@
                     </button>
                 </div>
                 <!-- /.info-box-content -->
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card card-info">
+                <div class="card-header border-transparent">
+                    <h3 class="card-title">5 Últimas Rotaciones</h3>
+
+                    <div class="card-tools">
+                        {{--<button type="button" id="btn-newRotation" class="btn btn-sm btn-warning float-left"><i class="fas fa-cut"></i> Nuevo corte</button>
+--}}
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table m-0 table-sm">
+                            <thead>
+                            <tr>
+                                <th>Rotación</th>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                            </tr>
+                            </thead>
+                            <tbody id="body-table">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer clearfix">
+                    <div class="d-flex flex-stack flex-wrap pt-1">
+                        <div class="fs-6 fw-bold text-gray-700" id="textPagination"></div>
+                        <!--begin::Pages-->
+                        <ul class="pagination" style="margin-left: auto;" id="pagination">
+
+                        </ul>
+                        <!--end::Pages-->
+                    </div>
+                </div>
+                <!-- /.card-footer -->
             </div>
         </div>
     </div>
@@ -1121,6 +1167,50 @@
             </div>
         </div>
     </div>--}}
+
+    <template id="previous-page">
+        <li class="page-item previous">
+            <a href="#" class="page-link" data-item>
+                <!--<i class="previous"></i>-->
+                <i class="fas fa-chevron-left"></i>
+            </a>
+        </li>
+    </template>
+
+    <template id="item-page">
+        <li class="page-item" data-active>
+            <a href="#" class="page-link" data-item="">5</a>
+        </li>
+    </template>
+
+    <template id="next-page">
+        <li class="page-item next">
+            <a href="#" class="page-link" data-item>
+                <!--<i class="next"></i>-->
+                <i class="fas fa-chevron-right"></i>
+            </a>
+        </li>
+    </template>
+
+    <template id="disabled-page">
+        <li class="page-item disabled">
+            <span class="page-link">...</span>
+        </li>
+    </template>
+
+    <template id="item-table">
+        <tr>
+            <td data-id></td>
+            <td data-fecha></td>
+            <td data-user></td>
+        </tr>
+    </template>
+
+    <template id="item-table-empty">
+        <tr>
+            <td colspan="3" align="center">No se ha encontrado ningún dato</td>
+        </tr>
+    </template>
 
     <div id="modalLocations" class="modal fade" tabindex="-1">
         <div class="modal-dialog modal-lg">

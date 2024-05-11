@@ -361,6 +361,46 @@ class RotationMaterialController extends Controller
         return response()->json(['message' => 'Corte de Rotación '. $date->format("d/m/Y") .' guardado con éxito.'], 200);
     }
 
+    public function getDataRotations(Request $request, $pageNumber = 1)
+    {
+        $perPage = 5;
+
+        $query = RotationMaterial::with('user')
+            ->orderBy('id', 'desc');
+
+        $totalFilteredRecords = $query->count();
+        $totalPages = ceil($totalFilteredRecords / $perPage);
+
+        $startRecord = ($pageNumber - 1) * $perPage + 1;
+        $endRecord = min($totalFilteredRecords, $pageNumber * $perPage);
+
+        $rotations = $query->skip(($pageNumber - 1) * $perPage)
+            ->take($perPage)
+            ->get();
+
+        $array = [];
+
+        foreach ($rotations as $index => $rotation)
+        {
+            array_push($array, [
+                "id" => $index+1,
+                "fecha" => $rotation->date_rotation->format('d/m/Y'),
+                "user" => ($rotation->user_id != null) ? $rotation->user->name:"Sin información"
+            ]);
+        }
+
+        $pagination = [
+            'currentPage' => (int)$pageNumber,
+            'totalPages' => (int)$totalPages,
+            'startRecord' => $startRecord,
+            'endRecord' => $endRecord,
+            'totalRecords' => $totalFilteredRecords,
+            'totalFilteredRecords' => $totalFilteredRecords
+        ];
+
+        return ['data' => $array, 'pagination' => $pagination];
+    }
+
     public function destroy(RotationMaterial $rotationMaterial)
     {
         //
