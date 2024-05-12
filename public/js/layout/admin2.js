@@ -5,8 +5,10 @@ $(document).ready(function () {
         dataType: 'json',
         success: function (json) {
             console.log(json.compra);
-            $('#tasaCompra').html('Compra: '+json.compra);
-            $('#tasaVenta').html('Venta: '+json.venta);
+            /*$('#tasaCompra').html('Compra: '+json.compra);
+            $('#tasaVenta').html('Venta: '+json.venta);*/
+            $('#tasaCompra').html('Compra: '+json.precioCompra);
+            $('#tasaVenta').html('Venta: '+json.precioVenta);
         }
     });
 

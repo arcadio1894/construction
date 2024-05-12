@@ -55,7 +55,11 @@ class EntryInventoryController extends Controller
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
 
-        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
+        $fechaFormato = $fecha->format('Y-m-d');
+        $response = $this->getTipoDeCambio($fechaFormato);
+
+        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
         //dump($request->get('date_invoice'));
         $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
@@ -80,7 +84,7 @@ class EntryInventoryController extends Controller
 
         $response = curl_exec($curl);
 
-        curl_close($curl);
+        curl_close($curl);*/
 
         $tipoCambioSunat = json_decode($response);
 
@@ -109,8 +113,8 @@ class EntryInventoryController extends Controller
                 'entry_type' => $request->get('entry_type'),
                 'date_entry' => Carbon::createFromFormat('d/m/Y', $request->get('date_invoice')),
                 'finance' => false,
-                'currency_compra' => (float) $tipoCambioSunat->compra,
-                'currency_venta' => (float) $tipoCambioSunat->venta,
+                'currency_compra' => (float) $tipoCambioSunat->precioCompra,
+                'currency_venta' => (float) $tipoCambioSunat->precioVenta,
                 'observation' => $request->get('observation'),
             ]);
 
@@ -408,4 +412,38 @@ class EntryInventoryController extends Controller
         return datatables($entries)->toJson();
     }
 
+    public function getTipoDeCambio($fechaFormato)
+    {
+        // Datos
+        $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
+        $fecha = $fechaFormato;
+
+        // Iniciar llamada a API
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            // para usar la api versión 2
+            CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fecha,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/api-tipo-cambio-sbs.html',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        // Datos listos para usar
+        $tipoCambioSbs = json_decode($response);
+        //var_dump($tipoCambioSbs);
+        return $response;
+    }
 }
