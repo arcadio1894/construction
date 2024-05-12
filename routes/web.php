@@ -2592,8 +2592,8 @@ Route::middleware('auth')->group(function (){
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
-
-Route::get('/api/sunat', function () {
+Route::get('/get/type/exchange', 'FinanceWorkController@getTypeExchange');
+Route::get('/api/sunat/v2', function () {
     $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
     $curl = curl_init();
@@ -2617,6 +2617,41 @@ Route::get('/api/sunat', function () {
 
     curl_close($curl);
 
+    return $response;
+
+});
+
+Route::get('/api/sunat', function () {
+    // Datos
+    $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
+    $fecha = '2024-05-11';
+
+// Iniciar llamada a API
+    $curl = curl_init();
+
+    curl_setopt_array($curl, array(
+        // para usar la api versión 2
+        CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fecha,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_SSL_VERIFYPEER => 0,
+        CURLOPT_ENCODING => '',
+        CURLOPT_MAXREDIRS => 2,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => 'GET',
+        CURLOPT_HTTPHEADER => array(
+            'Referer: https://apis.net.pe/api-tipo-cambio-sbs.html',
+            'Authorization: Bearer ' . $token
+        ),
+    ));
+
+    $response = curl_exec($curl);
+
+    curl_close($curl);
+// Datos listos para usar
+    $tipoCambioSbs = json_decode($response);
+    //var_dump($tipoCambioSbs);
     return $response;
 
 });

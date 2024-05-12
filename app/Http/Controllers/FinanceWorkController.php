@@ -431,10 +431,17 @@ class FinanceWorkController extends Controller
 
         $tiposCambios = $this->getTypeExchange();
         //dump($tiposCambios);
-        $firstDayWeek = Carbon::now('America/Lima')->format('Y-m-d');
+        $firstDayWeek = Carbon::now('America/Lima');
+        $fechaformateada = $firstDayWeek->format('Y-m-d');
         //dump($firstDayWeek);
-        $tipoCambio = $this->getExchange($firstDayWeek, $tiposCambios);
-        $rate = $tipoCambio->compra;
+        $tipoCambio = $this->getExchange($fechaformateada, $tiposCambios);
+        if ($tipoCambio == null)
+        {
+            $firstDayWeek->subDays(1);
+            $fechaformateada = $firstDayWeek->format('Y-m-d');
+            $tipoCambio = $this->getExchange($fechaformateada, $tiposCambios);
+        }
+        $rate = $tipoCambio->precioCompra;
 
         return view('financeWork.index_v2', compact( 'rate','years', 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStateWorks', 'arrayStates', 'banks'));
 
@@ -1024,12 +1031,29 @@ class FinanceWorkController extends Controller
         $currentDay = Carbon::now('America/Lima');
         //dump($currentDay->year);
         //dd($currentDay->month);
-        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        //$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        /*curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?year='.$currentDay->year.'&month='.$currentDay->month,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));*/
+        curl_setopt_array($curl, array(
+            // para usar la api versión 2
+            CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?month='.$currentDay->month.'&year='.$currentDay->year,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 2,
             CURLOPT_TIMEOUT => 0,

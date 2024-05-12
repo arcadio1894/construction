@@ -117,8 +117,8 @@ class PersonalPaymentController extends Controller
             //dd($tiposCambios);
             // Obtener la tasa de cambio para el día correspondiente utilizando tu función getExchange()
             $rate = $this->getExchange($firstDayWeek, $tiposCambios); // Reemplaza getExchange() con el nombre de tu propia función
-            $element['cambioCompra'] = (isset($rate)) ? (float)$rate->compra:1;
-            $element['cambioVenta'] = (isset($rate)) ? (float)$rate->venta:1;
+            $element['cambioCompra'] = (isset($rate)) ? (float)$rate->precioCompra:1;
+            $element['cambioVenta'] = (isset($rate)) ? (float)$rate->precioVenta:1;
         }
 
         unset($element);
@@ -368,12 +368,28 @@ class PersonalPaymentController extends Controller
 
     public function getTypeExchange($year, $month)
     {
-        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        /*curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?year='.$year.'&month='.$month,
             CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));*/
+        curl_setopt_array($curl, array(
+            // para usar la api versión 2
+            CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?month='.$month.'&year='.$year,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
             CURLOPT_ENCODING => '',
             CURLOPT_MAXREDIRS => 2,
             CURLOPT_TIMEOUT => 0,
