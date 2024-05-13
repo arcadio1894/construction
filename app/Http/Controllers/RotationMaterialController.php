@@ -166,9 +166,9 @@ class RotationMaterialController extends Controller
 
             //dump($quantityMaterials);
 
-            dump($finalMaterialsQuantity);
+            //dump($finalMaterialsQuantity);
 
-            dd();
+            //dd();
 
             /*$rotation = RotationMaterial::create([
                 'date_rotation' => Carbon::now("America/Lima"),

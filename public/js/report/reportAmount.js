@@ -26,10 +26,134 @@ $(document).ready(function () {
     getDataRotations(1);
 
     $(document).on('click', '[data-item]', showData);
+
+    $('#btn-newRotation').on('click', saveNewRotation);
 });
 
 let $modalLocations;
 let $modalEntries;
+
+function saveNewRotation() {
+
+    $("#btn-newRotation").attr("disabled", true);
+
+    $.confirm({
+        icon: 'fas fa-smile',
+        theme: 'modern',
+        closeIcon: false,
+        animation: 'zoom',
+        type: 'green',
+        title: 'Guardar corte de rotación',
+        content: 'Se tomará la fecha del último corte hasta la actualidad. A excepción del primer corte',
+        buttons: {
+            confirm: {
+                text: 'CONFIRMAR',
+                action: function (e) {
+                    $.get('/dashboard/store/rotation/material/', function(data) {
+                        /*toastr.success(data.message, 'Éxito', {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });*/
+                        $("#btn-newRotation").attr("disabled", false);
+                        toastr.success(data.message, 'Éxito', {
+                            "closeButton": true,
+                            "debug": false,
+                            "newestOnTop": false,
+                            "progressBar": true,
+                            "positionClass": "toast-top-right",
+                            "preventDuplicates": false,
+                            "onclick": null,
+                            "showDuration": "300",
+                            "hideDuration": "1000",
+                            "timeOut": "2000",
+                            "extendedTimeOut": "1000",
+                            "showEasing": "swing",
+                            "hideEasing": "linear",
+                            "showMethod": "fadeIn",
+                            "hideMethod": "fadeOut"
+                        });
+                        getDataRotations(1);
+                    }).fail(function(jqXHR, textStatus, errorThrown) {
+                        // Función de error, se ejecuta cuando la solicitud GET falla
+                        console.error(textStatus, errorThrown);
+                        if (jqXHR.responseJSON.message && !jqXHR.responseJSON.errors) {
+                            toastr.error(jqXHR.responseJSON.message, 'Error', {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                        }
+                        for (var property in jqXHR.responseJSON.errors) {
+                            toastr.error(jqXHR.responseJSON.errors[property], 'Error', {
+                                "closeButton": true,
+                                "debug": false,
+                                "newestOnTop": false,
+                                "progressBar": true,
+                                "positionClass": "toast-top-right",
+                                "preventDuplicates": false,
+                                "onclick": null,
+                                "showDuration": "300",
+                                "hideDuration": "1000",
+                                "timeOut": "2000",
+                                "extendedTimeOut": "1000",
+                                "showEasing": "swing",
+                                "hideEasing": "linear",
+                                "showMethod": "fadeIn",
+                                "hideMethod": "fadeOut"
+                            });
+                        }
+                        $("#btn-newRotation").attr("disabled", false);
+                    }, 'json')
+                        .done(function() {
+                            // Configuración de encabezados
+                            var headers = {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                            };
+
+                            $.ajaxSetup({
+                                headers: headers
+                            });
+                        });
+
+                },
+            },
+            cancel: {
+                text: 'CANCELAR',
+                action: function (e) {
+                    $.alert("Corte de rotación cancelada.");
+                    $("#btn-newRotation").attr("disabled", false);
+                },
+            },
+        },
+    });
+
+
+}
 
 function showData() {
     //event.preventDefault();

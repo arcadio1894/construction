@@ -270,8 +270,7 @@
                     <h3 class="card-title">5 Últimas Rotaciones</h3>
 
                     <div class="card-tools">
-                        {{--<button type="button" id="btn-newRotation" class="btn btn-sm btn-warning float-left"><i class="fas fa-cut"></i> Nuevo corte</button>
---}}
+                        <button type="button" id="btn-newRotation" class="btn btn-sm btn-warning float-left"><i class="fas fa-cut"></i> Nuevo corte</button>
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
                         </button>
