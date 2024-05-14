@@ -36,7 +36,8 @@ class Material extends Model
         'inventory',
         'date_update_price',
         'state_update_price',
-        'rotation'
+        'rotation',
+        'rotation_value'
     ];
 
     public function setNameProductAttribute($value)

@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\DataGeneral;
+use App\DetailEntry;
+use App\Entry;
 use App\Item;
 use App\Material;
 use App\OutputDetail;
@@ -39,11 +41,11 @@ class RotationMaterialController extends Controller
             $materialsQuantity = [];
             $quantityMaterials = [];
 
-            if ( isset($lastRotation) )
+            if ( !isset($lastRotation) )
             {
                 // TODO: Significa que no hay ultima rotacion tomamos todas las salidas desde el 2023
                 $output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
-
+                //$output_details = OutputDetail::all();
                 foreach ( $output_details as $output_detail )
                 {
                     if ( $output_detail->material_id == null )
@@ -66,15 +68,19 @@ class RotationMaterialController extends Controller
                         }
 
                     } else {
-                        $material = $output_detail->material;
-                        if ($material && $material->enable_status == 1) {
-                            // El material está activo
-                            $totalOutputs += $output_detail->percentage;
-                            // Guardamos el material en un array y su porcentaje
-                            array_push($materialsQuantity, [
-                                "material_id" => $material->id,
-                                "percentage" => $output_detail->percentage
-                            ]);
+                        $item_original = Item::find($output_detail->item_id);
+                        if ( isset($item_original) )
+                        {
+                            $material = $output_detail->material;
+                            if ($material && $material->enable_status == 1) {
+                                // El material está activo
+                                $totalOutputs += $item_original->percentage;
+                                // Guardamos el material en un array y su porcentaje
+                                array_push($materialsQuantity, [
+                                    "material_id" => $material->id,
+                                    "percentage" => $item_original->percentage
+                                ]);
+                            }
                         }
 
                     }
@@ -107,15 +113,20 @@ class RotationMaterialController extends Controller
 
                     } else {
                         $material = $output_detail->material;
-                        if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
-                            // El material está activo
-                            $totalOutputs += $output_detail->percentage;
-                            // Guardamos el material en un array y su porcentaje
-                            array_push($materialsQuantity, [
-                                "material_id" => $material->id,
-                                "percentage" => $output_detail->percentage
-                            ]);
+                        $item_original = Item::find($output_detail->item_id);
+                        if (isset($item_original))
+                        {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                                // El material está activo
+                                $totalOutputs += $item_original->percentage;
+                                // Guardamos el material en un array y su porcentaje
+                                array_push($materialsQuantity, [
+                                    "material_id" => $material->id,
+                                    "percentage" => $item_original->percentage
+                                ]);
+                            }
                         }
+
 
                     }
                 }
@@ -137,9 +148,53 @@ class RotationMaterialController extends Controller
 
             for ( $i=0; $i<count($quantityMaterials); $i++ )
             {
+                $material = Material::find($quantityMaterials[$i]['material_id']);
+
+                $totalEntries = 0;
+
+                if ( !isset($lastRotation) )
+                {
+                    // TODO: Significa que no hay ultima rotacion tomamos todas las entradas desde el 2023
+                    //$output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
+                    $entryDetails = DetailEntry::where('material_id', $material->id)
+                        ->whereYear('created_at', '>=', 2023)
+                        ->get();
+
+                    foreach ( $entryDetails as $detail )
+                    {
+                        $entry = Entry::with(['supplier'])->find($detail->entry_id);
+                        if ( $entry->entry_type != 'Retacería' )
+                        {
+                            $totalEntries += (float)$detail->entered_quantity;
+                        }
+                    }
+
+
+                } else {
+                    // TODO: Significa que si hay ultima rotacion tomamos todas las entradas entre ambas fechas
+                    //$output_details = OutputDetail::where('created_at', '>=', $lastRotation->date_rotation);
+                    $entryDetails = DetailEntry::where('material_id', '=', $material->id)
+                        ->where('created_at', '>=', $lastRotation->date_rotation)
+                        ->get();
+
+                    foreach ( $entryDetails as $detail )
+                    {
+                        $entry = Entry::with(['supplier'])->find($detail->entry_id);
+                        if ( $entry->entry_type != 'Retacería' )
+                        {
+                            $totalEntries += (float)$detail->entered_quantity;
+                        }
+                    }
+                }
+
                 $percentage = $quantityMaterials[$i]['percentage'];
 
-                $rotation_value = round(($percentage/$totalOutputs)*100, 2);
+                if ( $totalEntries>0 )
+                {
+                    $rotation_value = round(($percentage/$totalEntries)*100, 2);
+                } else {
+                    $rotation_value = 0;
+                }
 
                 $rotation_state = "";
 
@@ -158,13 +213,14 @@ class RotationMaterialController extends Controller
                     'material_id' => $quantityMaterials[$i]['material_id'],
                     'percentage' => $quantityMaterials[$i]['percentage'],
                     'rotation_value' => $rotation_value,
-                    'rotation_state' => $rotation_state
+                    'rotation_state' => $rotation_state,
+                    'total_entries' => $totalEntries
                 ]);
             }
 
-            usort($finalMaterialsQuantity, function($a, $b) {
-                return $b['percentage'] <=> $a['percentage'];
-            });
+            /*usort($finalMaterialsQuantity, function($a, $b) {
+                return $b['rotation_value'] <=> $a['rotation_value'];
+            });*/
 
             dump($finalMaterialsQuantity);
 
@@ -215,7 +271,7 @@ class RotationMaterialController extends Controller
             {
                 // TODO: Significa que no hay ultima rotacion tomamos todas las salidas desde el 2023
                 $output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
-
+                //$output_details = OutputDetail::all();
                 foreach ( $output_details as $output_detail )
                 {
                     if ( $output_detail->material_id == null )
@@ -238,15 +294,19 @@ class RotationMaterialController extends Controller
                         }
 
                     } else {
-                        $material = $output_detail->material;
-                        if ($material && $material->enable_status == 1) {
-                            // El material está activo
-                            $totalOutputs += $output_detail->percentage;
-                            // Guardamos el material en un array y su porcentaje
-                            array_push($materialsQuantity, [
-                                "material_id" => $material->id,
-                                "percentage" => $output_detail->percentage
-                            ]);
+                        $item_original = Item::find($output_detail->item_id);
+                        if ( isset($item_original) )
+                        {
+                            $material = $output_detail->material;
+                            if ($material && $material->enable_status == 1) {
+                                // El material está activo
+                                $totalOutputs += $item_original->percentage;
+                                // Guardamos el material en un array y su porcentaje
+                                array_push($materialsQuantity, [
+                                    "material_id" => $material->id,
+                                    "percentage" => $item_original->percentage
+                                ]);
+                            }
                         }
 
                     }
@@ -279,15 +339,20 @@ class RotationMaterialController extends Controller
 
                     } else {
                         $material = $output_detail->material;
-                        if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
-                            // El material está activo
-                            $totalOutputs += $output_detail->percentage;
-                            // Guardamos el material en un array y su porcentaje
-                            array_push($materialsQuantity, [
-                                "material_id" => $material->id,
-                                "percentage" => $output_detail->percentage
-                            ]);
+                        $item_original = Item::find($output_detail->item_id);
+                        if (isset($item_original))
+                        {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                                // El material está activo
+                                $totalOutputs += $item_original->percentage;
+                                // Guardamos el material en un array y su porcentaje
+                                array_push($materialsQuantity, [
+                                    "material_id" => $material->id,
+                                    "percentage" => $item_original->percentage
+                                ]);
+                            }
                         }
+
 
                     }
                 }
@@ -309,9 +374,53 @@ class RotationMaterialController extends Controller
 
             for ( $i=0; $i<count($quantityMaterials); $i++ )
             {
+                $material = Material::find($quantityMaterials[$i]['material_id']);
+
+                $totalEntries = 0;
+
+                if ( !isset($lastRotation) )
+                {
+                    // TODO: Significa que no hay ultima rotacion tomamos todas las entradas desde el 2023
+                    //$output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
+                    $entryDetails = DetailEntry::where('material_id', $material->id)
+                        ->whereYear('created_at', '>=', 2023)
+                        ->get();
+
+                    foreach ( $entryDetails as $detail )
+                    {
+                        $entry = Entry::with(['supplier'])->find($detail->entry_id);
+                        if ( $entry->entry_type != 'Retacería' )
+                        {
+                            $totalEntries += (float)$detail->entered_quantity;
+                        }
+                    }
+
+
+                } else {
+                    // TODO: Significa que si hay ultima rotacion tomamos todas las entradas entre ambas fechas
+                    //$output_details = OutputDetail::where('created_at', '>=', $lastRotation->date_rotation);
+                    $entryDetails = DetailEntry::where('material_id', '=', $material->id)
+                        ->where('created_at', '>=', $lastRotation->date_rotation)
+                        ->get();
+
+                    foreach ( $entryDetails as $detail )
+                    {
+                        $entry = Entry::with(['supplier'])->find($detail->entry_id);
+                        if ( $entry->entry_type != 'Retacería' )
+                        {
+                            $totalEntries += (float)$detail->entered_quantity;
+                        }
+                    }
+                }
+
                 $percentage = $quantityMaterials[$i]['percentage'];
 
-                $rotation_value = round(($percentage/$totalOutputs)*100, 2);
+                if ( $totalEntries>0 )
+                {
+                    $rotation_value = round(($percentage/$totalEntries)*100, 2);
+                } else {
+                    $rotation_value = 0;
+                }
 
                 $rotation_state = "";
 
@@ -330,7 +439,8 @@ class RotationMaterialController extends Controller
                     'material_id' => $quantityMaterials[$i]['material_id'],
                     'percentage' => $quantityMaterials[$i]['percentage'],
                     'rotation_value' => $rotation_value,
-                    'rotation_state' => $rotation_state
+                    'rotation_state' => $rotation_state,
+                    'total_entries' => $totalEntries
                 ]);
             }
 
@@ -339,6 +449,7 @@ class RotationMaterialController extends Controller
                 $material_id = $finalMaterialsQuantity[$i]['material_id'];
                 $material = Material::find($material_id);
                 $material->rotation = $finalMaterialsQuantity[$i]['rotation_state'];
+                $material->rotation_value = $finalMaterialsQuantity[$i]['rotation_value'];
                 $material->save();
             }
 
