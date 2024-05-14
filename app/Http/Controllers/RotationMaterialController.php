@@ -56,7 +56,7 @@ class RotationMaterialController extends Controller
                             $material = $item_original->material;
 
                             // Verifica si el material existe y está activo
-                            if ($material && $material->enable_status == 1) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -72,7 +72,7 @@ class RotationMaterialController extends Controller
                         if ( isset($item_original) )
                         {
                             $material = $output_detail->material;
-                            if ($material && $material->enable_status == 1) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -100,7 +100,7 @@ class RotationMaterialController extends Controller
                             $material = $item_original->material;
 
                             // Verifica si el material existe y está activo
-                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -116,7 +116,7 @@ class RotationMaterialController extends Controller
                         $item_original = Item::find($output_detail->item_id);
                         if (isset($item_original))
                         {
-                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -282,7 +282,7 @@ class RotationMaterialController extends Controller
                             $material = $item_original->material;
 
                             // Verifica si el material existe y está activo
-                            if ($material && $material->enable_status == 1) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -298,7 +298,7 @@ class RotationMaterialController extends Controller
                         if ( isset($item_original) )
                         {
                             $material = $output_detail->material;
-                            if ($material && $material->enable_status == 1) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -326,7 +326,7 @@ class RotationMaterialController extends Controller
                             $material = $item_original->material;
 
                             // Verifica si el material existe y está activo
-                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
@@ -342,7 +342,7 @@ class RotationMaterialController extends Controller
                         $item_original = Item::find($output_detail->item_id);
                         if (isset($item_original))
                         {
-                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8) ) {
+                            if ($material && ($material->enable_status == 1) && ($material->category_id != 8)  && $material->stock_current > 0 ) {
                                 // El material está activo
                                 $totalOutputs += $item_original->percentage;
                                 // Guardamos el material en un array y su porcentaje
