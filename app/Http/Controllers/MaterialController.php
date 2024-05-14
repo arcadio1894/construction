@@ -286,7 +286,7 @@ class MaterialController extends Controller
         $query = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
             ->where('enable_status', 1)
             ->where('category_id', '<>', 8)
-            ->orderBy('rotation', "desc")
+            /*->orderBy('rotation', "desc")*/
             ->orderBy('id');
 
         // Aplicar filtros si se proporcionan
