@@ -162,13 +162,14 @@ class RotationMaterialController extends Controller
                 ]);
             }
 
-            //dump($totalOutputs);
+            $finalMaterialsQuantity = $finalMaterialsQuantity->sortByDesc('percentage')->values()->all();
+
+            dump($finalMaterialsQuantity);
 
             //dump($quantityMaterials);
 
             //dump($finalMaterialsQuantity);
-
-            //dd();
+            dd();
 
             /*$rotation = RotationMaterial::create([
                 'date_rotation' => Carbon::now("America/Lima"),
