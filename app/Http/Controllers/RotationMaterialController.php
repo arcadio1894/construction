@@ -162,7 +162,9 @@ class RotationMaterialController extends Controller
                 ]);
             }
 
-            $finalMaterialsQuantity = $finalMaterialsQuantity->sortByDesc('percentage')->values()->all();
+            usort($finalMaterialsQuantity, function($a, $b) {
+                return $b['percentage'] <=> $a['percentage'];
+            });
 
             dump($finalMaterialsQuantity);
 
