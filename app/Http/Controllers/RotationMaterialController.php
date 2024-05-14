@@ -39,7 +39,7 @@ class RotationMaterialController extends Controller
             $materialsQuantity = [];
             $quantityMaterials = [];
 
-            if ( !isset($lastRotation) )
+            if ( isset($lastRotation) )
             {
                 // TODO: Significa que no hay ultima rotacion tomamos todas las salidas desde el 2023
                 $output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
