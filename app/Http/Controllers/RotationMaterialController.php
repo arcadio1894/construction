@@ -270,8 +270,8 @@ class RotationMaterialController extends Controller
             if ( !isset($lastRotation) )
             {
                 // TODO: Significa que no hay ultima rotacion tomamos todas las salidas desde el 2023
-                //$output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
-                $output_details = OutputDetail::all();
+                $output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
+                //$output_details = OutputDetail::all();
                 foreach ( $output_details as $output_detail )
                 {
                     if ( $output_detail->material_id == null )
@@ -383,7 +383,7 @@ class RotationMaterialController extends Controller
                     // TODO: Significa que no hay ultima rotacion tomamos todas las entradas desde el 2023
                     //$output_details = OutputDetail::whereYear('created_at', '>=', 2023)->get();
                     $entryDetails = DetailEntry::where('material_id', $material->id)
-                        //->whereYear('created_at', '>=', 2023)
+                        ->whereYear('created_at', '>=', 2023)
                         ->get();
 
                     foreach ( $entryDetails as $detail )
