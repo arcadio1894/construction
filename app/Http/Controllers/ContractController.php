@@ -215,8 +215,11 @@ class ContractController extends Controller
 
             // TODO: Verificar si hay algun finishContract
             $finishContract = FinishContract::where('contract_id', $contract->id)->first();
-            $finishContract->active = false;
-            $finishContract->save();
+            if ( isset($finishContract) )
+            {
+                $finishContract->active = false;
+                $finishContract->save();
+            }
 
             DB::commit();
 
