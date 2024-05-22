@@ -2623,15 +2623,17 @@ Route::get('/api/sunat/v2', function () {
 
 Route::get('/api/sunat', function () {
     // Datos
-    $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
-    $fecha = '2024-05-11';
+    //$token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
+    $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
+    $fecha = \Carbon\Carbon::now('America/Lima');
+    $fechaFormateada = $fecha->format('Y-m-d');
 
 // Iniciar llamada a API
     $curl = curl_init();
 
     curl_setopt_array($curl, array(
         // para usar la api versión 2
-        CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fecha,
+        CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fechaFormateada,
         CURLOPT_RETURNTRANSFER => true,
         CURLOPT_SSL_VERIFYPEER => 0,
         CURLOPT_ENCODING => '',
