@@ -281,6 +281,7 @@
             </thead>
             <tbody>
             @foreach( $equipment->consumables as $consumable )
+                @if( $consumable->quantity > 0 )
                 <tr>
                     <td class="desc">{{ $consumable->material->full_description }}</td>
                     <td class="unit">{{ $consumable->material->unitMeasure->name }}</td>
@@ -296,6 +297,40 @@
                         <td class="qty"></td>
                     @endcan
                 </tr>
+                @endif
+            @endforeach
+            </tbody>
+        </table>
+        <br>
+        <table>
+            <thead>
+            <tr>
+                <th class="desc">ELECTRICOS</th>
+                <th>UNIDAD</th>
+                <th>PRECIO</th>
+                <th>CANT.</th>
+                <th>TOTAL</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach( $equipment->electrics as $electric )
+                @if( $electric->quantity > 0 )
+                <tr>
+                    <td class="desc">{{ $electric->material->full_name }}</td>
+                    <td class="unit">{{ $electric->material->unitMeasure->name }}</td>
+                    @can('showPrices_quote')
+                        <td class="unit">USD {{ $electric->price }}</td>
+                    @else
+                        <td class="unit"></td>
+                    @endcan
+                    <td class="qty">{{ $electric->quantity }}</td>
+                    @can('showPrices_quote')
+                        <td class="qty">USD {{ $electric->total }}</td>
+                    @else
+                        <td class="qty"></td>
+                    @endcan
+                </tr>
+                @endif
             @endforeach
             </tbody>
         </table>

@@ -315,6 +315,166 @@
                         </div>
                     </div>
 
+                    <div class="card card-indigo collapsed-card">
+                        <div class="card-header">
+                            <h3 class="card-title">MATERIALES ELECTRICOS</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div data-bodyElectric>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total C/IGV</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                @can('showPrices_quote')
+                                    @foreach( $equipment->electrics as $electric )
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->full_description }}" data-electricDescription {{ ($electric->material->enable_status == 0) ? 'style=color:purple':( ($electric->material->stock_current == 0) ? 'style=color:red': ( ($electric->material->state_update_price == 1) ? 'style=color:blue':'' ) ) }} readonly>
+                                                    <input type="hidden" data-electricId="{{ $electric->material_id }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->unitMeasure->description }}" data-electricUnit readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" oninput="calculateTotalE(this);" data-electricQuantity  onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->quantity }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice2 onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->price/1.18,2) }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->price }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->total/1.18,2) }}" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->total }}" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @else
+                                    @foreach( $equipment->electrics as $electric )
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->full_description }}" {{ ($electric->material->enable_status == 0) ? 'style=color:purple':( ($electric->material->stock_current == 0) ? 'style=color:red': ( ($electric->material->state_update_price == 1) ? 'style=color:blue':'' ) ) }} data-electricDescription readonly>
+                                                    <input type="hidden" data-electricId="{{ $electric->material_id }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->unitMeasure->description }}" data-electricUnit readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricQuantity oninput="calculateTotalE(this);" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->quantity }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice2 onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ ($electric->price/1.18) }}" style="display: none" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->price }}" style="display: none" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->total/1.18,2) }}" style="display: none" readonly>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->total }}" style="display: none" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                @endcan
+
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card card-gray collapsed-card">
                         <div class="card-header">
                             <h3 class="card-title">SERVICIOS VARIOS</h3>
@@ -559,16 +719,21 @@
                                     </tr>
                                     <tr>
                                         <td>3.</td>
+                                        <td>ELECTRICOS</td>
+                                        <td data-total_electrics>{{ $equipment->total_electrics }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4.</td>
                                         <td>SERVICIOS VARIOS</td>
                                         <td data-total_workforces>{{ $equipment->total_workforces }}</td>
                                     </tr>
                                     <tr>
-                                        <td>4.</td>
+                                        <td>5.</td>
                                         <td>SERVICIOS ADICIONALES</td>
                                         <td data-total_tornos>{{ $equipment->total_turnstiles }}</td>
                                     </tr>
                                     <tr>
-                                        <td>5.</td>
+                                        <td>6.</td>
                                         <td>DÍAS DE TRABAJO</td>
                                         <td data-total_dias>{{ $equipment->total_workdays }}</td>
                                     </tr>

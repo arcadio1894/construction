@@ -628,6 +628,198 @@
                             </div>
                         </div>
 
+                        <div class="card card-indigo collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">MATERIALES ELECTRICOS</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control electric_search" data-electric style="width:100%" name="electric_search"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addElectric class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div data-bodyElectric>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <strong>Descripción</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Unidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Cantidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Precio S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Precio C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Acción</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @can('showPrices_quote')
+                                        @foreach( $equipment->electrics as $electric )
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->full_description }}" data-electricDescription {{ ($electric->material->enable_status == 0) ? 'style=color:purple':( ($electric->material->stock_current == 0) ? 'style=color:red': ( ($electric->material->state_update_price == 1) ? 'style=color:blue':'' ) ) }} readonly>
+                                                        <input type="hidden" data-electricId="{{ $electric->material_id }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->unitMeasure->description }}" data-electricUnit readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" oninput="calculateTotalE(this);" data-electricQuantity  onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->quantity }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice2 onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->price/1.18,2) }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->price }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->total/1.18,2) }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->total }}" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        @foreach( $equipment->electrics as $electric )
+                                            <div class="row">
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->full_description }}" {{ ($electric->material->enable_status == 0) ? 'style=color:purple':( ($electric->material->stock_current == 0) ? 'style=color:red': ( ($electric->material->state_update_price == 1) ? 'style=color:blue':'' ) ) }} data-electricDescription readonly>
+                                                        <input type="hidden" data-electricId="{{ $electric->material_id }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <div class="form-group">
+                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->material->unitMeasure->description }}" data-electricUnit readonly>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricQuantity oninput="calculateTotalE(this);" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->quantity }}">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice2 onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ ($electric->price/1.18) }}" style="display: none" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" data-electricPrice onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->price }}" style="display: none" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ round($electric->total/1.18,2) }}" style="display: none" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                    " value="{{ $electric->total }}" style="display: none" readonly>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-1">
+                                                    <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @endcan
+
+                                </div>
+                            </div>
+                        </div>
+
                         <div class="card card-gray collapsed-card">
                             <div class="card-header">
                                 <h3 class="card-title">SERVICIOS VARIOS</h3>
@@ -1085,16 +1277,21 @@
                                     </tr>
                                     <tr>
                                         <td>3.</td>
+                                        <td>ELECTRICOS</td>
+                                        <td data-total_electrics>{{ $equipment->total_electrics }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>4.</td>
                                         <td>SERVICIOS VARIOS</td>
                                         <td data-total_workforces>{{ $equipment->total_workforces }}</td>
                                     </tr>
                                     <tr>
-                                        <td>4.</td>
+                                        <td>5.</td>
                                         <td>SERVICIOS ADICIONALES</td>
                                         <td data-total_tornos>{{ $equipment->total_turnstiles }}</td>
                                     </tr>
                                     <tr>
-                                        <td>5.</td>
+                                        <td>6.</td>
                                         <td>DÍAS DE TRABAJO</td>
                                         <td data-total_dias>{{ $equipment->total_workdays }}</td>
                                     </tr>
@@ -1953,6 +2150,62 @@
             </div>
         </template>
 
+        <template id="template-electric">
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricDescription readonly>
+                        <input type="hidden" data-electricId>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricUnit readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotalE(this);" data-electricQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            ">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                </div>
+            </div>
+        </template>
+
         <template id="template-mano">
             <div class="row">
                 <div class="col-md-3">
@@ -2325,6 +2578,139 @@
                                             </div>
                                             <div class="col-md-1">
                                                 <button type="button" data-deleteConsumable class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card card-indigo collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">MATERIALES ELECTRICOS</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control electric_search" data-electric style="width:100%" name="electric_search"></select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addElectric class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div data-bodyElectric>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <strong>Descripción</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Unidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <strong>Cantidad</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Precio S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Precio C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total S/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Total C/IGV</strong>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <div class="form-group">
+                                                <strong>Acción</strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @foreach( $electrics as $electric )
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->full_description }}" data-electricDescription readonly>
+                                                    <input type="hidden" data-electricId="{{ $electric->id }}" value="{{ $electric->id }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $electric->unitMeasure->description }}" data-electricUnit readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" oninput="calculateTotalE(this);" placeholder="0.00" data-electricQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" value="{{ round($electric->unit_price/1.18,2) }}" class="form-control form-control-sm" data-electricPrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" value="{{ $electric->unit_price }}" class="form-control form-control-sm" data-electricPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-electricTotal2 value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-electricTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                             </div>
                                         </div>
                                     @endforeach
@@ -2848,16 +3234,21 @@
                                     </tr>
                                     <tr>
                                         <td>3.</td>
+                                        <td>ELECTRICOS</td>
+                                        <td data-total_electrics></td>
+                                    </tr>
+                                    <tr>
+                                        <td>4.</td>
                                         <td>SERVICIOS VARIOS</td>
                                         <td data-total_workforces></td>
                                     </tr>
                                     <tr>
-                                        <td>4.</td>
+                                        <td>5.</td>
                                         <td>SERVICIOS ADICIONALES</td>
                                         <td data-total_tornos></td>
                                     </tr>
                                     <tr>
-                                        <td>5.</td>
+                                        <td>6.</td>
                                         <td>DÍAS DE TRABAJO</td>
                                         <td data-total_dias></td>
                                     </tr>

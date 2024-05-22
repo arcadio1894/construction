@@ -50,6 +50,11 @@ class Material extends Model
         return $query->where($column, 'like', $value.'%');
     }
 
+    public function scopeWhereElectric($query, $column, $value)
+    {
+        return $query->where($column, 'like', $value.'%');
+    }
+
     public function getQuantityItemsAttribute()
     {
         $items = Item::where('material_id', $this->id)
@@ -74,11 +79,19 @@ class Material extends Model
 
         if($this->category_id == 2)
         {
-            $pos = strripos($this->description, "(*) ");
+            /*$pos = strripos($this->description, "(*) ");
             if ( $pos !== false ) {
                 $description = $description . substr($this->description, 4);
             } else {
                 $description = $description.$this->description;
+            }*/
+            if (preg_match('/\(\*\) |\(e\)/', $this->description, $matches, PREG_OFFSET_CAPTURE)) {
+                $pos = $matches[0][1];
+                // Si se encontró una coincidencia, eliminamos los primeros 4 caracteres
+                $description = $description . substr($this->description, 4);
+            } else {
+                // No se encontró ninguna de las cadenas
+                $description = $description . $this->description;
             }
         } else {
             $description = $description.$this->description;

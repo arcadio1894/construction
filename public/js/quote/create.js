@@ -1,6 +1,7 @@
 let $materials=[];
 let $materialsTypeahead=[];
 let $consumables=[];
+let $electrics=[];
 let $items=[];
 let $equipments=[];
 let $equipmentStatus=false;
@@ -34,6 +35,7 @@ $(document).ready(function () {
             for (var i=0; i<json.length; i++)
             {
                 $consumables.push(json[i]);
+                $electrics.push(json[i]);
             }
         }
     });
@@ -94,6 +96,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-addDia]', addDia);
 
     $(document).on('click', '[data-addConsumable]', addConsumable);
+
+    $(document).on('click', '[data-addElectric]', addElectric);
 
     $('#btn-addEquipment').on('click', addEquipment);
 
@@ -186,9 +190,32 @@ $(document).ready(function () {
         }
     });
 
+    $('.electric_search').select2({
+        placeholder: 'Selecciona un material',
+        ajax: {
+            url: '/dashboard/select/consumables',
+            dataType: 'json',
+            type: 'GET',
+            processResults(data) {
+                //console.log(data);
+                return {
+                    results: $.map(data, function (item) {
+                        //console.log(item.full_description);
+                        return {
+                            text: item.full_description,
+                            id: item.id,
+                        }
+                    })
+                }
+            }
+        }
+    });
+
     $(document).on('click', '[data-delete]', deleteItem);
 
     $(document).on('click', '[data-deleteConsumable]', deleteConsumable);
+
+    $(document).on('click', '[data-deleteElectric]', deleteElectric);
 
     $(document).on('click', '[data-deleteMano]', deleteMano);
 
@@ -389,6 +416,11 @@ $(document).ready(function () {
     });
     $(document).on('input', '[data-consumableQuantity]', function() {
         var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
+        card.removeClass('card-success');
+        card.addClass('card-gray-dark');
+    });
+    $(document).on('input', '[data-electricQuantity]', function() {
+        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
         card.removeClass('card-success');
         card.addClass('card-gray-dark');
     });
@@ -667,6 +699,7 @@ function saveEquipment() {
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
                     var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
+                    var electrics = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
                     var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
@@ -775,6 +808,41 @@ function saveEquipment() {
                         consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
                     }
 
+                    var electricsDescription = [];
+                    var electricsIds = [];
+                    var electricsUnit = [];
+                    var electricsQuantity = [];
+                    var electricsPrice = [];
+                    var electricsTotal = [];
+
+                    electrics.each(function(e){
+                        $(this).find('[data-electricDescription]').each(function(){
+                            electricsDescription.push($(this).val());
+                        });
+                        $(this).find('[data-electricid]').each(function(){
+                            console.log($(this).attr('data-electricid'));
+                            electricsIds.push($(this).attr('data-electricid'));
+                        });
+                        $(this).find('[data-electricUnit]').each(function(){
+                            electricsUnit.push($(this).val());
+                        });
+                        $(this).find('[data-electricQuantity]').each(function(){
+                            electricsQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-electricPrice]').each(function(){
+                            electricsPrice.push($(this).val());
+                        });
+                        $(this).find('[data-electricTotal]').each(function(){
+                            electricsTotal.push($(this).val());
+                        });
+                    });
+
+                    var electricsArray = [];
+
+                    for (let i = 0; i < electricsDescription.length; i++) {
+                        electricsArray.push({'id':electricsIds[i], 'description':electricsDescription[i], 'unit':electricsUnit[i], 'quantity':electricsQuantity[i], 'price': electricsPrice[i], 'total': electricsTotal[i]});
+                    }
+
                     var manosDescription = [];
                     var manosIds = [];
                     var manosUnit = [];
@@ -877,8 +945,8 @@ function saveEquipment() {
 
                     button.attr('data-saveEquipment', $equipments.length);
                     button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-                    updateTableTotalsEquipment(button, {'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    $equipments.push({'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    updateTableTotalsEquipment(button, {'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -901,6 +969,14 @@ function saveEquipment() {
 }
 
 function deleteConsumable() {
+    //console.log($(this).parent().parent().parent());
+    var card = $(this).parent().parent().parent().parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
+    $(this).parent().parent().remove();
+}
+
+function deleteElectric() {
     //console.log($(this).parent().parent().parent());
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
@@ -1106,6 +1182,184 @@ function addConsumable() {
         inputQuantity2.val(0);
         $(".consumable_search").empty().trigger('change');
         renderTemplateConsumable(render2, consumable2, cantidad2);
+    }
+
+}
+
+function addElectric() {
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var electricID = $(this).parent().parent().find('[data-electric]').val();
+        //console.log(material);
+        var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
+        var cantidad = inputQuantity.val();
+        if ( cantidad === '' || parseFloat(cantidad) === 0 )
+        {
+            toastr.error('Debe ingresar una cantidad', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        if ( electricID === '' || electricID === null )
+        {
+            toastr.error('Debe seleccionar un material eléctrico', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var render = $(this).parent().parent().next().next();
+
+        var electric = $electrics.find( mat=>mat.id === parseInt(electricID) );
+
+        var electrics = $(this).parent().parent().next().next().children();
+
+        electrics.each(function(e){
+            var id = $(this).children().children().children().next().val();
+            if (parseInt(electric.id) === parseInt(id)) {
+                inputQuantity.val(0);
+                $(".electric_search").empty().trigger('change');
+                toastr.error('Este material ya esta seleccionado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                e.stopPropagation();
+                return false ;
+            }
+        });
+        inputQuantity.val(0);
+        $(".electric_search").empty().trigger('change');
+        renderTemplateElectric(render, electric, cantidad);
+    } else {
+        var electricID2 = $(this).parent().parent().find('[data-electric]').val();
+        //console.log(material);
+        var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
+        var cantidad2 = inputQuantity2.val();
+        if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
+        {
+            toastr.error('Debe ingresar una cantidad', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        if ( electricID2 === '' || electricID2 === null )
+        {
+            toastr.error('Debe seleccionar un material electrico', 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+            return;
+        }
+
+        var render2 = $(this).parent().parent().next().next();
+
+        var electric2 = $electrics.find( mat=>mat.id === parseInt(electricID2) );
+        var electrics2 = $(this).parent().parent().next().next().children();
+
+        electrics2.each(function(e){
+            var id = $(this).children().children().children().next().val();
+            if (parseInt(electric2.id) === parseInt(id)) {
+                inputQuantity2.val(0);
+                $(".electric_search").empty().trigger('change');
+                toastr.error('Este material ya esta seleccionado', 'Error',
+                    {
+                        "closeButton": true,
+                        "debug": false,
+                        "newestOnTop": false,
+                        "progressBar": true,
+                        "positionClass": "toast-top-right",
+                        "preventDuplicates": false,
+                        "onclick": null,
+                        "showDuration": "300",
+                        "hideDuration": "1000",
+                        "timeOut": "2000",
+                        "extendedTimeOut": "1000",
+                        "showEasing": "swing",
+                        "hideEasing": "linear",
+                        "showMethod": "fadeIn",
+                        "hideMethod": "fadeOut"
+                    });
+                e.stopPropagation();
+                return false ;
+            }
+        });
+        inputQuantity2.val(0);
+        $(".electric_search").empty().trigger('change');
+        renderTemplateElectric(render2, electric2, cantidad2);
     }
 
 }
@@ -1609,6 +1863,7 @@ function confirmEquipment() {
                     var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
                     var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
+                    var electrics = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var workforces = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
                     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
                     var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
@@ -1716,6 +1971,41 @@ function confirmEquipment() {
                         consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
                     }
 
+                    // SECCION DE ELECTRICOS
+                    var electricsDescription = [];
+                    var electricsIds = [];
+                    var electricsUnit = [];
+                    var electricsQuantity = [];
+                    var electricsPrice = [];
+                    var electricsTotal = [];
+
+                    electrics.each(function(e){
+                        $(this).find('[data-electricDescription]').each(function(){
+                            electricsDescription.push($(this).val());
+                        });
+                        $(this).find('[data-electricId]').each(function(){
+                            electricsIds.push($(this).attr('data-electricid'));
+                        });
+                        $(this).find('[data-electricUnit]').each(function(){
+                            electricsUnit.push($(this).val());
+                        });
+                        $(this).find('[data-electricQuantity]').each(function(){
+                            electricsQuantity.push($(this).val());
+                        });
+                        $(this).find('[data-electricPrice]').each(function(){
+                            electricsPrice.push($(this).val());
+                        });
+                        $(this).find('[data-electricTotal]').each(function(){
+                            electricsTotal.push($(this).val());
+                        });
+                    });
+
+                    var electricsArray = [];
+
+                    for (let i = 0; i < electricsDescription.length; i++) {
+                        electricsArray.push({'id':electricsIds[i], 'description':electricsDescription[i], 'unit':electricsUnit[i], 'quantity':electricsQuantity[i], 'price': electricsPrice[i], 'total': electricsTotal[i]});
+                    }
+
                     var manosDescription = [];
                     var manosIds = [];
                     var manosUnit = [];
@@ -1794,6 +2084,9 @@ function confirmEquipment() {
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
+                    for (let i = 0; i < electricsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
+                    }
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }
@@ -1817,8 +2110,8 @@ function confirmEquipment() {
 
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-                    updateTableTotalsEquipment(button, {'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    updateTableTotalsEquipment(button, {'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -1844,6 +2137,7 @@ function updateTableTotalsEquipment(button, data) {
     var quantity = data.quantity;
     var materiales = data.materials;
     var consumibles = data.consumables;
+    var electrics = data.electrics;
     var serviciosVarios = data.workforces;
     var serviciosAdicionales = data.tornos;
     var diasTrabajo = data.dias;
@@ -1858,6 +2152,12 @@ function updateTableTotalsEquipment(button, data) {
 
     for (let j = 0; j < consumibles.length; j++) {
         totalConsumables += parseFloat(consumibles[j].total);
+    }
+
+    var totalElectrics = 0;
+
+    for (let j = 0; j < electrics.length; j++) {
+        totalElectrics += parseFloat(electrics[j].total);
     }
 
     var totalWorkforces = 0;
@@ -1889,6 +2189,11 @@ function updateTableTotalsEquipment(button, data) {
     //totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
     totalConsumablesElement.html((totalConsumables).toFixed(2));
     totalConsumablesElement.css('text-align', 'right');
+
+    var totalElectricsElement = table.find('[data-total_electrics]');
+    //totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
+    totalElectricsElement.html((totalElectrics).toFixed(2));
+    totalElectricsElement.css('text-align', 'right');
 
     var totalWorkforcesElement = table.find('[data-total_workforces]');
     //totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
@@ -1993,6 +2298,15 @@ function calculateRent2(rent) {
 }
 
 function calculateTotalC(e) {
+    var cantidad = e.value;
+    var precio = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
+    // CON IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
+    // SIN IGV
+    e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = ((parseFloat(cantidad)*parseFloat(precio))/1.18).toFixed(2);
+}
+
+function calculateTotalE(e) {
     var cantidad = e.value;
     var precio = e.parentElement.parentElement.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value;
     // CON IGV
@@ -2142,6 +2456,27 @@ function addEquipment() {
         }
     });
     //$equipmentStatus = false;
+
+    $('.electric_search').select2({
+        placeholder: 'Selecciona un material',
+        ajax: {
+            url: '/dashboard/select/consumables',
+            dataType: 'json',
+            type: 'GET',
+            processResults(data) {
+                //console.log(data);
+                return {
+                    results: $.map(data, function (item) {
+                        //console.log(item.full_description);
+                        return {
+                            text: item.full_description,
+                            id: item.id,
+                        }
+                    })
+                }
+            }
+        }
+    });
 
     $('.textarea_edit').summernote({
         lang: 'es-ES',
@@ -3255,7 +3590,7 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
 
 function renderTemplateConsumable(render, consumable, quantity) {
     var card = render.parent().parent().parent().parent();
-    card.removeClass('card-sucess');
+    card.removeClass('card-success');
     card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#template-consumable');
@@ -3332,6 +3667,91 @@ function renderTemplateConsumable(render, consumable, quantity) {
         clone2.querySelector("[data-consumablePrice2]").setAttribute("style","display:none;");
         clone2.querySelector("[data-consumableTotal2]").setAttribute("style","display:none;");
         clone2.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
+        render.append(clone2);
+    }
+
+
+}
+
+function renderTemplateElectric(render, electric, quantity) {
+    var card = render.parent().parent().parent().parent();
+    card.removeClass('card-success');
+    card.addClass('card-gray-dark');
+    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
+        var clone = activateTemplate('#template-electric');
+        //console.log(consumable.stock_current );
+
+        if ( electric.enable_status == 0 )
+        {
+            clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+            clone.querySelector("[data-electricDescription]").setAttribute("style", "color:purple;");
+
+        } else {
+            if ( electric.stock_current == 0 )
+            {
+                clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                clone.querySelector("[data-electricDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( electric.state_update_price == 1 )
+                {
+                    clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                    clone.querySelector("[data-electricDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                }
+
+            }
+        }
+
+        clone.querySelector("[data-electricId]").setAttribute('data-electricId', electric.id);
+        clone.querySelector("[data-electricUnit]").setAttribute('value', electric.unit_measure.description);
+        clone.querySelector("[data-electricQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-electricPrice]").setAttribute('value', (parseFloat(electric.unit_price)).toFixed(2));
+        clone.querySelector("[data-electricPrice2]").setAttribute('value', ( (parseFloat(electric.unit_price))/1.18 ).toFixed(2));
+        clone.querySelector("[data-electricTotal2]").setAttribute( 'value', ( (parseFloat(electric.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
+        clone.querySelector("[data-electricTotal]").setAttribute( 'value', (parseFloat(electric.unit_price)*parseFloat(quantity)).toFixed(2));
+        clone.querySelector("[data-deleteElectric]").setAttribute('data-deleteElectric', electric.id);
+        render.append(clone);
+    } else {
+        var clone2 = activateTemplate('#template-electric');
+        //console.log(consumable.stock_current );
+
+        if ( electric.enable_status == 0 )
+        {
+            clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+            clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:purple;");
+
+        } else {
+            if ( electric.stock_current == 0 )
+            {
+                clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:red;");
+            } else {
+                if ( electric.state_update_price == 1 )
+                {
+                    clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                    clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:blue;");
+                } else {
+                    clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+                }
+
+                //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
+            }
+        }
+
+        clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
+        clone2.querySelector("[data-electricId]").setAttribute('data-electricId', electric.id);
+        clone2.querySelector("[data-electricUnit]").setAttribute('value', electric.unit_measure.description);
+        clone2.querySelector("[data-electricQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-electricPrice]").setAttribute('value', (parseFloat(electric.unit_price)).toFixed(2));
+        clone2.querySelector("[data-electricTotal]").setAttribute( 'value', (parseFloat(electric.unit_price)*parseFloat(quantity)).toFixed(2));
+        clone2.querySelector("[data-electricPrice]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-electricTotal]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-electricPrice2]").setAttribute('value', ( (parseFloat(electric.unit_price))/1.18 ).toFixed(2));
+        clone2.querySelector("[data-electricTotal2]").setAttribute( 'value', ( (parseFloat(electric.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
+        clone2.querySelector("[data-electricPrice2]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-electricTotal2]").setAttribute("style","display:none;");
+        clone2.querySelector("[data-deleteElectric]").setAttribute('data-deleteElectric', electric.id);
         render.append(clone2);
     }
 

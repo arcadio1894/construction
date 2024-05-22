@@ -106,6 +106,11 @@ class Equipment extends Model
         return $this->hasMany('App\EquipmentConsumable');
     }
 
+    public function electrics()
+    {
+        return $this->hasMany('App\EquipmentElectric');
+    }
+
     public function workforces()
     {
         return $this->hasMany('App\EquipmentWorkforce');
@@ -139,6 +144,18 @@ class Equipment extends Model
         foreach ( $this->consumables as $consumable )
         {
             $total += $consumable->total;
+        }
+
+        //return $total*$this->quantity;
+        return $total;
+    }
+
+    public function getTotalElectricsAttribute()
+    {
+        $total = 0;
+        foreach ( $this->electrics as $electric )
+        {
+            $total += $electric->total;
         }
 
         //return $total*$this->quantity;
