@@ -45,7 +45,7 @@ class ProjectionController extends Controller
                 ]);
 
                 $projection_month_soles += (($worker->monthly_salary == null) ? 0:$worker->monthly_salary);
-                $projection_month_dollars += ((($worker->monthly_salary == null) ? 0:$worker->monthly_salary) / $typeExchange->compra);
+                $projection_month_dollars += ((($worker->monthly_salary == null) ? 0:$worker->monthly_salary) / $typeExchange->precioCompra);
 
             }
             $projection_week_soles = $projection_month_soles/($quantityDays/7);
@@ -75,10 +75,10 @@ class ProjectionController extends Controller
         $dateCurrent = Carbon::now('America/Lima');
         //dump($dateCurrent);
 
-        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
         $curl = curl_init();
 
-        curl_setopt_array($curl, array(
+        /*curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_ENCODING => '',
@@ -89,6 +89,22 @@ class ProjectionController extends Controller
             CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_HTTPHEADER => array(
                 'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
+                'Authorization: Bearer ' . $token
+            ),
+        ));*/
+        curl_setopt_array($curl, array(
+            // para usar la api versión 2
+            CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fecha,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/api-tipo-cambio-sbs.html',
                 'Authorization: Bearer ' . $token
             ),
         ));

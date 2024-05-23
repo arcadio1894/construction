@@ -979,7 +979,7 @@ class OrderServiceController extends Controller
     public function getTipoDeCambio($fechaFormato)
     {
         // Datos
-        $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
+        $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
         $fecha = $fechaFormato;
 
         // Iniciar llamada a API
