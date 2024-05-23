@@ -256,16 +256,21 @@
                     </tr>
                     <tr>
                         <td>3.</td>
+                        <td>ELECTRICOS</td>
+                        <td data-total_electrics> 000000.00 </td>
+                    </tr>
+                    <tr>
+                        <td>4.</td>
                         <td>SERVICIOS VARIOS</td>
                         <td data-total_workforces> 000000.00 </td>
                     </tr>
                     <tr>
-                        <td>4.</td>
+                        <td>5.</td>
                         <td>SERVICIOS ADICIONALES</td>
                         <td data-total_tornos> 000000.00 </td>
                     </tr>
                     <tr>
-                        <td>5.</td>
+                        <td>6.</td>
                         <td>DÍAS DE TRABAJO</td>
                         <td data-total_dias> 000000.00 </td>
                     </tr>

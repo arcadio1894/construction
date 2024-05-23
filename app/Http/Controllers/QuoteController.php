@@ -2910,7 +2910,7 @@ class QuoteController extends Controller
                 ->with('customer')
                 ->with('deadline')
                 ->with(['equipments' => function ($query) {
-                    $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
+                    $query->with(['materials', 'consumables', 'electrics', 'workforces', 'turnstiles']);
                 }])->first();
 
             $images = ImagesQuote::where('quote_id', $quote->id)
@@ -2979,6 +2979,7 @@ class QuoteController extends Controller
                     'description' => $equipment->description,
                     'total_materials' => $equipment->total_materials,
                     'total_consumables' => $equipment->total_consumables,
+                    'total_electrics' => $equipment->total_electrics,
                     'total_workforces' => $equipment->total_workforces,
                     'total_turnstiles' => $equipment->total_turnstiles,
                     'total_workdays' => $equipment->total_workdays,
@@ -4003,7 +4004,9 @@ class QuoteController extends Controller
         $unitMeasures = UnitMeasure::all();
         $customers = Customer::all();
         $defaultConsumable = '(*)';
+        $defaultElectric = '(e)';
         $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $utility = PorcentageQuote::where('name', 'utility')->first();
         $rent = PorcentageQuote::where('name', 'rent')->first();
@@ -4012,7 +4015,7 @@ class QuoteController extends Controller
             ->with('customer')
             ->with('deadline')
             ->with(['equipments' => function ($query) {
-                $query->with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays']);
+                $query->with(['materials', 'consumables', 'electrics', 'workforces', 'turnstiles', 'workdays']);
             }])->first();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $materials = Material::with('unitMeasure','typeScrap')
@@ -4036,7 +4039,7 @@ class QuoteController extends Controller
             ]);
         }
         //dump($quote);
-        return view('quote.editList', compact('quote', 'unitMeasures', 'customers', 'consumables', 'workforces', 'paymentDeadlines', 'permissions', 'utility', 'rent', 'letter', 'array'));
+        return view('quote.editList', compact('quote', 'unitMeasures', 'customers', 'consumables', 'electrics', 'workforces', 'paymentDeadlines', 'permissions', 'utility', 'rent', 'letter', 'array'));
 
     }
 
@@ -4062,6 +4065,10 @@ class QuoteController extends Controller
             foreach( $equipment_quote->consumables as $consumable ) {
                 //$totalDeleted = $totalDeleted + (float) $consumable->total;
                 $consumable->delete();
+            }
+            foreach( $equipment_quote->electrics as $electric ) {
+                //$totalDeleted = $totalDeleted + (float) $consumable->total;
+                $electric->delete();
             }
             foreach( $equipment_quote->workforces as $workforce ) {
                 //$totalDeleted = $totalDeleted + (float) $workforce->total;
@@ -4106,6 +4113,8 @@ class QuoteController extends Controller
 
                 $consumables = $equip['consumables'];
 
+                $electrics = $equip['electrics'];
+
                 $workforces = $equip['workforces'];
 
                 $tornos = $equip['tornos'];
@@ -4142,6 +4151,19 @@ class QuoteController extends Controller
                         'total' => (float) $consumable['quantity']*(float) $consumable['price'],
                         'state' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Falta comprar':'En compra',
                         'availability' => ((float) $consumable['quantity'] > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    //$totalConsumable += $equipmentConsumable->total;
+                }
+
+                foreach ( $electrics as $electric )
+                {
+                    $equipmentElectric = EquipmentElectric::create([
+                        'equipment_id' => $equipment_quote->id,
+                        'material_id' => (int)$electric['id'],
+                        'quantity' => (float) $electric['quantity'],
+                        'price' => (float) $electric['price'],
+                        'total' => (float) $electric['quantity']*(float) $electric['price'],
                     ]);
 
                     //$totalConsumable += $equipmentConsumable->total;
@@ -4252,6 +4274,9 @@ class QuoteController extends Controller
             foreach( $equipment_quote->consumables as $consumable ) {
                 $consumable->delete();
             }
+            foreach( $equipment_quote->electrics as $electric ) {
+                $electric->delete();
+            }
             foreach( $equipment_quote->workforces as $workforce ) {
                 $workforce->delete();
             }
@@ -4345,6 +4370,8 @@ class QuoteController extends Controller
 
                     $totalConsumable = 0;
 
+                    $totalElectric = 0;
+
                     $totalWorkforces = 0;
 
                     $totalTornos = 0;
@@ -4354,6 +4381,8 @@ class QuoteController extends Controller
                     $materials = $equipments[$i]->materials;
 
                     $consumables = $equipments[$i]->consumables;
+
+                    $electrics = $equipments[$i]->electrics;
 
                     $workforces = $equipments[$i]->workforces;
 
@@ -4394,6 +4423,19 @@ class QuoteController extends Controller
                         ]);
 
                         $totalConsumable += $equipmentConsumable->total;
+                    }
+
+                    for ( $e=0; $e<sizeof($electrics); $e++ )
+                    {
+                        $equipmentElectric = EquipmentElectric::create([
+                            'equipment_id' => $equipment->id,
+                            'material_id' => $electrics[$e]->id,
+                            'quantity' => (float) $electrics[$e]->quantity,
+                            'price' => (float) $electrics[$e]->price,
+                            'total' => (float) $electrics[$e]->quantity*(float) $electrics[$e]->price,
+                        ]);
+
+                        $totalElectric += $equipmentElectric->total;
                     }
 
                     for ( $w=0; $w<sizeof($workforces); $w++ )
@@ -4441,7 +4483,7 @@ class QuoteController extends Controller
 
                     //$equipment->total = ($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos + $totalDias)* (float)$equipment->quantity;
 
-                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity) + $totalDias;
+                    $totalEquipo = (($totalMaterial + $totalConsumable + $totalElectric + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity);
                     $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                     $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                     $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
@@ -4530,11 +4572,12 @@ class QuoteController extends Controller
 
                 array_push($resumenEquipments, [
                     "equipment" => $resumenEquipment->description,
-                    "total_materials" => $resumenEquipment->total_materials,
-                    "total_consumables" => $resumenEquipment->total_consumables,
-                    "total_workforces" => $resumenEquipment->total_workforces,
-                    "total_tornos" => $resumenEquipment->total_turnstiles,
-                    "total_dias" => $resumenEquipment->total_workdays
+                    "total_materials" => ($resumenEquipment->total_materials == null) ? 0:$resumenEquipment->total_materials,
+                    "total_consumables" => ($resumenEquipment->total_consumables == null) ? 0:$resumenEquipment->total_consumables,
+                    "total_electrics" => ($resumenEquipment->total_electrics == null) ? 0:$resumenEquipment->total_electrics,
+                    "total_workforces" => ($resumenEquipment->total_workforces == null) ? 0:$resumenEquipment->total_workforces,
+                    "total_tornos" => ($resumenEquipment->total_turnstiles == null) ? 0:$resumenEquipment->total_turnstiles,
+                    "total_dias" => ($resumenEquipment->total_workdays == null) ? 0:$resumenEquipment->total_workdays
                 ]);
 
             }
@@ -4597,7 +4640,7 @@ class QuoteController extends Controller
     public function getTipoDeCambio($fechaFormato)
     {
         // Datos
-        $token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
+        $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
         $fecha = $fechaFormato;
 
         // Iniciar llamada a API

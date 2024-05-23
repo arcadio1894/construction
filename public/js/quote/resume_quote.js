@@ -330,6 +330,7 @@ function renderDataResumenEquipments(data) {
     clone.querySelector("[data-equipment]").innerHTML = data.equipment;
     clone.querySelector("[data-total_materials]").innerHTML = data.total_materials;
     clone.querySelector("[data-total_consumables]").innerHTML = data.total_consumables;
+    clone.querySelector("[data-total_electrics]").innerHTML = data.total_electrics;
     clone.querySelector("[data-total_workforces]").innerHTML = data.total_workforces;
     clone.querySelector("[data-total_tornos]").innerHTML = data.total_tornos;
     clone.querySelector("[data-total_dias]").innerHTML = data.total_dias;

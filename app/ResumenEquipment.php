@@ -14,6 +14,7 @@ class ResumenEquipment extends Model
         'description',
         'total_materials',
         'total_consumables',
+        'total_electrics',
         'total_workforces',
         'total_turnstiles',
         'total_workdays',
