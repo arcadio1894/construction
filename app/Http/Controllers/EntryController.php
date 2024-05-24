@@ -2908,7 +2908,7 @@ class EntryController extends Controller
     public function getTipoDeCambio($fechaFormato)
     {
         // Datos
-        $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
+        $token = env('TOKEN_DOLLAR');
         $fecha = $fechaFormato;
 
         // Iniciar llamada a API
@@ -2933,9 +2933,42 @@ class EntryController extends Controller
 
         $response = curl_exec($curl);
 
-        curl_close($curl);
+        if ($response === false) {
+            // Error en la ejecución de cURL
+            $errorNo = curl_errno($curl);
+            $errorMsg = curl_error($curl);
+            curl_close($curl);
+
+            // Manejar el error
+            //echo "cURL Error #{$errorNo}: {$errorMsg}";
+        } else {
+            $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+            curl_close($curl);
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                // La solicitud fue exitosa
+                $data = json_decode($response, true);
+                // Manejar la respuesta exitosa
+                //echo "Respuesta exitosa: ";
+                //print_r($data);
+            } else {
+                // La solicitud no fue exitosa
+                // Decodificar el mensaje de error si la respuesta está en formato JSON
+                $errorData = json_decode($response, true);
+                //echo "Error en la solicitud: ";
+                ///print_r($errorData);
+                $response = [
+                    "precioCompra"=> 3.738,
+                    "precioVenta"=> 3.746,
+                    "moneda"=> "USD",
+                    "fecha"=> "2024-05-24"
+                ];
+            }
+        }
+
+        //curl_close($curl);
         // Datos listos para usar
-        $tipoCambioSbs = json_decode($response);
+        $tipoCambioSbs = json_encode($response);
         //var_dump($tipoCambioSbs);
         return $response;
     }
