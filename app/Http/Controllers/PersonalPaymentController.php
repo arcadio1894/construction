@@ -368,7 +368,8 @@ class PersonalPaymentController extends Controller
 
     public function getTypeExchange($year, $month)
     {
-        $token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
+        //$token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
+        $token = env('TOKEN_DOLLAR');
         $curl = curl_init();
 
         /*curl_setopt_array($curl, array(
