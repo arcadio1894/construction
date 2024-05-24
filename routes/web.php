@@ -2588,6 +2588,11 @@ Route::middleware('auth')->group(function (){
         Route::get('/store/rotation/material/', 'RotationMaterialController@storeRotationMaterial');
         Route::get('/get/rotation/material/', 'RotationMaterialController@getRotationMaterial');
         Route::get('/get/data/rotations/v2/{page}', 'RotationMaterialController@getDataRotations');
+
+        // TODO: Rutas de generacion de tipos de cambio
+        Route::get('/generar/tipo/cambios/', 'TipoCambioController@generarTipoCambios');
+
+
     });
 });
 
