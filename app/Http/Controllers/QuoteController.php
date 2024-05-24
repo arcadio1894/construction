@@ -4529,12 +4529,7 @@ class QuoteController extends Controller
             }
         }
 
-        $response = [
-            "precioCompra"=> 3.738,
-            "precioVenta"=> 3.746,
-            "moneda"=> "USD",
-            "fecha"=> "2024-05-24"
-        ];
+
         //curl_close($curl);
         // Datos listos para usar
         $tipoCambioSbs = json_encode($response);
