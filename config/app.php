@@ -171,6 +171,7 @@ return [
         Intervention\Image\ImageServiceProvider::class,
         Maatwebsite\Excel\ExcelServiceProvider::class,
         Webklex\PDFMerger\Providers\PDFMergerServiceProvider::class,
+
         /*
          * Application Service Providers...
          */
@@ -179,6 +180,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\TipoCambioServiceProvider::class,
 
     ],
 

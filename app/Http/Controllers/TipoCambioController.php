@@ -2,12 +2,99 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\TipoCambioService;
+use App\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 
 class TipoCambioController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
+    public function guardarTipoCambios()
+    {
+        DB::beginTransaction();
+        try {
+
+            // Ruta al archivo Excel
+            $ruta_excel = public_path('/excels/tipoCambios.xlsx');
+
+            // Leer el archivo Excel y obtener los datos
+            $datos_excel = Excel::toArray([], $ruta_excel);
+
+            // Obtener la primera hoja del Excel
+            $hoja = $datos_excel[0];
+
+            foreach (array_slice($hoja, 1) as $fila) {
+                // Convertir la fecha al formato YYYY-MM-DD
+                $fecha_celda = Carbon::instance(\PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($fila[0]))->toDateString();
+                $precioCompra = $fila[1];
+                $precioVenta = $fila[2];
+
+                $tipoCambio = TipoCambio::create([
+                    'fecha' => $fecha_celda ,
+                    'precioCompra' => $precioCompra,
+                    'precioVenta' => $precioVenta
+                ]);
+
+            }
+
+            DB::commit();
+
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+        return response()->json(['message' => 'Guardado de tipos de cambio con éxito.'], 200);
+
+    }
+
+    public function rellenarTipoCambios()
+    {
+        $startDate = Carbon::createFromDate(2022, 1, 1);
+        $endDate = Carbon::now();
+
+        $contador = 0;
+        while ($startDate->lte($endDate)) {
+            $exists = TipoCambio::whereDate('fecha', $startDate->toDateString())->exists();
+
+            if (!$exists) {
+                // Buscar el registro anterior más cercano
+                $registroAnterior = TipoCambio::whereDate('fecha', '<', $startDate->toDateString())
+                    ->orderBy('fecha', 'desc')
+                    ->first();
+
+                if ($registroAnterior) {
+                    $precioCompra = $registroAnterior->precioCompra;
+                    $precioVenta = $registroAnterior->precioVenta;
+                } else {
+                    // Si no hay un registro anterior, define valores predeterminados
+                    $precioCompra = 0; // Ajusta esto según sea necesario
+                    $precioVenta = 0;  // Ajusta esto según sea necesario
+                }
+
+                TipoCambio::create([
+                    'fecha' => $startDate->toDateString(),
+                    'precioCompra' => $precioCompra,
+                    'precioVenta' => $precioVenta
+                ]);
+
+                $contador++;
+            }
+
+            $startDate->addDay();
+        }
+
+        return response()->json(['message' => 'Relleno completo, se relleno '.$contador]);
+    }
+
     public function generarTipoCambios(Request $request)
     {
         // Fecha de inicio
@@ -96,5 +183,70 @@ class TipoCambioController extends Controller
         }
     }
 
+    public function obtenerTipoCambio()
+    {
+        // Aquí deberías poner la lógica real para obtener el tipo de cambio
+        // Por ejemplo, hacer una solicitud HTTP a un API que proporcione el tipo de cambio
+        $token = env('TOKEN_DOLLAR');
+        $fecha = Carbon::now('America/Lima');
+        $fechaFormateada = $fecha->format('Y-m-d');
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+            // para usar la api versión 2
+            CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fechaFormateada,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_SSL_VERIFYPEER => 0,
+            CURLOPT_ENCODING => '',
+            CURLOPT_MAXREDIRS => 2,
+            CURLOPT_TIMEOUT => 0,
+            CURLOPT_FOLLOWLOCATION => true,
+            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+            CURLOPT_CUSTOMREQUEST => 'GET',
+            CURLOPT_HTTPHEADER => array(
+                'Referer: https://apis.net.pe/api-tipo-cambio-sbs.html',
+                'Authorization: Bearer ' . $token
+            ),
+        ));
+
+        $response = curl_exec($curl);
+
+        dump($response);
+
+        $tipoCambioSbs = json_decode(json_encode($response));
+        dd();
+        return [
+            'precioCompra' => $tipoCambioSbs->precioCompra,  // Ejemplo de precio de compra
+            'precioVenta' => $tipoCambioSbs->precioVenta    // Ejemplo de precio de venta
+        ];
+    }
+
+    public function mostrarTipoCambio($fecha)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fecha);
+        return response()->json($tipoCambio);
+    }
+
+    public function mostrarTipoCambioActual()
+    {
+        $fecha = Carbon::now('America/Lima')->format('Y-m-d');
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fecha);
+        return response()->json($tipoCambio);
+    }
+
+    public function mostrarTipoCambioPrueba()
+    {
+        $fechaInicio = "2024-05-20";
+        $fechaFin = "2024-05-27";
+        $tipoCambio = $this->tipoCambioService->obtenerPorRangoFechas($fechaInicio, $fechaFin);
+        return response()->json($tipoCambio);
+    }
+
+    public function mostrarTipoCambioRango($fechaInicio, $fechaFin)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorRangoFechas($fechaInicio, $fechaFin);
+        return response()->json($tipoCambio);
+    }
 
 }
