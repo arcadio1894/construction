@@ -665,7 +665,7 @@ class InvoiceController extends Controller
         $fecha = $fechaFormato;
 
         // Iniciar llamada a API
-        $curl = curl_init();
+        /*$curl = curl_init();
 
         curl_setopt_array($curl, array(
             // para usar la api versión 2
@@ -717,12 +717,17 @@ class InvoiceController extends Controller
                     "fecha"=> "2024-05-24"
                 ];
             }
-        }
-
+        }*/
+        $response = [
+            "precioCompra"=> 3.738,
+            "precioVenta"=> 3.746,
+            "moneda"=> "USD",
+            "fecha"=> "2024-05-24"
+        ];
         //curl_close($curl);
         // Datos listos para usar
         $tipoCambioSbs = json_encode($response);
         //var_dump($tipoCambioSbs);
-        return $response;
+        return $tipoCambioSbs;
     }
 }
