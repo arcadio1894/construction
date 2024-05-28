@@ -84,7 +84,7 @@ class CreateProjectionMonthly extends Command
     public function obtenerTipoCambio($fechaFormato)
     {
         $tipoCambio = TipoCambio::whereDate('fecha', $fechaFormato)->first();
-        return response()->json($tipoCambio);
+        return $tipoCambio;
     }
 
     public function getExchange($fecha)

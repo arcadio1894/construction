@@ -1111,7 +1111,7 @@ class FinanceWorkController extends Controller
         }*/
 
         $tipoCambio = $this->tipoCambioService->obtenerPorMonthYear($currentDay->month, $currentDay->year);
-        return response()->json($tipoCambio);
+        return $tipoCambio;
 
         //curl_close($curl);
 

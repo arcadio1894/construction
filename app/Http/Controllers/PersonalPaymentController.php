@@ -379,7 +379,7 @@ class PersonalPaymentController extends Controller
         //$token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
 
         $tipoCambio = $this->tipoCambioService->obtenerPorMonthYear($month, $year);
-        return response()->json($tipoCambio);
+        return $tipoCambio;
 
         //return $tipoCambioSunat;
     }

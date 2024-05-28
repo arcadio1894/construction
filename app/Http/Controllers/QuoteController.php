@@ -3011,8 +3011,9 @@ class QuoteController extends Controller
         $fechaFormato = $fecha->format('Y-m-d');
 
         //$response = $this->getTipoDeCambio($fechaFormato);
-
+        //dump($fechaFormato);
         $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
+        //dd($tipoCambioSunat->precioCompra);
 
         $quote->currency_invoice = 'PEN';
         //$quote->currency_compra = (float) $tipoCambioSunat->compra;
@@ -4527,6 +4528,7 @@ class QuoteController extends Controller
     public function obtenerTipoCambio($fechaFormato)
     {
         $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
-        return response()->json($tipoCambio);
+        //dump($tipoCambio);
+        return $tipoCambio;
     }
 }

@@ -217,6 +217,7 @@ class EntryController extends Controller
         $fechaFormato = $fecha->format('Y-m-d');
         //$response = $this->getTipoDeCambio($fechaFormato);
         $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
+        //dd($tipoCambioSunat);
 
         //$tipoCambioSunat = json_decode($response);
 
@@ -2935,7 +2936,7 @@ class EntryController extends Controller
     public function obtenerTipoCambio($fechaFormato)
     {
         $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
-        return response()->json($tipoCambio);
+        return $tipoCambio;
     }
 }
 

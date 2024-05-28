@@ -717,6 +717,6 @@ class InvoiceController extends Controller
     public function obtenerTipoCambio($fechaFormato)
     {
         $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
-        return response()->json($tipoCambio);
+        return $tipoCambio;
     }
 }
