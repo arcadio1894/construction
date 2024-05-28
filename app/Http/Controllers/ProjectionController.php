@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DateDimension;
 use App\Projection;
 use App\ProjectionDetail;
+use App\Services\TipoCambioService;
 use App\Worker;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -12,13 +13,21 @@ use Illuminate\Support\Facades\DB;
 
 class ProjectionController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function createProjections()
     {
         $dateCurrent = Carbon::now('America/Lima');
 
         $workers = Worker::where('enable', 1)->where('id', '<>', 1)->get();
 
-        $typeExchange = $this->getExchange($dateCurrent->format('Y-m-d'));
+        //$typeExchange = $this->getExchange($dateCurrent->format('Y-m-d'));
+        $typeExchange = $this->obtenerTipoCambio($dateCurrent->format('Y-m-d'));
 
         $quantityDays = $dateCurrent->daysInMonth;
 
@@ -77,7 +86,7 @@ class ProjectionController extends Controller
 
         //$token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
         $token = env('TOKEN_DOLLAR');
-        $curl = curl_init();
+        //$curl = curl_init();
 
         /*curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha,
@@ -93,7 +102,7 @@ class ProjectionController extends Controller
                 'Authorization: Bearer ' . $token
             ),
         ));*/
-        curl_setopt_array($curl, array(
+        /*curl_setopt_array($curl, array(
             // para usar la api versión 2
             CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?date=' . $fecha,
             CURLOPT_RETURNTRANSFER => true,
@@ -143,13 +152,19 @@ class ProjectionController extends Controller
                     "fecha"=> "2024-05-24"
                 ];
             }
-        }
+        }*/
 
         //curl_close($curl);
 
         //$tipoCambioSunat = json_decode($response);
-        $responseObject = json_decode(json_encode($response));
-        return $responseObject;
+        //$responseObject = json_decode(json_encode($response));
+        //return $responseObject;
 
+    }
+
+    public function obtenerTipoCambio($fechaFormato)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
+        return response()->json($tipoCambio);
     }
 }

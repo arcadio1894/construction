@@ -28,6 +28,7 @@ use App\Quote;
 use App\QuoteUser;
 use App\ResumenEquipment;
 use App\ResumenQuote;
+use App\Services\TipoCambioService;
 use App\UnitMeasure;
 use App\User;
 use App\Workforce;
@@ -43,6 +44,13 @@ use Intervention\Image\Facades\Image;
 
 class QuoteController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function index()
     {
         $quotes = Quote::with(['customer'])->get();
@@ -3001,36 +3009,10 @@ class QuoteController extends Controller
         $begin = microtime(true);
         $fecha = Carbon::now('America/Lima');
         $fechaFormato = $fecha->format('Y-m-d');
-        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
-        //dump($request->get('date_invoice'));
-        //$fecha = Carbon::parse($quote->date_quote);
-        $fecha = Carbon::now('America/Lima');
+        //$response = $this->getTipoDeCambio($fechaFormato);
 
-        //dump();
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 2,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
-                'Authorization: Bearer ' . $token
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);*/
-        $response = $this->getTipoDeCambio($fechaFormato);
-
-        $tipoCambioSunat = json_decode($response);
+        $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
 
         $quote->currency_invoice = 'PEN';
         //$quote->currency_compra = (float) $tipoCambioSunat->compra;
@@ -4540,5 +4522,11 @@ class QuoteController extends Controller
         $tipoCambioSbs = json_encode($response);
         //var_dump($tipoCambioSbs);
         return $tipoCambioSbs;
+    }
+
+    public function obtenerTipoCambio($fechaFormato)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
+        return response()->json($tipoCambio);
     }
 }

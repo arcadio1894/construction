@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Projection;
 use App\ProjectionDetail;
+use App\TipoCambio;
 use App\Worker;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
@@ -40,7 +41,8 @@ class CreateProjectionMonthly extends Command
 
         $workers = Worker::where('enable', 1)->where('id', '<>', 1)->get();
 
-        $typeExchange = $this->getExchange($dateCurrent->format('Y-m-d'));
+        //$typeExchange = $this->getExchange($dateCurrent->format('Y-m-d'));
+        $typeExchange = $this->obtenerTipoCambio($dateCurrent->format('Y-m-d'));
 
         $quantityDays = $dateCurrent->daysInMonth;
 
@@ -65,7 +67,7 @@ class CreateProjectionMonthly extends Command
             ]);
 
             $projection_month_soles += (($worker->monthly_salary == null) ? 0:$worker->monthly_salary);
-            $projection_month_dollars += ((($worker->monthly_salary == null) ? 0:$worker->monthly_salary) / $typeExchange->compra);
+            $projection_month_dollars += ((($worker->monthly_salary == null) ? 0:$worker->monthly_salary) / $typeExchange->precioCompra);
 
         }
         $projection_week_soles = $projection_month_soles/($quantityDays/7);
@@ -79,9 +81,15 @@ class CreateProjectionMonthly extends Command
 
     }
 
+    public function obtenerTipoCambio($fechaFormato)
+    {
+        $tipoCambio = TipoCambio::whereDate('fecha', $fechaFormato)->first();
+        return response()->json($tipoCambio);
+    }
+
     public function getExchange($fecha)
     {
-        $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
         $curl = curl_init();
 
         curl_setopt_array($curl, array(
@@ -105,7 +113,7 @@ class CreateProjectionMonthly extends Command
 
         $tipoCambioSunat = json_decode($response);
 
-        return $tipoCambioSunat;
+        return $tipoCambioSunat;*/
 
     }
 }

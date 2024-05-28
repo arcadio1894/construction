@@ -11,6 +11,7 @@ use App\FinanceWork;
 use App\Output;
 use App\OutputDetail;
 use App\Quote;
+use App\Services\TipoCambioService;
 use App\Timeline;
 use App\Work;
 use Carbon\Carbon;
@@ -20,6 +21,13 @@ use Illuminate\Support\Facades\DB;
 
 class FinanceWorkController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function getDataFinanceWorks(Request $request, $pageNumber = 1)
     {
         $perPage = 10;
@@ -1033,8 +1041,8 @@ class FinanceWorkController extends Controller
         //dd($currentDay->month);
         //$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
         //$token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
-        $token = env('TOKEN_DOLLAR');
-        $curl = curl_init();
+        /*$token = env('TOKEN_DOLLAR');
+        $curl = curl_init();*/
 
         /*curl_setopt_array($curl, array(
             CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?year='.$currentDay->year.'&month='.$currentDay->month,
@@ -1050,7 +1058,7 @@ class FinanceWorkController extends Controller
                 'Authorization: Bearer ' . $token
             ),
         ));*/
-        curl_setopt_array($curl, array(
+        /*curl_setopt_array($curl, array(
             // para usar la api versión 2
             CURLOPT_URL => 'https://api.apis.net.pe/v2/sbs/tipo-cambio?month='.$currentDay->month.'&year='.$currentDay->year,
             CURLOPT_RETURNTRANSFER => true,
@@ -1100,7 +1108,10 @@ class FinanceWorkController extends Controller
                     "fecha"=> "2024-05-24"
                 ];
             }
-        }
+        }*/
+
+        $tipoCambio = $this->tipoCambioService->obtenerPorMonthYear($currentDay->month, $currentDay->year);
+        return response()->json($tipoCambio);
 
         //curl_close($curl);
 
@@ -1108,7 +1119,7 @@ class FinanceWorkController extends Controller
 
         //dd($response);
 
-        return $response;
+        //return $tipoCambio;
     }
 
     public function index()

@@ -22,4 +22,10 @@ class TipoCambioService
     {
         return TipoCambio::whereBetween('fecha', [$fechaInicio, $fechaFin])->get();
     }
+
+    public function obtenerPorMonthYear($month, $year)
+    {
+        return TipoCambio::whereMonth('fecha', $month)
+            ->whereYear('fecha', $year)->get();
+    }
 }

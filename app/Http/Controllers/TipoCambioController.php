@@ -239,7 +239,7 @@ class TipoCambioController extends Controller
     {
         $fechaInicio = "2024-05-20";
         $fechaFin = "2024-05-27";
-        $tipoCambio = $this->tipoCambioService->obtenerPorRangoFechas($fechaInicio, $fechaFin);
+        $tipoCambio = $this->tipoCambioService->obtenerPorMonthYear(5, 2024);
         return response()->json($tipoCambio);
     }
 
