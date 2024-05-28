@@ -20,6 +20,7 @@ use App\OrderPurchase;
 use App\OrderPurchaseDetail;
 use App\PaymentDeadline;
 use App\Quote;
+use App\Services\TipoCambioService;
 use App\Supplier;
 use App\SupplierCredit;
 use App\Typescrap;
@@ -33,6 +34,13 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class EntryInventoryController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function indexEntryInventory()
     {
         $user = Auth::user();
@@ -57,36 +65,9 @@ class EntryInventoryController extends Controller
 
         $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
         $fechaFormato = $fecha->format('Y-m-d');
-        $response = $this->getTipoDeCambio($fechaFormato);
+        //$response = $this->getTipoDeCambio($fechaFormato);
 
-        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
-
-        //dump($request->get('date_invoice'));
-        $fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_invoice'));
-
-        //dump();
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 2,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
-                'Authorization: Bearer ' . $token
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);*/
-
-        $tipoCambioSunat = json_decode($response);
+        $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
 
         if ( $request->get('purchase_order') != '' || $request->get('purchase_order') != null )
         {
@@ -479,5 +460,11 @@ class EntryInventoryController extends Controller
         $tipoCambioSbs = json_encode($response);
         //var_dump($tipoCambioSbs);
         return $response;
+    }
+
+    public function obtenerTipoCambio($fechaFormato)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
+        return $tipoCambio;
     }
 }

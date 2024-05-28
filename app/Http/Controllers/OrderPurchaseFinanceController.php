@@ -11,6 +11,7 @@ use App\OrderPurchaseFinance;
 use App\OrderPurchaseFinanceDetail;
 use App\PaymentDeadline;
 use App\Quote;
+use App\Services\TipoCambioService;
 use App\Supplier;
 use App\SupplierCredit;
 use App\UnitMeasure;
@@ -23,6 +24,13 @@ use Barryvdh\DomPDF\Facade as PDF;
 
 class OrderPurchaseFinanceController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function indexOrderPurchaseFinance()
     {
         $user = Auth::user();
@@ -69,37 +77,9 @@ class OrderPurchaseFinanceController extends Controller
 
         $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
         $fechaFormato = $fecha->format('Y-m-d');
-        $response = $this->getTipoDeCambio($fechaFormato);
+        //$response = $this->getTipoDeCambio($fechaFormato);
 
-        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
-
-        //dump($request->get('date_invoice'));
-        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
-        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
-
-        //dump();
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 2,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
-                'Authorization: Bearer ' . $token
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);*/
-
-        $tipoCambioSunat = json_decode($response);
+        $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
 
         DB::beginTransaction();
         try {
@@ -690,36 +670,9 @@ class OrderPurchaseFinanceController extends Controller
         $begin = microtime(true);
         $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
         $fechaFormato = $fecha->format('Y-m-d');
-        $response = $this->getTipoDeCambio($fechaFormato);
-        /*$token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
+        //$response = $this->getTipoDeCambio($fechaFormato);
 
-        //dump($request->get('date_invoice'));
-        $fecha = ($request->has('date_order')) ? Carbon::createFromFormat('d/m/Y', $request->get('date_order')) : Carbon::now();
-        //$fecha = Carbon::createFromFormat('d/m/Y', $request->get('date_order'));
-
-        //dump();
-        $curl = curl_init();
-
-        curl_setopt_array($curl, array(
-            CURLOPT_URL => 'https://api.apis.net.pe/v1/tipo-cambio-sunat?fecha='.$fecha->format('Y-m-d'),
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_ENCODING => '',
-            CURLOPT_MAXREDIRS => 2,
-            CURLOPT_TIMEOUT => 0,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-            CURLOPT_CUSTOMREQUEST => 'GET',
-            CURLOPT_HTTPHEADER => array(
-                'Referer: https://apis.net.pe/tipo-de-cambio-sunat-api',
-                'Authorization: Bearer ' . $token
-            ),
-        ));
-
-        $response = curl_exec($curl);
-
-        curl_close($curl);*/
-
-        $tipoCambioSunat = json_decode($response);
+        $tipoCambioSunat = $this->obtenerTipoCambio($fechaFormato);
 
         DB::beginTransaction();
         try {
@@ -908,7 +861,7 @@ class OrderPurchaseFinanceController extends Controller
         $fecha = $fechaFormato;
 
         // Iniciar llamada a API
-        $curl = curl_init();
+        /*$curl = curl_init();
 
         curl_setopt_array($curl, array(
             // para usar la api versión 2
@@ -960,12 +913,25 @@ class OrderPurchaseFinanceController extends Controller
                     "fecha"=> "2024-05-24"
                 ];
             }
-        }
+        }*/
+
+        $response = [
+            "precioCompra"=> 3.738,
+            "precioVenta"=> 3.746,
+            "moneda"=> "USD",
+            "fecha"=> "2024-05-24"
+        ];
 
         //curl_close($curl);
         // Datos listos para usar
         $tipoCambioSbs = json_encode($response);
         //var_dump($tipoCambioSbs);
         return $tipoCambioSbs;
+    }
+
+    public function obtenerTipoCambio($fechaFormato)
+    {
+        $tipoCambio = $this->tipoCambioService->obtenerPorFecha($fechaFormato);
+        return $tipoCambio;
     }
 }

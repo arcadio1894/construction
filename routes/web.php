@@ -2588,11 +2588,25 @@ Route::middleware('auth')->group(function (){
         Route::get('/store/rotation/material/', 'RotationMaterialController@storeRotationMaterial');
         Route::get('/get/rotation/material/', 'RotationMaterialController@getRotationMaterial');
         Route::get('/get/data/rotations/v2/{page}', 'RotationMaterialController@getDataRotations');
+
+        // TODO: Rutas de generacion de tipos de cambio
+        Route::get('/generar/tipo/cambios/', 'TipoCambioController@generarTipoCambios');
+        Route::get('/guardar/tipo/cambios/', 'TipoCambioController@guardarTipoCambios');
+        Route::get('/rellenar/tipo/cambios/', 'TipoCambioController@rellenarTipoCambios');
+        Route::get('/obtener/tipo/cambio/', 'TipoCambioController@obtenerTipoCambio');
+        Route::get('/mostrar/tipo/cambio/bd/actual/', 'TipoCambioController@mostrarTipoCambioActual');
+        Route::get('/mostrar/tipo/cambio/bd/prueba/', 'TipoCambioController@mostrarTipoCambioPrueba');
+
+
+
     });
 });
 
 Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/get/type/exchange', 'FinanceWorkController@getTypeExchange');
+
+Route::get('/api/sunat/', 'TipoCambioController@mostrarTipoCambioActual');
+
 Route::get('/api/sunat/v2', function () {
     $token = 'apis-token-1.aTSI1U7KEuT-6bbbCguH-4Y8TI6KS73N';
 
@@ -2621,7 +2635,7 @@ Route::get('/api/sunat/v2', function () {
 
 });
 
-Route::get('/api/sunat', function () {
+Route::get('/api/sunat/v1', function () {
     // Datos
     //$token = 'apis-token-8477.FTHJ05yz-JvXpWy3T6ynfT7CVd9sNOTK';
     $token = env('TOKEN_DOLLAR');
