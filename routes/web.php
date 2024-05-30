@@ -2597,7 +2597,14 @@ Route::middleware('auth')->group(function (){
         Route::get('/mostrar/tipo/cambio/bd/actual/', 'TipoCambioController@mostrarTipoCambioActual');
         Route::get('/mostrar/tipo/cambio/bd/prueba/', 'TipoCambioController@mostrarTipoCambioPrueba');
 
-
+        // TODO: Rutas de subida de archivos de materiales
+        Route::get('/importar/archivos/stocks/materiales', 'UploadFilesController@showUploadFilesStocksMaterials')
+            ->name('stocks.files.index')
+            ->middleware('permission:stock_files');
+        Route::post('/upload/files/stocks/min/max/materials', 'UploadFilesController@uploadFilesStocksMaterials')
+            ->name('stocks.files.store')
+            ->middleware('permission:stock_files');
+        Route::get('/download/example/stock/file', 'UploadFilesController@downloadExampleStockFile');
 
     });
 });

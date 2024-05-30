@@ -743,7 +743,28 @@
                             </li>
                             @endcan
 
+                            @can('enable_files')
+                                <li class="nav-item has-treeview @yield('openListFiles')">
+                                    <a href="#" class="nav-link">
+                                        <i class="far fa-circle nav-icon text-success"></i>
+                                        <p>
+                                            Importar archivos
+                                            <i class="right fas fa-angle-left"></i>
+                                        </p>
+                                    </a>
+                                    <ul class="nav nav-treeview">
+                                        @can('stock_files')
+                                            <li class="nav-item">
+                                                <a href="{{ route('stocks.files.index') }}" class="nav-link @yield('activeListStockFiles')">
+                                                    <i class="far fa-dot-circle nav-icon text-warning"></i>
+                                                    <p>Stocks</p>
+                                                </a>
+                                            </li>
+                                        @endcan
 
+                                    </ul>
+                                </li>
+                            @endcan
                         </ul>
                     </li>
                     @endcanany
