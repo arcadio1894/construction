@@ -315,7 +315,7 @@ function searchTotalPays() {
 
     if ( weekStart != '' || weekEnd != '' )
     {
-        if ( weekStart > weekEnd )
+        if ( parseInt(weekStart) > parseInt(weekEnd) )
         {
             toastr.error('El orden de las semanas es incorrecta.', 'Error',
                 {
