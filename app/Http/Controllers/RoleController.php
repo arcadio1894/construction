@@ -96,7 +96,8 @@ class RoleController extends Controller
         'sales' => 'VENTAS',
         'proforma' => 'PRE COTIZACIONES',
         'expenseSupplier' => 'EGRESOS PROVEEDORES',
-        'inventory' => 'INVENTARIO FISICO'
+        'inventory' => 'INVENTARIO FISICO',
+        'files' => 'IMPORTAR ARCHIVOS'
     ];
 
     public function index()
