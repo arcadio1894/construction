@@ -88,7 +88,7 @@
                         @csrf
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <label for="file">Archivo IMG/PDF </label>
+                                <label for="file">Archivo EXCEL </label>
                                 <div class="input-group">
                                     <div class="input-group-prepend">
                                         <span class="input-group-text"><i class="fas fa-file-excel"></i></span>

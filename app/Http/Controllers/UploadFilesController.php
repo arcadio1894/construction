@@ -21,7 +21,7 @@ class UploadFilesController extends Controller
 
     public function downloadExampleStockFile()
     {
-        $filePath = public_path('/excels/ejemploExcelMinimoMaximo.xlsx');
+        $filePath = public_path('/excels/excelOrigin/ejemploExcelMinimoMaximo.xlsx');
         return response()->download($filePath);
     }
 
@@ -33,8 +33,10 @@ class UploadFilesController extends Controller
         try {
             if ($request->file('file')->isValid()) {
                 $file = $request->file('file');
-                $filePath = $file->storeAs('public/excels', $file->getClientOriginalName());
-                $publicPath = public_path('excels/' . $file->getClientOriginalName());
+                $path = public_path().'/excels/';
+                $filename = $file->getClientOriginalName();
+                $request->file('file')->move($path, $filename);
+                $publicPath = public_path('/excels/' . $filename);
 
                 // Leer el archivo Excel
                 $datos_excel = Excel::toArray([], $publicPath);
