@@ -608,8 +608,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $maxId = Quote::max('id')+1;
         $length = 5;
@@ -972,8 +972,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->where('description','LIKE',"%".$defaultConsumable."%")->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->where('description','LIKE',"%".$defaultConsumable."%")->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $utility = PorcentageQuote::where('name', 'utility')->first();
@@ -1310,8 +1310,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $quote = Quote::where('id', $id)
@@ -3097,8 +3097,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $paymentDeadlines = PaymentDeadline::where('type', 'quotes')->get();
         $quote = Quote::where('id', $id)
@@ -3483,8 +3483,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
 
         $quote = Quote::where('id', $id)
@@ -3606,8 +3606,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
 
         $quote = Quote::where('id', $id)
@@ -3988,8 +3988,8 @@ class QuoteController extends Controller
         $customers = Customer::all();
         $defaultConsumable = '(*)';
         $defaultElectric = '(e)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
-        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->get();
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
         $workforces = Workforce::with('unitMeasure')->get();
         $utility = PorcentageQuote::where('name', 'utility')->first();
         $rent = PorcentageQuote::where('name', 'rent')->first();
