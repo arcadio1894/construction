@@ -54,7 +54,7 @@ class SendEmailStock extends Command
         {
             $state = '';
 
-            if ( $material->stock_current < $material->stock_min || $material->stock_current == 0 )
+            if ( $material->stock_current == 0 )
             {
                 $state = 'Agotado';
                 array_push($array, [
@@ -67,7 +67,7 @@ class SendEmailStock extends Command
                     'stock_min' => $material->stock_min,
                     'state' => $state,
                 ]);
-            } elseif ( $material->stock_current == $material->stock_min ) {
+            } elseif ( $material->stock_current > 0 && ($material->stock_current <= $material->stock_min) ) {
                 $state = 'Por agotarse';
                 array_push($array, [
                     'id' => $material->id,
