@@ -72,7 +72,7 @@
     <thead>
         <tr>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Código</th>
-            <th width="220px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Material</th>
+            <th width="450px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Material</th>
             <th width="180px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Categoría</th>
             {{--<th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Actual</th>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Minimo</th>
@@ -85,7 +85,7 @@
     @for ( $i = 0; $i<count($materials); $i++ )
         <tr>
             <td width="100px">{{ $materials[$i]['code'] }}</td>
-            <td width="220px" style="word-wrap: break-word">{{ $materials[$i]['material'] }}</td>
+            <td width="450px" style="word-wrap: break-word">{{ $materials[$i]['material'] }}</td>
             <td width="100px">{{ $materials[$i]['category'] }}</td>
             {{--<td width="100px">{{ $materials[$i]['stock'] }}</td>
             <td width="100px">{{ $materials[$i]['stock_min'] }}</td>
