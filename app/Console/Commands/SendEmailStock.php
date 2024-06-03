@@ -66,7 +66,7 @@ class SendEmailStock extends Command
                     'stock_max' => $material->stock_max,
                     'stock_min' => $material->stock_min,
                     'state' => $state,
-                    'to_buy' => $material->stock_max - $material->stock_current,
+                    'to_buy' => ceil($material->stock_max - $material->stock_current),
                 ]);
             } elseif ( $material->stock_current > 0 && ($material->stock_current <= $material->stock_min) ) {
                 $state = 'Por agotarse';
@@ -79,7 +79,7 @@ class SendEmailStock extends Command
                     'stock_max' => $material->stock_max,
                     'stock_min' => $material->stock_min,
                     'state' => $state,
-                    'to_buy' => $material->stock_max - $material->stock_current,
+                    'to_buy' => ceil($material->stock_max - $material->stock_current),
                 ]);
             }
 
