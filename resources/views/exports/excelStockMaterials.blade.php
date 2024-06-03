@@ -78,6 +78,7 @@
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Minimo</th>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Stock Maximo</th>
             <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Estado</th>
+            <th width="100px" style="background-color: #7A8DC5; font-size: 14px; word-wrap: break-word">Por Comprar</th>
         </tr>
     </thead>
     <tbody>
@@ -90,6 +91,7 @@
             <td width="100px">{{ $materials[$i]['stock_min'] }}</td>
             <td width="100px">{{ $materials[$i]['stock_max'] }}</td>
             <td width="100px">{{ $materials[$i]['state'] }}</td>
+            <td width="100px">{{ $materials[$i]['to_buy'] }}</td>
         </tr>
     @endfor
     </tbody>
