@@ -195,7 +195,7 @@
             <div>Sitio Web: www.sermeind.com.pe</div>
             <div>Teléfono: +51 959 332 205</div>
             <div>Email: servicios@sermeind.com.pe</div>
-            <div>Cotizado por: </div>
+            <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
         </div>
     </div>
 
@@ -503,7 +503,7 @@
                 <div>Sitio Web: www.sermeind.com.pe</div>
                 <div>Teléfono: +51 959 332 205</div>
                 <div>Email: servicios@sermeind.com.pe</div>
-                <div>Cotizado por: </div>
+                <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
             </div>
         </div>
 

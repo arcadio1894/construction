@@ -2267,6 +2267,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
+            ->with('users')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
@@ -2328,6 +2329,7 @@ class QuoteController extends Controller
         $quote = Quote::where('id', $id)
             ->with('customer')
             ->with('deadline')
+            ->with('users')
             ->with(['equipments' => function ($query) {
                 $query->with(['materials', 'consumables', 'workforces', 'turnstiles']);
             }])->first();
