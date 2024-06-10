@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\CategoryEquipment;
 use App\DefaultEquipment;
 
+use App\DefaultEquipmentElectric;
 use App\Http\Requests\StoreDefaultEquipmentRequest;
 
 use App\DefaultEquipmentMaterial;
@@ -44,7 +45,9 @@ class DefaultEquipmentController extends Controller
         $category = CategoryEquipment::find($category_id);
 
         $defaultConsumable = '(*)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $defaultElectric = '(e)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
 
         $unitMeasures = UnitMeasure::all();
 
@@ -85,7 +88,7 @@ class DefaultEquipmentController extends Controller
             'time' => $end
         ]);
 
-        return view('defaultEquipment.create', compact('permissions', 'category', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
+        return view('defaultEquipment.create', compact('permissions', 'category', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
     }
 
     public function store(StoreDefaultEquipmentRequest $request)
@@ -136,6 +139,8 @@ class DefaultEquipmentController extends Controller
 
                 $consumables = $equipments[$i]->consumables;
 
+                $electrics = $equipments[$i]->electrics;
+
                 $workforces = $equipments[$i]->workforces;
 
                 $tornos = $equipments[$i]->tornos;
@@ -174,6 +179,19 @@ class DefaultEquipmentController extends Controller
                         'total_price' => (float) $consumables[$k]->total,
                         //'state' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Falta comprar':'En compra',
                         //'availability' => ((float) $consumables[$k]->quantity > $material->stock_current) ? 'Agotado':'Completo',
+                    ]);
+
+                    //$totalConsumable += $equipmentConsumable->total;
+                }
+
+                for ( $e=0; $e<sizeof($electrics); $e++ )
+                {
+                    $equipmentElectric = DefaultEquipmentElectric::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id' => $electrics[$e]->id,
+                        'quantity' => (float) $electrics[$e]->quantity,
+                        'price' => (float) $electrics[$e]->price,
+                        'total' => (float) $electrics[$e]->total,
                     ]);
 
                     //$totalConsumable += $equipmentConsumable->total;
@@ -296,7 +314,9 @@ class DefaultEquipmentController extends Controller
         $category = CategoryEquipment::find($equipment->category_equipment_id);
 
         $defaultConsumable = '(*)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $defaultElectric = '(e)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
 
         $unitMeasures = UnitMeasure::all();
 
@@ -337,7 +357,7 @@ class DefaultEquipmentController extends Controller
             'time' => $end
         ]);
 
-        return view('defaultEquipment.edit', compact('permissions', 'category', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment', 'array'));
+        return view('defaultEquipment.edit', compact('permissions', 'category', 'consumables', 'electrics'  ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment', 'array'));
 
     }
 

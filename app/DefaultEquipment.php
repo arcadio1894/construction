@@ -93,6 +93,11 @@ class DefaultEquipment extends Model
         return $this->hasMany('App\DefaultEquipmentConsumable');
     }
 
+    public function electrics()
+    {
+        return $this->hasMany('App\DefaultEquipmentElectric');
+    }
+
     public function workforces()
     {
         return $this->hasMany('App\DefaultEquipmentWorkForce');
@@ -126,6 +131,18 @@ class DefaultEquipment extends Model
         foreach ( $this->consumables as $consumable )
         {
             $total += $consumable->total_price;
+        }
+
+        return $total;
+
+    }
+
+    public function getTotalElectricsAttribute()
+    {
+        $total = 0;
+        foreach ( $this->electrics as $electric )
+        {
+            $total += $electric->total_price;
         }
 
         return $total;
@@ -170,7 +187,7 @@ class DefaultEquipment extends Model
 
     public function getTotalEquipmentAttribute()
     {
-        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+        $total = $this->total_materials + $this->total_consumables + $this->total_electrics + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
 
         return $total;
 
@@ -178,7 +195,7 @@ class DefaultEquipment extends Model
 
     public function getTotalEquipmentUtilityAttribute()
     {
-        $total = $this->total_materials + $this->total_consumables + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
+        $total = $this->total_materials + $this->total_consumables + $this->total_electrics + $this->total_workforces + $this->total_turnstiles + $this->total_workdays;
 
         $total1 = $total * (($this->utility/100)+1);
         $total2 = $total1 * (($this->letter/100)+1);
