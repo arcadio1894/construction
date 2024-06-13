@@ -142,7 +142,7 @@ class DefaultEquipment extends Model
         $total = 0;
         foreach ( $this->electrics as $electric )
         {
-            $total += $electric->total_price;
+            $total += $electric->total;
         }
 
         return $total;

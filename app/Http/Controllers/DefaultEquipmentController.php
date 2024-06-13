@@ -390,6 +390,8 @@ class DefaultEquipmentController extends Controller
 
                 $consumables = $equipments[$i]->consumables;
 
+                $electrics = $equipments[$i]->electrics;
+
                 $workforces = $equipments[$i]->workforces;
 
                 $tornos = $equipments[$i]->tornos;
@@ -404,6 +406,10 @@ class DefaultEquipmentController extends Controller
                 foreach( $equipment->consumables as $consumable ) {
                     //$totalDeleted = $totalDeleted + (float) $consumable->total;
                     $consumable->delete();
+                }
+                foreach( $equipment->electrics as $electric ) {
+                    //$totalDeleted = $totalDeleted + (float) $consumable->total;
+                    $electric->delete();
                 }
                 foreach( $equipment->workforces as $workforce ) {
                     //$totalDeleted = $totalDeleted + (float) $workforce->total;
@@ -443,6 +449,19 @@ class DefaultEquipmentController extends Controller
                         'quantity' => (float) $consumables[$k]->quantity,
                         'unit_price' => (float) $consumables[$k]->price,
                         'total_price' => (float) $consumables[$k]->total,
+                    ]);
+
+                }
+
+                for ( $e=0; $e<sizeof($electrics); $e++ )
+                {
+
+                    $equipmentConsumable = DefaultEquipmentElectric::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id' => $electrics[$e]->id,
+                        'quantity' => (float) $electrics[$e]->quantity,
+                        'price' => (float) $electrics[$e]->price,
+                        'total' => (float) $electrics[$e]->total,
                     ]);
 
                 }

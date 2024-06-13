@@ -12,8 +12,8 @@ class EquipmentProformaElectric extends Model
         'equipment_proforma_id',
         'material_id',
         'quantity',
-        'unit_price',
-        'total_price',
+        'price',
+        'total',
     ];
 
     public function equipment(){

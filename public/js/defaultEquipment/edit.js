@@ -530,6 +530,8 @@ function fillEquipment() {
     var tornos = button.parent().parent().next().children().next().next().next().children().next().children().next().next().next().next().children().next().children().next().next();
     var dias = button.parent().parent().next().children().next().next().next().next().children().next().children().next().next().next();
 
+    console.log(electrics);
+
     var materialsDescription = [];
     var materialsUnit = [];
     var materialsLargo = [];
@@ -747,7 +749,7 @@ function fillEquipment() {
         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
     }
     for (let i = 0; i < electricsTotal.length; i++) {
-        totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
     }
     for (let i = 0; i < diasTotal.length; i++) {
         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
@@ -762,7 +764,7 @@ function fillEquipment() {
     $totalUtility = parseFloat($totalUtility) + parseFloat(totalEquipmentUtility);
 
     $equipments.push({'id':equipmentId, 'nameequipment':nameequipment,'largeequipment':largeequipment,'widthequipment':widthequipment,'highequipment':highequipment,'categoryequipment':categoryequipment,'categoryequipmentid':categoryequipmentid,'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-
+    console.log($equipments);
 }
 
 function imageDelete() {
@@ -1176,6 +1178,9 @@ function saveEquipment() {
                     }
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
+                    }
+                    for (let i = 0; i < electricsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
                     }
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
