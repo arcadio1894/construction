@@ -186,6 +186,7 @@
                     <th>Usuario solicitante</th>
                     <th>Usuario responsable</th>
                     <th>Tipo / Estado</th>
+                    <th>Equipo</th>
                     <th>Código</th>
                     <th>Material</th>
                     <th>Cantidad</th>
@@ -252,6 +253,7 @@
             <td data-requesting_user></td>
             <td data-responsible_user></td>
             <td data-typeText></td>
+            <td data-equipment></td>
             <td data-material_code></td>
             <td data-material></td>
             <td data-quantity></td>

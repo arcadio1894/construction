@@ -341,6 +341,7 @@ function renderDataTable(data) {
     clone.querySelector("[data-requesting_user]").innerHTML = data.requesting_user;
     clone.querySelector("[data-responsible_user]").innerHTML = data.responsible_user;
     clone.querySelector("[data-typeText]").innerHTML = data.typeText + "<br>"+data.stateText;
+    clone.querySelector("[data-equipment]").innerHTML = data.equipment;
     clone.querySelector("[data-material_code]").innerHTML = data.material_code;
     clone.querySelector("[data-material]").innerHTML = data.material;
     clone.querySelector("[data-quantity]").innerHTML = parseFloat(data.quantity).toFixed(2);

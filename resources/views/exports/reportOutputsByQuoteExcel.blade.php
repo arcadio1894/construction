@@ -79,6 +79,7 @@
             <th width="160px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Usuario solicitante</th>
             <th width="160px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Usuario responsable</th>
             <th width="150px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Tipo / Estado</th>
+            <th width="200px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Equipo</th>
             <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Código</th>
             <th width="200px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Material</th>
             <th width="90px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Cantidad</th>
@@ -95,6 +96,7 @@
             <th width="160px" style="word-wrap: break-word">{{ $outputs[$i]['requesting_user'] }}</th>
             <th width="160px" style="word-wrap: break-word">{{ $outputs[$i]['responsible_user'] }}</th>
             <th width="150px" style="word-wrap: break-word">{{ $outputs[$i]['stateText'] }}</th>
+            <th width="200px" style="word-wrap: break-word">{{ $outputs[$i]['equipment'] }}</th>
             <th width="75px">{{ $outputs[$i]['material_code'] }}</th>
             <th width="200px" style="word-wrap: break-word">{{ $outputs[$i]['material'] }}</th>
             @if($outputs[$i]['quantity'] == "TOTAL")
