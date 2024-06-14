@@ -3763,10 +3763,10 @@ class OutputController extends Controller
                     if ( $entry->currency_invoice == "PEN" )
                     {
                         $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
-                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
+                        array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id, 'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
 
                     } else {
-                        array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
+                        array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id,'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
 
                     }
 
@@ -3775,7 +3775,7 @@ class OutputController extends Controller
             }
 
             $new_arr3 = array();
-            foreach($materials_quantity as $item) {
+            /*foreach($materials_quantity as $item) {
                 if(isset($new_arr3[$item['material_id']])) {
                     $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
                     $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
@@ -3783,9 +3783,23 @@ class OutputController extends Controller
                 }
 
                 $new_arr3[$item['material_id']] = $item;
+            }*/
+            foreach ($materials_quantity as $item) {
+                $key = $item['equipment_id'] . '_' . $item['material_id'];
+
+                if (isset($new_arr3[$key])) {
+                    $new_arr3[$key]['quantity'] += (float)$item['quantity'];
+                    $new_arr3[$key]['price'] += (float)$item['price'];
+                    continue;
+                }
+
+                $new_arr3[$key] = $item;
             }
 
             $materials = array_values($new_arr3);
+/*
+            dump($materials);
+            dd();*/
 
             $state = "";
             $stateText = "";
@@ -3876,6 +3890,8 @@ class OutputController extends Controller
         {
             for ( $j=0; $j<count($arrayPaginated[$i]["materials"]); $j++ )
             {
+                $equipment_id = $arrayPaginated[$i]["materials"][$j]["equipment_id"];
+                $equipment = Equipment::find($equipment_id);
                 array_push($array, [
                     "id" => $arrayPaginated[$i]["id"],
                     "year" => $arrayPaginated[$i]["year"],
@@ -3891,6 +3907,7 @@ class OutputController extends Controller
                     "stateText" => $arrayPaginated[$i]["stateText"],
                     "custom" => $arrayPaginated[$i]["custom"],
                     "quote" => $arrayPaginated[$i]["quote"],
+                    "equipment" => ($equipment == null) ? "Sin equipo": $equipment->description,
                     "material_code" => $arrayPaginated[$i]["materials"][$j]["material_code"],
                     "material" => $arrayPaginated[$i]["materials"][$j]["material"],
                     "quantity" => $arrayPaginated[$i]["materials"][$j]["quantity"],
@@ -3910,7 +3927,7 @@ class OutputController extends Controller
             'totalFilteredRecords' => $totalFilteredRecords
         ];
 
-/*        dump($array);
+        /*dump($array);
         dd();*/
 
         return ['data' => $array, 'pagination' => $pagination];
@@ -3977,10 +3994,10 @@ class OutputController extends Controller
                         if ( $entry->currency_invoice == "PEN" )
                         {
                             $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
-                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
+                            array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id, 'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
 
                         } else {
-                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
+                            array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id,'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
 
                         }
                     }
@@ -3988,7 +4005,7 @@ class OutputController extends Controller
                 }
 
                 $new_arr3 = array();
-                foreach($materials_quantity as $item) {
+                /*foreach($materials_quantity as $item) {
                     if(isset($new_arr3[$item['material_id']])) {
                         $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
                         $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
@@ -3996,6 +4013,17 @@ class OutputController extends Controller
                     }
 
                     $new_arr3[$item['material_id']] = $item;
+                }*/
+                foreach ($materials_quantity as $item) {
+                    $key = $item['equipment_id'] . '_' . $item['material_id'];
+
+                    if (isset($new_arr3[$key])) {
+                        $new_arr3[$key]['quantity'] += (float)$item['quantity'];
+                        $new_arr3[$key]['price'] += (float)$item['price'];
+                        continue;
+                    }
+
+                    $new_arr3[$key] = $item;
                 }
 
                 $materials = array_values($new_arr3);
@@ -4064,6 +4092,8 @@ class OutputController extends Controller
                 for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
                 {
                     $total = $total + $array_outputs[$i]["materials"][$j]["price"];
+                    $equipment_id = $array_outputs[$i]["materials"][$j]["equipment_id"];
+                    $equipment = Equipment::find($equipment_id);
                     array_push($outputs_array, [
                         "id" => $array_outputs[$i]["id"],
                         "year" => $array_outputs[$i]["year"],
@@ -4079,6 +4109,7 @@ class OutputController extends Controller
                         "stateText" => $array_outputs[$i]["stateText"],
                         "custom" => $array_outputs[$i]["custom"],
                         "quote" => $array_outputs[$i]["quote"],
+                        "equipment" => ($equipment == null) ? "Sin equipo": $equipment->description,
                         "material_code" => $array_outputs[$i]["materials"][$j]["material_code"],
                         "material" => $array_outputs[$i]["materials"][$j]["material"],
                         "quantity" => $array_outputs[$i]["materials"][$j]["quantity"],
@@ -4103,6 +4134,7 @@ class OutputController extends Controller
                 "stateText" => "",
                 "custom" => "",
                 "quote" => "",
+                "equipment" => "",
                 "material_code" => "",
                 "material" => "",
                 "quantity" => "TOTAL",
@@ -4139,10 +4171,10 @@ class OutputController extends Controller
                         if ( $entry->currency_invoice == "PEN" )
                         {
                             $price = round((float)$outputDetail->price / $entry->currency_venta, 2);
-                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
+                            array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id, 'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> $price, 'currency' => 'USD'));
 
                         } else {
-                            array_push($materials_quantity, array('material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
+                            array_push($materials_quantity, array('equipment_id' => $outputDetail->equipment_id,'material_id'=>$outputDetail->material_id, 'material_code'=>$outputDetail->material->code, 'material'=>$outputDetail->material->full_name, 'material_complete'=>$outputDetail->material, 'quantity'=> (float)$outputDetail->percentage, 'price'=> (float)$outputDetail->price, 'currency' => 'USD'));
 
                         }
                     }
@@ -4150,7 +4182,7 @@ class OutputController extends Controller
                 }
 
                 $new_arr3 = array();
-                foreach($materials_quantity as $item) {
+                /*foreach($materials_quantity as $item) {
                     if(isset($new_arr3[$item['material_id']])) {
                         $new_arr3[ $item['material_id']]['quantity'] += (float)$item['quantity'];
                         $new_arr3[ $item['material_id']]['price'] += (float)$item['price'];
@@ -4158,6 +4190,17 @@ class OutputController extends Controller
                     }
 
                     $new_arr3[$item['material_id']] = $item;
+                }*/
+                foreach ($materials_quantity as $item) {
+                    $key = $item['equipment_id'] . '_' . $item['material_id'];
+
+                    if (isset($new_arr3[$key])) {
+                        $new_arr3[$key]['quantity'] += (float)$item['quantity'];
+                        $new_arr3[$key]['price'] += (float)$item['price'];
+                        continue;
+                    }
+
+                    $new_arr3[$key] = $item;
                 }
 
                 $materials = array_values($new_arr3);
@@ -4227,6 +4270,8 @@ class OutputController extends Controller
                 for ( $j=0; $j<count($array_outputs[$i]["materials"]); $j++ )
                 {
                     $total = $total + $array_outputs[$i]["materials"][$j]["price"];
+                    $equipment_id = $array_outputs[$i]["materials"][$j]["equipment_id"];
+                    $equipment = Equipment::find($equipment_id);
                     array_push($outputs_array, [
                         "id" => $array_outputs[$i]["id"],
                         "year" => $array_outputs[$i]["year"],
@@ -4242,6 +4287,7 @@ class OutputController extends Controller
                         "stateText" => $array_outputs[$i]["stateText"],
                         "custom" => $array_outputs[$i]["custom"],
                         "quote" => $array_outputs[$i]["quote"],
+                        "equipment" => ($equipment == null) ? "Sin equipo": $equipment->description,
                         "material_code" => $array_outputs[$i]["materials"][$j]["material_code"],
                         "material" => $array_outputs[$i]["materials"][$j]["material"],
                         "quantity" => $array_outputs[$i]["materials"][$j]["quantity"],
