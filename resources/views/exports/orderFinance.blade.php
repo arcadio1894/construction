@@ -221,6 +221,16 @@
         <div><span>RUC</span>: {{ ($service_order->supplier !== null) ? $service_order->supplier->RUC : 'No tiene ruc' }}</div>
         <div><span>DOMICILIO</span>: {{ ($service_order->supplier !== null) ? substr(substr($service_order->supplier->address, 0,80), 0, strrpos( substr($service_order->supplier->address, 0,80), ' ')): 'No tiene localización' }}
             <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {{ ($service_order->supplier !== null) ? substr($service_order->supplier->address, strrpos( substr($service_order->supplier->address, 0,80), ' '),strlen($service_order->supplier->address)): '' }} </div>
+        <div><span>CUENTAS BANC.</span>:
+            @if ( count( $accounts ) > 0 )
+                @foreach( $accounts as $index => $account )
+                    {{ $account->bank->short_name." - ".( ($account->currecy == 'PEN') ? 'Soles':'Dólares'  )." - ".$account->number_account }}
+                    @if ($index < count($accounts) - 1)
+                        <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    @endif
+                @endforeach
+            @endif
+        </div>
         <div><span>TELÉFONO</span>: {{ ($service_order->supplier !== null) ? $service_order->supplier->phone : 'No tiene telefono' }} </div>
         <div><span>CORREO</span>: {{ ($service_order->supplier !== null) ? $service_order->supplier->email : 'No tiene email' }} </div>
         <div><span>COTIZACIÓN</span>: {{ ($service_order->quote_supplier !== null) ? $service_order->quote_supplier : 'No tiene cotización' }} </div>

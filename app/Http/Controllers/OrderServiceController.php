@@ -11,6 +11,7 @@ use App\OrderServiceDetail;
 use App\PaymentDeadline;
 use App\Services\TipoCambioService;
 use App\Supplier;
+use App\SupplierAccount;
 use App\SupplierCredit;
 use App\UnitMeasure;
 use App\User;
@@ -349,7 +350,10 @@ class OrderServiceController extends Controller
         $length = 5;
         $codeOrder = ''.str_pad($id,$length,"0", STR_PAD_LEFT);
 
-        $view = view('exports.orderService', compact('service_order', 'codeOrder'));
+        $accounts = SupplierAccount::with('bank')
+            ->where('supplier_id', $service_order->supplier_id)->get();
+
+        $view = view('exports.orderService', compact('service_order', 'codeOrder', 'accounts'));
 
         $pdf = PDF::loadHTML($view);
 
