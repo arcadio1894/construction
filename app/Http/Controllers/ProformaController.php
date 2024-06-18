@@ -12,6 +12,7 @@ use App\DefaultEquipmentTurnstile;
 use App\DefaultEquipmentWorkForce;
 use App\Equipment;
 use App\EquipmentConsumable;
+use App\EquipmentElectric;
 use App\EquipmentMaterial;
 use App\EquipmentProforma;
 use App\EquipmentProformaConsumable;
@@ -266,7 +267,7 @@ class ProformaController extends Controller
 
         foreach ( $equipment->electrics as $equipment_electric )
         {
-            if ( $equipment_electric->price !== $equipment_electric->material->price )
+            if ( $equipment_electric->price !== $equipment_electric->material->unit_price )
             {
                 $flagChange = true;
                 $equipment_electric->price = $equipment_electric->material->unit_price;
@@ -491,11 +492,13 @@ class ProformaController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $equipment = EquipmentProforma::with(['materials', 'consumables', 'workforces', 'turnstiles', 'workdays'])
+        $equipment = EquipmentProforma::with(['materials', 'consumables', 'electrics', 'workforces', 'turnstiles', 'workdays'])
             ->find($equipment_id);
 
         $defaultConsumable = '(*)';
-        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->get();
+        $defaultElectric = '(e)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
 
         $unitMeasures = UnitMeasure::all();
 
@@ -508,7 +511,7 @@ class ProformaController extends Controller
         $materials = Material::with('unitMeasure','typeScrap')
             /*->where('enable_status', 1)*/->get();
 
-        //dd($array);
+        //dd($equipment);
 
         $array = [];
         foreach ( $materials as $material )
@@ -525,7 +528,7 @@ class ProformaController extends Controller
             ]);
         }
 
-        return view('proforma.editEquipment', compact('permissions', 'consumables' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment', 'array'));
+        return view('proforma.editEquipment', compact('permissions', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'equipment', 'array'));
 
     }
 
@@ -555,6 +558,8 @@ class ProformaController extends Controller
 
                 $consumables = $equipments[$i]->consumables;
 
+                $electrics = $equipments[$i]->electrics;
+
                 $workforces = $equipments[$i]->workforces;
 
                 $tornos = $equipments[$i]->tornos;
@@ -569,6 +574,10 @@ class ProformaController extends Controller
                 foreach( $equipment->consumables as $consumable ) {
                     //$totalDeleted = $totalDeleted + (float) $consumable->total;
                     $consumable->delete();
+                }
+                foreach( $equipment->electrics as $electric ) {
+                    //$totalDeleted = $totalDeleted + (float) $consumable->total;
+                    $electric->delete();
                 }
                 foreach( $equipment->workforces as $workforce ) {
                     //$totalDeleted = $totalDeleted + (float) $workforce->total;
@@ -608,6 +617,18 @@ class ProformaController extends Controller
                         'quantity' => (float) $consumables[$k]->quantity,
                         'unit_price' => (float) $consumables[$k]->price,
                         'total_price' => (float) $consumables[$k]->total,
+                    ]);
+
+                }
+
+                for ( $e=0; $e<sizeof($electrics); $e++ )
+                {
+                    $equipmentElectric = EquipmentProformaElectric::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'material_id' => $electrics[$e]->id,
+                        'quantity' => (float) $electrics[$e]->quantity,
+                        'price' => (float) $electrics[$e]->price,
+                        'total' => (float) $electrics[$e]->total,
                     ]);
 
                 }
@@ -808,6 +829,8 @@ class ProformaController extends Controller
 
                 $totalConsumable = 0;
 
+                $totalElectric = 0;
+
                 $totalWorkforces = 0;
 
                 $totalTornos = 0;
@@ -817,6 +840,8 @@ class ProformaController extends Controller
                 $materials = $defaultEquipment->materials;
 
                 $consumables = $defaultEquipment->consumables;
+
+                $electrics = $defaultEquipment->electrics;
 
                 $workforces = $defaultEquipment->workforces;
 
@@ -851,6 +876,19 @@ class ProformaController extends Controller
                     ]);
 
                     $totalConsumable += $equipmentConsumable->total_price;
+                }
+
+                for ( $e=0; $e<sizeof($electrics); $e++ )
+                {
+                    $equipmentElectric = EquipmentProformaElectric::create([
+                        'equipment_proforma_id' => $equipment->id,
+                        'material_id' => $electrics[$e]->material_id,
+                        'quantity' => (float) $electrics[$e]->quantity,
+                        'price' => (float) $electrics[$e]->price,
+                        'total' => (float) $electrics[$e]->total,
+                    ]);
+
+                    $totalElectric += $equipmentElectric->total;
                 }
 
                 for ( $w=0; $w<sizeof($workforces); $w++ )
@@ -894,7 +932,7 @@ class ProformaController extends Controller
                     $totalDias += $equipmentdias->total_price;
                 }
 
-                $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) )+$totalDias;
+                $totalEquipo = (($totalMaterial + $totalConsumable + $totalElectric + $totalWorkforces + $totalTornos) )+$totalDias;
                 $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                 $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                 $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);
@@ -1145,6 +1183,8 @@ class ProformaController extends Controller
 
                 $totalConsumable = 0;
 
+                $totalElectric = 0;
+
                 $totalWorkforces = 0;
 
                 $totalTornos = 0;
@@ -1154,6 +1194,8 @@ class ProformaController extends Controller
                 $materials = $equipo->materials;
 
                 $consumables = $equipo->consumables;
+
+                $electrics = $equipo->electrics;
 
                 $workforces = $equipo->workforces;
 
@@ -1194,6 +1236,19 @@ class ProformaController extends Controller
                     ]);
 
                     $totalConsumable += $equipmentConsumable->total;
+                }
+
+                foreach ( $electrics as $electric )
+                {
+                    $equipmentElectric = EquipmentElectric::create([
+                        'equipment_id' => $equipment->id,
+                        'material_id' => $electric->material_id,
+                        'quantity' => (float) $electric->quantity,
+                        'price' => (float) $electric->price,
+                        'total' => (float) $electric->total,
+                    ]);
+
+                    $totalElectric += $equipmentElectric->total;
                 }
 
                 foreach ( $workforces as $workforce )
@@ -1237,7 +1292,7 @@ class ProformaController extends Controller
                     $totalDias += $equipmentdias->total;
                 }
 
-                $totalEquipo = (($totalMaterial + $totalConsumable + $totalWorkforces + $totalTornos) * (float)$equipment->quantity)+$totalDias;
+                $totalEquipo = (($totalMaterial + $totalConsumable + $totalElectric + $totalWorkforces + $totalTornos + $totalDias) * (float)$equipment->quantity);
                 $totalEquipmentU = $totalEquipo*(($equipment->utility/100)+1);
                 $totalEquipmentL = $totalEquipmentU*(($equipment->letter/100)+1);
                 $totalEquipmentR = $totalEquipmentL*(($equipment->rent/100)+1);

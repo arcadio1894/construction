@@ -1163,16 +1163,21 @@
                                         </tr>
                                         <tr>
                                             <td>3.</td>
+                                            <td>ELECTRICOS</td>
+                                            <td data-total_electrics>{{ $equipment->total_electrics }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td>4.</td>
                                             <td>SERVICIOS VARIOS</td>
                                             <td data-total_workforces>{{ $equipment->total_workforces }}</td>
                                         </tr>
                                         <tr>
-                                            <td>4.</td>
+                                            <td>5.</td>
                                             <td>SERVICIOS ADICIONALES</td>
                                             <td data-total_tornos>{{ $equipment->total_turnstiles }}</td>
                                         </tr>
                                         <tr>
-                                            <td>5.</td>
+                                            <td>6.</td>
                                             <td>DÍAS DE TRABAJO</td>
                                             <td data-total_dias>{{ $equipment->total_workdays }}</td>
                                         </tr>
@@ -1352,6 +1357,62 @@
                 </div>
             </template>
 
+            <template id="template-electric">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricDescription readonly>
+                            <input type="hidden" data-electricId>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <div class="form-group">
+                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricUnit readonly>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <div class="form-group">
+                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotalE(this);" data-electricQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                ">
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                " readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                " readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                " readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <div class="form-group">
+                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                " readonly>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                    </div>
+                </div>
+            </template>
+
             <template id="template-dia">
                 <div class="row">
                     <div class="col-md-3">
@@ -1471,101 +1532,184 @@
                 </div>
             </template>
 
-            <template id="template-equipment">
-                <div class="col-md-12">
-                    <div class="card card-success" data-equip>
-                        <div class="card-header">
-                            <h3 class="card-title">EQUIPOS</h3>
+        <template id="template-equipment">
+            <div class="col-md-12">
+                <div class="card card-success" data-equip>
+                    <div class="card-header">
+                        <h3 class="card-title">EQUIPOS</h3>
 
-                            <div class="card-tools">
-                                <a data-confirm class="btn btn-primary btn-sm" data-toggle="tooltip" title="Confirmar" >
-                                    <i class="fas fa-check-square"></i> Confirmar equipo
-                                </a>
-                                <a class="btn btn-warning btn-sm" data-saveEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
-                                    <i class="fas fa-check-square"></i> Guardar cambios
-                                </a>
-                                <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                    <i class="fas fa-minus"></i>
-                                </button>
-                                <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                        <div class="card-tools">
+                            <a data-confirm class="btn btn-primary btn-sm" data-toggle="tooltip" title="Confirmar" >
+                                <i class="fas fa-check-square"></i> Confirmar equipo
+                            </a>
+                            <a class="btn btn-warning btn-sm" data-saveEquipment="" style="display:none" data-toggle="tooltip" title="Guardar cambios">
+                                <i class="fas fa-check-square"></i> Guardar cambios
+                            </a>
+                            {{--<a class="btn btn-danger btn-sm" data-deleteEquipment="" style="display:none" data-toggle="tooltip" title="Quitar">
+                                <i class="fas fa-check-square"></i> Eliminar equipo
+                            </a>--}}
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group row">
+                            <div class="col-md-3">
+                                <label for="description">Cantidad de equipo <span class="right badge badge-danger">(*)</span></label>
+                                <input type="number" data-quantityEquipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                    ">
+                                <input type="hidden" name="" data-utilityEquipment value="{{ $utility }}">
+                                <input type="hidden" name="" data-rentEquipment value="{{ $rent }}">
+                                <input type="hidden" name="" data-letterEquipment value="{{ $letter }}">
+
+                            </div>
+                            <div class="col-md-9">
+                                <label for="description"> <span class="right badge badge-danger">Importante</span></label>
+                                <p>Todos los costos se multiplicarán por esta cantidad. Ingrese cantidades para un equipo. </p>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="description">Descripción de equipo <span class="right badge badge-danger">(*)</span></label>
+                                <textarea name="" data-descriptionEquipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
+                            </div>
+                            <div class="col-md-12">
+                                <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
+                                <textarea class="textarea_edit" data-detailequipment placeholder="Place some text here"
+                                          style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
                             </div>
                         </div>
-                        <div class="card-body">
-                            <div class="form-group row">
-                                <div class="col-md-3">
-                                    <label for="description">Cantidad de equipo <span class="right badge badge-danger">(*)</span></label>
-                                    <input type="number" data-quantityEquipment class="form-control" placeholder="1" min="0" value="1" step="1" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                        ">
-                                    <input type="hidden" name="" data-utilityEquipment value="{{ $utility }}">
-                                    <input type="hidden" name="" data-rentEquipment value="{{ $rent }}">
-                                    <input type="hidden" name="" data-letterEquipment value="{{ $letter }}">
 
-                                </div>
-                                <div class="col-md-9">
-                                    <label for="description"> <span class="right badge badge-danger">Importante</span></label>
-                                    <p>Todos los costos se multiplicarán por esta cantidad. Ingrese cantidades para un equipo. </p>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="description">Descripción de equipo <span class="right badge badge-danger">(*)</span></label>
-                                    <textarea name="" data-descriptionEquipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
-                                </div>
-                                <div class="col-md-12">
-                                    <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                    <textarea class="textarea_edit" data-detailequipment placeholder="Place some text here"
-                                            style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;"></textarea>
+                        <div class="card card-cyan collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">MATERIALES</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
                                 </div>
                             </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" class="form-control rounded-0 typeahead materialTypeahead">
 
-                            <div class="card card-cyan collapsed-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">MATERIALES</h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                        </button>
+                                            {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control material_search" style="width:100%" name="material_search"></select>
+                                        --}}
+                                        </div>
+                                    </div>
+                                    {{--<div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>--}}
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Material</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Largo</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Ancho</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Precio C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total S/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Total C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-10">
-                                            <div class="form-group">
-                                                <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="text" class="form-control rounded-0 typeahead materialTypeahead">
+                                <div data-bodyMaterials>
 
-                                                {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
-                                                <select class="form-control material_search" style="width:100%" name="material_search"></select>
-                                            --}}
-                                            </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card card-warning collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">CONSUMIBLES</h3>
+
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <label>Seleccionar consumible <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control consumable_search" data-consumable style="width:100%" name="consumable_search"></select>
                                         </div>
-                                        {{--<div class="col-md-2">
-                                            <label for="btn-add"> &nbsp; </label>
-                                            <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                        </div>--}}
                                     </div>
-                                    <hr>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addConsumable class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
+                                </div>
+                                <hr>
+                                <div data-bodyConsumable>
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <strong>Material</strong>
+                                                <strong>Descripción</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <strong>Unidad</strong>
                                             </div>
                                         </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <strong>Largo</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <strong>Ancho</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
+                                        <div class="col-md-2">
                                             <div class="form-group">
                                                 <strong>Cantidad</strong>
                                             </div>
@@ -1596,595 +1740,515 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div data-bodyMaterials>
-
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="card card-warning collapsed-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">CONSUMIBLES</h3>
-
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <div class="form-group">
-                                                <label>Seleccionar consumible <span class="right badge badge-danger">(*)</span></label>
-                                                <select class="form-control consumable_search" data-consumable style="width:100%" name="consumable_search"></select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <label for="btn-add"> &nbsp; </label>
-                                            <button type="button" data-addConsumable class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                        </div>
-                                    </div>
-                                    <hr>
-                                    <div data-bodyConsumable>
+                                    @foreach( $consumables as $consumable )
                                         <div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
-                                                    <strong>Descripción</strong>
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->full_description }}" data-consumableDescription readonly>
+                                                    <input type="hidden" data-consumableId="{{ $consumable->id }}" value="{{ $consumable->id }}">
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <strong>Unidad</strong>
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->unitMeasure->description }}" data-consumableUnit readonly>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-2">
                                                 <div class="form-group">
-                                                    <strong>Cantidad</strong>
+                                                    <input type="number" class="form-control form-control-sm" oninput="calculateTotalC(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Precio S/IGV</strong>
+                                                    <input type="number" value="{{ round($consumable->unit_price/1.18,2) }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Precio C/IGV</strong>
+                                                    <input type="number" value="{{ $consumable->unit_price }}" class="form-control form-control-sm" data-consumablePrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Total S/IGV</strong>
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal2 value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
                                                 <div class="form-group">
-                                                    <strong>Total C/IGV</strong>
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
                                                 </div>
                                             </div>
                                             <div class="col-md-1">
-                                                <div class="form-group">
-                                                    <strong>Acción</strong>
-                                                </div>
+                                                <button type="button" data-deleteConsumable class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                             </div>
                                         </div>
-                                        @foreach( $consumables as $consumable )
-                                            <div class="row">
-                                                <div class="col-md-3">
-                                                    <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->full_description }}" data-consumableDescription readonly>
-                                                        <input type="hidden" data-consumableId="{{ $consumable->id }}" value="{{ $consumable->id }}">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $consumable->unitMeasure->description }}" data-consumableUnit readonly>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotalC(this);" placeholder="0.00" data-consumableQuantity min="0" value="0.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <div class="form-group">
-                                                        <input type="number" value="{{ round($consumable->unit_price/1.18,2) }}" class="form-control form-control-sm" data-consumablePrice2 placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <div class="form-group">
-                                                        <input type="number" value="{{ $consumable->unit_price }}" class="form-control form-control-sm" data-consumablePrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal2 value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" data-consumableTotal value="0" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-1">
-                                                    <button type="button" data-deleteConsumable class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
+                                    @endforeach
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="card card-gray collapsed-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">SERVICIOS VARIOS</h3>
+                        <div class="card card-gray collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">SERVICIOS VARIOS</h3>
 
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                        </button>
-                                    </div>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="material_search">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="material_search">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
 
-                                            </div>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label >Unidad <span class="right badge badge-danger">(*)</span></label>
-                                                <select class="form-control select2 unitMeasure" style="width: 100%;">
-                                                    <option></option>
-                                                    @foreach( $unitMeasures as $unitMeasure )
-                                                        <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label >Unidad <span class="right badge badge-danger">(*)</span></label>
+                                            <select class="form-control select2 unitMeasure" style="width: 100%;">
+                                                <option></option>
+                                                @foreach( $unitMeasures as $unitMeasure )
+                                                    <option value="{{ $unitMeasure->id }}">{{ $unitMeasure->name }}</option>
+                                                @endforeach
+                                            </select>
                                         </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" id="quantity" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                            </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" id="quantity" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                         </div>
-                                        @can('showPrices_quote')
+                                    </div>
+                                    @can('showPrices_quote')
                                         <div class="col-md-2">
                                             <div class="form-group">
                                                 <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
                                                 <input type="number" id="price" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
                                             </div>
                                         </div>
-                                        @endcan
-                                        <div class="col-md-2">
-                                            <label for="btn-add"> &nbsp; </label>
-                                            <button type="button" data-addMano class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                        </div>
+                                    @endcan
+                                    <div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addMano class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                    </div>
 
-                                    </div>
-                                    <hr>
-                                    <div class="row">
-                                        <div class="col-md-3">
-                                            <div class="form-group">
-                                                <strong>Descripción</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <strong>Unidad</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <strong>Cantidad</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <strong>Precio C/IGV</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <strong>Total</strong>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-1">
-                                            <div class="form-group">
-                                                <strong>Acción</strong>
-                                            </div>
+                                </div>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
                                         </div>
                                     </div>
-                                    <div data-bodyMano>
-                                        @foreach( $workforces as $workforce )
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Unidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Cantidad</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Precio C/IGV</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyMano>
+                                    @foreach( $workforces as $workforce )
+                                        <div class="row">
+                                            <div class="col-md-3">
+                                                <div class="form-group">
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription>
+                                                    <input type="hidden" data-manoId value="{{ $workforce->id }}">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <div class="form-group">
+                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unitMeasure->name }}" data-manoUnit readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" data-manoQuantity min="0" value="1.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" value="{{ $workforce->unit_price }}" oninput="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal value="{{ $workforce->unit_price }}" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-1">
+                                                <button type="button" data-deleteMano class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="card card-lightblue collapsed-card">
+                                    <div class="card-header">
+                                        <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
+
+                                        <div class="card-tools">
+                                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="text" onkeyup="mayus(this);" class="form-control">
+
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
+                                                    <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <label for="btn-add"> &nbsp; </label>
+                                                <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                            </div>
+
+                                        </div>
+                                        <hr>
+                                        <div data-bodyTorno>
                                             <div class="row">
-                                                <div class="col-md-3">
+                                                <div class="col-md-5">
                                                     <div class="form-group">
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->description }}" data-manoDescription>
-                                                        <input type="hidden" data-manoId value="{{ $workforce->id }}">
+                                                        <input type="text" value="SERVICIO DE CORTE Y DOBLEZ" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
+                                                        <input type="hidden" data-tornoId>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-2">
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal(this);" data-tornoQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        ">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <div class="form-group">
-                                                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="{{ $workforce->unitMeasure->name }}" data-manoUnit readonly>
-                                                        </div>
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " >
                                                     </div>
                                                 </div>
                                                 <div class="col-md-2">
                                                     <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" oninput="calculateTotal(this);" placeholder="0.00" data-manoQuantity min="0" value="1.00" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <input type="number" value="{{ $workforce->unit_price }}" oninput="calculateTotal2(this);" class="form-control form-control-sm" data-manoPrice placeholder="0.00" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " @cannot('showPrices_quote') style="display: none" @endcannot>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" data-manoTotal value="{{ $workforce->unit_price }}" min="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly @cannot('showPrices_quote') style="display: none" @endcannot>
+                                                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" data-tornoTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                        " readonly >
                                                     </div>
                                                 </div>
                                                 <div class="col-md-1">
-                                                    <button type="button" data-deleteMano class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                    </div>
-                                    <div class="card card-lightblue collapsed-card">
-                                        <div class="card-header">
-                                            <h3 class="card-title">SERVICIOS ADICIONALES <span class="right badge badge-danger">(Opcional)</span></h3>
-
-                                            <div class="card-tools">
-                                                <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                                </button>
-                                            </div>
-                                        </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <div class="form-group">
-                                                        <label for="">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                        <input type="text" onkeyup="mayus(this);" class="form-control">
-
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
-                                                        <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-2">
-                                                    <div class="form-group">
-                                                        <label for="price">Precio C/IGV <span class="right badge badge-danger">(*)</span></label>
-                                                        <input type="number" class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2">
-                                                    <label for="btn-add"> &nbsp; </label>
-                                                    <button type="button" data-addTorno class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                                </div>
-
-                                            </div>
-                                            <hr>
-                                            <div data-bodyTorno>
-                                                <div class="row">
-                                                    <div class="col-md-5">
-                                                        <div class="form-group">
-                                                            <input type="text" value="SERVICIO DE CORTE Y DOBLEZ" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
-                                                            <input type="hidden" data-tornoId>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal(this);" data-tornoQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                            ">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" oninput="calculateTotal2(this);" data-tornoPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                            " >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-2">
-                                                        <div class="form-group">
-                                                            <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" value="0.00" data-tornoTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                            " readonly >
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-1">
-                                                        <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-                                                    </div>
+                                                    <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                        </div>
 
-                            <div class="card card-orange collapsed-card">
-                                <div class="card-header">
-                                    <h3 class="card-title">DIAS DE TRABAJO</h3>
+                        <div class="card card-orange collapsed-card">
+                            <div class="card-header">
+                                <h3 class="card-title">DIAS DE TRABAJO</h3>
 
-                                    <div class="card-tools">
-                                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
-                                        </button>
+                                <div class="card-tools">
+                                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="text" data-description onkeyup="mayus(this);" class="form-control">
+
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="quantity">N° de personas <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
+                                            <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                        </div>
+                                    </div>
+                                    @can('showPrices_quote')
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <label for="price">Precio C/IGV por día <span class="right badge badge-danger">(*)</span></label>
+                                                <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                ">
+                                            </div>
+                                        </div>
+                                    @endcan
+                                    <div class="col-md-2">
+                                        <label for="btn-add"> &nbsp; </label>
+                                        <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
                                     </div>
                                 </div>
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-4">
-                                            <div class="form-group">
-                                                <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="text" data-description onkeyup="mayus(this);" class="form-control">
-
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="quantity">N° de personas <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" data-cantidad class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group">
-                                                <label for="hours">Días por persona <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="number" data-horas class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                            </div>
-                                        </div>
-                                        @can('showPrices_quote')
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <label for="price">Precio C/IGV por día <span class="right badge badge-danger">(*)</span></label>
-                                                    <input type="number" data-precio class="form-control" placeholder="0.00" min="0" value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    ">
-                                                </div>
-                                            </div>
-                                        @endcan
-                                        <div class="col-md-2">
-                                            <label for="btn-add"> &nbsp; </label>
-                                            <button type="button" data-addDia class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
+                                <hr>
+                                <div class="row">
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <strong>Descripción</strong>
                                         </div>
                                     </div>
-                                    <hr>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>N° de Personas</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Días por persona</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Precio C/IGV por día</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <strong>Total</strong>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="form-group">
+                                            <strong>Acción</strong>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div data-bodyDia>
                                     <div class="row">
                                         <div class="col-md-3">
                                             <div class="form-group">
-                                                <strong>Descripción</strong>
+                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA FABRICACIÓN" data-description >
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <strong>N° de Personas</strong>
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" oninput="calculateTotalQuatity(this);" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <strong>Días por persona</strong>
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" oninput="calculateTotalHour(this);" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <strong>Precio C/IGV por día</strong>
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="55.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <strong>Total</strong>
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-1">
-                                            <div class="form-group">
-                                                <strong>Acción</strong>
-                                            </div>
+                                            <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                         </div>
                                     </div>
-                                    <div data-bodyDia>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA FABRICACIÓN" data-description >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" oninput="calculateTotalQuatity(this);" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" oninput="calculateTotalHour(this);" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" value="55.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " @cannot('showPrices_quote') readonly @endcannot>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" value="0" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA INSTALACIÓN" data-description >
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA INSTALACIÓN" data-description >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " @cannot('showPrices_quote') readonly @endcannot>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA DOSSIER DE CALIDAD" data-description >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " @cannot('showPrices_quote') readonly @endcannot>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-1">
-                                                <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
                                         </div>
-                                        <div class="row">
-                                            <div class="col-md-3">
-                                                <div class="form-group">
-                                                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PREVENCIONISTA" data-description >
-                                                </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
                                             </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " >
-                                                </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA DOSSIER DE CALIDAD" data-description >
                                             </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="120.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " @cannot('showPrices_quote') readonly @endcannot>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
-                                            <div class="col-md-2">
-                                                <div class="form-group">
-                                                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                                                    this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                                                    " readonly>
-                                                </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
                                             </div>
-                                            <div class="col-md-1">
-                                                <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div class="form-group">
+                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PREVENCIONISTA" data-description >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalQuatity(this);" value="0" min="0" data-cantidad step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalHour(this);" value="0" min="0" data-horas step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " >
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="120.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " @cannot('showPrices_quote') readonly @endcannot>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group">
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total value="0" step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                                                " readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-1">
+                                            <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            @can('showPrices_quote')
+                        </div>
+                        @can('showPrices_quote')
                             <div class="card col-md-6">
                                 <div class="card-header">
                                     <h3 class="card-title">Resumen de totales</h3>
@@ -2230,13 +2294,13 @@
                                 </div>
                                 <!-- /.card-body -->
                             </div>
-                            @endcan
-                        </div>
-                        <!-- /.card-body -->
+                        @endcan
                     </div>
-                    <!-- /.card -->
+                    <!-- /.card-body -->
                 </div>
-            </template>
+                <!-- /.card -->
+            </div>
+        </template>
 
             <div class="row">
                 <div class="col-12">

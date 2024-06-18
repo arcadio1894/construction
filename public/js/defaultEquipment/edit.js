@@ -2356,6 +2356,9 @@ function confirmEquipment() {
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }
+                    for (let i = 0; i < electricsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
+                    }
                     totalEquipment = parseFloat((totalEquipment * quantity)/*+totalDias*/).toFixed(2);
 
                     totalEquipmentU = totalEquipment*((utility/100)+1);
