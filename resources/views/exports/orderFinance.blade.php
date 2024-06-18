@@ -224,7 +224,7 @@
         <div><span>CUENTAS BANC.</span>:
             @if ( count( $accounts ) > 0 )
                 @foreach( $accounts as $index => $account )
-                    {{ $account->bank->short_name." - ".( ($account->currecy == 'PEN') ? 'Soles':'Dólares'  )." - ".$account->number_account }}
+                    {{ $account->bank->short_name." - ".( ($account->currency == 'PEN') ? 'Soles':'Dólares'  )." - ".$account->number_account }}
                     @if ($index < count($accounts) - 1)
                         <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     @endif
