@@ -908,6 +908,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:list_quote');
         Route::get('exportar/reporte/cotizaciones/v2/', 'QuoteController@exportQuotesExcel')
             ->middleware('permission:list_quote');
+        Route::get('download/reporte/cotizaciones/v2/', 'QuoteController@downloadQuotesExcel')
+            ->middleware('permission:list_quote');
 
         // TODO: Rutas para V2 de listado de cotizaciones INDEX
         Route::get('/get/data/quotes/index/v2/{numberPage}', 'QuoteController@getDataQuotesIndex')

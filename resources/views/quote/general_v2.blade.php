@@ -107,6 +107,9 @@
     @hasanyrole('admin|principal')
     <button type="button" id="btn-export" class="btn btn-outline-primary btn-sm float-right mr-2" > <i class="far fa-file-excel"></i> Descargar Excel </button>
     @endhasanyrole
+    @can('create_quote')
+        <button type="button" id="btn-download" class="btn btn-outline-success btn-sm float-right mr-2" > <i class="fas fa-download"></i> Exportar cotizaciones </button>
+    @endcan
 @endsection
 
 @section('page-breadcrumb')

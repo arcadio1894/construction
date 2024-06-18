@@ -13,6 +13,7 @@ use App\EquipmentMaterial;
 use App\EquipmentTurnstile;
 use App\EquipmentWorkday;
 use App\EquipmentWorkforce;
+use App\Exports\QuotesExcelDownload;
 use App\Exports\QuotesReportExcelExport;
 use App\FinanceWork;
 use App\Http\Requests\StoreQuoteRequest;
@@ -2252,6 +2253,177 @@ class QuoteController extends Controller
         }
 
         return (new QuotesReportExcelExport($quotes_array, $dates))->download('reporteCotizaciones.xlsx');
+
+    }
+
+    public function downloadQuotesExcel()
+    {
+        $startDate = $_GET['start'];
+        $endDate = $_GET['end'];
+        $stateQuote = $_GET['stateQuote'];
+        $quotes_array = [];
+        $dates = '';
+
+        if ( $startDate == "" || $endDate == "" )
+        {
+            $dates = "REPORTE GENERAL DE COTIZACIONES";
+            $dateCurrent = Carbon::now('America/Lima');
+            $date4MonthAgo = $dateCurrent->subMonths(6);
+            $query = Quote::with('customer', 'deadline', 'users')
+                /*->where('created_at', '>=', $date4MonthAgo)*/
+                ->orderBy('created_at', 'DESC');
+        } else {
+            $dates = "REPORTE GENERAL DE COTIZACIONES DESDE ".$startDate." AL ".$endDate;
+            $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
+            $fechaFinal = Carbon::createFromFormat('d/m/Y', $endDate);
+
+            $query = Quote::with('customer', 'deadline', 'users')
+                ->whereDate('date_quote', '>=', $fechaInicio)
+                ->whereDate('date_quote', '<=', $fechaFinal)
+                ->orderBy('created_at', 'DESC');
+        }
+
+        if ($stateQuote) {
+            // Creada, Enviada, confirmada, elevada, VB Finanzas, VB Operaciones, Finalizadas, Anuladas
+            // created, send, confirm, raised, VB_finance, VB_operation, close, canceled
+            $query->where(function ($subquery) use ($stateQuote) {
+                $subquery->where(function ($q) use ($stateQuote) {
+                    switch ($stateQuote) {
+                        case 'created':
+                            $q->where('state', 'created')
+                                ->where(function ($q2) {
+                                    $q2->where('send_state', 0)
+                                        ->orWhere('send_state', false);
+                                });
+                            break;
+                        case 'send':
+                            $q->where('state', 'created')
+                                ->where(function ($q2) {
+                                    $q2->where('send_state', 1)
+                                        ->orWhere('send_state', true);
+                                });
+                            break;
+                        case 'close':
+                            $q->where('state_active', 'close');
+                            break;
+                        /*case 'VB_finance':
+                            $q->where('state', 'confirmed')
+                                ->where('raise_status', 1)
+                                ->where('vb_finances', 1)
+                                ->whereNull('vb_operations');
+                            break;*/
+                        case 'VB_operation':
+                            $q->where('state', 'confirmed')
+                                ->where('raise_status', 1)
+                                /*->where('vb_finances', 1)*/
+                                ->where('vb_operations', 1);
+                            break;
+                        case 'raised':
+                            $q->where('state', 'confirmed')
+                                ->where('raise_status', 1)
+                                ->where('state', '<>','canceled')
+                                ->where('state_active', '<>','close')
+                                ->where(function ($q2) {
+                                    $q2->where('vb_operations', null);
+                                });
+                            break;
+                        case 'confirm':
+                            $q->where('state', 'confirmed')
+                                ->where('raise_status', 0);
+                            break;
+                        case 'canceled':
+                            $q->where('state', 'canceled');
+                            break;
+                        default:
+                            // Lógica por defecto o manejo de errores si es necesario
+                            break;
+                    }
+                });
+            });
+        }
+
+        $quotes = $query->get();
+
+        foreach ( $quotes as $quote )
+        {
+            $state = "";
+            $stateText = "";
+            if ( $quote->state === 'created' ) {
+                if ( $quote->send_state == 1 || $quote->send_state == true )
+                {
+                    $state = 'send';
+                    $stateText = 'Enviado';
+                } else {
+                    $state = 'created';
+                    $stateText = 'Creada';
+                }
+            }
+            if ($quote->state_active === 'close'){
+                $state = 'close';
+                $stateText = 'Finalizada';
+            } else {
+                if ($quote->state === 'confirmed' && $quote->raise_status === 1){
+                    if ( $quote->vb_finances == 1 && $quote->vb_operations == null )
+                    {
+                        $state = 'raise';
+                        $stateText = 'Elevada';
+
+                    } else {
+                        if ( /*$quote->vb_finances == 1 &&*/ $quote->vb_operations == 1 )
+                        {
+                            $state = 'VB_operation';
+                            $stateText = 'V.B. Operaciones - '.$quote->date_vb_operations->format("d/m/Y");
+                        } else {
+                            if ( $quote->vb_operations == 0 || $quote->vb_operations == null )
+                            {
+                                $state = 'raise';
+                                $stateText = 'Elevada';
+                            }
+                        }
+                    }
+                }
+                if ($quote->state === 'confirmed' && $quote->raise_status === 0){
+                    $state = 'confirm';
+                    $stateText =  'Confirmada';
+                }
+                if ($quote->state === 'canceled'){
+                    $state = 'canceled';
+                    $stateText = 'Cancelada';
+                }
+            }
+
+            $stateDecimals = '';
+            if ( $quote->state_decimals == 1 )
+            {
+                $stateDecimals = 'Mostrar';
+            } else {
+                $stateDecimals = 'Ocultar';
+            }
+
+            array_push($quotes_array, [
+                "id" => $quote->id,
+                "year" => ( $quote->date_quote == null || $quote->date_quote == "") ? '':$quote->date_quote->year,
+                "code" => ($quote->code == null || $quote->code == "") ? '': $quote->code,
+                "description" => ($quote->description_quote == null || $quote->description_quote == "") ? '': $quote->description_quote,
+                "date_quote" => ($quote->date_quote == null || $quote->date_quote == "") ? '': $quote->date_quote->format('d/m/Y'),
+                "order" => ($quote->code_customer == null || $quote->code_customer == "") ? "": $quote->code_customer,
+                "date_validate" => ($quote->date_validate == null || $quote->date_validate == "") ? '': $quote->date_validate->format('d/m/Y'),
+                "deadline" => ($quote->payment_deadline_id == null || $quote->payment_deadline_id == "") ? "":$quote->deadline->description,
+                "time_delivery" => $quote->time_delivery.' DÍAS',
+                "customer" => ($quote->customer_id == "" || $quote->customer_id == null) ? "" : $quote->customer->business_name,
+                "total_igv" => round($quote->total_quote/1.18, 0),
+                "total" => round($quote->total_quote/1, 0),
+                "currency" => ($quote->currency_invoice == null || $quote->currency_invoice == "") ? '': $quote->currency_invoice,
+                "state" => $state,
+                "stateText" => $stateText,
+                "created_at" => $quote->created_at->format('d/m/Y'),
+                "creator" => ($quote->users[0] == null) ? "": $quote->users[0]->user->name,
+                "decimals" => $stateDecimals,
+                "send_state" => $quote->send_state
+            ]);
+        }
+
+        return (new QuotesExcelDownload($quotes_array, $dates))->download('listadoCotizaciones.xlsx');
 
     }
 

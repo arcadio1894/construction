@@ -60,6 +60,8 @@ $(document).ready(function () {
     $(document).on('click', '[data-vb_finances]', vbFinancesQuote);
 
     $(document).on('click', '[data-active_quote]', activeQuote);
+
+    $('#btn-download').on('click', downloadQuotes);
 });
 
 var $formDelete;
@@ -69,6 +71,99 @@ var $formDecimals;
 
 var $permissions;
 var $modalDetraction;
+
+function downloadQuotes() {
+    var start  = $('#start').val();
+    var end  = $('#end').val();
+    var stateQuote = $("#stateQuote").val();
+
+    console.log(start);
+    console.log(end);
+
+    if ( stateQuote == "" )
+    {
+        stateQuote = "all";
+    }
+
+    console.log(stateQuote);
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todas las cotizaciones',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end,
+                            stateQuote: stateQuote
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/download/reporte/cotizaciones/v2/?" + $.param(query);
+
+                        window.location = url;
+
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end,
+            stateQuote: stateQuote
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/download/reporte/cotizaciones/v2/?" + $.param(query);
+
+        window.location = url;
+
+    }
+}
 
 function activeQuote() {
     var quote_id = $(this).data('active');
