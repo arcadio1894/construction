@@ -730,7 +730,11 @@ function fillEquipments() {
 
             var materialsArray = [];
             for (let i = 0; i < materialsDescription.length; i++) {
-                var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                var materialSelected = $materials.find(
+                    //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
+                    mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
+                    mat.enable_status === 1
+                );
                 materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
             }
 
@@ -1251,7 +1255,11 @@ function saveEquipment() {
                         var materialsArray = [];
 
                         for (let i = 0; i < materialsDescription.length; i++) {
-                            var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                            var materialSelected = $materials.find(
+                                //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
+                                mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
+                                mat.enable_status === 1
+                            );
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -1588,7 +1596,11 @@ function saveEquipment() {
                         var materialsArray = [];
 
                         for (let i = 0; i < materialsDescription.length; i++) {
-                            var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                            var materialSelected = $materials.find(
+                                //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
+                                mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
+                                mat.enable_status === 1
+                            );
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -2834,7 +2846,11 @@ function confirmEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
+                        var materialSelected = $materials.find(
+                            //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
+                            mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
+                            mat.enable_status === 1
+                        );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
