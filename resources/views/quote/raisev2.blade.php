@@ -247,7 +247,7 @@
                     <th>Código</th>
                     <th>Descripción</th>
                     <th>Fecha Cotización</th>
-                    <th>Fecha Válida</th>
+                    {{--<th>Fecha Válida</th>--}}
                     <th>Forma Pago</th>
                     <th>Tiempo Entrega</th>
                     <th>Cliente</th>
@@ -256,7 +256,7 @@
                     <th>Total</th>
                     <th>Moneda</th>
                     <th>Estado</th>
-                    <th>Fecha Creación</th>
+                    {{--<th>Fecha Creación</th>--}}
                     <th>Creador</th>
                     <th>Decimales</th>
                     <th></th>
