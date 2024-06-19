@@ -729,7 +729,7 @@ function fillEquipments() {
             var materialsArray = [];
             for (let i = 0; i < materialsDescription.length; i++) {
                 //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                var materialSelected = $materials.find(
+                var materialSelected = $materials.find( mat=>
                     //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                     mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                     mat.enable_status === 1
@@ -1255,7 +1255,7 @@ function saveEquipment() {
 
                         for (let i = 0; i < materialsDescription.length; i++) {
                             //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                            var materialSelected = $materials.find(
+                            var materialSelected = $materials.find( mat=>
                                 //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                                 mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                                 mat.enable_status === 1
@@ -1597,7 +1597,7 @@ function saveEquipment() {
 
                         for (let i = 0; i < materialsDescription.length; i++) {
                             //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase());
-                            var materialSelected = $materials.find(
+                            var materialSelected = $materials.find( mat=>
                                 //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                                 mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                                 mat.enable_status === 1
@@ -2848,7 +2848,7 @@ function confirmEquipment() {
 
                     for (let i = 0; i < materialsDescription.length; i++) {
                         //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                        var materialSelected = $materials.find(
+                        var materialSelected = $materials.find( mat=>
                             //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                             mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                             mat.enable_status === 1
