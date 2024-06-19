@@ -225,7 +225,12 @@ $(document).ready(function () {
         var material_search = select_material.val();
 
         //$material = $materials.find(mat => mat.full_description.trim().toLowerCase() === material_search.trim().toLowerCase());
-        $material = $materials.find(mat => mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase());
+        //$material = $materials.find(mat => mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase());
+
+        $material = $materials.find(mat =>
+            mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase() &&
+            mat.enable_status === 1
+        );
 
         if ($material === undefined) {
             toastr.error('Debe seleccionar un material', 'Error',
