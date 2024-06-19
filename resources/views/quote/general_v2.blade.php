@@ -323,7 +323,7 @@
             <td data-code></td>
             <td data-description></td>
             <td data-date_quote></td>
-            <td data-date_validate></td>
+            {{--<td data-date_validate></td>--}}
             <td data-deadline></td>
 
             <td data-time_delivery></td>
@@ -334,7 +334,7 @@
             <td data-total></td>
             <td data-currency></td>
             <td data-state></td>
-            <td data-created_at></td>
+            {{--<td data-created_at></td>--}}
             <td data-creator></td>
             <td data-decimals></td>
             <td data-buttons></td>
@@ -343,7 +343,7 @@
 
     <template id="item-table-empty">
         <tr>
-            <td colspan="17" align="center">No se ha encontrado ningún dato</td>
+            <td colspan="15" align="center">No se ha encontrado ningún dato</td>
         </tr>
     </template>
 
