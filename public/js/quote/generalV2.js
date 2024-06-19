@@ -1319,7 +1319,7 @@ function renderDataTable(data) {
     clone.querySelector("[data-code]").innerHTML = data.code;
     clone.querySelector("[data-description]").innerHTML = data.description;
     clone.querySelector("[data-date_quote]").innerHTML = data.date_quote;
-    //clone.querySelector("[data-date_validate]").innerHTML = data.date_validate;
+    clone.querySelector("[data-date_validate]").innerHTML = data.date_validate;
     clone.querySelector("[data-deadline]").innerHTML = data.deadline;
     clone.querySelector("[data-time_delivery]").innerHTML = data.time_delivery;
     clone.querySelector("[data-customer]").innerHTML = data.customer;
@@ -1328,7 +1328,7 @@ function renderDataTable(data) {
     clone.querySelector("[data-total]").innerHTML = data.total;
     clone.querySelector("[data-currency]").innerHTML = data.currency;
     clone.querySelector("[data-state]").innerHTML = data.stateText;
-    //clone.querySelector("[data-created_at]").innerHTML = data.created_at;
+    clone.querySelector("[data-created_at]").innerHTML = data.created_at;
     clone.querySelector("[data-creator]").innerHTML = data.creator;
     clone.querySelector("[data-decimals]").innerHTML = data.decimals;
 
