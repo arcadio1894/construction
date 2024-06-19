@@ -15,9 +15,60 @@ $(document).ready(function () {
         selector: '[data-toggle="tooltip"]'
     });
 
+    $(document).on('click', '[data-add_scraps]', addScraps);
+    $modalScraps = $("#modalScraps");
+
+    $(document).on('input', '#width_new', function() {
+        console.log($(this).val());
+
+    });
+
+    $(document).on('input', '#length_new', function() {
+        console.log($(this).val());
+
+    });
+
 });
 
 var $permissions;
+var $modalScraps;
+
+function addScraps() {
+    // Resetear all
+    $modalScraps.find('[id=material]').val("");
+    $modalScraps.find('[id=material_id]').val("");
+    $modalScraps.find('[id=length]').val("");
+    $modalScraps.find('[id=width]').val("");
+    $modalScraps.find('[id=length_new]').val(0);
+    $modalScraps.find('[id=width_new]').val(0);
+
+
+    var material_name = $(this).data('material');
+    var material_id = $(this).data('id');
+    var width = $(this).data('width');
+    var length = $(this).data('length');
+    var typescrap = $(this).data('typescrap');
+
+    $modalScraps.find('[id=material]').val(material_name);
+    $modalScraps.find('[id=material_id]').val(material_id);
+
+
+    if (  typescrap == 1 || typescrap == 2 || typescrap == 6 )
+    {
+        // Planchas
+        $('#length').show();
+        $('#width').show();
+        $modalScraps.find('[id=length]').val(length);
+        $modalScraps.find('[id=width]').val(width);
+    } else {
+        // Tubos
+        $('#length').show();
+        $('#width').hide();
+        $modalScraps.find('[id=length]').val(length);
+    }
+
+    $modalScraps.modal('show');
+}
 
 function saveDataInventory() {
     $("#btn-save").attr("disabled", true);
@@ -289,6 +340,22 @@ function renderDataTable(data) {
 
     clone.querySelector("[data-inventory]").setAttribute('data-id', data.id);
     clone.querySelector("[data-inventory]").setAttribute('value', data.inventory);
+
+    //console.log(data.typescrap != null );
+    if ( data.typescrap != null )
+    {
+        clone.querySelector("[data-add_scraps]").setAttribute('data-id', data.id);
+        clone.querySelector("[data-add_scraps]").setAttribute('data-length', data.length);
+        clone.querySelector("[data-add_scraps]").setAttribute('data-width', data.width);
+        clone.querySelector("[data-add_scraps]").setAttribute('data-typescrap', data.typescrap);
+        clone.querySelector("[data-add_scraps]").setAttribute('data-material', data.full_name);
+    } else {
+        let element = clone.querySelector("[data-add_scraps]");
+        //console.log(element);
+        if (element) {
+            element.style.display = 'none';
+        }
+    }
 
     clone.querySelector("[data-location]").innerHTML = data.location;
 

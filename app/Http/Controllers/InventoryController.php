@@ -60,7 +60,10 @@ class InventoryController extends Controller
                 "full_name" => $material->full_name,
                 "stock" => $material->stock_current,
                 "inventory" => $material->inventory,
-                "location" => $localizacion
+                "location" => $localizacion,
+                "typescrap" => $material->typescrap_id,
+                "length" => ($material->typescrap_id == null) ? '': $material->typeScrap->length,
+                "width" => ($material->typescrap_id == null) ? '': $material->typeScrap->width,
             ]);
         }
 
