@@ -62,6 +62,19 @@
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
     <input type="hidden" id="materials" value="{{ json_encode($array) }}">
 
+    <div class="col-md-12">
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <strong>Importante!</strong> Código de colores en los materiales. <br>
+            El color gris indica que el material no ha sufrido modificaciones. <br>
+            El color <strong style="color: blue;">AZUL</strong> indica que el material ha sido actualizado el precio. <br>
+            El color <strong style="color: red;">ROJO</strong> indica que no hay stock en el almacén. <br>
+            El color <strong style="color: purple;">MORADO</strong> indica que el material ha sido recotizado y esta inhabilitado tratar de quitarlo y poner otro material igual o parecido. <br>
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    </div>
+
     <form id="formEdit" class="form-horizontal" data-url="{{ route('quote.update') }}" enctype="multipart/form-data">
         @csrf
         <div class="row">
