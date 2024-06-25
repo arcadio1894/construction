@@ -19,19 +19,83 @@ $(document).ready(function () {
     $modalScraps = $("#modalScraps");
 
     $(document).on('input', '#width_new', function() {
-        console.log($(this).val());
+        //console.log($(this).val());
+        let material_typescrap = $("#material_typescrap").val();
+        let material_length = $("#material_length").val();
+        let material_width = $("#material_width").val();
 
+        let material_length_new = $("#length_new").val();
+        let material_width_new = $("#width_new").val();
+
+        if (  material_typescrap == 1 || material_typescrap == 2 || material_typescrap == 6 )
+        {
+            // Planchas
+            let total = parseFloat(material_length)*parseFloat(material_width);
+            let scrap = parseFloat(material_length_new)*parseFloat(material_width_new);
+
+            let percentage_new = (scrap/total).toFixed(2);
+
+            $("#percentage_new").val(percentage_new);
+        } else {
+            // Tubos
+            let total = parseFloat(material_length);
+            let scrap = parseFloat(material_length_new);
+
+            let percentage_new = (scrap/total).toFixed(2);
+
+            $("#percentage_new").val(percentage_new);
+        }
     });
 
     $(document).on('input', '#length_new', function() {
-        console.log($(this).val());
+        //console.log($(this).val());
+        let material_typescrap = $("#material_typescrap").val();
+        let material_length = $("#material_length").val();
+        let material_width = $("#material_width").val();
+
+        let material_length_new = $("#length_new").val();
+        let material_width_new = $("#width_new").val();
+
+        if (  material_typescrap == 1 || material_typescrap == 2 || material_typescrap == 6 )
+        {
+            // Planchas
+            let total = parseFloat(material_length)*parseFloat(material_width);
+            let scrap = parseFloat(material_length_new)*parseFloat(material_width_new);
+
+            let percentage_new = (scrap/total).toFixed(2);
+
+            $("#percentage_new").val(percentage_new);
+        } else {
+            // Tubos
+            let total = parseFloat(material_length);
+            let scrap = parseFloat(material_length_new);
+
+            let percentage_new = (scrap/total).toFixed(2);
+
+            $("#percentage_new").val(percentage_new);
+        }
 
     });
 
+    $("#btn-submit-new").on('click', saveScrap);
 });
 
 var $permissions;
 var $modalScraps;
+
+function saveScrap() {
+    var id = $("#material_id").val();
+    var percentage = $("#percentage_new").val();
+    var $elemento = $('input[data-id="' + id + '"]');
+
+    var value = $elemento.val();
+
+    var new_total = (parseFloat(value) + parseFloat(percentage)).toFixed(2);
+
+    $elemento.val(new_total);
+
+    $modalScraps.modal("hide");
+}
 
 function addScraps() {
     // Resetear all
@@ -51,6 +115,9 @@ function addScraps() {
 
     $modalScraps.find('[id=material]').val(material_name);
     $modalScraps.find('[id=material_id]').val(material_id);
+    $modalScraps.find('[id=material_typescrap]').val(typescrap);
+    $modalScraps.find('[id=material_length]').val(length);
+    $modalScraps.find('[id=material_width]').val(width);
 
 
     if (  typescrap == 1 || typescrap == 2 || typescrap == 6 )
@@ -58,13 +125,21 @@ function addScraps() {
         // Planchas
         $('#length').show();
         $('#width').show();
+        $('#length_title').show();
+        $('#width_title').show();
         $modalScraps.find('[id=length]').val(length);
         $modalScraps.find('[id=width]').val(width);
+        $('#length_new_title').show();
+        $('#width_new_title').show();
     } else {
         // Tubos
         $('#length').show();
+        $('#length_title').show();
         $('#width').hide();
+        $('#width_title').hide();
         $modalScraps.find('[id=length]').val(length);
+        $('#length_new_title').show();
+        $('#width_new_title').hide();
     }
 
     $modalScraps.modal('show');

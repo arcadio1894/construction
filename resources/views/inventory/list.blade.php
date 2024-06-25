@@ -196,6 +196,9 @@
                             <div class="col-sm-12">
                                 <input type="text" id="material" name="material" class="form-control form-control-sm" readonly />
                                 <input type="hidden" id="material_id">
+                                <input type="hidden" id="material_typescrap">
+                                <input type="hidden" id="material_length">
+                                <input type="hidden" id="material_width">
                             </div>
                         </div>
                         <div class="col-md-2" id="length_title">
@@ -207,7 +210,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-2">
+                        <div class="col-md-2" id="width_title">
                             <label class="col-sm-12 control-label" for="width"> Ancho (mm) </label>
 
                             <div class="col-sm-12">
@@ -222,14 +225,14 @@
                         <div class="col-md-12" >
                             <label class="col-sm-12 control-label"> Ingrese las nuevas longitudes </label>
                         </div>
-                        <div class="col-md-3">
+                        <div class="col-md-3" id="length_new_title">
                             <label class="col-sm-12 control-label" for="length_new"> Largo (mm) </label>
 
                             <div class="col-sm-12">
                                 <input type="number" id="length_new" min="0" name="length_new" value="0" class="form-control form-control-sm" />
                             </div>
                         </div>
-                        <div class="col-md-3" >
+                        <div class="col-md-3" id="width_new_title">
                             <label class="col-sm-12 control-label" for="width_new"> Ancho (mm) </label>
 
                             <div class="col-sm-12">
@@ -266,5 +269,5 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/inventory/list.js') }}"></script>
+    <script src="{{ asset('js/inventory/list.js') }}?v={{ time() }}"></script>
 @endsection
