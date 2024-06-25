@@ -153,7 +153,7 @@ class ReportController extends Controller
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
             ->where('description', 'not like', '%EDESCE%')
             ->where('enable_status', 1)
-            ->whereNotIn('category_id', [8,6])
+            ->whereNotIn('category_id', [8])
             ->get();
 
         $materials_array = [];
