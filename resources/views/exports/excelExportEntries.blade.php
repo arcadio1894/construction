@@ -82,8 +82,10 @@
             <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Codigo</th>
             <th width="250px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Material</th>
             <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Cantidad</th>
-            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio</th>
-            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Total</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio Soles</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Precio Dolares</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Total Soles</th>
+            <th width="75px" style="word-wrap: break-word;background-color: #1c3c80; font-size: 14px; color: white">Total Dolares</th>
         </tr>
     </thead>
     <tbody>
@@ -99,8 +101,18 @@
                 <th width="75px">{{ $entries[$i]['codigo'] }}</th>
                 <th width="250px" style="word-wrap: break-word">{{ $entries[$i]['material'] }}</th>
                 <th width="75px">{{ $entries[$i]['cantidad'] }}</th>
-                <th width="75px">{{ $entries[$i]['precio'] }}</th>
-                <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                @if ( $entries[$i]['moneda'] == 'PEN' )
+                    <th width="75px">{{ $entries[$i]['precio'] }}</th>
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                    <th width="75px"></th>
+                @else
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['precio'] }}</th>
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                @endif
+
             </tr>
         @else
             <tr>
@@ -113,8 +125,17 @@
                 <th width="75px">{{ $entries[$i]['codigo'] }}</th>
                 <th width="250px" style="word-wrap: break-word">{{ $entries[$i]['material'] }}</th>
                 <th width="75px">{{ $entries[$i]['cantidad'] }}</th>
-                <th width="75px">{{ $entries[$i]['precio'] }}</th>
-                <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                @if ( $entries[$i]['moneda'] == 'PEN' )
+                    <th width="75px">{{ $entries[$i]['precio'] }}</th>
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                    <th width="75px"></th>
+                @else
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['precio'] }}</th>
+                    <th width="75px"></th>
+                    <th width="75px">{{ $entries[$i]['total_precio'] }}</th>
+                @endif
             </tr>
         @endif
     @endfor
