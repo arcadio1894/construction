@@ -1227,7 +1227,9 @@ class BoletaController extends Controller
                                 } else {
                                     $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
                                 }
-                                $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
+                                //$hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
+                                $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $assistance_detail->hours_discount;
+
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
                                     // TODO: Detectamos horas extras
