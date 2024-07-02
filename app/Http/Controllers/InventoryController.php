@@ -163,6 +163,11 @@ class InventoryController extends Controller
 
         $title = 'BASE DE MATERIALES COMPLETA';
 
+        // Reseteo de los stocks fisicos
+        Material::where('description', 'not like', '%EDESCE%')
+            ->where('enable_status', 1)
+            ->update(['inventory' => 0]);
+
         return Excel::download(new InventoryMaterialsExport($materials_array, $title), 'reporte_inventario_materiales.xlsx');
     }
 
