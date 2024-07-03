@@ -438,17 +438,21 @@ class FinanceWorkController extends Controller
         $banks = Bank::all();
 
         $tiposCambios = $this->getTypeExchange();
+
         //dump($tiposCambios);
         $firstDayWeek = Carbon::now('America/Lima');
         $fechaformateada = $firstDayWeek->format('Y-m-d');
-        //dump($firstDayWeek);
+        //dump($fechaformateada);
+        //dump($tiposCambios);
         $tipoCambio = $this->getExchange($fechaformateada, $tiposCambios);
-        if ($tipoCambio == null)
+        //dump($tipoCambio);
+        //dd();
+        /*if ($tipoCambio == null)
         {
             $firstDayWeek->subDays(1);
             $fechaformateada = $firstDayWeek->format('Y-m-d');
             $tipoCambio = $this->getExchange($fechaformateada, $tiposCambios);
-        }
+        }*/
         $rate = $tipoCambio->precioCompra;
 
         return view('financeWork.index_v2', compact( 'rate','years', 'permissions', 'arrayYears', 'arrayCustomers', 'arrayStateWorks', 'arrayStates', 'banks'));
@@ -1004,14 +1008,12 @@ class FinanceWorkController extends Controller
     {
         $date = Carbon::createFromFormat('Y-m-d', $fecha);
         $dateCurrent = Carbon::now('America/Lima');
-
         if ( $date->lessThan($dateCurrent) )
         {
             // Buscar el elemento en la data que tenga la fecha indicada
             $elementoEncontrado = null;
-            $elementoEncontrado = null;
             foreach ($tiposCambios as $elemento) {
-                if ($elemento->fecha === $fecha) {
+                if ($elemento->fecha->format('Y-m-d') == $fecha) {
                     $elementoEncontrado = $elemento;
                     break; // Rompemos el loop si encontramos el elemento
                 }

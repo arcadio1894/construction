@@ -351,7 +351,7 @@ class PersonalPaymentController extends Controller
             $elementoEncontrado = null;
             $elementoEncontrado = null;
             foreach ($tiposCambios as $elemento) {
-                if ($elemento->fecha === $fecha) {
+                if ($elemento->fecha->format('Y-m-d') === $fecha) {
                     $elementoEncontrado = $elemento;
                     break; // Rompemos el loop si encontramos el elemento
                 }
