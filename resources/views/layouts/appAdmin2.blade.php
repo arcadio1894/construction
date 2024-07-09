@@ -990,6 +990,45 @@
                     </li>
                     @endcan
 
+                    @can('enable_referralGuide')
+                        <li class="nav-header">GUIAS DE REMISIÓN</li>
+                        <li class="nav-item has-treeview @yield('openReferralGuide')">
+                            <a href="#" class="nav-link @yield('activeReferralGuide')">
+                                <i class="nav-icon fas fa-book"></i>
+                                <p>
+                                    Mantenedor de guías
+                                    <i class="right fas fa-angle-left"></i>
+                                </p>
+                            </a>
+                            <ul class="nav nav-treeview">
+                                @can('list_referralGuide')
+                                    <li class="nav-item">
+                                        <a href="{{ route('referral.guide.index') }}" class="nav-link @yield('activeListReferralGuide')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Listado de guías</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('create_referralGuide')
+                                    <li class="nav-item">
+                                        <a href="{{ route('referral.guide.create') }}" class="nav-link @yield('activeCreateReferralGuide')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Crear guía de remisión</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                                @can('setManagers_referralGuide')
+                                    <li class="nav-item">
+                                        <a href="{{--{{ route('inventory.index') }}--}}" class="nav-link @yield('activeListInventory')">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Configurar responsables</p>
+                                        </a>
+                                    </li>
+                                @endcan
+                            </ul>
+                        </li>
+                    @endcan
+
                     @canany('list_entryPurchase', 'list_entryScrap')
                     <li class="nav-header">ENTRADAS A ALMACEN</li>
                     @endcanany

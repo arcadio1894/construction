@@ -2608,6 +2608,34 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:stock_files');
         Route::get('/download/example/stock/file', 'UploadFilesController@downloadExampleStockFile');
 
+        // TODO: Rutas de Guias de Remision
+        Route::get('/guias/de/remision/', 'ReferralGuideController@index')
+            ->name('referral.guide.index')
+            ->middleware('permission:list_referralGuide');
+        Route::get('/get/data/referral/guides/{numberPage}', 'ReferralGuideController@getDataGuides');
+        Route::get('/crear/guia/de/remision/', 'ReferralGuideController@create')
+            ->name('referral.guide.create')
+            ->middleware('permission:create_referralGuide');
+        Route::post('store/guide/referral', 'ReferralGuideController@store')
+            ->name('referral.guide.store')
+            ->middleware('permission:create_referralGuide');
+        Route::post('/destroy/guide/referral/{guide_id}', 'ReferralGuideController@destroy')
+            ->name('referral.guide.destroy')
+            ->middleware('permission:destroy_referralGuide');
+        Route::get('ver/guia/remision/{guide_id}', 'ReferralGuideController@show')
+            ->name('referral.guide.show')
+            ->middleware('permission:list_referralGuide');
+        Route::get('imprimir/guia/remision/{guide_id}', 'ReferralGuideController@printReferralGuide')
+            ->middleware('permission:print_referralGuide');
+        Route::get('editar/guia/de/remision/{guide_id}', 'ReferralGuideController@edit')
+            ->name('referral.guide.edit')
+            ->middleware('permission:edit_referralGuide');
+        Route::post('update/guide/referral/{id}', 'ReferralGuideController@update')
+            ->name('referral.guide.update')
+            ->middleware('permission:edit_referralGuide');
+        Route::get('/exportar/guias/remision/v2/', 'ReferralGuideController@exportReferralGuides')
+            ->middleware('permission:download_referralGuide');
+
     });
 });
 

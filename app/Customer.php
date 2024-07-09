@@ -28,6 +28,11 @@ class Customer extends Model
         return $this->hasMany('App\ContactName');
     }
 
+    public function guides()
+    {
+        return $this->hasMany('App\ReferralGuide');
+    }
+
     /* En la cotizacion
     public function customer()
     {
