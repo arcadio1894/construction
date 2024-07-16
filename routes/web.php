@@ -2636,6 +2636,8 @@ Route::middleware('auth')->group(function (){
         Route::get('/exportar/guias/remision/v2/', 'ReferralGuideController@exportReferralGuides')
             ->middleware('permission:download_referralGuide');
 
+        // TODO: Rutas de reporte mensual
+        Route::get('/get/report/monthly/workers/', 'BoletaController@reportMonthlyWorkers');
     });
 });
 

@@ -8,6 +8,7 @@ use App\Boleta;
 use App\DateDimension;
 use App\Discount;
 use App\Due;
+use App\Exports\ReportHaberesExport;
 use App\FifthCategory;
 use App\Gratification;
 use App\Holiday;
@@ -19,6 +20,7 @@ use App\PensionSystem;
 use App\PercentageWorker;
 use App\PermitHour;
 use App\Refund;
+use App\Services\TipoCambioService;
 use App\SpecialBonus;
 use App\Suspension;
 use App\Vacation;
@@ -30,9 +32,17 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BoletaController extends Controller
 {
+    protected $tipoCambioService;
+
+    public function __construct(TipoCambioService $tipoCambioService)
+    {
+        $this->tipoCambioService = $tipoCambioService;
+    }
+
     public function indexPaySlip()
     {
         $user = Auth::user();
@@ -1230,6 +1240,14 @@ class BoletaController extends Controller
                                 //$hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
                                 $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $assistance_detail->hours_discount;
 
+                                if ( $workingDay->id == $wD->id )
+                                {
+
+                                    $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $assistance_detail->hours_discount ;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
                                 $hours100 = 0;
                                 if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
                                     // TODO: Detectamos horas extras
@@ -1877,4 +1895,1503 @@ class BoletaController extends Controller
         return ( !empty($holiday) ) ? true:false ;
     }
 
+    public function reportMonthlyWorkers()
+    {
+        $year = 2024;
+        $month = 5;
+
+        $workers = Worker::where('id', '<>', 1)->where('enable', 1)->get();
+
+        $arrayWorkers = [];
+
+        $daysOfWeek = 7;
+
+        $tiposCambios = $this->getTypeExchange($year, $month);
+
+        //TODO: Primero obtenemos las fechas de ese mes y año
+        $dates = DateDimension::where('year', $year)
+            ->where('month', $month)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        // TODO: Ahora recorremos las fechas para obtener las semanas y su cantidad de dias
+        $semanas = [];
+
+        foreach ( $dates as $date )
+        {
+            // Convierte la fecha en un objeto Carbon
+            $carbonDate = Carbon::parse($date->date);
+
+            // Obtén el número de la semana y el día de la semana actual
+            $numeroSemana = $carbonDate->weekOfYear;
+            $diaSemana = $carbonDate->dayOfWeek;
+
+            // Si la semana no existe en el array, agrégala
+            if (!isset($semanas[$numeroSemana])) {
+                $semanas[$numeroSemana] = ['semana' => $numeroSemana, 'dias' => 0];
+            }
+
+            // Incrementa la cantidad de días de la semana actual
+            $semanas[$numeroSemana]['dias']++;
+        }
+
+        $semanas = array_values($semanas);
+
+        foreach ($semanas as &$element) {
+            $semana = $element['semana'];
+
+            //$fechaPrimerDia = Carbon::now()->setISODate(date('Y'), $semana)->startOfWeek();
+            $fechaPrimerDia = Carbon::now()->setISODate($year, $semana)->startOfWeek();
+
+            // Verificar si el primer día de la semana pertenece al mes dado
+            if ($fechaPrimerDia->month == $month) {
+                $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
+                $element['lastDayWeek'] = $fechaPrimerDia->addDays($element['dias']-1)->format('Y-m-d');
+            } else {
+                // En caso de que pertenezca a otro mes, obtener el primer día del mes dado
+                //$fechaPrimerDia = Carbon::createFromDate(date('Y'), $month, 1);
+                $fechaPrimerDia = Carbon::createFromDate($year, $month, 1);
+                $element['firstDayWeek'] = $fechaPrimerDia->format('Y-m-d');
+                $element['lastDayWeek'] = $fechaPrimerDia->addDays($element['dias']-1)->format('Y-m-d');
+            }
+        }
+
+        unset($element);
+
+        //dump($semanas);
+        foreach ( $workers as $worker )
+        {
+            for ($j=0; $j<count($semanas); $j++)
+            {
+                $daysOfWeek = $semanas[$j]['dias'];
+                //dd($semanas[$j]['firstDayWeek']);
+                $arrayByWeek = $this->getTotalHoursByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'],  $semanas[$j]['lastDayWeek']);
+
+                //dd($arrayByWeek);
+                $h_ord = 0;
+                $h_25 = 0;
+                $h_35 = 0;
+                $h_100 = 0;
+                $h_esp = 0;
+
+                for ($i=0; $i<count($arrayByWeek); $i++)
+                {
+                    $h_ord += $arrayByWeek[$i]['h_ord'];
+                    $h_25 += $arrayByWeek[$i]['h_25'];
+                    $h_35 += $arrayByWeek[$i]['h_35'];
+                    $h_100 += $arrayByWeek[$i]['h_100'];
+                    $h_esp += $arrayByWeek[$i]['h_esp'];
+                }
+
+                // Empleador y empleado
+                $codigo = $worker->id;
+                $nombre = $worker->first_name . ' ' . $worker->last_name;
+                $cargo = ( $worker->work_function_id == null ) ? 'Sin cargo': $worker->work_function->description;
+
+                // Ingresos
+                $pagoXDia = ($worker->daily_salary == null) ? 0 : $worker->daily_salary;
+                $horasXDia = 8;
+                $diasMes = 30;
+                $horasSemanales = 48;
+                $pagoXHora = round($worker->daily_salary/$horasXDia,2);
+                $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
+                //dd($diasTrabajados);
+                // TODO: Usar el porcentageWorker
+                $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+                $rmv = PercentageWorker::where('name', 'rmv')->first();
+                $asignacionFamiliarDiaria = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
+                $asignacionFamiliarSemanal = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round((($rmv->value*($assign_family->value/100))/$diasMes)*$daysOfWeek, 2);
+                $horasOrdinarias = round(($h_ord + $h_esp), 2);
+                $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
+                $horasAl25 = round($h_25, 2);
+                $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+                $horasAl35 = round($h_35, 2);
+                $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+                $horasAl100 = round($h_100, 2);
+                $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+                $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
+                $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
+
+                $amountBonus = $this->getBonusByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+
+                $hoursVacation = $this->getVacationByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $vacaciones = $hoursVacation;
+                $montoVacaciones = round($hoursVacation*$pagoXHora, 2);
+                //$montoVacaciones = 0;
+
+                $amountRefund = $this->getRefundByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $reintegro = round($amountRefund, 2);
+
+                $amountGratification = $this->getGratificationByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $gratificaciones = round($amountGratification, 2);
+
+                $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones, 2);
+
+                // Descuento
+                $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
+                $sistemaPension = ($worker->pension_system_id == null) ? 'No tiene': $systemPension->description;
+                //$porcentageSistemaPension = 100;
+
+                if ( $worker->pension_system_id == null )
+                {
+                    $porcentageSistemaPension = 0;
+                } else {
+                    if ( $worker->percentage_pension_system == null || $worker->percentage_pension_system == 0 )
+                    {
+                        $porcentageSistemaPension = $systemPension->percentage;
+                    } else {
+                        $porcentageSistemaPension = $worker->percentage_pension_system;
+                    }
+                }
+                //$montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+                $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($porcentageSistemaPension/100), 2);
+
+                $amountRentaQuintaCat = $this->getRentaQuintaByWorkerV2( $worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $rentaQuintaCat = round($amountRentaQuintaCat, 2);
+
+                $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones - $montoSistemaPension - $rentaQuintaCat)*($worker->pension/100) , 2);
+
+                $amountLoan = $this->getLoanByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $prestamo = round($amountLoan, 2);
+
+                $amountOtros = $this->getDiscountByWorkerV2($worker->id, $semanas[$j]['firstDayWeek'], $semanas[$j]['lastDayWeek']);
+                $otros = round($amountOtros, 2);
+
+                $totalDescuentos = round($montoSistemaPension + $rentaQuintaCat + $pensionDeAlimentos + $prestamo + $otros, 2);
+
+                // Aporte
+                $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
+                $essalud = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones)*($percentageEssalud->value/100), 2);
+
+                $totalNetoPagar = round($totalIngresos - $totalDescuentos, 2) ;
+
+                // TODO: Crear el porcentageWorker HoursDiary = 8
+               array_push($arrayWorkers,[
+                   'codigo' => $codigo,
+                   'trabajador' => $nombre,
+                   'sueldoDiario' => $pagoXDia,
+                   'pagoXHora' => $pagoXHora,
+                   'diasTrabajados' => $diasTrabajados,
+                   'horasTrabajadas' => $horasOrdinarias+$horasAl25+$horasAl35,
+
+                   'horasOrdinarias' => $horasOrdinarias,
+                   'horasAl25' => $horasAl25,
+                   'horasAl35' => $horasAl35,
+                   'horasAl100' => $horasAl100,
+                   'asignacionFamiliarSemanal' => $asignacionFamiliarSemanal,
+                   'base' => $horasOrdinarias * $pagoXHora,
+                   'montoHorasTrabajadas' => $montoHorasOrdinarias,
+                   'montoHorasAl25' => $montoHorasAl25,
+                   'montoHorasAl35' => $montoHorasAl35,
+                   'montoHorasAl100' => $montoHorasAl100,
+                   'dominical' => $montoDominical,
+                   'bonosEspeciales' => $amountBonus,
+                   //'reintegro' => $reintegro,
+                   'vacaciones' => $montoVacaciones,
+                   'gratificaciones' => $gratificaciones,
+                   'remuneracionBruta' => ($horasOrdinarias * $pagoXHora)+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones,
+
+                   'totalIngresos' => $totalIngresos,
+
+                   'afp' => $montoSistemaPension,
+                   'renta' => $rentaQuintaCat,
+                   'prestamo' => $prestamo,
+                   'descJudiciales' => $pensionDeAlimentos,
+                   'otros' => $otros,
+                   'totalDescuentos' => $totalDescuentos,
+
+                   'remuneracionNeta' => (($horasOrdinarias * $pagoXHora)+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones)-$montoSistemaPension-$prestamo-$pensionDeAlimentos-$otros,
+
+                   'essalud' => $essalud,
+
+                   'totalNetoPagar' => $totalNetoPagar
+                ]);
+            }
+
+        }
+        //dd($arrayWorkers);
+
+        $resultados = [];
+
+        foreach ($arrayWorkers as $dato) {
+            $codigo = $dato['codigo'];
+
+            if (!isset($resultados[$codigo])) {
+                $resultados[$codigo] = [
+                    'codigo' => $dato['codigo'],
+                    'trabajador' => $dato['trabajador'],
+                    'sueldoDiario' => $dato['sueldoDiario'],
+                    'pagoXHora' => $dato['pagoXHora'],
+                    'diasTrabajados' => 0,
+                    'horasTrabajadas' => 0,
+                    'horasOrdinarias' => 0,
+                    'horasAl25' => 0,
+                    'horasAl35' => 0,
+                    'horasAl100' => 0,
+                    'asignacionFamiliarSemanal' => 0,
+                    'base' => 0,
+                    'montoHorasTrabajadas' => 0,
+                    'montoHorasAl25' => 0,
+                    'montoHorasAl35' => 0,
+                    'montoHorasAl100' => 0,
+                    'dominical' => 0,
+                    'bonosEspeciales' => 0,
+                    'vacaciones' => 0,
+                    'gratificaciones' => 0,
+                    'remuneracionBruta' => 0,
+                    'totalIngresos' => 0,
+                    'afp' => 0,
+                    'renta' => 0,
+                    'prestamo' => 0,
+                    'descJudiciales' => 0,
+                    'otros' => 0,
+                    'totalDescuentos' => 0,
+                    'remuneracionNeta' => 0,
+                    'essalud' => 0,
+                    'totalNetoPagar' => 0,
+                ];
+            }
+
+            // Sumar los valores del trabajador actual
+            $resultados[$codigo]['diasTrabajados'] += $dato['diasTrabajados'];
+            $resultados[$codigo]['horasTrabajadas'] += $dato['horasTrabajadas'];
+            $resultados[$codigo]['horasOrdinarias'] += $dato['horasOrdinarias'];
+            $resultados[$codigo]['horasAl25'] += $dato['horasAl25'];
+            $resultados[$codigo]['horasAl35'] += $dato['horasAl35'];
+            $resultados[$codigo]['horasAl100'] += $dato['horasAl100'];
+            $resultados[$codigo]['asignacionFamiliarSemanal'] += $dato['asignacionFamiliarSemanal'];
+            $resultados[$codigo]['base'] += $dato['base'];
+            $resultados[$codigo]['montoHorasTrabajadas'] += $dato['montoHorasTrabajadas'];
+            $resultados[$codigo]['montoHorasAl25'] += $dato['montoHorasAl25'];
+            $resultados[$codigo]['montoHorasAl35'] += $dato['montoHorasAl35'];
+            $resultados[$codigo]['montoHorasAl100'] += $dato['montoHorasAl100'];
+            $resultados[$codigo]['dominical'] += $dato['dominical'];
+            $resultados[$codigo]['bonosEspeciales'] += $dato['bonosEspeciales'];
+            $resultados[$codigo]['vacaciones'] += $dato['vacaciones'];
+            $resultados[$codigo]['gratificaciones'] += $dato['gratificaciones'];
+            $resultados[$codigo]['remuneracionBruta'] += $dato['remuneracionBruta'];
+            $resultados[$codigo]['totalIngresos'] += $dato['totalIngresos'];
+            $resultados[$codigo]['afp'] += $dato['afp'];
+            $resultados[$codigo]['renta'] += $dato['renta'];
+            $resultados[$codigo]['prestamo'] += $dato['prestamo'];
+            $resultados[$codigo]['descJudiciales'] += $dato['descJudiciales'];
+            $resultados[$codigo]['otros'] += $dato['otros'];
+            $resultados[$codigo]['totalDescuentos'] += $dato['totalDescuentos'];
+            $resultados[$codigo]['remuneracionNeta'] += $dato['remuneracionNeta'];
+            $resultados[$codigo]['essalud'] += $dato['essalud'];
+            $resultados[$codigo]['totalNetoPagar'] += $dato['totalNetoPagar'];
+        }
+
+        $resultados = array_values($resultados);
+
+        // Crear una instancia de Carbon para el primer día del mes
+        $primerDia = Carbon::createFromDate($year, $month, 1)->startOfMonth();
+
+        // Crear una instancia de Carbon para el último día del mes
+        $ultimoDia = Carbon::createFromDate($year, $month, 1)->endOfMonth();
+
+        // Formatear las fechas
+        $primerDiaFormateado = $primerDia->format('d/m/Y');
+        $ultimoDiaFormateado = $ultimoDia->format('d/m/Y');
+
+        // Obtener el nombre del mes usando Carbon (configurando la localización)
+        Carbon::setLocale('es');
+        $nombreMes = $primerDia->translatedFormat('F');
+
+        $title = "REPORTE DE HABERES DEL MES ".$nombreMes;
+        $subtitle = 'Fecha Inicio: '.$primerDiaFormateado.' Fecha Fin: '.$ultimoDiaFormateado;
+        //dd($resultados);
+        return Excel::download(new ReportHaberesExport($resultados, $title, $subtitle), 'reporte_haberes.xlsx');
+    }
+
+    public function getExchange($fecha, $tiposCambios)
+    {
+        $date = Carbon::createFromFormat('Y-m-d', $fecha);
+        $dateCurrent = Carbon::now('America/Lima');
+
+        if ( $date->lessThan($dateCurrent) )
+        {
+            // Buscar el elemento en la data que tenga la fecha indicada
+            $elementoEncontrado = null;
+            $elementoEncontrado = null;
+            foreach ($tiposCambios as $elemento) {
+                if ($elemento->fecha->format('Y-m-d') === $fecha) {
+                    $elementoEncontrado = $elemento;
+                    break; // Rompemos el loop si encontramos el elemento
+                }
+            }
+
+            // Verificar si se encontró el elemento y hacer lo que necesites con él
+            if ($elementoEncontrado) {
+                // Aquí tienes el elemento que corresponde a la fecha buscada
+                // Puedes imprimirlo o acceder a sus valores individuales
+                $tipoCambioSunat = $elementoEncontrado;
+            } else {
+                // El elemento no fue encontrado
+                $tipoCambioSunat = [];
+            }
+
+            return $tipoCambioSunat;
+        } else {
+            //dump('No entre');
+            return null;
+        }
+    }
+
+    public function getTypeExchange($year, $month)
+    {
+        //$token = 'apis-token-8651.OrHQT9azFQteF-IhmcLXP0W2MkemnPNX';
+
+        $tipoCambio = $this->tipoCambioService->obtenerPorMonthYear($month, $year);
+        return $tipoCambio;
+
+        //return $tipoCambioSunat;
+    }
+
+    public function getTotalHoursByWorkerV2($worker_id, $start, $end)
+    {
+        $arrayByWeek = [];
+        if ( $start != '' || $end != '' )
+        {
+            $date_start = Carbon::createFromFormat('Y-m-d', $start);
+            $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+            $worker = Worker::find($worker_id);
+            $dateCurrent = Carbon::now();
+
+            $arrayByDates = [];
+            $arrayByWeek = [];
+            $arrayByWeekMonth = [];
+
+            // TODO: Array By Dates
+            $yearCurrent = $dateCurrent->year;
+
+            $dates = DateDimension::whereDate('date', '>=',$date_start)
+                ->whereDate('date', '<=',$end_start)
+                ->orderBy('date', 'ASC')
+                ->get();
+
+            //dump($dates);
+
+            foreach ( $dates as $date )
+            {
+                $arrayDayAssistances = [];
+
+                $fecha = Carbon::create($date->year, $date->month, $date->day);
+                //dump($fecha);
+                $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                    ->where('worker_id', $worker->id)
+                    ->whereNotIn('status', ['S', 'F', 'P', 'U', 'TC'])
+                    ->first();
+                //dump($assistance_detail);
+                if ( !empty($assistance_detail) )
+                {
+                    //dump('Entre opr que si hay asistencia');
+                    // TODO: Verificamos las horas especiales: DM, V, L
+                    $medicalRests = MedicalRest::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($medicalRests);
+                    $vacations = Vacation::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($vacations);
+                    $licenses = License::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($licenses);
+                    $permit_hour = PermitHour::whereDate('date_start', '=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($permit_hour);
+                    $timeBreak = PercentageWorker::where('name', 'time_break')->first();
+                    $time_break = (float)$timeBreak->value;
+                    //dump($time_break);
+                    $workingDay = WorkingDay::find($assistance_detail->working_day_id);
+                    //dump($workingDay);
+                    if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
+                        //dump('Entré porque no es Feriado y es dia normal');
+                        // TODO: No feriado - Dia Normal (L-S)
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 || count($permit_hour)>0 )
+                        {
+                            if(count($permit_hour)>0 )
+                            {
+                                //TODO: OBTENER LAS HORAS TRABAJADAS
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //TODO: OBTENER LAS HORAS NETO $hoursWorked - $permit_hour[0]->hour
+                                $hoursNeto = round($hoursWorked - $permit_hour[0]->hour - $assistance_detail->hours_discount - $time_break, 2);
+                                //dump('Horas de permiso por hora: '. $permit_hour[0]);
+                                //TODO: AGREGAR AL ARRAY PUSH EN LAS HORAS ORDINARIAS
+                                array_push($arrayDayAssistances, [
+                                    $hoursNeto,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            } elseif (count($vacations)>0) {
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            } else {
+                                ///dump('Entré porque hay Horas especiales');
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //dump('Horas Trabajadas: '. $hoursWorked);
+                                //$hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
+                                //dump('Horas Trabajadas: '. $hoursNeto);
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
+                            //dump($arrayDayAssistances);
+                        } else {
+                            //dump('Entré porque no hay Horas especiales');
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                            if ( $workingDay->id == $wD->id )
+                            {
+                                if ( $hoursWorked > 4 )
+                                {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                }
+
+                            } else {
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            }
+                            //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            //dump('Horas Totales: ' . $hoursTotals);
+                            $hoursOrdinary = 0;
+                            $hours25 = 0;
+                            $hours35 = 0;
+                            $hours100 = 0;
+                            if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
+                                //dump('Entre porqe detectamos horas extras');
+                                // TODO: Detectamos horas extras
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount , 2);
+                                } else {
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                                }
+                                //$hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                                //dump('$hoursOrdinary' . $hoursOrdinary);
+                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                //dump('$hoursExtrasTotals' . $hoursExtrasTotals);
+                                if ( $hoursExtrasTotals > 0 && $hoursExtrasTotals < 2 ) {
+                                    $hours25 = $hoursExtrasTotals;
+                                    //dump('$hours25' . $hours25);
+                                } else {
+                                    $hours25 = 2;
+                                    //dump('$hours25' . $hours25);
+                                    $hours35 = $hoursExtrasTotals-2;
+                                    //dump('$hours35' . $hours35);
+                                }
+                            } else {
+                                //dump('Entre porqe no detectamos horas extras');
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount ;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+                                //$hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                //dump('$hoursOrdinary' . $hoursOrdinary);
+                            }
+
+                            array_push($arrayDayAssistances, [
+                                $hoursOrdinary,
+                                $hours25,
+                                $hours35,
+                                $hours100,
+                                0,
+                            ]);
+                            //dump($arrayDayAssistances);
+                        }
+
+                    } elseif ( !$this->isHoliday($fecha) && $fecha->isSunday() ) {
+                        // TODO: No feriado - Domingo
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
+                        {
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                0,
+                                $hoursNeto,
+                            ]);
+                        } else {
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursTotals,
+                                0,
+                            ]);
+                        }
+
+                    } elseif ( $this->isHoliday($fecha) && !$fecha->isSunday() ) {
+                        // TODO: Feriado - Dia Normal (L-S)
+                        // TODO: Ultimo Cambio
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        {
+                            if ( count($vacations)>0 )
+                            {
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            } else {
+                                // TODO: Con H-ESP
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //$hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
+                                array_push($arrayDayAssistances, [
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                    $hoursNeto,
+                                ]);
+                            }
+
+                        } else {
+                            // TODO: Sin H-ESP
+                            if ( $assistance_detail->status == 'A' )
+                            {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
+                                //$hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break;
+                                //$hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $assistance_detail->hours_discount;
+
+                                if ( $workingDay->id == $wD->id )
+                                {
+
+                                    $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $assistance_detail->hours_discount ;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($workingDay->time_start)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $hoursOrdinary1 = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary1;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $hoursOrdinary1 = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    $hours100+$hoursOrdinary1,
+                                    0,
+                                ]);
+                            } elseif ( $assistance_detail->status == 'H' ) {
+                                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                                //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    if ( $hoursWorked > 4 )
+                                    {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                    } else {
+                                        $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                                    }
+
+                                } else {
+                                    $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                                }
+                                $hoursOrdinary = 0;
+                                $hours100 = 0;
+                                if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
+                                    // TODO: Detectamos horas extras
+                                    $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                    if ( $workingDay->id == $wD->id )
+                                    {
+                                        $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount ;
+                                    } else {
+                                        $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    }
+                                    //$hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                    $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                    $hours100 = $hoursExtrasTotals;
+                                } else {
+                                    $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                    if ( $workingDay->id == $wD->id )
+                                    {
+                                        $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount ;
+                                    } else {
+                                        $hoursOrdinary = (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                    }
+                                    //$hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+
+                                array_push($arrayDayAssistances, [
+                                    $hoursOrdinary,
+                                    0,
+                                    0,
+                                    0,
+                                    0,
+                                ]);
+                            }
+
+                        }
+
+                    } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
+                        // TODO: Feriado - Domingo
+                        if ( count($medicalRests)>0 /*|| count($vacations)>0*/ || count($licenses)>0 )
+                        {
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursNeto,
+                                $hoursNeto,
+                            ]);
+                        } else {
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursTotals,
+                                0,
+                            ]);
+                        }
+                    }
+
+                }
+                else {
+                    if ( $fecha->isSunday() ) {
+                        array_push($arrayDayAssistances, [
+                            '',
+                            '',
+                            '',
+                            0,
+                            0,
+                        ]);
+                    } else {
+                        array_push($arrayDayAssistances, [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                        ]);
+                    }
+                }
+
+                array_push($arrayByDates, [
+                    'week' => $date->week,
+                    'date' => $date->date->format('d/m/Y'),
+                    'month' => $date->month_name_year,
+                    'day' => $date->day,
+                    'assistances' => $arrayDayAssistances
+                ]);
+            }
+
+            //dump($arrayByDates);
+            //dd();
+
+            $first = true;
+
+            $h_ord = 0;
+            $h_25 = 0;
+            $h_35 = 0;
+            $h_100 = 0;
+            $h_esp = 0;
+
+            $fecha = '';
+            $week = '';
+            $month = '';
+
+            //dump($arrayByDates);
+            //dd();
+
+            for ( $i=0; $i<count($arrayByDates); $i++ )
+            {
+                //dump($arrayByDates[$i]['date']);
+                if ( $first ) {
+                    //dump( 'Sem Act '.$arrayByDates[$i]['week'] .' - Sem Sig '. $arrayByDates[$i+1]['week'] );
+                    $week2 = ($i == count($arrayByDates)-1) ? 0:$arrayByDates[$i+1]['week'] ;
+                    //dump($week);
+                    if ( $arrayByDates[$i]['week'] != $week2 )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+                        //dump($arrayByWeek);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
+
+                }
+                else {
+                    if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
+                    {
+                        $dayEnd = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . $dayEnd;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+                        //dump($arrayByWeek);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+                    } else {
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+                    }
+
+
+                }
+
+            }
+        }
+        /*else {
+
+            $worker = Worker::find($worker_id);
+            $dateCurrent = Carbon::now();
+
+            $arrayByDates = [];
+            $arrayByWeek = [];
+            $arrayByWeekMonth = [];
+
+            // TODO: Array By Dates
+            $yearCurrent = $dateCurrent->year;
+
+            $dates = DateDimension::where('year', $yearCurrent)
+                ->orderBy('date', 'ASC')
+                ->get();
+
+            foreach ( $dates as $date )
+            {
+                $arrayDayAssistances = [];
+
+                $fecha = Carbon::create($date->year, $date->month, $date->day);
+                //dump($fecha);
+                $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                    ->where('worker_id', $worker->id)
+                    ->where('status', '<>', 'S')
+                    ->first();
+                //dump($assistance_detail);
+                if ( !empty($assistance_detail) )
+                {
+                    //dump('Entre opr que si hay asistencia');
+                    // TODO: Verificamos las horas especiales: DM, V, L
+                    $medicalRests = MedicalRest::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($medicalRests);
+                    $vacations = Vacation::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($vacations);
+                    $licenses = License::whereDate('date_start', '<=',$fecha->format('Y-m-d'))
+                        ->whereDate('date_end', '>=',$fecha->format('Y-m-d'))
+                        ->where('worker_id', $worker->id)
+                        ->get();
+                    //dump($licenses);
+                    $timeBreak = PercentageWorker::where('name', 'time_break')->first();
+                    $time_break = (float)$timeBreak->value;
+                    //dump($time_break);
+                    $workingDay = WorkingDay::find($assistance_detail->working_day_id);
+                    //dump($workingDay);
+                    if ( !$this->isHoliday($fecha) && !$fecha->isSunday() ) {
+                        //dump('Entré porque no es Feriado y es dia normal');
+                        // TODO: No feriado - Dia Normal (L-S)
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        {
+                            ///dump('Entré porque hay Horas especiales');
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            //dump('Horas Trabajadas: '. $hoursWorked);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            //dump('Horas Trabajadas: '. $hoursNeto);
+                            array_push($arrayDayAssistances, [
+                                0,
+                                0,
+                                0,
+                                0,
+                                $hoursNeto,
+                            ]);
+                            //dump($arrayDayAssistances);
+                        } else {
+                            //dump('Entré porque no hay Horas especiales');
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                            if ( $workingDay->id == $wD->id )
+                            {
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                            } else {
+                                $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            }
+                            //$hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            //dump('Horas Totales: ' . $hoursTotals);
+                            $hoursOrdinary = 0;
+                            $hours25 = 0;
+                            $hours35 = 0;
+                            $hours100 = 0;
+                            if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
+                                //dump('Entre porqe detectamos horas extras');
+                                // TODO: Detectamos horas extras
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount , 2);
+                                } else {
+                                    $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                                }
+                                //$hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+                                //dump('$hoursOrdinary' . $hoursOrdinary);
+                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                //dump('$hoursExtrasTotals' . $hoursExtrasTotals);
+                                if ( $hoursExtrasTotals > 0 && $hoursExtrasTotals < 2 ) {
+                                    $hours25 = $hoursExtrasTotals;
+                                    //dump('$hours25' . $hours25);
+                                } else {
+                                    $hours25 = 2;
+                                    //dump('$hours25' . $hours25);
+                                    $hours35 = $hoursExtrasTotals-2;
+                                    //dump('$hours35' . $hours35);
+                                }
+                            } else {
+                                //dump('Entre porqe no detectamos horas extras');
+                                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                                if ( $workingDay->id == $wD->id )
+                                {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $assistance_detail->hours_discount ;
+                                } else {
+                                    $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                }
+                                //$hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                                //dump('$hoursOrdinary' . $hoursOrdinary);
+                            }
+
+                            array_push($arrayDayAssistances, [
+                                $hoursOrdinary,
+                                $hours25,
+                                $hours35,
+                                $hours100,
+                                0,
+                            ]);
+                            //dump($arrayDayAssistances);
+                        }
+
+                    } elseif ( !$this->isHoliday($fecha) && $fecha->isSunday() ) {
+                        // TODO: No feriado - Domingo
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        {
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                0,
+                                $hoursNeto,
+                            ]);
+                        } else {
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursTotals,
+                                0,
+                            ]);
+                        }
+
+                    } elseif ( $this->isHoliday($fecha) && !$fecha->isSunday() ) {
+                        // TODO: Feriado - Dia Normal (L-S)
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        {
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            array_push($arrayDayAssistances, [
+                                0,
+                                0,
+                                0,
+                                0,
+                                $hoursNeto,
+                            ]);
+                        } else {
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            $hoursOrdinary = 0;
+                            $hours100 = 0;
+                            if ( $assistance_detail->hour_out_new > $workingDay->time_fin ){
+                                // TODO: Detectamos horas extras
+                                $hoursOrdinary = round( (Carbon::parse($workingDay->time_fin)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount , 2);
+
+                                $hoursExtrasTotals = $hoursTotals - $hoursOrdinary;
+                                $hours100 = $hoursExtrasTotals;
+                            } else {
+                                $hoursOrdinary = (Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry)) - $time_break - $assistance_detail->hours_discount ;
+                            }
+
+                            array_push($arrayDayAssistances, [
+                                $hoursOrdinary,
+                                0,
+                                0,
+                                $hours100+$hoursOrdinary,
+                                0,
+                            ]);
+                        }
+
+                    } elseif ( $this->isHoliday($fecha) && $fecha->isSunday() ) {
+                        // TODO: Feriado - Domingo
+                        if ( count($medicalRests)>0 || count($vacations)>0 || count($licenses)>0 )
+                        {
+                            // TODO: Con H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursNeto,
+                                $hoursNeto,
+                            ]);
+                        } else {
+                            // TODO: Sin H-ESP
+                            $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                            $hoursTotals = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+
+                            array_push($arrayDayAssistances, [
+                                '',
+                                '',
+                                '',
+                                $hoursTotals,
+                                0,
+                            ]);
+                        }
+                    }
+
+                }
+                else {
+                    if ( $fecha->isSunday() ) {
+                        array_push($arrayDayAssistances, [
+                            '',
+                            '',
+                            '',
+                            0,
+                            0,
+                        ]);
+                    } else {
+                        array_push($arrayDayAssistances, [
+                            0,
+                            0,
+                            0,
+                            0,
+                            0,
+                        ]);
+                    }
+                }
+
+                array_push($arrayByDates, [
+                    'week' => $date->week,
+                    'date' => $date->date->format('d/m/Y'),
+                    'month' => $date->month_name_year,
+                    'day' => $date->day,
+                    'assistances' => $arrayDayAssistances
+                ]);
+            }
+
+            //dump($arrayByDates);
+            //dd();
+
+            $first = true;
+
+            $h_ord = 0;
+            $h_25 = 0;
+            $h_35 = 0;
+            $h_100 = 0;
+            $h_esp = 0;
+
+            $fecha = '';
+            $week = '';
+            $month = '';
+
+            for ( $i=0; $i<count($arrayByDates); $i++ )
+            {
+                //dump($arrayByDates[$i]['date']);
+                if ( $first ) {
+                    $week2 = ($i == count($arrayByDates)-1) ? 0:$arrayByDates[$i+1]['week'] ;
+                    //dump($week);
+                    if ( $arrayByDates[$i]['week'] != $week2 )
+                    {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ' . $dayStart;
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+
+                    } else {
+                        $dayStart = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . 'DEL '. $dayStart .' AL ';
+                        $week = $week . $arrayByDates[$i]['week'];
+                        $month = $month . $arrayByDates[$i]['month'];
+
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+
+                    }
+                } else {
+                    if ( ($i == count($arrayByDates)-1) || ( (isset($arrayByDates[$i+1])) && ($arrayByDates[$i]['week'] != $arrayByDates[$i+1]['week']) ) )
+                    {
+                        $dayEnd = ($arrayByDates[$i]['day'] < 10) ? '0'.$arrayByDates[$i]['day']: $arrayByDates[$i]['day'];
+
+                        $fecha = $fecha . $dayEnd;
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = true;
+                        array_push($arrayByWeek, [
+                            'week'  => $week,
+                            'date'  => $fecha,
+                            'month' => $month,
+                            'h_ord' => $h_ord,
+                            'h_25'  => $h_25,
+                            'h_35'  => $h_35,
+                            'h_100' => $h_100,
+                            'h_esp' => $h_esp,
+                        ]);
+
+                        $fecha = '';
+                        $week = '';
+                        $month = '';
+                        $h_ord = 0;
+                        $h_25 = 0;
+                        $h_35 = 0;
+                        $h_100 = 0;
+                        $h_esp = 0;
+
+                    } else {
+                        $h_ord += ($arrayByDates[$i]['assistances'][0][0] == '') ? 0: $arrayByDates[$i]['assistances'][0][0];
+                        $h_25  += ($arrayByDates[$i]['assistances'][0][1] == '') ? 0: $arrayByDates[$i]['assistances'][0][1];
+                        $h_35  += ($arrayByDates[$i]['assistances'][0][2] == '') ? 0: $arrayByDates[$i]['assistances'][0][2];
+                        $h_100 += ($arrayByDates[$i]['assistances'][0][3] == '') ? 0: $arrayByDates[$i]['assistances'][0][3];
+                        $h_esp += ($arrayByDates[$i]['assistances'][0][4] == '') ? 0: $arrayByDates[$i]['assistances'][0][4];
+                        $first = false;
+                    }
+
+
+                }
+
+
+            }
+        }*/
+
+        //dump($arrayByWeek);
+        //dump($arrayByDates);
+        //dd();
+
+        return $arrayByWeek;
+
+    }
+
+    public function getBonusByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountBonus = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $specialBonuses = SpecialBonus::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($specialBonuses) )
+            {
+                foreach ( $specialBonuses as $bonus )
+                {
+                    $amountBonus+=$bonus->amount;
+                }
+            }
+        }
+
+        return $amountBonus;
+    }
+
+    public function getVacationByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $hoursVacation = 0;
+        $timeBreak = PercentageWorker::where('name', 'time_break')->first();
+        $time_break = (float)$timeBreak->value;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $assistance_detail = AssistanceDetail::whereDate('date_assistance',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->where('status', 'V')
+                ->first();
+            if ( !empty($assistance_detail) )
+            {
+                $hoursWorked = Carbon::parse($assistance_detail->hour_out_new)->floatDiffInHours($assistance_detail->hour_entry);
+                //dump('Horas Trabajadas: '. $hoursWorked);
+                $wD = WorkingDay::where('enable', true)->skip(2)->take(1)->first();
+                $workingDay = WorkingDay::find($assistance_detail->working_day_id);
+                if ( $workingDay->id == $wD->id )
+                {
+                    if ( $hoursWorked > 4 )
+                    {
+                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                    } else {
+                        $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount, 2);
+                    }
+
+                } else {
+                    $hoursNeto = round($hoursWorked - $assistance_detail->hours_discount - $time_break, 2);
+                }
+
+                $hoursVacation+=$hoursNeto;
+            }
+        }
+
+        return $hoursVacation;
+    }
+
+    public function getRefundByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountRefund = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $refunds = Refund::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($refunds) )
+            {
+                foreach ( $refunds as $refund )
+                {
+                    $amountRefund+=$refund->amount;
+                }
+            }
+        }
+
+        return $amountRefund;
+    }
+
+    public function getGratificationByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $amountRentaQuintaCat = 0;
+
+        $gratification = Gratification::whereDate('date', '>=', $date_start)
+            ->whereDate('date', '<=', $end_start)
+            ->where('worker_id', $worker->id)
+            ->first();
+
+        if ( !empty($gratification) )
+        {
+            $amountRentaQuintaCat+=$gratification->amount;
+        }
+
+        return $amountRentaQuintaCat;
+    }
+
+    public function getRentaQuintaByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $amountRentaQuintaCat = 0;
+
+        $fifthCategory = FifthCategory::whereDate('date', '>=', $date_start)
+            ->whereDate('date', '<=', $end_start)
+            ->where('worker_id', $worker->id)
+            ->first();
+
+        if ( !empty($fifthCategory) )
+        {
+            $amountRentaQuintaCat+=$fifthCategory->amount;
+        }
+
+        return $amountRentaQuintaCat;
+    }
+
+    public function getLoanByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountLoan = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $dues = Due::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($dues) )
+            {
+                foreach ( $dues as $due )
+                {
+                    $amountLoan+=$due->amount;
+                }
+
+            }
+        }
+
+        return $amountLoan;
+    }
+
+    public function getDiscountByWorkerV2($worker_id, $start, $end)
+    {
+        $date_start = Carbon::createFromFormat('Y-m-d', $start);
+        $end_start = Carbon::createFromFormat('Y-m-d', $end);
+
+        $worker = Worker::find($worker_id);
+
+        $dates = DateDimension::whereDate('date', '>=',$date_start)
+            ->whereDate('date', '<=',$end_start)
+            ->orderBy('date', 'ASC')
+            ->get();
+
+        $amountDiscount = 0;
+        foreach ( $dates as $date )
+        {
+            $fecha = Carbon::create($date->year, $date->month, $date->day);
+            $discounts = Discount::whereDate('date',$fecha->format('Y-m-d'))
+                ->where('worker_id', $worker->id)
+                ->get();
+            if ( !empty($discounts) )
+            {
+                foreach ( $discounts as $discount )
+                {
+                    $amountDiscount+=$discount->amount;
+                }
+            }
+        }
+
+        return $amountDiscount;
+    }
 }
