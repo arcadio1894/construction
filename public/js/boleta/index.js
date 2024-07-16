@@ -184,11 +184,103 @@ $(document).ready(function () {
     $('body').tooltip({
         selector: '[data-toggle="tooltip"]'
     });
+
+    $('#btn-download').on('click', showModalHaberes);
+
+    $modalHaberes = $('#modalHaberes');
+
+    $('#btn-submitExport').on('click', getReportExport);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
+var $modalHaberes;
+
+function getReportExport() {
+    $("#btn-submitExport").attr("disabled", true);
+    let year = $('#year').val();
+    var month  = $('#month').val();
+
+    if ( year == '' || month == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó año ni mes',
+            content: 'Si no hay año ni mes, se descargará del mes actual y año actual',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            year: $('#currentYear').val(),
+                            month: $('#currentMonth').val(),
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/get/report/monthly/workers/?" + $.param(query);
+
+                        window.location = url;
+                        $("#btn-submitExport").attr("disabled", false);
+                        $modalHaberes.modal('hide');
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                        $("#btn-submitExport").attr("disabled", false);
+                        $modalHaberes.modal('hide');
+                    },
+                },
+            },
+        });
+    } else {
+        var query = {
+            year: year,
+            month: month,
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/get/report/monthly/workers/?" + $.param(query);
+
+        window.location = url;
+        $("#btn-submitExport").attr("disabled", false);
+        $modalHaberes.modal('hide');
+    }
+}
+
+function showModalHaberes() {
+    $modalHaberes.modal('show');
+}
 
 function destroyWorker() {
     event.preventDefault();

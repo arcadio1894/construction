@@ -48,7 +48,33 @@ class BoletaController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        return view('boleta.index', compact('permissions'));
+        $registros = PaySlip::orderBy('year', 'desc');
+
+        $arrayYears = $registros->pluck('year')->unique()->toArray();
+
+        $arrayYears = array_values($arrayYears);
+
+        $date = Carbon::now('America/Lima');
+        $currentYear = $date->year;
+
+        $arrayMonths = [
+            ["value" => 1, "display" => "ENERO"],
+            ["value" => 2, "display" => "FEBRERO"],
+            ["value" => 3, "display" => "MARZO"],
+            ["value" => 4, "display" => "ABRIL"],
+            ["value" => 5, "display" => "MAYO"],
+            ["value" => 6, "display" => "JUNIO"],
+            ["value" => 7, "display" => "JULIO"],
+            ["value" => 8, "display" => "AGOSTO"],
+            ["value" => 9, "display" => "SETIEMBRE"],
+            ["value" => 10, "display" => "OCTUBRE"],
+            ["value" => 11, "display" => "NOVIEMBRE"],
+            ["value" => 12, "display" => "DICIEMBRE"]
+        ];
+
+        $currentMonth = $date->month;
+
+        return view('boleta.index', compact('permissions', 'arrayYears', 'arrayMonths', 'currentYear', 'currentMonth'));
     }
 
     public function create()
@@ -1897,16 +1923,15 @@ class BoletaController extends Controller
 
     public function reportMonthlyWorkers()
     {
-        $year = 2024;
-        $month = 5;
+        $year = $_GET['year'];
+        $month = $_GET['month'];
 
-        $workers = Worker::where('id', '<>', 1)->where('enable', 1)->get();
+        $workers = Worker::where('id', '<>', 1)->where('enable', 1)
+            ->orderBy('last_name')->get();
 
         $arrayWorkers = [];
 
         $daysOfWeek = 7;
-
-        $tiposCambios = $this->getTypeExchange($year, $month);
 
         //TODO: Primero obtenemos las fechas de ese mes y año
         $dates = DateDimension::where('year', $year)
@@ -1985,7 +2010,7 @@ class BoletaController extends Controller
 
                 // Empleador y empleado
                 $codigo = $worker->id;
-                $nombre = $worker->first_name . ' ' . $worker->last_name;
+                $nombre = $worker->last_name . ' ' . $worker->first_name;
                 $cargo = ( $worker->work_function_id == null ) ? 'Sin cargo': $worker->work_function->description;
 
                 // Ingresos
@@ -2198,7 +2223,7 @@ class BoletaController extends Controller
         Carbon::setLocale('es');
         $nombreMes = $primerDia->translatedFormat('F');
 
-        $title = "REPORTE DE HABERES DEL MES ".$nombreMes;
+        $title = "REPORTE DE HABERES DEL MES ". strtoupper($nombreMes);
         $subtitle = 'Fecha Inicio: '.$primerDiaFormateado.' Fecha Fin: '.$ultimoDiaFormateado;
         //dd($resultados);
         return Excel::download(new ReportHaberesExport($resultados, $title, $subtitle), 'reporte_haberes.xlsx');

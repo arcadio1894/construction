@@ -38,6 +38,8 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de los colaboradores</h5>
+    <button id="btn-download" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-file-excel font-20"></i> Descargar Reporte Haberes </button>
+
 @endsection
 
 @section('page-breadcrumb')
@@ -54,6 +56,8 @@
 
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
+    <input type="hidden" id="currentYear" value="{{ $currentYear }}">
+    <input type="hidden" id="currentMonth" value="{{ $currentMonth }}">
 
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-sm" id="dynamic-table">
@@ -73,7 +77,47 @@
         </table>
     </div>
 
+    <div id="modalHaberes" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar los filtros para realizar la descarga</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
 
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="year" class="col-12 col-form-label">Año del Reporte <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-sm-12">
+                                <select id="year" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option value="">TODOS</option>
+                                    @for ($i=0; $i<count($arrayYears); $i++)
+                                        <option value="{{ $arrayYears[$i] }}" {{ ($arrayYears[$i] == $currentYear) ? 'selected': '' }}>{{ $arrayYears[$i] }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="month" class="col-12 col-form-label">Mes del Reporte <span class="right badge badge-danger">(*)</span></label>
+                            <select id="month" name="stateQuote" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value="">TODOS</option>
+                                @foreach ($arrayMonths as $month)
+                                    <option value="{{ $month['value'] }}" {{ ($month['value'] == $currentMonth) ? 'selected':'' }}>{{ $month['display'] }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-submitExport" class="btn btn-primary" >Descargar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('plugins')
@@ -90,5 +134,17 @@
 @endsection
 
 @section('scripts')
-    <script src="{{ asset('js/boleta/index.js') }}"></script>
+    <script>
+        $(function () {
+            //Initialize Select2 Elements
+            $('#year').select2({
+                placeholder: "Selecione un año",
+            });
+            $('#month').select2({
+                placeholder: "Selecione un mes",
+                allowClear: true
+            });
+        })
+    </script>
+    <script src="{{ asset('js/boleta/index.js') }}?v={{ time() }}"></script>
 @endsection
