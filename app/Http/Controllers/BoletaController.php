@@ -1930,7 +1930,7 @@ class BoletaController extends Controller
         $year = $_GET['year'];
         $month = $_GET['month'];
 
-        $workers = Worker::where('id', '<>', 1)->where('id', 41)->where('enable', 1)
+        $workers = Worker::where('id', '<>', 1)/*->where('id', 41)*/->where('enable', 1)
             ->orderBy('last_name')->get();
 
         $arrayWorkers = [];
