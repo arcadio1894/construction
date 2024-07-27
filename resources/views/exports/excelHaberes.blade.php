@@ -95,8 +95,8 @@
 <table id="table">
     <thead>
         <tr>
-            <th colspan="6" class="trabajador-title" style="font-size: 12px;font-weight: bold;background-color: #1c3c80;color: #ffffff;text-align: center;">INFORMACIÓN DEL TRABAJADOR</th>
-            <th colspan="12" class="ingresos-title" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019;font-size: 12px;color: white">INGRESOS</th>
+            <th colspan="7" class="trabajador-title" style="font-size: 12px;font-weight: bold;background-color: #1c3c80;color: #ffffff;text-align: center;">INFORMACIÓN DEL TRABAJADOR</th>
+            <th colspan="13" class="ingresos-title" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019;font-size: 12px;color: white">INGRESOS</th>
             <th colspan="1" class="trabajador-title" style="font-size: 12px;font-weight: bold;background-color: #EAEE0A;color: #ffffff;text-align: center;"></th>
             <th colspan="5" class="descuentos-title" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #D31325;font-size: 12px;color: white">DESCUENTOS</th>
             <th colspan="1" class="trabajador-title" style="font-size: 12px;font-weight: bold;background-color: #EAEE0A;color: #ffffff;text-align: center;"></th>
@@ -108,11 +108,12 @@
             <th width="70px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #1c3c80; font-size: 12px; color: white">Sueldo Diario</th>
             <th width="70px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #1c3c80; font-size: 12px; color: white">Pago Por Hora</th>
             <th width="90px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #1c3c80; font-size: 12px; color: white">Dias Trabajados</th>
+            <th width="90px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #1c3c80; font-size: 12px; color: white">Dias Dominical</th>
             <th width="90px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #1c3c80; font-size: 12px; color: white">Horas Trabajadas</th>
-
             <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">H. Ord.</th>
             <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">H. Al 25%</th>
             <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">H. Al 35%</th>
+            <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">H. Al 100%</th>
             <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">Asig. Fam.</th>
             <th width="75px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">BASE</th>
             <th width="65px" style="font-weight: bold;vertical-align: center;text-align: center;word-wrap: break-word;background-color: #087019; font-size: 12px; color: white">Monto H. 25%</th>
@@ -144,10 +145,12 @@
             <th width="70px">{{ $haberes[$i]['sueldoDiario'] }}</th>
             <th width="70px">{{ $haberes[$i]['pagoXHora'] }}</th>
             <th width="90px">{{ $haberes[$i]['diasTrabajados'] }}</th>
+            <th width="65px">{{ $haberes[$i]['diasDominical'] }}</th>
             <th width="90px">{{ $haberes[$i]['horasTrabajadas'] }}</th>
             <th width="65px">{{ $haberes[$i]['horasOrdinarias'] }}</th>
             <th width="65px">{{ $haberes[$i]['horasAl25'] }}</th>
             <th width="65px">{{ $haberes[$i]['horasAl35'] }}</th>
+            <th width="65px">{{ $haberes[$i]['horasAl100'] }}</th>
             <th width="65px">{{ $haberes[$i]['asignacionFamiliarSemanal'] }}</th>
             <th width="75px">{{ $haberes[$i]['base'] }}</th>
 

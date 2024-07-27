@@ -523,7 +523,11 @@ class BoletaController extends Controller
             // Ingresos
             $pagoXDia = ($worker->daily_salary == null) ? 0 : $worker->daily_salary;
             $horasXDia = 8;
-            $diasMes = 30;
+            // $diasMes calcular si es 30 o 31
+            $date7 = Carbon::create($year, $month, 1);
+            // Obtener el número de días en el mes
+            $diasMes = $date7->daysInMonth;
+            //$diasMes = 30;
             $horasSemanales = 48;
             $pagoXHora = round($worker->daily_salary/$horasXDia,2);
             $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
@@ -1926,7 +1930,7 @@ class BoletaController extends Controller
         $year = $_GET['year'];
         $month = $_GET['month'];
 
-        $workers = Worker::where('id', '<>', 1)->where('enable', 1)
+        $workers = Worker::where('id', '<>', 1)->where('id', 41)->where('enable', 1)
             ->orderBy('last_name')->get();
 
         $arrayWorkers = [];
@@ -2016,7 +2020,10 @@ class BoletaController extends Controller
                 // Ingresos
                 $pagoXDia = ($worker->daily_salary == null) ? 0 : $worker->daily_salary;
                 $horasXDia = 8;
-                $diasMes = 30;
+                $date = Carbon::create($year, $month, 1);
+                // Obtener el número de días en el mes
+                $diasMes = $date->daysInMonth;
+                //$diasMes = 30;
                 $horasSemanales = 48;
                 $pagoXHora = round($worker->daily_salary/$horasXDia,2);
                 $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
@@ -2097,7 +2104,7 @@ class BoletaController extends Controller
                    'sueldoDiario' => $pagoXDia,
                    'pagoXHora' => $pagoXHora,
                    'diasTrabajados' => $diasTrabajados,
-                   'horasTrabajadas' => $horasOrdinarias+$horasAl25+$horasAl35,
+                   'horasTrabajadas' => $horasOrdinarias+$horasAl25+$horasAl35+$horasAl100,
 
                    'horasOrdinarias' => $horasOrdinarias,
                    'horasAl25' => $horasAl25,
@@ -2109,12 +2116,13 @@ class BoletaController extends Controller
                    'montoHorasAl25' => $montoHorasAl25,
                    'montoHorasAl35' => $montoHorasAl35,
                    'montoHorasAl100' => $montoHorasAl100,
+                   'diasDominical' => $dominical,
                    'dominical' => $montoDominical,
                    'bonosEspeciales' => $amountBonus,
                    //'reintegro' => $reintegro,
                    'vacaciones' => $montoVacaciones,
                    'gratificaciones' => $gratificaciones,
-                   'remuneracionBruta' => ($horasOrdinarias * $pagoXHora)+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones,
+                   'remuneracionBruta' => ($horasOrdinarias * $pagoXHora)+$asignacionFamiliarSemanal+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones,
 
                    'totalIngresos' => $totalIngresos,
 
@@ -2125,7 +2133,7 @@ class BoletaController extends Controller
                    'otros' => $otros,
                    'totalDescuentos' => $totalDescuentos,
 
-                   'remuneracionNeta' => (($horasOrdinarias * $pagoXHora)+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones)-$montoSistemaPension-$prestamo-$pensionDeAlimentos-$otros,
+                   'remuneracionNeta' => (($horasOrdinarias * $pagoXHora)+$asignacionFamiliarSemanal+$montoHorasAl25+$montoHorasAl35+$montoHorasAl100+$montoDominical-$amountBonus-$montoVacaciones-$gratificaciones)-$montoSistemaPension-$prestamo-$pensionDeAlimentos-$otros,
 
                    'essalud' => $essalud,
 
@@ -2134,7 +2142,7 @@ class BoletaController extends Controller
             }
 
         }
-        //dd($arrayWorkers);
+        //dump($arrayWorkers);
 
         $resultados = [];
 
@@ -2159,6 +2167,7 @@ class BoletaController extends Controller
                     'montoHorasAl25' => 0,
                     'montoHorasAl35' => 0,
                     'montoHorasAl100' => 0,
+                    'diasDominical' => 0,
                     'dominical' => 0,
                     'bonosEspeciales' => 0,
                     'vacaciones' => 0,
@@ -2190,6 +2199,7 @@ class BoletaController extends Controller
             $resultados[$codigo]['montoHorasAl25'] += $dato['montoHorasAl25'];
             $resultados[$codigo]['montoHorasAl35'] += $dato['montoHorasAl35'];
             $resultados[$codigo]['montoHorasAl100'] += $dato['montoHorasAl100'];
+            $resultados[$codigo]['diasDominical'] += $dato['diasDominical'];
             $resultados[$codigo]['dominical'] += $dato['dominical'];
             $resultados[$codigo]['bonosEspeciales'] += $dato['bonosEspeciales'];
             $resultados[$codigo]['vacaciones'] += $dato['vacaciones'];
@@ -2208,7 +2218,7 @@ class BoletaController extends Controller
         }
 
         $resultados = array_values($resultados);
-
+        //dd($resultados);
         // Crear una instancia de Carbon para el primer día del mes
         $primerDia = Carbon::createFromDate($year, $month, 1)->startOfMonth();
 
