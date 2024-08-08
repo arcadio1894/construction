@@ -136,7 +136,7 @@
 
         #notices .notice2 {
             color: #5D6975;
-            font-size: 0.9em;
+            font-size: 1.1em;
         }
 
         footer {
