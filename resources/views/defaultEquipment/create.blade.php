@@ -836,7 +836,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="55.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="70.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
@@ -874,7 +874,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="70.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
@@ -912,7 +912,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="70.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
@@ -2044,7 +2044,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="55.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" value="70.00" oninput="calculateTotalPrice(this);" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
@@ -2082,7 +2082,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="70.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
@@ -2120,7 +2120,7 @@
                                         </div>
                                         <div class="col-md-2">
                                             <div class="form-group">
-                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="55.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                                                <input type="number" class="form-control form-control-sm" placeholder="0.00" oninput="calculateTotalPrice(this);" value="70.00" min="0" data-precio step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                                                 this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
                                                 " @cannot('showPrices_quote') readonly @endcannot>
                                             </div>
