@@ -3463,5 +3463,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/quote/editList.js') }}"></script>
+    <script src="{{ asset('js/quote/editList.js') }}?={{ time() }}"></script>
 @endsection
