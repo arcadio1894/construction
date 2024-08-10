@@ -227,10 +227,24 @@ $(document).ready(function () {
         //$material = $materials.find(mat => mat.full_description.trim().toLowerCase() === material_search.trim().toLowerCase());
         //$material = $materials.find(mat => mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase());
 
-        $material = $materials.find(mat =>
+        /*$material = $materials.find(mat =>
             mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase() &&
             mat.enable_status === 1
+        );*/
+
+        var materialsWithSameName = $materials.filter(mat =>
+            mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase()
         );
+
+        var $material;
+
+        if (materialsWithSameName.length > 1) {
+            // Si hay más de un material con el mismo nombre, selecciona el que está activo
+            $material = materialsWithSameName.find(mat => mat.enable_status === 1);
+        } else {
+            // Si solo hay uno, selecciona ese material, no importa su estado
+            $material = materialsWithSameName[0];
+        }
 
         if ($material === undefined) {
             toastr.error('Debe seleccionar un material', 'Error',
@@ -729,11 +743,24 @@ function fillEquipments() {
             var materialsArray = [];
             for (let i = 0; i < materialsDescription.length; i++) {
                 //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                var materialSelected = $materials.find( mat=>
+                /*var materialSelected = $materials.find( mat=>
                     //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                     mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                     mat.enable_status === 1
+                );*/
+                var materialsWithSameName = $materials.filter(mat =>
+                    mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                 );
+
+                var materialSelected;
+
+                if (materialsWithSameName.length > 1) {
+                    // Si hay más de un material con el mismo nombre, selecciona el que está activo
+                    materialSelected = materialsWithSameName.find(mat => mat.enable_status === 1);
+                } else {
+                    // Si solo hay uno, selecciona ese material, no importa su estado
+                    materialSelected = materialsWithSameName[0];
+                }
                 materialsArray.push({'id':materialSelected.id, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
             }
 
@@ -1255,11 +1282,24 @@ function saveEquipment() {
 
                         for (let i = 0; i < materialsDescription.length; i++) {
                             //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                            var materialSelected = $materials.find( mat=>
+                            /*var materialSelected = $materials.find( mat=>
                                 //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                                 mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                                 mat.enable_status === 1
+                            );*/
+                            var materialsWithSameName = $materials.filter(mat =>
+                                mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                             );
+
+                            var materialSelected;
+
+                            if (materialsWithSameName.length > 1) {
+                                // Si hay más de un material con el mismo nombre, selecciona el que está activo
+                                materialSelected = materialsWithSameName.find(mat => mat.enable_status === 1);
+                            } else {
+                                // Si solo hay uno, selecciona ese material, no importa su estado
+                                materialSelected = materialsWithSameName[0];
+                            }
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -1597,11 +1637,24 @@ function saveEquipment() {
 
                         for (let i = 0; i < materialsDescription.length; i++) {
                             //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase());
-                            var materialSelected = $materials.find( mat=>
+                            /*var materialSelected = $materials.find( mat=>
                                 //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                                 mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                                 mat.enable_status === 1
+                            );*/
+                            var materialsWithSameName = $materials.filter(mat =>
+                                mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                             );
+
+                            var materialSelected;
+
+                            if (materialsWithSameName.length > 1) {
+                                // Si hay más de un material con el mismo nombre, selecciona el que está activo
+                                materialSelected = materialsWithSameName.find(mat => mat.enable_status === 1);
+                            } else {
+                                // Si solo hay uno, selecciona ese material, no importa su estado
+                                materialSelected = materialsWithSameName[0];
+                            }
                             materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                         }
 
@@ -2848,11 +2901,24 @@ function confirmEquipment() {
 
                     for (let i = 0; i < materialsDescription.length; i++) {
                         //var materialSelected = $materials.find( mat=>mat.full_description.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() );
-                        var materialSelected = $materials.find( mat=>
+                        /*var materialSelected = $materials.find( mat=>
                             //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                             mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
                             mat.enable_status === 1
+                        );*/
+                        var materialsWithSameName = $materials.filter(mat =>
+                            mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
                         );
+
+                        var materialSelected;
+
+                        if (materialsWithSameName.length > 1) {
+                            // Si hay más de un material con el mismo nombre, selecciona el que está activo
+                            materialSelected = materialsWithSameName.find(mat => mat.enable_status === 1);
+                        } else {
+                            // Si solo hay uno, selecciona ese material, no importa su estado
+                            materialSelected = materialsWithSameName[0];
+                        }
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
