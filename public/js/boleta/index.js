@@ -190,12 +190,218 @@ $(document).ready(function () {
     $modalHaberes = $('#modalHaberes');
 
     $('#btn-submitExport').on('click', getReportExport);
+
+    $selectYear = $('#yearG');
+    $selectMonth = $('#monthG');
+    $selectWeek = $('#weekG');
+
+    $selectYear.change(function () {
+        $selectMonth.empty();
+        $selectMonth.val('');
+        $selectMonth.trigger('change');
+        $selectWeek.empty();
+        $selectWeek.val('');
+        $selectWeek.trigger('change');
+
+        let year =  $selectYear.val();
+        console.log(year);
+        if ( year != null || year != undefined )
+        {
+            $.get( "/dashboard/get/months/of/year/"+year, function( data ) {
+                $selectMonth.append($("<option>", {
+                    value: '',
+                    text: ''
+                }));
+                for ( var i=0; i<data.length; i++ )
+                {
+                    $selectMonth.append($("<option>", {
+                        value: data[i].month,
+                        text: data[i].month_name
+                    }));
+                }
+            });
+        }
+
+    });
+
+    $selectMonth.change(function () {
+        $selectWeek.empty();
+        $selectWeek.val('');
+        $selectWeek.trigger('change');
+
+        let year =  $selectYear.val();
+        let month =  $selectMonth.val();
+
+        console.log(year);
+        console.log(month);
+
+        if ( (year != null || year != undefined) && (month != null || month != undefined) )
+        {
+            $.get( "/dashboard/get/weeks/of/month/"+month+"/year/"+year, function( data ) {
+                $selectWeek.append($("<option>", {
+                    value: '',
+                    text: ''
+                }));
+                for ( var i=0; i<data.length; i++ )
+                {
+                    $selectWeek.append($("<option>", {
+                        value: data[i].week,
+                        text: data[i].week
+                    }));
+                }
+            });
+        }
+
+    });
+
+    $selectWeek.change(function () {
+
+
+    });
+
+    $('#btn-submitGenerate').on('click', generateBoletaWorkers);
 });
 
 var $formDelete;
 var $modalDelete;
 var $permissions;
 var $modalHaberes;
+let $selectYear;
+let $selectMonth;
+let $selectWeek;
+
+function generateBoletaWorkers() {
+    let year = $selectYear.val();
+    let month = $selectMonth.val();
+    let week = $selectWeek.val();
+
+    // TODO: Validaciones
+    if ( year == '' || year == null )
+    {
+        toastr.error('Seleccione un año de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( month == '' || month == null )
+    {
+        toastr.error('Seleccione un mes de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    if ( week == '' || week == null )
+    {
+        toastr.error('Seleccione una semana de la lista', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }
+
+    var query = {
+        year: year,
+        month: month,
+        week: week
+    };
+
+    $.get( "/dashboard/generate/boletas/trabajadores?" + $.param(query), function( data ) {
+        console.log( data );
+    }).done(function(data) {
+        $dataBoleta = data;
+
+        console.log( data );
+    }).fail(function(data) {
+        if( data.responseJSON.message && !data.responseJSON.errors )
+        {
+            toastr.error(data.responseJSON.message, 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        }
+        for ( var property in data.responseJSON.errors ) {
+            toastr.error(data.responseJSON.errors[property], 'Error',
+                {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": false,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "2000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                });
+        }
+
+    });
+}
 
 function getReportExport() {
     $("#btn-submitExport").attr("disabled", true);

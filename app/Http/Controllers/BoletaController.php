@@ -139,6 +139,377 @@ class BoletaController extends Controller
 
     }
 
+    public function generateBoletasWorkers()
+    {
+        $year = $_GET['year'];
+        $month = $_GET['month'];
+        $week = $_GET['week'];
+
+        $daysOfWeek = 7;
+
+        DB::beginTransaction();
+        try {
+            $dateFirst = DateDimension::where('year', $year)
+                ->where('month', $month)
+                ->where('week', $week)
+                ->where('day_of_week', 1)
+                ->orderBy('date', 'asc')
+                ->first();
+
+            if ( !isset($dateFirst) )
+            {
+                $dateFirst = DateDimension::where('year', $year)
+                    ->where('month', $month-1)
+                    ->where('week', $week)
+                    ->where('day_of_week', 1)
+                    ->orderBy('date', 'asc')
+                    ->first();
+            }
+
+            $dateLast = DateDimension::where('date', '>=', $dateFirst->date)
+                ->orderBy('date', 'asc')
+                ->limit(1)
+                ->offset(6) // Avanzamos 6 días para obtener el final de la semana
+                ->first();
+
+            $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
+            $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
+
+            $periodo = $start .' al '.$end;
+
+            $semana = $week;
+
+            $workers = Worker::where('enable', true)
+                ->get();
+
+            foreach ( $workers as $worker )
+            {
+                $arrayByWeek = $this->getTotalHoursByWorker($worker->id, $start, $end);
+
+                $h_ord = 0;
+                $h_25 = 0;
+                $h_35 = 0;
+                $h_100 = 0;
+                $h_esp = 0;
+
+                for ($i=0; $i<count($arrayByWeek); $i++)
+                {
+                    $h_ord += $arrayByWeek[$i]['h_ord'];
+                    $h_25 += $arrayByWeek[$i]['h_25'];
+                    $h_35 += $arrayByWeek[$i]['h_35'];
+                    $h_100 += $arrayByWeek[$i]['h_100'];
+                    $h_esp += $arrayByWeek[$i]['h_esp'];
+                }
+
+                // Empleador y empleado
+                $empresa = 'SERMEIND FABRICACIONES INDUSTRIALES S.A.C.';
+                $ruc = '20540001384';
+                $codigo = $worker->id;
+                $nombre = $worker->first_name . ' ' . $worker->last_name;
+                $cargo = ( $worker->work_function_id == null ) ? 'Sin cargo': $worker->work_function->description;
+
+                // Ingresos
+                $pagoXDia = ($worker->daily_salary == null) ? 0 : $worker->daily_salary;
+                $horasXDia = 8;
+                // $diasMes calcular si es 30 o 31
+                $date7 = Carbon::create($year, $month, 1);
+                // Obtener el número de días en el mes
+                $diasMes = $date7->daysInMonth;
+                //$diasMes = 30;
+                $horasSemanales = 48;
+                $pagoXHora = round($worker->daily_salary/$horasXDia,2);
+                $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
+                //dd($diasTrabajados);
+                // TODO: Usar el porcentageWorker
+                $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+                $rmv = PercentageWorker::where('name', 'rmv')->first();
+                $asignacionFamiliarDiaria = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
+                $asignacionFamiliarSemanal = ($worker->num_children == 0 || $worker->num_children == null) ? 0: round((($rmv->value*($assign_family->value/100))/$diasMes)*$daysOfWeek, 2);
+                $horasOrdinarias = round(($h_ord + $h_esp), 2);
+                $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
+                $horasAl25 = round($h_25, 2);
+                $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+                $horasAl35 = round($h_35, 2);
+                $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+                $horasAl100 = round($h_100, 2);
+                $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+                $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
+                $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
+
+                $amountBonus = $this->getBonusByWorker($worker->id, $start, $end);
+
+                $hoursVacation = $this->getVacationByWorker($worker->id, $start, $end);
+                $vacaciones = $hoursVacation;
+                $montoVacaciones = round($hoursVacation*$pagoXHora, 2);
+                //$montoVacaciones = 0;
+
+                $amountRefund = $this->getRefundByWorker($worker->id, $start, $end);
+                $reintegro = round($amountRefund, 2);
+
+                $amountGratification = $this->getGratificationByWorker($worker->id, $start, $end);
+                $gratificaciones = round($amountGratification, 2);
+
+                $totalIngresos = round($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones, 2);
+
+                // Descuento
+                $systemPension = ($worker->pension_system_id == null) ? 'No tiene': PensionSystem::find($worker->pension_system_id);
+                $sistemaPension = ($worker->pension_system_id == null) ? 'No tiene': $systemPension->description;
+                //$porcentageSistemaPension = 100;
+
+                if ( $worker->pension_system_id == null )
+                {
+                    $porcentageSistemaPension = 0;
+                } else {
+                    if ( $worker->percentage_pension_system == null || $worker->percentage_pension_system == 0 )
+                    {
+                        $porcentageSistemaPension = $systemPension->percentage;
+                    } else {
+                        $porcentageSistemaPension = $worker->percentage_pension_system;
+                    }
+                }
+                //$montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($systemPension->percentage/100), 2);
+                $montoSistemaPension = ($worker->pension_system_id == null) ? 0 : round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro)*($porcentageSistemaPension/100), 2);
+
+                $amountRentaQuintaCat = $this->getRentaQuintaByWorker($worker->id, $start, $end);
+                $rentaQuintaCat = round($amountRentaQuintaCat, 2);
+
+                $pensionDeAlimentos = ($worker->pension == 0) ? 0 : round( ($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones - $montoSistemaPension - $rentaQuintaCat)*($worker->pension/100) , 2);
+
+                $amountLoan = $this->getLoanByWorker($worker->id, $start, $end);
+                $prestamo = round($amountLoan, 2);
+
+                $amountOtros = $this->getDiscountByWorker($worker->id, $start, $end);
+                $otros = round($amountOtros, 2);
+
+                $totalDescuentos = round($montoSistemaPension + $rentaQuintaCat + $pensionDeAlimentos + $prestamo + $otros, 2);
+
+                // Aporte
+                $percentageEssalud = PercentageWorker::where('name', 'essalud')->first();
+                $essalud = round(($asignacionFamiliarSemanal + $montoHorasOrdinarias + $montoHorasAl25 + $montoHorasAl35 +  $montoHorasAl100 + $montoDominical + $amountBonus + $montoVacaciones + $reintegro + $gratificaciones)*($percentageEssalud->value/100), 2);
+
+                $totalNetoPagar = round($totalIngresos - $totalDescuentos, 2) ;
+
+                // TODO: Crear el porcentageWorker HoursDiary = 8
+
+                $info = [
+                    'empresa' => $empresa,
+                    'ruc' => $ruc,
+                    'codigo' => $codigo,
+                    'nombre' => $nombre,
+                    'cargo' => $cargo,
+                    'semana' => $semana,
+                    'fecha' => $periodo,
+                    'pagoXDia' => $pagoXDia,
+                    'pagoXHora' => $pagoXHora,
+                    'diasTrabajados' => $diasTrabajados,
+                    'asignacionFamiliarDiaria' => $asignacionFamiliarDiaria,
+                    'asignacionFamiliarSemanal' => $asignacionFamiliarSemanal,
+                    'horasOrdinarias' => $horasOrdinarias,
+                    'montoHorasOrdinarias' => $montoHorasOrdinarias,
+                    'horasAl25' => $horasAl25,
+                    'montoHorasAl25' => $montoHorasAl25,
+                    'horasAl35' => $horasAl35,
+                    'montoHorasAl35' => $montoHorasAl35,
+                    'horasAl100' => $horasAl100,
+                    'montoHorasAl100' => $montoHorasAl100,
+                    'dominical' => $dominical,
+                    'montoDominical' => $montoDominical,
+                    'montoBonus' => $amountBonus,
+                    'vacaciones' => $vacaciones,
+                    'montoVacaciones' => $montoVacaciones,
+                    'reintegro' => $reintegro,
+                    'gratificaciones' => $gratificaciones,
+                    'totalIngresos' => $totalIngresos,
+                    'sistemaPension' => $sistemaPension,
+                    'montoSistemaPension' => $montoSistemaPension,
+                    'rentaQuintaCat' => $rentaQuintaCat,
+                    'pensionDeAlimentos' => $pensionDeAlimentos,
+                    'prestamo' => $prestamo,
+                    'otros' => $otros,
+                    'totalDescuentos' => $totalDescuentos,
+                    'essalud' => $essalud,
+                    'totalNetoPagar' => $totalNetoPagar
+                ];
+
+                $pension = Alimony::where('week', $week)
+                    ->where('month', $month)
+                    ->where('year', $year)
+                    ->where('type', 'w')
+                    ->where('worker_id', $worker->id)
+                    ->first();
+
+                if ( isset($pension) )
+                {
+                    $pension->delete();
+                    // Guardamos la pension de alimentos
+                    $alimony = Alimony::create([
+                        'week' => $week,
+                        'month' => $month,
+                        'year' => $year,
+                        'date' => Carbon::now('America/Lima'),
+                        'amount' => (float) $info['pensionDeAlimentos'],
+                        'worker_id' => $worker->id,
+                        'type' => 'w'
+                    ]);
+                } else {
+                    // Guardamos la pension de alimentos
+                    $alimony = Alimony::create([
+                        'week' => $week,
+                        'month' => $month,
+                        'year' => $year,
+                        'date' => Carbon::now('America/Lima'),
+                        'amount' => (float) $info['pensionDeAlimentos'],
+                        'worker_id' => $worker->id,
+                        'type' => 'w'
+                    ]);
+                }
+
+                $paySlipLast = PaySlip::where('codigo', $info['codigo'])
+                    ->where('semana', $info['semana'])
+                    ->where('fecha', $info['fecha'])->first();
+
+                if ( isset($paySlipLast) )
+                {
+                    $paySlipLast->delete();
+                    // TODO: Guardar la boleta y sus detalles
+                    $paySlip = PaySlip::create([
+                        'empresa' => $info['empresa'],
+                        'ruc' => $info['ruc'],
+                        'codigo' => $info['codigo'],
+                        'nombre' => $info['nombre'],
+                        'cargo' => $info['cargo'],
+                        'semana' => $info['semana'],
+                        'fecha' => $info['fecha'],
+                        'pagoxdia' => $info['pagoXDia'],
+                        'pagoXHora' => $info['pagoXHora'],
+                        'diasTrabajados' => $info['diasTrabajados'],
+                        'asignacionFamiliarDiaria' => $info['asignacionFamiliarDiaria'],
+                        'asignacionFamiliarSemanal' => $info['asignacionFamiliarSemanal'],
+                        'horasOrdinarias' => $info['horasOrdinarias'],
+                        'montoHorasOrdinarias' => $info['montoHorasOrdinarias'],
+                        'horasAl25' => $info['horasAl25'],
+                        'montoHorasAl25' => $info['montoHorasAl25'],
+                        'horasAl35' => $info['horasAl35'],
+                        'montoHorasAl35' => $info['montoHorasAl35'],
+                        'horasAl100' => $info['horasAl100'],
+                        'montoHorasAl100' => $info['montoHorasAl100'],
+                        'dominical' => $info['dominical'],
+                        'montoDominical' => $info['montoDominical'],
+                        'montoBonus' => $info['montoBonus'],
+                        'vacaciones' => $info['vacaciones'],
+                        'montoVacaciones' => $info['montoVacaciones'],
+                        'reintegro' => $info['reintegro'],
+                        'gratificaciones' => $info['gratificaciones'],
+                        'totalIngresos' => $info['totalIngresos'],
+                        'sistemaPension' => $info['sistemaPension'],
+                        'montoSistemaPension' => $info['montoSistemaPension'],
+                        'rentaQuintaCat' => $info['rentaQuintaCat'],
+                        'pensionDeAlimentos' => $info['pensionDeAlimentos'],
+                        'prestamo' => $info['prestamo'],
+                        'otros' => $info['otros'],
+                        'totalDescuentos' => $info['totalDescuentos'],
+                        'essalud' => $info['essalud'],
+                        'totalNetoPagar' => $info['totalNetoPagar'],
+                        'year' => $year
+                    ]);
+
+                } else {
+                    // TODO: Guardar la boleta y sus detalles
+                    $paySlip = PaySlip::create([
+                        'empresa' => $info['empresa'],
+                        'ruc' => $info['ruc'],
+                        'codigo' => $info['codigo'],
+                        'nombre' => $info['nombre'],
+                        'cargo' => $info['cargo'],
+                        'semana' => $info['semana'],
+                        'fecha' => $info['fecha'],
+                        'pagoxdia' => $info['pagoXDia'],
+                        'pagoXHora' => $info['pagoXHora'],
+                        'diasTrabajados' => $info['diasTrabajados'],
+                        'asignacionFamiliarDiaria' => $info['asignacionFamiliarDiaria'],
+                        'asignacionFamiliarSemanal' => $info['asignacionFamiliarSemanal'],
+                        'horasOrdinarias' => $info['horasOrdinarias'],
+                        'montoHorasOrdinarias' => $info['montoHorasOrdinarias'],
+                        'horasAl25' => $info['horasAl25'],
+                        'montoHorasAl25' => $info['montoHorasAl25'],
+                        'horasAl35' => $info['horasAl35'],
+                        'montoHorasAl35' => $info['montoHorasAl35'],
+                        'horasAl100' => $info['horasAl100'],
+                        'montoHorasAl100' => $info['montoHorasAl100'],
+                        'dominical' => $info['dominical'],
+                        'montoDominical' => $info['montoDominical'],
+                        'montoBonus' => $info['montoBonus'],
+                        'vacaciones' => $info['vacaciones'],
+                        'montoVacaciones' => $info['montoVacaciones'],
+                        'reintegro' => $info['reintegro'],
+                        'gratificaciones' => $info['gratificaciones'],
+                        'totalIngresos' => $info['totalIngresos'],
+                        'sistemaPension' => $info['sistemaPension'],
+                        'montoSistemaPension' => $info['montoSistemaPension'],
+                        'rentaQuintaCat' => $info['rentaQuintaCat'],
+                        'pensionDeAlimentos' => $info['pensionDeAlimentos'],
+                        'prestamo' => $info['prestamo'],
+                        'otros' => $info['otros'],
+                        'totalDescuentos' => $info['totalDescuentos'],
+                        'essalud' => $info['essalud'],
+                        'totalNetoPagar' => $info['totalNetoPagar'],
+                        'year' => $year
+                    ]);
+
+                }
+            }
+
+            $boletas = PaySlip::where('semana', $week)
+                ->where('fecha', $periodo)
+                ->get();
+
+            // Crear un directorio temporal para guardar los PDFs
+            $pathToSave = storage_path('app/boletas/');
+            $zipFileName = 'boletas_' . $week . '_' . $year . '_' . $month . '.zip';
+            $zipFilePath = $pathToSave . $zipFileName;
+
+            // Generar PDF y guardar en un directorio temporal
+            $pdfFiles = [];
+            foreach ($boletas as $boleta) {
+                $pdfFileName = 'boleta_' . $boleta->codigo . '.pdf';
+                $pdfFilePath = $pathToSave . $pdfFileName;
+                $view = view('exports.boletaSemanal', compact('boleta'));
+                $dompdf = PDF::loadHTML($view);
+                $dompdf->setPaper('A4', 'portrait');
+                $dompdf->render();
+                file_put_contents($pdfFilePath, $dompdf->output());
+
+                $pdfFiles[] = $pdfFilePath;
+            }
+
+            // Crear un archivo zip con los PDFs generados
+            $zip = new ZipArchive();
+            if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+                foreach ($pdfFiles as $file) {
+                    $zip->addFile($file, basename($file));
+                }
+                $zip->close();
+            }
+
+            // Eliminar los archivos PDF individuales para limpiar el directorio
+            foreach ($pdfFiles as $file) {
+                unlink($file);
+            }
+
+            // Descargar el archivo zip
+            return response()->download($zipFilePath)->deleteFileAfterSend(true);
+
+
+            DB::commit();
+        } catch ( \Throwable $e ) {
+            DB::rollBack();
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Boletas generadas con éxito.'], 200);
+
+    }
+
     public function saveBoletaWorkerWeekly()
     {
         $type = $_GET['type'];

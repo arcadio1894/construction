@@ -38,7 +38,10 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de los colaboradores</h5>
-    <button id="btn-download" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-file-excel font-20"></i> Descargar Reporte Haberes </button>
+
+    {{--<button id="btn-generate" class="btn btn-outline-primary btn-sm float-right " > <i class="fas fa-redo-alt"></i> Generar boletas </button>
+--}}
+    <button id="btn-download" class="btn btn-outline-success btn-sm float-right mr-1" > <i class="fa fa-file-excel font-20"></i> Descargar Reporte Haberes </button>
 
 @endsection
 
@@ -112,6 +115,51 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" id="btn-submitExport" class="btn btn-primary" >Descargar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="modalGenerate" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar los filtros para realizar la generación</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="yearG" class="col-12 col-form-label">Año <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-sm-12">
+                                <select id="yearG" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option value="">TODOS</option>
+                                    @for ($i=0; $i<count($arrayYears); $i++)
+                                        <option value="{{ $arrayYears[$i] }}" {{ ($arrayYears[$i] == $currentYear) ? 'selected': '' }}>{{ $arrayYears[$i] }}</option>
+                                    @endfor
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="monthG" class="col-12 col-form-label">Mes <span class="right badge badge-danger">(*)</span></label>
+                            <select id="monthG" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="weekG" class="col-12 col-form-label">Semana <span class="right badge badge-danger">(*)</span></label>
+                            <select id="weekG" class="form-control form-control-sm select2" style="width: 100%;">
+                                <option value=""></option>
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-submitGenerate" class="btn btn-primary" >Generar</button>
                     <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
                 </div>
 

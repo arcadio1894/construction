@@ -2207,6 +2207,9 @@ Route::middleware('auth')->group(function (){
         Route::get('/generate/boleta/worker', 'BoletaController@generateBoletaWorker')
             ->name('boleta.generate.worker')/*
             ->middleware('permission:edit_gratification')*/;
+
+        Route::get('/generate/boletas/trabajadores', 'BoletaController@generateBoletasWorkers');
+
         Route::get('/get/years/of/system/', 'DateDimensionController@getYearsOfSystem');
         Route::get('/get/months/of/year/{year}', 'DateDimensionController@getMonthsOfYear');
         Route::get('/get/weeks/of/month/{month}/year/{year}', 'DateDimensionController@getWeeksOfMonthsOfYear');
