@@ -236,7 +236,7 @@ $(document).ready(function () {
             mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase()
         );
 
-        var $material;
+        //var $material;
 
         if (materialsWithSameName.length > 1) {
             // Si hay más de un material con el mismo nombre, selecciona el que está activo
