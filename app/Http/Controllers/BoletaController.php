@@ -32,7 +32,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Barryvdh\DomPDF\Facade as PDF;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use ZipStream\ZipStream;
+use ZipStream\Option\Archive;
+use ZipStream\Option\File;
 
 class BoletaController extends Controller
 {
@@ -464,49 +468,60 @@ class BoletaController extends Controller
                 ->get();
 
             // Crear un directorio temporal para guardar los PDFs
-            $pathToSave = storage_path('app/boletas/');
+            $pathToSave = storage_path('app/public/boletas/');
             $zipFileName = 'boletas_' . $week . '_' . $year . '_' . $month . '.zip';
             $zipFilePath = $pathToSave . $zipFileName;
 
             // Generar PDF y guardar en un directorio temporal
             $pdfFiles = [];
+
             foreach ($boletas as $boleta) {
                 $pdfFileName = 'boleta_' . $boleta->codigo . '.pdf';
                 $pdfFilePath = $pathToSave . $pdfFileName;
                 $view = view('exports.boletaSemanal', compact('boleta'));
                 $dompdf = PDF::loadHTML($view);
                 $dompdf->setPaper('A4', 'portrait');
-                $dompdf->render();
+                //$dompdf->render();
                 file_put_contents($pdfFilePath, $dompdf->output());
 
                 $pdfFiles[] = $pdfFilePath;
             }
 
-            // Crear un archivo zip con los PDFs generados
-            $zip = new ZipArchive();
-            if ($zip->open($zipFilePath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
-                foreach ($pdfFiles as $file) {
-                    $zip->addFile($file, basename($file));
-                }
-                $zip->close();
+            // Crear opciones de archivo ZipStream
+            $archiveOptions = new Archive();
+            $archiveOptions->setSendHttpHeaders(true); // Enviar encabezados HTTP para la descarga
+
+            // Crear una instancia de ZipStream
+            $zip = new ZipStream($zipFileName, $archiveOptions);
+
+            foreach ($pdfFiles as $file) {
+                $fileName = basename($file);
+                $zip->addFileFromPath($fileName, $file);
             }
 
-            // Eliminar los archivos PDF individuales para limpiar el directorio
+            $zip->finish();
+
+            // Limpiar el directorio temporal
             foreach ($pdfFiles as $file) {
                 unlink($file);
             }
 
-            // Descargar el archivo zip
-            return response()->download($zipFilePath)->deleteFileAfterSend(true);
-
-
             DB::commit();
+
+            /*return response()->json([
+                'message' => 'Boletas generadas con éxito.'
+            ], 200);*/
+
         } catch ( \Throwable $e ) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-
-        return response()->json(['message' => 'Boletas generadas con éxito.'], 200);
+/*
+        return response()->json([
+            'message' => 'Boletas generadas con éxito.',
+            'zip_url' => url($zipFilePath)
+        ], 200);*/
+        return 0;
 
     }
 

@@ -39,8 +39,7 @@
 @section('page-title')
     <h5 class="card-title">Listado de los colaboradores</h5>
 
-    {{--<button id="btn-generate" class="btn btn-outline-primary btn-sm float-right " > <i class="fas fa-redo-alt"></i> Generar boletas </button>
---}}
+    <button id="btn-generate" class="btn btn-outline-primary btn-sm float-right " > <i class="fas fa-redo-alt"></i> Generar boletas </button>
     <button id="btn-download" class="btn btn-outline-success btn-sm float-right mr-1" > <i class="fa fa-file-excel font-20"></i> Descargar Reporte Haberes </button>
 
 @endsection
@@ -132,7 +131,13 @@
 
                 <div class="modal-body">
                     <div class="form-group row">
-                        <div class="col-md-6">
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                            <strong>Importante!</strong> Verifique que las horas y montos esten correctos porque la generación va a guardar y descargar el listado de boletas. <br>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="col-md-4">
                             <label for="yearG" class="col-12 col-form-label">Año <span class="right badge badge-danger">(*)</span></label>
                             <div class="col-sm-12">
                                 <select id="yearG" class="form-control form-control-sm select2" style="width: 100%;">
@@ -143,13 +148,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="monthG" class="col-12 col-form-label">Mes <span class="right badge badge-danger">(*)</span></label>
                             <select id="monthG" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value=""></option>
                             </select>
                         </div>
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <label for="weekG" class="col-12 col-form-label">Semana <span class="right badge badge-danger">(*)</span></label>
                             <select id="weekG" class="form-control form-control-sm select2" style="width: 100%;">
                                 <option value=""></option>
@@ -190,6 +195,19 @@
             });
             $('#month').select2({
                 placeholder: "Selecione un mes",
+                allowClear: true
+            });
+
+            $('#yearG').select2({
+                placeholder: "Selecione un año",
+                allowClear: true
+            });
+            $('#monthG').select2({
+                placeholder: "Selecione un mes",
+                allowClear: true
+            });
+            $('#weekG').select2({
+                placeholder: "Selecione una semana",
                 allowClear: true
             });
         })

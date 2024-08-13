@@ -195,69 +195,28 @@ $(document).ready(function () {
     $selectMonth = $('#monthG');
     $selectWeek = $('#weekG');
 
-    $selectYear.change(function () {
-        $selectMonth.empty();
-        $selectMonth.val('');
-        $selectMonth.trigger('change');
-        $selectWeek.empty();
-        $selectWeek.val('');
-        $selectWeek.trigger('change');
-
-        let year =  $selectYear.val();
-        console.log(year);
-        if ( year != null || year != undefined )
-        {
-            $.get( "/dashboard/get/months/of/year/"+year, function( data ) {
-                $selectMonth.append($("<option>", {
-                    value: '',
-                    text: ''
-                }));
-                for ( var i=0; i<data.length; i++ )
-                {
-                    $selectMonth.append($("<option>", {
-                        value: data[i].month,
-                        text: data[i].month_name
-                    }));
-                }
-            });
-        }
-
+    // Cargar meses cuando se cambia el año
+    $selectYear.change(function() {
+        const year = $selectYear.val();
+        loadMonths(year);
     });
 
-    $selectMonth.change(function () {
-        $selectWeek.empty();
-        $selectWeek.val('');
-        $selectWeek.trigger('change');
-
-        let year =  $selectYear.val();
-        let month =  $selectMonth.val();
-
-        console.log(year);
-        console.log(month);
-
-        if ( (year != null || year != undefined) && (month != null || month != undefined) )
-        {
-            $.get( "/dashboard/get/weeks/of/month/"+month+"/year/"+year, function( data ) {
-                $selectWeek.append($("<option>", {
-                    value: '',
-                    text: ''
-                }));
-                for ( var i=0; i<data.length; i++ )
-                {
-                    $selectWeek.append($("<option>", {
-                        value: data[i].week,
-                        text: data[i].week
-                    }));
-                }
-            });
-        }
-
+    // Cargar semanas cuando se cambia el mes
+    $selectMonth.change(function() {
+        const year = $selectYear.val();
+        const month = $selectMonth.val();
+        loadWeeks(year, month);
     });
 
-    $selectWeek.change(function () {
+    // Si ya hay un año seleccionado al cargar la página, cargar los meses
+    const initialYear = $selectYear.val();
+    if (initialYear) {
+        loadMonths(initialYear);
+    }
 
+    $('#btn-generate').on('click', showModalGenerate);
 
-    });
+    $modalGenerate = $('#modalGenerate');
 
     $('#btn-submitGenerate').on('click', generateBoletaWorkers);
 });
@@ -266,9 +225,59 @@ var $formDelete;
 var $modalDelete;
 var $permissions;
 var $modalHaberes;
+var $modalGenerate;
 let $selectYear;
 let $selectMonth;
 let $selectWeek;
+
+function loadMonths(year) {
+    $selectMonth.empty();
+    $selectMonth.val('');
+    $selectMonth.trigger('change');
+    $selectWeek.empty();
+    $selectWeek.val('');
+    $selectWeek.trigger('change');
+
+    if (year) {
+        $.get("/dashboard/get/months/of/year/" + year, function(data) {
+            $selectMonth.append($("<option>", {
+                value: '',
+                text: ''
+            }));
+            for (var i = 0; i < data.length; i++) {
+                $selectMonth.append($("<option>", {
+                    value: data[i].month,
+                    text: data[i].month_name
+                }));
+            }
+        });
+    }
+}
+
+function loadWeeks(year, month) {
+    $selectWeek.empty();
+    $selectWeek.val('');
+    $selectWeek.trigger('change');
+
+    if (year && month) {
+        $.get("/dashboard/get/weeks/of/month/" + month + "/year/" + year, function(data) {
+            $selectWeek.append($("<option>", {
+                value: '',
+                text: ''
+            }));
+            for (var i = 0; i < data.length; i++) {
+                $selectWeek.append($("<option>", {
+                    value: data[i].week,
+                    text: data[i].week
+                }));
+            }
+        });
+    }
+}
+
+function showModalGenerate() {
+    $modalGenerate.modal('show');
+}
 
 function generateBoletaWorkers() {
     let year = $selectYear.val();
@@ -351,12 +360,18 @@ function generateBoletaWorkers() {
         week: week
     };
 
-    $.get( "/dashboard/generate/boletas/trabajadores?" + $.param(query), function( data ) {
-        console.log( data );
-    }).done(function(data) {
-        $dataBoleta = data;
+    var url = "/dashboard/generate/boletas/trabajadores?" + $.param(query);
+    window.location = url;
 
-        console.log( data );
+    /*$.get( "/dashboard/generate/boletas/trabajadores?" + $.param(query), function( data ) {
+        //console.log( data );
+    }).done(function(data) {
+        if (data.zip_url) {
+            // Redirigir al usuario a la URL del archivo ZIP
+            window.location.href = data.zip_url;
+        } else {
+            console.error('No se generó la URL del archivo ZIP.');
+        }
     }).fail(function(data) {
         if( data.responseJSON.message && !data.responseJSON.errors )
         {
@@ -400,7 +415,7 @@ function generateBoletaWorkers() {
                 });
         }
 
-    });
+    });*/
 }
 
 function getReportExport() {
