@@ -416,6 +416,8 @@ function generateBoletaWorkers() {
         }
 
     });*/
+
+    $modalGenerate.modal('hide');
 }
 
 function getReportExport() {
