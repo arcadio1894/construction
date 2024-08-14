@@ -469,14 +469,18 @@ class BoletaController extends Controller
 
             // Crear un directorio temporal para guardar los PDFs
             $pathToSave = storage_path('app/public/boletas/');
-            $zipFileName = 'boletas_' . $week . '_' . $year . '_' . $month . '.zip';
+            $zipFileName = 'boletas_semana_' . $week . '_' . $year . '_' . $month . '.zip';
             $zipFilePath = $pathToSave . $zipFileName;
 
             // Generar PDF y guardar en un directorio temporal
             $pdfFiles = [];
 
             foreach ($boletas as $boleta) {
-                $pdfFileName = 'boleta_' . $boleta->codigo . '.pdf';
+                $worker = Worker::find($boleta->codigo);
+                $fecha = $boleta->fecha;
+                $fechaCorrecta = str_replace("/", "-", $fecha);
+                $pdfFileName = 'Boleta_'.$fechaCorrecta.' '.$worker->last_name.' '.$worker->first_name.'.pdf';
+                //$pdfFileName = 'boleta_' . $boleta->codigo . '.pdf';
                 $pdfFilePath = $pathToSave . $pdfFileName;
                 $view = view('exports.boletaSemanal', compact('boleta'));
                 $dompdf = PDF::loadHTML($view);
