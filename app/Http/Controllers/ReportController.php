@@ -51,11 +51,19 @@ class ReportController extends Controller
 
                     if ( $currency === 'USD' )
                     {
-                        $amount_dollars = $amount_dollars + (float)$item->price;
+                        $amount_dollars = $amount_dollars + ( (float)$item->material->unit_price * (float)$item->percentage ) ;
                     } else {
-                        $amount_soles = $amount_soles + (float)$item->price;
+                        if ( $item->price == 0 )
+                        {
+                            $amount_dollars = $amount_dollars + ( (float)$item->material->unit_price * (float)$item->percentage ) ;
+
+                        } else {
+                            $amount_soles = $amount_soles + (float)$item->price;
+                        }
+
                     }
                     $quantity_items = $quantity_items + (float)$item->percentage;
+
                 }
 
             }
@@ -112,11 +120,18 @@ class ReportController extends Controller
 
                     if ( $currency === 'USD' )
                     {
-                        $amount_dollars = $amount_dollars + (float)$item->price;
+                        $amount_dollars = $amount_dollars + ( (float)$item->material->unit_price * (float)$item->percentage ) ;
                         $quantity_dollars = $quantity_dollars + (float)$item->percentage;
                     } else {
-                        $amount_soles = $amount_soles + (float)$item->price;
-                        $quantity_soles = $quantity_soles + (float)$item->percentage;
+                        if ( $item->price == 0 )
+                        {
+                            $amount_dollars = $amount_dollars + ( (float)$item->material->unit_price * (float)$item->percentage ) ;
+                            $quantity_dollars = $quantity_dollars + (float)$item->percentage;
+                        } else {
+                            $amount_soles = $amount_soles + (float)$item->price;
+                            $quantity_soles = $quantity_soles + (float)$item->percentage;
+                        }
+
                     }
                 }
 
