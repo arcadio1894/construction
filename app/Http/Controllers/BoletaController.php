@@ -218,8 +218,8 @@ class BoletaController extends Controller
                 // $diasMes calcular si es 30 o 31
                 $date7 = Carbon::create($year, $month, 1);
                 // Obtener el número de días en el mes
-                $diasMes = $date7->daysInMonth;
-                //$diasMes = 30;
+                //$diasMes = $date7->daysInMonth;
+                $diasMes = 30;
                 $horasSemanales = 48;
                 $pagoXHora = round($worker->daily_salary/$horasXDia,2);
                 $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
@@ -232,11 +232,11 @@ class BoletaController extends Controller
                 $horasOrdinarias = round(($h_ord + $h_esp), 2);
                 $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
                 $horasAl25 = round($h_25, 2);
-                $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+                $montoHorasAl25 = round($h_25*(($worker->daily_salary_total/$horasXDia)*1.25), 2);
                 $horasAl35 = round($h_35, 2);
-                $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+                $montoHorasAl35 = round($h_35*(($worker->daily_salary_total/$horasXDia)*1.35), 2);
                 $horasAl100 = round($h_100, 2);
-                $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+                $montoHorasAl100 = round($h_100*(($worker->daily_salary_total/$horasXDia)*2), 2);
                 $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
                 $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
 
@@ -916,8 +916,8 @@ class BoletaController extends Controller
             // $diasMes calcular si es 30 o 31
             $date7 = Carbon::create($year, $month, 1);
             // Obtener el número de días en el mes
-            $diasMes = $date7->daysInMonth;
-            //$diasMes = 30;
+            //$diasMes = $date7->daysInMonth;
+            $diasMes = 30;
             $horasSemanales = 48;
             $pagoXHora = round($worker->daily_salary/$horasXDia,2);
             $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
@@ -930,11 +930,11 @@ class BoletaController extends Controller
             $horasOrdinarias = round(($h_ord + $h_esp), 2);
             $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
             $horasAl25 = round($h_25, 2);
-            $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+            $montoHorasAl25 = round($h_25*(($worker->daily_salary_total/$horasXDia)*1.25), 2);
             $horasAl35 = round($h_35, 2);
-            $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+            $montoHorasAl35 = round($h_35*(($worker->daily_salary_total/$horasXDia)*1.35), 2);
             $horasAl100 = round($h_100, 2);
-            $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+            $montoHorasAl100 = round($h_100*(($worker->daily_salary_total/$horasXDia)*2), 2);
             $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
             $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
 
@@ -2412,8 +2412,8 @@ class BoletaController extends Controller
                 $horasXDia = 8;
                 $date = Carbon::create($year, $month, 1);
                 // Obtener el número de días en el mes
-                $diasMes = $date->daysInMonth;
-                //$diasMes = 30;
+                //$diasMes = $date->daysInMonth;
+                $diasMes = 30;
                 $horasSemanales = 48;
                 $pagoXHora = round($worker->daily_salary/$horasXDia,2);
                 $diasTrabajados = round(($h_ord + $h_esp)/$horasXDia, 2);
@@ -2426,11 +2426,11 @@ class BoletaController extends Controller
                 $horasOrdinarias = round(($h_ord + $h_esp), 2);
                 $montoHorasOrdinarias = round(($h_ord + $h_esp)*($worker->daily_salary/$horasXDia), 2);
                 $horasAl25 = round($h_25, 2);
-                $montoHorasAl25 = round($h_25*(($worker->daily_salary/$horasXDia)*1.25), 2);
+                $montoHorasAl25 = round($h_25*(($worker->daily_salary_total/$horasXDia)*1.25), 2);
                 $horasAl35 = round($h_35, 2);
-                $montoHorasAl35 = round($h_35*(($worker->daily_salary/$horasXDia)*1.35), 2);
+                $montoHorasAl35 = round($h_35*(($worker->daily_salary_total/$horasXDia)*1.35), 2);
                 $horasAl100 = round($h_100, 2);
-                $montoHorasAl100 = round($h_100*(($worker->daily_salary/$horasXDia)*2), 2);
+                $montoHorasAl100 = round($h_100*(($worker->daily_salary_total/$horasXDia)*2), 2);
                 $dominical = round(($h_ord + $h_esp)/$horasSemanales, 2);
                 $montoDominical = round((($h_ord + $h_esp)/$horasSemanales)*($pagoXDia), 2);
 

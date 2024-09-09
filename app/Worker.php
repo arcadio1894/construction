@@ -84,5 +84,15 @@ class Worker extends Model
         return $this->hasMany('App\EmergencyContact');
     }
 
+    public function getDailySalaryTotalAttribute()
+    {
+        $diasMes = 30;
+        $assign_family = PercentageWorker::where('name', 'assign_family')->first();
+        $rmv = PercentageWorker::where('name', 'rmv')->first();
+        $asignacionFamiliarDiaria = ($this->num_children == 0 || $this->num_children == null) ? 0: round(($rmv->value*($assign_family->value/100))/$diasMes, 2);
+
+        return $this->daily_salary + $asignacionFamiliarDiaria;
+    }
+
     protected $dates = ['deleted_at', 'birthplace', 'admission_date', 'termination_date'];
 }
