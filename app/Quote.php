@@ -102,12 +102,12 @@ class Quote extends Model
 
     public function getHaveImagesAttribute()
     {
-        $have_images = true;
+        $have_images = false;
         $images = ImagesQuote::where('quote_id', $this->id)->get();
 
-        if ( isset($images) )
+        if ( count($images) > 0 )
         {
-            $have_images = false;
+            $have_images = true;
         }
 
 
