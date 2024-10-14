@@ -318,68 +318,72 @@
     </div>
 </main>
 @if($quote->have_details || $quote->have_images)
-<div class="page-break"></div>
-
-<header class="clearfix">
-    <div id="logo">
-        <img src="{{ asset('/landing/img/logo_pdf.png') }}">
-        <div id="company3" class="clearfix">
-            <div>RUC 20540001384</div>
-            <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
-            {{--<div>La Esperanza, Trujillo, Perú</div>--}}
-            <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 959 332 205</div>
-            <div>Email: servicios@sermeind.com.pe</div>
-            <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
-        </div>
-    </div>
-
-    <h1>COTIZACIÓN: {{ $quote->code }}</h1>
-
-    <div id="company2" class="clearfix">
-        <div>CLIENTE</div>
-        <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
-        <div>{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto' }}</div>
-        <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
-        <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
-    </div>
-
-    <div id="project">
-        <div><span>COTIZACIÓN #</span>: {{ $quote->id }}</div>
-        <div><span>FECHA</span>: {{ date( "d/m/Y", strtotime( $quote->date_quote )) }}</div>
-        <div><span>CLIENTE ID</span>: {{ ($quote->customer !== null) ? $quote->customer_id : 'No tiene localización'}}</div>
-        <div><span>VALIDO HASTA</span>: {{ date( "d/m/Y", strtotime( $quote->date_validate )) }} </div>
-
-    </div>
-
-</header>
-
-<div id="notices">
-    {{--<div>CARACTERISTICAS DE {{ $quote->code }}:</div>--}}
-    {{--<br>--}}
-    @foreach( $quote->equipments as $equipment )
-        <div class="notice"><strong>{{ $equipment->description }}</strong> </div>
-        <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
-    @endforeach
-</div>
-
-<div id="notices">
-    @if ( count($images) > 0 )
-        <div><strong>PLANOS DE LA COTIZACIÓN {{ $quote->code }}</strong> </div>
-        <br>
+    {{--<div class="page-break"></div>--}}
+    {{-- Solo añadir el salto de página si hay suficientes detalles o imágenes --}}
+    @if( count($quote->equipments) > 0 || count($images) > 0 )
+        <div class="page-break"></div>
     @endif
 
-    @foreach( $images as $image )
+    <header class="clearfix">
+        <div id="logo">
+            <img src="{{ asset('/landing/img/logo_pdf.png') }}">
+            <div id="company3" class="clearfix">
+                <div>RUC 20540001384</div>
+                <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
+                {{--<div>La Esperanza, Trujillo, Perú</div>--}}
+                <div>Sitio Web: www.sermeind.com.pe</div>
+                <div>Teléfono: +51 959 332 205</div>
+                <div>Email: servicios@sermeind.com.pe</div>
+                <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
+            </div>
+        </div>
 
-        <div class="notice">
-            <div class="notice"><em><u>{{ $image->description }}</u></em></div><br>
-            {{--<img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
-            <img src="{{ asset('/images/planos/'.$image->image) }}" style="width:500px; height:500px" ><br>
---}}
-            <img src="{{ asset('/images/planos/'.$image->image) }}" {{ ($image->height == 0 && $image->width == 0) ? 'class="plano contain"':'width='.(37*$image->width).'px height='.(37*$image->height).'px' }} ><br>
-        </div><br>
-    @endforeach
-</div>
+        <h1>COTIZACIÓN: {{ $quote->code }}</h1>
+
+        <div id="company2" class="clearfix">
+            <div>CLIENTE</div>
+            <div>{{ ($quote->customer !== null) ? $quote->customer->business_name : 'No tiene cliente' }}</div>
+            <div>{{ ($quote->contact !== null) ? $quote->contact->name : 'No tiene contacto' }}</div>
+            <div>{{ ($quote->customer !== null) ? $quote->customer->address : 'No tiene dirección' }}</div>
+            <div>{{ ($quote->customer !== null) ? $quote->customer->location : 'No tiene localización' }}</div>
+        </div>
+
+        <div id="project">
+            <div><span>COTIZACIÓN #</span>: {{ $quote->id }}</div>
+            <div><span>FECHA</span>: {{ date( "d/m/Y", strtotime( $quote->date_quote )) }}</div>
+            <div><span>CLIENTE ID</span>: {{ ($quote->customer !== null) ? $quote->customer_id : 'No tiene localización'}}</div>
+            <div><span>VALIDO HASTA</span>: {{ date( "d/m/Y", strtotime( $quote->date_validate )) }} </div>
+
+        </div>
+
+    </header>
+
+    <div id="notices">
+        {{--<div>CARACTERISTICAS DE {{ $quote->code }}:</div>--}}
+        {{--<br>--}}
+        @foreach( $quote->equipments as $equipment )
+            <div class="notice"><strong>{{ $equipment->description }}</strong> </div>
+            <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
+        @endforeach
+    </div>
+
+    <div id="notices">
+        @if ( count($images) > 0 )
+            <div><strong>PLANOS DE LA COTIZACIÓN {{ $quote->code }}</strong> </div>
+            <br>
+        @endif
+
+        @foreach( $images as $image )
+
+            <div class="notice">
+                <div class="notice"><em><u>{{ $image->description }}</u></em></div><br>
+                {{--<img src="{{ asset('/images/planos/'.$image->image) }}" class="plano contain"><br>
+                <img src="{{ asset('/images/planos/'.$image->image) }}" style="width:500px; height:500px" ><br>
+    --}}
+                <img src="{{ asset('/images/planos/'.$image->image) }}" {{ ($image->height == 0 && $image->width == 0) ? 'class="plano contain"':'width='.(37*$image->width).'px height='.(37*$image->height).'px' }} ><br>
+            </div><br>
+        @endforeach
+    </div>
 
 @endif
 
