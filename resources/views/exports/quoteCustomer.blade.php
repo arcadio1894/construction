@@ -24,7 +24,7 @@
 
         header {
             padding: 10px 0;
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
 
         #logo {
@@ -363,7 +363,7 @@
         {{--<br>--}}
         @foreach( $quote->equipments as $equipment )
             <div class="notice"><strong>{{ $equipment->description }}</strong> </div>
-            <div class="notice">{!! nl2br($equipment->detail) !!}</div><br>
+            <div class="notice">{!! nl2br($equipment->detail) !!}</div>
         @endforeach
     </div>
 
