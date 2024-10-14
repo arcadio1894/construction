@@ -24,7 +24,7 @@
 
         header {
             padding: 10px 0;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         #logo {
