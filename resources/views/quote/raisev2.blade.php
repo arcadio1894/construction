@@ -240,7 +240,7 @@
         <!--begin::Tab pane-->
         <hr>
         <div class="table-responsive">
-            <table class="table table-bordered letraTabla table-hover table-sm">
+            <table class="table table-bordered letraTabla table-hover table-sm mb-5">
                 <thead>
                 <tr class="normal-title">
                     <th>ID</th>
