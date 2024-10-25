@@ -24,7 +24,7 @@
 
         header {
             padding: 10px 0;
-            margin-bottom: 10px;
+            margin-bottom: 0px;
         }
 
         #logo {
@@ -77,7 +77,7 @@
 
         #company2 {
             float: right;
-
+            width: 450px;
         }
 
         #company3 {
