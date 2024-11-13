@@ -266,7 +266,7 @@ class InvoiceController extends Controller
     {
         $begin = microtime(true);
         $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(5);
+        $date4MonthAgo = $dateCurrent->subMonths(10);
         $entries = Entry::with('supplier')->with('category_invoice')
             /*->with(['details' => function ($query) {
                 $query->with('material');
