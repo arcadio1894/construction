@@ -263,6 +263,21 @@
                 </div>
                 <!-- /.info-box-content -->
             </div>
+            <div class="info-box" id="box">
+                <span class="info-box-icon bg-success elevation-1">
+                    <i class="fas fa-file-excel"></i>
+                </span>
+
+                <div class="info-box-content">
+                    <span class="info-box-text">DESCARGAR SALIDAS</span>
+                    <button id="btn-downloadOutputs" class="btn btn-sm btn-outline-success">
+                        <span class="info-box-number">
+                            Descargar <i class="fas fa-cloud-download-alt"></i>
+                        </span>
+                    </button>
+                </div>
+                <!-- /.info-box-content -->
+            </div>
         </div>
         <div class="col-md-4">
             <div class="card card-info">
@@ -1278,6 +1293,51 @@
             </div>
         </div>
     </div>
+
+    <div id="modalOutputs" class="modal fade" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Seleccionar los filtros para realizar la descarga</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <div class="col-md-6">
+                            <label for="typeOutput" class="col-12 col-form-label">Tipo de salidas <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-sm-12">
+                                <select id="typeOutput" name="typeOutput" class="form-control form-control-sm select2" style="width: 100%;">
+                                    <option></option>
+                                    <option value="1" selected>TODAS</option>
+                                    <option value="or"  >SALIDAS REGULARES</option>
+                                    <option value="orn" >SALIDAS NORMALES</option>
+                                    <option value="ore" >SALIDAS EXTRAS</option>
+                                    <option value="ors" >SALIDAS DE AREA</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="typeOutput" class="col-12 col-form-label">Fechas de entradas <span class="right badge badge-danger">(*)</span></label>
+                            <div class="col-md-12" id="sandbox-container2">
+                                <div class="input-daterange input-group" id="datepicker2">
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="startO" name="startO" autocomplete="off">
+                                    <span class="input-group-addon">&nbsp;&nbsp;&nbsp; al &nbsp;&nbsp;&nbsp; </span>
+                                    <input type="text" class="form-control form-control-sm date-range-filter" id="endO" name="endO" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btn-submitExportOutputs" class="btn btn-primary" >Descargar</button>
+                    <button type="button" class="btn btn-danger" data-dismiss="modal" >Cancelar</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
@@ -1300,6 +1360,10 @@
                 placeholder: "Selecione un almacén",
             });
             $('#typeEntry').select2({
+                placeholder: "Selecione Tipo",
+                allowClear: true
+            });
+            $('#typeOutput').select2({
                 placeholder: "Selecione Tipo",
                 allowClear: true
             });

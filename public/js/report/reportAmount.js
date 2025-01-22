@@ -23,15 +23,119 @@ $(document).ready(function () {
         autoclose: true
     });
 
+    $('#sandbox-container2 .input-daterange').datepicker({
+        todayBtn: "linked",
+        clearBtn: true,
+        language: "es",
+        multidate: false,
+        autoclose: true
+    });
+
     getDataRotations(1);
 
     $(document).on('click', '[data-item]', showData);
 
     $('#btn-newRotation').on('click', saveNewRotation);
+
+    $('#btn-downloadOutputs').on('click', showModalOutputs);
+    $modalOutputs = $('#modalOutputs');
+    $('#btn-submitExportOutputs').on('click', getReportExportOutputs);
 });
 
 let $modalLocations;
 let $modalEntries;
+let $modalOutputs;
+
+function showModalOutputs() {
+    $modalOutputs.modal('show');
+}
+
+function getReportExportOutputs() {
+    $("#btn-submitExportOutputs").attr("disabled", true);
+    let typeOutput = $('#typeOutput').val();
+    var start  = $('#startO').val();
+    var end  = $('#endO').val();
+    var startDate   = moment(start, "DD/MM/YYYY");
+    var endDate     = moment(end, "DD/MM/YYYY");
+
+    if ( start == '' || end == '' )
+    {
+        console.log('Sin fechas');
+        $.confirm({
+            icon: 'fas fa-file-excel',
+            theme: 'modern',
+            closeIcon: true,
+            animation: 'zoom',
+            type: 'green',
+            title: 'No especificó fechas',
+            content: 'Si no hay fechas se descargará todos las salidas pero demorará bastante',
+            buttons: {
+                confirm: {
+                    text: 'DESCARGAR',
+                    action: function (e) {
+                        //$.alert('Descargado igual');
+                        console.log(start);
+                        console.log(end);
+
+                        var query = {
+                            start: start,
+                            end: end,
+                            typeOutput: typeOutput
+                        };
+
+                        $.alert('Descargando archivo ...');
+
+                        var url = "/dashboard/exportar/salidas/almacen/v2/?" + $.param(query);
+
+                        window.location = url;
+                        $("#btn-submitExportOutputs").attr("disabled", false);
+                    },
+                },
+                cancel: {
+                    text: 'CANCELAR',
+                    action: function (e) {
+                        $.alert("Exportación cancelada.");
+                        $("#btn-submitExportOutputs").attr("disabled", false);
+                    },
+                },
+            },
+        });
+    } else {
+        console.log('Con fechas');
+        console.log(JSON.stringify(start));
+        console.log(JSON.stringify(end));
+
+        var query = {
+            start: start,
+            end: end,
+            typeOutput: typeOutput
+        };
+
+        toastr.success('Descargando archivo ...', 'Éxito',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "2000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+
+        var url = "/dashboard/exportar/salidas/almacen/v2/?" + $.param(query);
+
+        window.location = url;
+        $("#btn-submitExportOutputs").attr("disabled", false);
+    }
+}
 
 function saveNewRotation() {
 

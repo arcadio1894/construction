@@ -11,6 +11,7 @@ use App\Entry;
 use App\Equipment;
 use App\EquipmentConsumable;
 use App\EquipmentMaterial;
+use App\Exports\OutputReportExcelDownload;
 use App\Exports\OutputsByQuoteExcelExport;
 use App\Http\Requests\StoreRequestOutputRequest;
 use App\Http\Requests\StoreSimpleOutputRequest;
@@ -4323,6 +4324,310 @@ class OutputController extends Controller
         }
 
         return (new OutputsByQuoteExcelExport($outputs_array, $dates))->download('reporteSalidasPorCotizacion.xlsx');
+
+    }
+
+    public function exportOutputsAlmacen()
+    {
+        //dd($request);
+        $start = $_GET['start'];
+        $end = $_GET['end'];
+        $type = $_GET['typeOutput'];
+        //dump($start);
+        //dump($end);
+        $array = [];
+        $dates = '';
+
+        if ( $start == '' || $end == '' )
+        {
+            //dump('Descargar todos');
+            $dates = 'REPORTE DE SALIDAS TOTALES';
+            $outputs = [];
+            switch ($type) {
+                case 1: //Todas
+                    $dates = $dates . "  ";
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->whereIn('indicator', ['ors', 'orn', 'ore', 'or'])
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'or': // Salidas Regulares
+                    $dates = $dates . " REGULARES";
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'or')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'orn': // Salidas Normales
+                    $dates = $dates . " NORMALES ";
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'orn')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'ore': // Salidas Extras
+                    $dates = $dates . " EXTRAS ";
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'ore')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'ors': // Salidas De Area
+                    $dates = $dates . " DE AREA ";
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'ors')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+            $array = [];
+
+            foreach ( $outputs as $output )
+            {
+                $tipo = "";
+                if ( $output->indicator == "or" )
+                {
+                    $tipo = "REGULAR";
+                } elseif ( $output->indicator == "orn" ) {
+                    $tipo = "NORMAL";
+                } elseif ( $output->indicator == "ore" ) {
+                    $tipo = "EXTRA";
+                } elseif ( $output->indicator == "ors" ) {
+                    $tipo = "DE EXTRA";
+                }
+
+                $groupedDetails = [];
+
+                foreach ( $output->details as $detail )
+                {
+                    // Obtener el material, precio y moneda
+                    $materialId = $detail->material_id;
+                    $price = $detail->price;
+
+                    // Verificar si existe relación con detailEntry
+                    $currency = 'USD'; // Valor predeterminado si no existe la relación
+                    if ($detail->items && $detail->items->detailEntry) {
+                        $currency = ($detail->items && $detail->items->detailEntry && $detail->items->detailEntry->entry)
+                            ? $detail->items->detailEntry->entry->currency_invoice
+                            : 'USD';
+                    }
+
+                    // Clave para agrupar: material, precio y moneda
+                    $groupKey = "{$materialId}_{$price}_{$currency}";
+
+                    // Sumar las cantidades agrupadas
+                    if (isset($groupedDetails[$groupKey])) {
+                        $groupedDetails[$groupKey]['quantity'] += 1; // Incrementar cantidad
+                    } else {
+                        $groupedDetails[$groupKey] = [
+                            'material_id' => $materialId,
+                            'price' => $price,
+                            'currency' => $currency,
+                            'quantity' => 1,
+                        ];
+                    }
+
+                    /*array_push($array, [
+                        'tipo' => $tipo,
+                        'solicitud' => "Solicitud-".$output->id,
+                        'execution_order' => $output->execution_order,
+                        "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                        'fecha' => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                        'usuario_solicitante' => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                        'usuario_responsable' => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+
+                        'moneda' => $entry->currency_invoice,
+                        'codigo' => $detail->material->code,
+                        'material' => $detail->material->full_name,
+                        'cantidad' => $detail->entered_quantity,
+                        'precio' => $detail->unit_price,
+                        'total_precio' => ($detail->total_detail == null) ? round($detail->unit_price*$detail->entered_quantity, 2):$detail->total_detail,
+                    ]);*/
+                }
+
+                foreach ($groupedDetails as $groupKey => $group) {
+                    // Descomponer el groupKey para extraer información, si es necesario
+                    $materialId = $group['material_id'];
+                    $price = $group['price'];
+                    $currency = $group['currency'];
+
+                    // Buscar el material relacionado para obtener su código y nombre completo
+                    $material = Material::find($materialId);
+
+                    // Construir el arreglo con los datos necesarios
+                    array_push($array, [
+                        'tipo' => $tipo,
+                        'solicitud' => "Solicitud-".$output->id,
+                        'execution_order' => $output->execution_order,
+                        "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                        'fecha' => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                        'usuario_solicitante' => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                        'usuario_responsable' => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                        'moneda' => $currency,
+                        'codigo' => $material ? $material->code : 'No hay datos',
+                        'material' => $material ? $material->full_name : 'No hay datos',
+                        'cantidad' => $group['quantity'], // Suma de los porcentajes
+                        'precio' => $price,
+                        'total_precio' => round($price * $group['quantity'], 2),
+                    ]);
+                }
+
+
+            }
+
+            /*dump($array);
+            dd();*/
+
+        } else {
+            $date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+
+            $dates = 'REPORTE DE SALIDAS';
+            $outputs = [];
+            switch ($type) {
+                case 1: //Todas
+                    $dates = $dates . " TOTALES DEL ".$start." AL ".$end;
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->whereIn('indicator', ['ors', 'orn', 'ore', 'or'])
+                        ->whereDate('request_date', '>=', $date_start)
+                        ->whereDate('request_date', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+                    break;
+                case 'or': // Salidas regulares
+                    $dates = $dates . " REGULARES ".$start." AL ".$end;
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'or')
+                        ->whereDate('request_date', '>=', $date_start)
+                        ->whereDate('request_date', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'orn': // Salidas normales
+                    $dates = $dates . " NORMALES ".$start." AL ".$end;
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'orn')
+                        ->whereDate('request_date', '>=', $date_start)
+                        ->whereDate('request_date', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'ore': // Salidas extras
+                    $dates = $dates . " EXTRAS ".$start." AL ".$end;
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'ore')
+                        ->whereDate('request_date', '>=', $date_start)
+                        ->whereDate('request_date', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+                case 'ors': // Salidas de Area
+                    $dates = $dates . " DE AREAS ".$start." AL ".$end;
+                    $outputs = Output::with(['quote', 'responsibleUser', 'requestingUser', 'details.items.detailEntry.entry'])
+                        ->where('indicator', 'ors')
+                        ->whereDate('request_date', '>=', $date_start)
+                        ->whereDate('request_date', '<=', $end_start)
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+                    break;
+            }
+
+
+            $array = [];
+            foreach ( $outputs as $output )
+            {
+                $tipo = "";
+                if ( $output->indicator == "or" )
+                {
+                    $tipo = "REGULAR";
+                } elseif ( $output->indicator == "orn" ) {
+                    $tipo = "NORMAL";
+                } elseif ( $output->indicator == "ore" ) {
+                    $tipo = "EXTRA";
+                } elseif ( $output->indicator == "ors" ) {
+                    $tipo = "DE EXTRA";
+                }
+                $groupedDetails = [];
+                foreach ( $output->details as $detail )
+                {
+                    // Obtener el material, precio y moneda
+                    $materialId = $detail->material_id;
+                    $price = $detail->price;
+
+                    // Verificar si existe relación con detailEntry
+                    $currency = ($detail->items && $detail->items->detailEntry && $detail->items->detailEntry->entry)
+                        ? $detail->items->detailEntry->entry->currency_invoice
+                        : 'USD';
+
+                    // Determinar el porcentaje a sumar
+                    $percentage = $detail->percentage ?? ($detail->items ? $detail->items->percentage : 0);
+
+                    // Clave para agrupar: material, precio y moneda
+                    $groupKey = "{$materialId}_{$price}_{$currency}";
+
+                    // Sumar los porcentajes agrupados
+                    if (isset($groupedDetails[$groupKey])) {
+                        $groupedDetails[$groupKey]['quantity'] += $percentage;
+                    } else {
+                        $groupedDetails[$groupKey] = [
+                            'material_id' => $materialId,
+                            'price' => $price,
+                            'currency' => $currency,
+                            'quantity' => $percentage, // Asignar el primer porcentaje
+                        ];
+                    }
+                    /*array_push($array, [
+                        'tipo' => $tipo,
+                        'solicitud' => "Solicitud-".$output->id,
+                        'execution_order' => $output->execution_order,
+                        "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                        'fecha' => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                        'usuario_solicitante' => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                        'usuario_responsable' => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+
+                        'moneda' => $entry->currency_invoice,
+                        'codigo' => $detail->material->code,
+                        'material' => $detail->material->full_name,
+                        'cantidad' => $detail->entered_quantity,
+                        'precio' => $detail->unit_price,
+                        'total_precio' => ($detail->total_detail == null) ? round($detail->unit_price*$detail->entered_quantity, 2):$detail->total_detail,
+                    ]);*/
+                }
+
+                foreach ($groupedDetails as $groupKey => $group) {
+                    // Descomponer el groupKey para extraer información, si es necesario
+                    $materialId = $group['material_id'];
+                    $price = $group['price'];
+                    $currency = $group['currency'];
+
+                    // Buscar el material relacionado para obtener su código y nombre completo
+                    $material = Material::find($materialId);
+
+                    // Construir el arreglo con los datos necesarios
+                    array_push($array, [
+                        'tipo' => $tipo,
+                        'solicitud' => "Solicitud-".$output->id,
+                        'execution_order' => $output->execution_order,
+                        "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
+                        'fecha' => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
+                        'usuario_solicitante' => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
+                        'usuario_responsable' => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
+                        'moneda' => $currency,
+                        'codigo' => $material ? $material->code : 'No hay datos',
+                        'material' => $material ? $material->full_name : 'No hay datos',
+                        'cantidad' => $group['quantity'], // Suma de los porcentajes
+                        'precio' => $price,
+                        'total_precio' => round($price * $group['quantity'], 2),
+                    ]);
+                }
+            }
+
+            /*dump($array);
+            dd();*/
+        }
+        return (new OutputReportExcelDownload($array, $dates))->download('reporteSalidas.xlsx');
 
     }
 }

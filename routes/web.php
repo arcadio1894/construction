@@ -2589,6 +2589,9 @@ Route::middleware('auth')->group(function (){
 
         Route::get('/exportar/entradas/almacen/v2/', 'EntryController@exportEntriesAlmacen');
 
+        Route::get('/exportar/salidas/almacen/v2/', 'OutputController@exportOutputsAlmacen');
+
+
         // TODO: Rutas Rotacion de materiales
         Route::get('/store/rotation/material/', 'RotationMaterialController@storeRotationMaterial');
         Route::get('/get/rotation/material/', 'RotationMaterialController@getRotationMaterial');
