@@ -4405,16 +4405,18 @@ class OutputController extends Controller
                     $materialId = $detail->material_id;
                     //$price = $detail->price;
 
-                    // Verificar si existe relación con detailEntry
-                    $currency = 'USD'; // Valor predeterminado si no existe la relación
-                    if ($detail->items && $detail->items->detailEntry) {
-                        $currency = ($detail->items && $detail->items->detailEntry && $detail->items->detailEntry->entry)
-                            ? $detail->items->detailEntry->entry->currency_invoice
-                            : 'USD';
-                    }
+                    // Verificar si existe relación con detailEntry para determinar la moneda
+                    $currency = ($detail->items && $detail->items->detailEntry && $detail->items->detailEntry->entry)
+                        ? $detail->items->detailEntry->entry->currency_invoice
+                        : 'USD';
 
-                    // Obtener el precio del item relacionado con este detalle
-                    $price = $detail->items ? $detail->items->price : $detail->price; // Priorizar el precio del item si existe
+                    // Obtener el precio del item relacionado o usar el del OutputDetail si el precio del item es 0
+                    if ($detail->items && $detail->items->price > 0) {
+                        $price = $detail->items->price;
+                    } else {
+                        $price = $detail->price; // Usar precio del OutputDetail
+                        $currency = 'USD'; // Forzar moneda a USD
+                    }
 
                     // Clave para agrupar: material, precio y moneda
                     $groupKey = "{$materialId}_{$price}_{$currency}";
@@ -4542,13 +4544,18 @@ class OutputController extends Controller
                     $materialId = $detail->material_id;
                     //$price = $detail->price;
 
-                    // Verificar si existe relación con detailEntry
+                    // Verificar si existe relación con detailEntry para determinar la moneda
                     $currency = ($detail->items && $detail->items->detailEntry && $detail->items->detailEntry->entry)
                         ? $detail->items->detailEntry->entry->currency_invoice
                         : 'USD';
 
-                    // Obtener el precio del item relacionado con este detalle
-                    $price = $detail->items ? $detail->items->price : $detail->price; // Priorizar el precio del item si existe
+                    // Obtener el precio del item relacionado o usar el del OutputDetail si el precio del item es 0
+                    if ($detail->items && $detail->items->price > 0) {
+                        $price = $detail->items->price;
+                    } else {
+                        $price = $detail->price; // Usar precio del OutputDetail
+                        $currency = 'USD'; // Forzar moneda a USD
+                    }
 
                     // Determinar el porcentaje a sumar
                     $percentage = $detail->percentage ?? ($detail->items ? $detail->items->percentage : 0);
@@ -4567,22 +4574,6 @@ class OutputController extends Controller
                             'quantity' => $percentage, // Asignar el primer porcentaje
                         ];
                     }
-                    /*array_push($array, [
-                        'tipo' => $tipo,
-                        'solicitud' => "Solicitud-".$output->id,
-                        'execution_order' => $output->execution_order,
-                        "description" => ($output->quote == null) ? 'No hay datos': $output->quote->description_quote,
-                        'fecha' => ($output->request_date == null || $output->request_date == "") ? '': $output->request_date->format('d/m/Y'),
-                        'usuario_solicitante' => ($output->requesting_user == null) ? 'No hay datos': $output->requestingUser->name,
-                        'usuario_responsable' => ($output->responsible_user == null) ? 'No hay datos': $output->responsibleUser->name,
-
-                        'moneda' => $entry->currency_invoice,
-                        'codigo' => $detail->material->code,
-                        'material' => $detail->material->full_name,
-                        'cantidad' => $detail->entered_quantity,
-                        'precio' => $detail->unit_price,
-                        'total_precio' => ($detail->total_detail == null) ? round($detail->unit_price*$detail->entered_quantity, 2):$detail->total_detail,
-                    ]);*/
                 }
 
                 foreach ($groupedDetails as $groupKey => $group) {
