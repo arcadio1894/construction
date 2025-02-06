@@ -210,6 +210,38 @@
         </div>
     </div>
     @endcan
+    @can('update_user')
+        <div id="modalReset" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Reseteo de contraseña</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    </div>
+                    <form id="formReset" data-url="{{ route('user.reset') }}">
+                        @csrf
+                        <div class="modal-body">
+                            <input type="hidden" id="user_id" name="user_id">
+
+                            <p id="nameReset"></p>
+
+                            <div class="form-group">
+                                <label class="col-sm-12 control-label" for="passwordReset"> Nueva contraseña <span class="right badge badge-danger">(*)</span></label>
+
+                                <div class="col-sm-12">
+                                    <input type="text" id="passwordReset" name="passwordReset" class="form-control" required />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                            <button type="button" id="btn-submit-reset" class="btn btn-danger">Resetar Contraseña</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    @endcan
 @endsection
 
 @section('plugins')

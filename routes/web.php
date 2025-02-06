@@ -46,6 +46,8 @@ Route::middleware('auth')->group(function (){
             ->middleware('permission:update_user');
         Route::post('user/destroy', 'UserController@destroy')->name('user.destroy')
             ->middleware('permission:destroy_user');
+        Route::post('user/reset', 'UserController@resetPassword')->name('user.reset')
+            ->middleware('permission:update_user');
         Route::get('/all/users', 'UserController@getUsers');
         Route::get('/user/roles/{id}', 'UserController@getRoles')->name('user.roles')
             ->middleware('permission:update_user');

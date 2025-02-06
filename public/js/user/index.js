@@ -31,6 +31,9 @@ $(document).ready(function () {
                         if ( $.inArray('destroy_user', $permissions) !== -1 ) {
                             text = text + ' <button data-delete="'+item.id+'" data-email="'+item.email+'" data-name="'+item.name+'" class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Inhabilitar</button>';
                         }
+                        if ( $.inArray('update_user', $permissions) !== -1 ) {
+                            text = text + ' <button data-reset_password="'+item.id+'" data-name="'+item.name+'" class="btn btn-outline-primary btn-sm"><i class="fas fa-redo-alt"></i> Resetear contraseña</button> ';
+                        }
                         return text;
 
                     }
@@ -199,7 +202,15 @@ $(document).ready(function () {
 
     $('#newWorkers').on('click', convertUsersToWorkers);
 
+    $formReset = $('#formReset');
+    $("#btn-submit-reset").on('click', resetPassword);
+    $modalReset = $('#modalReset');
+    $(document).on('click', '[data-reset_password]', openModalReset);
+
 });
+
+var $formReset;
+var $modalReset;
 
 var $formCreate;
 var $modalCreate;
@@ -211,6 +222,73 @@ var $formDelete;
 var $modalDelete;
 
 var $permissions;
+
+
+function resetPassword() {
+    $.confirm({
+        title: 'Confirmar Reseteo',
+        content: '¿Está seguro de resetear la contraseña de este usuario?',
+        type: 'red',
+        buttons: {
+            cancelar: function () {},
+            confirmar: {
+                btnClass: 'btn-red',
+                action: function () {
+                    let form = $('#formReset');
+                    let url = form.data('url');
+                    let formData = form.serialize();
+
+                    $.ajax({
+                        url: url,
+                        type: 'POST',
+                        data: formData,
+                        dataType: 'json',
+                        beforeSend: function () {
+                            $("#btn-submit-reset").prop("disabled", true);
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                $.alert({
+                                    title: 'Éxito',
+                                    content: 'La contraseña ha sido reseteada correctamente.',
+                                    type: 'green'
+                                });
+                                $('#modalReset').modal('hide');
+                                $('#passwordReset').val('');
+                            } else {
+                                $.alert({
+                                    title: 'Error',
+                                    content: response.message,
+                                    type: 'red'
+                                });
+                            }
+                        },
+                        error: function () {
+                            $.alert({
+                                title: 'Error',
+                                content: 'Hubo un problema al resetear la contraseña.',
+                                type: 'red'
+                            });
+                        },
+                        complete: function () {
+                            $("#btn-submit-reset").prop("disabled", false);
+                        }
+                    });
+                }
+            }
+        }
+    });
+}
+
+function openModalReset() {
+    var user_id = $(this).data('reset_password');
+    var name = $(this).data('name');
+
+    $modalReset.find('[id=user_id]').val(user_id);
+    $modalReset.find('[id=nameReset]').html(name);
+
+    $modalReset.modal('show');
+}
 
 function convertUsersToWorkers() {
     $.confirm({

@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -338,5 +339,27 @@ class UserController extends Controller
 
         return response()->json(['message' => 'Trabajadores creados.'], 200);
 
+    }
+
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required|exists:users,id',
+            'passwordReset' => 'required|min:6'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()]);
+        }
+
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json(['success' => false, 'message' => 'Usuario no encontrado.']);
+        }
+
+        $user->password = Hash::make($request->passwordReset);
+        $user->save();
+
+        return response()->json(['success' => true, 'message' => 'Contraseña reseteada correctamente.']);
     }
 }
