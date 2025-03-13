@@ -494,6 +494,14 @@ function saveTableItems() {
     var equipment_id = $modalAddItems.find('[id=equipment]').val();
     var equipment_name = $modalAddItems.find('[id=equipment_name]').val();
 
+    let material_quantity = $('#material_selected_quantity').val();
+
+    /*if ( material_quantity != $itemsSelected.length )
+    {
+        alert("Error en cantidades");
+        return;
+    }*/
+
     for ( let j=0; j<$itemsSelected.length; j++ )
     {
         if ( $items.find(x => x.item === $itemsSelected[j].id ) )
@@ -783,13 +791,13 @@ function requestItemsQuantity() {
 
     $('#body-items').html('');
     $itemsSelected = [];
-
+    let iterator = 1;
     $.ajax({
         url: "/dashboard/get/items/output/complete/"+result.id,
         type: 'GET',
         dataType: 'json',
         success: function (json){
-            let iterator = 1;
+
             for (var i=0; i<json.length; i++)
             {
                 //$users.push(json[i].name);
@@ -799,10 +807,10 @@ function requestItemsQuantity() {
                     renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
                     const result = $itemsComplete.find( item => item.id == json[i].id );
                     $itemsSelected.push(result);
-                    iterator+=1;
+                    iterator = iterator + 1;
                 } else {
                     renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
-                    iterator+=1;
+                    iterator = iterator + 1;
                 }
             }
 
@@ -866,13 +874,13 @@ function requestItemsQuantity2(event) {
 
         $('#body-items').html('');
         $itemsSelected = [];
-
+        let iterator = 1;
         $.ajax({
             url: "/dashboard/get/items/output/complete/"+result.id,
             type: 'GET',
             dataType: 'json',
             success: function (json){
-                let iterator = 1;
+
                 for (var i=0; i<json.length; i++)
                 {
                     //$users.push(json[i].name);
@@ -882,10 +890,10 @@ function requestItemsQuantity2(event) {
                         renderTemplateItemSelected(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
                         const result = $itemsComplete.find( item => item.id == json[i].id );
                         $itemsSelected.push(result);
-                        iterator+=1;
+                        iterator = iterator + 1;
                     } else {
                         renderTemplateItem(i+1, json[i].code, json[i].location, json[i].length, json[i].width, json[i].weight, json[i].price, json[i].id);
-                        iterator+=1;
+                        iterator = iterator + 1;
                     }
                 }
 
@@ -1696,6 +1704,21 @@ function storeOutputRequest() {
     var items = JSON.stringify($items);
     var form = new FormData($('#formCreate')[0]);
     form.append('items', items);
+
+    // 🚀 Mostrar loader en toda la pantalla
+    $.blockUI({
+        message: '<h3>⏳ Procesando solicitud...</h3>',
+        css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: 0.5,
+            color: '#fff'
+        }
+    });
+
     $.ajax({
         url: createUrl,
         method: 'POST',
@@ -1704,6 +1727,7 @@ function storeOutputRequest() {
         contentType:false,
         success: function (data) {
             console.log(data);
+            $.unblockUI();
             toastr.success(data.message, 'Éxito',
                 {
                     "closeButton": true,
@@ -1731,6 +1755,7 @@ function storeOutputRequest() {
         },
         error: function (data) {
             console.log(data);
+            $.unblockUI();
             if( data.responseJSON.message && !data.responseJSON.errors )
             {
                 toastr.error(data.responseJSON.message, 'Error',

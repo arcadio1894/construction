@@ -383,13 +383,13 @@ function requestItemsQuantity() {
 
     $('#body-items').html('');
     $itemsSelected = [];
-
+    let iterator = 1;
     $.ajax({
         url: "/dashboard/get/items/output/complete/"+result.id,
         type: 'GET',
         dataType: 'json',
         success: function (json){
-            let iterator = 1;
+
             for (var i=0; i<json.length; i++)
             {
                 //$users.push(json[i].name);
@@ -399,10 +399,10 @@ function requestItemsQuantity() {
                     renderTemplateItemSelected(i+1, json[i].code, json[i].id);
                     const result = $itemsComplete.find( item => item.id == json[i].id );
                     $itemsSelected.push(result);
-                    iterator+=1;
+                    iterator = iterator + 1;
                 } else {
                     renderTemplateItem(i+1, json[i].code, json[i].id);
-                    iterator+=1;
+                    iterator = iterator + 1;
                 }
             }
 
@@ -464,13 +464,13 @@ function requestItemsQuantity2(event) {
 
         $('#body-items').html('');
         $itemsSelected = [];
-
+        let iterator = 1;
         $.ajax({
             url: "/dashboard/get/items/output/complete/"+result.id,
             type: 'GET',
             dataType: 'json',
             success: function (json){
-                let iterator = 1;
+
                 for (var i=0; i<json.length; i++)
                 {
                     //$users.push(json[i].name);
@@ -480,10 +480,10 @@ function requestItemsQuantity2(event) {
                         renderTemplateItemSelected(i+1, json[i].code, json[i].id);
                         const result = $itemsComplete.find( item => item.id == json[i].id );
                         $itemsSelected.push(result);
-                        iterator+=1;
+                        iterator = iterator + 1;
                     } else {
                         renderTemplateItem(i+1, json[i].code, json[i].id);
-                        iterator+=1;
+                        iterator = iterator + 1;
                     }
                 }
 

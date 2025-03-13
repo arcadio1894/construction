@@ -326,6 +326,8 @@
             placeholder: "Seleccione",
         })
     </script>
-    <script src="{{ asset('js/entry/entry_purchase_order.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
+    <script src="{{ asset('js/entry/entry_purchase_order.js') }}?v={{ time() }}"></script>
 
 @endsection

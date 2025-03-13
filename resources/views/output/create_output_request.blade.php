@@ -420,5 +420,7 @@
             });
         })
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
     <script src="{{ asset('js/output/output_request.js') }}"></script>
 @endsection

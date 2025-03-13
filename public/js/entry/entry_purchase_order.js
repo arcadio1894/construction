@@ -191,6 +191,21 @@ function storeOrderPurchase() {
     form.append('subtotal_send', subtotal_send);
     form.append('taxes_send', taxes_send);
     form.append('total_send', total_send);
+
+    // 🚀 Mostrar loader en toda la pantalla
+    $.blockUI({
+        message: '<h3>⏳ Procesando solicitud...</h3>',
+        css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: 0.5,
+            color: '#fff'
+        }
+    });
+
     $.ajax({
         url: createUrl,
         method: 'POST',
@@ -199,6 +214,8 @@ function storeOrderPurchase() {
         contentType:false,
         success: function (data) {
             console.log(data);
+            // 🛑 Quitar loader
+            $.unblockUI();
             toastr.success(data.message, 'Éxito',
                 {
                     "closeButton": true,
@@ -223,6 +240,8 @@ function storeOrderPurchase() {
             }, 2000 )
         },
         error: function (data) {
+            // 🛑 Quitar loader
+            $.unblockUI();
             if( data.responseJSON.message && !data.responseJSON.errors )
             {
                 toastr.error(data.responseJSON.message, 'Error',
