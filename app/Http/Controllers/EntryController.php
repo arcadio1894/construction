@@ -1801,8 +1801,8 @@ class EntryController extends Controller
                     'ordered_quantity' => $items[$i]->quantity,
                     'entered_quantity' => $items[$i]->entered,
                     'isComplete' => ($items[$i]->quantity == $items[$i]->entered) ? true:false,
-                    'largo' => $items[$i]->largo,
-                    'ancho' => $items[$i]->ancho,
+                    'largo' => $items[$i]->largo !== "" ? $items[$i]->largo : null,
+                    'ancho' => $items[$i]->ancho !== "" ? $items[$i]->ancho : null,
                     'scrap' => $items[$i]->scrap,
                 ]);
 
@@ -1912,15 +1912,17 @@ class EntryController extends Controller
                             $typeScrap = $material->typeScrap;
                             $length = $typeScrap->length;
                             $width = $typeScrap->width;
+                            $largo = $items[$i]->largo !== "" ? $items[$i]->largo : 0;
+                            $ancho = $items[$i]->ancho !== "" ? $items[$i]->ancho : 0;
 
                             if ( $width == 0 )
                             {
                                 // TODO Es un tubo
-                                $porcentage = round((float)($items[$i]->largo/$length), 2);
+                                $porcentage = round((float)($largo/$length), 2);
                             } else {
                                 // TODO Es una plancha
                                 $areaTotal = (float)($length * $width);
-                                $areaScrap = (float)($items[$i]->largo*$items[$i]->ancho);
+                                $areaScrap = (float)($largo*$ancho);
                                 $porcentage = round((float)($areaScrap/$areaTotal), 2);
                             }
 
@@ -1928,8 +1930,8 @@ class EntryController extends Controller
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => (float)$items[$i]->largo,
-                                'width' => (float)$items[$i]->ancho,
+                                'length' => (float)$largo,
+                                'width' => (float)$ancho,
                                 'weight' => 0,
                                 'price' => (float)$items[$i]->price,
                                 'percentage' => $porcentage,
@@ -2009,15 +2011,17 @@ class EntryController extends Controller
                             $typeScrap = $material->typeScrap;
                             $length = $typeScrap->length;
                             $width = $typeScrap->width;
+                            $largo = $items[$i]->largo !== "" ? $items[$i]->largo : 0;
+                            $ancho = $items[$i]->ancho !== "" ? $items[$i]->ancho : 0;
 
                             if ( $width == 0 )
                             {
                                 // TODO Es un tubo
-                                $porcentage = round((float)($items[$i]->largo/$length), 2);
+                                $porcentage = round((float)($largo/$length), 2);
                             } else {
                                 // TODO Es una plancha
                                 $areaTotal = (float)($length * $width);
-                                $areaScrap = (float)($items[$i]->largo*$items[$i]->ancho);
+                                $areaScrap = (float)($largo*$ancho);
                                 $porcentage = round((float)($areaScrap/$areaTotal), 2);
                             }
 
@@ -2025,8 +2029,8 @@ class EntryController extends Controller
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => (float)$items[$i]->largo,
-                                'width' => (float)$items[$i]->ancho,
+                                'length' => (float)$largo,
+                                'width' => (float)$ancho,
                                 'weight' => 0,
                                 'price' => (float)$items[$i]->price,
                                 'percentage' => $porcentage,
