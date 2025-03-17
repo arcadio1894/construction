@@ -15,7 +15,10 @@ class OrderPurchaseDetail extends Model
         'quantity',
         'price',
         'igv',
-        'total_detail'
+        'total_detail',
+        'largo',
+        'ancho',
+        'scrap'
     ];
 
     protected $dates = ['deleted_at'];

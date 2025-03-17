@@ -141,6 +141,10 @@ function deleteItem() {
 function storeOrderPurchase() {
     event.preventDefault();
     var arrayId = [];
+    var arrayLargo = [];
+    var arrayAncho = [];
+    var arrayScrap = [];
+    var arrayDetailId = [];
     var arrayCode = [];
     var arrayDescription = [];
     var arrayQuantity = [];
@@ -150,6 +154,10 @@ function storeOrderPurchase() {
 
     $('[data-id]').each(function(e){
         arrayId.push($(this).val());
+        arrayLargo.push($(this).attr('data-largo'));
+        arrayAncho.push($(this).attr('data-ancho'));
+        arrayScrap.push($(this).attr('data-scrap'));
+        arrayDetailId.push($(this).attr('data-detail_id'));
     });
     $('[data-code]').each(function(e){
         arrayCode.push($(this).val());
@@ -172,7 +180,18 @@ function storeOrderPurchase() {
 
     var itemsArray = [];
     for (let i = 0; i < arrayId.length; i++) {
-        itemsArray.push({'id':arrayId[i], 'code':arrayCode[i], 'description':arrayDescription[i], 'quantity': arrayQuantity[i], 'entered': arrayEntered[i], 'price': arrayPrice[i], 'id_location': arrayLocation[i]});
+        itemsArray.push({
+            'id':arrayId[i],
+            'code':arrayCode[i],
+            'largo':arrayLargo[i],
+            'ancho':arrayAncho[i],
+            'scrap':arrayScrap[i],
+            'detail_id':arrayDetailId[i],
+            'description':arrayDescription[i],
+            'quantity': arrayQuantity[i],
+            'entered': arrayEntered[i],
+            'price': arrayPrice[i],
+            'id_location': arrayLocation[i]});
     }
 
     console.log(itemsArray);

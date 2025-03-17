@@ -17,7 +17,10 @@ class DetailEntry extends Model
         'unit_price',
         'material_name',
         'material_unit',
-        'total_detail'
+        'total_detail',
+        'largo',
+        'ancho',
+        'scrap'
     ];
 
     public function getMaterialDescriptionAttribute()

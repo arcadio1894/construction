@@ -1718,8 +1718,6 @@ class EntryController extends Controller
     public function storeEntryPurchaseOrder(StoreEntryPurchaseOrderRequest $request)
     {
         $begin = microtime(true);
-        //$extension = $request->file('image')->getClientOriginalExtension();
-        //dd($extension);
 
         //dd($request->get('deferred_invoice'));
         $validated = $request->validated();
@@ -1729,7 +1727,6 @@ class EntryController extends Controller
             $orderPurchase = OrderPurchase::find($request->get('purchase_order_id'));
             $orderPurchase->status_order = 'pick_up';
             $orderPurchase->save();
-            //dump($tipoCambioSunat->compra);
             $entry = Entry::create([
                 'referral_guide' => $request->get('referral_guide'),
                 'purchase_order' => $request->get('purchase_order'),
@@ -1753,7 +1750,6 @@ class EntryController extends Controller
                 $path = public_path().'/images/entries/';
                 $image = $request->file('image');
                 $extension = $request->file('image')->getClientOriginalExtension();
-                //dd(  );
                 if ( strtoupper($extension) != "PDF")
                 {
                     $filename = $entry->id . '.JPG';
@@ -1769,13 +1765,6 @@ class EntryController extends Controller
                     $entry->image = $filename;
                     $entry->save();
                 }
-                /*$filename = $entry->id . '.jpg';
-                $img = Image::make($image);
-                $img->orientate();
-                $img->save($path.$filename, 80, 'jpg');
-                //$request->file('image')->move($path, $filename);
-                $entry->image = $filename;
-                $entry->save();*/
             }
 
             if (!$request->file('imageOb')) {
@@ -1791,7 +1780,6 @@ class EntryController extends Controller
                     $img = Image::make($image);
                     $img->orientate();
                     $img->save($path.$filename, 80, 'JPG');
-                    //$request->file('image')->move($path, $filename);
                     $entry->imageOb = $filename;
                     $entry->save();
                 } else {
@@ -1800,17 +1788,9 @@ class EntryController extends Controller
                     $entry->imageOb = $filename;
                     $entry->save();
                 }
-                /*$filename = $entry->id . '.jpg';
-                $img = Image::make($image);
-                $img->orientate();
-                $img->save($path.$filename, 80, 'jpg');
-                $entry->imageOb = $filename;
-                $entry->save();*/
             }
 
             $items = json_decode($request->get('items'));
-
-            //dd($items);
 
             for ( $i=0; $i<sizeof($items); $i++ )
             {
@@ -1821,6 +1801,9 @@ class EntryController extends Controller
                     'ordered_quantity' => $items[$i]->quantity,
                     'entered_quantity' => $items[$i]->entered,
                     'isComplete' => ($items[$i]->quantity == $items[$i]->entered) ? true:false,
+                    'largo' => $items[$i]->largo,
+                    'ancho' => $items[$i]->ancho,
+                    'scrap' => $items[$i]->scrap,
                 ]);
 
                 // TODO: Revisamos si hay un material en seguimiento y creamos
@@ -1867,9 +1850,10 @@ class EntryController extends Controller
                     }
                 }
 
-                $orderPurchasesDetail = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)
+                /*$orderPurchasesDetail = OrderPurchaseDetail::where('order_purchase_id', $orderPurchase->id)
                     ->where('material_id', $items[$i]->id)
-                    ->first();
+                    ->first();*/
+                $orderPurchasesDetail = OrderPurchaseDetail::find($items[$i]->detail_id);
                 $materialOrder = MaterialOrder::where('order_purchase_detail_id',$orderPurchasesDetail->id)
                     ->where('material_id',$orderPurchasesDetail->material_id)->first();
 
@@ -1897,19 +1881,58 @@ class EntryController extends Controller
                         $detail_entry->save();
                     }
                     //dd($detail_entry->material->materialType);
+                    // TODO: Material retazable
                     if ( isset($detail_entry->material->typeScrap) )
                     {
-                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        // TODO: Material retazable entero
+                        if ( $items[$i]->scrap == 0 )
                         {
+                            for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                            {
+                                Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $this->generateRandomString(20),
+                                    'length' => (float)$detail_entry->material->typeScrap->length,
+                                    'width' => (float)$detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => (float)$items[$i]->price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
+                                    'state' => 'good',
+                                    'state_item' => 'entered'
+                                ]);
+                            }
+                        }
+                        // TODO: Material retazable parte
+                        else {
+                            $porcentage = 0;
+                            $material = Material::find($detail_entry->material_id);
+                            $typeScrap = $material->typeScrap;
+                            $length = $typeScrap->length;
+                            $width = $typeScrap->width;
+
+                            if ( $width == 0 )
+                            {
+                                // TODO Es un tubo
+                                $porcentage = round((float)($items[$i]->largo/$length), 2);
+                            } else {
+                                // TODO Es una plancha
+                                $areaTotal = (float)($length * $width);
+                                $areaScrap = (float)($items[$i]->largo*$items[$i]->ancho);
+                                $porcentage = round((float)($areaScrap/$areaTotal), 2);
+                            }
+
                             Item::create([
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => (float)$detail_entry->material->typeScrap->length,
-                                'width' => (float)$detail_entry->material->typeScrap->width,
+                                'length' => (float)$items[$i]->largo,
+                                'width' => (float)$items[$i]->ancho,
                                 'weight' => 0,
                                 'price' => (float)$items[$i]->price,
-                                'percentage' => 1,
+                                'percentage' => $porcentage,
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
                                 'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
                                 'state' => 'good',
@@ -1917,7 +1940,10 @@ class EntryController extends Controller
                             ]);
                         }
 
-                    } else {
+
+                    }
+                    // TODO: Material NO retazable
+                    else {
                         for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
                         {
                             Item::create([
@@ -1934,12 +1960,11 @@ class EntryController extends Controller
                                 'state_item' => 'entered'
                             ]);
                         }
+
                     }
                 } else {
                     $price = ((float)$detail_entry->material->unit_price > (float)$items[$i]->price) ? $detail_entry->material->unit_price : $items[$i]->price;
-                    //dump($detail_entry->material->unit_price);
-                    //dump((float)$items[$i]->price);
-                    //dd($price);
+
                     $materialS = Material::find($detail_entry->material_id);
                     if ( (float)$materialS->unit_price < (float)$price )
                     {
@@ -1952,28 +1977,69 @@ class EntryController extends Controller
                         $detail_entry->unit_price = (float) round((float)$items[$i]->price,2);
                         $detail_entry->save();
                     }
-                    //dd($detail_entry->material->materialType);
+
+                    // TODO: Material retazable
                     if ( isset($detail_entry->material->typeScrap) )
                     {
-                        for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                        // TODO: Material retazable entero
+                        if ( $items[$i]->scrap == 0 )
                         {
+                            for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
+                            {
+                                Item::create([
+                                    'detail_entry_id' => $detail_entry->id,
+                                    'material_id' => $detail_entry->material_id,
+                                    'code' => $this->generateRandomString(20),
+                                    'length' => (float)$detail_entry->material->typeScrap->length,
+                                    'width' => (float)$detail_entry->material->typeScrap->width,
+                                    'weight' => 0,
+                                    'price' => (float)$price,
+                                    'percentage' => 1,
+                                    'typescrap_id' => $detail_entry->material->typeScrap->id,
+                                    'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
+                                    'state' => 'good',
+                                    'state_item' => 'entered'
+                                ]);
+                            }
+                        }
+                        // TODO: Material retazable parte
+                        else {
+                            $porcentage = 0;
+                            $material = Material::find($detail_entry->material_id);
+                            $typeScrap = $material->typeScrap;
+                            $length = $typeScrap->length;
+                            $width = $typeScrap->width;
+
+                            if ( $width == 0 )
+                            {
+                                // TODO Es un tubo
+                                $porcentage = round((float)($items[$i]->largo/$length), 2);
+                            } else {
+                                // TODO Es una plancha
+                                $areaTotal = (float)($length * $width);
+                                $areaScrap = (float)($items[$i]->largo*$items[$i]->ancho);
+                                $porcentage = round((float)($areaScrap/$areaTotal), 2);
+                            }
+
                             Item::create([
                                 'detail_entry_id' => $detail_entry->id,
                                 'material_id' => $detail_entry->material_id,
                                 'code' => $this->generateRandomString(20),
-                                'length' => (float)$detail_entry->material->typeScrap->length,
-                                'width' => (float)$detail_entry->material->typeScrap->width,
+                                'length' => (float)$items[$i]->largo,
+                                'width' => (float)$items[$i]->ancho,
                                 'weight' => 0,
-                                'price' => (float)$price,
-                                'percentage' => 1,
+                                'price' => (float)$items[$i]->price,
+                                'percentage' => $porcentage,
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
-                                'location_id' => ($items[$i]->id_location) == '' ? 1 : $items[$i]->id_location,
+                                'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
                                 'state' => 'good',
                                 'state_item' => 'entered'
                             ]);
                         }
-                    } else {
-                        //dd($detail_entry->material->typeScrap);
+
+                    }
+                    // TODO: Material NO retazable
+                    else {
                         for ( $k=0; $k<(int)$detail_entry->entered_quantity; $k++ )
                         {
                             Item::create([

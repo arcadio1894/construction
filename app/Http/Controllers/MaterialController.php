@@ -850,4 +850,17 @@ class MaterialController extends Controller
         dump($end);
         dd();
     }
+
+    public function checkRetazable($id)
+    {
+        $material = Material::find($id);
+
+        if (!$material) {
+            return response()->json(['error' => 'Material no encontrado'], 404);
+        }
+
+        return response()->json([
+            'retazable' => !is_null($material->typescrap_id) // true si es retazable, false si no lo es
+        ]);
+    }
 }

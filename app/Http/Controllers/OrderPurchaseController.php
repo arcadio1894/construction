@@ -1260,6 +1260,9 @@ class OrderPurchaseController extends Controller
                     'order_purchase_id' => $orderPurchase->id,
                     'material_id' => $items[$i]->id_material,
                     'quantity' => (float) $items[$i]->quantity,
+                    'largo' => (float) $items[$i]->largo,
+                    'ancho' => (float) $items[$i]->ancho,
+                    'scrap' => (float) $items[$i]->scrap,
                     'price' => (float) $items[$i]->price,
                     'total_detail' => (float) $items[$i]->total,
                 ]);

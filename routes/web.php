@@ -2646,6 +2646,9 @@ Route::middleware('auth')->group(function (){
 
         // TODO: Rutas de reporte mensual
         Route::get('/get/report/monthly/workers/', 'BoletaController@reportMonthlyWorkers');
+
+        // TODO: Rutas de verificacion
+        Route::get('/materials/check-retazable/{id}', 'MaterialController@checkRetazable');
     });
 });
 

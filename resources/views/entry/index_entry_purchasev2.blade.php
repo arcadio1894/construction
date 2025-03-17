@@ -101,9 +101,9 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de entradas</h5>
-    @can('create_entryPurchase')
+    {{--@can('create_entryPurchase')
         <a href="{{ route('entry.purchase.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo ingreso </a>
-    @endcan
+    @endcan--}}
 @endsection
 
 @section('page-breadcrumb')

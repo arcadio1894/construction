@@ -179,7 +179,7 @@
                                 <div class="form-group">
                                     <label for="quantity">Cantidad <span class="right badge badge-danger">(*)</span></label>
                                     {{--<input type="number" oninput="this.value = this.value.replace(/[^0-9]/g,'');" step="1" id="quantity" class="form-control">--}}
-                                    <input type="number" {{--oninput="this.value = this.value.replace(/[^0-9]/g,'');"--}} step="0.01" id="quantity" class="form-control">
+                                    <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g,'');" step="1" id="quantity" class="form-control">
                                 </div>
                             </div>
                             <div class="col-md-2">

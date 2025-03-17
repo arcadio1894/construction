@@ -202,7 +202,18 @@
                                     <div class="col-md-1">
                                         <div class="form-group">
                                             <div class="form-group">
-                                                <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-id value="{{ $detail->material->id }}" readonly>
+                                                <input
+                                                        type="text"
+                                                        onkeyup="mayus(this);"
+                                                        class="form-control form-control-sm"
+                                                        data-id
+                                                        data-largo = "{{ $detail->largo }}"
+                                                        data-ancho = "{{ $detail->ancho }}"
+                                                        data-scrap = "{{ $detail->scrap }}"
+                                                        data-detail_id = "{{ $detail->id }}"
+                                                        value="{{ $detail->material->id }}"
+                                                        readonly
+                                                >
                                             </div>
                                         </div>
                                     </div>

@@ -231,9 +231,19 @@
                                     <strong>Código</strong>
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <strong>Material</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <strong>Largo</strong>
+                                </div>
+                            </div>
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <strong>Ancho</strong>
                                 </div>
                             </div>
                             <div class="col-md-1">
@@ -251,7 +261,7 @@
                                     <strong>Precio S/Igv</strong>
                                 </div>
                             </div>
-                            <div class="col-md-2">
+                            <div class="col-md-1">
                                 <div class="form-group">
                                     <strong>Total C/Igv</strong>
                                 </div>
@@ -340,7 +350,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="form-group">
                     <div class="form-group">
                         <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-description readonly>
@@ -350,20 +360,30 @@
 
             <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g,'');calculateTotal(this);" placeholder="0.00" min="0" data-quantity step="1" >
+                    <input type="number" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g,'');" placeholder="0.00" min="0" data-largo step="0.01" >
                 </div>
             </div>
             <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal2(this);" placeholder="0.00" min="0" data-price step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                    <input type="number" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g,'');" placeholder="0.00" min="0" data-ancho step="0.01" >
                 </div>
             </div>
             <div class="col-md-1">
                 <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" oninput="calculateTotal3(this);" placeholder="0.00" min="0" data-price2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                    <input type="number" class="form-control form-control-sm" oninput="this.value = this.value.replace(/[^0-9]/g,'');/*calculateTotal(this);*/" placeholder="0.00" min="0" data-quantity step="1" >
                 </div>
             </div>
-            <div class="col-md-2">
+            <div class="col-md-1">
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" {{--oninput="calculateTotal2(this);"--}} placeholder="0.00" min="0" data-price step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                </div>
+            </div>
+            <div class="col-md-1">
+                <div class="form-group">
+                    <input type="number" class="form-control form-control-sm" {{--oninput="calculateTotal3(this);"--}} placeholder="0.00" min="0" data-price2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$">
+                </div>
+            </div>
+            <div class="col-md-1">
                 <div class="form-group">
                     <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-total step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
                             this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
@@ -638,6 +658,7 @@
 
         })
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
 
-    <script src="{{ asset('js/orderPurchase/create.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/create.js') }}?v={{ time() }}"></script>
 @endsection
