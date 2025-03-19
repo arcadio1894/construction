@@ -506,29 +506,32 @@ class MaterialController extends Controller
             $material = Material::with('category:id,name', 'materialType:id,name','unitMeasure:id,name','subcategory:id,name','subType:id,name','exampler:id,name','brand:id,name','warrant:id,name','quality:id,name','typeScrap:id,name')
                 ->where('enable_status', 1)
                 ->find($mat['material_id']);
-            array_push($arrayMaterials, [
-                'id'=> $material->id,
-                'description' => $material->full_description,
-                'code' => $material->code,
-                'priority' => $material->priority,
-                'measure' => $material->measure,
-                'unit_measure' => ($material->unit_measure_id == null) ? '': $material->unitMeasure->name,
-                'stock_max' => $material->stock_max,
-                'stock_min'=>$material->stock_min,
-                'quantity_items'=>$material->quantity_items,
-                'stock_current'=>$mat['quantity'],
-                'unit_price'=>$material->unit_price,
-                'image'=>$material->image,
-                'category' => ($material->category_id == null) ? '': $material->category->name,
-                'subcategory' => ($material->subcategory_id == null) ? '': $material->subcategory->name,
-                'material_type' => ($material->material_type_id == null) ? '': $material->materialType->name,
-                'sub_type' => ($material->sub_type_id == null) ? '': $material->sub_type->name,
-                'warrant' => ($material->warrant_id == null) ? '': $material->warrant->name,
-                'quality' => ($material->quality_id == null) ? '': $material->quality->name,
-                'brand' => ($material->brand_id == null) ? '': $material->brand->name,
-                'exampler' => ($material->exampler_id == null) ? '': $material->exampler->name,
-                'type_scrap' => ($material->type_scrap_id == null) ? '': $material->typeScrap->name,
-            ]);
+            if ( isset($material) ) {
+                array_push($arrayMaterials, [
+                    'id'=> $material->id,
+                    'description' => $material->full_description,
+                    'code' => $material->code,
+                    'priority' => $material->priority,
+                    'measure' => $material->measure,
+                    'unit_measure' => ($material->unit_measure_id == null) ? '': $material->unitMeasure->name,
+                    'stock_max' => $material->stock_max,
+                    'stock_min'=>$material->stock_min,
+                    'quantity_items'=>$material->quantity_items,
+                    'stock_current'=>$mat['quantity'],
+                    'unit_price'=>$material->unit_price,
+                    'image'=>$material->image,
+                    'category' => ($material->category_id == null) ? '': $material->category->name,
+                    'subcategory' => ($material->subcategory_id == null) ? '': $material->subcategory->name,
+                    'material_type' => ($material->material_type_id == null) ? '': $material->materialType->name,
+                    'sub_type' => ($material->sub_type_id == null) ? '': $material->sub_type->name,
+                    'warrant' => ($material->warrant_id == null) ? '': $material->warrant->name,
+                    'quality' => ($material->quality_id == null) ? '': $material->quality->name,
+                    'brand' => ($material->brand_id == null) ? '': $material->brand->name,
+                    'exampler' => ($material->exampler_id == null) ? '': $material->exampler->name,
+                    'type_scrap' => ($material->type_scrap_id == null) ? '': $material->typeScrap->name,
+                ]);
+            }
+
         }
 
         foreach($materials as $material) {
