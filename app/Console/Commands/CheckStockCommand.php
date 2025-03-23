@@ -30,7 +30,7 @@ class CheckStockCommand extends Command
             // Calcular quantity_items (items activos)
             $quantity_items = Item::where('material_id', $material->id)
                 ->where('state_item', '!=', 'exited')
-                ->count();
+                ->sum('percentage');
 
             // Calcular quantity_entries (entradas de hoy)
             $quantity_entries = DetailEntry::where('material_id', $material->id)
