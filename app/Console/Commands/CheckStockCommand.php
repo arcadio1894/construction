@@ -19,7 +19,7 @@ class CheckStockCommand extends Command
 
     public function handle()
     {
-        $today = Carbon::now('America/Lima')->subDay()->toDateString();
+        $today = Carbon::now('America/Lima')->toDateString();
 
         $desfases = [];
 
