@@ -1234,7 +1234,9 @@ class OutputController extends Controller
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Solicitud de salida guardada con éxito.', 'url'=>route('output.request.index')], 200);
+        return response()->json([
+            'message' => 'Solicitud de salida guardada con éxito.',
+            'url'=>route('output.request.indexV2')], 200);
 
     }
 
