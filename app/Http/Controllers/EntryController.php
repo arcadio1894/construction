@@ -1938,7 +1938,7 @@ class EntryController extends Controller
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
                                 'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
                                 'state' => 'good',
-                                'state_item' => 'entered'
+                                'state_item' => 'scraped'
                             ]);
                         }
 
@@ -2037,7 +2037,7 @@ class EntryController extends Controller
                                 'typescrap_id' => $detail_entry->material->typeScrap->id,
                                 'location_id' => ($items[$i]->id_location)=='' ? 1:$items[$i]->id_location,
                                 'state' => 'good',
-                                'state_item' => 'entered'
+                                'state_item' => 'scraped'
                             ]);
                         }
 
