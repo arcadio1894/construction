@@ -768,7 +768,7 @@ class MaterialController extends Controller
     {
 
         $items = Item::where('material_id', $id)
-            ->whereIn('state_item', ['entered', 'scraped'])
+            ->whereIn('state_item', ['entered', 'scraped', 'reserved'])
             ->with(['location' => function ($query) {
                 $query->with(['area', 'warehouse', 'shelf', 'level', 'container', 'position']);
             }])
