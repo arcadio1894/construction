@@ -89,6 +89,7 @@ class OutputController extends Controller
             $query = Output::with(['requestingUser', 'responsibleUser', 'quote'])
                 ->where('indicator', '<>', 'ors')
                 ->where('state', '<>', 'confirmed')
+                ->orderBy('state', 'asc')
                 ->orderBy('created_at', 'desc');
         } else {
             $fechaInicio = Carbon::createFromFormat('d/m/Y', $startDate);
@@ -99,6 +100,7 @@ class OutputController extends Controller
                 ->where('state', '<>', 'confirmed')
                 ->whereDate('request_date', '>=', $fechaInicio)
                 ->whereDate('request_date', '<=', $fechaFinal)
+                ->orderBy('state', 'asc')
                 ->orderBy('request_date', 'desc');
         }
 
