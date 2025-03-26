@@ -42,7 +42,8 @@ $(document).ready(function () {
                 {
                     var status = (item.state_item === 'entered') ? '<span class="badge bg-success">Ingresado</span>' :
                         (item.state_item === 'scraped') ? '<span class="badge bg-warning">Retazo</span>' :
-                            'Indefinido';
+                            (item.state_item === 'reserved') ? '<span class="badge bg-info">Reservado</span>' :
+                                'Indefinido';
                     return '<p> '+status+' </p>'
                 }
             },
