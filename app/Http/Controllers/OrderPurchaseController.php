@@ -1215,6 +1215,32 @@ class OrderPurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+
+            $items = json_decode($request->get('items'));
+
+            foreach ($items as $item) {
+                $material = Material::find($item->id_material);
+
+                // Verificamos si la cantidad tiene decimales
+                $isDecimal = fmod($item->quantity, 1) != 0;
+
+                if ($material) {
+                    if (is_null($material->typescrap_id)) {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "El material ({$material->full_name}) no permite retazos, por lo que no se puede pedir valores decimales ({$item->quantity})"
+                            ], 422);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Material con ID {$item->id_material} no encontrado"
+                    ], 422);
+                }
+            }
+
             $maxCode = OrderPurchase::withTrashed()->max('id');
             $maxId = $maxCode + 1;
             $length = 5;
@@ -2000,6 +2026,39 @@ class OrderPurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+
+            $items = json_decode($request->get('items'));
+
+            foreach ($items as $item) {
+                $material = Material::find($item->id_material);
+
+                // Verificamos si la cantidad tiene decimales
+                $isDecimal = fmod($item->quantity, 1) != 0;
+
+                if ($material) {
+                    if (is_null($material->typescrap_id)) {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "El material ({$material->full_name}) no permite retazos, por lo que no se puede pedir valores decimales ({$item->quantity})"
+                            ], 422);
+                        }
+                    } else {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "No se puede pedir retazos por Orden de Compra Normal"
+                            ], 422);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Material con ID {$item->id_material} no encontrado"
+                    ], 422);
+                }
+            }
+
             $maxCode = OrderPurchase::withTrashed()->max('id');
             $maxId = $maxCode + 1;
             $length = 5;
@@ -2268,6 +2327,39 @@ class OrderPurchaseController extends Controller
         $begin = microtime(true);
         DB::beginTransaction();
         try {
+
+            $items = json_decode($request->get('items'));
+
+            foreach ($items as $item) {
+                $material = Material::find($item->id_material);
+
+                // Verificamos si la cantidad tiene decimales
+                $isDecimal = fmod($item->quantity, 1) != 0;
+
+                if ($material) {
+                    if (is_null($material->typescrap_id)) {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "El material ({$material->full_name}) no permite retazos, por lo que no se puede pedir valores decimales ({$item->quantity})"
+                            ], 422);
+                        }
+                    } else {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "No se puede pedir retazos por Orden de Compra Normal"
+                            ], 422);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Material con ID {$item->id_material} no encontrado"
+                    ], 422);
+                }
+            }
+
             $detail = OrderPurchaseDetail::find($detail_id);
             $orderExpress = OrderPurchase::find($detail->order_purchase_id);
 
@@ -2452,6 +2544,39 @@ class OrderPurchaseController extends Controller
 
         DB::beginTransaction();
         try {
+
+            $items = json_decode($request->get('items'));
+
+            foreach ($items as $item) {
+                $material = Material::find($item->id_material);
+
+                // Verificamos si la cantidad tiene decimales
+                $isDecimal = fmod($item->quantity, 1) != 0;
+
+                if ($material) {
+                    if (is_null($material->typescrap_id)) {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "El material ({$material->full_name}) no permite retazos, por lo que no se puede pedir valores decimales ({$item->quantity})"
+                            ], 422);
+                        }
+                    } else {
+                        if ($isDecimal) {
+                            return response()->json([
+                                'success' => false,
+                                'message' => "No se puede pedir retazos por Orden de Compra Normal"
+                            ], 422);
+                        }
+                    }
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => "Material con ID {$item->id_material} no encontrado"
+                    ], 422);
+                }
+            }
+
             $orderPurchase = OrderPurchase::find($request->get('order_id'));
             $orderPurchase->payment_deadline_id = ($request->has('payment_deadline_id')) ? $request->get('payment_deadline_id') : null;
             $orderPurchase->supplier_id = ($request->has('supplier_id')) ? $request->get('supplier_id') : null;
