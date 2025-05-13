@@ -29,6 +29,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class OutputController extends Controller
 {
@@ -967,32 +968,42 @@ class OutputController extends Controller
     public function attendOutputRequest(Request $request)
     {
         $begin = microtime(true);
-        //dd($request);
+
         $output = Output::find($request->get('output_id'));
         DB::beginTransaction();
         try {
             $output->state = 'attended';
             $output->save();
 
+            // Obtener todos los detalles de salida
             $outputDetails = OutputDetail::where('output_id', $output->id)->get();
-            foreach ( $outputDetails as $outputDetail )
-            {
+
+            // Para rastrear los movimientos
+            Log::info("== Iniciando actualización de stock para Output ID: {$output->id} ==");
+
+            // Agrupación por material para evitar restas múltiples
+            $materialReductions = [];
+
+            foreach ($outputDetails as $outputDetail) {
                 $item = Item::find($outputDetail->item_id);
                 $item->state_item = 'exited';
                 $item->save();
-                // TODO: Dismunir el stock del material
-                $material = Material::find($item->material_id);
-                $material->stock_current = $material->stock_current - $item->percentage;
-                $material->save();
+
+                // Agrupar los porcentajes por material_id
+                if (!isset($materialReductions[$item->material_id])) {
+                    $materialReductions[$item->material_id] = 0;
+                }
+
+                $materialReductions[$item->material_id] += $item->percentage;
+
+                // Log para ver qué se está acumulando
+                Log::info("Material ID: {$item->material_id} | Acumulado para restar: {$materialReductions[$item->material_id]}");
 
                 $quote = Quote::where('order_execution', $output->execution_order)->first();
 
-                // TODO: Verificar si la salida es normal o extra
-                // TODO: Si es normal se coloca en material_taken
-                if (isset($quote))
-                {
+                if (isset($quote)) {
                     MaterialTaken::create([
-                        'material_id' => $material->id,
+                        'material_id' => $item->material_id,
                         'quantity_request' => $item->percentage,
                         'quote_id' => $quote->id,
                         'output_id' => $output->id,
@@ -1001,8 +1012,29 @@ class OutputController extends Controller
                         'type_output' => $output->indicator
                     ]);
                 }
-
             }
+
+            // Ahora restamos el stock solo una vez por cada material
+            foreach ($materialReductions as $materialId => $totalPercentage) {
+                $material = Material::find($materialId);
+
+                // Log antes de restar
+                Log::info("Material ID: {$material->id} | Stock actual: {$material->stock_current} | Total a restar: {$totalPercentage}");
+
+                // Resta en una única operación
+                $material->stock_current -= $totalPercentage;
+
+                // Validación para evitar negativos
+                if ($material->stock_current < 0) {
+                    throw new \Exception("El stock del material {$material->name} no puede ser negativo");
+                }
+
+                $material->save();
+
+                // Log después de restar
+                Log::info("Material ID: {$material->id} | Stock final: {$material->stock_current}");
+            }
+
             $end = microtime(true) - $begin;
 
             Audit::create([
@@ -1010,14 +1042,15 @@ class OutputController extends Controller
                 'action' => 'Atender Salidas',
                 'time' => $end
             ]);
+
             DB::commit();
-        } catch ( \Throwable $e ) {
+        } catch (\Throwable $e) {
             DB::rollBack();
+            Log::error("Error al atender salida: " . $e->getMessage());
             return response()->json(['message' => $e->getMessage()], 422);
         }
 
         return response()->json(['message' => 'Solicitud de salida atendida con éxito.'], 200);
-
     }
 
     public function confirmOutputRequest(Request $request)

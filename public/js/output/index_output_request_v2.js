@@ -606,6 +606,21 @@ function attendOutput() {
     var formulario = $('#formAttend')[0];
     var form = new FormData(formulario);
     event.preventDefault();
+    $modalAttend.modal('hide');
+    // 🚀 Mostrar loader en toda la pantalla
+    $.blockUI({
+        message: '<h3>⏳ Procesando solicitud...</h3>',
+        css: {
+            border: 'none',
+            padding: '15px',
+            backgroundColor: '#000',
+            '-webkit-border-radius': '10px',
+            '-moz-border-radius': '10px',
+            opacity: 0.5,
+            color: '#fff'
+        }
+    });
+
     // Obtener la URL
     var attendUrl = $formAttend.data('url');
     $.ajax({
@@ -616,6 +631,7 @@ function attendOutput() {
         contentType:false,
         success: function (data) {
             console.log(data);
+            $.unblockUI();
             toastr.success(data.message, 'Éxito',
                 {
                     "closeButton": true,
@@ -642,6 +658,7 @@ function attendOutput() {
             }, 2000 )
         },
         error: function (data) {
+            $.unblockUI();
             if( data.responseJSON.message && !data.responseJSON.errors )
             {
                 toastr.error(data.responseJSON.message, 'Error',

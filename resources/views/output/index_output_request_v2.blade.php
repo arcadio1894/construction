@@ -813,6 +813,8 @@
 
         })
     </script>
-    <script src="{{ asset('js/output/index_output_request_v2.js') }}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.blockUI/2.70/jquery.blockUI.min.js"></script>
+
+    <script src="{{ asset('js/output/index_output_request_v2.js') }}?v={{ time() }}"></script>
 
 @endsection
