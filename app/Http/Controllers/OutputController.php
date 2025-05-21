@@ -968,40 +968,42 @@ class OutputController extends Controller
     public function attendOutputRequest(Request $request)
     {
         $begin = microtime(true);
-
         $output = Output::find($request->get('output_id'));
+
         DB::beginTransaction();
         try {
-            $output->state = 'attended';
-            $output->save();
-
             // Obtener todos los detalles de salida
             $outputDetails = OutputDetail::where('output_id', $output->id)->get();
 
-            // Para rastrear los movimientos
             Log::info("== Iniciando actualización de stock para Output ID: {$output->id} ==");
 
-            // Agrupación por material para evitar restas múltiples
             $materialReductions = [];
 
             foreach ($outputDetails as $outputDetail) {
                 $item = Item::find($outputDetail->item_id);
-                $item->state_item = 'exited';
-                $item->save();
 
-                // Agrupar los porcentajes por material_id
+                if (!$item) {
+                    throw new \Exception("El item con ID {$outputDetail->item_id} no fue encontrado.");
+                }
+
+                $item->state_item = 'exited';
+                if (!$item->save()) {
+                    throw new \Exception("No se pudo actualizar el estado del item ID {$item->id}.");
+                }
+
+                Log::info("Item ID {$item->id} actualizado a 'exited'");
+
                 if (!isset($materialReductions[$item->material_id])) {
                     $materialReductions[$item->material_id] = 0;
                 }
 
                 $materialReductions[$item->material_id] += $item->percentage;
 
-                // Log para ver qué se está acumulando
                 Log::info("Material ID: {$item->material_id} | Acumulado para restar: {$materialReductions[$item->material_id]}");
 
                 $quote = Quote::where('order_execution', $output->execution_order)->first();
 
-                if (isset($quote)) {
+                if ($quote) {
                     MaterialTaken::create([
                         'material_id' => $item->material_id,
                         'quantity_request' => $item->percentage,
@@ -1014,26 +1016,25 @@ class OutputController extends Controller
                 }
             }
 
-            // Ahora restamos el stock solo una vez por cada material
             foreach ($materialReductions as $materialId => $totalPercentage) {
                 $material = Material::find($materialId);
 
-                // Log antes de restar
                 Log::info("Material ID: {$material->id} | Stock actual: {$material->stock_current} | Total a restar: {$totalPercentage}");
 
-                // Resta en una única operación
                 $material->stock_current -= $totalPercentage;
 
-                // Validación para evitar negativos
                 if ($material->stock_current < 0) {
                     throw new \Exception("El stock del material {$material->name} no puede ser negativo");
                 }
 
                 $material->save();
 
-                // Log después de restar
                 Log::info("Material ID: {$material->id} | Stock final: {$material->stock_current}");
             }
+
+            // ✅ Aquí recién marcamos como atendida, cuando todo fue exitoso
+            $output->state = 'attended';
+            $output->save();
 
             $end = microtime(true) - $begin;
 
@@ -1044,6 +1045,20 @@ class OutputController extends Controller
             ]);
 
             DB::commit();
+
+            // ✅ Validación final post-commit: asegurarse que todos los ítems estén con estado 'exited'
+            $itemsConError = Item::whereIn('id', $outputDetails->pluck('item_id'))
+                ->where('state_item', '!=', 'exited')
+                ->get();
+
+            if ($itemsConError->count() > 0) {
+                Log::warning("Algunos ítems no quedaron como 'exited' después del commit.", $itemsConError->toArray());
+                return response()->json([
+                    'message' => 'La salida fue atendida, pero algunos ítems no tienen el estado esperado.',
+                    'items_con_error' => $itemsConError
+                ], 206); // 206 Partial Content
+            }
+
         } catch (\Throwable $e) {
             DB::rollBack();
             Log::error("Error al atender salida: " . $e->getMessage());
@@ -1277,96 +1292,61 @@ class OutputController extends Controller
 
     public function destroyTotalOutputRequest(Request $request)
     {
-        //dump($request);
         $begin = microtime(true);
         DB::beginTransaction();
         try {
-
             $output = Output::find($request->get('output_id'));
 
-            if ($output->state === 'created')
-            {
-                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
-                foreach ( $outputDetails as $outputDetail )
-                {
-                    if ( $outputDetail->item_id != null )
-                    {
-                        $item = Item::find($outputDetail->item_id);
+            if (!$output) {
+                return response()->json(['message' => 'Salida no encontrada.'], 404);
+            }
 
-                        $items = Item::where('code',$item->code)->get();
-                        $count_items = count($items);
-                        $last_item = Item::where('code',$item->code)
-                            ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
-                            return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                        } else {
-                            if ($count_items>1){
-                                $item->state_item = 'scraped';
-                                $item->save();
-                            } else {
-                                if ($item->percentage < 1)
-                                {
-                                    $item->state_item = 'scraped';
-                                    $item->save();
-                                } else {
-                                    $item->state_item = 'entered';
-                                    $item->save();
-                                }
-                            }
-                        }
+            $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+
+            // Cuando la salida aún no ha sido atendida
+            if ($output->state === 'created') {
+                foreach ($outputDetails as $outputDetail) {
+                    if ($outputDetail->item_id != null) {
+                        $item = Item::find($outputDetail->item_id);
+                        if (!$item) continue;
+
+                        // Si es retazo (menor a 1), va a 'scraped'. Si es entero (1), va a 'entered'
+                        $item->state_item = ($item->percentage < 1) ? 'scraped' : 'entered';
+                        $item->save();
                     }
 
                     $outputDetail->delete();
                 }
+
                 $output->delete();
             }
 
-            if ($output->state !== 'created')
-            {
-                $outputDetails = OutputDetail::where('output_id', $output->id)->get();
-                foreach ( $outputDetails as $outputDetail )
-                {
-                    if ( $outputDetail->item_id == null )
-                    {
-                        $item = Item::find($outputDetail->item_id);
-                        $items = Item::where('code',$item->code)->get();
-                        $count_items = count($items);
-                        $last_item = Item::where('code',$item->code)
-                            ->orderBy('created_at', 'desc')->first();
-                        if ( $last_item->state_item === 'scraped' && $count_items>1 ) {
-                            return response()->json(['message' => 'No se puede eliminar. Contacte con soporte técnico.'], 422);
-                        } else {
-                            if ($count_items>1){
-                                $item->state_item = 'scraped';
-                                $item->save();
-                                $material = Material::find($item->material_id);
-                                $material->stock_current = $material->stock_current + $item->percentage;
-                                $material->save();
-                            } else {
-                                if ($item->percentage < 1)
-                                {
-                                    $item->state_item = 'scraped';
-                                    $item->save();
-                                } else {
-                                    $item->state_item = 'entered';
-                                    $item->save();
-                                }
-                                $material = Material::find($item->material_id);
-                                $material->stock_current = $material->stock_current + $item->percentage;
-                                $material->save();
-                            }
-                        }
+            // Cuando la salida ya fue atendida o confirmada
+            if (in_array($output->state, ['attended', 'confirmed'])) {
+                foreach ($outputDetails as $outputDetail) {
+                    $item = Item::find($outputDetail->item_id);
+                    if (!$item) continue;
 
-                        // TODO: Dismunir el stock del material
+                    // Restaurar estado del ítem
+                    $item->state_item = ($item->percentage < 1) ? 'scraped' : 'entered';
+                    $item->save();
+
+                    // Devolver stock al material
+                    $material = Material::find($item->material_id);
+                    if ($material) {
+                        $material->stock_current += $item->percentage;
+                        $material->save();
                     }
+
+                    // Eliminar relación en material_taken si existe
                     $material_taken = MaterialTaken::where('output_detail_id', $outputDetail->id)->first();
-                    if (isset( $material_taken->id ))
-                    {
+                    if ($material_taken) {
                         $material_taken->delete();
                     }
-                    $outputDetail->delete();
 
+                    $outputDetail->delete();
                 }
+
                 $output->delete();
             }
 
@@ -1374,17 +1354,17 @@ class OutputController extends Controller
 
             Audit::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Eliminar total Salida',
+                'action' => 'Eliminar total Salida (ID: ' . $output->id . ')',
                 'time' => $end
             ]);
+
             DB::commit();
-        } catch ( \Throwable $e ) {
+            return response()->json(['message' => 'Eliminación total con éxito.'], 200);
+
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-
-        return response()->json(['message' => 'Eliminación total con éxito.'], 200);
-
     }
 
     public function returnItemOutputDetail(Request $request, $id_output, $id_item)
