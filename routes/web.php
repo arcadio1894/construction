@@ -2756,3 +2756,8 @@ Route::get('/api/sunat/v1', function () {
     return $response;
 
 });
+
+Route::get('/descargar-log', function () {
+    $path = storage_path('logs/laravel.log');
+    return response()->download($path);
+});
