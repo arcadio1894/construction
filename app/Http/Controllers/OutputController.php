@@ -970,6 +970,14 @@ class OutputController extends Controller
         $begin = microtime(true);
         $output = Output::find($request->get('output_id'));
 
+        if (!$output) {
+            return response()->json(['message' => 'Salida no encontrada.'], 422);
+        }
+
+        if ($output->state === 'attended') {
+            return response()->json(['message' => 'Esta salida ya fue atendida previamente.'], 422); // 409 Conflict
+        }
+
         DB::beginTransaction();
         try {
             // Obtener todos los detalles de salida
@@ -981,6 +989,11 @@ class OutputController extends Controller
 
             foreach ($outputDetails as $outputDetail) {
                 $item = Item::find($outputDetail->item_id);
+
+                if ($item->state_item === 'exited') {
+                    Log::warning("El item ID {$item->id} ya está en estado 'exited'. Se ignora.");
+                    continue; // evitar volver a restar o registrar
+                }
 
                 if (!$item) {
                     throw new \Exception("El item con ID {$outputDetail->item_id} no fue encontrado.");
@@ -1040,7 +1053,7 @@ class OutputController extends Controller
 
             Audit::create([
                 'user_id' => Auth::user()->id,
-                'action' => 'Atender Salidas',
+                'action' => 'Atender Salidas '.$output->id,
                 'time' => $end
             ]);
 
@@ -2945,7 +2958,7 @@ class OutputController extends Controller
 
     }
 
-    public function attendOutputSimple(Request $request)
+    public function attendOutputSimpleOriginal(Request $request)
     {
         $begin = microtime(true);
         //dd($request);
@@ -2996,6 +3009,80 @@ class OutputController extends Controller
 
         return response()->json(['message' => 'Solicitud de área atendida con éxito.'], 200);
 
+    }
+
+    public function attendOutputSimple(Request $request)
+    {
+        $begin = microtime(true);
+        $output = Output::find($request->get('output_id'));
+
+        if (!$output) {
+            return response()->json(['message' => 'Salida no encontrada.'], 404);
+        }
+
+        if ($output->state === 'attended') {
+            return response()->json(['message' => 'Esta salida ya fue atendida anteriormente.'], 409); // Conflict
+        }
+
+        DB::beginTransaction();
+        try {
+            $outputDetails = OutputDetail::where('output_id', $output->id)->get();
+            $materialReductions = [];
+
+            foreach ($outputDetails as $outputDetail) {
+                $item = Item::find($outputDetail->item_id);
+
+                // Ya está atendido este item
+                if ($item->state_item === 'exited') {
+                    continue;
+                }
+
+                // Actualizar item
+                $item->state_item = 'exited';
+                $item->type = $outputDetail->activo ? true : $item->type; // si es activo
+                $item->usage = $outputDetail->activo ? 'in_use' : $item->usage;
+                $item->save();
+
+                // Acumular reducción
+                if (!isset($materialReductions[$item->material_id])) {
+                    $materialReductions[$item->material_id] = 0;
+                }
+                $materialReductions[$item->material_id] += $item->percentage;
+            }
+
+            // Aplicar reducción de stock
+            foreach ($materialReductions as $materialId => $totalReduction) {
+                $material = Material::find($materialId);
+                if (!$material) {
+                    throw new \Exception("Material con ID {$materialId} no encontrado.");
+                }
+
+                if ($material->stock_current < $totalReduction) {
+                    throw new \Exception("El stock del material {$material->name} sería negativo.");
+                }
+
+                $material->stock_current -= $totalReduction;
+                $material->save();
+            }
+
+            $output->state = 'attended';
+            $output->save();
+
+            $end = microtime(true) - $begin;
+            Audit::create([
+                'user_id' => Auth::user()->id,
+                'action' => 'Atender salida simple',
+                'time' => $end
+            ]);
+
+            DB::commit();
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error("Error en attendOutputSimple: " . $e->getMessage());
+            return response()->json(['message' => $e->getMessage()], 422);
+        }
+
+        return response()->json(['message' => 'Solicitud de salida simple atendida con éxito.'], 200);
     }
 
     public function confirmOutputSimple(Request $request)
