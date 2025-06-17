@@ -57,8 +57,9 @@ class RegistrarTipoCambio extends Command
         $exists = TipoCambio::whereDate('fecha', $fecha)->exists();
 
         if ($exists) {
-            $this->info("Tipo de cambio ya registrado para la fecha $fecha.");
-            return;
+            $mensaje = "Tipo de cambio ya registrado para la fecha $fecha.";
+            $this->info($mensaje);
+            Log::channel('tipocambio')->info($mensaje);
         }
 
         try {
@@ -85,7 +86,10 @@ class RegistrarTipoCambio extends Command
                 'time' => 0
             ]);
 
-            $this->info("Tipo de cambio registrado para la fecha $fecha. " . $tipoCambioData->precioVenta);
+            $mensaje = "Tipo de cambio registrado para la fecha $fecha. " . $tipoCambioData->precioVenta;
+            $this->info($mensaje);
+            Log::channel('tipocambio')->info($mensaje);
+
         } catch (\Exception $e) {
             // fallback: usar último tipo de cambio conocido
             $ultimo = TipoCambio::orderBy('fecha', 'desc')->first();
