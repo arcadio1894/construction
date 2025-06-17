@@ -7,6 +7,7 @@ use App\TipoCambio;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class RegistrarTipoCambio extends Command
 {
@@ -18,7 +19,7 @@ class RegistrarTipoCambio extends Command
         parent::__construct();
     }
 
-    public function handle()
+    /*public function handle()
     {
         // Lógica para obtener el tipo de cambio
         // Aquí deberías llamar al método que ya tienes implementado para obtener el tipo de cambio
@@ -48,6 +49,71 @@ class RegistrarTipoCambio extends Command
         }
 
         $this->info("Tipo de cambio no registrado para la fecha $fecha. ");
+    }*/
+    public function handle()
+    {
+        $fecha = Carbon::now('America/Lima')->startOfDay();
+
+        $exists = TipoCambio::whereDate('fecha', $fecha)->exists();
+
+        if ($exists) {
+            $this->info("Tipo de cambio ya registrado para la fecha $fecha.");
+            return;
+        }
+
+        try {
+            $response = $this->obtenerTipoCambio();
+            $tipoCambioData = json_decode($response);
+
+            if (
+                json_last_error() !== JSON_ERROR_NONE ||
+                !is_object($tipoCambioData) ||
+                !isset($tipoCambioData->precioCompra, $tipoCambioData->precioVenta)
+            ) {
+                throw new \Exception("Respuesta inválida o incompleta de la API: $response");
+            }
+
+            TipoCambio::create([
+                'fecha' => $fecha,
+                'precioCompra' => $tipoCambioData->precioCompra,
+                'precioVenta' => $tipoCambioData->precioVenta,
+            ]);
+
+            Audit::create([
+                'user_id' => 1,
+                'action' => 'Guardar tipoCambio API: ' . $tipoCambioData->precioCompra . ' / ' . $tipoCambioData->precioVenta,
+                'time' => 0
+            ]);
+
+            $this->info("Tipo de cambio registrado para la fecha $fecha. " . $tipoCambioData->precioVenta);
+        } catch (\Exception $e) {
+            // fallback: usar último tipo de cambio conocido
+            $ultimo = TipoCambio::orderBy('fecha', 'desc')->first();
+
+            // Loguear la respuesta cruda si está disponible
+            Log::channel('tipocambio')->error('Respuesta API inválida o error: ' . $e->getMessage());
+            Log::channel('tipocambio')->debug('Respuesta cruda de API:', ['response' => $response ?? 'No se recibió respuesta']);
+
+            if ($ultimo) {
+                TipoCambio::create([
+                    'fecha' => $fecha,
+                    'precioCompra' => $ultimo->precioCompra,
+                    'precioVenta' => $ultimo->precioVenta,
+                ]);
+
+                Audit::create([
+                    'user_id' => 1,
+                    'action' => 'Guardar tipoCambio fallback: ' . $ultimo->precioCompra . ' / ' . $ultimo->precioVenta,
+                    'time' => 0
+                ]);
+
+                Log::error('Fallo al obtener tipo de cambio desde API. Se usó valor anterior. Error: ' . $e->getMessage());
+                $this->warn("API falló, se usó el último tipo de cambio registrado.");
+            } else {
+                Log::critical('Fallo al obtener tipo de cambio y no hay registros anteriores. Error: ' . $e->getMessage());
+                $this->error("No se pudo registrar ningún tipo de cambio. No hay datos previos.");
+            }
+        }
     }
 
     // Método simulado para obtener el tipo de cambio
