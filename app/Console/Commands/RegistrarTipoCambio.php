@@ -60,6 +60,7 @@ class RegistrarTipoCambio extends Command
             $mensaje = "Tipo de cambio ya registrado para la fecha $fecha.";
             $this->info($mensaje);
             Log::channel('tipocambio')->info($mensaje);
+            return;
         }
 
         try {
