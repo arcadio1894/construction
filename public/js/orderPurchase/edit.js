@@ -151,8 +151,25 @@ $(document).ready(function () {
 
 });
 
+function escapeRegex(string) {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 // Initializing the typeahead
 var substringMatcher = function(strs) {
+    return function findMatches(q, cb) {
+        var matches = [];
+        var safeQuery = escapeRegex(q); // escapamos caracteres especiales
+        var substrRegex = new RegExp(safeQuery, 'i');
+        $.each(strs, function(i, str) {
+            if (substrRegex.test(str)) {
+                matches.push(str);
+            }
+        });
+        cb(matches);
+    };
+};
+/*var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
         var matches, substringRegex;
 
@@ -172,7 +189,7 @@ var substringMatcher = function(strs) {
 
         cb(matches);
     };
-};
+};*/
 
 let $formCreate;
 let $modalCheck;
