@@ -143,5 +143,5 @@
 
         })
     </script>
-    <script src="{{ asset('js/orderPurchase/indexGeneral.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/indexGeneral.js') }}?v={{ time() }}"></script>
 @endsection

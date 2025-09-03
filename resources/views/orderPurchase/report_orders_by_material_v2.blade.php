@@ -309,6 +309,6 @@
 
         })
     </script>
-    <script src="{{ asset('js/orderPurchase/report_orders_by_material_v2.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/report_orders_by_material_v2.js') }}?v={{ time() }}"></script>
 
 @endsection

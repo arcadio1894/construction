@@ -115,5 +115,5 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('js/orderPurchase/index.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/index.js') }}?v={{ time() }}"></script>
 @endsection

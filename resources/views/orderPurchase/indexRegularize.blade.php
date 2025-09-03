@@ -88,5 +88,5 @@
 
 @section('scripts')
     <script src="{{ asset('admin/plugins/moment/moment.min.js') }}"></script>
-    <script src="{{ asset('js/orderPurchase/indexRegularize.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/indexRegularize.js') }}?v={{ time() }}"></script>
 @endsection

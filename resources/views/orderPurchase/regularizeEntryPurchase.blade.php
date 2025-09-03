@@ -413,5 +413,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/editRegularize.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/editRegularize.js') }}?v={{ time() }}"></script>
 @endsection

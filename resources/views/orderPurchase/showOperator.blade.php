@@ -357,5 +357,5 @@
         })
     </script>
 
-    <script src="{{ asset('js/orderPurchase/show.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/show.js') }}?v={{ time() }}"></script>
 @endsection

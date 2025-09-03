@@ -415,6 +415,6 @@
 
         })
     </script>
-    <script src="{{ asset('js/orderPurchase/expressV2.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/expressV2.js') }}?v={{ time() }}"></script>
 
 @endsection

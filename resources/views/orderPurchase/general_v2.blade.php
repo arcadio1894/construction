@@ -432,6 +432,6 @@
 
         })
     </script>
-    <script src="{{ asset('js/orderPurchase/generalV2.js') }}"></script>
+    <script src="{{ asset('js/orderPurchase/generalV2.js') }}?v={{ time() }}"></script>
 
 @endsection
