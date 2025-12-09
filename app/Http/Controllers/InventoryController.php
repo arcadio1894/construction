@@ -116,26 +116,45 @@ class InventoryController extends Controller
         DB::beginTransaction();
         try {
 
-            $inventories = $request->input('data');
+            $inventories = $request->input('data', []);
 
-            foreach ( $inventories as $inventory )
-            {
-                //$inventory['description']
-                $material = Material::find($inventory['material_id']);
-                if ( isset($material) )
-                {
-                    $material->inventory = (float)$inventory['quantity'];
-                    $material->save();
+            if (!is_array($inventories)) {
+                return response()->json(['message' => 'Formato de datos inválido.'], 422);
+            }
+
+            foreach ($inventories as $inventory) {
+                if (!isset($inventory['material_id'])) {
+                    continue; // o lanzar error si quieres obligar
                 }
+
+                $material = Material::find($inventory['material_id']);
+
+                if (!$material) {
+                    continue; // si prefieres, puedes registrar los IDs no encontrados
+                }
+
+                // quantity puede venir como null, número o excepcionalmente string
+                $quantity = $inventory['quantity'] ?? null;
+
+                if ($quantity === '' || $quantity === null) {
+                    // NO CONTADO → dejamos inventory en null
+                    $material->inventory = null;
+                } else {
+                    // valor real (incluye 0)
+                    $material->inventory = (float) $quantity;
+                }
+
+                $material->save();
             }
 
             DB::commit();
-        } catch ( \Throwable $e ) {
+
+            return response()->json(['message' => 'Datos guardados con éxito.'], 200);
+
+        } catch (\Throwable $e) {
             DB::rollBack();
             return response()->json(['message' => $e->getMessage()], 422);
         }
-        return response()->json(['message' => 'Datos guardados con éxito.'], 200);
-
     }
 
     public function exportListInventory()
@@ -166,7 +185,7 @@ class InventoryController extends Controller
         // Reseteo de los stocks fisicos
         Material::where('description', 'not like', '%EDESCE%')
             ->where('enable_status', 1)
-            ->update(['inventory' => 0]);
+            ->update(['inventory' => null]);
 
         return Excel::download(new InventoryMaterialsExport($materials_array, $title), 'reporte_inventario_materiales.xlsx');
     }

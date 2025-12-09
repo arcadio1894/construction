@@ -105,7 +105,7 @@
     @can('create_request')
         <a href="{{ route('output.request.create') }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nueva solicitud Regular</a>
     @endcan
-    @hasanyrole('admin|principal|cordinator_operations')
+    @hasanyrole('admin|principal|cordinator_operations|supervisor_operations')
     <button type="button" id="btn-export" class="btn btn-outline-primary btn-sm float-right mr-2" > <i class="far fa-file-excel"></i> Descargar Excel </button>
     @endhasanyrole
 @endsection

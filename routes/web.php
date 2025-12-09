@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\InventoryBalanceController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -2649,6 +2649,12 @@ Route::middleware('auth')->group(function (){
 
         // TODO: Rutas de verificacion
         Route::get('/materials/check-retazable/{id}', 'MaterialController@checkRetazable');
+
+        Route::post('/inventory-balance/run', [InventoryBalanceController::class, 'run'])
+            ->name('inventory.balance.run');
+
+        Route::get('/inventory-balance/{balance}/download', [InventoryBalanceController::class, 'download'])
+            ->name('inventory.balance.download');
     });
 });
 

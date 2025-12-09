@@ -3,6 +3,14 @@ $(document).ready(function () {
     //console.log($permissions);
     getDataInventory(1);
 
+    // Al cargar la página: deshabilitar cuadre automático
+    $('#btnInventoryBalance').prop('disabled', true);
+    inventoryEdited = false;
+
+    // Cualquier cambio en los inputs de inventario marca como editado
+    $(document).on('input change', '[data-inventory]', function () {
+        inventoryEdited = true;
+    });
 
     $(document).on('click', '[data-item]', showData);
     $("#btn-search").on('click', showDataSearch);
@@ -78,23 +86,99 @@ $(document).ready(function () {
     });
 
     $("#btn-submit-new").on('click', saveScrap);
+
+    $('#btnInventoryBalance').on('click', function (e) {
+        e.preventDefault();
+
+        $.confirm({
+            title: 'Confirmar cuadre automático',
+            content: '¿Estás seguro de realizar el cuadre de stocks automático? ' +
+                'Recuerde que debe guardar TODOS los stocks físicos.',
+            buttons: {
+                cancelar: function () {
+                    // no hacer nada
+                },
+                aceptar: function () {
+                    ejecutarCuadreAutomatico();
+                }
+            }
+        });
+    });
 });
 
 var $permissions;
 var $modalScraps;
+// Flag global
+var inventoryEdited = false;
+
+function ejecutarCuadreAutomatico() {
+    $('#inventory-balance-loader').show();
+
+    $.ajax({
+        url: '/dashboard/inventory-balance/run',
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+        },
+        success: function (res) {
+            $('#inventory-balance-loader').hide();
+
+            if (res.ok) {
+                // dispara la descarga del Excel
+                window.location.href = res.download_url;
+
+                // recarga la página después de unos segundos
+                setTimeout(function () {
+                    window.location.reload();
+                }, 3000); // ajusta si necesitas más/menos tiempo
+
+            } else {
+                alert(res.message || 'Ocurrió un problema al realizar el cuadre.');
+            }
+        },
+        error: function (xhr) {
+            $('#inventory-balance-loader').hide();
+
+            let msg = 'Error inesperado al realizar el cuadre.';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            alert(msg);
+        }
+    });
+}
 
 function saveScrap() {
     var id = $("#material_id").val();
-    var percentage = $("#percentage_new").val();
+
+    // porcentaje ingresado / calculado
+    var percentageStr = $("#percentage_new").val();
+    var percentage = parseFloat(percentageStr);
+    if (isNaN(percentage)) {
+        percentage = 0; // por seguridad
+    }
+
+    // input de inventario del material
     var $elemento = $('input[data-id="' + id + '"]');
 
-    var value = $elemento.val();
+    // valor actual del input (puede estar vacío)
+    var valueStr = $elemento.val();
+    var value = parseFloat(valueStr);
+    if (isNaN(value)) {
+        value = 0; // si está vacío, empezamos en 0
+    }
 
-    var new_total = (parseFloat(value) + parseFloat(percentage)).toFixed(2);
+    // nuevo total
+    var new_total = (value + percentage).toFixed(2);
 
+    // setear en el input (siempre será string numérica válida)
     $elemento.val(new_total);
 
-    $modalScraps.modal("hide");
+    // marcamos que hay cambios sin guardar
+    inventoryEdited = true;
+
+    // cerrar el modal
+    $("#modalScraps").modal("hide");
 }
 
 function addScraps() {
@@ -146,15 +230,30 @@ function addScraps() {
 }
 
 function saveDataInventory() {
-    $("#btn-save").attr("disabled", true);
+    // Deshabilitamos el botón mientras se guarda
+    $("#btn-save").prop("disabled", true);
 
     var arrayInventory = [];
-    $('[data-inventory]').each(function(){
+
+    // Recorremos todos los inputs que tengan data-inventory
+    $('[data-inventory]').each(function () {
         var input = $(this);
         var material_id = input.attr('data-id');
-        var quantity = input.val();
+        var quantity = $.trim(input.val());
 
-        arrayInventory.push({"material_id": material_id, "quantity": quantity});
+        // Si está vacío → null (NO contado)
+        if (quantity === '') {
+            quantity = null;
+        } else {
+            // Intentamos convertirlo a número
+            var num = parseFloat(quantity);
+            quantity = isNaN(num) ? null : num; // si es inválido → null
+        }
+
+        arrayInventory.push({
+            material_id: material_id,
+            quantity: quantity
+        });
     });
 
     //console.log(arrayInventory);
@@ -170,6 +269,11 @@ function saveDataInventory() {
 
             $.alert(data.message);
             $("#btn-save").attr("disabled", false);
+
+            // ✅ Ya está todo guardado
+            inventoryEdited = false;
+
+            $('#btnInventoryBalance').prop('disabled', false);
 
         },
         error: function (data) {
@@ -252,11 +356,28 @@ function showDataSearch() {
     getDataInventory(1)
 }
 
-function showData() {
-    //event.preventDefault();
+function showData(e) {
+    e.preventDefault();
+
     var numberPage = $(this).attr('data-item');
-    console.log(numberPage);
-    getDataInventory(numberPage)
+
+    // Si hay cambios sin guardar, NO cambiamos de página
+    if (inventoryEdited) {
+        $.confirm({
+            title: 'Cantidades sin guardar',
+            content: 'Hay cantidades sin guardar. Debe guardar antes de cambiar de página.',
+            buttons: {
+                aceptar: function () {
+                    // No hacemos nada, solo se cierra el popup
+                }
+            }
+        });
+
+        return; // bloqueamos el paginado
+    }
+
+    // Si todo está guardado, sí cambiamos de página
+    getDataInventory(numberPage);
 }
 
 function getDataInventory($numberPage) {

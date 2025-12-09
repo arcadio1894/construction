@@ -41,12 +41,22 @@
 @section('content')
     <input type="hidden" id="permissions" value="{{ json_encode($permissions) }}">
 
+    <div id="inventory-balance-loader"
+         style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.5); z-index:9999; text-align:center;">
+        <div style="position:relative; top:40%; background:#fff; padding:20px 30px;
+                border-radius:4px; display:inline-block;">
+            <strong>Procesando cuadre automático...</strong><br>
+            <span>Por favor, espere.</span>
+        </div>
+    </div>
+
     <!--begin::Form-->
     <form action="#">
         <!--begin::Card-->
         <!--begin::Input group-->
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
                 <!-- Barra de búsqueda -->
                 <div class="input-group">
                     <input type="text" id="full_name" class="form-control" placeholder="Nombre del material..." autocomplete="off">
@@ -62,6 +72,10 @@
             <div class="col-md-2">
                 <button class="btn btn-warning btn-block" type="button" id="btn-export"> <i class="far fa-file-excel"></i> Exportar Excel</button>
             </div>
+            <div class="col-md-2">
+                <button class="btn btn-primary btn-block" type="button" id="btnInventoryBalance"> <i class="fas fa-magic"></i> Cuadre automático</button>
+            </div>
+
         </div>
         <!--end::Input group-->
         <!--begin:Action-->
