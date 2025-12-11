@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\ContactName;
 use App\Customer;
 use App\Entry;
+use App\InventoryBalance;
 use App\Location;
 use App\Material;
 use App\Output;
@@ -60,6 +61,13 @@ class HomeController extends Controller
             $l = 'AR:'.$location->area->name.'|AL:'.$location->warehouse->name.'|AN:'.$location->shelf->name.'|NIV:'.$location->level->name.'|CON:'.$location->container->name.'|POS:'.$location->position->name;
             array_push($locations, ['id'=> $location->id, 'location' => $l]);
         }
+
+        // ✅ 5 últimos cuadres de inventario
+        $lastInventoryBalances = InventoryBalance::with('user')
+            ->orderBy('created_at', 'desc')
+            ->take(5)
+            ->get();
+
         return view('dashboard.dashboard',
             compact('customerCount',
                 'contactNameCount',
@@ -69,6 +77,7 @@ class HomeController extends Controller
                 'invoiceCount',
                 'outputCount',
                 'locations',
-                'almacenes'));
+                'almacenes',
+                'lastInventoryBalances'));
     }
 }

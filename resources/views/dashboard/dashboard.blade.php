@@ -324,6 +324,64 @@
                 <!-- /.card-footer -->
             </div>
         </div>
+
+        <div class="col-md-4">
+            <div class="card card-info">
+                <div class="card-header border-transparent">
+                    <h3 class="card-title">5 Últimos Cuadres de Inventario</h3>
+
+                    <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- /.card-header -->
+
+                <div class="card-body p-0">
+                    <div class="table-responsive">
+                        <table class="table m-0 table-sm">
+                            <thead>
+                            <tr>
+                                <th>Cuadre</th>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @forelse($lastInventoryBalances as $balance)
+                                <tr>
+                                    <!-- Número incremental 1, 2, 3... -->
+                                    <td>{{ $loop->iteration }}</td>
+
+                                    <!-- Fecha formateada -->
+                                    <td>{{ $balance->created_at->format('d/m/Y') }}</td>
+
+                                    <!-- Usuario -->
+                                    <td>{{ optional($balance->user)->name ?? '—' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="3" class="text-center">
+                                        No hay cuadres registrados.
+                                    </td>
+                                </tr>
+                            @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.table-responsive -->
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer clearfix">
+            <span class="text-muted">
+                Mostrando hasta 5 últimos cuadres de inventario.
+            </span>
+                </div>
+                <!-- /.card-footer -->
+            </div>
+        </div>
     </div>
     @endhasanyrole
     {{--<div class="row">
