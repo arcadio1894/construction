@@ -487,7 +487,7 @@ class InventoryBalanceController extends Controller
                 // Agregar fila al resumen (para el Excel)
                 $rows[] = [
                     'codigo'        => $material->code,
-                    'material'      => $material->description,
+                    'material'      => $material->full_name,
                     'stock_sistema' => $material->stock_current,
                     'stock_fisico'  => $material->inventory,
                     'ubicaciones'   => $locations,
@@ -506,9 +506,21 @@ class InventoryBalanceController extends Controller
             $fileName = 'cuadre_inventario_'.$balance->id.'.xlsx';
             $filePath = 'inventory_balances/'.$fileName;
 
-            Excel::store(new InventoryBalanceExport($rows), $filePath, 'public');
+            $fechaTitulo = now()->format('d/m/Y \A \L\A\S H:i');
+
+            $title = 'CUADRE AUTOMÁTICO DE INVENTARIO - '.$fechaTitulo.' horas';
+
+            Excel::store(
+                new InventoryBalanceExport($rows, $title),
+                $filePath,
+                'public'
+            );
 
             $balance->update(['excel_path' => $filePath]);
+
+            Material::where('description', 'not like', '%EDESCE%')
+                ->where('enable_status', 1)
+                ->update(['inventory' => null]);
 
             DB::commit();
 
