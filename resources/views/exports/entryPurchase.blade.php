@@ -239,7 +239,6 @@
 
 </header>
 
-<br><br>
 
 <main>
 
@@ -278,7 +277,7 @@
         @endforeach
         </tbody>
     </table>
-    <br><br><br><br>
+    <br><br>
     <table id="sumary">
         <tbody>
         <tr>
