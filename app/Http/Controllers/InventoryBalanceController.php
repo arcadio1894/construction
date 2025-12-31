@@ -449,7 +449,7 @@ class InventoryBalanceController extends Controller
                     }
 
                     foreach ($itemsToOutput as $item) {
-                        $item->state_item = 'reserved'; // o el estado que corresponda
+                        $item->state_item = 'exited'; // o el estado que corresponda
                         $item->save();
 
                         OutputDetail::create([
