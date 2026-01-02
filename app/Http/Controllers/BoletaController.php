@@ -52,11 +52,14 @@ class BoletaController extends Controller
         $user = Auth::user();
         $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
 
-        $registros = PaySlip::orderBy('year', 'desc');
+        //$registros = PaySlip::orderBy('year', 'desc');
+        $arrayYears = DateDimension::distinct()->get(['year']);
+        //$arrayYears = $registros->pluck('year')->unique()->toArray();
 
-        $arrayYears = $registros->pluck('year')->unique()->toArray();
+        /*dump($arrayYears);
+        dd();*/
 
-        $arrayYears = array_values($arrayYears);
+        //$arrayYears = array_values($arrayYears);
 
         $date = Carbon::now('America/Lima');
         $currentYear = $date->year;

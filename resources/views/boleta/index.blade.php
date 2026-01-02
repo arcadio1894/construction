@@ -94,9 +94,12 @@
                             <div class="col-sm-12">
                                 <select id="year" class="form-control form-control-sm select2" style="width: 100%;">
                                     <option value="">TODOS</option>
-                                    @for ($i=0; $i<count($arrayYears); $i++)
+                                    {{--@for ($i=0; $i<count($arrayYears); $i++)
                                         <option value="{{ $arrayYears[$i] }}" {{ ($arrayYears[$i] == $currentYear) ? 'selected': '' }}>{{ $arrayYears[$i] }}</option>
-                                    @endfor
+                                    @endfor--}}
+                                    @foreach( $arrayYears as $year )
+                                        <option value="{{ $year->year }}" {{ ($year->year == $currentYear) ? 'selected': '' }}>{{ $year->year}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -142,9 +145,12 @@
                             <div class="col-sm-12">
                                 <select id="yearG" class="form-control form-control-sm select2" style="width: 100%;">
                                     <option value="">TODOS</option>
-                                    @for ($i=0; $i<count($arrayYears); $i++)
+                                    {{--@for ($i=0; $i<count($arrayYears); $i++)
                                         <option value="{{ $arrayYears[$i] }}" {{ ($arrayYears[$i] == $currentYear) ? 'selected': '' }}>{{ $arrayYears[$i] }}</option>
-                                    @endfor
+                                    @endfor--}}
+                                    @foreach( $arrayYears as $year )
+                                        <option value="{{ $year->year }}" {{ ($year->year == $currentYear) ? 'selected': '' }}>{{ $year->year}}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
