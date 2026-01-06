@@ -156,7 +156,7 @@ class BoletaController extends Controller
 
         DB::beginTransaction();
         try {
-            $dateFirst = DateDimension::where('year', $year)
+            /*$dateFirst = DateDimension::where('year', $year)
                 ->where('month', $month)
                 ->where('week', $week)
                 ->where('day_of_week', 1)
@@ -182,7 +182,28 @@ class BoletaController extends Controller
             $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
             $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
 
-            $periodo = $start .' al '.$end;
+            $periodo = $start .' al '.$end;*/
+            // Lunes de la semana ISO indicada
+            $start = Carbon::now('America/Lima')->setISODate($year, $week)->startOfDay();
+            // Domingo de esa misma semana
+            $end   = $start->copy()->addDays(6)->endOfDay();
+
+            // Si quieres validar que el week "aparezca" en el mes elegido (opcional):
+            // (Esto NO cambia el rango, solo evita combinaciones raras en UI)
+            /*
+            $weekTouchesMonth = $start->month === $month || $end->month === $month;
+            if (!$weekTouchesMonth) {
+                return response()->json(['message' => 'La semana no pertenece a ese mes.'], 422);
+            }
+            */
+
+            $periodo = $start->format('d/m/Y') . ' al ' . $end->format('d/m/Y');
+
+            // Si necesitas lista de fechas (7 días)
+            $dates = [];
+            for ($i=0; $i<7; $i++) {
+                $dates[] = $start->copy()->addDays($i)->toDateString(); // YYYY-MM-DD
+            }
 
             $semana = $week;
 
@@ -822,7 +843,7 @@ class BoletaController extends Controller
                 ->where('week', $week)
                 ->where('day_of_week', 1) // 1 representa el lunes
                 ->first();*/
-            $dateFirst = DateDimension::where('year', $year)
+            /*$dateFirst = DateDimension::where('year', $year)
                 ->where('month', $month)
                 ->where('week', $week)
                 ->where('day_of_week', 1)
@@ -837,7 +858,9 @@ class BoletaController extends Controller
                     ->where('day_of_week', 1)
                     ->orderBy('date', 'asc')
                     ->first();
-            }
+            }*/
+
+
 
             //dump($dateFirst);
             /*$dateLast = DateDimension::where('year', $year)
@@ -853,19 +876,40 @@ class BoletaController extends Controller
             ->where('week', $week)
             ->where('day_of_week', 7) // 7 representa el domingo
             ->first();*/
-            $dateLast = DateDimension::where('date', '>=', $dateFirst->date)
+            /*$dateLast = DateDimension::where('date', '>=', $dateFirst->date)
                 ->orderBy('date', 'asc')
                 ->limit(1)
                 ->offset(6) // Avanzamos 6 días para obtener el final de la semana
-                ->first();
+                ->first();*/
 
             //dump($dateLast);
             //dd();
 
-            $start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
+            /*$start = (($dateFirst->day<10) ? '0'.$dateFirst->day:$dateFirst->day).'/'.(($dateFirst->month<10) ? '0'.$dateFirst->month:$dateFirst->month).'/'.$dateFirst->year;
             $end = (($dateLast->day<10) ? '0'.$dateLast->day:$dateLast->day).'/'.(($dateLast->month<10) ? '0'.$dateLast->month:$dateLast->month).'/'.$dateLast->year;
 
-            $periodo = $start .' al '.$end;
+            $periodo = $start .' al '.$end;*/
+            // Lunes de la semana ISO indicada
+            $start = Carbon::now('America/Lima')->setISODate($year, $week)->startOfDay();
+            // Domingo de esa misma semana
+            $end   = $start->copy()->addDays(6)->endOfDay();
+
+            // Si quieres validar que el week "aparezca" en el mes elegido (opcional):
+            // (Esto NO cambia el rango, solo evita combinaciones raras en UI)
+            /*
+            $weekTouchesMonth = $start->month === $month || $end->month === $month;
+            if (!$weekTouchesMonth) {
+                return response()->json(['message' => 'La semana no pertenece a ese mes.'], 422);
+            }
+            */
+
+            $periodo = $start->format('d/m/Y') . ' al ' . $end->format('d/m/Y');
+
+            // Si necesitas lista de fechas (7 días)
+            $dates = [];
+            for ($i=0; $i<7; $i++) {
+                $dates[] = $start->copy()->addDays($i)->format('d/m/Y'); // DD/MM/YYYY
+            }
 
             $semana = $week;
         }
@@ -1148,8 +1192,10 @@ class BoletaController extends Controller
 
     public function getBonusByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1179,8 +1225,10 @@ class BoletaController extends Controller
 
     public function getDiscountByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1210,8 +1258,10 @@ class BoletaController extends Controller
 
     public function getSuspensionsWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1227,8 +1277,10 @@ class BoletaController extends Controller
 
     public function getLoanByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1260,8 +1312,10 @@ class BoletaController extends Controller
 
     public function getRentaQuintaByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1282,8 +1336,10 @@ class BoletaController extends Controller
 
     public function getGratificationByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1305,8 +1361,10 @@ class BoletaController extends Controller
 
     public function getRefundByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1336,8 +1394,10 @@ class BoletaController extends Controller
 
     public function getVacationByWorker($worker_id, $start, $end)
     {
-        $date_start = Carbon::createFromFormat('d/m/Y', $start);
-        $end_start = Carbon::createFromFormat('d/m/Y', $end);
+        /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+        $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+        $date_start = $start;
+        $end_start  = $end;
 
         $worker = Worker::find($worker_id);
 
@@ -1387,8 +1447,10 @@ class BoletaController extends Controller
         $arrayByWeek = [];
         if ( $start != '' || $end != '' )
         {
-            $date_start = Carbon::createFromFormat('d/m/Y', $start);
-            $end_start = Carbon::createFromFormat('d/m/Y', $end);
+            /*$date_start = Carbon::createFromFormat('d/m/Y', $start);
+            $end_start = Carbon::createFromFormat('d/m/Y', $end);*/
+            $date_start = $start;
+            $end_start  = $end;
 
             $worker = Worker::find($worker_id);
             $dateCurrent = Carbon::now();
@@ -1405,7 +1467,6 @@ class BoletaController extends Controller
                 ->orderBy('date', 'ASC')
                 ->get();
 
-            //dump($dates);
 
             foreach ( $dates as $date )
             {
