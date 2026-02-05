@@ -265,16 +265,29 @@ class InvoiceController extends Controller
     public function getJsonInvoices()
     {
         $begin = microtime(true);
-        $dateCurrent = Carbon::now('America/Lima');
-        $date4MonthAgo = $dateCurrent->subMonths(10);
-        $entries = Entry::with('supplier')->with('category_invoice')
-            /*->with(['details' => function ($query) {
-                $query->with('material');
-            }])*/
-            ->where('date_entry', '>=', $date4MonthAgo)
+
+        // 🔒 RANGO TEMPORAL FIJO (SOLO PARA PRUEBAS)
+        $dateFrom = Carbon::create(2022, 3, 1, 0, 0, 0, 'America/Lima');   // 01-03-2022
+        $dateTo   = Carbon::create(2022, 12, 31, 23, 59, 59, 'America/Lima'); // 31-12-2022
+
+        /*$dateCurrent = Carbon::now('America/Lima');
+        $dateFrom = $dateCurrent->copy()->subMonths(10);
+        $dateTo = $dateCurrent;*/
+
+        $entries = Entry::with('supplier')
+            ->with('category_invoice')
+            ->whereBetween('date_entry', [$dateFrom, $dateTo])
             ->where('entry_type', 'Por compra')
             ->orderBy('created_at', 'desc')
             ->get();
+        /*$dateCurrent = Carbon::now('America/Lima');
+        $date4MonthAgo = $dateCurrent->subMonths(10);
+        $entries = Entry::with('supplier')->with('category_invoice')
+            ->where('date_entry', '>=', $date4MonthAgo)
+            ->where('entry_type', 'Por compra')
+            ->orderBy('created_at', 'desc')
+            ->get();*/
+
         $orderServices = OrderService::with('supplier')
             /*->with(['details'])*/
             ->where('regularize', 'r')
