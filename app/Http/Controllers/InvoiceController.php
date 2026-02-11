@@ -267,12 +267,12 @@ class InvoiceController extends Controller
         $begin = microtime(true);
 
         // 🔒 RANGO TEMPORAL FIJO (SOLO PARA PRUEBAS)
-        $dateFrom = Carbon::create(2022, 3, 1, 0, 0, 0, 'America/Lima');   // 01-03-2022
-        $dateTo   = Carbon::create(2022, 12, 31, 23, 59, 59, 'America/Lima'); // 31-12-2022
+        /*$dateFrom = Carbon::create(2022, 3, 1, 0, 0, 0, 'America/Lima');   // 01-03-2022
+        $dateTo   = Carbon::create(2022, 12, 31, 23, 59, 59, 'America/Lima'); // 31-12-2022*/
 
-        /*$dateCurrent = Carbon::now('America/Lima');
+        $dateCurrent = Carbon::now('America/Lima');
         $dateFrom = $dateCurrent->copy()->subMonths(10);
-        $dateTo = $dateCurrent;*/
+        $dateTo = $dateCurrent;
 
         $entries = Entry::with('supplier')
             ->with('category_invoice')
