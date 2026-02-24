@@ -2452,6 +2452,12 @@ class QuoteController extends Controller
 
         $pdf = PDF::loadHTML($view);
 
+        // TODO: Esto muestra el pie de pagina
+        /*$pdf = PDF::loadView('exports.quoteCustomer2', compact('quote','images'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);*/
+
         $description = str_replace(array('"', "'", "/"),'',$quote->description_quote);
 
         $name = $quote->code . ' '. ltrim(rtrim($description)) . '.pdf';
