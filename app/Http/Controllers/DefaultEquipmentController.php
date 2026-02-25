@@ -91,6 +91,228 @@ class DefaultEquipmentController extends Controller
         return view('defaultEquipment.create', compact('permissions', 'category', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
     }
 
+    public function createSubEquipmentO($category_id)
+    {
+        $begin = microtime(true);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $category = CategoryEquipment::find($category_id);
+
+        $defaultConsumable = '(*)';
+        $defaultElectric = '(e)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
+
+        $unitMeasures = UnitMeasure::all();
+
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
+
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+        //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure,
+                'typescrap_id' => $material->typescrap_id,
+                'enable_status' => $material->enable_status,
+                'update_price' => $material->state_update_price
+            ]);
+        }
+
+        $categoryMap = [
+            'materials'       => ['label' => 'MATERIALES',            'model' => 'DefaultEquipmentMaterial',   'color' => 'btn-info'],
+            'consumibles'     => ['label' => 'CONSUMIBLES',           'model' => 'DefaultEquipmentConsumable', 'color' => 'btn-warning'],
+            'electrics'       => ['label' => 'MATERIALES ELÉCTRICOS', 'model' => 'DefaultEquipmentElectric',   'color' => 'bg-indigo'],
+            'servicios_varios'=> ['label' => 'SERVICIOS VARIOS',      'model' => 'DefaultEquipmentWorkForce',  'color' => 'btn-secondary'],
+            'dias_trabajo'    => ['label' => 'DÍAS DE TRABAJO',       'model' => 'DefaultEquipmentWorkDay',    'color' => 'bg-orange'],
+        ];
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear equipo por defecto VISTA',
+            'time' => $end
+        ]);
+
+        return view('defaultEquipment.createSubEquipment', compact('categoryMap','permissions', 'category', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
+    }
+
+    public function createSubEquipment($category_id)
+    {
+        $begin = microtime(true);
+
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $category = CategoryEquipment::findOrFail($category_id);
+
+        $unitMeasures = UnitMeasure::select('id','name')->get(); // liviano
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent    = PorcentageQuote::where('name', 'rent')->first();
+        $letter  = PorcentageQuote::where('name', 'letter')->first();
+
+        $categoryMap = [
+            'materials'       => ['label' => 'MATERIALES',            'model' => 'DefaultEquipmentMaterial',   'color' => 'btn-info'],
+            'consumibles'     => ['label' => 'CONSUMIBLES',           'model' => 'DefaultEquipmentConsumable', 'color' => 'btn-warning'],
+            'electrics'       => ['label' => 'MATERIALES ELÉCTRICOS', 'model' => 'DefaultEquipmentElectric',   'color' => 'bg-indigo'],
+            'servicios_varios'=> ['label' => 'SERVICIOS VARIOS',      'model' => 'DefaultEquipmentWorkForce',  'color' => 'btn-secondary'],
+            'dias_trabajo'    => ['label' => 'DÍAS DE TRABAJO',       'model' => 'DefaultEquipmentWorkDay',    'color' => 'bg-orange'],
+        ];
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => $user->id,
+            'action'  => 'Crear equipo por defecto VISTA',
+            'time'    => $end
+        ]);
+
+        return view('defaultEquipment.createSubEquipment', compact(
+            'categoryMap','permissions','category','unitMeasures','utility','rent','letter'
+        ));
+    }
+
+    public function searchMaterials(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $materials = Material::query()
+            ->select(
+                'id',
+                'full_name',
+                'unit_price',
+                'code',
+                'typescrap_id',
+                'enable_status',
+                'stock_current',
+                'unit_measure_id',
+                'state_update_price'
+            )
+            ->with([
+                'unitMeasure:id,name',
+                'typeScrap:id,length,width' // Asegúrate que la relación se llame typeScrap
+            ])
+            ->where('full_name', 'like', "%{$q}%")
+            ->orderBy('full_name')
+            ->limit(12)
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id'            => $m->id,
+                    'full_name'     => $m->full_name,
+                    'unit_price'    => $m->unit_price,
+                    'code'          => $m->code,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'update_price'  => $m->state_update_price,
+
+                    // ✅ para que tu render no cambie:
+                    'unit_measure'  => $m->unitMeasure ? ['name' => $m->unitMeasure->name] : ['name' => ''],
+                    'unit'          => optional($m->unitMeasure)->name, // por si lo usas en el texto del select2
+
+                    // ✅ para tu lógica del modal:
+                    'type_scrap'    => $m->typeScrap ? [
+                        'id'     => (int) $m->typescrap_id,
+                        'length' => $m->typeScrap->length,
+                        'width'  => $m->typeScrap->width,
+                    ] : null,
+                ];
+            });
+
+        return response()->json($materials);
+    }
+
+    public function selectConsumables(Request $request)
+    {
+        $q = trim($request->get('q',''));
+        $page = (int) $request->get('page', 1);
+        $perPage = 20;
+
+        $defaultConsumable = '(*)';
+
+        $query = Material::query()
+            ->select('id','full_name','unit_price','stock_current','enable_status','state_update_price','unit_measure_id')
+            ->with(['unitMeasure:id,name']);
+
+        if ($q !== '') {
+            $query->where('full_name', 'like', "%{$q}%");
+        }
+
+        $p = $query->orderBy('full_name')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $p->getCollection()->map(function($m){
+                return [
+                    'id' => $m->id,
+                    'text' => $m->full_name . (optional($m->unitMeasure)->name ? ' (' . $m->unitMeasure->name . ')' : ''),
+                    'full_name' => $m->full_name,
+                    'unit_price' => $m->unit_price,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'state_update_price' => $m->state_update_price,
+                    'unit' => optional($m->unitMeasure)->name,
+                    'unit_measure' => $m->unitMeasure, // ✅ para que tu render lo use
+                ];
+            })->values(),
+            'more' => $p->hasMorePages()
+        ]);
+    }
+
+    public function selectElectrics(Request $request)
+    {
+        $q = trim($request->get('q',''));
+        $page = (int) $request->get('page', 1);
+        $perPage = 20;
+
+        $query = Material::query()
+            ->select('id','full_name','unit_price','stock_current','enable_status','state_update_price','unit_measure_id')
+            ->with(['unitMeasure:id,name']);
+
+        if ($q !== '') {
+            $query->where('full_name', 'like', "%{$q}%");
+        }
+
+        $p = $query->orderBy('full_name')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $p->getCollection()->map(function($m){
+                return [
+                    'id' => $m->id,
+                    'text' => $m->full_name . (optional($m->unitMeasure)->name ? ' (' . $m->unitMeasure->name . ')' : ''),
+                    'full_name' => $m->full_name,
+                    'unit_price' => $m->unit_price,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'state_update_price' => $m->state_update_price,
+                    'unit' => optional($m->unitMeasure)->name,
+                    'unit_measure' => $m->unitMeasure,
+                ];
+            })->values(),
+            'more' => $p->hasMorePages()
+        ]);
+    }
+
     public function store(StoreDefaultEquipmentRequest $request)
     {
         $begin = microtime(true);

@@ -10,6 +10,39 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', deleteDefaultEquipment);
 
+    $(document).on('click', '.btn-create-equipment', function () {
+
+        let equipoCompletoUrl = $(this).data('url');
+        let subEquipoUrl = $(this).data('suburl');
+
+        $.confirm({
+            title: '¿Qué desea crear?',
+            content: 'Seleccione una opción:',
+            type: 'blue',
+            buttons: {
+                equipoCompleto: {
+                    text: 'Equipo Completo',
+                    btnClass: 'btn-success',
+                    action: function () {
+                        window.location.href = equipoCompletoUrl;
+                    }
+                },
+                subEquipo: {
+                    text: 'Subequipo',
+                    btnClass: 'btn-warning',
+                    action: function () {
+                        window.location.href = subEquipoUrl;
+                    }
+                },
+                cancelar: {
+                    text: 'Cancelar',
+                    btnClass: 'btn-danger'
+                }
+            }
+        });
+
+    });
+
 });
 
 function deleteDefaultEquipment() {
