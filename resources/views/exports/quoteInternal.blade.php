@@ -193,7 +193,7 @@
             <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
             {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 959 332 205</div>
+            <div>Teléfono: +51 998 396 337</div>
             <div>Email: servicios@sermeind.com.pe</div>
             <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
         </div>
@@ -501,7 +501,7 @@
                 <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
                 {{--<div>La Esperanza, Trujillo, Perú</div>--}}
                 <div>Sitio Web: www.sermeind.com.pe</div>
-                <div>Teléfono: +51 959 332 205</div>
+                <div>Teléfono: +51 998 396 337</div>
                 <div>Email: servicios@sermeind.com.pe</div>
                 <div>Cotizado por: {{ ($quote->users[0] == null) ? "": $quote->users[0]->user->name }}</div>
             </div>
@@ -556,7 +556,7 @@
 
 @endif
 <footer>
-    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 959 332 205
+    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 998 396 337
 </footer>
 </body>
 </html>

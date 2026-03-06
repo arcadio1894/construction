@@ -175,7 +175,8 @@
             <div>Predio el Horcón - Sector el Horcón U.C 02972- F-Moche</div>
             {{--<div>La Esperanza, Trujillo, Perú</div>--}}
             <div>Sitio Web: www.sermeind.com.pe</div>
-            <div>Teléfono: +51 959 332 205</div>
+            <div>Teléfono: +51 998 396 337</div>
+            <div>Correo: logistica@sermeind.com.pe</div>
         </div>
     </div>
 
@@ -210,8 +211,8 @@
         <div><span>RAZON SOCIAL</span>: SERMEIND FABRICACIONES INDUSTRIALES S.A.C</div>
         <div><span>RUC</span>: 20540001384</div>
         <div><span>DOMICILIO</span>: Predio el Horcón - Sector el Horcón U.C 02972- F-Moche <br> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; - TRUJILLO</div>
-        <div><span>TELÉFONO</span>: (+51) 959 332 205</div>
-        <div><span>CORREO</span>: KPAREDES@SERMEIND.COM</div>
+        <div><span>TELÉFONO</span>: (+51) 998 396 337</div>
+        <div><span>CORREO</span>: logistica@sermeind.com.pe</div>
 
     </div>
     <br><br><br><br><br><br><br><br>
@@ -367,7 +368,7 @@
     @endforeach
 </div>--}}
 <footer>
-    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 959 332 205
+    Predio el Horcón - Sector el Horcón U.C 02972- F-Moche  |  +51 998 396 337
 </footer>
 </body>
 </html>
