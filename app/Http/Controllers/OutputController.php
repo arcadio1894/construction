@@ -345,6 +345,12 @@ class OutputController extends Controller
                 }
 
             }
+
+            foreach ( $equipment->electrics as $electric )
+            {
+                array_push($materials_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+
+            }
             foreach ( $equipment->consumables as $consumable )
             {
                 $subcategory = Subcategory::find($consumable->material->subcategory_id);
@@ -378,6 +384,9 @@ class OutputController extends Controller
         $consumables = [];
         $consumables_quantity = [];
 
+        $electricos = [];
+        $electricos_quantity = [];
+
         foreach ( $quote->equipments as $equipment )
         {
             foreach ( $equipment->consumables as $consumable )
@@ -399,6 +408,12 @@ class OutputController extends Controller
 
             }
 
+            foreach ( $equipment->electrics as $electric )
+            {
+                array_push($electricos_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+
+            }
+
         }
 
         $new_arr2 = array();
@@ -412,6 +427,19 @@ class OutputController extends Controller
         }
 
         $consumables = array_values($new_arr2);
+
+        $electric_new_arr2 = array();
+        foreach($electricos_quantity as $item) {
+            if(isset($electric_new_arr2[$item['material_id']])) {
+                $electric_new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $electric_new_arr2[$item['material_id']] = $item;
+        }
+
+        $electricos = array_values($electric_new_arr2);
+
         $users = User::all();
 
         $end = microtime(true) - $begin;
@@ -422,7 +450,7 @@ class OutputController extends Controller
             'time' => $end
         ]);
 
-        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'materials', 'quote', 'items', 'turnstiles'));
+        return view('output.create_output_request_order', compact('users','permissions', 'consumables', 'electricos','materials', 'quote', 'items', 'turnstiles'));
     }
 
     public function createOutputRequestOrderExtra($id_quote)
@@ -533,6 +561,9 @@ class OutputController extends Controller
         $consumables = [];
         $consumables_quantity = [];
 
+        $electricos = [];
+        $electricos_quantity = [];
+
         foreach ( $quote->equipments as $equipment )
         {
             foreach ( $equipment->consumables as $consumable )
@@ -554,6 +585,12 @@ class OutputController extends Controller
 
             }
 
+            foreach ( $equipment->electrics as $electric )
+            {
+                array_push($electricos_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+
+            }
+
         }
 
         $new_arr2 = array();
@@ -568,6 +605,18 @@ class OutputController extends Controller
 
         $consumables = array_values($new_arr2);
 
+        $electric_new_arr2 = array();
+        foreach($electricos_quantity as $item) {
+            if(isset($electric_new_arr2[$item['material_id']])) {
+                $electric_new_arr2[ $item['material_id']]['quantity'] += (float)$item['quantity'];
+                continue;
+            }
+
+            $electric_new_arr2[$item['material_id']] = $item;
+        }
+
+        $electricos = array_values($electric_new_arr2);
+
         $items = [];
 
         $users = User::all();
@@ -580,7 +629,7 @@ class OutputController extends Controller
             'time' => $end
         ]);
 
-        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'consumables', 'quote', 'items', 'turnstiles'));
+        return view('output.create_output_request_order_extra', compact('users','permissions', 'materials', 'electricos','consumables', 'quote', 'items', 'turnstiles'));
     }
 
     public function getOutputRequest()

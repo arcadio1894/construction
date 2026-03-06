@@ -204,10 +204,6 @@
                                 <label for="description">Descripción de equipo <span class="right badge badge-danger">(*)</span></label>
                                 <textarea name="" data-descriptionequipment onkeyup="mayus(this);" cols="30" class="form-control" placeholder="Ingrese detalles ...."></textarea>
                             </div>
-                            {{--<div class="col-md-12">
-                                <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
-                                <textarea name=""  onkeyup="mayus(this);" cols="30" class="form-control" style="word-break: break-all;" placeholder="Ingrese detalles ...."></textarea>
-                            </div>--}}
                             <div class="col-md-12">
                                 <label for="description">Detalles de equipo <span class="right badge badge-danger">(*)</span></label>
                                 <textarea class="textarea_edit" data-detailequipment placeholder="Place some text here"
@@ -228,18 +224,33 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="materials"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="materials">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
                                             <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                             <input type="text" id="material_search" class="form-control rounded-0 typeahead materialTypeahead">
 
-                                            {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
-                                            <select class="form-control material_search" style="width:100%" name="material_search"></select>
-                                        --}}
                                         </div>
                                     </div>
-                                    {{--<div class="col-md-2">
-                                        <label for="btn-add"> &nbsp; </label>
-                                        <button type="button" data-add class="btn btn-block btn-outline-primary">Agregar <i class="fas fa-arrow-circle-right"></i></button>
-                                    </div>--}}
+
                                 </div>
                                 <hr>
                                 <div class="row">
@@ -297,25 +308,7 @@
                                 <div data-bodyMaterials>
 
                                 </div>
-                                {{--<div class="row">
-                                    <table class="table table-head-fixed text-nowrap">
-                                        <thead>
-                                        <tr>
-                                            <th>Codigo</th>
-                                            <th>Material</th>
-                                            <th>Unidad</th>
-                                            <th>Cantidad</th>
-                                            <th>Precio</th>
-                                            <th>Importe</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody data-bodyMaterials>
 
-                                        </tbody>
-
-                                    </table>
-                                </div>--}}
                             </div>
                         </div>
 
@@ -329,6 +322,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="consumibles"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="consumibles">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
@@ -464,6 +478,27 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="electrics"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="electrics">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
@@ -597,6 +632,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="servicios_varios"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="servicios_varios">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -808,6 +864,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="dias_trabajo"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="dias_trabajo">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -1133,101 +1210,6 @@
                 <!-- /.card -->
             </div>
         </div>
-
-
-
-        {{--<div class="row" >
-            <div class="col-md-12">
-                <div class="card card-success">
-                    <div class="card-header">
-                        <h3 class="card-title">IMAGENES DE PLANOS</h3>
-
-                        <div class="card-tools">
-                            <a id="addImage" class="btn btn-primary btn-sm" data-toggle="tooltip" title="Agregar imagen">
-                                <i class="far fa-images"></i> Agregar Imagen
-                            </a>
-                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
-                                <i class="fas fa-minus"></i></button>
-                        </div>
-                    </div>
-                    <div class="card-body" >
-                        <div class="row" id="body-images">
-                            --}}{{--<div class="col-md-4">
-                                <div class="card card-outline card-success">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Imagen Seleccionada</h3>
-
-                                        <div class="card-tools">
-                                            <button type="button" data-imagedelete class="btn btn-sm btn-outline-danger" ><i class="fas fa-trash"></i></i>
-                                            </button>
-                                        </div>
-                                        <!-- /.card-tools -->
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                            <textarea class="form-control" name="descplanos[]" rows="2" placeholder="Enter ..."></textarea>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
-                                                </div>
-                                            </div>
-                                            <img height="100px" width="100%" />
-
-                                        </div>
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                                <!-- /.card -->
-                            </div>--}}{{--
-                        </div>
-
-                        <template id="template-image">
-                            <div class="col-md-4">
-                                <div class="card card-outline card-success">
-                                    <div class="card-header">
-                                        <h3 class="card-title">Imagen Seleccionada</h3>
-
-                                        <div class="card-tools">
-                                            <button type="button" data-imagedelete class="btn btn-sm btn-outline-danger" ><i class="fas fa-trash"></i></i>
-                                            </button>
-                                        </div>
-                                        <!-- /.card-tools -->
-                                    </div>
-                                    <!-- /.card-header -->
-                                    <div class="card-body">
-                                        <div class="form-group">
-                                            <label for="description">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                            <textarea class="form-control" name="descplanos[]" rows="2" placeholder="Enter ..."></textarea>
-
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="description">Imagen <span class="right badge badge-danger">(*)</span></label>
-                                            <div class="input-group">
-                                                <div class="custom-file">
-                                                    <input type="file" name="planos[]" accept="image/*" class="form-control" onchange="previewFile(this)">
-                                                </div>
-                                            </div>
-                                            <img height="100px" width="100%" />
-
-                                        </div>
-                                    </div>
-                                    <!-- /.card-body -->
-                                </div>
-                                <!-- /.card -->
-                            </div>
-                        </template>
-                    </div>
-                    <!-- /.card-body -->
-                </div>
-                <!-- /.card -->
-            </div>
-        </div>--}}
 
         @can('showPrices_quote')
         <div class="row">
@@ -1628,6 +1610,27 @@
                                 <div class="row">
                                     <div class="col-md-10">
                                         <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="materials"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="materials">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
                                             <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                             <input type="text" class="form-control rounded-0 typeahead materialTypeahead">
 
@@ -1710,6 +1713,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="consumibles"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="consumibles">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
@@ -1844,6 +1868,27 @@
                             </div>
                             <div class="card-body">
                                 <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="electrics"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="electrics">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="col-md-8">
                                         <div class="form-group">
                                             <label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
@@ -1976,6 +2021,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="servicios_varios"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="servicios_varios">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -2187,6 +2253,27 @@
                                 </div>
                             </div>
                             <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-10">
+                                        <div class="form-group">
+                                            <label>Plantilla / Equipo guardado</label>
+                                            <select class="form-control select2 default-equipment-select"
+                                                    data-default-equipment
+                                                    data-keyword="dias_trabajo"
+                                                    style="width:100%">
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label>&nbsp;</label>
+                                        <button type="button" class="btn btn-block btn-outline-primary"
+                                                data-load-default-equipment
+                                                data-keyword="dias_trabajo">
+                                            Cargar
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group">
@@ -2657,6 +2744,11 @@
     <script src="{{asset('admin/plugins/typehead/typeahead.bundle.js')}}"></script>
     <script src="{{asset('admin/plugins/summernote/summernote-bs4.min.js')}}"></script>
     <script src="{{asset('admin/plugins/summernote/lang/summernote-es-ES.js')}}"></script>
+
+    <script>
+        window.routeDefaultEquipmentOptions = "{{ route('defaultEquipment.options.byKeyword') }}";
+    </script>
+
     <script>
         $(function () {
 

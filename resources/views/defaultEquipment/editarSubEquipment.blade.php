@@ -167,6 +167,7 @@
 
                             <input type="hidden" name="keyword" id="keyword" value="materials">
                             <input type="hidden" id="category_equipment_id" class="form-control" value="{{ $category->id}}">
+                            <input type="hidden" id="default_equipment_id" class="form-control" value="{{ $equipment->id}}">
 
                         </div>
 
@@ -187,9 +188,6 @@
                                             <div class="form-group">
                                                 <label for="material_search">Buscar material <span class="right badge badge-danger">(*)</span></label>
                                                 <select id="material_search" class="form-control material_search" style="width:100%"></select>
-                                                {{--<label>Seleccionar material <span class="right badge badge-danger">(*)</span></label>
-                                                <select class="form-control material_search" style="width:100%" name="material_search"></select>
-                                            --}}
                                             </div>
                                         </div>
 
@@ -434,7 +432,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label for="material_search">Descripción <span class="right badge badge-danger">(*)</span></label>
-                                                <input type="text" id="material_search" onkeyup="mayus(this);" class="form-control">
+                                                <input type="text" onkeyup="mayus(this);" class="form-control">
 
                                             </div>
                                         </div>
@@ -1378,13 +1376,20 @@
     <script src="{{asset('admin/plugins/summernote/lang/summernote-es-ES.js')}}"></script>
 
     <script>
+        window.isEditMode = {{ isset($equipment) ? 'true' : 'false' }};
+        window.initialKeyword = @json(isset($keyword) ? $keyword : 'materials');
+        window.initialEquipment = @json(isset($equipment) ? $equipment : null);
+
         window.routeSelectConsumables = "{{ route('subequipo.materials.select.consumables') }}";
         window.routeSelectElectrics   = "{{ route('subequipo.materials.select.electrics') }}";
         window.routeSearchMaterials   = "{{ route('subequipo.materials.search') }}";
         window.routeStoreDefaultEquipment = "{{ route('defaultEquipment.subequipment.store') }}";
+
+        // si tendrás update:
+        window.routeUpdateDefaultEquipment = "{{ route('defaultEquipment.subequipment.update', $equipment->id ?? 0) }}";
     </script>
 
-    <script src="{{ asset('js/defaultEquipment/createSubEquipment.js') }}"></script>
+    <script src="{{ asset('js/defaultEquipment/editarSubEquipment.js') }}"></script>
 
     <script>
         $(function () {

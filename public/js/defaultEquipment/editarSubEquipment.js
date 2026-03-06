@@ -279,259 +279,6 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
 
-    //$("input[id='"+this.id+"']")   $('.materialTypeahead')
-    /*$(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
-        var select_material = $(this);
-        console.log($(this).val());
-        // TODO: Tomar el texto no el val()
-        var material_search = select_material.val();
-
-        $material = $materials.find(mat =>
-            mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase() &&
-            mat.enable_status === 1
-        );
-
-        if( $material === undefined )
-        {
-            toastr.error('Debe seleccionar un material', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        if ( $material.type_scrap === null )
-        {
-            $('#presentation').hide();
-            $('#length_material').hide();
-            $('#width_material').hide();
-            $('#width_entered_material').hide();
-            $('#length_entered_material').hide();
-            $('#material_quantity').val($material.stock_current);
-            $('#quantity_entered_material').show();
-            $('#material_price').val($material.unit_price);
-
-            // TODO: Render esta fallando
-            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
-            $modalAddMaterial.modal('show');
-        } else {
-            switch($material.type_scrap.id) {
-                case 1:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#length_material').show();
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#material_quantity').val($material.stock_current);
-                    $('#quantity_entered_material').hide();
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 2:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#length_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 3:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 4:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 5:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 6:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#length_material').show();
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#material_quantity').val($material.stock_current);
-                    $('#quantity_entered_material').hide();
-                    $('#material_price').val($material.unit_price);
-                    break;
-                default:
-                    $('#length_material').hide();
-                    $('#width_material').hide();
-                    $('#width_entered_material').hide();
-                    $('#length_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_percentage_entered').hide();
-                    $('#material_price').val($material.unit_price);
-
-            }
-            //var idMaterial = $(this).select2('data').id;
-            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
-            $modalAddMaterial.modal('show');
-        }
-    });*/
-
-    /*$(document).on('input', '[data-materialLargo]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-materialAncho]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-materialQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-manoQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-consumableQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-electricQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-manoPrice]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-description]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-nameequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-largeequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-widthequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-highequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-cantidad]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-horas]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-precio]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-tornoQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-tornoPrice]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-quantityequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-descriptionequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-detailequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on("summernote.change", ".textarea_edit",function (e) {   // callback as jquery custom event
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });*/
-
     $selectCustomer = $('#customer_id');
     $selectContact = $('#contact_id');
 
@@ -569,6 +316,19 @@ $(document).ready(function () {
     $(document).on('click', '[data-saveDefaultEquipment]', function () {
         saveDefaultEquipmentSection();
     });
+
+    $(function () {
+        if (window.isEditMode && window.initialEquipment) {
+            // activar sección correcta y bloquear las otras
+            activateKeywordSection(window.initialKeyword, true);
+
+            // llenar nombre del equipo
+            $('[data-nameequipment]').val(window.initialEquipment.description || '');
+
+            // cargar filas según keyword
+            hydrateSection(window.initialKeyword, window.initialEquipment);
+        }
+    });
 });
 
 var $formCreate;
@@ -577,6 +337,175 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+
+function hydrateSection(keyword, equipment) {
+    // limpiar bodies
+    /*$('[data-bodyMaterials]').empty();
+    $('[data-bodyConsumable]').empty();
+    $('[data-bodyElectric]').empty();
+    $('[data-bodyMano]').empty();
+    $('[data-bodyTorno]').empty();
+    $('[data-bodyDia]').empty();*/
+
+    switch (keyword) {
+        case 'materials':
+            hydrateMaterials(equipment.materials || []);
+            break;
+        case 'consumibles':
+            hydrateConsumables(equipment.consumables || []);
+            break;
+        case 'electrics':
+            hydrateElectrics(equipment.electrics || []);
+            break;
+        case 'servicios_varios':
+            hydrateWorkforces(equipment.workforces || []);
+            hydrateTurnstiles(equipment.turnstiles || []);
+            break;
+        case 'dias_trabajo':
+            hydrateWorkdays(equipment.workdays || []);
+            break;
+    }
+}
+
+function setVal($el, value) { $el.val(value ?? ''); }
+
+function hydrateMaterials(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#materials-selected');
+        const $row = $(row);
+
+        // it: DefaultEquipmentMaterial (con material)
+        setVal($row.find('[data-materialDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-materialId]'), it.material_id);
+
+        setVal($row.find('[data-materialUnit]'), it.material?.unit || '');
+
+        setVal($row.find('[data-materialLargo]'), it.length ?? 0);
+        setVal($row.find('[data-materialAncho]'), it.width ?? 0);
+        setVal($row.find('[data-materialQuantity]'), it.quantity ?? 0);
+
+        // precios (si guardas unit_price/total_price en tabla)
+        setVal($row.find('[data-materialPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-materialTotal]'), it.total_price ?? 0);
+
+        // si manejas los “sin igv” como Price2/Total2, aquí setea si los tienes
+        // setVal($row.find('[data-materialPrice2]'), it.unit_price/1.18);
+        // setVal($row.find('[data-materialTotal2]'), it.total_price/1.18);
+
+        $('[data-bodyMaterials]').append($row);
+    });
+
+    if (window.isEditMode) lockKeywordChange();
+}
+
+function hydrateConsumables(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#template-consumable');
+        const $row = $(row);
+
+        setVal($row.find('[data-consumableDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-consumableId]'), it.material_id);
+        setVal($row.find('[data-consumableUnit]'), it.material?.unit || '');
+
+        setVal($row.find('[data-consumableQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-consumablePrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-consumableTotal]'), it.total_price ?? 0);
+
+        $('[data-bodyConsumable]').append($row);
+    });
+}
+
+function hydrateElectrics(items) {
+    console.log(items);
+    items.forEach(it => {
+        const row = activateTemplate('#template-electric');
+        const $row = $(row);
+
+        setVal($row.find('[data-electricDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-electricId]'), it.material_id);
+        setVal($row.find('[data-electricUnit]'), it.material?.unit_measure.description || '');
+
+        setVal($row.find('[data-electricQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-electricPrice]'), it.price ?? 0);
+        setVal($row.find('[data-electricTotal]'), it.total ?? 0);
+
+        $('[data-bodyElectric]').append($row);
+    });
+}
+
+function hydrateWorkforces(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#template-mano');
+        const $row = $(row);
+
+        setVal($row.find('[data-manoDescription]'), it.description || '');
+        setVal($row.find('[data-manoUnit]'), it.unit || '');
+        setVal($row.find('[data-manoQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-manoPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-manoTotal]'), it.total_price ?? 0);
+
+        $('[data-bodyMano]').append($row);
+    });
+}
+
+function hydrateTurnstiles(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#template-torno');
+        const $row = $(row);
+
+        setVal($row.find('[data-tornoDescription]'), it.description || '');
+        setVal($row.find('[data-tornoQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-tornoPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-tornoTotal]'), it.total_price ?? 0);
+
+        $('[data-bodyTorno]').append($row);
+    });
+}
+
+function hydrateWorkdays(items) {
+    // ojo: en tu tabla se llama quantityPerson/hoursPerPerson/pricePerHour
+    items.forEach(it => {
+        const row = activateTemplate('#template-dia');
+        const $row = $(row);
+
+        setVal($row.find('[data-description]'), it.description || '');
+        setVal($row.find('[data-cantidad]'), it.quantityPerson ?? 0);
+        setVal($row.find('[data-horas]'), it.hoursPerPerson ?? 0);
+        setVal($row.find('[data-precio]'), it.pricePerHour ?? 0);
+        setVal($row.find('[data-total]'), it.total_price ?? 0);
+
+        $('[data-bodyDia]').append($row);
+    });
+}
+
+function lockKeywordChange() {
+    $('#keyword-selector').css('pointer-events', 'none');
+    $('#keyword-selector .btn-keyword.is-active').css('pointer-events', 'auto'); // solo el activo “sin efecto”
+}
+
+function activateKeywordSection(keyword, lockOthers = false) {
+    // set hidden
+    $('#keyword').val(keyword);
+
+    // ocultar/mostrar secciones
+    $('.keyword-section').addClass('d-none');
+    $('.keyword-section[data-keyword="' + keyword + '"]').removeClass('d-none');
+
+    // botones visual
+    $('.btn-keyword').removeClass('is-active is-inactive');
+    const $activeBtn = $('.btn-keyword[data-keyword="' + keyword + '"]');
+    $activeBtn.addClass('is-active').find('i.fas').removeClass('d-none');
+
+    $('.btn-keyword').not($activeBtn).addClass('is-inactive').find('i.fas').addClass('d-none');
+
+    if (lockOthers) {
+        // bloquear botones y secciones no activas
+        $('.btn-keyword').not($activeBtn).prop('disabled', true).css('pointer-events', 'none');
+        $('.keyword-section').not('[data-keyword="' + keyword + '"]')
+            .find('input, select, textarea, button')
+            .prop('disabled', true);
+    }
+}
 
 function num(v) {
     const n = parseFloat(String(v ?? '').replace(',', '.'));
@@ -738,10 +667,12 @@ function collectWorkdays() {
 
 function buildPayloadByKeyword(keyword) {
     var category_equipment_id = $('#category_equipment_id').val();
+    const default_equipment_id = $('#default_equipment_id').val();
     const payload = {
         keyword: keyword,
         description: getEquipmentName(),
-        category_equipment_id: category_equipment_id
+        category_equipment_id: category_equipment_id,
+        default_equipment_id: default_equipment_id
     };
 
     switch (keyword) {

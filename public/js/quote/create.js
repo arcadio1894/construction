@@ -11,6 +11,7 @@ let $subtotal=0;
 let $subtotal2=0;
 let $subtotal3=0;
 var $permissions;
+let DEFAULT_EQUIPMENTS = null; // cache { grouped: {...}, flat: [...] }
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
@@ -175,17 +176,34 @@ $(document).ready(function () {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
-            processResults(data) {
-                //console.log(data);
+            /*processResults(data) {
+                console.log(data);
                 return {
                     results: $.map(data, function (item) {
-                        //console.log(item.full_description);
+                        console.log(item);
                         return {
-                            text: item.full_description,
+                            text: item.full_name,
                             id: item.id,
                         }
                     })
                 }
+            }*/
+            delay: 250,
+            data: function (params) {
+                return { q: params.term, page: params.page || 1 };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
+                return {
+                    results: (data.results || []).map(function (item) {
+                        return {
+                            id: item.id,
+                            text: item.full_name,
+                            raw: item // ✅ guardas todo
+                        };
+                    }),
+                    pagination: { more: data.more }
+                };
             }
         }
     });
@@ -196,17 +214,22 @@ $(document).ready(function () {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
-            processResults(data) {
-                //console.log(data);
+            delay: 250,
+            data: function (params) {
+                return { q: params.term, page: params.page || 1 };
+            },
+            processResults: function (data, params) {
+                params.page = params.page || 1;
                 return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
+                    results: (data.results || []).map(function (item) {
                         return {
-                            text: item.full_description,
                             id: item.id,
-                        }
-                    })
-                }
+                            text: item.full_name,
+                            raw: item // ✅ guardas todo
+                        };
+                    }),
+                    pagination: { more: data.more }
+                };
             }
         }
     });
@@ -523,6 +546,189 @@ $(document).ready(function () {
     $('#addImage').on('click', addImage);
     $(document).on('click', '[data-imagedelete]', imageDelete);
 
+    fetchDefaultEquipmentsOptions().then(() => {
+        initDefaultEquipmentSelects($(document)); // por si hay algún select fuera del template
+    });
+
+    $(document).on('click', '[data-load-default-equipment]', function () {
+        const $btn = $(this);
+        const keyword = $btn.data('keyword'); // materials / consumibles / electrics / servicios_varios / dias_trabajo
+
+        // el select está en el mismo bloque (row) arriba
+        const $equipCard = $btn.closest('[data-equip]');
+        const $select = $equipCard.find('select[data-default-equipment][data-keyword="' + keyword + '"]');
+
+        const defaultEquipmentId = $select.val();
+        if (!defaultEquipmentId) {
+            toastr.warning('Seleccione una plantilla / equipo guardado.');
+            return;
+        }
+
+        // resolver body
+        const bodyTarget = resolveBodyContainer($btn, keyword);
+        if (!bodyTarget) {
+            toastr.error('No se encontró el contenedor para renderizar: ' + keyword);
+            return;
+        }
+
+        // limpiar body(s)
+        if (keyword === 'servicios_varios') {
+            //bodyTarget.mano.empty();
+            //bodyTarget.torno.empty();
+        } else {
+            //bodyTarget.empty();
+        }
+
+        // request
+        $.ajax({
+            url: buildDefaultEquipmentItemsUrl(defaultEquipmentId, keyword),
+            method: 'GET',
+            dataType: 'json',
+            beforeSend: function () {
+                $btn.prop('disabled', true);
+            }
+        }).done(function (res) {
+            if (!res || !res.keyword) {
+                toastr.error('Respuesta inválida del servidor.');
+                return;
+            }
+
+            // ✅ RENDER SEGÚN KEYWORD
+            switch (res.keyword) {
+
+                case 'materials': {
+                    const $render = bodyTarget; // [data-bodyMaterials]
+                    (res.items || []).forEach(function (it) {
+                        const materialObj = normalizeMaterialForRender(it.material, it.material_id);
+                        const desc = it.material?.full_name || it.material?.description || materialObj.full_name;
+                        const unit = it.material?.unit_measure?.description
+                            || it.material?.unitMeasure?.description
+                            || materialObj.unit_measure?.description
+                            || '';
+
+                        renderTemplateMaterial(
+                            it.material_id,                 // code
+                            desc,                          // description
+                            it.quantity || 0,              // quantity
+                            unit,                          // unit
+                            it.unit_price || 0,            // price
+                            it.total_price || 0,           // total
+                            $render,                       // render container
+                            it.length || 0,                // length
+                            it.width || 0,                 // width
+                            materialObj                    // material (obj completo)
+                        );
+                    });
+                    break;
+                }
+
+                /*case 'consumibles': {
+                    const $render = bodyTarget; // [data-bodyConsumable]
+                    (res.items || []).forEach(function (it) {
+                        const consumable = normalizeConsumableForRender(it);
+                        renderTemplateConsumable($render, consumable, it.quantity || 0);
+                    });
+                    break;
+                }*/
+                case 'consumibles': {
+                    const $render = bodyTarget;
+
+                    (res.items || []).forEach(function (it) {
+                        const merged = upsertConsumableInBody($render, it);
+                        if (merged) return;
+
+                        const consumable = normalizeConsumableForRender(it);
+                        renderTemplateConsumable($render, consumable, it.quantity || 0);
+                    });
+
+                    break;
+                }
+
+                /*case 'electrics': {
+                    const $render = bodyTarget; // [data-bodyElectric]
+                    (res.items || []).forEach(function (it) {
+                        const electric = normalizeElectricForRender(it);
+                        // tu controller para electrics devuelve { quantity, price, total } pero tu render usa unit_price
+                        // si tu tabla tiene "price" como unitario, lo mapeamos:
+                        electric.unit_price = (it.price != null) ? it.price : electric.unit_price;
+
+                        renderTemplateElectric($render, electric, it.quantity || 0);
+                    });
+                    break;
+                }*/
+                case 'electrics': {
+                    const $render = bodyTarget;
+
+                    (res.items || []).forEach(function (it) {
+                        const merged = upsertElectricInBody($render, it);
+                        if (merged) return;
+
+                        const electric = normalizeElectricForRender(it);
+                        electric.unit_price = (it.price != null) ? it.price : electric.unit_price;
+                        renderTemplateElectric($render, electric, it.quantity || 0);
+                    });
+
+                    break;
+                }
+
+                case 'dias_trabajo': {
+                    const $render = bodyTarget; // [data-bodyDia]
+                    (res.items || []).forEach(function (it) {
+                        renderTemplateDia(
+                            $render,
+                            it.description || '',
+                            it.pricePerHour || 0,
+                            it.hoursPerPerson || 0,
+                            it.quantityPerson || 0,
+                            it.total_price || 0
+                        );
+                    });
+                    break;
+                }
+
+                case 'servicios_varios': {
+                    const $mano = bodyTarget.mano;   // [data-bodyMano]
+                    const $torno = bodyTarget.torno; // [data-bodyTorno]
+
+                    const workforces = res.items?.workforces || [];
+                    const turnstiles = res.items?.turnstiles || [];
+
+                    workforces.forEach(function (w) {
+                        renderTemplateMano(
+                            $mano,
+                            w.description || '',
+                            w.unit || '',
+                            w.quantity || 0,
+                            w.unit_price || 0
+                        );
+                    });
+
+                    turnstiles.forEach(function (t) {
+                        renderTemplateTorno(
+                            $torno,
+                            t.description || '',
+                            t.quantity || 0,
+                            t.unit_price || 0
+                        );
+                    });
+
+                    break;
+                }
+
+                default:
+                    toastr.error('Keyword no soportado: ' + res.keyword);
+            }
+
+            toastr.success('Plantilla cargada: ' + keyword);
+
+        }).fail(function (xhr) {
+            const msg = (xhr.responseJSON && (xhr.responseJSON.message || xhr.responseJSON.error)) ? (xhr.responseJSON.message || xhr.responseJSON.error) : 'Error al cargar plantilla.';
+            toastr.error(msg);
+        }).always(function () {
+            $btn.prop('disabled', false);
+        });
+    });
+
 });
 
 var $formCreate;
@@ -531,6 +737,149 @@ var $material;
 var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
+
+function toNumber(val) {
+    const n = parseFloat(val);
+    return isNaN(n) ? 0 : n;
+}
+
+function setVal($el, v) {
+    $el.val(v);
+    $el.trigger('input'); // por si tienes listeners
+    $el.trigger('change');
+}
+
+function findElectricRow($body, electricId) {
+    const $id = $body.find(`[data-electricId="${electricId}"]`).first();
+    if (!$id.length) return null;
+    return $id.closest('.row');
+}
+
+function upsertElectricInBody($body, it) {
+    const electricId = it.material_id; // mismo razonamiento
+    const $row = findElectricRow($body, electricId);
+    if (!$row) return false;
+
+    const $qty = $row.find('[data-electricQuantity]').first();
+    const currentQty = toNumber($qty.val());
+    const addQty = toNumber(it.quantity);
+    const newQty = currentQty + addQty;
+
+    setVal($qty, newQty);
+
+    const $price = $row.find('[data-electricPrice]').first();
+    const $total = $row.find('[data-electricTotal]').first();
+    const $total2 = $row.find('[data-electricTotal2]').first();
+
+    const price = toNumber($price.val());
+    const total = newQty * price;
+
+    if ($total.length)  $total.val(total.toFixed(2));
+    if ($total2.length) $total2.val((total / 1.18).toFixed(2));
+
+    return true;
+}
+
+function findConsumableRow($body, consumableId) {
+    const $id = $body.find(`[data-consumableId="${consumableId}"]`).first();
+    if (!$id.length) return null;
+    return $id.closest('.row');
+}
+
+function upsertConsumableInBody($body, it) {
+    const consumableId = it.material_id; // ojo: tu backend manda material_id; en render se usa consumable.id
+    // En normalizeConsumableForRender(it) tú seteas consumable.id = material_id, así que calza.
+
+    const $row = findConsumableRow($body, consumableId);
+    if (!$row) return false;
+
+    const $qty = $row.find('[data-consumableQuantity]').first();
+    const currentQty = toNumber($qty.val());
+    const addQty = toNumber(it.quantity);
+    const newQty = currentQty + addQty;
+
+    setVal($qty, newQty);
+
+    const $price = $row.find('[data-consumablePrice]').first();
+    const $price2 = $row.find('[data-consumablePrice2]').first();
+    const $total = $row.find('[data-consumableTotal]').first();
+    const $total2 = $row.find('[data-consumableTotal2]').first();
+
+    const price = toNumber($price.val());
+    const total = newQty * price;
+
+    if ($total.length)  $total.val(total.toFixed(2));
+    if ($total2.length) $total2.val((total / 1.18).toFixed(2));
+
+    return true;
+}
+
+function applyDefaultEquipmentToCard($card, keyword, items) {
+    if (keyword === 'materials') {
+        hydrateMaterials(items, $card);
+        return;
+    }
+
+    if (keyword === 'consumibles') {
+        hydrateConsumables(items, $card);
+        return;
+    }
+
+    if (keyword === 'electrics') {
+        hydrateElectrics(items, $card);
+        return;
+    }
+
+    if (keyword === 'dias_trabajo') {
+        hydrateWorkdays(items, $card);
+        return;
+    }
+
+    if (keyword === 'servicios_varios') {
+        hydrateWorkforces(items.workforces || [], $card);
+        hydrateTurnstiles(items.turnstiles || [], $card); // si lo pintas en otro body, lo separamos
+        return;
+    }
+}
+
+function fetchDefaultEquipmentsOptions() {
+    return $.ajax({
+        url:  window.routeDefaultEquipmentOptions, // ajusta tu ruta real
+        method: 'GET',
+        dataType: 'json'
+    }).then(res => {
+        DEFAULT_EQUIPMENTS = res;
+        return res;
+    });
+}
+
+function initDefaultEquipmentSelects($scope) {
+    if (!DEFAULT_EQUIPMENTS || !DEFAULT_EQUIPMENTS.grouped) return;
+
+    $scope.find('select[data-default-equipment]').each(function () {
+        const $sel = $(this);
+        const keyword = $sel.data('keyword');
+
+        // Evitar re-inicializar select2 si ya existe
+        if ($sel.hasClass('select2-hidden-accessible')) return;
+
+        $sel.select2({
+            placeholder: 'Selecciona un equipo guardado',
+            allowClear: true,
+            width: '100%'
+        });
+
+        // Llenar opciones por keyword
+        const options = (DEFAULT_EQUIPMENTS.grouped[keyword] || []);
+        $sel.empty().append(new Option('', '', true, false)); // placeholder vacío
+
+        options.forEach(opt => {
+            $sel.append(new Option(opt.description, opt.id, false, false));
+        });
+
+        $sel.trigger('change.select2');
+    });
+}
 
 function imageDelete() {
     console.log('click');
@@ -2237,7 +2586,6 @@ function updateTableTotalsEquipment(button, data) {
     totalDiasElement.css('text-align', 'right');
 }
 
-
 function mayus(e) {
     e.value = e.value.toUpperCase();
 }
@@ -2385,126 +2733,47 @@ function calculateTotalPrice(e) {
 }
 
 function addEquipment() {
+    const $equip = renderTemplateEquipment();
 
-    //var result = document.querySelectorAll('[data-equip]');
-    //console.log(result);
-    /*for (var index in result){
-        if (result.hasOwnProperty(index)){
-            if(result[index].getAttribute('style')!==null){
-                //console.log(result[index].getAttribute('style'));
-                $equipmentStatus=true;
-            }
-        }
-    }*/
-    //var equipmentStat = confirmEquipment.css('display') === 'none';
-    //console.log(confirmEquipment);
-    /*if ( !$equipmentStatus )
-    {
-        toastr.error('Confirme el equipo antes de agregar otro.', 'Error',
-            {
-                "closeButton": true,
-                "debug": false,
-                "newestOnTop": false,
-                "progressBar": true,
-                "positionClass": "toast-top-right",
-                "preventDuplicates": false,
-                "onclick": null,
-                "showDuration": "300",
-                "hideDuration": "1000",
-                "timeOut": "2000",
-                "extendedTimeOut": "1000",
-                "showEasing": "swing",
-                "hideEasing": "linear",
-                "showMethod": "fadeIn",
-                "hideMethod": "fadeOut"
-            });
-        return;
-    }*/
+    // Typeahead SOLO en ese equipo
+    const $ta = $equip.find('.materialTypeahead');
+    $ta.typeahead('destroy');
+    $ta.typeahead(
+        { hint: true, highlight: true, minLength: 1 },
+        { limit: 12, source: substringMatcher($materialsTypeahead) }
+    );
 
-    renderTemplateEquipment();
-    $('.materialTypeahead').typeahead('destroy');
-
-    $('.materialTypeahead').typeahead({
-            hint: true,
-            highlight: true, /* Enable substring highlighting */
-            minLength: 1 /* Specify minimum characters required for showing suggestions */
-        },
-        {
-            limit: 12,
-            source: substringMatcher($materialsTypeahead)
-        });
-
-    /*$('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            type: 'GET',
-            processResults(data) {
-                //console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
-            }
-        }
-    });
-*/
-    /*for (var i=0; i<$materials.length; i++)
-    {
-        var newOption = new Option($materials[i].full_description, $materials[i].id, false, false);
-        $('.material_search').append(newOption).trigger('change');
-    }*/
-
-    $('.consumable_search').select2({
+    // Select2 SOLO en ese equipo
+    $equip.find('.consumable_search').select2({
         placeholder: 'Selecciona un consumible',
         ajax: {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
             processResults(data) {
-                //console.log(data);
                 return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
+                    results: $.map(data, item => ({ text: item.full_description, id: item.id }))
+                };
             }
         }
     });
-    //$equipmentStatus = false;
 
-    $('.electric_search').select2({
+    $equip.find('.electric_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
             processResults(data) {
-                //console.log(data);
                 return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
+                    results: $.map(data, item => ({ text: item.full_description, id: item.id }))
+                };
             }
         }
     });
 
-    $('.textarea_edit').summernote({
+    // Summernote SOLO en ese equipo
+    $equip.find('.textarea_edit').summernote({
         lang: 'es-ES',
         placeholder: 'Ingrese los detalles',
         tabsize: 2,
@@ -2517,6 +2786,17 @@ function addEquipment() {
             ['view', ['codeview', 'help']]
         ]
     });
+}
+
+function bodySelectorByKeyword(keyword) {
+    switch (keyword) {
+        case 'materials': return '[data-bodyMaterials]';
+        case 'consumibles': return '[data-bodyConsumable]';
+        case 'electrics': return '[data-bodyElectric]';
+        case 'servicios_varios': return '[data-bodyMano]';      // workforces
+        case 'dias_trabajo': return '[data-bodyDia]';
+        default: return null;
+    }
 }
 
 function deleteItem() {
@@ -3474,6 +3754,91 @@ function calculateTotalMaterialAncho(e) {
 
 }
 
+// ✅ Helper: arma URL (si estás usando Ziggy, puedes reemplazar por route())
+function buildDefaultEquipmentItemsUrl(id, keyword) {
+    return `/dashboard/default-equipments/${id}/items?keyword=${encodeURIComponent(keyword)}`;
+}
+
+// ✅ Helper: busca el contenedor correcto dentro del card del equipo
+function resolveBodyContainer($btn, keyword) {
+    // Subimos al template del equipo (card con data-equip)
+    const $equipCard = $btn.closest('[data-equip]');
+    if (!$equipCard.length) return null;
+
+    switch (keyword) {
+        case 'materials':
+            return $equipCard.find('[data-bodyMaterials]');
+        case 'consumibles':
+            return $equipCard.find('[data-bodyConsumable]');
+        case 'electrics':
+            return $equipCard.find('[data-bodyElectric]');
+        case 'dias_trabajo':
+            return $equipCard.find('[data-bodyDia]');
+        case 'servicios_varios':
+            // este keyword tiene 2 bodies
+            return {
+                mano: $equipCard.find('[data-bodyMano]'),
+                torno: $equipCard.find('[data-bodyTorno]')
+            };
+        default:
+            return null;
+    }
+}
+
+// ✅ Normaliza “material” para que tus renders no revienten por campos faltantes
+function normalizeMaterialForRender(rawMaterial, fallbackId) {
+    // rawMaterial puede venir como item.material (controller) o venir null
+    const m = rawMaterial || {};
+    const unitMeasure = m.unit_measure || m.unitMeasure || m.unit_measure_id || null;
+
+    return {
+        // campos que tu renderTemplateMaterial usa
+        id: m.id || fallbackId,
+        full_name: m.full_name || m.fullName || m.description || '',
+        description: m.description || m.full_name || '',
+        unit_measure: unitMeasure && unitMeasure.description
+            ? unitMeasure
+            : (m.unitMeasure ? { description: m.unitMeasure.description } : { description: '' }),
+
+        // defaults para no romper lógica de colores
+        enable_status: (m.enable_status != null) ? m.enable_status : 1,
+        stock_current: (m.stock_current != null) ? m.stock_current : 999999,
+        update_price: (m.update_price != null) ? m.update_price : 0,
+        state_update_price: (m.state_update_price != null) ? m.state_update_price : 0,
+
+        // scrap
+        type_scrap: m.type_scrap || m.typeScrap || null
+    };
+}
+
+function normalizeConsumableForRender(item) {
+    // tu renderTemplateConsumable espera:
+    // { id, full_description, unit_measure:{description}, unit_price, enable_status, stock_current, state_update_price }
+    const m = normalizeMaterialForRender(item.material, item.material_id);
+
+    return {
+        id: m.id,
+        full_description: item.material?.full_name || item.material?.description || item.material?.full_description || m.full_name,
+        unit_measure: m.unit_measure || { description: '' },
+
+        unit_price: (item.unit_price != null) ? item.unit_price : (item.material?.unit_price || 0),
+
+        enable_status: m.enable_status,
+        stock_current: m.stock_current,
+        state_update_price: (m.state_update_price != null) ? m.state_update_price : 0
+    };
+}
+
+function normalizeElectricForRender(item) {
+    // tu renderTemplateElectric espera lo mismo que consumable pero con electric.*
+    const e = normalizeConsumableForRender(item);
+    // por compatibilidad con tu render (usa electric.unit_price)
+    return {
+        ...e,
+        full_description: e.full_description
+    };
+}
+
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {
     var card = render.parent().parent().parent().parent();
     card.removeClass('card-success');
@@ -3849,13 +4214,20 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
 }
 
 function renderTemplateEquipment() {
-    var clone = activateTemplate('#template-equipment');
+    const frag = activateTemplate('#template-equipment');
 
-    $('#body-equipment').append(clone);
+    // lo insertamos
+    $('#body-equipment').append(frag);
 
-    $('.unitMeasure').select2({
-        placeholder: "Seleccione unidad",
-    });
+    // obtenemos el ÚLTIMO equipo agregado (elemento real del DOM)
+    const $equip = $('#body-equipment').children().last();
+
+    // init solo dentro de ese equipo
+    $equip.find('.unitMeasure').select2({ placeholder: "Seleccione unidad" });
+
+    initDefaultEquipmentSelects($equip);
+
+    return $equip;
 }
 
 function activateTemplate(id) {

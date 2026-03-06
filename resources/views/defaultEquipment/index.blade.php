@@ -281,5 +281,9 @@
 @endsection
 
 @section('scripts')
+    <script>
+        window.routeEditEquipment = "{{ url('/dashboard/editar/equipo/categoria') }}";
+        window.routeEditSubEquipment = "{{ url('/dashboard/editar/subequipo/categoria') }}";
+    </script>
     <script src="{{ asset('js/defaultEquipment/index.js') }}"></script>
 @endsection

@@ -269,7 +269,9 @@ function renderDataDefaultEquipments(data) {
 }
 
 function renderDataTableCard(data) {
+
     var clone = activateTemplate('#item-card');
+
     clone.querySelector("[data-id]").innerHTML = data.id;
     clone.querySelector("[data-description]").innerHTML = data.description;
     clone.querySelector("[data-large]").innerHTML = data.large;
@@ -280,10 +282,27 @@ function renderDataTableCard(data) {
     clone.querySelector("[data-priceIGVUtility]").innerHTML = data.priceIGVUtility;
     clone.querySelector("[data-priceSIGVUtility]").innerHTML = data.priceSIGVUtility;
     clone.querySelector("[data-created_at]").innerHTML = data.created_at;
-    clone.querySelector("[data-edit]").setAttribute('data-edit', data.id);
-    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/equipo/categoria/'+data.id);
+
+    const editBtn = clone.querySelector("[data-edit]");
+
+    editBtn.setAttribute('data-edit', data.id);
+
+    // 🔥 DECISIÓN INTELIGENTE
+    let editUrl;
+
+    if (data.category_key === null || data.category_key === "") {
+        // Equipo completo (ruta antigua)
+        editUrl = location.origin + '/dashboard/editar/equipo/categoria/' + data.id;
+    } else {
+        // Subequipo (ruta nueva)
+        editUrl = location.origin + '/dashboard/editar/subequipo/categoria/' + data.id;
+    }
+
+    editBtn.setAttribute('href', editUrl);
+
     clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
     clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
+
     $("#body-table").append(clone);
 
     $('[data-toggle="tooltip"]').tooltip();
