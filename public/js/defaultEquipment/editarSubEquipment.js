@@ -370,6 +370,7 @@ function hydrateSection(keyword, equipment) {
 function setVal($el, value) { $el.val(value ?? ''); }
 
 function hydrateMaterials(items) {
+    console.log(items);
     items.forEach(it => {
         const row = activateTemplate('#materials-selected');
         const $row = $(row);
@@ -378,7 +379,8 @@ function hydrateMaterials(items) {
         setVal($row.find('[data-materialDescription]'), it.material?.full_name || it.material?.description || '');
         setVal($row.find('[data-materialId]'), it.material_id);
 
-        setVal($row.find('[data-materialUnit]'), it.material?.unit || '');
+        const unit = it.material?.unit_measure?.description ?? '';
+        setVal($row.find('[data-materialUnit]'), unit);
 
         setVal($row.find('[data-materialLargo]'), it.length ?? 0);
         setVal($row.find('[data-materialAncho]'), it.width ?? 0);
@@ -389,9 +391,12 @@ function hydrateMaterials(items) {
         setVal($row.find('[data-materialTotal]'), it.total_price ?? 0);
 
         // si manejas los “sin igv” como Price2/Total2, aquí setea si los tienes
-        // setVal($row.find('[data-materialPrice2]'), it.unit_price/1.18);
-        // setVal($row.find('[data-materialTotal2]'), it.total_price/1.18);
+        setVal($row.find('[data-materialPrice2]'), (it.unit_price/1.18).toFixed(2));
+        setVal($row.find('[data-materialTotal2]'), (it.total_price/1.18).toFixed(2));
 
+        $row.find('[data-delete]').attr('data-delete', it.material_id);
+
+        $materials.push(it.material);
         $('[data-bodyMaterials]').append($row);
     });
 
@@ -399,18 +404,26 @@ function hydrateMaterials(items) {
 }
 
 function hydrateConsumables(items) {
+    console.log(items);
     items.forEach(it => {
         const row = activateTemplate('#template-consumable');
         const $row = $(row);
 
         setVal($row.find('[data-consumableDescription]'), it.material?.full_name || it.material?.description || '');
         setVal($row.find('[data-consumableId]'), it.material_id);
-        setVal($row.find('[data-consumableUnit]'), it.material?.unit || '');
+        const unit = it.material?.unit_measure?.description ?? '';
+        setVal($row.find('[data-consumableUnit]'), unit);
 
         setVal($row.find('[data-consumableQuantity]'), it.quantity ?? 0);
         setVal($row.find('[data-consumablePrice]'), it.unit_price ?? 0);
         setVal($row.find('[data-consumableTotal]'), it.total_price ?? 0);
 
+        setVal($row.find('[data-consumablePrice2]'), (it.unit_price/1.18).toFixed(2));
+        setVal($row.find('[data-consumableTotal2]'), (it.total_price/1.18).toFixed(2));
+
+        $row.find('[data-deleteconsumable]').attr('data-deleteconsumable', it.material_id);
+
+        $consumables.push(it.material);
         $('[data-bodyConsumable]').append($row);
     });
 }
@@ -428,6 +441,13 @@ function hydrateElectrics(items) {
         setVal($row.find('[data-electricQuantity]'), it.quantity ?? 0);
         setVal($row.find('[data-electricPrice]'), it.price ?? 0);
         setVal($row.find('[data-electricTotal]'), it.total ?? 0);
+
+        setVal($row.find('[data-electricPrice2]'), (it.price/1.18).toFixed(2));
+        setVal($row.find('[data-electricTotal2]'), (it.total/1.18).toFixed(2));
+
+        $row.find('[data-deleteelectric]').attr('data-deleteelectric', it.material_id);
+
+        $electrics.push(it.material);
 
         $('[data-bodyElectric]').append($row);
     });
@@ -1253,6 +1273,10 @@ function deleteConsumable() {
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
+
+    /*var code = $(this).data('delete');
+    $materials = $materials.filter(material => material.code !== code);*/
+
     $(this).parent().parent().remove();
 }
 
@@ -2482,9 +2506,11 @@ function deleteItem() {
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
 
+    var id = $(this).data('delete');
+    $materials = $materials.filter(material => material.id !== id);
+
     $(this).parent().parent().remove();
-    var itemId = $(this).data('delete');
-    //$items = $items.filter(item => item.id !== itemId);
+
 }
 
 function calculatePercentage() {
@@ -3202,7 +3228,10 @@ function storeQuote() {
     });
 }
 
-function calculateTotalMaterialQuantity(e) {
+const IGV_RATE = 0.18;
+const TUBE_TYPE_IDS = [3, 4, 5];
+
+/*function calculateTotalMaterialQuantity(e) {
     var cantidad = e.value;
     var material_id = e.getAttribute('material_id');
     console.log(material_id);
@@ -3454,6 +3483,171 @@ function calculateTotalMaterialAncho(e) {
     //var priceConIgvTotal =
     e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP ;
 
+}*/
+
+function calculateTotalMaterialQuantity(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
+
+    const { row, material, quantity, length, width } = rowData;
+
+    if (!material.type_scrap) {
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    if (isTube(material)) {
+        if (!hasValue(length)) {
+            updateMaterialPrices(row, quantity, material.unit_price);
+            return;
+        }
+
+        const originalLength = toNumber(material.type_scrap.length);
+        const newLength = quantity * originalLength;
+
+        setRowValue(row, '[data-materialLargo]', newLength);
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    // Si es plancha
+    if (!hasValue(length) || !hasValue(width)) {
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    setRowValue(row, '[data-materialLargo]', 0);
+    setRowValue(row, '[data-materialAncho]', 0);
+    updateMaterialPrices(row, quantity, material.unit_price);
+}
+
+function calculateTotalMaterialLargo(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
+
+    const { row, material, length, width } = rowData;
+
+    if (!material.type_scrap) {
+        return;
+    }
+
+    if (isTube(material)) {
+        const originalLength = toNumber(material.type_scrap.length);
+
+        if (!originalLength) return;
+
+        const quantity = length / originalLength;
+
+        setRowValue(row, '[data-materialQuantity]', quantity);
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    // Si es plancha
+    const originalLength = toNumber(material.type_scrap.length);
+    const originalWidth = toNumber(material.type_scrap.width);
+
+    if (!originalLength || !originalWidth || !hasValue(width)) return;
+
+    const originalArea = originalLength * originalWidth;
+    const newArea = length * width;
+    const quantity = newArea / originalArea;
+
+    setRowValue(row, '[data-materialQuantity]', quantity);
+    updateMaterialPrices(row, quantity, material.unit_price);
+}
+
+function calculateTotalMaterialAncho(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
+
+    const { row, material, length, width } = rowData;
+
+    if (!material.type_scrap || isTube(material)) {
+        return;
+    }
+
+    const originalLength = toNumber(material.type_scrap.length);
+    const originalWidth = toNumber(material.type_scrap.width);
+
+    if (!originalLength || !originalWidth || !hasValue(length)) return;
+
+    const originalArea = originalLength * originalWidth;
+    const newArea = length * width;
+    const quantity = newArea / originalArea;
+
+    setRowValue(row, '[data-materialQuantity]', quantity);
+    updateMaterialPrices(row, quantity, material.unit_price);
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getMaterialRowData(input) {
+    const row = input.closest('.row');
+    if (!row) return null;
+
+    const materialId = row.querySelector('[data-materialId]')?.value;
+    if (!materialId) {
+        console.warn('No se encontró data-materialId en la fila');
+        return null;
+    }
+
+    const material = $materials.find(mat => mat.id === parseInt(materialId));
+    if (!material) {
+        console.warn('No se encontró el material en $materials', materialId);
+        return null;
+    }
+
+    return {
+        row,
+        materialId: parseInt(materialId),
+        material,
+        quantity: toNumber(getRowValue(row, '[data-materialQuantity]')),
+        length: toNumber(getRowValue(row, '[data-materialLargo]')),
+        width: toNumber(getRowValue(row, '[data-materialAncho]'))
+    };
+}
+
+function isTube(material) {
+    return material?.type_scrap && TUBE_TYPE_IDS.includes(material.type_scrap.id);
+}
+
+function updateMaterialPrices(row, quantity, unitPrice) {
+    const totalConIgv = quantity * unitPrice;
+    const totalSinIgv = totalConIgv / (1 + IGV_RATE);
+
+    const unitPriceConIgv = unitPrice;
+    const unitPriceSinIgv = unitPrice / (1 + IGV_RATE);
+
+    setRowValue(row, '[data-materialPrice2]', unitPriceSinIgv);
+    setRowValue(row, '[data-materialPrice]', unitPriceConIgv);
+    setRowValue(row, '[data-materialTotal2]', totalSinIgv);
+    setRowValue(row, '[data-materialTotal]', totalConIgv);
+}
+
+function getRowValue(row, selector) {
+    return row.querySelector(selector)?.value ?? '';
+}
+
+function setRowValue(row, selector, value) {
+    const element = row.querySelector(selector);
+    if (!element) return;
+    element.value = formatDecimal(value);
+}
+
+function toNumber(value) {
+    if (value === null || value === undefined || value === '') return 0;
+    return parseFloat(value) || 0;
+}
+
+function hasValue(value) {
+    return value !== null && value !== undefined && value !== '' && value > 0;
+}
+
+function formatDecimal(value) {
+    return parseFloat(value || 0).toFixed(2);
 }
 
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {

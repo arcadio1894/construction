@@ -813,15 +813,15 @@ class DefaultEquipmentController extends Controller
         // Cargar relaciones según keyword (solo lo necesario)
         switch ($keyword) {
             case 'materials':
-                $equipment->load(['materials.material.unitMeasure']);
+                $equipment->load(['materials.material.unitMeasure', 'materials.material.typeScrap']);
                 break;
 
             case 'consumibles':
-                $equipment->load(['consumables.material.unitMeasure']);
+                $equipment->load(['consumables.material.unitMeasure', 'consumables.material.typeScrap']);
                 break;
 
             case 'electrics':
-                $equipment->load(['electrics.material.unitMeasure']);
+                $equipment->load(['electrics.material.unitMeasure', 'electrics.material.typeScrap']);
                 break;
 
             case 'servicios_varios':
@@ -1111,10 +1111,33 @@ class DefaultEquipmentController extends Controller
 
         foreach ( $operations as $operation )
         {
-
+            $name_keyword = "";
+            $key = $operation->category_key;
+            if ($key == 'materials')
+            {
+                $name_keyword = "materiales";
+            } else {
+                if ($key == 'consumibles')
+                {
+                    $name_keyword = "consumibles";
+                } else {
+                    if ($key == 'electrics')
+                    {
+                        $name_keyword = "electricos";
+                    } else {
+                        if ($key == 'servicios_varios')
+                        {
+                            $name_keyword = "servicios varios";
+                        } else {
+                            $name_keyword = "dias de trabajo";
+                        }
+                    }
+                }
+            }
             array_push($arrayDefaultEquipments, [
                 "id" => $operation->id,
                 "description" => $operation->description,
+                "keyword" => ($operation->category_key == null) ? 'Completo':$name_keyword,
                 "large" => $operation->large,
                 "width" => $operation->width,
                 "high" => $operation->high,

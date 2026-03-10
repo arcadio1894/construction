@@ -955,6 +955,13 @@ class OrderPurchaseController extends Controller
                         }
 
                     }
+
+                    foreach ( $equipment->electrics as $electric )
+                    {
+                        array_push($materials, $electric->material_id);//$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
+                        array_push($materials_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'material_complete'=>$electric->material, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+
+                    }
                 }
 
             }
@@ -998,6 +1005,22 @@ class OrderPurchaseController extends Controller
                                 array_push($array_takens, array('material_id'=>$item->material_id, 'quantity'=> (float)$item->quantity_request));
                             }
                         }
+
+                    }
+
+                    foreach ( $equipment->electrics as $electric )
+                    {
+                        // TODO: Cambiamos a tipo de orden 'orn' y 'ore'
+                        $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
+                            ->where('material_id', $electric->material_id)
+                            /*->whereIn('type_output', 'orn')*/
+                            ->get();
+
+                        foreach ( $materials_taken as $item )
+                        {
+                            array_push($array_takens, array('material_id'=>$item->material_id, 'quantity'=> (float)$item->quantity_request));
+                        }
+
 
                     }
                 }
@@ -1101,6 +1124,12 @@ class OrderPurchaseController extends Controller
                             //dump($material2->material_id == $material['material_id']);
                             if ($material2->material_id == $material['material_id'] && $material2->replacement == 0) {
                                 $quantity += $material2->quantity * $equipment->quantity;
+                            }
+                        }
+                        foreach ($equipment->electrics as $electric2) {
+                            //dump($material2->material_id == $material['material_id']);
+                            if ($electric2->material_id == $material['material_id'] && $electric2->replacement == 0) {
+                                $quantity += $electric2->quantity * $equipment->quantity;
                             }
                         }
                     }
@@ -1557,6 +1586,13 @@ class OrderPurchaseController extends Controller
                         }
 
                     }
+
+                    foreach ( $equipment->electrics as $electric )
+                    {
+                        array_push($materials, $electric->material_id);//$urlQuote = '<a target="_blank" class="btn btn-primary btn-xs" href="'.route('quote.show', $quote->id).'" data-toggle="tooltip" data-placement="top" title="'.(float)$material->quantity*(float)$equipment->quantity.'">'.$quote->code.'</a>';
+                        array_push($materials_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'material_complete'=>$electric->material, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+
+                    }
                 }
 
             }
@@ -1600,6 +1636,22 @@ class OrderPurchaseController extends Controller
                                 array_push($array_takens, array('material_id'=>$item->material_id, 'quantity'=> (float)$item->quantity_request));
                             }
                         }
+
+                    }
+
+                    foreach ( $equipment->electrics as $electric )
+                    {
+                        // TODO: Cambiamos a tipo de orden 'orn' y 'ore'
+                        $materials_taken = MaterialTaken::where('equipment_id', $equipment->id)
+                            ->where('material_id', $electric->material_id)
+                            /*->whereIn('type_output', 'orn')*/
+                            ->get();
+
+                        foreach ( $materials_taken as $item )
+                        {
+                            array_push($array_takens, array('material_id'=>$item->material_id, 'quantity'=> (float)$item->quantity_request));
+                        }
+
 
                     }
                 }
@@ -1694,6 +1746,13 @@ class OrderPurchaseController extends Controller
                         if ( $material2->material_id == $material['material_id'] && $material2->replacement == 0 )
                         {
                             $quantity += $material2->quantity*$equipment->quantity;
+                        }
+                    }
+
+                    foreach ($equipment->electrics as $electric2) {
+                        //dump($material2->material_id == $material['material_id']);
+                        if ($electric2->material_id == $material['material_id'] && $electric2->replacement == 0) {
+                            $quantity += $electric2->quantity * $equipment->quantity;
                         }
                     }
                 }

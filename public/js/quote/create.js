@@ -1292,6 +1292,9 @@ function saveEquipment() {
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
+                    for (let i = 0; i < electricsTotal.length; i++) {
+                        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
+                    }
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }

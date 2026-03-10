@@ -348,7 +348,7 @@ class OutputController extends Controller
 
             foreach ( $equipment->electrics as $electric )
             {
-                array_push($materials_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+                array_push($materials_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_description, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
 
             }
             foreach ( $equipment->consumables as $consumable )
@@ -410,7 +410,7 @@ class OutputController extends Controller
 
             foreach ( $equipment->electrics as $electric )
             {
-                array_push($electricos_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_name, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
+                array_push($electricos_quantity, array('material_id'=>$electric->material_id, 'material'=>$electric->material->full_description, 'quantity'=> (float)$electric->quantity*(float)$equipment->quantity));
 
             }
 
@@ -439,6 +439,8 @@ class OutputController extends Controller
         }
 
         $electricos = array_values($electric_new_arr2);
+        /*dump($electricos);
+        dd();*/
 
         $users = User::all();
 

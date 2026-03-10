@@ -21,7 +21,7 @@ $(document).ready(function () {
             type: 'blue',
             buttons: {
                 equipoCompleto: {
-                    text: 'Equipo Completo',
+                    text: 'Equipo',
                     btnClass: 'btn-success',
                     action: function () {
                         window.location.href = equipoCompletoUrl;
@@ -274,6 +274,7 @@ function renderDataTableCard(data) {
 
     clone.querySelector("[data-id]").innerHTML = data.id;
     clone.querySelector("[data-description]").innerHTML = data.description;
+    clone.querySelector("[data-keyword]").innerHTML = data.keyword;
     clone.querySelector("[data-large]").innerHTML = data.large;
     clone.querySelector("[data-width]").innerHTML = data.width;
     clone.querySelector("[data-high]").innerHTML = data.high;

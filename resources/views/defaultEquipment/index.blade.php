@@ -155,6 +155,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Descripción</th>
+                    <th>Tipo</th>
                     <th>Largo</th>
                     <th>Ancho</th>
                     <th>Alto</th>
@@ -250,6 +251,7 @@
         <tr>
             <td data-id></td>
             <td data-description></td>
+            <td data-keyword></td>
             <td data-large></td>
             <td data-width></td>
             <td data-high></td>

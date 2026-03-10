@@ -165,7 +165,7 @@
                                 </button>
                             @endforeach
 
-                            <input type="hidden" name="keyword" id="keyword" value="materials">
+                            <input type="hidden" name="keyword" id="keyword" data-name_keyword value="materials">
                             <input type="hidden" id="category_equipment_id" class="form-control" value="{{ $category->id}}">
 
                         </div>
@@ -551,7 +551,7 @@
                                             </div>
                                             <hr>
                                             <div data-bodyTorno>
-                                                <div class="row">
+                                                {{--<div class="row">
                                                     <div class="col-md-5">
                                                         <div class="form-group">
                                                             <input type="text" value="SERVICIO DE CORTE Y DOBLEZ" onkeyup="mayus(this);" class="form-control form-control-sm" data-tornoDescription>
@@ -583,7 +583,7 @@
                                                     <div class="col-md-1">
                                                         <button type="button" data-deleteTorno class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                                     </div>
-                                                </div>
+                                                </div>--}}
                                             </div>
                                         </div>
                                     </div>
@@ -676,7 +676,7 @@
                                         </div>
                                     </div>
                                     <div data-bodyDia>
-                                        <div class="row">
+                                        {{--<div class="row">
                                             <div class="col-md-3">
                                                 <div class="form-group">
                                                     <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" value="PERSONAL PARA FABRICACIÓN" data-description >
@@ -827,7 +827,7 @@
                                             <div class="col-md-1">
                                                 <button type="button" data-deleteDia class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                                             </div>
-                                        </div>
+                                        </div>--}}
                                     </div>
                                 </div>
                             </div>
@@ -1057,60 +1057,60 @@
         </template>
 
         <template id="template-electric">
-        <div class="row">
-            <div class="col-md-3">
-                <div class="form-group">
-                    <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricDescription readonly>
-                    <input type="hidden" data-electricId>
-                </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
+            <div class="row">
+                <div class="col-md-3">
                     <div class="form-group">
-                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricUnit readonly>
+                        <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricDescription readonly>
+                        <input type="hidden" data-electricId>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-2">
-                <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotalE(this);" data-electricQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                        ">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <div class="form-group">
+                            <input type="text" onkeyup="mayus(this);" class="form-control form-control-sm" data-electricUnit readonly>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" oninput="calculateTotalE(this);" data-electricQuantity step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            ">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <div class="form-group">
+                        <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
+                            this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
+                            " readonly>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
                 </div>
             </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                        " readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricPrice step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                        " readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal2 step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                        " readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <div class="form-group">
-                    <input type="number" class="form-control form-control-sm" placeholder="0.00" min="0" data-electricTotal step="0.01" pattern="^\d+(?:\.\d{1,2})?$" onblur="
-                        this.style.borderColor=/^\d+(?:\.\d{1,2})?$/.test(this.value)?'':'red'
-                        " readonly>
-                </div>
-            </div>
-            <div class="col-md-1">
-                <button type="button" data-deleteElectric class="btn btn-block btn-outline-danger btn-sm"><i class="fas fa-trash"></i> </button>
-            </div>
-        </div>
-    </template>
+        </template>
 
         <template id="template-dia">
             <div class="row">

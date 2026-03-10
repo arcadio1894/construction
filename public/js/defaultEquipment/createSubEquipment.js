@@ -772,6 +772,7 @@ function buildPayloadByKeyword(keyword) {
 
 function saveDefaultEquipmentSection() {
     const keyword = $('#keyword').val();
+    const name_keyword = $('#keyword').data('name_keyword');
     const name = getEquipmentName();
 
     if (!name) {
@@ -781,7 +782,7 @@ function saveDefaultEquipmentSection() {
 
     $.confirm({
         title: '¿Estás seguro de guardar los cambios?',
-        content: 'Recuerda que solo se guardarán los cambios de la sección actual.',
+        content: 'Recuerda que solo se guardarán los cambios de la sección '+name_keyword,
         type: 'blue',
         buttons: {
             cancelar: {
@@ -821,7 +822,30 @@ function saveDefaultEquipmentSection() {
 
 function setKeyword(key) {
     $('#keyword').val(key);
+    let name_keyword = "";
+    if (key == 'materials')
+    {
+        name_keyword = "materiales";
+    } else {
+        if (key == 'consumibles')
+        {
+            name_keyword = "consumibles";
+        } else {
+            if (key == 'electrics')
+            {
+                name_keyword = "electricos";
+            } else {
+                if (key == 'servicios_varios')
+                {
+                    name_keyword = "servicios varios";
+                } else {
+                    name_keyword = "dias de trabajo";
+                }
+            }
+        }
+    }
 
+    $('#keyword').data('name_keyword', name_keyword);
     // botones: activo/inactivo
     $('.btn-keyword')
         .removeClass('is-active')
@@ -1319,6 +1343,9 @@ function saveEquipment() {
 
 function deleteConsumable() {
     //console.log($(this).parent().parent().parent());
+    var id = $(this).data('deleteconsumable');
+    $consumables = $consumables.filter(material => material.id !== id);
+
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
@@ -1327,6 +1354,8 @@ function deleteConsumable() {
 
 function deleteElectric() {
     //console.log($(this).parent().parent().parent());
+    var id = $(this).data('deleteelectric');
+    $electrics = $electrics.filter(material => material.id !== id);
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
@@ -1393,6 +1422,7 @@ function addConsumable() {
         return;
     }
 
+    $consumables.push(consumable);
     // ✅ render
     renderTemplateConsumable($render, consumable, cantidad);
 
@@ -1438,6 +1468,7 @@ function addElectric() {
     $row.find('[data-cantidad]').val(0);
     $row.find('[data-electric]').val(null).trigger('change');
 
+    $electrics.push(sel.raw);
     // render
     renderTemplateElectric($render, electric, qty);
 }
@@ -2550,10 +2581,11 @@ function deleteItem() {
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
+    var code = $(this).data('delete');
+    $materials = $materials.filter(material => material.code !== code);
 
     $(this).parent().parent().remove();
-    var itemId = $(this).data('delete');
-    //$items = $items.filter(item => item.id !== itemId);
+
 }
 
 function calculatePercentage() {
@@ -2783,6 +2815,7 @@ function addTableMaterials() {
 
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity, 'material_price':total, 'material_length':length, 'material_width':witdh});
         //console.log($renderMaterial);
+        $materials.push($material);
         renderTemplateMaterial($material.code, $material.full_name, material_quantity, $material.unit_measure.name, $material.unit_price, total, $renderMaterial, length, witdh, $material);
 
         $('#material_length_entered').val('');
@@ -2887,6 +2920,7 @@ function addTableMaterials() {
         var witdh2 = $('#material_width_entered').val();
         console.log($renderMaterial);
         //$items.push({ 'id': $items.length+1, 'material': $material, 'material_quantity': material_quantity2, 'material_price':0, 'material_length':length2, 'material_width':witdh2});
+        $materials.push($material);
         renderTemplateMaterial($material.code, $material.full_name, material_quantity2, $material.unit_measure.name, $material.unit_price, 0, $renderMaterial, length2, witdh2, $material);
 
         $('#material_length_entered').val('');
