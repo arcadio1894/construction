@@ -375,10 +375,10 @@ if (isset($pdf)) {
     $font = $fontMetrics->get_font("Arial", "normal");
 
     // Debajo de "Cotizado por" (ajusta si deseas)
-    $x = 260;
-    $y = 810;
+    $x = 490;
+    $y = 20;
 
-    $pdf->page_text($x, $y, "Página: {PAGE_NUM} de {PAGE_COUNT}", $font, 8, array(0,0,0));
+    $pdf->page_text($x, $y, "Página: {PAGE_NUM} de {PAGE_COUNT}", $font, 11, array(0,0,0));
 }
 </script>
 </body>

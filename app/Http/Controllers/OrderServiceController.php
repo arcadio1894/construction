@@ -342,7 +342,8 @@ class OrderServiceController extends Controller
     public function printOrderService($id)
     {
         $service_order = null;
-        $service_order = OrderService::with('approved_user')
+        $service_order = OrderService::withTrashed()
+            ->with('approved_user')
             ->with('deadline')
             ->with('details')
             ->where('id', $id)->first();
