@@ -2677,9 +2677,13 @@ class OrderPurchaseController extends Controller
         $accounts = SupplierAccount::with('bank')
             ->where('supplier_id', $purchase_order->supplier_id)->get();
 
-        $view = view('exports.entryPurchase', compact('purchase_order','codeOrder', 'accounts'));
+        /*$view = view('exports.entryPurchase', compact('purchase_order','codeOrder', 'accounts'));
 
-        $pdf = PDF::loadHTML($view);
+        $pdf = PDF::loadHTML($view);*/
+        $pdf = PDF::loadView('exports.entryPurchase2', compact('purchase_order','codeOrder', 'accounts'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
 
         $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
 
@@ -2703,9 +2707,13 @@ class OrderPurchaseController extends Controller
         $accounts = SupplierAccount::with('bank')
             ->where('supplier_id', $purchase_order->supplier_id)->get();
 
-        $view = view('exports.entryPurchase', compact('purchase_order','codeOrder', 'accounts'));
+        /*$view = view('exports.entryPurchase', compact('purchase_order','codeOrder', 'accounts'));
 
-        $pdf = PDF::loadHTML($view);
+        $pdf = PDF::loadHTML($view);*/
+        $pdf = PDF::loadView('exports.entryPurchase2', compact('purchase_order','codeOrder', 'accounts'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
 
         $name = 'Orden_de_compra_ ' . $purchase_order->id . '.pdf';
 

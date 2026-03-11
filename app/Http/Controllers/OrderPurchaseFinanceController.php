@@ -523,9 +523,13 @@ class OrderPurchaseFinanceController extends Controller
         $accounts = SupplierAccount::with('bank')
             ->where('supplier_id', $service_order->supplier_id)->get();
 
-        $view = view('exports.orderFinance', compact('service_order','codeOrder', 'accounts'));
+        /*$view = view('exports.orderFinance', compact('service_order','codeOrder', 'accounts'));
 
-        $pdf = PDF::loadHTML($view);
+        $pdf = PDF::loadHTML($view);*/
+        $pdf = PDF::loadView('exports.orderFinance2', compact('service_order','codeOrder', 'accounts'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
 
         $name = 'Orden_de_compra_finanzas_ ' . $service_order->id . '.pdf';
 
@@ -546,9 +550,13 @@ class OrderPurchaseFinanceController extends Controller
         $accounts = SupplierAccount::with('bank')
             ->where('supplier_id', $service_order->supplier_id)->get();
 
-        $view = view('exports.orderFinance', compact('service_order','codeOrder', 'accounts'));
+        /*$view = view('exports.orderFinance', compact('service_order','codeOrder', 'accounts'));
 
-        $pdf = PDF::loadHTML($view);
+        $pdf = PDF::loadHTML($view);*/
+        $pdf = PDF::loadView('exports.orderFinance2', compact('service_order','codeOrder', 'accounts'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
 
         $name = 'Orden_de_compra_finanzas_ ' . $service_order->id . '.pdf';
 

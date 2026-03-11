@@ -2448,9 +2448,14 @@ class QuoteController extends Controller
             ->where('type', 'img')
             ->orderBy('order', 'ASC')->get();
 
-        $view = view('exports.quoteCustomer', compact('quote', 'images'));
+        /*$view = view('exports.quoteCustomer', compact('quote', 'images'));
 
-        $pdf = PDF::loadHTML($view);
+        $pdf = PDF::loadHTML($view);*/
+
+        $pdf = PDF::loadView('exports.quoteCustomer2', compact('quote','images'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);
 
         $description = str_replace(array('"', "'", "/"),'',$quote->description_quote);
 
