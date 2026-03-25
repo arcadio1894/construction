@@ -25,6 +25,7 @@ use App\PorcentageQuote;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class DefaultEquipmentController extends Controller
 {
@@ -89,6 +90,446 @@ class DefaultEquipmentController extends Controller
         ]);
 
         return view('defaultEquipment.create', compact('permissions', 'category', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
+    }
+
+    public function createSubEquipmentO($category_id)
+    {
+        $begin = microtime(true);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $category = CategoryEquipment::find($category_id);
+
+        $defaultConsumable = '(*)';
+        $defaultElectric = '(e)';
+        $consumables = Material::with('unitMeasure')->where('category_id', 2)->whereConsumable('description',$defaultConsumable)->orderBy('full_name', 'asc')->get();
+        $electrics = Material::with('unitMeasure')->where('category_id', 2)->whereElectric('description',$defaultElectric)->orderBy('full_name', 'asc')->get();
+
+        $unitMeasures = UnitMeasure::all();
+
+        $workforces = Workforce::with('unitMeasure')->get();
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
+
+        $materials = Material::with('unitMeasure','typeScrap')
+            /*->where('enable_status', 1)*/->get();
+
+        //dd($array);
+
+        $array = [];
+        foreach ( $materials as $material )
+        {
+            array_push($array, [
+                'id'=> $material->id,
+                'full_name' => $material->full_name,
+                'type_scrap' => $material->typeScrap,
+                'stock_current' => $material->stock_current,
+                'unit_price' => $material->unit_price,
+                'unit' => $material->unitMeasure->name,
+                'code' => $material->code,
+                'unit_measure' => $material->unitMeasure,
+                'typescrap_id' => $material->typescrap_id,
+                'enable_status' => $material->enable_status,
+                'update_price' => $material->state_update_price
+            ]);
+        }
+
+        $categoryMap = [
+            'materials'       => ['label' => 'MATERIALES',            'model' => 'DefaultEquipmentMaterial',   'color' => 'btn-info'],
+            'consumibles'     => ['label' => 'CONSUMIBLES',           'model' => 'DefaultEquipmentConsumable', 'color' => 'btn-warning'],
+            'electrics'       => ['label' => 'MATERIALES ELÉCTRICOS', 'model' => 'DefaultEquipmentElectric',   'color' => 'bg-indigo'],
+            'servicios_varios'=> ['label' => 'SERVICIOS VARIOS',      'model' => 'DefaultEquipmentWorkForce',  'color' => 'btn-secondary'],
+            'dias_trabajo'    => ['label' => 'DÍAS DE TRABAJO',       'model' => 'DefaultEquipmentWorkDay',    'color' => 'bg-orange'],
+        ];
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => Auth::user()->id,
+            'action' => 'Crear equipo por defecto VISTA',
+            'time' => $end
+        ]);
+
+        return view('defaultEquipment.createSubEquipment', compact('categoryMap','permissions', 'category', 'consumables', 'electrics' ,'unitMeasures' ,'workforces', 'utility', 'rent', 'letter', 'array'));
+    }
+
+    public function createSubEquipment($category_id)
+    {
+        $begin = microtime(true);
+
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        $category = CategoryEquipment::findOrFail($category_id);
+
+        $unitMeasures = UnitMeasure::select('id','name')->get(); // liviano
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent    = PorcentageQuote::where('name', 'rent')->first();
+        $letter  = PorcentageQuote::where('name', 'letter')->first();
+
+        $categoryMap = [
+            'materials'       => ['label' => 'MATERIALES',            'model' => 'DefaultEquipmentMaterial',   'color' => 'btn-info'],
+            'consumibles'     => ['label' => 'CONSUMIBLES',           'model' => 'DefaultEquipmentConsumable', 'color' => 'btn-warning'],
+            'electrics'       => ['label' => 'MATERIALES ELÉCTRICOS', 'model' => 'DefaultEquipmentElectric',   'color' => 'bg-indigo'],
+            'servicios_varios'=> ['label' => 'SERVICIOS VARIOS',      'model' => 'DefaultEquipmentWorkForce',  'color' => 'btn-secondary'],
+            'dias_trabajo'    => ['label' => 'DÍAS DE TRABAJO',       'model' => 'DefaultEquipmentWorkDay',    'color' => 'bg-orange'],
+        ];
+
+        $end = microtime(true) - $begin;
+
+        Audit::create([
+            'user_id' => $user->id,
+            'action'  => 'Crear equipo por defecto VISTA',
+            'time'    => $end
+        ]);
+
+        return view('defaultEquipment.createSubEquipment', compact(
+            'categoryMap','permissions','category','unitMeasures','utility','rent','letter'
+        ));
+    }
+
+    public function storeDefaultEquipmentSection(Request $request)
+    {
+        // JSON puro
+        $data = $request->all();
+
+        $validator = Validator::make($data, [
+            'keyword'      => 'required|string|in:materials,consumibles,electrics,servicios_varios,dias_trabajo',
+            'description'  => 'required|string|max:255',
+            'default_equipment_id' => 'nullable|integer|exists:default_equipments,id',
+            'category_equipment_id' => 'required|numeric',
+            // arrays opcionales (depende keyword)
+            'materials'    => 'array',
+            'consumables'  => 'array',
+            'electrics'    => 'array',
+            'workforces'   => 'array',
+            'turnstiles'   => 'array',
+            'workdays'     => 'array',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Datos inválidos.',
+                'errors'  => $validator->errors()
+            ], 422);
+        }
+
+        $keyword = $data['keyword'];
+
+        try {
+            DB::beginTransaction();
+
+            // 1) Crear o traer equipo
+            if (!empty($data['default_equipment_id'])) {
+                $equipment = DefaultEquipment::findOrFail($data['default_equipment_id']);
+                // Solo actualizamos el nombre si quieres
+                $equipment->update([
+                    'description' => $data['description'],
+                    'category_key' => $data['keyword'], // ✅ si quieres que quede actualizado
+                ]);
+            } else {
+                $equipment = DefaultEquipment::create([
+                    'description' => $data['description'],
+                    'category_key'  => $keyword, // ✅ aquí guardas el keyword
+                    // Dejar null / defaults (como pediste)
+                    'large' => null,
+                    'width' => null,
+                    'high'  => null,
+                    'category_equipment_id' => $data['category_equipment_id'],
+                    'details' => '',
+                    'utility' => null,
+                    'letter' => null,
+                    'rent' => null,
+                ]);
+            }
+
+            // 2) Borrar SOLO la sección actual si es update
+            // (si es create nuevo, no pasa nada)
+            switch ($keyword) {
+                case 'materials':
+                    DefaultEquipmentMaterial::where('default_equipment_id', $equipment->id)->delete();
+                    break;
+                case 'consumibles':
+                    DefaultEquipmentConsumable::where('default_equipment_id', $equipment->id)->delete();
+                    break;
+                case 'electrics':
+                    DefaultEquipmentElectric::where('default_equipment_id', $equipment->id)->delete();
+                    break;
+                case 'servicios_varios':
+                    DefaultEquipmentWorkForce::where('default_equipment_id', $equipment->id)->delete();
+                    DefaultEquipmentTurnstile::where('default_equipment_id', $equipment->id)->delete();
+                    break;
+                case 'dias_trabajo':
+                    DefaultEquipmentWorkDay::where('default_equipment_id', $equipment->id)->delete();
+                    break;
+            }
+
+            // 3) Insertar sección actual
+            if ($keyword === 'materials') {
+                $rows = $data['materials'] ?? [];
+
+                // Traer precios reales desde DB
+                $materialIds = collect($rows)->pluck('material_id')->filter()->unique()->values();
+                $materialsDB = Material::whereIn('id', $materialIds)->get()->keyBy('id');
+
+                foreach ($rows as $row) {
+                    $materialId = (int)($row['material_id'] ?? 0);
+                    if (!$materialId || !$materialsDB->has($materialId)) continue;
+
+                    $mat = $materialsDB[$materialId];
+
+                    $qty   = (float)($row['quantity'] ?? 0);
+                    $len   = (float)($row['length'] ?? 0);
+                    $wid   = (float)($row['width'] ?? 0);
+
+                    // si tu "percentage" es igual a quantity como antes:
+                    $percentage = $qty;
+
+                    $unitPrice  = (float)$mat->unit_price;
+                    $totalPrice = $qty * $unitPrice;
+
+                    DefaultEquipmentMaterial::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id'          => $materialId,
+                        'quantity'             => $qty,
+                        'length'               => $len,
+                        'width'                => $wid,
+                        'percentage'           => $percentage,
+                        'unit_price'           => $unitPrice,
+                        'total_price'          => $totalPrice,
+                    ]);
+                }
+            }
+
+            if ($keyword === 'consumibles') {
+                $rows = $data['consumables'] ?? [];
+
+                foreach ($rows as $row) {
+                    $materialId = (int)($row['material_id'] ?? 0);
+                    if (!$materialId) continue;
+
+                    DefaultEquipmentConsumable::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id'          => $materialId,
+                        'quantity'             => (float)($row['quantity'] ?? 0),
+                        'unit_price'           => (float)($row['price'] ?? 0),
+                        'total_price'          => (float)($row['total'] ?? 0),
+                    ]);
+                }
+            }
+
+            if ($keyword === 'electrics') {
+                $rows = $data['electrics'] ?? [];
+
+                foreach ($rows as $row) {
+                    $materialId = (int)($row['material_id'] ?? 0);
+                    if (!$materialId) continue;
+
+                    DefaultEquipmentElectric::create([
+                        'default_equipment_id' => $equipment->id,
+                        'material_id'          => $materialId,
+                        'quantity'             => (float)($row['quantity'] ?? 0),
+                        'price'                => (float)($row['price'] ?? 0),
+                        'total'                => (float)($row['total'] ?? 0),
+                    ]);
+                }
+            }
+
+            if ($keyword === 'servicios_varios') {
+                $workforces = $data['workforces'] ?? [];
+                $turnstiles = $data['turnstiles'] ?? [];
+
+                // ✅ 1) workforces
+                for ($w = 0; $w < count($workforces); $w++) {
+                    $wf = $workforces[$w];
+
+                    $desc = trim((string)($wf['description'] ?? ''));
+                    if ($desc === '') continue;
+
+                    DefaultEquipmentWorkForce::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description'          => $desc,
+                        'quantity'             => (float)($wf['quantity'] ?? 0),
+                        'unit_price'           => (float)($wf['price'] ?? $wf['unit_price'] ?? 0),
+                        'total_price'          => (float)($wf['total'] ?? $wf['total_price'] ?? 0),
+                        'unit'                 => (string)($wf['unit'] ?? ''),
+                    ]);
+                }
+
+                // ✅ 2) turnstiles
+                for ($r = 0; $r < count($turnstiles); $r++) {
+                    $t = $turnstiles[$r];
+
+                    $desc = trim((string)($t['description'] ?? ''));
+                    if ($desc === '') continue;
+
+                    DefaultEquipmentTurnstile::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description'          => $desc,
+                        'quantity'             => (float)($t['quantity'] ?? 0),
+                        'unit_price'           => (float)($t['price'] ?? $t['unit_price'] ?? 0),
+                        'total_price'          => (float)($t['total'] ?? $t['total_price'] ?? 0),
+                    ]);
+                }
+            }
+
+            if ($keyword === 'dias_trabajo') {
+                $rows = $data['workdays'] ?? [];
+
+                foreach ($rows as $row) {
+                    $desc = trim((string)($row['description'] ?? ''));
+                    if ($desc === '') continue;
+
+                    DefaultEquipmentWorkDay::create([
+                        'default_equipment_id' => $equipment->id,
+                        'description'          => $desc,
+                        'quantityPerson'       => (float)($row['quantityPerson'] ?? 0),
+                        'hoursPerPerson'       => (float)($row['hoursPerPerson'] ?? 0),
+                        'pricePerHour'         => (float)($row['pricePerHour'] ?? 0),
+                        'total_price'          => (float)($row['total_price'] ?? 0),
+                    ]);
+                }
+            }
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Se guardaron los cambios de la sección: ' . $keyword,
+                'default_equipment_id' => $equipment->id,
+            ]);
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'message' => 'Error al guardar.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function searchMaterials(Request $request)
+    {
+        $q = trim($request->get('q', ''));
+        if (mb_strlen($q) < 2) {
+            return response()->json([]);
+        }
+
+        $materials = Material::query()
+            ->select(
+                'id',
+                'full_name',
+                'unit_price',
+                'code',
+                'typescrap_id',
+                'enable_status',
+                'stock_current',
+                'unit_measure_id',
+                'state_update_price'
+            )
+            ->with([
+                'unitMeasure:id,name',
+                'typeScrap:id,length,width' // Asegúrate que la relación se llame typeScrap
+            ])
+            ->where('full_name', 'like', "%{$q}%")
+            ->orderBy('full_name')
+            ->limit(12)
+            ->get()
+            ->map(function ($m) {
+                return [
+                    'id'            => $m->id,
+                    'full_name'     => $m->full_name,
+                    'unit_price'    => $m->unit_price,
+                    'code'          => $m->code,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'update_price'  => $m->state_update_price,
+
+                    // ✅ para que tu render no cambie:
+                    'unit_measure'  => $m->unitMeasure ? ['name' => $m->unitMeasure->name] : ['name' => ''],
+                    'unit'          => optional($m->unitMeasure)->name, // por si lo usas en el texto del select2
+
+                    // ✅ para tu lógica del modal:
+                    'type_scrap'    => $m->typeScrap ? [
+                        'id'     => (int) $m->typescrap_id,
+                        'length' => $m->typeScrap->length,
+                        'width'  => $m->typeScrap->width,
+                    ] : null,
+                ];
+            });
+
+        return response()->json($materials);
+    }
+
+    public function selectConsumables(Request $request)
+    {
+        $q = trim($request->get('q',''));
+        $page = (int) $request->get('page', 1);
+        $perPage = 20;
+
+        $defaultConsumable = '(*)';
+
+        $query = Material::query()
+            ->select('id','full_name','unit_price','stock_current','enable_status','state_update_price','unit_measure_id')
+            ->with(['unitMeasure:id,name']);
+
+        if ($q !== '') {
+            $query->where('full_name', 'like', "%{$q}%");
+        }
+
+        $p = $query->orderBy('full_name')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $p->getCollection()->map(function($m){
+                return [
+                    'id' => $m->id,
+                    'text' => $m->full_name . (optional($m->unitMeasure)->name ? ' (' . $m->unitMeasure->name . ')' : ''),
+                    'full_name' => $m->full_name,
+                    'unit_price' => $m->unit_price,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'state_update_price' => $m->state_update_price,
+                    'unit' => optional($m->unitMeasure)->name,
+                    'unit_measure' => $m->unitMeasure, // ✅ para que tu render lo use
+                ];
+            })->values(),
+            'more' => $p->hasMorePages()
+        ]);
+    }
+
+    public function selectElectrics(Request $request)
+    {
+        $q = trim($request->get('q',''));
+        $page = (int) $request->get('page', 1);
+        $perPage = 20;
+
+        $query = Material::query()
+            ->select('id','full_name','unit_price','stock_current','enable_status','state_update_price','unit_measure_id')
+            ->with(['unitMeasure:id,name']);
+
+        if ($q !== '') {
+            $query->where('full_name', 'like', "%{$q}%");
+        }
+
+        $p = $query->orderBy('full_name')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $p->getCollection()->map(function($m){
+                return [
+                    'id' => $m->id,
+                    'text' => $m->full_name . (optional($m->unitMeasure)->name ? ' (' . $m->unitMeasure->name . ')' : ''),
+                    'full_name' => $m->full_name,
+                    'unit_price' => $m->unit_price,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'state_update_price' => $m->state_update_price,
+                    'unit' => optional($m->unitMeasure)->name,
+                    'unit_measure' => $m->unitMeasure,
+                ];
+            })->values(),
+            'more' => $p->hasMorePages()
+        ]);
     }
 
     public function store(StoreDefaultEquipmentRequest $request)
@@ -361,6 +802,60 @@ class DefaultEquipmentController extends Controller
 
     }
 
+    public function editSubEquipment($equipment_id)
+    {
+        $equipment = DefaultEquipment::findOrFail($equipment_id);
+        $user = Auth::user();
+        $permissions = $user->getPermissionsViaRoles()->pluck('name')->toArray();
+        // keyword que define qué sección se editó
+        $keyword = $equipment->category_key; // ej: 'materials', 'consumibles', etc.
+
+        // Cargar relaciones según keyword (solo lo necesario)
+        switch ($keyword) {
+            case 'materials':
+                $equipment->load(['materials.material.unitMeasure', 'materials.material.typeScrap']);
+                break;
+
+            case 'consumibles':
+                $equipment->load(['consumables.material.unitMeasure', 'consumables.material.typeScrap']);
+                break;
+
+            case 'electrics':
+                $equipment->load(['electrics.material.unitMeasure', 'electrics.material.typeScrap']);
+                break;
+
+            case 'servicios_varios':
+                $equipment->load(['workforces', 'turnstiles']);
+                break;
+
+            case 'dias_trabajo':
+                $equipment->load(['workdays']);
+                break;
+        }
+
+        // lo que ya usas en create
+        $category = CategoryEquipment::findOrFail($equipment->category_equipment_id);
+
+        $unitMeasures = UnitMeasure::all();
+
+        $utility = PorcentageQuote::where('name', 'utility')->first();
+        $rent = PorcentageQuote::where('name', 'rent')->first();
+        $letter = PorcentageQuote::where('name', 'letter')->first();
+
+        $categoryMap = [
+            'materials'       => ['label' => 'MATERIALES',            'model' => 'DefaultEquipmentMaterial',   'color' => 'btn-info'],
+            'consumibles'     => ['label' => 'CONSUMIBLES',           'model' => 'DefaultEquipmentConsumable', 'color' => 'btn-warning'],
+            'electrics'       => ['label' => 'MATERIALES ELÉCTRICOS', 'model' => 'DefaultEquipmentElectric',   'color' => 'bg-indigo'],
+            'servicios_varios'=> ['label' => 'SERVICIOS VARIOS',      'model' => 'DefaultEquipmentWorkForce',  'color' => 'btn-secondary'],
+            'dias_trabajo'    => ['label' => 'DÍAS DE TRABAJO',       'model' => 'DefaultEquipmentWorkDay',    'color' => 'bg-orange'],
+        ];
+
+        // IMPORTANTE: devolvemos la misma vista de creación, pero con data inicial
+        return view('defaultEquipment.editarSubEquipment', compact(
+            'equipment', 'keyword', 'category', 'categoryMap', 'unitMeasures', 'permissions', 'utility', 'rent', 'letter'
+        ));
+    }
+
     public function update(UpdateDefaultEquipmentRequest $request, $equipment_id)
     {
         $begin = microtime(true);
@@ -543,6 +1038,9 @@ class DefaultEquipmentController extends Controller
             foreach( $equipment->turnstiles as $turnstile ) {
                 $turnstile->delete();
             }
+            foreach( $equipment->electrics as $electric ) {
+                $electric->delete();
+            }
             foreach( $equipment->workdays as $workday ) {
                 $workday->delete();
             }
@@ -613,10 +1111,33 @@ class DefaultEquipmentController extends Controller
 
         foreach ( $operations as $operation )
         {
-
+            $name_keyword = "";
+            $key = $operation->category_key;
+            if ($key == 'materials')
+            {
+                $name_keyword = "materiales";
+            } else {
+                if ($key == 'consumibles')
+                {
+                    $name_keyword = "consumibles";
+                } else {
+                    if ($key == 'electrics')
+                    {
+                        $name_keyword = "electricos";
+                    } else {
+                        if ($key == 'servicios_varios')
+                        {
+                            $name_keyword = "servicios varios";
+                        } else {
+                            $name_keyword = "dias de trabajo";
+                        }
+                    }
+                }
+            }
             array_push($arrayDefaultEquipments, [
                 "id" => $operation->id,
                 "description" => $operation->description,
+                "keyword" => ($operation->category_key == null) ? 'Completo':$name_keyword,
                 "large" => $operation->large,
                 "width" => $operation->width,
                 "high" => $operation->high,
@@ -625,6 +1146,8 @@ class DefaultEquipmentController extends Controller
                 "priceIGVUtility" => round($operation->total_equipment_utility, 2),
                 "priceSIGVUtility" => round($operation->total_equipment_utility/1.18, 2),
                 "created_at" => $operation->created_at->format('d/m/Y'),
+                // 🔥 AGREGAR ESTO
+                "category_key" => $operation->category_key,
             ]);
         }
 
@@ -639,4 +1162,178 @@ class DefaultEquipmentController extends Controller
 
         return ['data' => $arrayDefaultEquipments, 'pagination' => $pagination];
     }
+
+    public function optionsByKeyword(Request $request)
+    {
+        $allowedKeywords = [
+            'materials',
+            'consumibles',
+            'electrics',
+            'servicios_varios',
+            'dias_trabajo',
+        ];
+
+        $query = DefaultEquipment::query()
+            ->select(['id', 'description', 'category_key', 'category_equipment_id'])
+            ->whereIn('category_key', $allowedKeywords)
+            ->orderBy('description');
+
+        $rows = $query->get();
+
+        // ✅ A) agrupado por keyword
+        $grouped = [];
+        foreach ($allowedKeywords as $k) {
+            $grouped[$k] = [];
+        }
+
+        foreach ($rows as $r) {
+            $key = $r->category_key;
+            if (!isset($grouped[$key])) continue;
+
+            $grouped[$key][] = [
+                'id' => $r->id,
+                'description' => $r->description,
+            ];
+        }
+
+        // ✅ B) plano (por si lo quieres también)
+        $flat = $rows->map(function ($r) {
+            return [
+                'id' => $r->id,
+                'description' => $r->description,
+                'keyword' => $r->category_key,
+            ];
+        })->values();
+
+        return response()->json([
+            'grouped' => $grouped, // para combos por sección
+            'flat'    => $flat,    // opcional
+        ]);
+    }
+
+    public function itemsByKeyword(Request $request, $id)
+    {
+        $keyword = $request->query('keyword');
+
+        $allowed = ['materials','consumibles','electrics','servicios_varios','dias_trabajo'];
+        abort_unless(in_array($keyword, $allowed, true), 422, 'Keyword inválido');
+
+        // Validar que exista el DefaultEquipment
+        DefaultEquipment::select('id')->findOrFail($id);
+
+        switch ($keyword) {
+            case 'materials':
+                $rows = DefaultEquipmentMaterial::with(['material.unitMeasure'])
+                    ->where('default_equipment_id', $id)->get();
+
+                $items = $rows->map(function ($r) {
+                    return [
+                        'material_id' => $r->material_id,
+                        /*'material' => [
+                            'full_name' => optional($r->material)->full_name,
+                            'description' => optional($r->material)->description,
+                            'unit_measure' => optional(optional($r->material)->unitMeasure),
+                        ],*/
+                        'material' => $r->material,
+                        'quantity' => $r->quantity,
+                        'length' => $r->length,
+                        'width' => $r->width,
+                        'percentage' => $r->percentage,
+                        'unit_price' => $r->unit_price,
+                        'total_price' => $r->total_price,
+                    ];
+                });
+
+                return response()->json(['keyword'=>$keyword, 'items'=>$items]);
+
+            case 'consumibles':
+                $rows = DefaultEquipmentConsumable::with(['material.unitMeasure'])
+                    ->where('default_equipment_id', $id)->get();
+
+                $items = $rows->map(function ($r) {
+                    return [
+                        'material_id' => $r->material_id,
+                        /*'material' => [
+                            'full_name' => optional($r->material)->full_name,
+                            'description' => optional($r->material)->description,
+                            'unit_measure' => optional(optional($r->material)->unitMeasure),
+                        ],*/
+                        'material' => $r->material,
+                        'quantity' => $r->quantity,
+                        'unit_price' => $r->unit_price,
+                        'total_price' => $r->total_price,
+                    ];
+                });
+
+                return response()->json(['keyword'=>$keyword, 'items'=>$items]);
+
+            case 'electrics':
+                $rows = DefaultEquipmentElectric::with(['material.unitMeasure'])
+                    ->where('default_equipment_id', $id)->get();
+
+                $items = $rows->map(function ($r) {
+                    return [
+                        'material_id' => $r->material_id,
+                        /*'material' => [
+                            'full_name' => optional($r->material)->full_name,
+                            'description' => optional($r->material)->description,
+                            'unit_measure' => optional(optional($r->material)->unitMeasure),
+                        ],*/
+                        'material' => $r->material,
+                        'quantity' => $r->quantity,
+                        'price' => $r->price,
+                        'total' => $r->total,
+                    ];
+                });
+
+                return response()->json(['keyword'=>$keyword, 'items'=>$items]);
+
+            case 'dias_trabajo':
+                $rows = DefaultEquipmentWorkDay::where('default_equipment_id', $id)->get();
+
+                $items = $rows->map(function ($r) {
+                    return [
+                        'description' => $r->description,
+                        'quantityPerson' => $r->quantityPerson,
+                        'hoursPerPerson' => $r->hoursPerPerson,
+                        'pricePerHour' => $r->pricePerHour,
+                        'total_price' => $r->total_price,
+                    ];
+                });
+
+                return response()->json(['keyword'=>$keyword, 'items'=>$items]);
+
+            case 'servicios_varios':
+                $workforces = DefaultEquipmentWorkForce::where('default_equipment_id', $id)->get()
+                    ->map(function ($r) {
+                        return [
+                            'description' => $r->description,
+                            'unit' => $r->unit, // ya lo tienes guardado
+                            'quantity' => $r->quantity,
+                            'unit_price' => $r->unit_price,
+                            'total_price' => $r->total_price,
+                        ];
+                    });
+
+                $turnstiles = DefaultEquipmentTurnstile::where('default_equipment_id', $id)->get()
+                    ->map(function ($r) {
+                        return [
+                            'description' => $r->description,
+                            'quantity' => $r->quantity,
+                            'unit_price' => $r->unit_price,
+                            'total_price' => $r->total_price,
+                        ];
+                    });
+
+                return response()->json([
+                    'keyword' => $keyword,
+                    'items' => [
+                        'workforces' => $workforces,
+                        'turnstiles' => $turnstiles,
+                    ]
+                ]);
+        }
+    }
+
+
 }

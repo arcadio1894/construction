@@ -11,78 +11,9 @@ let $subtotal=0;
 let $subtotal2=0;
 let $subtotal3=0;
 var $permissions;
-let DEFAULT_EQUIPMENTS = null; // cache { grouped: {...}, flat: [...] }
 
 $(document).ready(function () {
     $permissions = JSON.parse($('#permissions').val());
-    $materials = JSON.parse($('#materials').val());
-    /*$.ajax({
-        url: "/dashboard/get/quote/materials/",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $materials.push(json[i]);
-            }
-        }
-    });*/
-
-    $.ajax({
-        url: "/dashboard/get/quote/consumables/",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $consumables.push(json[i]);
-                $electrics.push(json[i]);
-            }
-        }
-    });
-
-    $.ajax({
-        url: "/dashboard/get/materials/quote",
-        type: 'GET',
-        dataType: 'json',
-        success: function (json) {
-            for (var i=0; i<json.length; i++)
-            {
-                $materialsTypeahead.push(json[i].material);
-            }
-
-        }
-    });
-
-    $('.materialTypeahead').typeahead({
-            hint: true,
-            highlight: true, /* Enable substring highlighting */
-            minLength: 1 /* Specify minimum characters required for showing suggestions */
-        },
-        {
-            limit: 12,
-            source: substringMatcher($materialsTypeahead)
-        });
-    /*$('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            type: 'GET',
-            processResults(data) {
-                //console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                }
-            }
-        }
-    });*/
 
     $modalAddMaterial = $('#modalAddMaterial');
 
@@ -108,7 +39,6 @@ $(document).ready(function () {
 
     $formCreate = $('#formCreate');
     $("#btn-submit").on("click", storeQuote);
-    //$formCreate.on('submit', storeQuote);
 
     $('input[type=radio][name=presentation]').on('change', function() {
         switch ($(this).val()) {
@@ -142,52 +72,147 @@ $(document).ready(function () {
         }
     });
 
-    /*$('.material_search').select2({
-        placeholder: 'Selecciona un material',
-        ajax: {
-            url: '/dashboard/select/materials',
-            dataType: 'json',
-            delay: 250,
-            type: 'GET',
-            data: function(params) {
-                return {
-                    term: params.term || '',
-                    page: params.page || 1
+    $('#material_search')
+        .select2({
+            theme: 'bootstrap4',
+            placeholder: 'Buscar material',
+            allowClear: true,
+            minimumInputLength: 2,
+            ajax: {
+                url: window.routeSearchMaterials,
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return { q: params.term };
+                },
+                processResults: function (data) {
+                    return {
+                        results: (data || []).map(function (item) {
+                            return {
+                                id: item.id,
+                                text: item.full_name + (item.unit ? ' (' + item.unit + ')' : ''),
+                                raw: item
+                            };
+                        })
+                    };
+                },
+                cache: true
+            }
+        })
+        .on('select2:select', function (e) {
+
+            // ✅ acá está la clave
+            const selected = e.params.data;
+            $material = selected && selected.raw ? selected.raw : null;
+
+            if (!$material) {
+                toastr.error('No se pudo leer el material seleccionado', 'Error');
+                return;
+            }
+
+            // ✅ contenedor fijo
+            $renderMaterial = $('[data-bodyMaterials]').first();
+
+            // ✅ validar duplicado por hidden
+            const materialId = String($material.id);
+            const exists = $('[data-bodyMaterials]')
+                .find('[data-materialId]')
+                .filter(function () {
+                    return String($(this).val()) === materialId;
+                }).length > 0;
+
+            if (exists) {
+                toastr.error('Este material ya está seleccionado', 'Error');
+                $(this).val(null).trigger('change');
+                return;
+            }
+
+            // Reset inputs modal
+            $('#material_length_entered').val('');
+            $('#material_width_entered').val('');
+            $('#material_quantity_entered').val('');
+            $('#material_percentage_entered').val('');
+            $('#material_price_entered').val('');
+
+            // --- lógica del modal ---
+            if ($material.type_scrap === null) {
+
+                $('#presentation').hide();
+                $('#length_material').hide();
+                $('#width_material').hide();
+                $('#width_entered_material').hide();
+                $('#length_entered_material').hide();
+
+                $('#material_quantity').val($material.stock_current);
+                $('#quantity_entered_material').show();
+
+                $('#material_price').val($material.unit_price);
+
+                $modalAddMaterial.modal('show');
+
+            } else {
+
+                $('#presentation').show();
+                $("#fraction").prop("checked", true);
+
+                switch (parseInt($material.type_scrap.id)) {
+                    case 1:
+                    case 2:
+                    case 6:
+                        $('#length_entered_material').show();
+                        $('#width_entered_material').show();
+                        $('#length_material').show();
+                        $('#width_material').show();
+
+                        $('#material_length').val($material.type_scrap.length);
+                        $('#material_width').val($material.type_scrap.width);
+
+                        $('#material_quantity').val($material.stock_current);
+                        $('#quantity_entered_material').hide();
+                        $('#material_price').val($material.unit_price);
+                        break;
+
+                    case 3:
+                    case 4:
+                    case 5:
+                        $('#length_entered_material').show();
+                        $('#length_material').show();
+                        $('#material_length').val($material.type_scrap.length);
+
+                        $('#width_material').hide();
+                        $('#width_entered_material').hide();
+
+                        $('#quantity_entered_material').hide();
+                        $('#material_quantity').val($material.stock_current);
+                        $('#material_price').val($material.unit_price);
+                        break;
+
+                    default:
+                        $('#length_material').hide();
+                        $('#width_material').hide();
+                        $('#width_entered_material').hide();
+                        $('#length_entered_material').hide();
+
+                        $('#material_quantity').val($material.stock_current);
+                        $('#material_percentage_entered').hide();
+                        $('#material_price').val($material.unit_price);
                 }
-            },
-            processResults: function (data) {
-                return {
-                    results: $.map(data.results, function (item) {
-                        //console.log(item.full_description);
-                        return {
-                            text: item.full_description,
-                            id: item.id,
-                        }
-                    })
-                };
-            },
-            cache: true
-        }
-    });*/
+
+                $modalAddMaterial.modal('show');
+            }
+
+            // limpiar select2
+            $(this).val(null).trigger('change');
+        });
 
     $('.consumable_search').select2({
+        theme: 'bootstrap4',
         placeholder: 'Selecciona un consumible',
+        allowClear: true,
+        minimumInputLength: 2,
         ajax: {
-            url: '/dashboard/select/consumables',
+            url: routeSelectConsumables,
             dataType: 'json',
-            type: 'GET',
-            /*processResults(data) {
-                console.log(data);
-                return {
-                    results: $.map(data, function (item) {
-                        console.log(item);
-                        return {
-                            text: item.full_name,
-                            id: item.id,
-                        }
-                    })
-                }
-            }*/
             delay: 250,
             data: function (params) {
                 return { q: params.term, page: params.page || 1 };
@@ -198,7 +223,7 @@ $(document).ready(function () {
                     results: (data.results || []).map(function (item) {
                         return {
                             id: item.id,
-                            text: item.full_name,
+                            text: item.text,
                             raw: item // ✅ guardas todo
                         };
                     }),
@@ -209,26 +234,30 @@ $(document).ready(function () {
     });
 
     $('.electric_search').select2({
-        placeholder: 'Selecciona un material',
+        theme: 'bootstrap4',
+        placeholder: 'Selecciona un material eléctrico',
+        allowClear: true,
+        minimumInputLength: 2,
         ajax: {
-            url: '/dashboard/select/consumables',
+            url: routeSelectElectrics,
             dataType: 'json',
-            type: 'GET',
             delay: 250,
             data: function (params) {
                 return { q: params.term, page: params.page || 1 };
             },
             processResults: function (data, params) {
                 params.page = params.page || 1;
+
                 return {
                     results: (data.results || []).map(function (item) {
+                        // item ya trae {id, text, ...} desde el controller
                         return {
                             id: item.id,
-                            text: item.full_name,
-                            raw: item // ✅ guardas todo
+                            text: item.text || item.full_name || '',
+                            raw: item
                         };
                     }),
-                    pagination: { more: data.more }
+                    pagination: { more: !!data.more }
                 };
             }
         }
@@ -249,277 +278,6 @@ $(document).ready(function () {
     $(document).on('click', '[data-deleteEquipment]', deleteEquipment);
 
     $(document).on('click', '[data-saveEquipment]', saveEquipment);
-
-    //$("input[id='"+this.id+"']")   $('.materialTypeahead')
-    $(document).on('typeahead:select', '.materialTypeahead', function(ev, suggestion) {
-        var select_material = $(this);
-        console.log($(this).val());
-        // TODO: Tomar el texto no el val()
-        var material_search = select_material.val();
-
-        //$material = $materials.find( mat=>mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase() );
-
-        /*$material = $materials.find(mat =>
-            mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase() &&
-            mat.enable_status === 1
-        );*/
-        var materialsWithSameName = $materials.filter(mat =>
-            mat.full_name.trim().toLowerCase() === material_search.trim().toLowerCase()
-        );
-
-        //var $material;
-
-        if (materialsWithSameName.length > 1) {
-            // Si hay más de un material con el mismo nombre, selecciona el que está activo
-            $material = materialsWithSameName.find(mat => mat.enable_status === 1);
-        } else {
-            // Si solo hay uno, selecciona ese material, no importa su estado
-            $material = materialsWithSameName[0];
-        }
-
-        if( $material === undefined )
-        {
-            toastr.error('Debe seleccionar un material', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        /*for (var i=0; i<$items.length; i++)
-        {
-            var mat = $items.find( mat=>mat.material.id === $material.id );
-            if (mat !== undefined)
-            {
-                toastr.error('Este material ya esta seleccionado', 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-                return;
-            }
-        }*/
-
-        if ( $material.type_scrap === null )
-        {
-            $('#presentation').hide();
-            $('#length_material').hide();
-            $('#width_material').hide();
-            $('#width_entered_material').hide();
-            $('#length_entered_material').hide();
-            $('#material_quantity').val($material.stock_current);
-            $('#quantity_entered_material').show();
-            $('#material_price').val($material.unit_price);
-
-            // TODO: Render esta fallando
-            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
-            $modalAddMaterial.modal('show');
-        } else {
-            switch($material.type_scrap.id) {
-                case 1:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#length_material').show();
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#material_quantity').val($material.stock_current);
-                    $('#quantity_entered_material').hide();
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 2:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#length_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 3:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 4:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 5:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#width_material').hide();
-                    $('#length_material').show();
-                    $('#width_entered_material').hide();
-                    $('#quantity_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_price').val($material.unit_price);
-                    break;
-                case 6:
-                    $('#presentation').show();
-                    $("#fraction").prop("checked", true);
-                    $('#length_entered_material').show();
-                    $('#width_entered_material').show();
-                    $('#width_material').show();
-                    $('#material_length').val($material.type_scrap.length);
-                    $('#length_material').show();
-                    $('#material_width').val($material.type_scrap.width);
-                    $('#material_quantity').val($material.stock_current);
-                    $('#quantity_entered_material').hide();
-                    $('#material_price').val($material.unit_price);
-                    break;
-                default:
-                    $('#length_material').hide();
-                    $('#width_material').hide();
-                    $('#width_entered_material').hide();
-                    $('#length_entered_material').hide();
-                    $('#material_quantity').val($material.stock_current);
-                    $('#material_percentage_entered').hide();
-                    $('#material_price').val($material.unit_price);
-
-            }
-            //var idMaterial = $(this).select2('data').id;
-            $renderMaterial = $(this).parent().parent().parent().parent().next().next().next();
-            $modalAddMaterial.modal('show');
-        }
-    });
-
-    $(document).on('input', '[data-materialLargo]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-materialAncho]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-materialQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-
-    $(document).on('input', '[data-manoQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-consumableQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-electricQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-manoPrice]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-description]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-cantidad]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-horas]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-precio]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-tornoQuantity]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-tornoPrice]', function() {
-        var card = $(this).parent().parent().parent().parent().parent().parent().parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-quantityequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-descriptionequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on('input', '[data-detailequipment]', function() {
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
-    $(document).on("summernote.change", ".textarea_edit",function (e) {   // callback as jquery custom event
-        var card = $(this).parent().parent().parent().parent();
-        card.removeClass('card-success');
-        card.addClass('card-gray-dark');
-    });
 
     $selectCustomer = $('#customer_id');
     $selectContact = $('#contact_id');
@@ -546,189 +304,31 @@ $(document).ready(function () {
     $('#addImage').on('click', addImage);
     $(document).on('click', '[data-imagedelete]', imageDelete);
 
-    fetchDefaultEquipmentsOptions().then(() => {
-        initDefaultEquipmentSelects($(document)); // por si hay algún select fuera del template
+
+    // inicial
+    setKeyword($('#keyword').val() || 'materials');
+
+    // click
+    $(document).on('click', '.btn-keyword', function(){
+        setKeyword($(this).data('keyword'));
     });
 
-    $(document).on('click', '[data-load-default-equipment]', function () {
-        const $btn = $(this);
-        const keyword = $btn.data('keyword'); // materials / consumibles / electrics / servicios_varios / dias_trabajo
-
-        // el select está en el mismo bloque (row) arriba
-        const $equipCard = $btn.closest('[data-equip]');
-        const $select = $equipCard.find('select[data-default-equipment][data-keyword="' + keyword + '"]');
-
-        const defaultEquipmentId = $select.val();
-        if (!defaultEquipmentId) {
-            toastr.warning('Seleccione una plantilla / equipo guardado.');
-            return;
-        }
-
-        // resolver body
-        const bodyTarget = resolveBodyContainer($btn, keyword);
-        if (!bodyTarget) {
-            toastr.error('No se encontró el contenedor para renderizar: ' + keyword);
-            return;
-        }
-
-        // limpiar body(s)
-        if (keyword === 'servicios_varios') {
-            //bodyTarget.mano.empty();
-            //bodyTarget.torno.empty();
-        } else {
-            //bodyTarget.empty();
-        }
-
-        // request
-        $.ajax({
-            url: buildDefaultEquipmentItemsUrl(defaultEquipmentId, keyword),
-            method: 'GET',
-            dataType: 'json',
-            beforeSend: function () {
-                $btn.prop('disabled', true);
-            }
-        }).done(function (res) {
-            if (!res || !res.keyword) {
-                toastr.error('Respuesta inválida del servidor.');
-                return;
-            }
-
-            // ✅ RENDER SEGÚN KEYWORD
-            switch (res.keyword) {
-
-                case 'materials': {
-                    const $render = bodyTarget; // [data-bodyMaterials]
-                    (res.items || []).forEach(function (it) {
-                        const materialObj = normalizeMaterialForRender(it.material, it.material_id);
-                        const desc = it.material?.full_name || it.material?.description || materialObj.full_name;
-                        const unit = it.material?.unit_measure?.description
-                            || it.material?.unitMeasure?.description
-                            || materialObj.unit_measure?.description
-                            || '';
-
-                        renderTemplateMaterial(
-                            it.material_id,                 // code
-                            desc,                          // description
-                            it.quantity || 0,              // quantity
-                            unit,                          // unit
-                            it.unit_price || 0,            // price
-                            it.total_price || 0,           // total
-                            $render,                       // render container
-                            it.length || 0,                // length
-                            it.width || 0,                 // width
-                            materialObj                    // material (obj completo)
-                        );
-                    });
-                    break;
-                }
-
-                /*case 'consumibles': {
-                    const $render = bodyTarget; // [data-bodyConsumable]
-                    (res.items || []).forEach(function (it) {
-                        const consumable = normalizeConsumableForRender(it);
-                        renderTemplateConsumable($render, consumable, it.quantity || 0);
-                    });
-                    break;
-                }*/
-                case 'consumibles': {
-                    const $render = bodyTarget;
-
-                    (res.items || []).forEach(function (it) {
-                        const merged = upsertConsumableInBody($render, it);
-                        if (merged) return;
-
-                        const consumable = normalizeConsumableForRender(it);
-                        renderTemplateConsumable($render, consumable, it.quantity || 0);
-                    });
-
-                    break;
-                }
-
-                /*case 'electrics': {
-                    const $render = bodyTarget; // [data-bodyElectric]
-                    (res.items || []).forEach(function (it) {
-                        const electric = normalizeElectricForRender(it);
-                        // tu controller para electrics devuelve { quantity, price, total } pero tu render usa unit_price
-                        // si tu tabla tiene "price" como unitario, lo mapeamos:
-                        electric.unit_price = (it.price != null) ? it.price : electric.unit_price;
-
-                        renderTemplateElectric($render, electric, it.quantity || 0);
-                    });
-                    break;
-                }*/
-                case 'electrics': {
-                    const $render = bodyTarget;
-
-                    (res.items || []).forEach(function (it) {
-                        const merged = upsertElectricInBody($render, it);
-                        if (merged) return;
-
-                        const electric = normalizeElectricForRender(it);
-                        electric.unit_price = (it.price != null) ? it.price : electric.unit_price;
-                        renderTemplateElectric($render, electric, it.quantity || 0);
-                    });
-
-                    break;
-                }
-
-                case 'dias_trabajo': {
-                    const $render = bodyTarget; // [data-bodyDia]
-                    (res.items || []).forEach(function (it) {
-                        renderTemplateDia(
-                            $render,
-                            it.description || '',
-                            it.pricePerHour || 0,
-                            it.hoursPerPerson || 0,
-                            it.quantityPerson || 0,
-                            it.total_price || 0
-                        );
-                    });
-                    break;
-                }
-
-                case 'servicios_varios': {
-                    const $mano = bodyTarget.mano;   // [data-bodyMano]
-                    const $torno = bodyTarget.torno; // [data-bodyTorno]
-
-                    const workforces = res.items?.workforces || [];
-                    const turnstiles = res.items?.turnstiles || [];
-
-                    workforces.forEach(function (w) {
-                        renderTemplateMano(
-                            $mano,
-                            w.description || '',
-                            w.unit || '',
-                            w.quantity || 0,
-                            w.unit_price || 0
-                        );
-                    });
-
-                    turnstiles.forEach(function (t) {
-                        renderTemplateTorno(
-                            $torno,
-                            t.description || '',
-                            t.quantity || 0,
-                            t.unit_price || 0
-                        );
-                    });
-
-                    break;
-                }
-
-                default:
-                    toastr.error('Keyword no soportado: ' + res.keyword);
-            }
-
-            toastr.success('Plantilla cargada: ' + keyword);
-
-        }).fail(function (xhr) {
-            const msg = (xhr.responseJSON && (xhr.responseJSON.message || xhr.responseJSON.error)) ? (xhr.responseJSON.message || xhr.responseJSON.error) : 'Error al cargar plantilla.';
-            toastr.error(msg);
-        }).always(function () {
-            $btn.prop('disabled', false);
-        });
+    $(document).on('click', '[data-saveDefaultEquipment]', function () {
+        saveDefaultEquipmentSection();
     });
 
+    $(function () {
+        if (window.isEditMode && window.initialEquipment) {
+            // activar sección correcta y bloquear las otras
+            activateKeywordSection(window.initialKeyword, true);
+
+            // llenar nombre del equipo
+            $('[data-nameequipment]').val(window.initialEquipment.description || '');
+
+            // cargar filas según keyword
+            hydrateSection(window.initialKeyword, window.initialEquipment);
+        }
+    });
 });
 
 var $formCreate;
@@ -738,147 +338,455 @@ var $renderMaterial;
 var $selectCustomer;
 var $selectContact;
 
-function toNumber(val) {
-    const n = parseFloat(val);
+function hydrateSection(keyword, equipment) {
+    // limpiar bodies
+    /*$('[data-bodyMaterials]').empty();
+    $('[data-bodyConsumable]').empty();
+    $('[data-bodyElectric]').empty();
+    $('[data-bodyMano]').empty();
+    $('[data-bodyTorno]').empty();
+    $('[data-bodyDia]').empty();*/
+
+    switch (keyword) {
+        case 'materials':
+            hydrateMaterials(equipment.materials || []);
+            break;
+        case 'consumibles':
+            hydrateConsumables(equipment.consumables || []);
+            break;
+        case 'electrics':
+            hydrateElectrics(equipment.electrics || []);
+            break;
+        case 'servicios_varios':
+            hydrateWorkforces(equipment.workforces || []);
+            hydrateTurnstiles(equipment.turnstiles || []);
+            break;
+        case 'dias_trabajo':
+            hydrateWorkdays(equipment.workdays || []);
+            break;
+    }
+}
+
+function setVal($el, value) { $el.val(value ?? ''); }
+
+function hydrateMaterials(items) {
+    console.log(items);
+    items.forEach(it => {
+        const row = activateTemplate('#materials-selected');
+        const $row = $(row);
+
+        // it: DefaultEquipmentMaterial (con material)
+        setVal($row.find('[data-materialDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-materialId]'), it.material_id);
+
+        const unit = it.material?.unit_measure?.description ?? '';
+        setVal($row.find('[data-materialUnit]'), unit);
+
+        setVal($row.find('[data-materialLargo]'), it.length ?? 0);
+        setVal($row.find('[data-materialAncho]'), it.width ?? 0);
+        setVal($row.find('[data-materialQuantity]'), it.quantity ?? 0);
+
+        // precios (si guardas unit_price/total_price en tabla)
+        setVal($row.find('[data-materialPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-materialTotal]'), it.total_price ?? 0);
+
+        // si manejas los “sin igv” como Price2/Total2, aquí setea si los tienes
+        setVal($row.find('[data-materialPrice2]'), (it.unit_price/1.18).toFixed(2));
+        setVal($row.find('[data-materialTotal2]'), (it.total_price/1.18).toFixed(2));
+
+        $row.find('[data-delete]').attr('data-delete', it.material_id);
+
+        $materials.push(it.material);
+        $('[data-bodyMaterials]').append($row);
+    });
+
+    if (window.isEditMode) lockKeywordChange();
+}
+
+function hydrateConsumables(items) {
+    console.log(items);
+    items.forEach(it => {
+        const row = activateTemplate('#template-consumable');
+        const $row = $(row);
+
+        setVal($row.find('[data-consumableDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-consumableId]'), it.material_id);
+        const unit = it.material?.unit_measure?.description ?? '';
+        setVal($row.find('[data-consumableUnit]'), unit);
+
+        setVal($row.find('[data-consumableQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-consumablePrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-consumableTotal]'), it.total_price ?? 0);
+
+        setVal($row.find('[data-consumablePrice2]'), (it.unit_price/1.18).toFixed(2));
+        setVal($row.find('[data-consumableTotal2]'), (it.total_price/1.18).toFixed(2));
+
+        $row.find('[data-deleteconsumable]').attr('data-deleteconsumable', it.material_id);
+
+        $consumables.push(it.material);
+        $('[data-bodyConsumable]').append($row);
+    });
+}
+
+function hydrateElectrics(items) {
+    console.log(items);
+    items.forEach(it => {
+        const row = activateTemplate('#template-electric');
+        const $row = $(row);
+
+        setVal($row.find('[data-electricDescription]'), it.material?.full_name || it.material?.description || '');
+        setVal($row.find('[data-electricId]'), it.material_id);
+        setVal($row.find('[data-electricUnit]'), it.material?.unit_measure.description || '');
+
+        setVal($row.find('[data-electricQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-electricPrice]'), it.price ?? 0);
+        setVal($row.find('[data-electricTotal]'), it.total ?? 0);
+
+        setVal($row.find('[data-electricPrice2]'), (it.price/1.18).toFixed(2));
+        setVal($row.find('[data-electricTotal2]'), (it.total/1.18).toFixed(2));
+
+        $row.find('[data-deleteelectric]').attr('data-deleteelectric', it.material_id);
+
+        $electrics.push(it.material);
+
+        $('[data-bodyElectric]').append($row);
+    });
+}
+
+function hydrateWorkforces(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#template-mano');
+        const $row = $(row);
+
+        setVal($row.find('[data-manoDescription]'), it.description || '');
+        setVal($row.find('[data-manoUnit]'), it.unit || '');
+        setVal($row.find('[data-manoQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-manoPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-manoTotal]'), it.total_price ?? 0);
+
+        $('[data-bodyMano]').append($row);
+    });
+}
+
+function hydrateTurnstiles(items) {
+    items.forEach(it => {
+        const row = activateTemplate('#template-torno');
+        const $row = $(row);
+
+        setVal($row.find('[data-tornoDescription]'), it.description || '');
+        setVal($row.find('[data-tornoQuantity]'), it.quantity ?? 0);
+        setVal($row.find('[data-tornoPrice]'), it.unit_price ?? 0);
+        setVal($row.find('[data-tornoTotal]'), it.total_price ?? 0);
+
+        $('[data-bodyTorno]').append($row);
+    });
+}
+
+function hydrateWorkdays(items) {
+    // ojo: en tu tabla se llama quantityPerson/hoursPerPerson/pricePerHour
+    items.forEach(it => {
+        const row = activateTemplate('#template-dia');
+        const $row = $(row);
+
+        setVal($row.find('[data-description]'), it.description || '');
+        setVal($row.find('[data-cantidad]'), it.quantityPerson ?? 0);
+        setVal($row.find('[data-horas]'), it.hoursPerPerson ?? 0);
+        setVal($row.find('[data-precio]'), it.pricePerHour ?? 0);
+        setVal($row.find('[data-total]'), it.total_price ?? 0);
+
+        $('[data-bodyDia]').append($row);
+    });
+}
+
+function lockKeywordChange() {
+    $('#keyword-selector').css('pointer-events', 'none');
+    $('#keyword-selector .btn-keyword.is-active').css('pointer-events', 'auto'); // solo el activo “sin efecto”
+}
+
+function activateKeywordSection(keyword, lockOthers = false) {
+    // set hidden
+    $('#keyword').val(keyword);
+
+    // ocultar/mostrar secciones
+    $('.keyword-section').addClass('d-none');
+    $('.keyword-section[data-keyword="' + keyword + '"]').removeClass('d-none');
+
+    // botones visual
+    $('.btn-keyword').removeClass('is-active is-inactive');
+    const $activeBtn = $('.btn-keyword[data-keyword="' + keyword + '"]');
+    $activeBtn.addClass('is-active').find('i.fas').removeClass('d-none');
+
+    $('.btn-keyword').not($activeBtn).addClass('is-inactive').find('i.fas').addClass('d-none');
+
+    if (lockOthers) {
+        // bloquear botones y secciones no activas
+        $('.btn-keyword').not($activeBtn).prop('disabled', true).css('pointer-events', 'none');
+        $('.keyword-section').not('[data-keyword="' + keyword + '"]')
+            .find('input, select, textarea, button')
+            .prop('disabled', true);
+    }
+}
+
+function num(v) {
+    const n = parseFloat(String(v ?? '').replace(',', '.'));
     return isNaN(n) ? 0 : n;
 }
-
-function setVal($el, v) {
-    $el.val(v);
-    $el.trigger('input'); // por si tienes listeners
-    $el.trigger('change');
+function str(v) {
+    return String(v ?? '').trim();
 }
 
-function findElectricRow($body, electricId) {
-    const $id = $body.find(`[data-electricId="${electricId}"]`).first();
-    if (!$id.length) return null;
-    return $id.closest('.row');
+function collectMaterials() {
+    const rows = $('[data-bodyMaterials] .row');
+    const items = [];
+
+    rows.each(function () {
+        const $row = $(this);
+
+        const material_id = num($row.find('[data-materialId]').val());
+        if (!material_id) return; // salta rows vacíos
+
+        const quantity = num($row.find('[data-materialQuantity]').val());
+        const length   = num($row.find('[data-materialLargo]').val());
+        const width    = num($row.find('[data-materialAncho]').val());
+
+        // precios / totales (tú ya los renderizas)
+        const unit_price  = num($row.find('[data-materialPrice]').val());
+        const total_price = num($row.find('[data-materialTotal]').val());
+
+        // en tu modelo guardabas percentage = quantity
+        const percentage = quantity;
+
+        items.push({ material_id, quantity, length, width, percentage, unit_price, total_price });
+    });
+
+    return items;
 }
 
-function upsertElectricInBody($body, it) {
-    const electricId = it.material_id; // mismo razonamiento
-    const $row = findElectricRow($body, electricId);
-    if (!$row) return false;
+function collectConsumables() {
+    const rows = $('[data-bodyConsumable] .row');
+    const items = [];
 
-    const $qty = $row.find('[data-electricQuantity]').first();
-    const currentQty = toNumber($qty.val());
-    const addQty = toNumber(it.quantity);
-    const newQty = currentQty + addQty;
+    rows.each(function () {
+        const $row = $(this);
 
-    setVal($qty, newQty);
+        const material_id = num($row.find('[data-consumableId]').val());
+        if (!material_id) return;
 
-    const $price = $row.find('[data-electricPrice]').first();
-    const $total = $row.find('[data-electricTotal]').first();
-    const $total2 = $row.find('[data-electricTotal2]').first();
+        const quantity = num($row.find('[data-consumableQuantity]').val());
 
-    const price = toNumber($price.val());
-    const total = newQty * price;
+        // Si NO tienes permiso, estos inputs están ocultos.
+        // Usa fallback: si no hay data-consumablePrice, usa data-consumablePrice2.
+        const price = num($row.find('[data-consumablePrice]').val()) || num($row.find('[data-consumablePrice2]').val());
+        const total = num($row.find('[data-consumableTotal]').val()) || num($row.find('[data-consumableTotal2]').val());
 
-    if ($total.length)  $total.val(total.toFixed(2));
-    if ($total2.length) $total2.val((total / 1.18).toFixed(2));
+        items.push({ material_id, quantity, price, total });
+    });
 
-    return true;
+    return items;
 }
 
-function findConsumableRow($body, consumableId) {
-    const $id = $body.find(`[data-consumableId="${consumableId}"]`).first();
-    if (!$id.length) return null;
-    return $id.closest('.row');
+function collectElectrics() {
+    const rows = $('[data-bodyElectric] .row');
+    const items = [];
+
+    rows.each(function () {
+        const $row = $(this);
+
+        const material_id = num($row.find('[data-electricId]').val());
+        if (!material_id) return;
+
+        const quantity = num($row.find('[data-electricQuantity]').val());
+        const price    = num($row.find('[data-electricPrice]').val());
+        const total    = num($row.find('[data-electricTotal]').val());
+
+        items.push({ material_id, quantity, price, total });
+    });
+
+    return items;
 }
 
-function upsertConsumableInBody($body, it) {
-    const consumableId = it.material_id; // ojo: tu backend manda material_id; en render se usa consumable.id
-    // En normalizeConsumableForRender(it) tú seteas consumable.id = material_id, así que calza.
+function collectWorkforces() {
+    const items = [];
 
-    const $row = findConsumableRow($body, consumableId);
-    if (!$row) return false;
+    $('[data-bodyMano] .row').each(function () {
+        const $row = $(this);
 
-    const $qty = $row.find('[data-consumableQuantity]').first();
-    const currentQty = toNumber($qty.val());
-    const addQty = toNumber(it.quantity);
-    const newQty = currentQty + addQty;
+        const description = str($row.find('[data-manoDescription]').val());
+        const unit        = str($row.find('[data-manoUnit]').val());
+        const quantity    = num($row.find('[data-manoQuantity]').val());
+        const unit_price  = num($row.find('[data-manoPrice]').val());
+        const total_price = num($row.find('[data-manoTotal]').val());
 
-    setVal($qty, newQty);
+        if (!description) return;
 
-    const $price = $row.find('[data-consumablePrice]').first();
-    const $price2 = $row.find('[data-consumablePrice2]').first();
-    const $total = $row.find('[data-consumableTotal]').first();
-    const $total2 = $row.find('[data-consumableTotal2]').first();
+        items.push({
+            description,
+            unit,
+            quantity,
+            unit_price,
+            total_price
+        });
+    });
 
-    const price = toNumber($price.val());
-    const total = newQty * price;
-
-    if ($total.length)  $total.val(total.toFixed(2));
-    if ($total2.length) $total2.val((total / 1.18).toFixed(2));
-
-    return true;
+    return items;
 }
 
-function applyDefaultEquipmentToCard($card, keyword, items) {
-    if (keyword === 'materials') {
-        hydrateMaterials(items, $card);
+function collectTurnstiles() {
+    const items = [];
+
+    $('[data-bodyTorno] .row').each(function () {
+        const $row = $(this);
+
+        const description = str($row.find('[data-tornoDescription]').val());
+        const quantity    = num($row.find('[data-tornoQuantity]').val());
+        const unit_price  = num($row.find('[data-tornoPrice]').val());
+        const total_price = num($row.find('[data-tornoTotal]').val());
+
+        if (!description) return;
+
+        items.push({
+            description,
+            quantity,
+            unit_price,
+            total_price
+        });
+    });
+
+    return items;
+}
+
+function getEquipmentName() {
+    return str($('[data-nameequipment]').val());
+}
+
+function collectWorkdays() {
+    const items = [];
+
+    $('[data-bodyDia] .row').each(function () {
+        const $row = $(this);
+
+        const description    = str($row.find('[data-description]').val());
+        const quantityPerson = num($row.find('[data-cantidad]').val());
+        const hoursPerPerson = num($row.find('[data-horas]').val());
+        const pricePerHour   = num($row.find('[data-precio]').val());
+        const total_price    = num($row.find('[data-total]').val());
+
+        if (!description) return;
+
+        items.push({
+            description,
+            quantityPerson,
+            hoursPerPerson,
+            pricePerHour,
+            total_price
+        });
+    });
+
+    return items;
+}
+
+function buildPayloadByKeyword(keyword) {
+    var category_equipment_id = $('#category_equipment_id').val();
+    const default_equipment_id = $('#default_equipment_id').val();
+    const payload = {
+        keyword: keyword,
+        description: getEquipmentName(),
+        category_equipment_id: category_equipment_id,
+        default_equipment_id: default_equipment_id
+    };
+
+    switch (keyword) {
+        case 'materials':
+            payload.materials = collectMaterials();       // (tu función existente)
+            break;
+
+        case 'consumibles':
+            payload.consumables = collectConsumables();   // (tu función existente)
+            break;
+
+        case 'electrics':
+            payload.electrics = collectElectrics();       // (tu función existente)
+            break;
+
+        case 'servicios_varios':
+            payload.workforces = collectWorkforces();
+            payload.turnstiles = collectTurnstiles();
+            break;
+
+        case 'dias_trabajo':
+            payload.workdays = collectWorkdays();
+            break;
+    }
+
+    return payload;
+}
+
+function saveDefaultEquipmentSection() {
+    const keyword = $('#keyword').val();
+    const name = getEquipmentName();
+
+    if (!name) {
+        toastr.error('Debe ingresar el Nombre del Equipo', 'Error');
         return;
     }
 
-    if (keyword === 'consumibles') {
-        hydrateConsumables(items, $card);
-        return;
-    }
+    $.confirm({
+        title: '¿Estás seguro de guardar los cambios?',
+        content: 'Recuerda que solo se guardarán los cambios de la sección actual.',
+        type: 'blue',
+        buttons: {
+            cancelar: {
+                text: 'Cancelar',
+                btnClass: 'btn-secondary'
+            },
+            guardar: {
+                text: 'Guardar',
+                btnClass: 'btn-primary',
+                action: function () {
 
-    if (keyword === 'electrics') {
-        hydrateElectrics(items, $card);
-        return;
-    }
+                    const payload = buildPayloadByKeyword(keyword);
 
-    if (keyword === 'dias_trabajo') {
-        hydrateWorkdays(items, $card);
-        return;
-    }
-
-    if (keyword === 'servicios_varios') {
-        hydrateWorkforces(items.workforces || [], $card);
-        hydrateTurnstiles(items.turnstiles || [], $card); // si lo pintas en otro body, lo separamos
-        return;
-    }
-}
-
-function fetchDefaultEquipmentsOptions() {
-    return $.ajax({
-        url:  window.routeDefaultEquipmentOptions, // ajusta tu ruta real
-        method: 'GET',
-        dataType: 'json'
-    }).then(res => {
-        DEFAULT_EQUIPMENTS = res;
-        return res;
+                    $.ajax({
+                        url: window.routeStoreDefaultEquipment, // <-- define esta ruta en blade
+                        method: 'POST',
+                        data: JSON.stringify(payload),
+                        contentType: 'application/json; charset=utf-8',
+                        dataType: 'json',
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+                        },
+                        success: function (res) {
+                            toastr.success(res.message || 'Guardado correctamente');
+                            location.reload();
+                        },
+                        error: function (xhr) {
+                            const msg = xhr.responseJSON?.message || 'Error al guardar';
+                            toastr.error(msg, 'Error');
+                        }
+                    });
+                }
+            }
+        }
     });
 }
 
-function initDefaultEquipmentSelects($scope) {
-    if (!DEFAULT_EQUIPMENTS || !DEFAULT_EQUIPMENTS.grouped) return;
+function setKeyword(key) {
+    $('#keyword').val(key);
 
-    $scope.find('select[data-default-equipment]').each(function () {
-        const $sel = $(this);
-        const keyword = $sel.data('keyword');
+    // botones: activo/inactivo
+    $('.btn-keyword')
+        .removeClass('is-active')
+        .addClass('is-inactive')
+        .find('.fa-check').addClass('d-none');
 
-        // Evitar re-inicializar select2 si ya existe
-        if ($sel.hasClass('select2-hidden-accessible')) return;
+    $('.btn-keyword[data-keyword="'+key+'"]')
+        .addClass('is-active')
+        .removeClass('is-inactive')
+        .find('.fa-check').removeClass('d-none');
 
-        $sel.select2({
-            placeholder: 'Selecciona un equipo guardado',
-            allowClear: true,
-            width: '100%'
-        });
-
-        // Llenar opciones por keyword
-        const options = (DEFAULT_EQUIPMENTS.grouped[keyword] || []);
-        $sel.empty().append(new Option('', '', true, false)); // placeholder vacío
-
-        options.forEach(opt => {
-            $sel.append(new Option(opt.description, opt.id, false, false));
-        });
-
-        $sel.trigger('change.select2');
-    });
+    // secciones
+    $('.keyword-section').addClass('d-none');
+    $('.keyword-section[data-keyword="'+key+'"]').removeClass('d-none');
 }
 
 function imageDelete() {
@@ -914,6 +822,18 @@ function previewFile(input) {
         preview.src = "";
     }
 }
+
+/*var materialsBH = new Bloodhound({
+    datumTokenizer: Bloodhound.tokenizers.obj.whitespace('full_name'),
+    queryTokenizer: Bloodhound.tokenizers.whitespace,
+    remote: {
+        url: routeSearchMaterials + '?q=%QUERY',
+        wildcard: '%QUERY',
+        transform: function (response) {
+            return response; // array plano
+        }
+    }
+});*/
 
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
@@ -1056,14 +976,23 @@ function saveEquipment() {
 
                     //TODO: Otra vez guardamos el equipo
 
-                    var quantity = button.parent().parent().next().children().children().children().next().val();
+                    var quantity =  button.parent().parent().next().children().children().children().next().val();
 
-                    var utility = button.parent().parent().next().children().children().children().next().next().val();
-                    var rent = button.parent().parent().next().children().children().children().next().next().next().val();
-                    var letter = button.parent().parent().next().children().children().children().next().next().next().next().val();
+                    var nameequipment =         button.parent().parent().next().children().children().next().children().next().val();
 
-                    var description = button.parent().parent().next().children().children().next().next().children().next().val();
-                    var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var largeequipment =        button.parent().parent().next().children().children().next().next().children().next().val();
+                    var widthequipment =        button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var highequipment =         button.parent().parent().next().children().children().next().next().next().next().children().next().val();
+                    var categoryequipment =     button.parent().parent().next().children().children().next().next().next().next().next().children().next().val();
+                    var categoryequipmentid =   button.parent().parent().next().children().children().next().next().next().next().next().next().next().next().next().children().next().val();
+                    
+
+                    var utility =   button.parent().parent().next().children().children().children().next().next().val();
+                    var rent =      button.parent().parent().next().children().children().children().next().next().next().val();
+                    var letter =    button.parent().parent().next().children().children().children().next().next().next().next().val();
+
+                    var description = button.parent().parent().next().children().children().next().next().next().next().next().next().children().next().val();
+                    var detail = button.parent().parent().next().children().children().next().next().next().next().next().next().next().next().children().next().val();
                     var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var electrics = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
@@ -1106,11 +1035,7 @@ function saveEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>
-                            //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
-                            mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
-                            mat.enable_status === 1
-                        );
+                        var materialSelected = $materials.find( mat=>mat.full_name === materialsDescription[i] );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
@@ -1179,6 +1104,7 @@ function saveEquipment() {
                         consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
                     }
 
+                    // TODO: seccion electricos
                     var electricsDescription = [];
                     var electricsIds = [];
                     var electricsUnit = [];
@@ -1191,7 +1117,7 @@ function saveEquipment() {
                             electricsDescription.push($(this).val());
                         });
                         $(this).find('[data-electricid]').each(function(){
-                            console.log($(this).attr('data-electricid'));
+                            //console.log($(this).attr('data-consumableid'));
                             electricsIds.push($(this).attr('data-electricid'));
                         });
                         $(this).find('[data-electricUnit]').each(function(){
@@ -1319,8 +1245,8 @@ function saveEquipment() {
 
                     button.attr('data-saveEquipment', $equipments.length);
                     button.next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-                    updateTableTotalsEquipment(button, {'id':equipmentId, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    $equipments.push({'id':equipmentId, 'nameequipment':nameequipment,'largeequipment':largeequipment,'widthequipment':widthequipment,'highequipment':highequipment,'categoryequipment':categoryequipment,'categoryequipmentid':categoryequipmentid,'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    updateTableTotalsEquipment(button, {'id':equipmentId, 'nameequipment':nameequipment,'largeequipment':largeequipment,'widthequipment':widthequipment,'highequipment':highequipment,'categoryequipment':categoryequipment,'categoryequipmentid':categoryequipmentid,'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -1347,6 +1273,10 @@ function deleteConsumable() {
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
+
+    /*var code = $(this).data('delete');
+    $materials = $materials.filter(material => material.code !== code);*/
+
     $(this).parent().parent().remove();
 }
 
@@ -1383,359 +1313,88 @@ function deleteTorno() {
 }
 
 function addConsumable() {
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        var consumableID = $(this).parent().parent().find('[data-consumable]').val();
-        //console.log(material);
-        var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
-        var cantidad = inputQuantity.val();
-        if ( cantidad === '' || parseFloat(cantidad) === 0 )
-        {
-            toastr.error('Debe ingresar una cantidad', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
+    const $card = $(this).closest('.card');
+    const $select = $card.find('.consumable_search');
+    const $qty = $card.find('[data-cantidad]');
 
-        if ( consumableID === '' || consumableID === null )
-        {
-            toastr.error('Debe seleccionar un consumible', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        var render = $(this).parent().parent().next().next();
-
-        var consumable = $consumables.find( mat=>mat.id === parseInt(consumableID) );
-
-        var consumables = $(this).parent().parent().next().next().children();
-
-        consumables.each(function(e){
-            var id = $(this).children().children().children().next().val();
-            if (parseInt(consumable.id) === parseInt(id)) {
-                inputQuantity.val(0);
-                $(".consumable_search").empty().trigger('change');
-                toastr.error('Este material ya esta seleccionado', 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-                e.stopPropagation();
-                return false ;
-            }
-        });
-        inputQuantity.val(0);
-        $(".consumable_search").empty().trigger('change');
-        renderTemplateConsumable(render, consumable, cantidad);
-    } else {
-        var consumableID2 = $(this).parent().parent().find('[data-consumable]').val();
-        //console.log(material);
-        var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
-        var cantidad2 = inputQuantity2.val();
-        if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
-        {
-            toastr.error('Debe ingresar una cantidad', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        if ( consumableID2 === '' || consumableID2 === null )
-        {
-            toastr.error('Debe seleccionar un consumible', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        var render2 = $(this).parent().parent().next().next();
-
-        var consumable2 = $consumables.find( mat=>mat.id === parseInt(consumableID2) );
-        var consumables2 = $(this).parent().parent().next().next().children();
-
-        consumables2.each(function(e){
-            var id = $(this).children().children().children().next().val();
-            if (parseInt(consumable2.id) === parseInt(id)) {
-                inputQuantity2.val(0);
-                $(".consumable_search").empty().trigger('change');
-                toastr.error('Este material ya esta seleccionado', 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-                e.stopPropagation();
-                return false ;
-            }
-        });
-        inputQuantity2.val(0);
-        $(".consumable_search").empty().trigger('change');
-        renderTemplateConsumable(render2, consumable2, cantidad2);
+    const cantidad = parseFloat(($qty.val() || '0').toString());
+    if (!cantidad || cantidad <= 0) {
+        toastr.error('Debe ingresar una cantidad', 'Error', toastOpts());
+        return;
     }
 
+    const selected = $select.select2('data')[0]; // {id,text,raw}
+    if (!selected || !selected.id) {
+        toastr.error('Debe seleccionar un consumible', 'Error', toastOpts());
+        return;
+    }
+
+    const consumable = selected.raw || null;
+    if (!consumable) {
+        toastr.error('No se pudo obtener el consumible seleccionado', 'Error', toastOpts());
+        return;
+    }
+
+    const $render = $card.find('[data-bodyConsumable]'); // donde se dibuja
+    // ✅ verificar duplicado leyendo los hidden ya renderizados
+    const exists = $render.find('[data-consumableId]').filter(function () {
+        return parseInt($(this).val() || $(this).attr('value') || 0) === parseInt(consumable.id);
+    }).length > 0;
+
+    if (exists) {
+        $qty.val(0);
+        $select.val(null).trigger('change');
+        toastr.error('Este material ya está seleccionado', 'Error', toastOpts());
+        return;
+    }
+
+    // ✅ render
+    renderTemplateConsumable($render, consumable, cantidad);
+
+    // ✅ reset
+    $qty.val(0);
+    $select.val(null).trigger('change');
+}
+
+function toastError(msg){
+    toastr.error(msg, 'Error', {
+        closeButton:true, progressBar:true, positionClass:"toast-top-right",
+        timeOut:"2000", showDuration:"300", hideDuration:"1000"
+    });
 }
 
 function addElectric() {
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        var electricID = $(this).parent().parent().find('[data-electric]').val();
-        //console.log(material);
-        var inputQuantity = $(this).parent().parent().find('[data-cantidad]');
-        var cantidad = inputQuantity.val();
-        if ( cantidad === '' || parseFloat(cantidad) === 0 )
-        {
-            toastr.error('Debe ingresar una cantidad', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
+    var $btn = $(this);
+    var $row = $btn.closest('.row'); // fila del select + cantidad + botón
 
-        if ( electricID === '' || electricID === null )
-        {
-            toastr.error('Debe seleccionar un material eléctrico', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
+    var qty = parseFloat($row.find('[data-cantidad]').val() || 0);
+    if (!qty) return toastError('Debe ingresar una cantidad');
 
-        var render = $(this).parent().parent().next().next();
+    var sel = $row.find('[data-electric]').select2('data')[0];
+    if (!sel || !sel.id) return toastError('Debe seleccionar un material eléctrico');
 
-        var electric = $electrics.find( mat=>mat.id === parseInt(electricID) );
+    var electric = sel.raw || { id: sel.id, full_name: sel.text, text: sel.text };
 
-        var electrics = $(this).parent().parent().next().next().children();
+    // contenedor donde se renderiza
+    var $render = $btn.closest('.card-body').find('[data-bodyElectric]');
 
-        electrics.each(function(e){
-            var id = $(this).children().children().children().next().val();
-            if (parseInt(electric.id) === parseInt(id)) {
-                inputQuantity.val(0);
-                $(".electric_search").empty().trigger('change');
-                toastr.error('Este material ya esta seleccionado', 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-                e.stopPropagation();
-                return false ;
-            }
-        });
-        inputQuantity.val(0);
-        $(".electric_search").empty().trigger('change');
-        renderTemplateElectric(render, electric, cantidad);
-    } else {
-        var electricID2 = $(this).parent().parent().find('[data-electric]').val();
-        //console.log(material);
-        var inputQuantity2 = $(this).parent().parent().find('[data-cantidad]');
-        var cantidad2 = inputQuantity2.val();
-        if ( cantidad2 === '' || parseFloat(cantidad2) === 0 )
-        {
-            toastr.error('Debe ingresar una cantidad', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
+    // validar duplicado leyendo el hidden del template renderizado
+    var exists = $render.find('[data-electricId]').filter(function(){
+        return String($(this).val()) === String(electric.id);
+    }).length > 0;
 
-        if ( electricID2 === '' || electricID2 === null )
-        {
-            toastr.error('Debe seleccionar un material electrico', 'Error',
-                {
-                    "closeButton": true,
-                    "debug": false,
-                    "newestOnTop": false,
-                    "progressBar": true,
-                    "positionClass": "toast-top-right",
-                    "preventDuplicates": false,
-                    "onclick": null,
-                    "showDuration": "300",
-                    "hideDuration": "1000",
-                    "timeOut": "2000",
-                    "extendedTimeOut": "1000",
-                    "showEasing": "swing",
-                    "hideEasing": "linear",
-                    "showMethod": "fadeIn",
-                    "hideMethod": "fadeOut"
-                });
-            return;
-        }
-
-        var render2 = $(this).parent().parent().next().next();
-
-        var electric2 = $electrics.find( mat=>mat.id === parseInt(electricID2) );
-        var electrics2 = $(this).parent().parent().next().next().children();
-
-        electrics2.each(function(e){
-            var id = $(this).children().children().children().next().val();
-            if (parseInt(electric2.id) === parseInt(id)) {
-                inputQuantity2.val(0);
-                $(".electric_search").empty().trigger('change');
-                toastr.error('Este material ya esta seleccionado', 'Error',
-                    {
-                        "closeButton": true,
-                        "debug": false,
-                        "newestOnTop": false,
-                        "progressBar": true,
-                        "positionClass": "toast-top-right",
-                        "preventDuplicates": false,
-                        "onclick": null,
-                        "showDuration": "300",
-                        "hideDuration": "1000",
-                        "timeOut": "2000",
-                        "extendedTimeOut": "1000",
-                        "showEasing": "swing",
-                        "hideEasing": "linear",
-                        "showMethod": "fadeIn",
-                        "hideMethod": "fadeOut"
-                    });
-                e.stopPropagation();
-                return false ;
-            }
-        });
-        inputQuantity2.val(0);
-        $(".electric_search").empty().trigger('change');
-        renderTemplateElectric(render2, electric2, cantidad2);
+    if (exists) {
+        $row.find('[data-cantidad]').val(0);
+        $row.find('[data-electric]').val(null).trigger('change');
+        return toastError('Este material ya está seleccionado');
     }
 
+    // limpiar inputs
+    $row.find('[data-cantidad]').val(0);
+    $row.find('[data-electric]').val(null).trigger('change');
+
+    // render
+    renderTemplateElectric($render, electric, qty);
 }
 
 function addMano() {
@@ -2228,13 +1887,22 @@ function confirmEquipment() {
 
                     var quantity = button.parent().parent().next().children().children().children().next().val();
 
+
+                    var nameequipment =         button.parent().parent().next().children().children().next().children().next().val();
+
+                    var largeequipment =        button.parent().parent().next().children().children().next().next().children().next().val();
+                    var widthequipment =        button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var highequipment =         button.parent().parent().next().children().children().next().next().next().next().children().next().val();
+                    var categoryequipment =     button.parent().parent().next().children().children().next().next().next().next().next().children().next().val();
+                    var categoryequipmentid =   button.parent().parent().next().children().children().next().next().next().next().next().next().next().next().next().children().next().val();
+
                     // TODO: Obtencion de los porcentages
                     var utility = button.parent().parent().next().children().children().children().next().next().val();
                     var rent = button.parent().parent().next().children().children().children().next().next().next().val();
                     var letter = button.parent().parent().next().children().children().children().next().next().next().next().val();
 
-                    var description = button.parent().parent().next().children().children().next().next().children().next().val();
-                    var detail = button.parent().parent().next().children().children().next().next().next().children().next().val();
+                    var description = button.parent().parent().next().children().children().next().next().next().next().next().next().children().next().val();
+                    var detail = button.parent().parent().next().children().children().next().next().next().next().next().next().next().next().children().next().val();
                     var materials = button.parent().parent().next().children().next().children().next().children().next().next().next();
                     var consumables = button.parent().parent().next().children().next().next().children().next().children().next().next();
                     var electrics = button.parent().parent().next().children().next().next().next().children().next().children().next().next();
@@ -2277,11 +1945,7 @@ function confirmEquipment() {
                     var materialsArray = [];
 
                     for (let i = 0; i < materialsDescription.length; i++) {
-                        var materialSelected = $materials.find( mat=>
-                            //mat=>mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase()
-                            mat.full_name.trim().toLowerCase() === materialsDescription[i].trim().toLowerCase() &&
-                            mat.enable_status === 1
-                        );
+                        var materialSelected = $materials.find( mat=>mat.full_name === materialsDescription[i] );
                         materialsArray.push({'id':materialSelected.id,'material':materialSelected, 'description':materialsDescription[i], 'unit':materialsUnit[i], 'length':materialsLargo[i], 'width':materialsAncho[i], 'quantity':materialsQuantity[i], 'price': materialsPrice[i], 'total': materialsTotal[i]});
                     }
 
@@ -2349,7 +2013,6 @@ function confirmEquipment() {
                         consumablesArray.push({'id':consumablesIds[i], 'description':consumablesDescription[i], 'unit':consumablesUnit[i], 'quantity':consumablesQuantity[i], 'price': consumablesPrice[i], 'total': consumablesTotal[i]});
                     }
 
-                    // SECCION DE ELECTRICOS
                     var electricsDescription = [];
                     var electricsIds = [];
                     var electricsUnit = [];
@@ -2462,9 +2125,6 @@ function confirmEquipment() {
                     for (let i = 0; i < consumablesTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(consumablesTotal[i]);
                     }
-                    for (let i = 0; i < electricsTotal.length; i++) {
-                        totalEquipment = parseFloat(totalEquipment) + parseFloat(electricsTotal[i]);
-                    }
                     for (let i = 0; i < diasTotal.length; i++) {
                         totalEquipment = parseFloat(totalEquipment) + parseFloat(diasTotal[i]);
                     }
@@ -2488,8 +2148,8 @@ function confirmEquipment() {
 
                     button.next().attr('data-saveEquipment', $equipments.length);
                     button.next().next().attr('data-deleteEquipment', $equipments.length);
-                    $equipments.push({'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
-                    updateTableTotalsEquipment(button, {'id':$equipments.length, 'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    $equipments.push({'id':$equipments.length, 'nameequipment':nameequipment,'largeequipment':largeequipment,'widthequipment':widthequipment,'highequipment':highequipment,'categoryequipment':categoryequipment,'categoryequipmentid':categoryequipmentid,'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
+                    updateTableTotalsEquipment(button, {'id':$equipments.length, 'nameequipment':nameequipment,'largeequipment':largeequipment,'widthequipment':widthequipment,'highequipment':highequipment,'categoryequipment':categoryequipment,'categoryequipmentid':categoryequipmentid,'quantity':quantity, 'utility':utility, 'rent':rent, 'letter':letter, 'total':totalEquipment, 'description':description, 'detail':detail, 'materials': materialsArray, 'consumables':consumablesArray, 'electrics':electricsArray, 'workforces':manosArray, 'tornos':tornosArray, 'dias':diasArray});
                     var card = button.parent().parent().parent();
                     card.removeClass('card-gray-dark');
                     card.addClass('card-success');
@@ -2534,8 +2194,8 @@ function updateTableTotalsEquipment(button, data) {
 
     var totalElectrics = 0;
 
-    for (let j = 0; j < electrics.length; j++) {
-        totalElectrics += parseFloat(electrics[j].total);
+    for (let e = 0; e < electrics.length; e++) {
+        totalElectrics += parseFloat(electrics[e].total);
     }
 
     var totalWorkforces = 0;
@@ -2559,13 +2219,11 @@ function updateTableTotalsEquipment(button, data) {
     var table = button.parent().parent().next().children().next().next().next().next().next().children().next().children();
 
     var totalMaterialsElement = table.find('[data-total_materials]');
-    //totalMaterialsElement.html((totalMaterials*quantity).toFixed(2));
-    totalMaterialsElement.html((totalMaterials).toFixed(2));
+    totalMaterialsElement.html((totalMaterials*quantity).toFixed(2));
     totalMaterialsElement.css('text-align', 'right');
 
     var totalConsumablesElement = table.find('[data-total_consumables]');
-    //totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
-    totalConsumablesElement.html((totalConsumables).toFixed(2));
+    totalConsumablesElement.html((totalConsumables*quantity).toFixed(2));
     totalConsumablesElement.css('text-align', 'right');
 
     var totalElectricsElement = table.find('[data-total_electrics]');
@@ -2574,13 +2232,11 @@ function updateTableTotalsEquipment(button, data) {
     totalElectricsElement.css('text-align', 'right');
 
     var totalWorkforcesElement = table.find('[data-total_workforces]');
-    //totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
-    totalWorkforcesElement.html((totalWorkforces).toFixed(2));
+    totalWorkforcesElement.html((totalWorkforces*quantity).toFixed(2));
     totalWorkforcesElement.css('text-align', 'right');
 
     var totalTornosElement = table.find('[data-total_tornos]');
-    //totalTornosElement.html((totalTornos*quantity).toFixed(2));
-    totalTornosElement.html((totalTornos).toFixed(2));
+    totalTornosElement.html((totalTornos*quantity).toFixed(2));
     totalTornosElement.css('text-align', 'right');
 
     var totalDiasElement = table.find('[data-total_dias]');
@@ -2681,6 +2337,7 @@ function calculateTotalC(e) {
     e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = (parseFloat(cantidad)*parseFloat(precio)).toFixed(2);
     // SIN IGV
     e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = ((parseFloat(cantidad)*parseFloat(precio))/1.18).toFixed(2);
+
 }
 
 function calculateTotalE(e) {
@@ -2736,47 +2393,99 @@ function calculateTotalPrice(e) {
 }
 
 function addEquipment() {
-    const $equip = renderTemplateEquipment();
 
-    // Typeahead SOLO en ese equipo
-    const $ta = $equip.find('.materialTypeahead');
-    $ta.typeahead('destroy');
-    $ta.typeahead(
-        { hint: true, highlight: true, minLength: 1 },
-        { limit: 12, source: substringMatcher($materialsTypeahead) }
-    );
+    //var result = document.querySelectorAll('[data-equip]');
+    //console.log(result);
+    /*for (var index in result){
+        if (result.hasOwnProperty(index)){
+            if(result[index].getAttribute('style')!==null){
+                //console.log(result[index].getAttribute('style'));
+                $equipmentStatus=true;
+            }
+        }
+    }*/
+    //var equipmentStat = confirmEquipment.css('display') === 'none';
+    //console.log(confirmEquipment);
+    /*if ( !$equipmentStatus )
+    {
+        toastr.error('Confirme el equipo antes de agregar otro.', 'Error',
+            {
+                "closeButton": true,
+                "debug": false,
+                "newestOnTop": false,
+                "progressBar": true,
+                "positionClass": "toast-top-right",
+                "preventDuplicates": false,
+                "onclick": null,
+                "showDuration": "300",
+                "hideDuration": "1000",
+                "timeOut": "2000",
+                "extendedTimeOut": "1000",
+                "showEasing": "swing",
+                "hideEasing": "linear",
+                "showMethod": "fadeIn",
+                "hideMethod": "fadeOut"
+            });
+        return;
+    }*/
 
-    // Select2 SOLO en ese equipo
-    $equip.find('.consumable_search').select2({
+    renderTemplateEquipment();
+    $('.materialTypeahead').typeahead('destroy');
+
+    $('.materialTypeahead').typeahead({
+            hint: true,
+            highlight: true, /* Enable substring highlighting */
+            minLength: 1 /* Specify minimum characters required for showing suggestions */
+        },
+        {
+            limit: 12,
+            source: substringMatcher($materialsTypeahead)
+        });
+
+    $('.consumable_search').select2({
         placeholder: 'Selecciona un consumible',
         ajax: {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
             processResults(data) {
+                //console.log(data);
                 return {
-                    results: $.map(data, item => ({ text: item.full_description, id: item.id }))
-                };
+                    results: $.map(data, function (item) {
+                        //console.log(item.full_description);
+                        return {
+                            text: item.full_description,
+                            id: item.id,
+                        }
+                    })
+                }
             }
         }
     });
+    //$equipmentStatus = false;
 
-    $equip.find('.electric_search').select2({
+    $('.electric_search').select2({
         placeholder: 'Selecciona un material',
         ajax: {
             url: '/dashboard/select/consumables',
             dataType: 'json',
             type: 'GET',
             processResults(data) {
+                //console.log(data);
                 return {
-                    results: $.map(data, item => ({ text: item.full_description, id: item.id }))
-                };
+                    results: $.map(data, function (item) {
+                        //console.log(item.full_description);
+                        return {
+                            text: item.full_description,
+                            id: item.id,
+                        }
+                    })
+                }
             }
         }
     });
 
-    // Summernote SOLO en ese equipo
-    $equip.find('.textarea_edit').summernote({
+    $('.textarea_edit').summernote({
         lang: 'es-ES',
         placeholder: 'Ingrese los detalles',
         tabsize: 2,
@@ -2791,26 +2500,17 @@ function addEquipment() {
     });
 }
 
-function bodySelectorByKeyword(keyword) {
-    switch (keyword) {
-        case 'materials': return '[data-bodyMaterials]';
-        case 'consumibles': return '[data-bodyConsumable]';
-        case 'electrics': return '[data-bodyElectric]';
-        case 'servicios_varios': return '[data-bodyMano]';      // workforces
-        case 'dias_trabajo': return '[data-bodyDia]';
-        default: return null;
-    }
-}
-
 function deleteItem() {
     //console.log($(this).parent().parent().parent());
     var card = $(this).parent().parent().parent().parent().parent().parent().parent();
     card.removeClass('card-success');
     card.addClass('card-gray-dark');
 
+    var id = $(this).data('delete');
+    $materials = $materials.filter(material => material.id !== id);
+
     $(this).parent().parent().remove();
-    var itemId = $(this).data('delete');
-    //$items = $items.filter(item => item.id !== itemId);
+
 }
 
 function calculatePercentage() {
@@ -3047,7 +2747,7 @@ function addTableMaterials() {
         $('#material_percentage_entered').val('');
         $('#material_price_entered').val('');
         $('#material_quantity_entered').val('');
-        $(".material_search").empty().trigger('change');
+        $('#material_search').val(null).trigger('change');
         $modalAddMaterial.modal('hide');
     } else {
         if( $('#material_length_entered').val().trim() === '' && $("#length_entered_material").attr('style') === '' )
@@ -3150,7 +2850,7 @@ function addTableMaterials() {
         $('#material_width_entered').val('');
         $('#material_percentage_entered').val('');
         $('#material_quantity_entered').val('');
-        $(".material_search").empty().trigger('change');
+        $('#material_search').val(null).trigger('change');
         $modalAddMaterial.modal('hide');
     }
 
@@ -3422,8 +3122,33 @@ function storeQuote() {
     var createUrl = $formCreate.data('url');
     var equipos = JSON.stringify($equipments);
     var formulario = $('#formCreate')[0];
+    //var formulario = $('#formCreate');
     var form = new FormData(formulario);
+    //var form = formulario;
+    //console.log($equipments);
+    var nameequipment = $('[data-nameequipment]').val();
+    form.append('nameequipment', nameequipment);
+
+    var largeequipment = $('[data-largeequipment]').val();
+    form.append('largeequipment', largeequipment);
+
+    var widthequipment = $('[data-widthequipment]').val();
+    form.append('widthequipment', widthequipment);
+
+    var highequipment = $('[data-highequipment]').val();
+    form.append('highequipment', highequipment);
+
+    var categoryequipment = $('[data-categoryequipment]').val();
+    form.append('categoryequipment', categoryequipment);
+
+    var detailequipment = $('[data-detailequipment]').val();
+    form.append('detailequipment', detailequipment);
+
+    var categoryequipmentid = $('[data-categoryequipmentid]').val();
+    form.append('categoryequipmentid', categoryequipmentid);
+
     form.append('equipments', equipos);
+    console.log(form);
     $.ajax({
         url: createUrl,
         method: 'POST',
@@ -3503,7 +3228,10 @@ function storeQuote() {
     });
 }
 
-function calculateTotalMaterialQuantity(e) {
+const IGV_RATE = 0.18;
+const TUBE_TYPE_IDS = [3, 4, 5];
+
+/*function calculateTotalMaterialQuantity(e) {
     var cantidad = e.value;
     var material_id = e.getAttribute('material_id');
     console.log(material_id);
@@ -3755,97 +3483,175 @@ function calculateTotalMaterialAncho(e) {
     //var priceConIgvTotal =
     e.parentElement.parentElement.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.firstElementChild.firstElementChild.value = newPriceConIgvP ;
 
-}
+}*/
 
-// ✅ Helper: arma URL (si estás usando Ziggy, puedes reemplazar por route())
-function buildDefaultEquipmentItemsUrl(id, keyword) {
-    return `/dashboard/default-equipments/${id}/items?keyword=${encodeURIComponent(keyword)}`;
-}
+function calculateTotalMaterialQuantity(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
 
-// ✅ Helper: busca el contenedor correcto dentro del card del equipo
-function resolveBodyContainer($btn, keyword) {
-    // Subimos al template del equipo (card con data-equip)
-    const $equipCard = $btn.closest('[data-equip]');
-    if (!$equipCard.length) return null;
+    const { row, material, quantity, length, width } = rowData;
 
-    switch (keyword) {
-        case 'materials':
-            return $equipCard.find('[data-bodyMaterials]');
-        case 'consumibles':
-            return $equipCard.find('[data-bodyConsumable]');
-        case 'electrics':
-            return $equipCard.find('[data-bodyElectric]');
-        case 'dias_trabajo':
-            return $equipCard.find('[data-bodyDia]');
-        case 'servicios_varios':
-            // este keyword tiene 2 bodies
-            return {
-                mano: $equipCard.find('[data-bodyMano]'),
-                torno: $equipCard.find('[data-bodyTorno]')
-            };
-        default:
-            return null;
+    if (!material.type_scrap) {
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
     }
+
+    if (isTube(material)) {
+        if (!hasValue(length)) {
+            updateMaterialPrices(row, quantity, material.unit_price);
+            return;
+        }
+
+        const originalLength = toNumber(material.type_scrap.length);
+        const newLength = quantity * originalLength;
+
+        setRowValue(row, '[data-materialLargo]', newLength);
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    // Si es plancha
+    if (!hasValue(length) || !hasValue(width)) {
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    setRowValue(row, '[data-materialLargo]', 0);
+    setRowValue(row, '[data-materialAncho]', 0);
+    updateMaterialPrices(row, quantity, material.unit_price);
 }
 
-// ✅ Normaliza “material” para que tus renders no revienten por campos faltantes
-function normalizeMaterialForRender(rawMaterial, fallbackId) {
-    // rawMaterial puede venir como item.material (controller) o venir null
-    const m = rawMaterial || {};
-    const unitMeasure = m.unit_measure || m.unitMeasure || m.unit_measure_id || null;
+function calculateTotalMaterialLargo(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
+
+    const { row, material, length, width } = rowData;
+
+    if (!material.type_scrap) {
+        return;
+    }
+
+    if (isTube(material)) {
+        const originalLength = toNumber(material.type_scrap.length);
+
+        if (!originalLength) return;
+
+        const quantity = length / originalLength;
+
+        setRowValue(row, '[data-materialQuantity]', quantity);
+        updateMaterialPrices(row, quantity, material.unit_price);
+        return;
+    }
+
+    // Si es plancha
+    const originalLength = toNumber(material.type_scrap.length);
+    const originalWidth = toNumber(material.type_scrap.width);
+
+    if (!originalLength || !originalWidth || !hasValue(width)) return;
+
+    const originalArea = originalLength * originalWidth;
+    const newArea = length * width;
+    const quantity = newArea / originalArea;
+
+    setRowValue(row, '[data-materialQuantity]', quantity);
+    updateMaterialPrices(row, quantity, material.unit_price);
+}
+
+function calculateTotalMaterialAncho(input) {
+    const rowData = getMaterialRowData(input);
+    if (!rowData) return;
+
+    const { row, material, length, width } = rowData;
+
+    if (!material.type_scrap || isTube(material)) {
+        return;
+    }
+
+    const originalLength = toNumber(material.type_scrap.length);
+    const originalWidth = toNumber(material.type_scrap.width);
+
+    if (!originalLength || !originalWidth || !hasValue(length)) return;
+
+    const originalArea = originalLength * originalWidth;
+    const newArea = length * width;
+    const quantity = newArea / originalArea;
+
+    setRowValue(row, '[data-materialQuantity]', quantity);
+    updateMaterialPrices(row, quantity, material.unit_price);
+}
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function getMaterialRowData(input) {
+    const row = input.closest('.row');
+    if (!row) return null;
+
+    const materialId = row.querySelector('[data-materialId]')?.value;
+    if (!materialId) {
+        console.warn('No se encontró data-materialId en la fila');
+        return null;
+    }
+
+    const material = $materials.find(mat => mat.id === parseInt(materialId));
+    if (!material) {
+        console.warn('No se encontró el material en $materials', materialId);
+        return null;
+    }
 
     return {
-        // campos que tu renderTemplateMaterial usa
-        id: m.id || fallbackId,
-        full_name: m.full_name || m.fullName || m.description || '',
-        description: m.description || m.full_name || '',
-        unit_measure: unitMeasure && unitMeasure.description
-            ? unitMeasure
-            : (m.unitMeasure ? { description: m.unitMeasure.description } : { description: '' }),
-
-        // defaults para no romper lógica de colores
-        enable_status: (m.enable_status != null) ? m.enable_status : 1,
-        stock_current: (m.stock_current != null) ? m.stock_current : 999999,
-        update_price: (m.update_price != null) ? m.update_price : 0,
-        state_update_price: (m.state_update_price != null) ? m.state_update_price : 0,
-
-        // scrap
-        type_scrap: m.type_scrap || m.typeScrap || null
+        row,
+        materialId: parseInt(materialId),
+        material,
+        quantity: toNumber(getRowValue(row, '[data-materialQuantity]')),
+        length: toNumber(getRowValue(row, '[data-materialLargo]')),
+        width: toNumber(getRowValue(row, '[data-materialAncho]'))
     };
 }
 
-function normalizeConsumableForRender(item) {
-    // tu renderTemplateConsumable espera:
-    // { id, full_description, unit_measure:{description}, unit_price, enable_status, stock_current, state_update_price }
-    const m = normalizeMaterialForRender(item.material, item.material_id);
-
-    return {
-        id: m.id,
-        full_description: item.material?.full_name || item.material?.description || item.material?.full_description || m.full_name,
-        unit_measure: m.unit_measure || { description: '' },
-
-        unit_price: (item.unit_price != null) ? item.unit_price : (item.material?.unit_price || 0),
-
-        enable_status: m.enable_status,
-        stock_current: m.stock_current,
-        state_update_price: (m.state_update_price != null) ? m.state_update_price : 0
-    };
+function isTube(material) {
+    return material?.type_scrap && TUBE_TYPE_IDS.includes(material.type_scrap.id);
 }
 
-function normalizeElectricForRender(item) {
-    // tu renderTemplateElectric espera lo mismo que consumable pero con electric.*
-    const e = normalizeConsumableForRender(item);
-    // por compatibilidad con tu render (usa electric.unit_price)
-    return {
-        ...e,
-        full_description: e.full_description
-    };
+function updateMaterialPrices(row, quantity, unitPrice) {
+    const totalConIgv = quantity * unitPrice;
+    const totalSinIgv = totalConIgv / (1 + IGV_RATE);
+
+    const unitPriceConIgv = unitPrice;
+    const unitPriceSinIgv = unitPrice / (1 + IGV_RATE);
+
+    setRowValue(row, '[data-materialPrice2]', unitPriceSinIgv);
+    setRowValue(row, '[data-materialPrice]', unitPriceConIgv);
+    setRowValue(row, '[data-materialTotal2]', totalSinIgv);
+    setRowValue(row, '[data-materialTotal]', totalConIgv);
+}
+
+function getRowValue(row, selector) {
+    return row.querySelector(selector)?.value ?? '';
+}
+
+function setRowValue(row, selector, value) {
+    const element = row.querySelector(selector);
+    if (!element) return;
+    element.value = formatDecimal(value);
+}
+
+function toNumber(value) {
+    if (value === null || value === undefined || value === '') return 0;
+    return parseFloat(value) || 0;
+}
+
+function hasValue(value) {
+    return value !== null && value !== undefined && value !== '' && value > 0;
+}
+
+function formatDecimal(value) {
+    return parseFloat(value || 0).toFixed(2);
 }
 
 function renderTemplateMaterial(code, description, quantity, unit, price, total, render, length, width, material) {
     var card = render.parent().parent().parent().parent();
-    card.removeClass('card-success');
-    card.addClass('card-gray-dark');
     if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
         var clone = activateTemplate('#materials-selected');
 
@@ -3867,10 +3673,11 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
                 } else {
                     clone.querySelector("[data-materialDescription]").setAttribute('value', description);
                 }
-
+                //clone.querySelector("[data-materialDescription]").setAttribute('value', description);
             }
         }
 
+        clone.querySelector('[data-materialid]').value = material.id; // ✅ AQUÍ
         clone.querySelector("[data-materialUnit]").setAttribute('value', unit);
         if (material.type_scrap == null)
         {
@@ -3933,6 +3740,7 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
                 clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
                 clone2.querySelector("[data-materialDescription]").setAttribute("style", "color:red;");
             } else {
+
                 if ( material.update_price == 1 )
                 {
                     clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
@@ -3940,12 +3748,12 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
                 } else {
                     clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
                 }
-
+                //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
             }
         }
 
-
         //clone2.querySelector("[data-materialDescription]").setAttribute('value', description);
+        clone2.querySelector('[data-materialid]').value = material.id; // ✅ AQUÍ
         clone2.querySelector("[data-materialUnit]").setAttribute('value', unit);
         if (material.type_scrap == null)
         {
@@ -3982,174 +3790,134 @@ function renderTemplateMaterial(code, description, quantity, unit, price, total,
     }
 }
 
-function renderTemplateConsumable(render, consumable, quantity) {
-    var card = render.parent().parent().parent().parent();
-    card.removeClass('card-success');
-    card.addClass('card-gray-dark');
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        var clone = activateTemplate('#template-consumable');
-        //console.log(consumable.stock_current );
-
-        if ( consumable.enable_status == 0 )
-        {
-            clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:purple;");
-
-        } else {
-            if ( consumable.stock_current == 0 )
-            {
-                clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
-            } else {
-                if ( consumable.state_update_price == 1 )
-                {
-                    clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                    clone.querySelector("[data-consumableDescription]").setAttribute("style", "color:blue;");
-                } else {
-                    clone.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                }
-
-            }
-        }
-
-        clone.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
-        clone.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
-        clone.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
-        clone.querySelector("[data-consumablePrice2]").setAttribute('value', ( (parseFloat(consumable.unit_price))/1.18 ).toFixed(2));
-        clone.querySelector("[data-consumableTotal2]").setAttribute( 'value', ( (parseFloat(consumable.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
-        clone.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
-        render.append(clone);
-    } else {
-        var clone2 = activateTemplate('#template-consumable');
-        //console.log(consumable.stock_current );
-
-        if ( consumable.enable_status == 0 )
-        {
-            clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:purple;");
-
-        } else {
-            if ( consumable.stock_current == 0 )
-            {
-                clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:red;");
-            } else {
-                if ( consumable.state_update_price == 1 )
-                {
-                    clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                    clone2.querySelector("[data-consumableDescription]").setAttribute("style", "color:blue;");
-                } else {
-                    clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-                }
-
-                //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            }
-        }
-
-        clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-        clone2.querySelector("[data-consumableId]").setAttribute('data-consumableId', consumable.id);
-        clone2.querySelector("[data-consumableUnit]").setAttribute('value', consumable.unit_measure.description);
-        clone2.querySelector("[data-consumableQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone2.querySelector("[data-consumablePrice]").setAttribute('value', (parseFloat(consumable.unit_price)).toFixed(2));
-        clone2.querySelector("[data-consumableTotal]").setAttribute( 'value', (parseFloat(consumable.unit_price)*parseFloat(quantity)).toFixed(2));
-        clone2.querySelector("[data-consumablePrice]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-consumableTotal]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-consumablePrice2]").setAttribute('value', ( (parseFloat(consumable.unit_price))/1.18 ).toFixed(2));
-        clone2.querySelector("[data-consumableTotal2]").setAttribute( 'value', ( (parseFloat(consumable.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
-        clone2.querySelector("[data-consumablePrice2]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-consumableTotal2]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-deleteConsumable]").setAttribute('data-deleteConsumable', consumable.id);
-        render.append(clone2);
-    }
-
-
+function toastOpts() {
+    return {
+        closeButton: true,
+        debug: false,
+        newestOnTop: false,
+        progressBar: true,
+        positionClass: "toast-top-right",
+        preventDuplicates: false,
+        onclick: null,
+        showDuration: "300",
+        hideDuration: "1000",
+        timeOut: "2000",
+        extendedTimeOut: "1000",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut"
+    };
 }
 
-function renderTemplateElectric(render, electric, quantity) {
-    var card = render.parent().parent().parent().parent();
-    card.removeClass('card-success');
-    card.addClass('card-gray-dark');
-    if ( $.inArray('showPrices_quote', $permissions) !== -1 ) {
-        var clone = activateTemplate('#template-electric');
-        //console.log(consumable.stock_current );
+function renderTemplateConsumable($render, consumable, quantity) {
+    const card = $render.closest('.card');
+    /*card.removeClass('card-success').addClass('card-gray-dark');*/
 
-        if ( electric.enable_status == 0 )
-        {
-            clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-            clone.querySelector("[data-electricDescription]").setAttribute("style", "color:purple;");
+    const canSeePrices = $.inArray('showPrices_quote', $permissions) !== -1;
 
-        } else {
-            if ( electric.stock_current == 0 )
-            {
-                clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                clone.querySelector("[data-electricDescription]").setAttribute("style", "color:red;");
-            } else {
-                if ( electric.state_update_price == 1 )
-                {
-                    clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                    clone.querySelector("[data-electricDescription]").setAttribute("style", "color:blue;");
-                } else {
-                    clone.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                }
+    const clone = activateTemplate('#template-consumable');
 
-            }
-        }
+    const desc = consumable.full_name || '';
+    const unitText =
+        (consumable.unit_measure && (consumable.unit_measure.name || consumable.unit_measure.description)) ||
+        consumable.unit ||
+        '';
 
-        clone.querySelector("[data-electricId]").setAttribute('data-electricId', electric.id);
-        clone.querySelector("[data-electricUnit]").setAttribute('value', electric.unit_measure.description);
-        clone.querySelector("[data-electricQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-electricPrice]").setAttribute('value', (parseFloat(electric.unit_price)).toFixed(2));
-        clone.querySelector("[data-electricPrice2]").setAttribute('value', ( (parseFloat(electric.unit_price))/1.18 ).toFixed(2));
-        clone.querySelector("[data-electricTotal2]").setAttribute( 'value', ( (parseFloat(electric.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
-        clone.querySelector("[data-electricTotal]").setAttribute( 'value', (parseFloat(electric.unit_price)*parseFloat(quantity)).toFixed(2));
-        clone.querySelector("[data-deleteElectric]").setAttribute('data-deleteElectric', electric.id);
-        render.append(clone);
-    } else {
-        var clone2 = activateTemplate('#template-electric');
-        //console.log(consumable.stock_current );
+    // ✅ color reglas (igual que antes)
+    const $descInput = $(clone).find('[data-consumableDescription]');
+    $descInput.val(desc);
 
-        if ( electric.enable_status == 0 )
-        {
-            clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-            clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:purple;");
-
-        } else {
-            if ( electric.stock_current == 0 )
-            {
-                clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:red;");
-            } else {
-                if ( electric.state_update_price == 1 )
-                {
-                    clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                    clone2.querySelector("[data-electricDescription]").setAttribute("style", "color:blue;");
-                } else {
-                    clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-                }
-
-                //clone2.querySelector("[data-consumableDescription]").setAttribute('value', consumable.full_description);
-            }
-        }
-
-        clone2.querySelector("[data-electricDescription]").setAttribute('value', electric.full_description);
-        clone2.querySelector("[data-electricId]").setAttribute('data-electricId', electric.id);
-        clone2.querySelector("[data-electricUnit]").setAttribute('value', electric.unit_measure.description);
-        clone2.querySelector("[data-electricQuantity]").setAttribute('value', (parseFloat(quantity)).toFixed(2));
-        clone2.querySelector("[data-electricPrice]").setAttribute('value', (parseFloat(electric.unit_price)).toFixed(2));
-        clone2.querySelector("[data-electricTotal]").setAttribute( 'value', (parseFloat(electric.unit_price)*parseFloat(quantity)).toFixed(2));
-        clone2.querySelector("[data-electricPrice]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-electricTotal]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-electricPrice2]").setAttribute('value', ( (parseFloat(electric.unit_price))/1.18 ).toFixed(2));
-        clone2.querySelector("[data-electricTotal2]").setAttribute( 'value', ( (parseFloat(electric.unit_price)*parseFloat(quantity))/1.18 ).toFixed(2));
-        clone2.querySelector("[data-electricPrice2]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-electricTotal2]").setAttribute("style","display:none;");
-        clone2.querySelector("[data-deleteElectric]").setAttribute('data-deleteElectric', electric.id);
-        render.append(clone2);
+    if (parseInt(consumable.enable_status) === 0) {
+        $descInput.css('color', 'purple');
+    } else if (parseFloat(consumable.stock_current || 0) === 0) {
+        $descInput.css('color', 'red');
+    } else if (parseInt(consumable.state_update_price || consumable.update_price || 0) === 1) {
+        $descInput.css('color', 'blue');
     }
 
+    // ✅ hidden id
+    $(clone).find('[data-consumableId]').val(consumable.id);
 
+    // ✅ unit + qty
+    $(clone).find('[data-consumableUnit]').val(unitText);
+    $(clone).find('[data-consumableQuantity]').val((parseFloat(quantity) || 0).toFixed(2));
+
+    // ✅ precios y totales
+    const price = parseFloat(consumable.unit_price || 0);
+    const total = price * parseFloat(quantity || 0);
+
+    const $p = $(clone).find('[data-consumablePrice]');
+    const $p2 = $(clone).find('[data-consumablePrice2]');
+    const $t = $(clone).find('[data-consumableTotal]');
+    const $t2 = $(clone).find('[data-consumableTotal2]');
+
+    $p.val(price.toFixed(2));
+    $p2.val((price / 1.18).toFixed(2));
+    $t.val(total.toFixed(2));
+    $t2.val((total / 1.18).toFixed(2));
+
+    // ✅ si NO puede ver precios, escondemos columnas (como tu lógica)
+    if (!canSeePrices) {
+        $p.hide();  $t.hide();
+        $p2.hide(); $t2.hide();
+    }
+
+    // ✅ delete
+    $(clone).find('[data-deleteConsumable]').attr('data-deleteConsumable', consumable.id);
+
+    $render.append(clone);
+}
+
+function renderTemplateElectric($render, electric, quantity) {
+    var $card = $render.closest('.card');
+    //$card.removeClass('card-success').addClass('card-gray-dark');
+
+    var showPrices = $.inArray('showPrices_quote', $permissions) !== -1;
+
+    var clone = activateTemplate('#template-electric');
+
+    // descripción
+    var desc = electric.full_name || electric.text || '';
+    var $desc = $(clone).find('[data-electricDescription]');
+    $desc.val(desc);
+
+    // color por estado (si viene)
+    if (electric.enable_status == 0) $desc.css('color','purple');
+    else if (electric.stock_current == 0) $desc.css('color','red');
+    else if (electric.state_update_price == 1) $desc.css('color','blue');
+
+    // hidden id para duplicados
+    $(clone).find('[data-electricId]').val(electric.id);
+
+    // unidad (según lo que devuelvas)
+    var unit =
+        (electric.unit_measure && (electric.unit_measure.name || electric.unit_measure.description)) ?
+            (electric.unit_measure.name || electric.unit_measure.description) :
+            (electric.unit || '');
+
+    $(clone).find('[data-electricUnit]').val(unit);
+
+    // cálculos
+    var price = parseFloat(electric.unit_price || 0);
+    var qty   = parseFloat(quantity || 0);
+    var total = price * qty;
+
+    $(clone).find('[data-electricQuantity]').val(qty.toFixed(2));
+    $(clone).find('[data-electricPrice]').val(price.toFixed(2));
+    $(clone).find('[data-electricPrice2]').val((price/1.18).toFixed(2));
+    $(clone).find('[data-electricTotal]').val(total.toFixed(2));
+    $(clone).find('[data-electricTotal2]').val((total/1.18).toFixed(2));
+
+    // esconder columnas si no tiene permiso
+    if (!showPrices) {
+        $(clone).find('[data-electricPrice],[data-electricTotal],[data-electricPrice2],[data-electricTotal2]').hide();
+    }
+
+    // botón eliminar
+    $(clone).find('[data-deleteElectric]').attr('data-deleteElectric', electric.id);
+
+    $render.append(clone);
 }
 
 function renderTemplateMano(render, description, unit, quantity, unitPrice) {
@@ -4217,20 +3985,13 @@ function renderTemplateDia(render, description, pricePerHour2, hoursPerPerson2, 
 }
 
 function renderTemplateEquipment() {
-    const frag = activateTemplate('#template-equipment');
+    var clone = activateTemplate('#template-equipment');
 
-    // lo insertamos
-    $('#body-equipment').append(frag);
+    $('#body-equipment').append(clone);
 
-    // obtenemos el ÚLTIMO equipo agregado (elemento real del DOM)
-    const $equip = $('#body-equipment').children().last();
-
-    // init solo dentro de ese equipo
-    $equip.find('.unitMeasure').select2({ placeholder: "Seleccione unidad" });
-
-    initDefaultEquipmentSelects($equip);
-
-    return $equip;
+    $('.unitMeasure').select2({
+        placeholder: "Seleccione unidad",
+    });
 }
 
 function activateTemplate(id) {

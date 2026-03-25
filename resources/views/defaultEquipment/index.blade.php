@@ -47,9 +47,14 @@
 
 @section('page-title')
     <h5 class="card-title">Listado de equipos de la categoría {{ $category->description }}</h5>
-    
+
     @can('create_defaultEquipment')
-        <a href="{{ route('defaultEquipment.create',$category->id) }}" class="btn btn-outline-success btn-sm float-right" > <i class="fa fa-plus font-20"></i> Nuevo Equipo </a>
+        <button type="button"
+                data-url="{{ route('defaultEquipment.create',$category->id) }}"
+                data-suburl="{{ route('defaultEquipment.subequipment.create',$category->id) }}"
+                class="btn btn-outline-success btn-sm float-right btn-create-equipment">
+            <i class="fa fa-plus font-20"></i> Nuevo Equipo
+        </button>
     @endcan
 
 @endsection
@@ -150,6 +155,7 @@
                 <tr>
                     <th>ID</th>
                     <th>Descripción</th>
+                    <th>Tipo</th>
                     <th>Largo</th>
                     <th>Ancho</th>
                     <th>Alto</th>
@@ -245,6 +251,7 @@
         <tr>
             <td data-id></td>
             <td data-description></td>
+            <td data-keyword></td>
             <td data-large></td>
             <td data-width></td>
             <td data-high></td>
@@ -276,5 +283,9 @@
 @endsection
 
 @section('scripts')
+    <script>
+        window.routeEditEquipment = "{{ url('/dashboard/editar/equipo/categoria') }}";
+        window.routeEditSubEquipment = "{{ url('/dashboard/editar/subequipo/categoria') }}";
+    </script>
     <script src="{{ asset('js/defaultEquipment/index.js') }}"></script>
 @endsection

@@ -902,6 +902,12 @@ Route::middleware('auth')->group(function (){
             ->name('decimals.change')
             ->middleware('permission:update_quote');
 
+        Route::get('/default-equipment/options/by-keyword', 'DefaultEquipmentController@optionsByKeyword')
+            ->name('defaultEquipment.options.byKeyword')
+            ->middleware('permission:create_quote'); // ajusta permiso si quieres
+        Route::get('/default-equipments/{id}/items', 'DefaultEquipmentController@itemsByKeyword')
+            ->name('defaultEquipments.itemsByKeyword');
+
         // TODO: Rutas para V2 de listado de cotizaciones GENERAL
         Route::get('/get/data/quotes/v2/{numberPage}', 'QuoteController@getDataQuotes')
             ->middleware('permission:list_quote');
@@ -2493,6 +2499,34 @@ Route::middleware('auth')->group(function (){
         Route::get('/equipos/categoria/{category_id}/crear', 'DefaultEquipmentController@create')
             ->name('defaultEquipment.create')
             ->middleware('permission:create_defaultEquipment');
+
+        Route::get('/subequipo/categoria/{category_id}/crear/', 'DefaultEquipmentController@createSubEquipment')
+            ->name('defaultEquipment.subequipment.create')
+            ->middleware('permission:create_defaultEquipment');
+        Route::post('store/subequipo', 'DefaultEquipmentController@storeDefaultEquipmentSection')
+            ->name('defaultEquipment.subequipment.store')
+            ->middleware('permission:create_defaultEquipment');
+        Route::get('/editar/subequipo/categoria/{equipment_id}', 'DefaultEquipmentController@editSubEquipment')
+            ->name('defaultEquipment.subequipment.edit')
+            ->middleware('permission:update_defaultEquipment');
+        Route::post('update/subequipo/{equipment_id}', 'DefaultEquipmentController@updateSubEquipment')
+            ->name('defaultEquipment.subequipment.update')
+            ->middleware('permission:update_defaultEquipment');
+        Route::post('destroy/subequipo/{equipment_id}', 'DefaultEquipmentController@destroySubEquipment')
+            ->name('defaultEquipment.subequipment.destroy')
+            ->middleware('permission:destroy_defaultEquipment');
+
+        Route::get('/subequipo/materials/search', 'DefaultEquipmentController@searchMaterials')
+            ->name('subequipo.materials.search')
+            ->middleware('permission:create_defaultEquipment');
+        Route::get('/subequipo/select/consumables', 'DefaultEquipmentController@selectConsumables')
+            ->name('subequipo.materials.select.consumables')
+            ->middleware('permission:create_defaultEquipment');
+        Route::get('/subequipo/select/electrics', 'DefaultEquipmentController@selectElectrics')
+            ->name('subequipo.materials.select.electrics')
+            ->middleware('permission:create_defaultEquipment');
+
+
         Route::post('store/defaultEquipment', 'DefaultEquipmentController@store')
             ->name('defaultEquipment.store')
             ->middleware('permission:create_defaultEquipment');

@@ -11,6 +11,7 @@ class DefaultEquipment extends Model
 
     protected $fillable = [
         'description',
+        'category_key',
         'large',
         'width',
         'high',
@@ -21,7 +22,7 @@ class DefaultEquipment extends Model
         'rent'
     ];
 
-    protected $appends = ['subtotal_rent', 'subtotal_utility', 'subtotal_percentage'];
+    //protected $appends = ['subtotal_rent', 'subtotal_utility', 'subtotal_percentage'];
 
     public function category()
     {

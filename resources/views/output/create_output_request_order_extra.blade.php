@@ -325,6 +325,53 @@
                 </div>
                 <!-- /.card -->
             </div>
+
+            <div class="col-md-12">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Materiales eléctricos de la orden de ejecución</h3>
+
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse" data-toggle="tooltip" title="Collapse">
+                                <i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card">
+                                    <!-- /.card-header -->
+                                    <div class="card-body table-responsive p-0">
+                                        <table class="table table-head-fixed text-nowrap">
+                                            <thead>
+                                            <tr>
+                                                <th>N°</th>
+                                                <th>Material</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            @foreach ( $electricos as $key => $electric )
+                                                <tr>
+                                                    <td>{{ $key + 1 }}</td>
+                                                    <td>{{ $electric['material'] }}</td>
+                                                    <td>{{ $electric['quantity'] }}</td>
+                                                </tr>
+                                            @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <!-- /.card-body -->
+                                </div>
+                                <!-- /.card -->
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                </div>
+                <!-- /.card -->
+            </div>
+
             <div class="col-md-12">
                 <div class="card card-primary">
                     <div class="card-header">

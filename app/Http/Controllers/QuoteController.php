@@ -1663,22 +1663,50 @@ class QuoteController extends Controller
         );
         dump($results);*/
         //return response()->json($results);
-        $materials = [];
+        /*$materials = [];
 
         if($request->has('q')){
             $search = $request->get('q');
-            $materials = Material::where('category_id', 2)->get()->filter(function ($item) use ($search) {
-                // replace stristr with your choice of matching function
-                return false !== stristr($item->full_description, $search);
-            });
+            $materials = Material::where('full_name', 'like', "%{$search}%");
         }
-        return json_encode($materials);
+        return json_encode($materials);*/
+        $q = trim($request->get('q',''));
+        $page = (int) $request->get('page', 1);
+        $perPage = 20;
+
+        $query = Material::query()
+            ->select('id','full_name','unit_price','stock_current','enable_status','state_update_price','unit_measure_id')
+            ->with(['unitMeasure:id,name']);
+
+        if ($q !== '') {
+            $query->where('full_name', 'like', "%{$q}%");
+        }
+
+        $p = $query->orderBy('full_name')
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return response()->json([
+            'results' => $p->getCollection()->map(function($m){
+                return [
+                    'id' => $m->id,
+                    'text' => $m->full_name . (optional($m->unitMeasure)->name ? ' (' . $m->unitMeasure->name . ')' : ''),
+                    'full_name' => $m->full_name,
+                    'unit_price' => $m->unit_price,
+                    'stock_current' => $m->stock_current,
+                    'enable_status' => $m->enable_status,
+                    'state_update_price' => $m->state_update_price,
+                    'unit' => optional($m->unitMeasure)->name,
+                    'unit_measure' => $m->unitMeasure, // ✅ para que tu render lo use
+                ];
+            })->values(),
+            'more' => $p->hasMorePages()
+        ]);
     }
 
     public function getConsumables()
     {
         $materials = Material::with('category', 'materialType','unitMeasure','subcategory','subType','exampler','brand','warrant','quality','typeScrap')
-            ->where('category_id', 2)/*->where('enable_status', 1)*/->get();
+            /*->where('category_id', 2)->where('enable_status', 1)*/->get();
         return $materials;
     }
 
@@ -2456,6 +2484,12 @@ class QuoteController extends Controller
             ->setPaper('a4', 'portrait');
 
         $pdf->getDomPDF()->set_option('isPhpEnabled', true);
+
+        // TODO: Esto muestra el pie de pagina
+        /*$pdf = PDF::loadView('exports.quoteCustomer2', compact('quote','images'))
+            ->setPaper('a4', 'portrait');
+
+        $pdf->getDomPDF()->set_option('isPhpEnabled', true);*/
 
         $description = str_replace(array('"', "'", "/"),'',$quote->description_quote);
 

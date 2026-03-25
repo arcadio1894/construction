@@ -10,6 +10,39 @@ $(document).ready(function () {
 
     $(document).on('click', '[data-delete]', deleteDefaultEquipment);
 
+    $(document).on('click', '.btn-create-equipment', function () {
+
+        let equipoCompletoUrl = $(this).data('url');
+        let subEquipoUrl = $(this).data('suburl');
+
+        $.confirm({
+            title: '¿Qué desea crear?',
+            content: 'Seleccione una opción:',
+            type: 'blue',
+            buttons: {
+                equipoCompleto: {
+                    text: 'Equipo',
+                    btnClass: 'btn-success',
+                    action: function () {
+                        window.location.href = equipoCompletoUrl;
+                    }
+                },
+                subEquipo: {
+                    text: 'Subequipo',
+                    btnClass: 'btn-warning',
+                    action: function () {
+                        window.location.href = subEquipoUrl;
+                    }
+                },
+                cancelar: {
+                    text: 'Cancelar',
+                    btnClass: 'btn-danger'
+                }
+            }
+        });
+
+    });
+
 });
 
 function deleteDefaultEquipment() {
@@ -236,9 +269,12 @@ function renderDataDefaultEquipments(data) {
 }
 
 function renderDataTableCard(data) {
+
     var clone = activateTemplate('#item-card');
+
     clone.querySelector("[data-id]").innerHTML = data.id;
     clone.querySelector("[data-description]").innerHTML = data.description;
+    clone.querySelector("[data-keyword]").innerHTML = data.keyword;
     clone.querySelector("[data-large]").innerHTML = data.large;
     clone.querySelector("[data-width]").innerHTML = data.width;
     clone.querySelector("[data-high]").innerHTML = data.high;
@@ -247,10 +283,27 @@ function renderDataTableCard(data) {
     clone.querySelector("[data-priceIGVUtility]").innerHTML = data.priceIGVUtility;
     clone.querySelector("[data-priceSIGVUtility]").innerHTML = data.priceSIGVUtility;
     clone.querySelector("[data-created_at]").innerHTML = data.created_at;
-    clone.querySelector("[data-edit]").setAttribute('data-edit', data.id);
-    clone.querySelector("[data-edit]").setAttribute('href', location.origin+'/dashboard/editar/equipo/categoria/'+data.id);
+
+    const editBtn = clone.querySelector("[data-edit]");
+
+    editBtn.setAttribute('data-edit', data.id);
+
+    // 🔥 DECISIÓN INTELIGENTE
+    let editUrl;
+
+    if (data.category_key === null || data.category_key === "") {
+        // Equipo completo (ruta antigua)
+        editUrl = location.origin + '/dashboard/editar/equipo/categoria/' + data.id;
+    } else {
+        // Subequipo (ruta nueva)
+        editUrl = location.origin + '/dashboard/editar/subequipo/categoria/' + data.id;
+    }
+
+    editBtn.setAttribute('href', editUrl);
+
     clone.querySelector("[data-delete]").setAttribute('data-delete', data.id);
     clone.querySelector("[data-delete]").setAttribute('data-description', data.description);
+
     $("#body-table").append(clone);
 
     $('[data-toggle="tooltip"]').tooltip();
