@@ -2851,7 +2851,9 @@ class EntryController extends Controller
                         'tipo' => $entry->entry_type,
                         'orden' => $entry->purchase_order,
                         'factura' => $entry->invoice,
-                        'proveedor' => ($entry->supplier_id != null) ? $entry->supplier->business_name:"Sin Provedor",
+                        'proveedor' => $entry->supplier
+                            ? $entry->supplier->business_name . ($entry->supplier->deleted_at ? ' (Eliminado)' : '')
+                            : 'Sin Proveedor',
                         'fecha' => ($entry->date_entry != null) ? $entry->date_entry->format("d/m/Y"):"Sin fecha",
                         'observaciones' => $entry->observation,
                         'moneda' => $entry->currency_invoice,
@@ -2913,7 +2915,9 @@ class EntryController extends Controller
                         'tipo' => $entry->entry_type,
                         'orden' => $entry->purchase_order,
                         'factura' => $entry->invoice,
-                        'proveedor' => ($entry->supplier_id != null) ? $entry->supplier->business_name:"Sin Provedor",
+                        'proveedor' => $entry->supplier
+                            ? $entry->supplier->business_name . ($entry->supplier->deleted_at ? ' (Eliminado)' : '')
+                            : 'Sin Proveedor',
                         'fecha' => ($entry->date_entry != null) ? $entry->date_entry->format("d/m/Y"):"Sin fecha",
                         'observaciones' => $entry->observation,
                         'moneda' => $entry->currency_invoice,
