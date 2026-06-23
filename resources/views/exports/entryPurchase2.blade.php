@@ -22,7 +22,7 @@
 
         header {
             padding: 10px 0;
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
         #logo {
@@ -278,7 +278,7 @@
         @endforeach
         </tbody>
     </table>
-    <br><br>
+    <br>
     <table id="sumary">
         <tbody>
         <tr>
